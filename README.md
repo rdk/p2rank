@@ -10,8 +10,9 @@ Ligand-binding site prediction tool based on machine learning.
 * PyMOL 1.7.x for viewing visualizations
 
 
-## Example commands (can be executed here in the installation directory)
+## Example commands 
 
+Following commands can be executed in the installation directory.
 
 #### Print help:
 
