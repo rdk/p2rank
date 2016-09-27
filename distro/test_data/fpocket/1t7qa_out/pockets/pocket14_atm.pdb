@@ -1,0 +1,44 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket    15:
+HEADER 0  - Pocket Score                      : 7.2861
+HEADER 1  - Number of V. Vertices             :    39
+HEADER 2  - Mean alpha-sphere radius          : 4.2835
+HEADER 3  - Mean alpha-sphere SA              : 0.6470
+HEADER 4  - Mean B-factor                     : 0.7301
+HEADER 5  - Hydrophobicity Score              : -4.1429
+HEADER 6  - Polarity Score                    :     3
+HEADER 7  - Volume Score                      : 3.1429
+HEADER 8  - Real volume (approximation)       : 1815.6792
+HEADER 9  - Charge Score                      :     0
+HEADER 10 - Local hydrophobic density Score   : 0.0000
+HEADER 11 - Number of apolar alpha sphere     :     0
+HEADER 12 - Proportion of apolar alpha sphere : 0.0000
+ATOM   4757   NE ARG A 623      83.934   1.671 -20.176  1.00 70.93           N 0
+ATOM   4760  NH2 ARG A 623      85.001   0.969 -18.262  1.00 72.71           N 0
+ATOM   4753    O ARG A 623      86.498   1.546 -25.249  1.00 64.93           O 0
+ATOM   4758   CZ ARG A 623      84.393   1.923 -18.955  1.00 72.19           C 0
+ATOM   4754   CB ARG A 623      84.242   1.521 -23.022  1.00 63.62           C 0
+ATOM   3776  NH1 ARG A 497      82.413   6.145 -23.455  1.00 40.38           N 0
+ATOM   4756   CD ARG A 623      83.258   2.652 -21.018  1.00 68.57           C 0
+ATOM   4759  NH1 ARG A 623      84.249   3.132 -18.426  1.00 72.59           N 0
+ATOM   4761    N ALA A 624      85.597  -0.516 -25.162  1.00 67.45           N 0
+ATOM   4752    C ARG A 623      85.540   0.805 -25.019  1.00 64.47           C 0
+ATOM   4762   CA ALA A 624      86.817  -1.188 -25.597  1.00 70.44           C 0
+ATOM   4765   CB ALA A 624      86.742  -2.674 -25.256  1.00 70.29           C 0
+ATOM   4744   CA PRO A 622      81.514  -0.386 -26.583  1.00 46.02           C 0
+ATOM   4750    N ARG A 623      83.059   0.586 -24.965  1.00 56.25           N 0
+ATOM   3214  OE2 GLU A 425      77.803  -0.727 -22.131  1.00 26.90           O 0
+ATOM   4747   CB PRO A 622      81.881  -1.798 -27.029  1.00 45.24           C 0
+ATOM   3203    O SER A 424      79.819  -2.201 -18.145  1.00 22.94           O 0
+ATOM   4755   CG ARG A 623      82.982   2.111 -22.412  1.00 66.34           C 0
+ATOM   3213  OE1 GLU A 425      78.670   1.252 -21.728  1.00 24.32           O 0
+ATOM   3212   CD GLU A 425      77.871   0.327 -21.463  1.00 25.22           C 0
+ATOM   3208    C GLU A 425      79.554   1.245 -17.549  1.00 20.05           C 0
+ATOM   3220   CG LYS A 426      82.813   0.766 -15.480  1.00 32.82           C 0
+ATOM   3207   CA GLU A 425      78.713   0.325 -18.435  1.00 20.54           C 0
+ATOM   3209    O GLU A 425      80.083   2.252 -18.019  1.00 20.13           O 0
+TER
+END

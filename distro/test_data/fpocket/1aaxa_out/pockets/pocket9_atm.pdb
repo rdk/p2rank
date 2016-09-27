@@ -1,0 +1,60 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket    10:
+HEADER 0  - Pocket Score                      : 15.8206
+HEADER 1  - Number of V. Vertices             :    60
+HEADER 2  - Mean alpha-sphere radius          : 3.8386
+HEADER 3  - Mean alpha-sphere SA              : 0.5819
+HEADER 4  - Mean B-factor                     : 0.3921
+HEADER 5  - Hydrophobicity Score              : 19.8333
+HEADER 6  - Polarity Score                    :     8
+HEADER 7  - Volume Score                      : 3.7500
+HEADER 8  - Real volume (approximation)       : 1900.8517
+HEADER 9  - Charge Score                      :     0
+HEADER 10 - Local hydrophobic density Score   : 11.2500
+HEADER 11 - Number of apolar alpha sphere     :    16
+HEADER 12 - Proportion of apolar alpha sphere : 0.2667
+ATOM     37   CA GLU A   6      70.366  16.136  14.818  1.00 37.01           C 0
+ATOM     29    C LYS A   5      71.688  17.930  15.771  1.00 41.63           C 0
+ATOM     32   CG LYS A   5      74.176  17.346  17.476  1.00 56.93           C 0
+ATOM     30    O LYS A   5      72.151  18.257  14.672  1.00 41.02           O 0
+ATOM     69   CB GLN A   9      73.398  16.102  11.587  1.00 53.82           C 0
+ATOM     36    N GLU A   6      70.807  16.949  15.928  1.00 38.05           N 0
+ATOM     40   CB GLU A   6      69.403  15.069  15.298  1.00 38.16           C 0
+ATOM      1    N GLU A   2      70.005  13.921  20.148  1.00 54.07           N 0
+ATOM     73  NE2 GLN A   9      71.702  13.662  11.514  1.00 73.34           N 0
+ATOM     33   CD LYS A   5      75.061  16.737  18.569  1.00 61.94           C 0
+ATOM     41   CG GLU A   6      68.915  14.175  14.185  1.00 42.26           C 0
+ATOM     42   CD GLU A   6      67.787  13.261  14.611  1.00 46.00           C 0
+ATOM     43  OE1 GLU A   6      67.231  13.450  15.721  1.00 49.93           O 0
+ATOM     70   CG GLN A   9      73.713  14.835  10.787  1.00 64.47           C 0
+ATOM      4    O GLU A   2      69.657  16.302  18.564  1.00 52.31           O 0
+ATOM     31   CB LYS A   5      72.824  17.832  18.016  1.00 48.82           C 0
+ATOM      5   CB GLU A   2      70.382  16.015  21.470  1.00 53.53           C 0
+ATOM   2009   NZ LYS A 247      65.847   9.887  14.387  1.00 36.77           N 0
+ATOM   1992  OD2 ASP A 245      65.069   8.148  19.456  1.00 35.43           O 0
+ATOM     44  OE2 GLU A   6      67.456  12.350  13.823  1.00 47.50           O 0
+ATOM   1981    O VAL A 244      64.057  13.562  21.687  1.00 27.59           O 0
+ATOM      2   CA GLU A   2      69.373  15.173  20.679  1.00 53.47           C 0
+ATOM     10    N MET A   3      67.565  16.180  19.417  1.00 48.64           N 0
+ATOM   1969    O SER A 242      67.019  13.341  25.015  1.00 33.44           O 0
+ATOM   1989   CB ASP A 245      63.625   9.652  20.554  1.00 30.75           C 0
+ATOM   1990   CG ASP A 245      64.236   9.063  19.291  1.00 35.03           C 0
+ATOM   1986   CA ASP A 245      63.307  11.141  20.430  1.00 28.19           C 0
+ATOM   1980    C VAL A 244      63.297  12.783  22.263  1.00 27.48           C 0
+ATOM   1975    O SER A 243      63.552  11.168  25.406  1.00 30.87           O 0
+ATOM   1974    C SER A 243      63.994  12.314  25.528  1.00 29.58           C 0
+ATOM   1985    N ASP A 245      62.875  11.639  21.734  1.00 27.54           N 0
+ATOM   1991  OD1 ASP A 245      63.880   9.471  18.151  1.00 32.59           O 0
+ATOM   2214   OH TYR A 271      64.232  13.786  14.125  1.00 26.58           O 0
+ATOM   1993    N ILE A 246      62.098  12.464  18.781  1.00 26.83           N 0
+ATOM   2001    N LYS A 247      61.490  11.090  16.267  1.00 25.61           N 0
+ATOM     11   CA MET A   3      66.890  16.831  18.309  1.00 45.71           C 0
+ATOM     14   CB MET A   3      65.458  17.166  18.705  1.00 45.08           C 0
+ATOM   1998  CG1 ILE A 246      61.488  15.280  18.109  1.00 27.37           C 0
+ATOM   2212  CE2 TYR A 271      64.546  16.083  14.718  1.00 24.02           C 0
+ATOM   1997   CB ILE A 246      61.260  14.130  17.120  1.00 24.88           C 0
+TER
+END

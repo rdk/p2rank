@@ -1,0 +1,62 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket     7:
+HEADER 0  - Pocket Score                      : 17.5432
+HEADER 1  - Number of V. Vertices             :    68
+HEADER 2  - Mean alpha-sphere radius          : 3.9343
+HEADER 3  - Mean alpha-sphere SA              : 0.4876
+HEADER 4  - Mean B-factor                     : 0.0979
+HEADER 5  - Hydrophobicity Score              : 16.4000
+HEADER 6  - Polarity Score                    :     6
+HEADER 7  - Volume Score                      : 3.4667
+HEADER 8  - Real volume (approximation)       : 1962.9800
+HEADER 9  - Charge Score                      :     0
+HEADER 10 - Local hydrophobic density Score   : 18.0000
+HEADER 11 - Number of apolar alpha sphere     :    25
+HEADER 12 - Proportion of apolar alpha sphere : 0.3676
+ATOM    394    O ASP A  48      45.190   5.445   2.832  1.00 18.03           O 0
+ATOM    194  NH2 ARG A  24      54.571   5.272   1.790  1.00 45.69           N 0
+ATOM   2110   CA GLY A 259      50.384   7.956   7.533  1.00 17.65           C 0
+ATOM   2107   SD MET A 258      45.990   4.110   6.075  1.00 18.28           S 0
+ATOM   2109    N GLY A 259      49.961   6.718   8.170  1.00 17.24           N 0
+ATOM   2137  NE2 GLN A 262      50.764  10.335   4.797  1.00 19.87           N 0
+ATOM   2105   CB MET A 258      47.895   4.366   8.114  1.00 17.21           C 0
+ATOM   2136  OE1 GLN A 262      50.003  11.313   2.919  1.00 29.85           O 0
+ATOM    395   CB ASP A  48      44.890   5.562   0.063  1.00 22.67           C 0
+ATOM    398  OD2 ASP A  48      45.151   5.772  -2.272  1.00 30.51           O 0
+ATOM    191   NE ARG A  24      55.484   6.845   3.195  1.00 35.38           N 0
+ATOM   2068  NH1 ARG A 254      54.035   6.687   7.895  1.00 17.20           N 0
+ATOM   2069  NH2 ARG A 254      53.936   8.974   7.783  1.00 16.96           N 0
+ATOM    158   OH TYR A  20      54.964  11.220   5.135  1.00 21.44           O 0
+ATOM   2104    O MET A 258      47.978   7.503   8.897  1.00 15.51           O 0
+ATOM   1798  CD1 ILE A 219      47.055  10.156   5.733  1.00 15.63           C 0
+ATOM   2106   CG MET A 258      46.577   4.940   7.555  1.00 16.62           C 0
+ATOM   2103    C MET A 258      48.780   6.578   8.761  1.00 17.42           C 0
+ATOM    405  CG2 VAL A  49      44.269   8.650   3.728  1.00 11.27           C 0
+ATOM    231  OD1 ASP A  29      49.654  -2.390   6.766  1.00 38.10           O 0
+ATOM   2108   CE MET A 258      45.674   2.457   6.743  1.00 13.59           C 0
+ATOM    217    O ALA A  27      55.225   0.068   9.475  1.00 29.73           O 0
+ATOM    232  OD2 ASP A  29      51.316  -3.362   5.688  1.00 39.09           O 0
+ATOM    230   CG ASP A  29      50.822  -2.849   6.725  1.00 36.63           C 0
+ATOM    187    O ARG A  24      56.907   3.078   6.372  1.00 32.17           O 0
+ATOM    222    O SER A  28      52.001   0.397   9.720  1.00 21.20           O 0
+ATOM    229   CB ASP A  29      51.702  -2.780   7.975  1.00 32.09           C 0
+ATOM    218   CB ALA A  27      55.150   3.328   9.448  1.00 22.47           C 0
+ATOM    427  CE1 PHE A  52      47.227   0.701  10.057  1.00 13.05           C 0
+ATOM    429   CZ PHE A  52      48.176   1.425  10.774  1.00 15.07           C 0
+ATOM    188   CB ARG A  24      57.374   5.951   4.988  1.00 27.04           C 0
+ATOM   2102   CA MET A 258      48.476   5.168   9.285  1.00 15.50           C 0
+ATOM   2062    O ARG A 254      50.890   3.315  13.088  1.00 14.75           O 0
+ATOM   2064   CG ARG A 254      52.894   6.764  11.810  1.00 16.78           C 0
+ATOM   2063   CB ARG A 254      52.932   5.477  12.658  1.00 15.52           C 0
+ATOM   2065   CD ARG A 254      54.021   6.801  10.765  1.00 18.92           C 0
+ATOM    404  CG1 VAL A  49      43.453   8.380   6.109  1.00 14.24           C 0
+ATOM   2095   CG ARG A 257      45.198   7.183  11.671  1.00 12.32           C 0
+ATOM    409    O SER A  50      43.300   3.950   8.534  1.00 17.10           O 0
+ATOM   1797  CG2 ILE A 219      45.901   9.842   8.527  1.00 15.91           C 0
+ATOM   2098   CZ ARG A 257      42.405   8.525  10.513  1.00 15.28           C 0
+ATOM   2097   NE ARG A 257      43.574   9.000  10.942  1.00 13.49           N 0
+TER
+END

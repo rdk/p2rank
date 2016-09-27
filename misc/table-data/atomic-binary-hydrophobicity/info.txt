@@ -1,0 +1,29 @@
+
+
+ref:
+
+http://www.sciencedirect.com/science/article/pii/S0022283613006232
+
+
+
+@article{Kapcha2014484,
+    title = "A Simple Atomic-Level Hydrophobicity Scale Reveals Protein Interfacial Structure ",
+    journal = "Journal of Molecular Biology ",
+    volume = "426",
+    number = "2",
+    pages = "484 - 498",
+    year = "2014",
+    note = "",
+    issn = "0022-2836",
+    doi = "http://dx.doi.org/10.1016/j.jmb.2013.09.039",
+    url = "http://www.sciencedirect.com/science/article/pii/S0022283613006232",
+    author = "Lauren H. Kapcha and Peter J. Rossky",
+    keywords = "molecular recognition",
+    keywords = "hydration",
+    keywords = "protein binding",
+    keywords = "hydropathy",
+    keywords = "biomolecule visualization ",
+    abstract = "Abstract Many amino acid residue hydrophobicity scales have been created in an effort to better understand and rapidly characterize water–protein interactions based only on protein structure and sequence. There is surprisingly low consistency in the ranking of residue hydrophobicity between scales, and their ability to provide insightful characterization varies substantially across subject proteins. All current scales characterize hydrophobicity based on entire amino acid residue units. We introduce a simple binary but atomic-level hydrophobicity scale that allows for the classification of polar and non-polar moieties within single residues, including backbone atoms. This simple scale is first shown to capture the anticipated hydrophobic character for those whole residues that align in classification among most scales. Examination of a set of protein binding interfaces establishes good agreement between residue-based and atomic-level descriptions of hydrophobicity for five residues, while the remaining residues produce discrepancies. We then show that the atomistic scale properly classifies the hydrophobicity of functionally important regions where residue-based scales fail. To illustrate the utility of the new approach, we show that the atomic-level scale rationalizes the hydration of two hydrophobic pockets and the presence of a void in a third pocket within a single protein and that it appropriately classifies all of the functionally important hydrophilic sites within two otherwise hydrophobic pores. We suggest that an atomic level of detail is, in general, necessary for the reliable depiction of hydrophobicity for all protein surfaces. The present formulation can be implemented simply in a manner no more complex than current residue-based approaches. "
+}
+
+

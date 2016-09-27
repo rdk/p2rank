@@ -1,0 +1,56 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket    11:
+HEADER 0  - Pocket Score                      : 6.2157
+HEADER 1  - Number of V. Vertices             :    54
+HEADER 2  - Mean alpha-sphere radius          : 4.0517
+HEADER 3  - Mean alpha-sphere SA              : 0.6175
+HEADER 4  - Mean B-factor                     : 0.2454
+HEADER 5  - Hydrophobicity Score              : 27.2727
+HEADER 6  - Polarity Score                    :     5
+HEADER 7  - Volume Score                      : 4.5455
+HEADER 8  - Real volume (approximation)       : 2511.8120
+HEADER 9  - Charge Score                      :     1
+HEADER 10 - Local hydrophobic density Score   : 15.3636
+HEADER 11 - Number of apolar alpha sphere     :    22
+HEADER 12 - Proportion of apolar alpha sphere : 0.4074
+ATOM   4293   CB ASP B  96     126.884   6.643  35.775  1.00 14.35           C 0
+ATOM   4522   CG ARG B 128     126.727  10.531  33.194  1.00 21.70           C 0
+ATOM   4282    N VAL B  95     128.554  10.607  38.501  1.00 17.43           N 0
+ATOM   4295  OD1 ASP B  96     128.899   5.592  35.053  1.00 20.31           O 0
+ATOM   4524   NE ARG B 128     128.616  11.813  32.196  1.00 36.03           N 0
+ATOM   4294   CG ASP B  96     128.129   5.773  36.017  1.00 20.56           C 0
+ATOM   4284    C VAL B  95     126.732   9.007  38.079  1.00 16.43           C 0
+ATOM   4285    O VAL B  95     126.017   9.681  37.329  1.00 13.30           O 0
+ATOM   4289    N ASP B  96     126.817   7.683  38.017  1.00 16.87           N 0
+ATOM   4296  OD2 ASP B  96     128.341   5.269  37.137  1.00 25.84           O 0
+ATOM   4283   CA VAL B  95     127.612   9.673  39.134  1.00 14.82           C 0
+ATOM   4523   CD ARG B 128     127.212  11.856  32.614  1.00 21.96           C 0
+ATOM   4521   CB ARG B 128     125.281  10.672  33.672  1.00 16.78           C 0
+ATOM   4517    N ARG B 128     124.571   8.355  33.205  1.00 14.91           N 0
+ATOM   4498    O ARG B 126     125.829   4.620  30.811  1.00 16.70           O 0
+ATOM   4508    C ARG B 127     124.192   7.107  33.471  1.00 12.82           C 0
+ATOM   4526  NH1 ARG B 128     128.676  14.023  31.513  1.00 37.46           N 0
+ATOM   4525   CZ ARG B 128     129.279  12.849  31.681  1.00 36.18           C 0
+ATOM   4546  CD2 LEU B 131     123.018  13.634  29.627  1.00 29.42           C 0
+ATOM   4547    N LYS B 132     120.746  15.761  31.348  1.00 16.66           N 0
+ATOM   4538    O GLY B 130     121.692  15.480  34.546  1.00 21.02           O 0
+ATOM   4540   CA LEU B 131     121.712  13.761  32.361  1.00 15.30           C 0
+ATOM   4551   CB LYS B 132     120.278  18.005  30.455  1.00 17.95           C 0
+ATOM   4554   CE LYS B 132     120.769  20.736  28.973  1.00 26.17           C 0
+ATOM   4555   NZ LYS B 132     121.424  22.082  29.025  1.00 23.57           N 0
+ATOM   4537    C GLY B 130     121.771  14.269  34.755  1.00 19.04           C 0
+ATOM   4287  CG1 VAL B  95     125.750   9.372  40.833  1.00 15.90           C 0
+ATOM   4286   CB VAL B  95     126.745  10.365  40.218  1.00 14.78           C 0
+ATOM   4534  CG2 VAL B 129     122.767  10.531  39.060  1.00 22.33           C 0
+ATOM   4288  CG2 VAL B  95     127.633  10.936  41.311  1.00 18.11           C 0
+ATOM   5410  CE2 TYR B 244     121.103  14.158  45.046  1.00 28.59           C 0
+ATOM   5419  CD1 LEU B 245     121.633   9.011  42.432  1.00 15.84           C 0
+ATOM   5412   OH TYR B 244     120.996  16.052  43.569  1.00 29.78           O 0
+ATOM   4536   CA GLY B 130     121.896  13.740  36.180  1.00 18.08           C 0
+ATOM   4535    N GLY B 130     122.253  12.324  36.319  1.00 15.65           N 0
+ATOM   4539    N LEU B 131     121.728  13.370  33.776  1.00 16.45           N 0
+TER
+END

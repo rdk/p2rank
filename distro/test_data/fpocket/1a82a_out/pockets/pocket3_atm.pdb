@@ -1,0 +1,66 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket     4:
+HEADER 0  - Pocket Score                      : 26.2826
+HEADER 1  - Number of V. Vertices             :    71
+HEADER 2  - Mean alpha-sphere radius          : 4.2765
+HEADER 3  - Mean alpha-sphere SA              : 0.6630
+HEADER 4  - Mean B-factor                     : 0.0668
+HEADER 5  - Hydrophobicity Score              : 27.3125
+HEADER 6  - Polarity Score                    :    12
+HEADER 7  - Volume Score                      : 4.0625
+HEADER 8  - Real volume (approximation)       : 2560.1013
+HEADER 9  - Charge Score                      :    -1
+HEADER 10 - Local hydrophobic density Score   : 25.0323
+HEADER 11 - Number of apolar alpha sphere     :    31
+HEADER 12 - Proportion of apolar alpha sphere : 0.4366
+ATOM     89  CG2 THR A  11      -2.001  23.852   6.983  1.00  9.24           C 0
+ATOM    586    O PRO A  79      -8.110  20.491  11.565  1.00  8.18           O 0
+ATOM    591   CA THR A  80      -9.332  22.980  12.033  1.00  7.62           C 0
+ATOM    595  OG1 THR A  80     -11.486  23.467  10.923  1.00  7.71           O 0
+ATOM    597    N SER A  81      -9.481  25.395  11.588  1.00  4.82           N 0
+ATOM    912  OG1 THR A 122      -3.795  30.523  10.048  1.00  5.39           O 0
+ATOM    601   CB SER A  81      -9.777  27.688  10.740  1.00  2.78           C 0
+ATOM    602   OG SER A  81      -9.305  29.021  10.810  1.00  5.71           O 0
+ATOM     81  OD1 ASP A  10      -1.189  26.111   4.252  1.00 10.44           O 0
+ATOM    878    N GLY A 119      -1.083  29.624   8.580  1.00  7.92           N 0
+ATOM     87   CB THR A  11      -1.278  24.564   8.138  1.00  9.07           C 0
+ATOM    875   CA GLY A 118      -1.420  27.781  10.111  1.00  8.58           C 0
+ATOM     83    N THR A  11       0.200  25.838   6.579  1.00  8.65           N 0
+ATOM    907    N THR A 122      -4.533  33.188   9.431  1.00  2.01           N 0
+ATOM    879   CA GLY A 119      -0.316  30.641   7.890  1.00  3.55           C 0
+ATOM    900   CB PHE A 121      -4.580  35.531   6.670  1.00  4.99           C 0
+ATOM    896    N PHE A 121      -2.628  34.633   7.781  1.00  3.74           N 0
+ATOM    898    C PHE A 121      -4.997  34.194   8.708  1.00  4.72           C 0
+ATOM    880    C GLY A 119      -0.576  32.010   8.481  1.00  3.42           C 0
+ATOM    920   CD PRO A 123      -8.377  32.263   9.691  1.00  2.46           C 0
+ATOM    908   CA THR A 122      -5.424  32.281  10.154  1.00  2.70           C 0
+ATOM    899    O PHE A 121      -6.199  34.468   8.652  1.00  8.79           O 0
+ATOM    882    N TRP A 120      -0.121  33.043   7.780  1.00  2.08           N 0
+ATOM    913  CG2 THR A 122      -5.483  30.337  11.733  1.00  2.91           C 0
+ATOM    886   CB TRP A 120       0.363  35.370   7.203  1.00  2.43           C 0
+ATOM    888  CD1 TRP A 120      -0.275  37.834   7.134  1.00  3.29           C 0
+ATOM   1209   CB VAL A 161       0.789  40.063   3.432  1.00  6.88           C 0
+ATOM    903  CD2 PHE A 121      -3.674  37.083   4.936  1.00  5.38           C 0
+ATOM   1185   CA THR A 158       3.594  36.282   2.920  1.00  3.92           C 0
+ATOM    905  CE2 PHE A 121      -3.367  38.363   4.481  1.00  6.94           C 0
+ATOM   1211  CG2 VAL A 161      -0.044  39.970   2.128  1.00  6.14           C 0
+ATOM   1210  CG1 VAL A 161      -0.110  40.220   4.605  1.00 10.25           C 0
+ATOM    887   CG TRP A 120       0.426  36.792   7.645  1.00  3.06           C 0
+ATOM   1189  OG1 THR A 158       3.018  33.957   3.279  1.00  2.68           O 0
+ATOM   1179    O LEU A 157       2.659  38.087   1.028  1.00  2.17           O 0
+ATOM   1182  CD1 LEU A 157       0.248  34.108  -2.289  1.00  6.51           C 0
+ATOM   1180   CB LEU A 157       1.782  35.543  -0.968  1.00  3.20           C 0
+ATOM   1183  CD2 LEU A 157       0.604  36.472  -2.961  1.00  6.78           C 0
+ATOM   1178    C LEU A 157       2.997  36.966   0.656  1.00  3.81           C 0
+ATOM   1184    N THR A 158       3.497  36.042   1.478  1.00  3.48           N 0
+ATOM   1158   CG HIS A 154       2.313  29.456  -0.752  1.00  3.82           C 0
+ATOM     71    O THR A   9       1.937  29.305   3.053  1.00  7.52           O 0
+ATOM   1157   CB HIS A 154       3.527  30.169  -0.248  1.00  2.88           C 0
+ATOM   1160  CD2 HIS A 154       1.213  29.918  -1.399  1.00  4.65           C 0
+ATOM   1156    O HIS A 154       4.255  33.247   0.716  1.00  3.17           O 0
+ATOM   1154   CA HIS A 154       3.737  31.538  -0.887  1.00  3.66           C 0
+TER
+END

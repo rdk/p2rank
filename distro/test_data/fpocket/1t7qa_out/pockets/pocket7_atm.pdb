@@ -1,0 +1,46 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket     8:
+HEADER 0  - Pocket Score                      : 17.0805
+HEADER 1  - Number of V. Vertices             :    44
+HEADER 2  - Mean alpha-sphere radius          : 4.2838
+HEADER 3  - Mean alpha-sphere SA              : 0.6244
+HEADER 4  - Mean B-factor                     : 0.1915
+HEADER 5  - Hydrophobicity Score              : 41.8750
+HEADER 6  - Polarity Score                    :     4
+HEADER 7  - Volume Score                      : 4.6250
+HEADER 8  - Real volume (approximation)       : 1550.8820
+HEADER 9  - Charge Score                      :     2
+HEADER 10 - Local hydrophobic density Score   : 14.7059
+HEADER 11 - Number of apolar alpha sphere     :    17
+HEADER 12 - Proportion of apolar alpha sphere : 0.3864
+ATOM   3233   CA SER A 428      75.449   4.973 -11.814  1.00 16.88           C 0
+ATOM   3829   CD ARG A 504      77.236   8.683  -8.405  1.00 20.14           C 0
+ATOM   3832  NH1 ARG A 504      75.561   7.532  -6.435  1.00 19.01           N 0
+ATOM   3223   NZ LYS A 426      83.289   1.570 -11.712  1.00 40.32           N 0
+ATOM   3236   CB SER A 428      75.448   6.303 -11.055  1.00 15.98           C 0
+ATOM   3797  CG1 VAL A 500      75.894   8.464 -15.116  1.00 21.71           C 0
+ATOM   3827   CB ARG A 504      77.474  10.413 -10.239  1.00 18.10           C 0
+ATOM   3807  NE2 GLN A 501      80.310   8.486 -14.186  1.00 39.42           N 0
+ATOM   3795    O VAL A 500      76.185  11.172 -13.521  1.00 19.99           O 0
+ATOM   3828   CG ARG A 504      78.199   9.558  -9.203  1.00 18.72           C 0
+ATOM   3232    N SER A 428      76.376   5.031 -12.939  1.00 17.51           N 0
+ATOM   3806  OE1 GLN A 501      81.310  10.060 -12.926  1.00 43.06           O 0
+ATOM   3218    O LYS A 426      80.359   4.084 -15.048  1.00 20.35           O 0
+ATOM   3226    C LEU A 427      76.640   3.957 -13.678  1.00 18.08           C 0
+ATOM   3217    C LYS A 426      79.729   3.029 -15.121  1.00 21.80           C 0
+ATOM   3222   CE LYS A 426      82.584   1.220 -12.981  1.00 40.19           C 0
+ATOM   3227    O LEU A 427      76.158   2.854 -13.451  1.00 18.27           O 0
+ATOM   3224    N LEU A 427      78.407   2.965 -15.035  1.00 21.01           N 0
+ATOM   3196   CG LYS A 423      75.427  -1.301 -11.582  1.00 22.25           C 0
+ATOM   3244   CD PRO A 429      73.967   2.495 -11.121  1.00 15.19           C 0
+ATOM   3216   CA LYS A 426      80.433   1.696 -15.319  1.00 23.87           C 0
+ATOM   3194    O LYS A 423      78.770  -1.447 -14.597  1.00 18.69           O 0
+ATOM   3192   CA LYS A 423      76.533  -1.008 -13.862  1.00 20.47           C 0
+ATOM   3197   CD LYS A 423      75.436  -2.115 -10.295  1.00 24.62           C 0
+ATOM   3195   CB LYS A 423      76.150  -1.984 -12.741  1.00 21.20           C 0
+ATOM   3237   OG SER A 428      74.250   6.449 -10.304  1.00 16.21           O 0
+TER
+END

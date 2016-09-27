@@ -1,0 +1,89 @@
+HEADER
+HEADER This is a pqr format file writen by the programm fpocket.                 
+HEADER It represent the voronoi vertices of a single pocket found by the         
+HEADER algorithm.                                                                
+HEADER                                                                           
+HEADER Information about the pocket     7:
+HEADER 0  - Pocket Score                      : 17.5432
+HEADER 1  - Number of V. Vertices             :    68
+HEADER 2  - Mean alpha-sphere radius          : 3.9343
+HEADER 3  - Mean alpha-sphere SA              : 0.4876
+HEADER 4  - Mean B-factor                     : 0.0979
+HEADER 5  - Hydrophobicity Score              : 16.4000
+HEADER 6  - Polarity Score                    :     6
+HEADER 7  - Volume Score                      : 3.4667
+HEADER 8  - Real volume (approximation)       : 1962.9800
+HEADER 9  - Charge Score                      :     0
+HEADER 10 - Local hydrophobic density Score   : 18.0000
+HEADER 11 - Number of apolar alpha sphere     :    25
+HEADER 12 - Proportion of apolar alpha sphere : 0.3676
+ATOM   5795  POL STP     7      50.013   5.188   3.531    0.00     4.88
+ATOM   7198  POL STP     7      50.022   5.173   3.545    0.00     4.88
+ATOM   8816  POL STP     7      49.989   5.840   3.209    0.00     4.83
+ATOM   7198  POL STP     7      50.312   4.427   3.923    0.00     4.84
+ATOM   5798  POL STP     7      49.757   6.635   0.984    0.00     5.07
+ATOM   5798  POL STP     7      50.020   7.097  -0.417    0.00     5.38
+ATOM   8816  POL STP     7      49.851   6.545   1.846    0.00     4.89
+ATOM   8816  POL STP     7      51.670   6.582   4.088    0.00     3.93
+ATOM  12797  POL STP     7      52.007   5.870   4.666    0.00     3.90
+ATOM  12793  POL STP     7      52.500   7.346   4.868    0.00     3.46
+ATOM  12793  POL STP     7      52.575   7.637   5.131    0.00     3.27
+ATOM  11437  POL STP     7      53.350   8.560   4.728    0.00     3.14
+ATOM  12793  POL STP     7      52.743   7.635   4.952    0.00     3.35
+ATOM  12797  POL STP     7      51.768   5.220   4.796    0.00     4.11
+ATOM  10406 APOL STP     7      47.915   7.149   5.789    0.00     3.13
+ATOM  10462 APOL STP     7      47.948   7.107   5.834    0.00     3.09
+ATOM   7198 APOL STP     7      48.522   6.377   4.889    0.00     3.60
+ATOM  10406 APOL STP     7      48.207   6.773   4.791    0.00     3.70
+ATOM   7198 APOL STP     7      48.831   5.698   5.147    0.00     3.38
+ATOM  10462 APOL STP     7      48.004   7.036   5.828    0.00     3.07
+ATOM  10406 APOL STP     7      48.294   6.747   4.597    0.00     3.80
+ATOM  10406  POL STP     7      48.461   7.668   2.994    0.00     3.96
+ATOM  10725  POL STP     7      47.884   8.148   2.586    0.00     3.82
+ATOM  10409  POL STP     7      48.748   6.939   3.993    0.00     4.03
+ATOM  10725  POL STP     7      47.575   8.420   1.296    0.00     4.11
+ATOM   5809 APOL STP     7      49.849   1.818   4.683    0.00     4.70
+ATOM   5809  POL STP     7      50.617   2.170   3.922    0.00     5.46
+ATOM   4052  POL STP     7      53.362   0.567   5.482    0.00     4.43
+ATOM   5796  POL STP     7      52.369   1.530   4.533    0.00     5.14
+ATOM   4054  POL STP     7      53.338   0.592   5.493    0.00     4.44
+ATOM   5108  POL STP     7      53.435   0.300   5.649    0.00     4.23
+ATOM   4054  POL STP     7      53.529   1.636   6.610    0.00     3.68
+ATOM   5108  POL STP     7      53.334   0.390   5.714    0.00     4.22
+ATOM   5795  POL STP     7      52.189   1.725   4.718    0.00     5.18
+ATOM  12803  POL STP     7      52.003   2.870   5.361    0.00     5.01
+ATOM   5795  POL STP     7      51.919   1.840   4.700    0.00     5.22
+ATOM   5796  POL STP     7      51.809   1.604   4.229    0.00     5.20
+ATOM   5809  POL STP     7      51.406   2.208   4.760    0.00     5.31
+ATOM  12805  POL STP     7      51.859   2.911   5.339    0.00     5.05
+ATOM  12803  POL STP     7      52.276   2.907   5.791    0.00     4.67
+ATOM  12803  POL STP     7      51.915   3.423   7.166    0.00     3.96
+ATOM  12805  POL STP     7      51.820   3.058   5.802    0.00     4.74
+ATOM  12805  POL STP     7      51.785   3.100   5.289    0.00     4.97
+ATOM   5810 APOL STP     7      49.512   1.421   7.658    0.00     3.39
+ATOM   5810  POL STP     7      49.469   1.208   7.242    0.00     3.63
+ATOM   5810 APOL STP     7      49.017   1.145   6.968    0.00     3.60
+ATOM  12795  POL STP     7      54.451   4.809   5.384    0.00     3.16
+ATOM  12799  POL STP     7      53.799   4.381   5.169    0.00     3.58
+ATOM   8835  POL STP     7      51.316   3.446   8.051    0.00     3.54
+ATOM   8835 APOL STP     7      50.254   2.753   9.052    0.00     3.01
+ATOM   8835  POL STP     7      51.704   3.828   9.098    0.00     3.50
+ATOM   8835  POL STP     7      50.625   3.117  10.041    0.00     3.07
+ATOM   8835  POL STP     7      51.704   3.886   9.730    0.00     3.50
+ATOM   7198 APOL STP     7      51.928   4.367   9.617    0.00     3.39
+ATOM   9774 APOL STP     7      52.031   4.402   9.665    0.00     3.31
+ATOM   8835 APOL STP     7      51.781   4.156   9.656    0.00     3.48
+ATOM   9778 APOL STP     7      51.961   4.407   9.590    0.00     3.37
+ATOM   8835 APOL STP     7      51.561   4.549   9.910    0.00     3.21
+ATOM   8835 APOL STP     7      51.722   3.953   9.752    0.00     3.50
+ATOM  12803  POL STP     7      52.074   4.513   9.409    0.00     3.30
+ATOM  10729 APOL STP     7      46.626   7.072   5.142    0.00     3.17
+ATOM  10731 APOL STP     7      46.511   7.100   5.281    0.00     3.14
+ATOM  12219 APOL STP     7      46.223   7.232   5.582    0.00     3.04
+ATOM  12232 APOL STP     7      44.394   6.869   8.672    0.00     3.12
+ATOM  12232 APOL STP     7      44.600   7.045   8.646    0.00     3.09
+ATOM  12232 APOL STP     7      44.329   6.884   8.696    0.00     3.11
+ATOM  12233 APOL STP     7      44.415   7.076   8.710    0.00     3.06
+ATOM  12233 APOL STP     7      44.490   7.139   8.700    0.00     3.05
+TER
+END

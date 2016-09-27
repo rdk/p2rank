@@ -1,0 +1,45 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket    16:
+HEADER 0  - Pocket Score                      : 11.6007
+HEADER 1  - Number of V. Vertices             :    40
+HEADER 2  - Mean alpha-sphere radius          : 3.6920
+HEADER 3  - Mean alpha-sphere SA              : 0.4452
+HEADER 4  - Mean B-factor                     : 0.2826
+HEADER 5  - Hydrophobicity Score              : 8.0000
+HEADER 6  - Polarity Score                    :     6
+HEADER 7  - Volume Score                      : 3.0000
+HEADER 8  - Real volume (approximation)       : 1027.1056
+HEADER 9  - Charge Score                      :    -2
+HEADER 10 - Local hydrophobic density Score   : 11.0000
+HEADER 11 - Number of apolar alpha sphere     :    12
+HEADER 12 - Proportion of apolar alpha sphere : 0.3000
+ATOM   1245    O SER A 151      43.426  34.881   9.532  1.00 30.24           O 0
+ATOM   1247   OG SER A 151      46.069  36.493  11.926  1.00 27.84           O 0
+ATOM   1554  OE2 GLU A 186      50.967  33.611   6.369  1.00 58.73           O 0
+ATOM   1246   CB SER A 151      45.041  37.160  11.233  1.00 24.28           C 0
+ATOM   1244    C SER A 151      43.847  35.041  10.676  1.00 28.00           C 0
+ATOM   1252   CB TYR A 152      46.084  32.459  10.659  1.00 23.02           C 0
+ATOM   1487  CG2 THR A 178      45.345  31.387   7.109  1.00 20.13           C 0
+ATOM   1553  OE1 GLU A 186      51.941  34.062   8.301  1.00 58.35           O 0
+ATOM   1552   CD GLU A 186      51.533  33.247   7.432  1.00 55.71           C 0
+ATOM   2397    O SER A 295      50.223  35.953  12.974  1.00 34.74           O 0
+ATOM   1254  CD1 TYR A 152      47.165  33.341  12.775  1.00 23.46           C 0
+ATOM   1253   CG TYR A 152      46.788  32.254  11.983  1.00 23.29           C 0
+ATOM   1578   OG SER A 190      52.663  31.863  12.414  1.00 36.43           O 0
+ATOM   1486  OG1 THR A 178      46.888  30.281   8.589  1.00 24.06           O 0
+ATOM   1551   CG GLU A 186      51.739  31.736   7.658  1.00 47.88           C 0
+ATOM   1577   CB SER A 190      51.773  30.900  12.949  1.00 25.97           C 0
+ATOM   1255  CD2 TYR A 152      47.114  30.974  12.426  1.00 23.44           C 0
+ATOM   1473   OH TYR A 176      49.610  28.207  11.679  1.00 21.51           O 0
+ATOM   1485   CB THR A 178      46.371  30.268   7.250  1.00 24.67           C 0
+ATOM   1550   CB GLU A 186      52.897  31.420   8.594  1.00 33.32           C 0
+ATOM   2404   CB HIS A 296      50.500  39.008  12.530  1.00 44.43           C 0
+ATOM   2407  CD2 HIS A 296      52.961  38.773  11.717  1.00 51.66           C 0
+ATOM   2403    O HIS A 296      47.889  38.330  12.819  1.00 38.13           O 0
+ATOM   1546    N GLU A 186      52.719  28.941   8.749  1.00 25.60           N 0
+ATOM   1484    O THR A 178      47.941  28.155   6.454  1.00 30.55           O 0
+TER
+END

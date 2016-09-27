@@ -1,0 +1,67 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket     3:
+HEADER 0  - Pocket Score                      : 33.9113
+HEADER 1  - Number of V. Vertices             :    92
+HEADER 2  - Mean alpha-sphere radius          : 4.1193
+HEADER 3  - Mean alpha-sphere SA              : 0.5263
+HEADER 4  - Mean B-factor                     : 0.2909
+HEADER 5  - Hydrophobicity Score              : 20.8500
+HEADER 6  - Polarity Score                    :    15
+HEADER 7  - Volume Score                      : 4.3000
+HEADER 8  - Real volume (approximation)       : 1791.7023
+HEADER 9  - Charge Score                      :    -1
+HEADER 10 - Local hydrophobic density Score   : 17.4545
+HEADER 11 - Number of apolar alpha sphere     :    22
+HEADER 12 - Proportion of apolar alpha sphere : 0.2391
+ATOM   1596  OE2 GLU A 211       7.793  17.308  14.223  1.00 14.84           O 0
+ATOM     96   CD GLU A  12       0.659  19.502   9.222  1.00 30.59           C 0
+ATOM     98  OE2 GLU A  12      -0.020  18.502   9.541  1.00 35.30           O 0
+ATOM     97  OE1 GLU A  12       0.655  20.558   9.903  1.00 36.01           O 0
+ATOM    392  OD1 ASP A  54       2.540  21.321  16.406  1.00  5.39           O 0
+ATOM    385   OG SER A  53       1.679  18.006  17.851  1.00  7.55           O 0
+ATOM    864  OE2 GLU A 115       3.688  25.806  14.872  1.00  6.44           O 0
+ATOM    110    N LYS A  15       6.851  25.012  10.765  1.00  5.78           N 0
+ATOM    118   NZ LYS A  15       2.291  26.727  10.585  1.00  7.84           N 0
+ATOM    114   CB LYS A  15       5.634  26.784  12.039  1.00  5.05           C 0
+ATOM    119    N THR A  16       6.899  24.350  13.533  1.00  4.33           N 0
+ATOM    393  OD2 ASP A  54       2.111  23.426  15.950  1.00  4.43           O 0
+ATOM    124  OG1 THR A  16       4.980  23.289  15.475  1.00  4.03           O 0
+ATOM     90    N GLU A  12       1.612  23.015   8.170  1.00  8.75           N 0
+ATOM    106    N GLY A  14       6.579  23.217   8.534  1.00  7.70           N 0
+ATOM    123   CB THR A  16       6.240  22.640  15.237  1.00  6.85           C 0
+ATOM    107   CA GLY A  14       7.690  23.104   9.463  1.00  6.32           C 0
+ATOM    126    N VAL A  17       9.095  22.478  13.766  1.00  2.00           N 0
+ATOM    132  CG2 VAL A  17       9.967  19.707  12.668  1.00  4.51           C 0
+ATOM     95   CG GLU A  12       1.495  19.429   7.943  1.00 25.04           C 0
+ATOM   1326   CB VAL A 177       8.867  19.561   3.931  1.00 11.21           C 0
+ATOM   1323   CA VAL A 177      10.250  18.886   4.205  1.00 11.34           C 0
+ATOM   1327  CG1 VAL A 177       8.628  20.676   4.917  1.00 10.94           C 0
+ATOM   1325    O VAL A 177       9.790  16.535   4.035  1.00 15.22           O 0
+ATOM   1586   CG PRO A 210      11.076  16.124  12.323  1.00 19.61           C 0
+ATOM   1312  OD1 ASN A 175      12.601  21.886   8.037  1.00  4.50           O 0
+ATOM   1533    O PRO A 204      15.901  18.382   7.682  1.00  5.50           O 0
+ATOM   1585   CB PRO A 210      12.511  16.567  12.434  1.00 18.25           C 0
+ATOM   1551    N LEU A 206      14.978  15.501   7.995  1.00  9.94           N 0
+ATOM   1317    O ASP A 176      12.885  18.604   5.015  1.00  8.34           O 0
+ATOM   1555   CB LEU A 206      15.585  15.429  10.366  1.00  9.12           C 0
+ATOM    131  CG1 VAL A  17      12.143  20.808  12.118  1.00  4.73           C 0
+ATOM   1557  CD1 LEU A 206      17.024  17.400  11.006  1.00 10.33           C 0
+ATOM   1528  CG2 ILE A 203      15.575  21.141   9.998  1.00  2.10           C 0
+ATOM   1554    O LEU A 206      13.061  14.154  10.139  1.00 19.69           O 0
+ATOM   1543  CD1 TRP A 205      12.708  14.788   4.780  1.00  9.28           C 0
+ATOM   1545  NE1 TRP A 205      12.113  13.547   4.801  1.00  8.76           N 0
+ATOM   1562    O ALA A 207      10.990  11.571  10.357  1.00 26.60           O 0
+ATOM   1560   CA ALA A 207      12.755  11.742   8.736  1.00 24.38           C 0
+ATOM   1313  ND2 ASN A 175      10.407  21.982   7.642  1.00  2.64           N 0
+ATOM   1621  CG2 THR A 215      17.125  19.852  13.736  1.00  3.60           C 0
+ATOM   1584    O PRO A 210      13.480  18.071  15.038  1.00 15.86           O 0
+ATOM    130   CB VAL A  17      10.643  21.047  12.426  1.00  3.37           C 0
+ATOM     93    O GLU A  12       3.908  21.286   6.038  1.00  9.32           O 0
+ATOM     92    C GLU A  12       3.625  22.082   6.922  1.00  8.96           C 0
+ATOM     91   CA GLU A  12       2.404  21.834   7.815  1.00 10.88           C 0
+ATOM     99    N VAL A  13       4.345  23.175   7.145  1.00  6.68           N 0
+TER
+END

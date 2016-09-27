@@ -1,0 +1,51 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket    10:
+HEADER 0  - Pocket Score                      : 5.4464
+HEADER 1  - Number of V. Vertices             :    39
+HEADER 2  - Mean alpha-sphere radius          : 4.2278
+HEADER 3  - Mean alpha-sphere SA              : 0.7161
+HEADER 4  - Mean B-factor                     : 0.1064
+HEADER 5  - Hydrophobicity Score              : 19.0909
+HEADER 6  - Polarity Score                    :     5
+HEADER 7  - Volume Score                      : 4.0909
+HEADER 8  - Real volume (approximation)       : 1811.6510
+HEADER 9  - Charge Score                      :     1
+HEADER 10 - Local hydrophobic density Score   : 10.5000
+HEADER 11 - Number of apolar alpha sphere     :    12
+HEADER 12 - Proportion of apolar alpha sphere : 0.3077
+ATOM   1051  CD2 LEU A 147      35.242  11.024  -3.987  1.00 10.42           C 0
+ATOM   1056   CB GLN A 148      33.533  12.657  -8.700  1.00 14.77           C 0
+ATOM   1057   CG GLN A 148      34.236  13.521  -9.728  1.00 24.80           C 0
+ATOM   1060  NE2 GLN A 148      34.864  12.739 -11.929  0.00 24.47           N 0
+ATOM   1743  OE1 GLU A 241      40.414  11.530  -2.791  1.00 12.18           O 0
+ATOM   1019  ND2 ASN A 142      33.894   7.119  -6.143  1.00 13.45           N 0
+ATOM   1081  OD1 ASP A 151      38.263  13.905  -3.659  1.00 12.54           O 0
+ATOM   1727    O TYR A 240      41.017   6.593  -4.006  1.00 12.79           O 0
+ATOM   1736    N GLU A 241      40.299   7.360  -1.990  1.00  7.93           N 0
+ATOM   1726    C TYR A 240      40.247   6.522  -3.029  1.00  9.29           C 0
+ATOM   1728   CB TYR A 240      37.837   6.221  -3.480  1.00 10.30           C 0
+ATOM   1742   CD GLU A 241      39.432  11.274  -2.079  1.00 10.71           C 0
+ATOM   1744  OE2 GLU A 241      38.431  12.030  -2.072  1.00 12.06           O 0
+ATOM   1737   CA GLU A 241      41.237   8.489  -1.994  1.00  8.56           C 0
+ATOM   1053   CA GLN A 148      33.659  13.297  -7.306  1.00 11.80           C 0
+ATOM   1745    N SER A 242      43.604   8.390  -2.522  1.00  9.05           N 0
+ATOM   1750   OG SER A 242      45.496   7.727  -4.628  1.00 24.08           O 0
+ATOM   1749   CB SER A 242      45.856   8.542  -3.546  1.00 15.57           C 0
+ATOM   1052    N GLN A 148      32.844  12.586  -6.340  1.00 10.04           N 0
+ATOM   1055    O GLN A 148      34.169  15.663  -7.425  1.00 11.90           O 0
+ATOM   1079   CB ASP A 151      36.556  15.391  -4.259  1.00  9.95           C 0
+ATOM   1088   CG ARG A 152      36.017  18.273  -8.914  1.00 15.35           C 0
+ATOM   1748    O SER A 242      44.980   9.844  -0.649  1.00 12.26           O 0
+ATOM   1413   CG PRO A 196      42.262  14.222  -0.670  1.00 11.14           C 0
+ATOM   1084   CA ARG A 152      36.367  19.278  -6.594  1.00 10.95           C 0
+ATOM   1078    O ASP A 151      37.405  18.476  -4.177  1.00 10.39           O 0
+ATOM   1083    N ARG A 152      35.895  18.098  -5.832  1.00  9.97           N 0
+ATOM   1117   CB ALA A 155      40.216  20.283  -4.783  1.00 10.06           C 0
+ATOM   1077    C ASP A 151      36.439  17.841  -4.657  1.00 11.33           C 0
+ATOM   1422  ND2 ASN A 197      40.216  17.426  -2.201  1.00 11.97           N 0
+ATOM   1080   CG ASP A 151      37.635  14.930  -3.288  1.00 10.01           C 0
+TER
+END

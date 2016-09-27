@@ -1,0 +1,39 @@
+#!/bin/bash
+
+
+#
+# Set maximum memory for JVM heap
+#
+export JAVA_OPTS="$JAVA_OPTS -Xmx2048m"
+
+#
+# Set this to change the Java installation that will be used to run the program:
+#
+#JAVA_HOME="/opt/java8"
+
+
+# -XX:+UseConcMarkSweepGC
+# -XX:+UseG1GC
+export JAVA_OPTS="$JAVA_OPTS -XX:+CMSClassUnloadingEnabled -XX:+UseConcMarkSweepGC"
+
+UNAME=`uname -a`
+if [[ "$UNAME" = MINGW* ]] ; then
+    PATH_SEPARATOR=';' # for win
+else
+    PATH_SEPARATOR=':' # for unix
+fi
+
+THIS_SCRIPT_DIR_REL_PATH=`dirname "${BASH_SOURCE[0]}"`
+export POCKET_RANK_BASE_DIR="$THIS_SCRIPT_DIR_REL_PATH"
+
+CLASSPATH="${POCKET_RANK_BASE_DIR}/bin/p2rank.jar${PATH_SEPARATOR}${POCKET_RANK_BASE_DIR}/bin/lib/*"
+
+# Determine the Java command to use to start the JVM.
+if [ -n "$JAVA_HOME" ] ; then
+    JAVACMD="$JAVA_HOME/bin/java"
+else
+    JAVACMD="java"
+fi
+
+
+"$JAVACMD" $JAVA_OPTS -cp "${CLASSPATH}" cz.siret.prank.program.Main "$@"

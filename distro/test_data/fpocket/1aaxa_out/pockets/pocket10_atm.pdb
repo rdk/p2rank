@@ -1,0 +1,58 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket    11:
+HEADER 0  - Pocket Score                      : 15.4934
+HEADER 1  - Number of V. Vertices             :    60
+HEADER 2  - Mean alpha-sphere radius          : 4.0572
+HEADER 3  - Mean alpha-sphere SA              : 0.6104
+HEADER 4  - Mean B-factor                     : 0.1394
+HEADER 5  - Hydrophobicity Score              : -4.4167
+HEADER 6  - Polarity Score                    :     7
+HEADER 7  - Volume Score                      : 3.4167
+HEADER 8  - Real volume (approximation)       : 2067.2034
+HEADER 9  - Charge Score                      :    -2
+HEADER 10 - Local hydrophobic density Score   : 8.8333
+HEADER 11 - Number of apolar alpha sphere     :    12
+HEADER 12 - Proportion of apolar alpha sphere : 0.2000
+ATOM   1405  NH2 ARG A 169      28.444  13.039  28.143  1.00 29.05           N 0
+ATOM    854   CG LYS A 103      32.547  11.315  28.035  1.00 19.43           C 0
+ATOM    855   CD LYS A 103      32.886  10.676  29.382  1.00 27.95           C 0
+ATOM    857   NZ LYS A 103      30.563   9.741  29.609  1.00 30.68           N 0
+ATOM   1403   CZ ARG A 169      28.980  14.076  27.507  1.00 29.27           C 0
+ATOM    853   CB LYS A 103      33.621  12.304  27.615  1.00 16.85           C 0
+ATOM   1402   NE ARG A 169      28.685  15.316  27.883  1.00 26.73           N 0
+ATOM   1712    O GLU A 207      37.489  14.738  32.288  1.00 30.21           O 0
+ATOM   1724  ND1 HIS A 208      36.713  17.974  30.168  1.00 22.22           N 0
+ATOM    852    O LYS A 103      35.091  14.530  26.790  1.00 16.58           O 0
+ATOM   1401   CD ARG A 169      29.204  16.510  27.219  1.00 25.95           C 0
+ATOM   1404  NH1 ARG A 169      29.798  13.875  26.474  1.00 25.58           N 0
+ATOM   1719   CA HIS A 208      38.111  15.208  29.641  1.00 20.41           C 0
+ATOM    851    C LYS A 103      34.475  13.940  25.880  1.00 17.57           C 0
+ATOM    850   CA LYS A 103      33.414  12.869  26.206  1.00 15.34           C 0
+ATOM   1728    N GLY A 209      37.588  13.671  27.858  1.00 17.90           N 0
+ATOM    861    O SER A 104      34.003  16.898  24.482  1.00 15.36           O 0
+ATOM   1726  CE1 HIS A 208      36.729  19.149  30.774  1.00 20.46           C 0
+ATOM   1400   CG ARG A 169      28.328  17.711  27.496  1.00 24.00           C 0
+ATOM   1399   CB ARG A 169      28.711  18.882  26.625  1.00 22.58           C 0
+ATOM   1422  CD1 ILE A 171      31.584  19.060  23.139  1.00 20.60           C 0
+ATOM   1409    O GLU A 170      32.098  21.771  25.737  1.00 19.58           O 0
+ATOM   1406    N GLU A 170      29.457  21.991  26.580  1.00 21.37           N 0
+ATOM   1396   CA ARG A 169      27.920  20.162  26.916  1.00 23.27           C 0
+ATOM   1391    O THR A 168      25.957  19.660  28.823  1.00 28.22           O 0
+ATOM    873  NH1 ARG A 105      34.205  23.604  27.620  1.00 38.17           N 0
+ATOM    870   CD ARG A 105      35.838  21.405  27.224  1.00 33.10           C 0
+ATOM    868   CB ARG A 105      36.582  19.120  26.550  1.00 22.31           C 0
+ATOM    865   CA ARG A 105      35.826  18.813  25.250  1.00 20.28           C 0
+ATOM   1729   CA GLY A 209      37.891  12.600  26.933  1.00 16.73           C 0
+ATOM    843    O GLN A 102      35.478  11.098  25.479  1.00 14.37           O 0
+ATOM   1721    O HIS A 208      39.579  13.498  28.884  1.00 22.07           O 0
+ATOM   1705    O PRO A 206      41.102  12.978  31.861  1.00 28.44           O 0
+ATOM   1720    C HIS A 208      38.481  14.038  28.765  1.00 19.24           C 0
+ATOM    871   NE ARG A 105      36.295  22.680  27.758  1.00 35.39           N 0
+ATOM    872   CZ ARG A 105      35.491  23.718  27.938  1.00 37.75           C 0
+ATOM   1727  NE2 HIS A 208      37.909  19.707  30.568  1.00 21.83           N 0
+ATOM    874  NH2 ARG A 105      35.960  24.860  28.430  1.00 36.06           N 0
+TER
+END

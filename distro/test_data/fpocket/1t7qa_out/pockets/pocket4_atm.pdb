@@ -1,0 +1,52 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket     5:
+HEADER 0  - Pocket Score                      : 20.7536
+HEADER 1  - Number of V. Vertices             :    44
+HEADER 2  - Mean alpha-sphere radius          : 4.2303
+HEADER 3  - Mean alpha-sphere SA              : 0.6333
+HEADER 4  - Mean B-factor                     : 0.0454
+HEADER 5  - Hydrophobicity Score              : 35.8333
+HEADER 6  - Polarity Score                    :     7
+HEADER 7  - Volume Score                      : 3.8333
+HEADER 8  - Real volume (approximation)       : 2124.5088
+HEADER 9  - Charge Score                      :     0
+HEADER 10 - Local hydrophobic density Score   : 23.0000
+HEADER 11 - Number of apolar alpha sphere     :    24
+HEADER 12 - Proportion of apolar alpha sphere : 0.5455
+ATOM   3445   OG SER A 454      62.740  12.720  -2.625  1.00 17.26           O 0
+ATOM   3534  CG2 THR A 465      64.658  13.547   2.259  1.00 13.91           C 0
+ATOM   3533  OG1 THR A 465      64.220  15.910   2.051  1.00 12.88           O 0
+ATOM   3527  NH2 ARG A 464      60.053  13.098   6.796  1.00 21.99           N 0
+ATOM   3430   OH TYR A 452      62.851  16.953  -1.535  1.00 16.49           O 0
+ATOM   4215   OG SER A 552      58.495  15.786  -6.448  1.00 16.38           O 0
+ATOM   3428  CE2 TYR A 452      62.601  16.058  -3.760  1.00 13.71           C 0
+ATOM   3429   CZ TYR A 452      62.732  17.145  -2.895  1.00 14.63           C 0
+ATOM   4334  CG1 VAL A 569      55.642  17.414  -5.250  1.00 17.38           C 0
+ATOM   4313  CD1 PHE A 566      55.281  11.960  -5.756  1.00 15.07           C 0
+ATOM   4312   CG PHE A 566      55.117  10.816  -4.985  1.00 15.42           C 0
+ATOM   4311   CB PHE A 566      53.846  10.582  -4.207  1.00 17.68           C 0
+ATOM   4314  CD2 PHE A 566      56.155   9.891  -4.934  1.00 16.19           C 0
+ATOM   4315  CE1 PHE A 566      56.466  12.186  -6.469  1.00 15.94           C 0
+ATOM   4316  CE2 PHE A 566      57.346  10.103  -5.642  1.00 14.50           C 0
+ATOM   4317   CZ PHE A 566      57.503  11.253  -6.411  1.00 14.40           C 0
+ATOM   4228   OG SER A 554      60.741   9.084  -4.496  1.00 17.45           O 0
+ATOM   4335  CG2 VAL A 569      56.183  19.130  -7.000  1.00 14.75           C 0
+ATOM   4168    O MET A 547      59.067  24.613  -6.716  1.00 16.63           O 0
+ATOM   4341  CG1 VAL A 570      54.533  22.600  -8.768  1.00 15.48           C 0
+ATOM   4332    O VAL A 569      53.183  20.875  -6.313  1.00 15.73           O 0
+ATOM   4333   CB VAL A 569      55.208  18.720  -5.908  1.00 15.88           C 0
+ATOM   4183    N PHE A 549      58.560  22.429  -9.432  1.00 15.70           N 0
+ATOM   4190  CD2 PHE A 549      60.537  21.306  -6.820  1.00 16.39           C 0
+ATOM   3427  CE1 TYR A 452      62.747  18.435  -3.393  1.00 13.52           C 0
+ATOM   3425  CD1 TYR A 452      62.633  18.652  -4.766  1.00 14.26           C 0
+ATOM   3426  CD2 TYR A 452      62.484  16.292  -5.147  1.00 14.20           C 0
+ATOM   3424   CG TYR A 452      62.500  17.593  -5.664  1.00 12.59           C 0
+ATOM   4192  CE2 PHE A 549      61.612  21.870  -6.127  1.00 15.30           C 0
+ATOM   3423   CB TYR A 452      62.351  17.862  -7.160  1.00 11.42           C 0
+ATOM   4219    O THR A 553      62.249  12.515  -6.226  1.00 14.37           O 0
+ATOM   4227   CB SER A 554      61.884   9.918  -4.536  1.00 14.39           C 0
+TER
+END

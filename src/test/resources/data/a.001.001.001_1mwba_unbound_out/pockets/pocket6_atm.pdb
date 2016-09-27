@@ -1,0 +1,40 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket     7:
+HEADER 0  - Pocket Score                      : 1.4099
+HEADER 1  - Number of V. Vertices             :    37
+HEADER 2  - Mean alpha-sphere radius          : 4.1561
+HEADER 3  - Mean alpha-sphere SA              : 0.5196
+HEADER 4  - Mean B-factor                     : 0.3168
+HEADER 5  - Hydrophobicity Score              : -6.3750
+HEADER 6  - Polarity Score                    :     4
+HEADER 7  - Volume Score                      : 3.1250
+HEADER 8  - Real volume (approximation)       : 1392.0134
+HEADER 9  - Charge Score                      :     1
+HEADER 10 - Local hydrophobic density Score   : 8.0000
+HEADER 11 - Number of apolar alpha sphere     :     9
+HEADER 12 - Proportion of apolar alpha sphere : 0.2432
+ATOM    928   CE LYS A  60     -12.067 -11.680  12.547  1.00  4.45           C 0
+ATOM   1055  NH2 ARG A  67     -14.545  -5.354   9.209  1.00  4.07           N 0
+ATOM   1819  NH2 ARG A 119     -16.451  -8.166   6.832  1.00  4.29           N 0
+ATOM    929   NZ LYS A  60     -13.045 -12.727  12.957  1.00  4.96           N 0
+ATOM   1818  NH1 ARG A 119     -14.286  -7.714   7.301  1.00  3.69           N 0
+ATOM   1840  OD2 ASP A 120     -10.547  -5.368   7.957  1.00  2.39           O 0
+ATOM    922   CA LYS A  60      -8.647  -9.311  11.016  1.00  2.12           C 0
+ATOM    943    N TYR A  61      -8.837  -6.953  11.572  1.00  1.73           N 0
+ATOM    925   CB LYS A  60      -9.494 -10.218  11.911  1.00  2.57           C 0
+ATOM    946    O TYR A  61     -10.702  -4.789  12.038  1.00  1.60           O 0
+ATOM    970  OD1 ASP A  62     -11.770  -6.552  15.205  1.00  2.89           O 0
+ATOM    912    O ASP A  59      -8.385 -10.373   8.463  1.00  2.57           O 0
+ATOM   1839  OD1 ASP A 120     -12.579  -5.340   7.241  1.00  2.03           O 0
+ATOM    926   CG LYS A  60     -10.036 -11.387  11.086  1.00  2.91           C 0
+ATOM   1762    O ALA A 116     -10.179  -7.953   5.558  1.00  1.62           O 0
+ATOM   1815   CD ARG A 119     -13.423  -8.816   4.947  1.00  2.45           C 0
+ATOM   1763   CB ALA A 116      -9.268 -11.016   5.526  1.00  1.78           C 0
+ATOM    927   CD LYS A  60     -10.802 -12.354  11.999  1.00  3.72           C 0
+ATOM   1816   NE ARG A 119     -14.826  -8.752   5.342  1.00  2.96           N 0
+ATOM   1817   CZ ARG A 119     -15.190  -8.208   6.499  1.00  3.49           C 0
+TER
+END

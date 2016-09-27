@@ -1,0 +1,46 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket    13:
+HEADER 0  - Pocket Score                      : 13.1009
+HEADER 1  - Number of V. Vertices             :    46
+HEADER 2  - Mean alpha-sphere radius          : 3.7240
+HEADER 3  - Mean alpha-sphere SA              : 0.4545
+HEADER 4  - Mean B-factor                     : 0.2816
+HEADER 5  - Hydrophobicity Score              : 19.4444
+HEADER 6  - Polarity Score                    :     7
+HEADER 7  - Volume Score                      : 4.4444
+HEADER 8  - Real volume (approximation)       : 1513.4451
+HEADER 9  - Charge Score                      :     1
+HEADER 10 - Local hydrophobic density Score   : 12.4706
+HEADER 11 - Number of apolar alpha sphere     :    17
+HEADER 12 - Proportion of apolar alpha sphere : 0.3696
+ATOM   1937   CD ARG A 238      61.139  11.906  31.991  1.00 56.09           C 0
+ATOM    631  OE2 GLU A  76      59.095   8.046  28.227  1.00 43.37           O 0
+ATOM   1936   CG ARG A 238      60.819  13.139  31.142  1.00 49.20           C 0
+ATOM   1940  NH1 ARG A 238      62.376  10.074  30.165  1.00 70.12           N 0
+ATOM   1928   CD LYS A 237      54.898  12.717  31.079  1.00 48.01           C 0
+ATOM   1926   CB LYS A 237      56.670  14.308  31.855  1.00 38.92           C 0
+ATOM   1905  CD2 LEU A 234      56.547  11.403  26.684  1.00 14.85           C 0
+ATOM   1901    O LEU A 234      58.514  14.937  28.992  1.00 28.02           O 0
+ATOM    626    O GLU A  76      54.115   9.261  29.603  1.00 26.56           O 0
+ATOM    628   CG GLU A  76      56.796   7.455  28.288  1.00 33.20           C 0
+ATOM   2025  CG2 VAL A 249      58.323  10.751  20.937  1.00 17.12           C 0
+ATOM   1975    O SER A 243      63.552  11.168  25.406  1.00 30.87           O 0
+ATOM   1985    N ASP A 245      62.875  11.639  21.734  1.00 27.54           N 0
+ATOM   1904  CD1 LEU A 234      57.276  11.790  24.347  1.00 19.12           C 0
+ATOM   1979   CA VAL A 244      62.700  13.131  23.622  1.00 26.20           C 0
+ATOM    630  OE1 GLU A  76      58.118   7.633  26.294  1.00 41.11           O 0
+ATOM   1989   CB ASP A 245      63.625   9.652  20.554  1.00 30.75           C 0
+ATOM   1988    O ASP A 245      61.199  10.503  19.442  1.00 26.41           O 0
+ATOM   2014   CB LYS A 248      61.344   7.082  19.184  1.00 26.65           C 0
+ATOM   1902   CB LEU A 234      57.574  13.613  26.015  1.00 19.99           C 0
+ATOM   1984  CG2 VAL A 244      61.073  14.648  24.782  1.00 24.89           C 0
+ATOM   1900    C LEU A 234      58.199  15.229  27.835  1.00 24.10           C 0
+ATOM   1977   OG SER A 243      63.207  13.407  28.145  1.00 31.29           O 0
+ATOM   1983  CG1 VAL A 244      60.841  14.193  22.334  1.00 24.63           C 0
+ATOM   2018   NZ LYS A 248      64.510   4.143  20.168  1.00 50.90           N 0
+ATOM   2015   CG LYS A 248      62.084   5.752  19.283  1.00 37.23           C 0
+TER
+END

@@ -1,0 +1,56 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket     5:
+HEADER 0  - Pocket Score                      : 19.4784
+HEADER 1  - Number of V. Vertices             :    68
+HEADER 2  - Mean alpha-sphere radius          : 3.7966
+HEADER 3  - Mean alpha-sphere SA              : 0.4806
+HEADER 4  - Mean B-factor                     : 0.1153
+HEADER 5  - Hydrophobicity Score              : 22.4545
+HEADER 6  - Polarity Score                    :     7
+HEADER 7  - Volume Score                      : 3.9091
+HEADER 8  - Real volume (approximation)       : 2145.4602
+HEADER 9  - Charge Score                      :    -1
+HEADER 10 - Local hydrophobic density Score   : 20.1429
+HEADER 11 - Number of apolar alpha sphere     :    28
+HEADER 12 - Proportion of apolar alpha sphere : 0.4118
+ATOM    600    O LYS A  73      48.987   5.497  23.252  1.00 18.02           O 0
+ATOM    618   CB GLU A  75      51.421   4.206  27.021  1.00 27.28           C 0
+ATOM    605   NZ LYS A  73      46.775   3.799  27.587  1.00 42.50           N 0
+ATOM    621  OE1 GLU A  75      52.261   1.590  27.082  1.00 35.57           O 0
+ATOM   2089   CZ PHE A 256      48.943   2.983  20.908  1.00 12.73           C 0
+ATOM    603   CD LYS A  73      45.229   4.063  25.614  1.00 32.52           C 0
+ATOM    602   CG LYS A  73      46.085   5.227  25.112  1.00 28.17           C 0
+ATOM    601   CB LYS A  73      46.118   5.295  23.568  1.00 20.76           C 0
+ATOM   2087  CE1 PHE A 256      47.643   2.678  20.508  1.00 12.90           C 0
+ATOM   2050  OE2 GLU A 252      53.102   3.216  21.415  1.00 17.32           O 0
+ATOM    614    N GLU A  75      50.828   6.213  25.759  1.00 22.71           N 0
+ATOM   2015   CG LYS A 248      62.084   5.752  19.283  1.00 37.23           C 0
+ATOM    630  OE1 GLU A  76      58.118   7.633  26.294  1.00 41.11           O 0
+ATOM   2014   CB LYS A 248      61.344   7.082  19.184  1.00 26.65           C 0
+ATOM   2049  OE1 GLU A 252      55.208   3.060  20.777  1.00 18.93           O 0
+ATOM   2013    O LYS A 248      58.206   6.726  18.200  1.00 21.14           O 0
+ATOM    627   CB GLU A  76      55.596   7.272  27.379  1.00 24.95           C 0
+ATOM    632    N ALA A  77      53.448   9.534  27.456  1.00 21.78           N 0
+ATOM   1905  CD2 LEU A 234      56.547  11.403  26.684  1.00 14.85           C 0
+ATOM   1904  CD1 LEU A 234      57.276  11.790  24.347  1.00 19.12           C 0
+ATOM    636   CB ALA A  77      52.905  11.589  26.251  1.00 19.77           C 0
+ATOM    613   CE MET A  74      53.017   8.849  21.191  1.00 12.55           C 0
+ATOM    623    N GLU A  76      53.226   6.645  27.417  1.00 25.74           N 0
+ATOM    610   CB MET A  74      50.719   9.248  23.745  1.00 15.99           C 0
+ATOM    607   CA MET A  74      50.238   7.830  24.059  1.00 17.50           C 0
+ATOM    608    C MET A  74      50.449   7.467  25.528  1.00 19.50           C 0
+ATOM   2047   CG GLU A 252      54.199   5.240  20.759  1.00 17.67           C 0
+ATOM    628   CG GLU A  76      56.796   7.455  28.288  1.00 33.20           C 0
+ATOM   2048   CD GLU A 252      54.170   3.727  20.995  1.00 20.19           C 0
+ATOM   2025  CG2 VAL A 249      58.323  10.751  20.937  1.00 17.12           C 0
+ATOM   2020   CA VAL A 249      57.488   9.238  19.091  1.00 18.95           C 0
+ATOM   2019    N VAL A 249      58.829   8.835  18.700  1.00 21.38           N 0
+ATOM   2046   CB GLU A 252      55.118   5.669  19.624  1.00 12.76           C 0
+ATOM   2012    C LYS A 248      59.079   7.598  18.282  1.00 22.63           C 0
+ATOM   2024  CG1 VAL A 249      56.035  11.101  19.964  1.00 18.26           C 0
+ATOM   1875  CG2 THR A 230      53.707  12.542  22.607  1.00 18.41           C 0
+TER
+END

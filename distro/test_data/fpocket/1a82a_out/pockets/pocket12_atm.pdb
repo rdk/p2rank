@@ -1,0 +1,54 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket    13:
+HEADER 0  - Pocket Score                      : 6.5604
+HEADER 1  - Number of V. Vertices             :    46
+HEADER 2  - Mean alpha-sphere radius          : 3.6493
+HEADER 3  - Mean alpha-sphere SA              : 0.5089
+HEADER 4  - Mean B-factor                     : 0.1189
+HEADER 5  - Hydrophobicity Score              : 51.3333
+HEADER 6  - Polarity Score                    :     1
+HEADER 7  - Volume Score                      : 3.6667
+HEADER 8  - Real volume (approximation)       : 1185.8091
+HEADER 9  - Charge Score                      :     0
+HEADER 10 - Local hydrophobic density Score   : 19.1818
+HEADER 11 - Number of apolar alpha sphere     :    22
+HEADER 12 - Proportion of apolar alpha sphere : 0.4783
+ATOM   1461    O MET A 194      11.966  38.519  -1.789  1.00  6.40           O 0
+ATOM   1475   CA PRO A 196      13.837  40.594   1.850  1.00  5.57           C 0
+ATOM   1478   CB PRO A 196      12.895  41.766   1.595  1.00  4.90           C 0
+ATOM   1474    N PRO A 196      13.085  39.458   1.311  1.00  5.57           N 0
+ATOM   1450    O ARG A 193      15.689  38.582  -3.246  1.00  6.27           O 0
+ATOM   1479   CG PRO A 196      11.540  41.143   1.827  1.00  6.59           C 0
+ATOM   1228  NE2 GLN A 163       8.822  43.369   1.875  1.00 19.47           N 0
+ATOM   1480   CD PRO A 196      11.655  39.792   1.146  1.00  5.77           C 0
+ATOM   1171    O MET A 156       5.377  37.920  -0.819  1.00  4.09           O 0
+ATOM   1173   CG MET A 156       8.102  35.951  -3.738  1.00 13.89           C 0
+ATOM   1169   CA MET A 156       6.574  36.069  -1.714  1.00  3.69           C 0
+ATOM   1195   CB ALA A 159       7.962  38.302   2.073  1.00  6.03           C 0
+ATOM   1172   CB MET A 156       6.669  36.080  -3.245  1.00  8.38           C 0
+ATOM   1204  NE2 GLN A 160       3.776  42.038  -3.293  1.00  7.52           N 0
+ATOM   1174   SD MET A 156       8.227  36.264  -5.512  1.00 21.24           S 0
+ATOM   1200   CB GLN A 160       4.139  41.197  -0.439  1.00  5.77           C 0
+ATOM   1196    N GLN A 160       5.362  40.005   1.379  1.00  5.90           N 0
+ATOM   1197   CA GLN A 160       4.764  41.282   0.971  1.00  5.13           C 0
+ATOM   1462   CB MET A 194      12.247  36.314  -3.997  1.00  9.97           C 0
+ATOM   1471  CG1 ILE A 195      11.791  34.874   0.809  1.00  3.22           C 0
+ATOM   1439  CD2 LEU A 191      11.447  30.664  -1.526  1.00  3.49           C 0
+ATOM   1433   CA LEU A 191      14.116  32.159  -2.351  1.00  2.44           C 0
+ATOM   1143  CG2 ILE A 152       9.212  32.154  -5.795  1.00  3.00           C 0
+ATOM   1435    O LEU A 191      14.536  34.204  -1.134  1.00  2.03           O 0
+ATOM   1167   CB ALA A 155       8.422  32.547   0.251  1.00  4.50           C 0
+ATOM   1140    O ILE A 152       7.158  32.765  -3.242  1.00  2.02           O 0
+ATOM   1168    N MET A 156       6.700  34.714  -1.213  1.00  2.89           N 0
+ATOM   1428    O THR A 190      14.538  33.799  -4.541  1.00  3.14           O 0
+ATOM   1432    N LEU A 191      14.653  31.760  -3.648  1.00  2.03           N 0
+ATOM   1464   SD MET A 194      11.371  35.193  -6.408  1.00 23.26           S 0
+ATOM   1431  CG2 THR A 190      13.121  32.159  -6.985  1.00  3.14           C 0
+ATOM   1460    C MET A 194      12.771  37.591  -1.902  1.00  7.21           C 0
+ATOM   1166    O ALA A 155       6.810  35.368   0.940  1.00  4.52           O 0
+ATOM   1467   CA ILE A 195      12.746  37.190   0.485  1.00  4.67           C 0
+TER
+END

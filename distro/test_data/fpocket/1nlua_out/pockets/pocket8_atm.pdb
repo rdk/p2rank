@@ -1,0 +1,44 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket     9:
+HEADER 0  - Pocket Score                      : 6.0151
+HEADER 1  - Number of V. Vertices             :    37
+HEADER 2  - Mean alpha-sphere radius          : 3.5081
+HEADER 3  - Mean alpha-sphere SA              : 0.4468
+HEADER 4  - Mean B-factor                     : 0.1584
+HEADER 5  - Hydrophobicity Score              : 50.5000
+HEADER 6  - Polarity Score                    :     3
+HEADER 7  - Volume Score                      : 4.5000
+HEADER 8  - Real volume (approximation)       : 772.7740
+HEADER 9  - Charge Score                      :     2
+HEADER 10 - Local hydrophobic density Score   : 6.0000
+HEADER 11 - Number of apolar alpha sphere     :     7
+HEADER 12 - Proportion of apolar alpha sphere : 0.1892
+ATOM    361  OD1 ASN A  52      27.130  29.554  29.512  1.00 11.90           O 0
+ATOM     59    N THR A  11      30.915  26.353  26.908  1.00 12.16           N 0
+ATOM    334  CE1 PHE A  48      26.795  28.044  24.811  1.00 10.78           C 0
+ATOM     65  CG2 THR A  11      30.126  29.158  27.422  1.00 18.76           C 0
+ATOM     64  OG1 THR A  11      30.616  27.745  29.307  1.00 15.11           O 0
+ATOM     58   CD PRO A  10      28.008  23.921  26.063  1.00 10.81           C 0
+ATOM     44   CBAASN A   9      28.620  24.595  30.002  0.50 11.26           C 0
+ATOM    362  ND2 ASN A  52      25.789  29.637  27.738  1.00 10.24           N 0
+ATOM   1972    O LEU A 273      24.984  22.658  26.264  1.00 10.83           O 0
+ATOM   1993  CE1 TYR A 275      21.712  27.237  27.066  1.00  8.76           C 0
+ATOM    332  CD1 PHE A  48      25.420  28.213  24.611  1.00  9.97           C 0
+ATOM   1991  CD1 TYR A 275      21.364  26.781  25.801  1.00  9.18           C 0
+ATOM     48  OD1AASN A   9      26.730  23.325  30.629  0.50 54.65           O 0
+ATOM    614  NE2 GLN A  86      23.299  25.393  22.981  1.00  5.90           N 0
+ATOM     46   CGAASN A   9      27.442  24.293  30.933  0.50 16.76           C 0
+ATOM   1996   OH TYR A 275      21.179  27.529  29.391  1.00 10.49           O 0
+ATOM     50  ND2AASN A   9      27.223  25.060  32.001  0.50 31.76           N 0
+ATOM   2036  CD1 LEU A 280      21.576  23.319  28.000  1.00 14.50           C 0
+ATOM   2037  CD2 LEU A 280      21.188  23.235  30.461  1.00 29.95           C 0
+ATOM     52    N PRO A  10      29.354  23.975  26.628  1.00 10.19           N 0
+ATOM    354   CB ALA A  51      21.799  30.926  29.273  1.00  9.52           C 0
+ATOM    360   CG ASN A  52      26.601  30.192  28.613  1.00  8.79           C 0
+ATOM    352    C ALA A  51      23.638  32.456  29.921  1.00  8.34           C 0
+ATOM    353    O ALA A  51      23.874  32.553  31.133  1.00  9.66           O 0
+TER
+END

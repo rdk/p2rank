@@ -1,0 +1,34 @@
+
+
+Amino Acid ligand binding propensities
+
+
+ref:
+
+
+@article{doi:10.1021/ci6002202,
+author = {Soga, Shinji and Shirai, Hiroki and Kobori, Masato and Hirayama, Noriaki}
+title = {Use of Amino Acid Composition to Predict Ligand-Binding Sites},
+journal = {Journal of Chemical Information and Modeling},
+volume = {47},
+number = {2},
+pages = {400-406},
+year = {2007},
+doi = {10.1021/ci6002202},
+    note ={PMID: 17243757},
+
+URL = {
+        http://dx.doi.org/10.1021/ci6002202
+
+},
+eprint = {
+        http://dx.doi.org/10.1021/ci6002202
+
+}
+,
+    abstract = { A novel method for predicting the binding sites for druglike compounds on the surface of proteins was developed on the basis of the specific amino acid composition observed at the ligand-binding sites of ligand−protein complexes determined by X-ray analysis. A profile representing the preference of each of the 20 standard amino acids at the binding sites of druglike molecules was obtained for a small set of high-quality complex structures. An index termed propensity for ligand binding (PLB) was created from these profiles. The PLB index was used to predict the propensity of binding for 804 ligands at all potential binding sites on the proteins whose structures were determined by X-ray analysis. If the sites with the first two highest PLB indices are taken into consideration, the successfully predicted sites reached a high percentage of 86. The PLB prediction is relatively simple, but the validation study showed that it is both fast and accurate to detect ligand-binding sites, especially the binding sites of druglike molecules. Therefore, the PLB index can be used to predict the ligand-binding sites of uncharacterized protein structures and also to identify novel drug-binding sites of known drug targets. }
+}
+
+
+
+

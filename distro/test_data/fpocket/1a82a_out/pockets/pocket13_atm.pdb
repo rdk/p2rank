@@ -1,0 +1,39 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket    14:
+HEADER 0  - Pocket Score                      : 5.9166
+HEADER 1  - Number of V. Vertices             :    36
+HEADER 2  - Mean alpha-sphere radius          : 3.9983
+HEADER 3  - Mean alpha-sphere SA              : 0.5373
+HEADER 4  - Mean B-factor                     : 0.3381
+HEADER 5  - Hydrophobicity Score              : 62.8750
+HEADER 6  - Polarity Score                    :     2
+HEADER 7  - Volume Score                      : 4.1250
+HEADER 8  - Real volume (approximation)       : 1435.6476
+HEADER 9  - Charge Score                      :     1
+HEADER 10 - Local hydrophobic density Score   : 10.0000
+HEADER 11 - Number of apolar alpha sphere     :    11
+HEADER 12 - Proportion of apolar alpha sphere : 0.3056
+ATOM     15   NZ LYS A   2      19.459  40.058  19.704  1.00 25.70           N 0
+ATOM   1672   CA ALA A 222      23.899  36.334  14.757  1.00 13.33           C 0
+ATOM   1674    O ALA A 222      23.606  38.276  13.361  1.00 15.33           O 0
+ATOM   1675   CB ALA A 222      25.420  36.225  14.634  1.00 14.07           C 0
+ATOM    224   OH TYR A  31      20.860  37.583  22.182  1.00 10.66           O 0
+ATOM   1666    O LEU A 221      21.323  35.875  15.553  1.00  9.83           O 0
+ATOM   1687    O LEU A 224      19.709  39.037  15.058  1.00 16.48           O 0
+ATOM    828  NE1 TRP A 111      16.744  34.938  20.665  1.00  4.62           N 0
+ATOM   1668   CG LEU A 221      19.970  33.105  17.638  1.00 11.59           C 0
+ATOM     13   CD LYS A   2      17.594  39.276  21.109  1.00 21.84           C 0
+ATOM   1671    N ALA A 222      23.284  35.012  14.931  1.00 10.71           N 0
+ATOM   1665    C LEU A 221      22.024  34.896  15.341  1.00  8.96           C 0
+ATOM    208   CB ALA A  29      23.137  32.210  21.796  1.00  7.77           C 0
+ATOM   1667   CB LEU A 221      21.331  33.049  16.946  1.00  9.54           C 0
+ATOM    222  CE2 TYR A  31      20.619  35.223  22.516  1.00  5.76           C 0
+ATOM   1670  CD2 LEU A 221      20.157  32.642  19.034  1.00 12.69           C 0
+ATOM     38   OH TYR A   4      16.047  38.534  17.943  1.00 10.54           O 0
+ATOM   1690  CD1 LEU A 224      16.311  35.273  15.551  1.00 10.06           C 0
+ATOM   1688   CB LEU A 224      18.193  36.509  14.521  1.00 14.10           C 0
+TER
+END

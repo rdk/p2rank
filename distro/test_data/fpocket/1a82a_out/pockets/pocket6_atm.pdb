@@ -1,0 +1,54 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket     7:
+HEADER 0  - Pocket Score                      : 12.8700
+HEADER 1  - Number of V. Vertices             :    53
+HEADER 2  - Mean alpha-sphere radius          : 4.3034
+HEADER 3  - Mean alpha-sphere SA              : 0.6848
+HEADER 4  - Mean B-factor                     : 0.1813
+HEADER 5  - Hydrophobicity Score              : 22.4000
+HEADER 6  - Polarity Score                    :     5
+HEADER 7  - Volume Score                      : 3.8000
+HEADER 8  - Real volume (approximation)       : 1996.9747
+HEADER 9  - Charge Score                      :     4
+HEADER 10 - Local hydrophobic density Score   : 18.0952
+HEADER 11 - Number of apolar alpha sphere     :    21
+HEADER 12 - Proportion of apolar alpha sphere : 0.3962
+ATOM   1626    N LYS A 217      22.199  23.808  15.486  1.00  3.92           N 0
+ATOM   1612    C ALA A 214      19.838  19.328  16.251  1.00  6.82           C 0
+ATOM   1613    O ALA A 214      20.701  19.061  15.413  1.00  6.45           O 0
+ATOM   1614   CB ALA A 214      21.046  18.012  17.995  1.00  8.25           C 0
+ATOM   1631   CG LYS A 217      23.383  21.536  14.026  1.00 10.90           C 0
+ATOM   1622    N GLY A 216      19.667  23.004  16.366  1.00  2.33           N 0
+ATOM    178  OE1 GLN A  24      18.246  21.478  18.659  1.00  5.41           O 0
+ATOM   1630   CB LYS A 217      24.203  22.746  14.554  1.00  8.40           C 0
+ATOM   1633   CE LYS A 217      25.461  20.084  13.731  1.00 19.24           C 0
+ATOM    177   CD GLN A  24      17.233  21.691  19.321  1.00  7.23           C 0
+ATOM    446  OD1 ASN A  61      14.224  21.276  21.514  1.00 13.33           O 0
+ATOM   1600    O ASN A 212      16.028  15.513  19.230  1.00 17.25           O 0
+ATOM    198   NZ LYS A  27      18.870  22.779  27.502  1.00 21.20           N 0
+ATOM    176   CG GLN A  24      17.195  22.835  20.319  1.00  4.06           C 0
+ATOM    179  NE2 GLN A  24      16.127  20.948  19.208  1.00  7.28           N 0
+ATOM   1611   CA ALA A 214      19.694  18.487  17.512  1.00  8.09           C 0
+ATOM   1608    O ALA A 213      16.928  18.471  17.358  1.00 11.42           O 0
+ATOM   1610    N ALA A 214      18.858  17.339  17.146  1.00  9.63           N 0
+ATOM    197   CE LYS A  27      19.655  23.939  27.006  1.00 20.12           C 0
+ATOM    174    O GLN A  24      20.046  26.228  21.301  1.00  3.04           O 0
+ATOM    203   CB ALA A  28      23.486  26.869  21.514  1.00  5.94           C 0
+ATOM    196   CD LYS A  27      18.906  24.836  26.031  1.00 14.61           C 0
+ATOM    175   CB GLN A  24      18.081  23.976  19.897  1.00  2.22           C 0
+ATOM    172   CA GLN A  24      17.930  25.239  20.737  1.00  2.78           C 0
+ATOM   1623   CA GLY A 216      20.136  24.357  16.654  1.00  4.24           C 0
+ATOM    195   CG LYS A  27      19.696  26.117  25.797  1.00 11.74           C 0
+ATOM    200   CA ALA A  28      23.222  27.495  22.908  1.00  7.97           C 0
+ATOM    199    N ALA A  28      21.782  27.675  23.130  1.00  5.81           N 0
+ATOM    181   CA ALA A  25      20.187  27.789  19.044  1.00  3.89           C 0
+ATOM   1624    C GLY A 216      21.346  24.774  15.816  1.00  3.78           C 0
+ATOM   1625    O GLY A 216      21.507  25.944  15.474  1.00  3.91           O 0
+ATOM   1627   CA LYS A 217      23.395  24.042  14.678  1.00  5.66           C 0
+ATOM    193    O LYS A  27      22.059  28.416  25.246  1.00  5.83           O 0
+ATOM    192    C LYS A  27      21.326  28.114  24.301  1.00  6.20           C 0
+TER
+END

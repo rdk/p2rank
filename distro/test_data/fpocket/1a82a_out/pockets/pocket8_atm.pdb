@@ -1,0 +1,42 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket     9:
+HEADER 0  - Pocket Score                      : 9.6474
+HEADER 1  - Number of V. Vertices             :    36
+HEADER 2  - Mean alpha-sphere radius          : 4.0089
+HEADER 3  - Mean alpha-sphere SA              : 0.6328
+HEADER 4  - Mean B-factor                     : 0.3002
+HEADER 5  - Hydrophobicity Score              : 24.5000
+HEADER 6  - Polarity Score                    :     4
+HEADER 7  - Volume Score                      : 3.1250
+HEADER 8  - Real volume (approximation)       : 1273.0046
+HEADER 9  - Charge Score                      :    -1
+HEADER 10 - Local hydrophobic density Score   : 15.0000
+HEADER 11 - Number of apolar alpha sphere     :    16
+HEADER 12 - Proportion of apolar alpha sphere : 0.4444
+ATOM    690    O ILE A  93     -10.362  35.929  21.010  1.00  6.90           O 0
+ATOM    704    N SER A  95      -7.518  38.571  22.337  1.00  6.76           N 0
+ATOM    955   CG PHE A 128      -8.663  39.293  16.313  1.00 12.02           C 0
+ATOM    703  OE2 GLU A  94      -9.228  40.706  23.963  1.00  8.36           O 0
+ATOM    708   CB SER A  95      -6.463  40.538  21.339  1.00  6.63           C 0
+ATOM    956  CD1 PHE A 128      -8.144  40.586  16.319  1.00 14.77           C 0
+ATOM    702  OE1 GLU A  94     -11.204  39.832  24.343  1.00 15.70           O 0
+ATOM    948  OG1 THR A 127     -14.315  40.434  14.980  1.00  3.37           O 0
+ATOM    954   CB PHE A 128      -9.994  38.981  15.640  1.00  8.89           C 0
+ATOM    701   CD GLU A  94      -9.963  39.816  24.456  1.00 12.09           C 0
+ATOM    957  CD2 PHE A 128      -7.990  38.309  17.028  1.00 13.65           C 0
+ATOM    696   CA GLU A  94      -9.107  36.977  23.258  1.00  5.60           C 0
+ATOM    960   CZ PHE A 128      -6.329  39.894  17.742  1.00 13.63           C 0
+ATOM    959  CE2 PHE A 128      -6.823  38.609  17.746  1.00 15.97           C 0
+ATOM    958  CE1 PHE A 128      -6.980  40.887  17.032  1.00 15.26           C 0
+ATOM    934   OG SER A 125     -12.938  37.339  15.786  1.00  4.09           O 0
+ATOM   1028  NE2 GLN A 136      -4.883  44.199  18.237  1.00 30.79           N 0
+ATOM   1027  OE1 GLN A 136      -4.760  44.567  20.467  1.00 37.14           O 0
+ATOM    709   OG SER A  95      -5.235  41.101  20.930  1.00  5.61           O 0
+ATOM    925   CB LEU A 124      -8.271  34.489  16.375  1.00  2.08           C 0
+ATOM    933   CB SER A 125     -13.058  36.042  16.356  1.00  5.68           C 0
+ATOM    923    C LEU A 124     -10.654  33.803  15.891  1.00  3.71           C 0
+TER
+END

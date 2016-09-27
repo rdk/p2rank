@@ -1,0 +1,51 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket    11:
+HEADER 0  - Pocket Score                      : 7.5098
+HEADER 1  - Number of V. Vertices             :    48
+HEADER 2  - Mean alpha-sphere radius          : 3.7590
+HEADER 3  - Mean alpha-sphere SA              : 0.5792
+HEADER 4  - Mean B-factor                     : 0.2111
+HEADER 5  - Hydrophobicity Score              : 55.4286
+HEADER 6  - Polarity Score                    :     3
+HEADER 7  - Volume Score                      : 5.2857
+HEADER 8  - Real volume (approximation)       : 1838.3098
+HEADER 9  - Charge Score                      :     0
+HEADER 10 - Local hydrophobic density Score   : 18.1667
+HEADER 11 - Number of apolar alpha sphere     :    24
+HEADER 12 - Proportion of apolar alpha sphere : 0.5000
+ATOM   1237  CE1 HIS A 164      -1.570  47.055   3.508  1.00 20.00           C 0
+ATOM   1235  ND1 HIS A 164      -0.676  46.158   3.866  1.00 20.00           N 0
+ATOM   1203  OE1 GLN A 160       1.892  43.015  -2.599  1.00 12.05           O 0
+ATOM   1238  NE2 HIS A 164      -1.082  47.780   2.532  1.00 20.00           N 0
+ATOM   1234   CG HIS A 164       0.442  46.330   3.067  1.00 18.33           C 0
+ATOM   1211  CG2 VAL A 161      -0.044  39.970   2.128  1.00  6.14           C 0
+ATOM   1236  CD2 HIS A 164       0.172  47.359   2.228  1.00 20.00           C 0
+ATOM   1233   CB HIS A 164       1.667  45.446   3.223  1.00 13.25           C 0
+ATOM   1201   CG GLN A 160       3.540  42.544  -0.916  1.00  5.39           C 0
+ATOM   1206   CA VAL A 161       1.776  41.245   3.327  1.00  6.62           C 0
+ATOM   1210  CG1 VAL A 161      -0.110  40.220   4.605  1.00 10.25           C 0
+ATOM   1208    O VAL A 161       1.871  42.640   5.294  1.00  6.99           O 0
+ATOM   1199    O GLN A 160       3.700  42.962   2.307  1.00  3.37           O 0
+ATOM   1205    N VAL A 161       2.839  40.899   2.393  1.00  4.44           N 0
+ATOM    906   CZ PHE A 121      -3.531  39.472   5.341  1.00  6.57           C 0
+ATOM   1200   CB GLN A 160       4.139  41.197  -0.439  1.00  5.77           C 0
+ATOM   1202   CD GLN A 160       2.991  42.528  -2.350  1.00  7.63           C 0
+ATOM   1179    O LEU A 157       2.659  38.087   1.028  1.00  2.17           O 0
+ATOM   1177   CA LEU A 157       2.898  36.594  -0.814  1.00  2.00           C 0
+ATOM   1204  NE2 GLN A 160       3.776  42.038  -3.293  1.00  7.52           N 0
+ATOM   1183  CD2 LEU A 157       0.604  36.472  -2.961  1.00  6.78           C 0
+ATOM   1176    N LEU A 157       4.183  36.070  -1.275  1.00  2.40           N 0
+ATOM   1172   CB MET A 156       6.669  36.080  -3.245  1.00  8.38           C 0
+ATOM   1171    O MET A 156       5.377  37.920  -0.819  1.00  4.09           O 0
+ATOM   1170    C MET A 156       5.314  36.769  -1.226  1.00  2.40           C 0
+ATOM   1148    O ASN A 153       3.981  33.561  -2.703  1.00  2.35           O 0
+ATOM   1181   CG LEU A 157       1.251  35.234  -2.375  1.00  4.10           C 0
+ATOM   1151  OD1 ASN A 153       2.086  33.307  -5.392  1.00  2.21           O 0
+ATOM   1146   CA ASN A 153       4.721  32.182  -4.514  1.00  2.52           C 0
+ATOM   1175   CE MET A 156       7.665  34.763  -6.155  1.00 23.52           C 0
+ATOM   1174   SD MET A 156       8.227  36.264  -5.512  1.00 21.24           S 0
+TER
+END

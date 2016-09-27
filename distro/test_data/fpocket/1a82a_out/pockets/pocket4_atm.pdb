@@ -1,0 +1,43 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket     5:
+HEADER 0  - Pocket Score                      : 15.9295
+HEADER 1  - Number of V. Vertices             :    39
+HEADER 2  - Mean alpha-sphere radius          : 3.1773
+HEADER 3  - Mean alpha-sphere SA              : 0.4130
+HEADER 4  - Mean B-factor                     : 0.0442
+HEADER 5  - Hydrophobicity Score              : 35.6667
+HEADER 6  - Polarity Score                    :     8
+HEADER 7  - Volume Score                      : 4.3333
+HEADER 8  - Real volume (approximation)       : 421.2970
+HEADER 9  - Charge Score                      :     1
+HEADER 10 - Local hydrophobic density Score   : 13.8667
+HEADER 11 - Number of apolar alpha sphere     :    15
+HEADER 12 - Proportion of apolar alpha sphere : 0.3846
+ATOM    869    N ALA A 117      -0.378  29.838  14.095  1.00  6.77           N 0
+ATOM     62  OG1 THR A   7       2.979  32.928   9.475  1.00  4.27           O 0
+ATOM    866   CA GLY A 116       1.436  31.096  15.091  1.00  7.88           C 0
+ATOM    877    O GLY A 118       0.691  28.910   9.774  1.00  9.10           O 0
+ATOM    867    C GLY A 116       0.721  29.790  14.838  1.00  7.96           C 0
+ATOM    116   CD LYS A  15       3.883  28.454  11.288  1.00  5.42           C 0
+ATOM    881    O GLY A 119      -1.252  32.132   9.510  1.00  3.78           O 0
+ATOM     58   CA THR A   7       4.888  32.069  10.730  1.00  6.00           C 0
+ATOM     49   CZ PHE A   5       2.090  34.289  14.465  1.00  4.33           C 0
+ATOM    872    O ALA A 117      -1.837  29.839  11.833  1.00  5.63           O 0
+ATOM     53    O VAL A   6       4.985  31.558  13.469  1.00  3.04           O 0
+ATOM     48  CE2 PHE A   5       2.927  34.730  13.460  1.00  3.06           C 0
+ATOM    973   CG PHE A 130      -2.331  34.037  14.893  1.00  4.21           C 0
+ATOM    975  CD2 PHE A 130      -2.614  32.709  15.157  1.00  6.32           C 0
+ATOM    972   CB PHE A 130      -2.906  34.705  13.685  1.00  4.43           C 0
+ATOM    892  CE3 TRP A 120       2.117  36.767   9.631  1.00  3.93           C 0
+ATOM    883   CA TRP A 120      -0.245  34.418   8.247  1.00  3.00           C 0
+ATOM    885    O TRP A 120      -1.866  35.434   9.761  1.00  2.22           O 0
+ATOM    970    C PHE A 130      -2.760  37.201  13.549  1.00  2.27           C 0
+ATOM    979    N ALA A 131      -2.800  37.530  12.258  1.00  3.63           N 0
+ATOM   1012  CG2 VAL A 134       1.284  37.701  14.612  1.00  2.03           C 0
+ATOM    980   CA ALA A 131      -2.050  38.659  11.736  1.00  2.81           C 0
+ATOM    894  CZ3 TRP A 120       2.705  37.594  10.579  1.00  4.40           C 0
+TER
+END

@@ -1,0 +1,46 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket    12:
+HEADER 0  - Pocket Score                      : 4.8186
+HEADER 1  - Number of V. Vertices             :    42
+HEADER 2  - Mean alpha-sphere radius          : 3.6717
+HEADER 3  - Mean alpha-sphere SA              : 0.4781
+HEADER 4  - Mean B-factor                     : 0.5078
+HEADER 5  - Hydrophobicity Score              : 5.4286
+HEADER 6  - Polarity Score                    :     4
+HEADER 7  - Volume Score                      : 3.2857
+HEADER 8  - Real volume (approximation)       : 1211.6484
+HEADER 9  - Charge Score                      :    -1
+HEADER 10 - Local hydrophobic density Score   : 1.3333
+HEADER 11 - Number of apolar alpha sphere     :     3
+HEADER 12 - Proportion of apolar alpha sphere : 0.0714
+ATOM   6087   CA ALA B 331      94.050  17.249  54.194  1.00 25.53           C 0
+ATOM   4849  NH2 ARG B 171      96.878  11.920  58.695  1.00 54.22           N 0
+ATOM   6086    N ALA B 331      95.448  16.824  54.098  1.00 24.98           N 0
+ATOM   6090   CB ALA B 331      93.871  18.221  55.364  1.00 29.50           C 0
+ATOM   6084  OE1 GLN B 330      99.249  15.821  56.807  1.00 33.14           O 0
+ATOM   4838  OD2 ASP B 170      93.340  14.240  52.723  1.00 21.38           O 0
+ATOM   4848  NH1 ARG B 171      95.942   9.832  58.498  1.00 42.04           N 0
+ATOM   6261  OG1 THR B 354      91.550  12.013  52.216  1.00 30.94           O 0
+ATOM   4835   CB ASP B 170      94.832  12.521  52.026  1.00 13.74           C 0
+ATOM   4847   CZ ARG B 171      96.893  10.702  58.172  1.00 49.70           C 0
+ATOM   4842    O ARG B 171      95.250   8.617  52.964  1.00 18.93           O 0
+ATOM   6262  CG2 THR B 354      90.062  10.784  53.655  1.00 34.55           C 0
+ATOM   4844   CG ARG B 171      97.246   8.995  55.356  1.00 35.33           C 0
+ATOM   4846   NE ARG B 171      97.861  10.352  57.329  1.00 48.70           N 0
+ATOM   4839    N ARG B 171      97.131  10.612  52.465  1.00 19.90           N 0
+ATOM   6073    O THR B 329      98.250  14.772  52.319  1.00 19.74           O 0
+ATOM   4836   CG ASP B 170      94.429  13.988  52.166  1.00 20.41           C 0
+ATOM   6085  NE2 GLN B 330     100.781  15.051  55.351  1.00 32.01           N 0
+ATOM   6078   CA GLN B 330      97.849  17.073  53.877  1.00 25.92           C 0
+ATOM   6067   CD GLU B 328     101.565  11.510  52.677  1.00 22.13           C 0
+ATOM   4843   CB ARG B 171      98.210   9.205  54.192  1.00 22.27           C 0
+ATOM   6068  OE1 GLU B 328     102.238  12.295  53.385  1.00 33.51           O 0
+ATOM   6069  OE2 GLU B 328     101.543  10.273  52.851  1.00 25.57           O 0
+ATOM   4845   CD ARG B 171      97.960   9.037  56.703  1.00 32.11           C 0
+ATOM   6081   CB GLN B 330      98.721  17.945  54.794  1.00 26.17           C 0
+ATOM   6079    C GLN B 330      96.440  17.653  53.782  1.00 24.59           C 0
+TER
+END

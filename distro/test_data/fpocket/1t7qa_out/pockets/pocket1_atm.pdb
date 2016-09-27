@@ -1,0 +1,66 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket     2:
+HEADER 0  - Pocket Score                      : 26.2515
+HEADER 1  - Number of V. Vertices             :    76
+HEADER 2  - Mean alpha-sphere radius          : 3.6054
+HEADER 3  - Mean alpha-sphere SA              : 0.5746
+HEADER 4  - Mean B-factor                     : 0.1167
+HEADER 5  - Hydrophobicity Score              : 50.2667
+HEADER 6  - Polarity Score                    :     5
+HEADER 7  - Volume Score                      : 4.0000
+HEADER 8  - Real volume (approximation)       : 2097.7886
+HEADER 9  - Charge Score                      :     2
+HEADER 10 - Local hydrophobic density Score   : 15.4667
+HEADER 11 - Number of apolar alpha sphere     :    30
+HEADER 12 - Proportion of apolar alpha sphere : 0.3947
+ATOM   3612   CB LEU A 476      70.405  21.134 -21.069  1.00 19.58           C 0
+ATOM   3587   CA ILE A 473      73.870  22.139 -18.071  1.00 20.95           C 0
+ATOM   3615  CD2 LEU A 476      69.581  23.402 -21.718  1.00 18.24           C 0
+ATOM   3583    O SER A 472      71.548  20.642 -17.925  1.00 19.64           O 0
+ATOM   3589    O ILE A 473      73.975  20.863 -20.104  1.00 22.04           O 0
+ATOM   3592  CG2 ILE A 473      75.943  23.192 -19.037  1.00 23.43           C 0
+ATOM   3591  CG1 ILE A 473      74.754  24.273 -17.080  1.00 22.35           C 0
+ATOM   3645   CD LYS A 480      70.064  22.048 -26.386  1.00 28.58           C 0
+ATOM   3620   CB ALA A 477      75.027  19.409 -23.181  1.00 20.55           C 0
+ATOM   3617   CA ALA A 477      73.574  19.273 -23.627  1.00 19.74           C 0
+ATOM   3613   CG LEU A 476      69.678  21.943 -22.147  1.00 19.72           C 0
+ATOM   3646   CE LYS A 480      69.091  23.079 -25.841  1.00 31.81           C 0
+ATOM   3616    N ALA A 477      72.682  19.460 -22.492  1.00 18.71           N 0
+ATOM   3610    C LEU A 476      71.362  19.438 -22.648  1.00 19.98           C 0
+ATOM   3611    O LEU A 476      70.820  19.264 -23.744  1.00 18.96           O 0
+ATOM   3309    O GLN A 438      64.713  15.104 -20.867  1.00 13.29           O 0
+ATOM   3637  CG1 VAL A 479      68.088  15.323 -22.341  1.00 19.83           C 0
+ATOM   3313  OE1 GLN A 438      66.000  17.359 -16.923  1.00 13.92           O 0
+ATOM   3310   CB GLN A 438      66.771  14.799 -18.361  1.00 13.29           C 0
+ATOM   3607   OG SER A 475      70.073  17.949 -17.672  1.00 17.04           O 0
+ATOM   3344   CB TYR A 442      64.292  17.028 -23.661  1.00 19.93           C 0
+ATOM   3390    O GLN A 447      62.139  20.410 -21.707  1.00 19.01           O 0
+ATOM   3397   CA ALA A 448      64.018  21.137 -19.810  1.00 18.72           C 0
+ATOM   3340    N TYR A 442      62.362  16.125 -22.430  1.00 15.30           N 0
+ATOM   3335  CD2 TYR A 441      60.590  18.185 -19.728  1.00 18.20           C 0
+ATOM   3332   CB TYR A 441      61.124  15.721 -19.614  1.00 15.47           C 0
+ATOM   3333   CG TYR A 441      60.257  16.911 -19.278  1.00 16.11           C 0
+ATOM   3401    N CYS A 449      62.956  21.213 -17.626  1.00 17.55           N 0
+ATOM   3406   SG CYS A 449      60.693  19.386 -16.120  1.00 17.53           S 0
+ATOM   3608    N LEU A 476      71.133  18.934 -20.264  1.00 18.81           N 0
+ATOM   3605    O SER A 475      70.712  16.924 -21.176  1.00 19.63           O 0
+ATOM   3604    C SER A 475      71.172  17.606 -20.257  1.00 20.54           C 0
+ATOM   3609   CA LEU A 476      70.526  19.641 -21.381  1.00 20.00           C 0
+ATOM   3582    C SER A 472      72.120  20.960 -16.882  1.00 19.73           C 0
+ATOM   3578    O ALA A 471      69.413  20.911 -13.891  1.00 18.67           O 0
+ATOM   3586    N ILE A 473      73.235  21.681 -16.849  1.00 19.01           N 0
+ATOM   3579   CB ALA A 471      66.833  20.220 -15.121  1.00 16.80           C 0
+ATOM   3577    C ALA A 471      69.316  20.087 -14.798  1.00 17.90           C 0
+ATOM   3400   CB ALA A 448      65.458  21.287 -19.367  1.00 19.03           C 0
+ATOM   3580    N SER A 472      70.311  19.829 -15.641  1.00 18.35           N 0
+ATOM   3581   CA SER A 472      71.584  20.529 -15.532  1.00 17.88           C 0
+ATOM   3576   CA ALA A 471      68.034  19.286 -14.982  1.00 16.82           C 0
+ATOM   3346  CD1 TYR A 442      64.947  19.409 -24.207  1.00 24.00           C 0
+ATOM   3638  CG2 VAL A 479      68.053  17.597 -23.409  1.00 17.45           C 0
+ATOM   3614  CD1 LEU A 476      68.288  21.356 -22.384  1.00 15.80           C 0
+ATOM   4208  CD1 LEU A 551      61.285  15.712 -15.498  1.00 14.21           C 0
+TER
+END

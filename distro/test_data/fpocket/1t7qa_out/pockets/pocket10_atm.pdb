@@ -1,0 +1,46 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket    11:
+HEADER 0  - Pocket Score                      : 15.8497
+HEADER 1  - Number of V. Vertices             :    40
+HEADER 2  - Mean alpha-sphere radius          : 4.1406
+HEADER 3  - Mean alpha-sphere SA              : 0.5757
+HEADER 4  - Mean B-factor                     : 0.0860
+HEADER 5  - Hydrophobicity Score              : 7.0000
+HEADER 6  - Polarity Score                    :     6
+HEADER 7  - Volume Score                      : 2.7500
+HEADER 8  - Real volume (approximation)       : 1361.8230
+HEADER 9  - Charge Score                      :    -1
+HEADER 10 - Local hydrophobic density Score   : 4.0000
+HEADER 11 - Number of apolar alpha sphere     :     5
+HEADER 12 - Proportion of apolar alpha sphere : 0.1250
+ATOM   3857  CG2 THR A 507      73.609  10.966  -5.310  1.00 15.54           C 0
+ATOM   3888  CG2 ILE A 511      73.210  11.467  -0.635  1.00 17.00           C 0
+ATOM   3832  NH1 ARG A 504      75.561   7.532  -6.435  1.00 19.01           N 0
+ATOM   3833  NH2 ARG A 504      76.348   9.008  -4.853  1.00 22.77           N 0
+ATOM   3889  CD1 ILE A 511      76.009  10.336  -0.677  1.00 18.54           C 0
+ATOM   4236  OE1 GLN A 555      67.950   4.133  -5.208  1.00 27.99           O 0
+ATOM   3252  OD2 ASP A 430      69.491   8.746  -8.387  1.00 17.26           O 0
+ATOM   3557  CD1 ILE A 468      70.377  13.178  -5.320  1.00 14.47           C 0
+ATOM   3443    O SER A 454      66.896  11.680  -3.498  1.00 14.09           O 0
+ATOM   3447   CA ALA A 455      68.526  12.923  -1.554  1.00 15.16           C 0
+ATOM   3451    N SER A 456      68.966  11.655   0.478  1.00 15.81           N 0
+ATOM   3455   CB SER A 456      69.076   9.914   2.198  1.00 16.04           C 0
+ATOM   4232    O GLN A 555      64.286   6.343  -3.377  1.00 16.56           O 0
+ATOM   4250   CG PRO A 557      67.087   2.433  -3.263  1.00 24.19           C 0
+ATOM   4251   CD PRO A 557      65.864   3.008  -2.645  1.00 21.24           C 0
+ATOM   3439  OE2 GLU A 453      67.511  10.042  -7.511  1.00 13.20           O 0
+ATOM   4233   CB GLN A 555      65.531   6.123  -6.204  1.00 19.75           C 0
+ATOM   4235   CD GLN A 555      67.431   4.488  -6.261  1.00 23.95           C 0
+ATOM   4229    N GLN A 555      63.796   7.730  -5.605  1.00 16.34           N 0
+ATOM   3450   CB ALA A 455      69.560  13.994  -1.936  1.00 12.44           C 0
+ATOM   3250   CG ASP A 430      69.206   7.575  -8.719  1.00 15.68           C 0
+ATOM   4237  NE2 GLN A 555      68.135   4.740  -7.355  1.00 18.98           N 0
+ATOM   3251  OD1 ASP A 430      68.032   7.141  -8.749  1.00 14.57           O 0
+ATOM   3249   CB ASP A 430      70.329   6.635  -9.119  1.00 14.18           C 0
+ATOM   3444   CB SER A 454      64.072  12.279  -2.463  1.00 14.26           C 0
+ATOM   4227   CB SER A 554      61.884   9.918  -4.536  1.00 14.39           C 0
+TER
+END

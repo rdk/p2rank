@@ -1,0 +1,49 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket     6:
+HEADER 0  - Pocket Score                      : 20.6036
+HEADER 1  - Number of V. Vertices             :    46
+HEADER 2  - Mean alpha-sphere radius          : 3.9670
+HEADER 3  - Mean alpha-sphere SA              : 0.5694
+HEADER 4  - Mean B-factor                     : 0.1463
+HEADER 5  - Hydrophobicity Score              : 25.5000
+HEADER 6  - Polarity Score                    :     3
+HEADER 7  - Volume Score                      : 3.1000
+HEADER 8  - Real volume (approximation)       : 1225.8397
+HEADER 9  - Charge Score                      :     0
+HEADER 10 - Local hydrophobic density Score   : 30.6250
+HEADER 11 - Number of apolar alpha sphere     :    32
+HEADER 12 - Proportion of apolar alpha sphere : 0.6957
+ATOM   3927  CE1 PHE A 516      69.565  25.683  -5.582  1.00 19.79           C 0
+ATOM   3929   CZ PHE A 516      70.035  25.002  -6.702  1.00 18.98           C 0
+ATOM   3566   CZ ARG A 469      66.086  23.782  -7.929  1.00 18.94           C 0
+ATOM   4164   CB ALA A 546      64.736  27.427  -9.324  1.00 17.41           C 0
+ATOM   3568  NH2 ARG A 469      65.336  24.397  -7.024  1.00 18.29           N 0
+ATOM   3565   NE ARG A 469      67.301  23.355  -7.601  1.00 18.07           N 0
+ATOM   3567  NH1 ARG A 469      65.603  23.575  -9.148  1.00 19.14           N 0
+ATOM   3564   CD ARG A 469      68.197  22.630  -8.498  1.00 17.13           C 0
+ATOM   3937  OD2 ASP A 517      65.966  23.619  -4.387  1.00 18.77           O 0
+ATOM   3931   CA ASP A 517      68.152  23.883  -1.935  1.00 16.22           C 0
+ATOM   3965  CD1 LEU A 520      68.935  29.207  -3.579  1.00 20.69           C 0
+ATOM   4144  CE2 TYR A 543      65.073  29.655  -4.155  1.00 21.09           C 0
+ATOM   3925  CD1 PHE A 516      70.348  25.745  -4.427  1.00 18.99           C 0
+ATOM   3963   CB LEU A 520      68.211  28.729  -1.266  1.00 16.53           C 0
+ATOM   3933    O ASP A 517      66.985  25.110  -0.257  1.00 15.98           O 0
+ATOM   4146   OH TYR A 543      64.147  28.832  -2.120  1.00 23.45           O 0
+ATOM   3964   CG LEU A 520      69.406  28.697  -2.221  1.00 19.98           C 0
+ATOM   4171   SD MET A 547      63.389  25.962  -4.792  1.00 18.96           S 0
+ATOM   4142  CD2 TYR A 543      64.976  30.473  -5.274  1.00 21.17           C 0
+ATOM   4135    N TYR A 543      63.805  32.139  -9.182  1.00 20.31           N 0
+ATOM   4092  CG1 ILE A 537      68.559  35.119  -4.776  1.00 28.51           C 0
+ATOM   4133   CB SER A 542      65.601  32.862 -11.710  1.00 22.97           C 0
+ATOM   4120  OD1 ASP A 540      66.291  35.786  -9.799  1.00 25.67           O 0
+ATOM   4139   CB TYR A 543      63.751  32.134  -6.724  1.00 21.32           C 0
+ATOM   4132    O SER A 542      63.958  30.350 -10.529  1.00 19.94           O 0
+ATOM   4136   CA TYR A 543      63.641  31.302  -8.002  1.00 20.46           C 0
+ATOM   4094  CD1 ILE A 537      69.890  34.602  -4.263  1.00 29.48           C 0
+ATOM   4131    C SER A 542      63.953  31.571 -10.373  1.00 21.42           C 0
+ATOM   4090    O ILE A 537      65.541  34.956  -5.421  1.00 25.16           O 0
+TER
+END

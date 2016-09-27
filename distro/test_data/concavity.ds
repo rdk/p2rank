@@ -1,0 +1,18 @@
+# dataset for rescoring
+
+PARAM.METHOD=concavity
+
+# uncomment if ligands are separated with TER record:
+PARAM.LIGANDS_SEPARATED_BY_TER=true
+
+#  pocket-prediction-output-pdb
+
+
+concavity/1a82a.pdb/1a82a_concavity_pocket.pdb
+concavity/1aaxa.pdb/1aaxa_concavity_pocket.pdb
+concavity/1nlua.pdb/1nlua_concavity_pocket.pdb
+concavity/1t7qa.pdb/1t7qa_concavity_pocket.pdb
+concavity/2ck3b.pdb/2ck3b_concavity_pocket.pdb
+
+
+

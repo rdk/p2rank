@@ -1,0 +1,63 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket     2:
+HEADER 0  - Pocket Score                      : 24.7648
+HEADER 1  - Number of V. Vertices             :    79
+HEADER 2  - Mean alpha-sphere radius          : 4.0104
+HEADER 3  - Mean alpha-sphere SA              : 0.4823
+HEADER 4  - Mean B-factor                     : 0.2003
+HEADER 5  - Hydrophobicity Score              : 21.2000
+HEADER 6  - Polarity Score                    :    11
+HEADER 7  - Volume Score                      : 4.0000
+HEADER 8  - Real volume (approximation)       : 2384.8740
+HEADER 9  - Charge Score                      :     1
+HEADER 10 - Local hydrophobic density Score   : 38.5652
+HEADER 11 - Number of apolar alpha sphere     :    46
+HEADER 12 - Proportion of apolar alpha sphere : 0.5823
+ATOM   5365  OD1 ASP B 238     118.602   1.837  52.883  1.00 21.34           O 0
+ATOM   4389   CB ASP B 109     119.998  -0.117  46.856  1.00 15.36           C 0
+ATOM   4392  OD2 ASP B 109     122.319  -0.550  47.133  1.00 18.88           O 0
+ATOM   4429  CG2 ILE B 115     119.552  -3.946  47.801  1.00 17.08           C 0
+ATOM   5161  NH2 ARG B 210     116.960  -0.985  53.580  1.00 37.98           N 0
+ATOM   5366  OD2 ASP B 238     117.283   2.147  51.179  1.00 26.72           O 0
+ATOM   4430  CD1 ILE B 115     116.429  -3.380  47.836  1.00 17.78           C 0
+ATOM   5333    O SER B 233     116.279   1.213  47.558  1.00 14.89           O 0
+ATOM   5158   NE ARG B 210     115.135  -2.383  53.488  1.00 26.50           N 0
+ATOM   5335   OG SER B 233     113.053  -0.081  48.310  1.00 22.16           O 0
+ATOM   5156   CG ARG B 210     112.902  -3.455  53.283  1.00 26.32           C 0
+ATOM   5347  CG2 THR B 235     112.420   0.709  51.419  1.00 18.08           C 0
+ATOM   5179   CB VAL B 213     109.407  -2.189  48.866  1.00 16.35           C 0
+ATOM   5346  OG1 THR B 235     114.369   0.891  52.780  1.00 22.12           O 0
+ATOM   5152   CA ARG B 210     110.671  -2.175  53.405  1.00 18.15           C 0
+ATOM   4426    O ILE B 115     117.463  -7.686  48.380  1.00 15.08           O 0
+ATOM   4427   CB ILE B 115     118.438  -4.995  47.752  1.00 17.24           C 0
+ATOM   5160  NH1 ARG B 210     116.683  -2.584  55.197  1.00 28.93           N 0
+ATOM   5159   CZ ARG B 210     116.259  -1.990  54.087  1.00 31.37           C 0
+ATOM   5157   CD ARG B 210     114.278  -3.476  53.952  1.00 27.85           C 0
+ATOM   5210  CG2 VAL B 217     109.091  -8.694  44.267  1.00  5.33           C 0
+ATOM   4450   CE LYS B 118     114.108 -13.408  42.956  1.00 29.80           C 0
+ATOM   4451   NZ LYS B 118     112.851 -13.110  42.217  1.00 32.86           N 0
+ATOM   4435   CB ASP B 116     115.939  -9.294  44.936  1.00 16.57           C 0
+ATOM   4377  CG2 VAL B 107     112.957  -6.465  43.964  1.00 13.24           C 0
+ATOM   4434    O ASP B 116     116.736 -11.713  46.406  1.00 13.74           O 0
+ATOM   5209  CG1 VAL B 217     108.958  -7.077  46.148  1.00 27.96           C 0
+ATOM   4432   CA ASP B 116     116.778  -9.324  46.219  1.00 15.90           C 0
+ATOM   5185    O ALA B 214     106.847  -7.914  48.403  1.00 12.88           O 0
+ATOM   5186   CB ALA B 214     108.797  -7.164  50.975  1.00 15.81           C 0
+ATOM   4375   CB VAL B 107     114.238  -5.722  44.306  1.00 10.15           C 0
+ATOM   5177    C VAL B 213     107.990  -4.297  48.741  1.00 16.23           C 0
+ATOM   5182    N ALA B 214     108.338  -5.072  49.770  1.00 14.33           N 0
+ATOM   5180  CG1 VAL B 213     109.946  -2.354  47.440  1.00 16.17           C 0
+ATOM   4376  CG1 VAL B 107     113.945  -4.518  45.226  1.00 13.95           C 0
+ATOM   5154    O ARG B 210     109.539  -3.896  52.175  1.00 15.71           O 0
+ATOM   5183   CA ALA B 214     108.326  -6.525  49.672  1.00 14.89           C 0
+ATOM   5334   CB SER B 233     113.701  -0.318  47.070  1.00 19.91           C 0
+ATOM   4438  OD2 ASP B 116     116.223  -9.208  42.574  1.00 14.98           O 0
+ATOM   4359    O GLY B 105     113.355  -9.417  39.466  1.00 10.88           O 0
+ATOM   5244  OG1 THR B 221     107.273 -11.217  42.224  1.00 14.33           O 0
+ATOM   5277   CG MET B 226     109.183  -8.941  39.827  1.00 13.38           C 0
+ATOM   5279   CE MET B 226     110.794  -6.841  40.611  1.00 17.33           C 0
+TER
+END

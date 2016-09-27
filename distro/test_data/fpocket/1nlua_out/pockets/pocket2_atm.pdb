@@ -1,0 +1,59 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket     3:
+HEADER 0  - Pocket Score                      : 19.3933
+HEADER 1  - Number of V. Vertices             :    69
+HEADER 2  - Mean alpha-sphere radius          : 3.6961
+HEADER 3  - Mean alpha-sphere SA              : 0.4861
+HEADER 4  - Mean B-factor                     : 0.0453
+HEADER 5  - Hydrophobicity Score              : 36.6667
+HEADER 6  - Polarity Score                    :    10
+HEADER 7  - Volume Score                      : 4.4667
+HEADER 8  - Real volume (approximation)       : 1899.9695
+HEADER 9  - Charge Score                      :     0
+HEADER 10 - Local hydrophobic density Score   : 17.0833
+HEADER 11 - Number of apolar alpha sphere     :    24
+HEADER 12 - Proportion of apolar alpha sphere : 0.3478
+ATOM   1696   CA GLY A 236      39.966   3.861   9.088  1.00  7.77           C 0
+ATOM   1354    O SER A 188      34.513   2.783   7.891  1.00  8.41           O 0
+ATOM   1694    O GLY A 235      37.896   3.695  10.903  1.00  8.39           O 0
+ATOM   1362  CG1 VAL A 189      36.995   4.883   6.955  1.00  7.51           C 0
+ATOM   1351    N SER A 188      34.689   0.329   7.080  1.00  7.75           N 0
+ATOM   1343   CB TYR A 187      36.759  -1.686   8.448  1.00  9.32           C 0
+ATOM   2478  CE1 TYR A 341      40.004   0.596  10.751  1.00  8.15           C 0
+ATOM   1235  CG1 VAL A 173      36.491   0.251  12.345  1.00  9.41           C 0
+ATOM   1234   CB VAL A 173      35.138  -0.208  11.778  1.00  7.55           C 0
+ATOM   2481   OH TYR A 341      40.980  -0.323   8.737  1.00 10.60           O 0
+ATOM   1699    N TYR A 237      40.490   4.063   6.726  1.00  7.36           N 0
+ATOM   1708  CE2 TYR A 237      42.169   0.239   5.673  1.00  7.88           C 0
+ATOM   1342    O TYR A 187      35.537  -1.174   5.591  1.00  9.82           O 0
+ATOM   1710   OH TYR A 237      41.714  -1.519   4.134  1.00 14.89           O 0
+ATOM   1702    O TYR A 237      39.240   3.772   4.342  1.00  8.62           O 0
+ATOM   1341    C TYR A 187      35.171  -0.868   6.737  1.00  8.89           C 0
+ATOM   1709   CZ TYR A 237      41.905  -0.155   4.385  1.00  9.37           C 0
+ATOM   1706  CD2 TYR A 237      42.368   1.603   5.927  1.00  7.60           C 0
+ATOM   1352   CA SER A 188      34.407   1.304   6.041  1.00  7.84           C 0
+ATOM    993  OE2 GLU A 138      36.160   4.814   1.535  1.00  9.11           O 0
+ATOM   1357    N VAL A 189      34.433   3.726   5.808  1.00  7.75           N 0
+ATOM   1722  CG1 VAL A 239      37.820   0.942   0.855  1.00 10.15           C 0
+ATOM   1707  CE1 TYR A 237      41.816   0.766   3.362  1.00 10.17           C 0
+ATOM   1353    C SER A 188      34.453   2.683   6.653  1.00  7.69           C 0
+ATOM   1329    O SER A 185      36.768  -6.224   8.418  1.00 12.52           O 0
+ATOM   1345  CD1 TYR A 187      38.415  -3.052   9.783  1.00 12.15           C 0
+ATOM   1339    N TYR A 187      35.167  -3.252   7.381  1.00 10.11           N 0
+ATOM   1338  CG2 THR A 186      32.854  -5.106   5.344  1.00 16.90           C 0
+ATOM   1333   CA THR A 186      34.287  -5.497   7.319  1.00 12.49           C 0
+ATOM   1337  OG1 THR A 186      33.073  -7.309   6.274  1.00 16.55           O 0
+ATOM   1355   CB SER A 188      33.010   1.045   5.464  1.00  9.43           C 0
+ATOM    998   CB ALA A 139      30.994   2.564  -0.903  1.00 12.64           C 0
+ATOM   1360    O VAL A 189      32.850   5.682   4.671  1.00  8.58           O 0
+ATOM    990   CG GLU A 138      34.026   5.764   1.472  1.00  8.62           C 0
+ATOM   1263   SG CYS A 176      30.364   2.422   3.510  1.00 21.97           S 0
+ATOM    994    N ALA A 139      31.244   4.832  -0.038  1.00  8.73           N 0
+ATOM   1723  CG2 VAL A 239      36.606   2.364  -0.854  1.00  9.78           C 0
+ATOM   1732  CE1 TYR A 240      34.543   4.620  -2.470  1.00  9.78           C 0
+ATOM   1262   CB CYS A 176      29.525   0.897   4.139  1.00 16.35           C 0
+TER
+END

@@ -1,0 +1,56 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket     8:
+HEADER 0  - Pocket Score                      : 10.4133
+HEADER 1  - Number of V. Vertices             :    63
+HEADER 2  - Mean alpha-sphere radius          : 3.6534
+HEADER 3  - Mean alpha-sphere SA              : 0.4346
+HEADER 4  - Mean B-factor                     : 0.2169
+HEADER 5  - Hydrophobicity Score              : 13.1429
+HEADER 6  - Polarity Score                    :     4
+HEADER 7  - Volume Score                      : 2.7857
+HEADER 8  - Real volume (approximation)       : 1829.9448
+HEADER 9  - Charge Score                      :     1
+HEADER 10 - Local hydrophobic density Score   : 17.2381
+HEADER 11 - Number of apolar alpha sphere     :    21
+HEADER 12 - Proportion of apolar alpha sphere : 0.3333
+ATOM    143   CB SER A  21      46.371  31.832  27.305  1.00 12.11           C 0
+ATOM    144   OG SER A  21      46.881  30.821  26.390  1.00 14.43           O 0
+ATOM    142    O SER A  21      45.778  33.677  25.053  1.00 13.51           O 0
+ATOM   2673  NH1 ARG A 366      53.045  31.718  23.001  1.00 35.04           N 0
+ATOM   2674  NH2 ARG A 366      51.390  31.962  21.378  1.00 28.57           N 0
+ATOM   2672   CZ ARG A 366      52.596  32.223  21.855  1.00 35.51           C 0
+ATOM    156   CD PRO A  23      44.400  34.380  20.776  1.00 14.14           C 0
+ATOM   2637   OGASER A 362      48.781  30.706  19.642  0.50 11.92           O 0
+ATOM    146   CA ALA A  22      44.311  32.481  23.058  1.00 10.20           C 0
+ATOM   2206   CB ALA A 303      46.148  33.858  17.457  1.00 12.14           C 0
+ATOM   2671   NE ARG A 366      53.439  33.009  21.193  1.00 35.70           N 0
+ATOM   2670   CD ARG A 366      53.155  33.665  19.915  1.00 35.01           C 0
+ATOM    155   CG PRO A  23      44.105  35.639  20.025  1.00 19.27           C 0
+ATOM   2205    O ALA A 303      47.838  35.719  15.721  1.00 18.01           O 0
+ATOM   2214  ND2 ASN A 304      48.059  32.118  14.752  1.00 12.44           N 0
+ATOM   2635    O SER A 362      51.634  29.676  18.543  1.00 14.36           O 0
+ATOM   2660   CB ILE A 365      51.287  28.683  15.073  1.00 14.41           C 0
+ATOM   2633   CA SER A 362      49.680  28.511  19.288  1.00 11.79           C 0
+ATOM   2663  CD1 ILE A 365      49.143  27.409  14.650  1.00 14.80           C 0
+ATOM   2186  CD2 LEU A 300      46.017  28.892  18.032  1.00 21.49           C 0
+ATOM   2213  OD1 ASN A 304      49.828  33.185  13.803  1.00 16.63           O 0
+ATOM   2669   CG ARG A 366      52.956  32.682  18.758  1.00 28.33           C 0
+ATOM   2664    N ARG A 366      53.560  30.472  16.567  1.00 18.34           N 0
+ATOM   2662  CG2 ILE A 365      50.992  29.735  14.021  1.00 15.96           C 0
+ATOM    149   CB ALA A  22      43.951  31.255  22.198  1.00 12.63           C 0
+ATOM   2171    O ARG A 299      42.816  32.533  17.111  1.00 10.47           O 0
+ATOM   2610    N ALA A 359      47.091  26.138  23.452  1.00 11.75           N 0
+ATOM    129   CA ALA A  19      42.742  27.630  24.835  1.00  9.81           C 0
+ATOM    123    O ASP A  18      45.092  26.299  25.459  1.00 11.44           O 0
+ATOM   2611   CA ALA A 359      48.125  27.113  23.772  1.00 12.15           C 0
+ATOM    145    N ALA A  22      44.350  32.066  24.448  1.00 10.77           N 0
+ATOM   2608  CG2 ILE A 358      44.309  26.883  21.156  1.00 11.47           C 0
+ATOM   2605    O ILE A 358      47.426  26.415  21.285  1.00 11.46           O 0
+ATOM   2636   CB SER A 362      48.797  29.384  20.195  1.00 12.13           C 0
+ATOM   2613    O ALA A 359      50.343  27.399  22.815  1.00 13.47           O 0
+ATOM   2614   CB ALA A 359      48.191  27.399  25.263  1.00 15.26           C 0
+TER
+END

@@ -1,0 +1,20 @@
+ALA	A	Alanine		hydrophobic
+CYS	C	Cysteine		free amino group makes it basic and hydrophilic
+ASP	D	Aspartic acid		"carbohydrate can be covalently linked (""N-linked) to its -NH"
+GLU	E	Glutamic acid		free carboxyl group makes it acidic and hydrophilic
+PHE	F	Phenylalanine		oxidation of their sulfhydryl (-SH) groups link 2 Cys (S-S)
+GLY	G	Glycine		free carboxyl group makes it acidic and hydrophilic
+HIS	H	Histidine		moderately hydrophilic
+ILE	I	Isoleucine		so small it is amphiphilic (can exist in any surroundings)
+LYS	K	Lysine		basic and hydrophilic
+LEU	L	Leucine		hydrophobic
+MET	M	Methionine		hydrophobic
+ASN	N	Asparagine		strongly basic and hydrophilic
+PRO	P	Proline		hydrophobic
+GLN	Q	Glutamine		very hydrophobic
+ARG	R	Arginine		causes kinks in the chain
+SER	S	Serine		"carbohydrate can be covalently linked (""O-linked"") to its -OH"
+THR	T	Threonine		"carbohydrate can be covalently linked (""O-linked"") to its -OH"
+VAL	V	Valine		scarce in most plant proteins
+TRP	W	Tryptophan		a phosphate or sulfate group can be covalently attached to its -OH
+TYR	Y	Tyrosine		hydrophobic

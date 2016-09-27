@@ -1,0 +1,46 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket     1:
+HEADER 0  - Pocket Score                      : 26.5673
+HEADER 1  - Number of V. Vertices             :    49
+HEADER 2  - Mean alpha-sphere radius          : 3.4289
+HEADER 3  - Mean alpha-sphere SA              : 0.4541
+HEADER 4  - Mean B-factor                     : 0.0781
+HEADER 5  - Hydrophobicity Score              : 30.8182
+HEADER 6  - Polarity Score                    :     6
+HEADER 7  - Volume Score                      : 3.9091
+HEADER 8  - Real volume (approximation)       : 741.1713
+HEADER 9  - Charge Score                      :     1
+HEADER 10 - Local hydrophobic density Score   : 26.9286
+HEADER 11 - Number of apolar alpha sphere     :    28
+HEADER 12 - Proportion of apolar alpha sphere : 0.5714
+ATOM   4483   OG SER A 588      55.422   5.821  -8.791  1.00 17.43           O 0
+ATOM   4314  CD2 PHE A 566      56.155   9.891  -4.934  1.00 16.19           C 0
+ATOM   4377    O GLY A 575      54.987  10.276 -10.563  1.00 14.62           O 0
+ATOM   4307    N PHE A 566      53.146   8.715  -5.644  1.00 17.40           N 0
+ATOM   4310    O PHE A 566      52.703  10.837  -7.252  1.00 16.57           O 0
+ATOM   4316  CE2 PHE A 566      57.346  10.103  -5.642  1.00 14.50           C 0
+ATOM   4386    N CYS A 577      58.231   7.799  -9.169  1.00 13.70           N 0
+ATOM   4306   CB ALA A 565      52.501   5.753  -6.471  1.00 16.66           C 0
+ATOM   4308   CA PHE A 566      52.707   9.957  -5.030  1.00 17.63           C 0
+ATOM   3078  CD1 ILE A 409      47.885   6.728  -8.970  1.00 25.51           C 0
+ATOM   4305    O ALA A 565      53.007   7.524  -3.746  1.00 17.19           O 0
+ATOM   3062  CD2 LEU A 407      46.089   9.555  -7.847  1.00 19.64           C 0
+ATOM   4309    C PHE A 566      52.242  10.910  -6.116  1.00 16.65           C 0
+ATOM   4304    C ALA A 565      53.249   7.590  -4.947  1.00 16.18           C 0
+ATOM   4318    N GLY A 567      51.318  11.798  -5.769  1.00 17.60           N 0
+ATOM   4495   CB SER A 590      51.165  10.521 -10.348  1.00 14.19           C 0
+ATOM   3061  CD1 LEU A 407      47.128  11.421  -9.167  1.00 20.01           C 0
+ATOM   3076  CG1 ILE A 409      48.139   7.387 -10.319  1.00 19.88           C 0
+ATOM   4482   CB SER A 588      54.656   4.861  -9.489  1.00 17.81           C 0
+ATOM   4486    C VAL A 589      52.696   8.524 -12.706  1.00 14.57           C 0
+ATOM   4484    N VAL A 589      54.097   6.599 -12.330  1.00 13.86           N 0
+ATOM   4487    O VAL A 589      51.681   7.906 -13.043  1.00 15.29           O 0
+ATOM   3077  CG2 ILE A 409      49.142   5.314 -11.301  1.00 22.38           C 0
+ATOM   3093   SD MET A 411      51.815   2.752 -10.400  1.00 19.00           S 0
+ATOM   4491    N SER A 590      52.657   9.717 -12.124  1.00 13.32           N 0
+ATOM   4319   CA GLY A 567      50.830  12.748  -6.748  1.00 15.16           C 0
+TER
+END

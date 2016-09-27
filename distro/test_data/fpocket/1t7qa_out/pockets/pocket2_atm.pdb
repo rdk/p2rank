@@ -1,0 +1,58 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket     3:
+HEADER 0  - Pocket Score                      : 23.1390
+HEADER 1  - Number of V. Vertices             :    57
+HEADER 2  - Mean alpha-sphere radius          : 3.7170
+HEADER 3  - Mean alpha-sphere SA              : 0.4968
+HEADER 4  - Mean B-factor                     : 0.1487
+HEADER 5  - Hydrophobicity Score              : 18.4286
+HEADER 6  - Polarity Score                    :     7
+HEADER 7  - Volume Score                      : 4.0000
+HEADER 8  - Real volume (approximation)       : 1470.1400
+HEADER 9  - Charge Score                      :     1
+HEADER 10 - Local hydrophobic density Score   : 13.8750
+HEADER 11 - Number of apolar alpha sphere     :    16
+HEADER 12 - Proportion of apolar alpha sphere : 0.2807
+ATOM   4543   CB GLU A 597      50.467  20.504 -21.061  1.00 27.99           C 0
+ATOM   4544   CG GLU A 597      49.986  21.692 -21.883  1.00 33.47           C 0
+ATOM   4546  OE1 GLU A 597      48.479  22.524 -20.239  1.00 36.46           O 0
+ATOM   4357  OD2 ASP A 572      53.258  23.929 -15.172  1.00 24.61           O 0
+ATOM   4354   CB ASP A 572      51.584  22.229 -15.183  1.00 18.79           C 0
+ATOM   4533   SG CYS A 595      49.164  20.617 -17.331  1.00 21.71           S 0
+ATOM   3339   OH TYR A 441      57.807  20.183 -18.448  1.00 21.90           O 0
+ATOM   4200  OD1 ASN A 550      55.844  22.188 -14.940  1.00 19.70           O 0
+ATOM   3395  NE2 GLN A 447      59.671  25.139 -21.087  1.00 32.28           N 0
+ATOM   3378  CD2 TYR A 445      55.626  19.286 -22.340  1.00 16.74           C 0
+ATOM   4542    O GLU A 597      51.471  17.742 -21.061  1.00 25.05           O 0
+ATOM   4554  CG2 THR A 598      51.556  17.666 -17.237  1.00 19.87           C 0
+ATOM   3380  CE2 TYR A 445      54.578  18.582 -21.751  1.00 17.78           C 0
+ATOM   4353    O ASP A 572      53.377  20.131 -15.263  1.00 17.40           O 0
+ATOM   3382   OH TYR A 445      53.795  16.754 -20.441  1.00 15.12           O 0
+ATOM   3381   CZ TYR A 445      54.843  17.439 -21.014  1.00 17.16           C 0
+ATOM   4368  CD1 TYR A 574      55.103  15.144 -16.043  1.00 16.09           C 0
+ATOM   4197    O ASN A 550      56.727  17.578 -13.471  1.00 15.55           O 0
+ATOM   3336  CE1 TYR A 441      58.266  17.847 -18.247  1.00 16.92           C 0
+ATOM   4198   CB ASN A 550      57.445  20.458 -14.513  1.00 14.78           C 0
+ATOM   4370  CE1 TYR A 574      54.664  15.301 -17.360  1.00 17.45           C 0
+ATOM   3392   CG GLN A 447      60.689  23.349 -22.364  1.00 26.23           C 0
+ATOM   3399    O ALA A 448      62.499  22.850 -19.101  1.00 17.90           O 0
+ATOM   3405   CB CYS A 449      60.713  21.145 -16.610  1.00 17.81           C 0
+ATOM   3337  CE2 TYR A 441      59.775  19.284 -19.449  1.00 18.30           C 0
+ATOM   4201  ND2 ASN A 550      57.905  22.808 -14.312  1.00 13.18           N 0
+ATOM   4199   CG ASN A 550      57.000  21.898 -14.614  1.00 16.00           C 0
+ATOM   3374    O TYR A 445      58.810  21.353 -25.255  1.00 21.31           O 0
+ATOM   3394  OE1 GLN A 447      59.616  25.259 -23.330  1.00 34.37           O 0
+ATOM   3393   CD GLN A 447      59.944  24.669 -22.300  1.00 31.37           C 0
+ATOM   3375   CB TYR A 445      58.064  19.595 -22.919  1.00 16.03           C 0
+ATOM   3376   CG TYR A 445      56.945  18.862 -22.211  1.00 17.04           C 0
+ATOM   3407    N ALA A 450      62.371  22.403 -14.265  1.00 15.47           N 0
+ATOM   3402   CA CYS A 449      62.104  21.787 -16.590  1.00 17.64           C 0
+ATOM   4158  CG2 ILE A 545      61.751  28.074 -13.919  1.00 22.62           C 0
+ATOM   4176    O HIS A 548      58.959  23.625 -11.294  1.00 17.33           O 0
+ATOM   4155    O ILE A 545      61.058  26.388 -11.210  1.00 18.85           O 0
+ATOM   3411   CB ALA A 450      62.172  23.257 -11.986  1.00 15.66           C 0
+TER
+END

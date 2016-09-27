@@ -1,0 +1,51 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket    11:
+HEADER 0  - Pocket Score                      : 4.9016
+HEADER 1  - Number of V. Vertices             :    48
+HEADER 2  - Mean alpha-sphere radius          : 4.0819
+HEADER 3  - Mean alpha-sphere SA              : 0.5708
+HEADER 4  - Mean B-factor                     : 0.3314
+HEADER 5  - Hydrophobicity Score              : 28.7000
+HEADER 6  - Polarity Score                    :     4
+HEADER 7  - Volume Score                      : 4.0000
+HEADER 8  - Real volume (approximation)       : 1833.1055
+HEADER 9  - Charge Score                      :     1
+HEADER 10 - Local hydrophobic density Score   : 5.8182
+HEADER 11 - Number of apolar alpha sphere     :    11
+HEADER 12 - Proportion of apolar alpha sphere : 0.2292
+ATOM    535  NE2 GLN A  76      13.248  12.865  14.052  0.00 23.06           N 0
+ATOM    526  NE2 GLN A  75      10.526  17.292  16.955  0.00 26.31           N 0
+ATOM    524   CD GLN A  75      10.494  18.177  15.966  0.00 26.21           C 0
+ATOM    525  OE1 GLN A  75       9.442  18.626  15.510  0.00 26.40           O 0
+ATOM    522   CB GLN A  75      11.798  18.719  13.871  1.00 22.96           C 0
+ATOM    518    N GLN A  75      13.151  19.427  11.862  1.00 16.01           N 0
+ATOM    532   CG GLN A  76      14.476  14.676  13.020  0.00 23.75           C 0
+ATOM    516  OD1 ASP A  74      14.307  17.207   8.295  1.00 22.44           O 0
+ATOM    517  OD2 ASP A  74      15.191  17.433  10.317  1.00 18.59           O 0
+ATOM    527    N GLN A  76      14.501  17.459  13.360  1.00 17.45           N 0
+ATOM    523   CG GLN A  75      11.834  18.620  15.412  1.00 26.36           C 0
+ATOM    528   CA GLN A  76      15.711  16.757  13.851  1.00 17.46           C 0
+ATOM    533   CD GLN A  76      14.411  13.255  13.545  0.00 23.47           C 0
+ATOM   2011  CD1 TYR A 277      13.606  21.745  18.492  1.00 13.05           C 0
+ATOM   2003  OD1 ASN A 276      16.366  19.186  20.802  1.00 26.64           O 0
+ATOM    521    O GLN A  75      14.975  19.194  14.754  1.00 16.12           O 0
+ATOM    530    O GLN A  76      17.954  17.524  14.329  1.00 17.19           O 0
+ATOM    549    N GLY A  79      18.601  19.979  16.159  1.00 11.32           N 0
+ATOM   2004  ND2 ASN A 276      17.024  20.656  19.228  1.00 13.29           N 0
+ATOM    550   CA GLY A  79      19.524  19.503  17.177  1.00 11.45           C 0
+ATOM   2045  OE1 GLN A 281      17.934  17.104  23.001  1.00 53.08           O 0
+ATOM    534  OE1 GLN A  76      15.395  12.517  13.495  0.00 23.95           O 0
+ATOM   2046  NE2 GLN A 281      15.965  17.806  23.885  1.00 69.63           N 0
+ATOM    531   CB GLN A  76      15.826  15.329  13.269  1.00 23.49           C 0
+ATOM   2013  CE1 TYR A 277      13.436  21.669  17.113  1.00 13.27           C 0
+ATOM   2002   CG ASN A 276      17.003  20.185  20.456  1.00 14.02           C 0
+ATOM   2063  CD1 ILE A 283      22.144  17.950  21.493  1.00 20.04           C 0
+ATOM   2001   CB ASN A 276      17.815  20.942  21.469  1.00 11.95           C 0
+ATOM   1983  CG2 ILE A 274      22.614  21.929  21.780  1.00 10.71           C 0
+ATOM    552    O GLY A  79      21.863  19.868  17.441  1.00 10.80           O 0
+ATOM    580   CB ASP A  82      21.100  23.123  18.612  1.00  9.58           C 0
+TER
+END

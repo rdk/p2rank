@@ -1,0 +1,46 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket    14:
+HEADER 0  - Pocket Score                      : 12.9715
+HEADER 1  - Number of V. Vertices             :    45
+HEADER 2  - Mean alpha-sphere radius          : 3.3793
+HEADER 3  - Mean alpha-sphere SA              : 0.4294
+HEADER 4  - Mean B-factor                     : 0.0120
+HEADER 5  - Hydrophobicity Score              : 22.5000
+HEADER 6  - Polarity Score                    :     4
+HEADER 7  - Volume Score                      : 3.8000
+HEADER 8  - Real volume (approximation)       : 511.2551
+HEADER 9  - Charge Score                      :     0
+HEADER 10 - Local hydrophobic density Score   : 15.6471
+HEADER 11 - Number of apolar alpha sphere     :    17
+HEADER 12 - Proportion of apolar alpha sphere : 0.3778
+ATOM    764  ND1 HIS A  94      28.279   8.112  10.339  1.00 16.65           N 0
+ATOM    545    O TYR A  66      31.124   4.609  11.311  1.00 17.16           O 0
+ATOM    555   CA ILE A  67      33.546   5.913  11.793  1.00 17.97           C 0
+ATOM    558   CB ILE A  67      33.159   6.930  12.903  1.00 17.44           C 0
+ATOM    559  CG1 ILE A  67      33.578   8.341  12.457  1.00 14.45           C 0
+ATOM    747  CG2 THR A  91      30.179   9.559   7.380  1.00 13.34           C 0
+ATOM    341    O ARG A  43      33.811   7.444   6.217  1.00 19.94           O 0
+ATOM    562    N ASN A  68      35.444   6.674  10.480  1.00 15.94           N 0
+ATOM    342   CB ARG A  43      31.546   5.554   6.515  1.00 18.17           C 0
+ATOM    706  NE2 GLN A  85      35.103  10.059   6.826  1.00 11.98           N 0
+ATOM    745   CB THR A  91      30.209  10.637   8.444  1.00 16.28           C 0
+ATOM    746  OG1 THR A  91      31.127  11.655   8.037  1.00 18.86           O 0
+ATOM    762   CB HIS A  94      28.986   9.163  12.516  1.00 14.88           C 0
+ATOM    344   CD ARG A  43      29.766   4.468   7.982  1.00 15.68           C 0
+ATOM    343   CG ARG A  43      30.063   5.381   6.801  1.00 16.92           C 0
+ATOM    696  OG1 THR A  84      37.191  11.111  12.297  1.00 16.34           O 0
+ATOM    703   CG GLN A  85      36.962  11.247   7.794  1.00  7.81           C 0
+ATOM    561  CD1 ILE A  67      33.108   9.453  13.387  1.00 16.39           C 0
+ATOM    712   CA PRO A  87      33.266  14.445   8.199  1.00 15.07           C 0
+ATOM    565    O ASN A  68      37.695   8.866  10.938  1.00 16.55           O 0
+ATOM    701    O GLN A  85      37.014  13.694   9.668  1.00 17.80           O 0
+ATOM    715   CB PRO A  87      32.380  14.877   9.372  1.00 13.86           C 0
+ATOM    774  CD1 PHE A  95      33.861  14.495  13.466  1.00 13.55           C 0
+ATOM    772   CB PHE A  95      31.448  13.830  13.183  1.00 14.67           C 0
+ATOM    744    O THR A  91      29.540  12.152  10.731  1.00 14.98           O 0
+ATOM    717   CD PRO A  87      34.521  15.819   9.757  1.00 14.50           C 0
+TER
+END

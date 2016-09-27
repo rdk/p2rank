@@ -1,0 +1,44 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket    18:
+HEADER 0  - Pocket Score                      : 7.2307
+HEADER 1  - Number of V. Vertices             :    36
+HEADER 2  - Mean alpha-sphere radius          : 4.3413
+HEADER 3  - Mean alpha-sphere SA              : 0.6627
+HEADER 4  - Mean B-factor                     : 0.1809
+HEADER 5  - Hydrophobicity Score              : 64.2857
+HEADER 6  - Polarity Score                    :     3
+HEADER 7  - Volume Score                      : 5.2857
+HEADER 8  - Real volume (approximation)       : 1519.3607
+HEADER 9  - Charge Score                      :     2
+HEADER 10 - Local hydrophobic density Score   : 18.7000
+HEADER 11 - Number of apolar alpha sphere     :    20
+HEADER 12 - Proportion of apolar alpha sphere : 0.5556
+ATOM   1056   CD LYS A 128      24.142  33.134   9.506  1.00 32.48           C 0
+ATOM   1048  OE1 GLN A 127      28.636  28.273   6.602  1.00 34.05           O 0
+ATOM   1058   NZ LYS A 128      24.179  34.379   7.356  1.00 42.79           N 0
+ATOM   1057   CE LYS A 128      24.943  34.039   8.583  1.00 37.45           C 0
+ATOM   1045   CB GLN A 127      28.111  29.346   9.609  1.00 23.38           C 0
+ATOM   1055   CG LYS A 128      25.012  32.718  10.656  1.00 27.03           C 0
+ATOM   1082   CG LYS A 131      20.513  29.779  10.355  1.00 30.08           C 0
+ATOM   1081   CB LYS A 131      21.271  28.830  11.240  1.00 24.92           C 0
+ATOM   1083   CD LYS A 131      19.329  29.070   9.767  1.00 35.04           C 0
+ATOM   1084   CE LYS A 131      18.781  29.827   8.591  1.00 36.77           C 0
+ATOM   1054   CB LYS A 128      24.266  31.902  11.686  1.00 22.57           C 0
+ATOM   1050    N LYS A 128      25.989  30.218  12.139  1.00 22.60           N 0
+ATOM   1041    N GLN A 127      27.217  27.948  11.408  1.00 22.34           N 0
+ATOM   1004   CG GLN A 123      29.007  24.420   7.188  1.00 19.45           C 0
+ATOM   1100   CG MET A 133      23.800  22.626  11.909  1.00 21.87           C 0
+ATOM   1046   CG GLN A 127      28.918  28.224   8.970  1.00 28.02           C 0
+ATOM   1023    O TRP A 125      28.485  24.595  11.065  1.00 16.39           O 0
+ATOM   1080    O LYS A 131      22.380  26.883  12.764  1.00 20.50           O 0
+ATOM   1102   CE MET A 133      25.248  20.966  10.241  1.00 19.07           C 0
+ATOM   1101   SD MET A 133      25.499  22.220  11.503  1.00 22.62           S 0
+ATOM   1035   CA PRO A 126      26.632  25.965  12.658  1.00 21.92           C 0
+ATOM   1049  NE2 GLN A 127      30.479  29.236   7.447  1.00 33.92           N 0
+ATOM   1047   CD GLN A 127      29.343  28.565   7.568  1.00 31.87           C 0
+ATOM   1002    O GLN A 123      28.117  21.381   8.256  1.00 14.72           O 0
+TER
+END
