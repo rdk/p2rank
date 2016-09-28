@@ -9,12 +9,12 @@ Ligand-binding site prediction tool based on machine learning.
 </p>
 
 
-### Requirements
+#### Requirements
 
 * Java 1.8 or newer for execution
 * PyMOL 1.7.x for viewing visualizations
 
-### Setup
+#### Setup
 
 P2RANK requires no installation. Binary packages can be downloaded from project website.
 
@@ -22,7 +22,7 @@ P2RANK requires no installation. Binary packages can be downloaded from project 
 * Source code: https://github.com/rdk/p2rank
 * Datasets: https://github.com/rdk/p2rank-datasets
 
-### Usage
+#### Usage
 
 <pre>
 <b>prank</b> predict -f test_data/1fbl.pdb         # predict pockets on a single pdb file 
@@ -30,7 +30,7 @@ P2RANK requires no installation. Binary packages can be downloaded from project 
 
 See more usage examples below...
 
-### Compilation
+#### Compilation
 
 To compile P2RANK you need Gradle (https://gradle.org/). Build with:
 
@@ -46,13 +46,13 @@ Usage Examples
 
 Following commands can be executed in the installation directory.
 
-### Print help:
+#### Print help:
 
 ~~~
 prank help
 ~~~
 
-### Ligand binding site prediction (P2RANK algorithm):
+#### Ligand binding site prediction (P2RANK algorithm):
 
 ~~~
 prank predict test.ds                             # run on whole dataset (containing list of pdb files)
@@ -66,14 +66,14 @@ prank predict -c predict2.groovy  test.ds         # specify configuration file (
                                                     different prediction model and combination of parameters)
 ~~~
 
-### Evaluate model for pocket prediction:
+#### Evaluate model for pocket prediction:
 
 ~~~
 prank eval-predict test.ds
 prank eval-predict -f test_data/1fbl.pdb
 ~~~
 
-### Prediction output notes:
+#### Prediction output notes:
 
    For each file in the dataset program produces a CSV file in the output directory named 
    `<pdb_file_name>_predictions.csv`, which contains an ordered list of predicted pockets, their scores, coordinates 
@@ -83,7 +83,7 @@ prank eval-predict -f test_data/1fbl.pdb
    in `visualizations/data/<pdb_file_name>_points.pdb`. There "Residue sequence number" (23-26) of HETATM record 
    cocrresponds to the rank of corresponding pocket (points with value 0 do not belong to any pocket).
 
-### Rescore pocket detected by other methods (PRANK algorithm):
+#### Rescore pocket detected by other methods (PRANK algorithm):
 
 ~~~
 prank rescore test_data/fpocket.ds
@@ -91,7 +91,7 @@ prank rescore fpocket.ds                 # test_data/ is default 'dataset_base_d
 prank rescore fpocket.ds -o output_dir   # test_output/ is default 'output_base_dir'
 ~~~
 
-### Override default params with custom config file:
+#### Override default params with custom config file:
 
 ~~~
 prank rescore -c config/example.groovy test_data/fpocket.ds
@@ -99,7 +99,7 @@ prank rescore -c example.groovy        fpocket.ds
 ~~~
 
 
-### It is also possible to override default params on a command line with their full name:
+#### It is also possible to override default params on a command line with their full name:
  (to see complete list of params look into config/default.groovy)
 
 ~~~
@@ -107,7 +107,7 @@ prank rescore                   -seed 151 -threads 8  test_data/fpocket.ds
 prank rescore -c example.groovy -seed 151 -threads 8  test_data/fpocket.ds
 ~~~
 
-### Evaluate model for pocket rescoring:
+#### Evaluate model for pocket rescoring:
 
 ~~~
 prank eval-rescore                        fpocket-pairs.ds
