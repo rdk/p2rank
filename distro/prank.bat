@@ -14,8 +14,8 @@ rem set "JAVA_HOME=c:\java8"
 
 set "JAVA_OPTS=%JAVA_OPTS% -XX:+CMSClassUnloadingEnabled -XX:+UseConcMarkSweepGC"
 
-set "PRANK_BASE_DIR=%~dp0%"
-set "CLASSPATH=%PRANK_BASE_DIR%/bin/p2rank.jar;%PRANK_BASE_DIR%/bin/lib/*"
+set "INSTALL_DIR=%~dp0%"
+set "CLASSPATH=%INSTALL_DIR%/bin/p2rank.jar;%INSTALL_DIR%/bin/lib/*"
+set "LOG_FILE=%INSTALL_DIR%/log/prank.log"
 
-
-"%JAVA_HOME%\bin\java.exe" %JAVA_OPTS% -cp "%CLASSPATH%" cz.siret.prank.program.Main %*
+"%JAVA_HOME%\bin\java.exe" %JAVA_OPTS% -cp "%CLASSPATH%" cz.siret.prank.program.Main %* 2> %LOG_FILE%

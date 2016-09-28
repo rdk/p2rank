@@ -24,9 +24,10 @@ else
 fi
 
 THIS_SCRIPT_DIR_REL_PATH=`dirname "${BASH_SOURCE[0]}"`
-export POCKET_RANK_BASE_DIR="$THIS_SCRIPT_DIR_REL_PATH"
+export INSTALL_DIR="$THIS_SCRIPT_DIR_REL_PATH"
+LOG_FILE="$INSTALL_DIR/log/prank.log"
 
-CLASSPATH="${POCKET_RANK_BASE_DIR}/bin/p2rank.jar${PATH_SEPARATOR}${POCKET_RANK_BASE_DIR}/bin/lib/*"
+CLASSPATH="${INSTALL_DIR}/bin/p2rank.jar${PATH_SEPARATOR}${INSTALL_DIR}/bin/lib/*"
 
 # Determine the Java command to use to start the JVM.
 if [ -n "$JAVA_HOME" ] ; then
@@ -36,4 +37,4 @@ else
 fi
 
 
-"$JAVACMD" $JAVA_OPTS -cp "${CLASSPATH}" cz.siret.prank.program.Main "$@"
+"$JAVACMD" $JAVA_OPTS -cp "${CLASSPATH}" cz.siret.prank.program.Main "$@" 2>${LOG_FILE}
