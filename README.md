@@ -32,13 +32,7 @@ See more usage examples below...
 
 ### Compilation
 
-To compile P2RANK you need Gradle (https://gradle.org/). Build with:
-
-~~~
-./make.sh
-# OR
-gradle assemble
-~~~
+To compile P2RANK you need Gradle (https://gradle.org/). Build with `./make.sh` or `gradle assemble`.
 
 
 Usage Examples
