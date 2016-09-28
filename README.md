@@ -1,4 +1,6 @@
 
+[![Build Status](https://travis-ci.org/rdk/p2rank.svg?branch=master)](https://travis-ci.org/rdk/p2rank)
+
 P2RANK 
 ======
 
