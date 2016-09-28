@@ -118,6 +118,15 @@ prank eval-rescore -m other.model         fpocket-pairs.ds -o output_dir
 ~~~
 
 
+## Thanks
+
+This program builds upon software written by other people, either through library dependencies or code included in it's source tree (where no library builds were available). Notably:
+* FastRandomForest by Fran Supek (https://code.google.com/archive/p/fast-random-forest/)
+* KDTree by Rednaxela (http://robowiki.net/wiki/User:Rednaxela/kD-Tree)
+* BioJava (https://github.com/biojava)
+* Chemistry Development Kit (https://github.com/cdk)
+* Weka (http://www.cs.waikato.ac.nz/ml/weka/)
+
 ## Contributing
 
 We welcome any bug reports, enhancement requests, and other contributions. To submit a bug report or enhancement request, please use the [GitHub issues tracker](https://github.com/rdk/p2rank/issues). For more substantial contributions, please fork this repo, push your changes to your fork, and submit a pull request with a good commit message. 
