@@ -1,7 +1,7 @@
 
 P2RANK 
 ======
-Ligand-binding site prediction tool based on machine learning.
+> Ligand-binding site prediction tool based on machine learning.
 
 [![Build Status](https://travis-ci.org/rdk/p2rank.svg?branch=master)](https://travis-ci.org/rdk/p2rank)
 
