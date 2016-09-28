@@ -34,6 +34,12 @@ See more usage examples below...
 
 To compile P2RANK you need Gradle (https://gradle.org/). Build with `./make.sh` or `gradle assemble`.
 
+### Algorithm
+
+P2RANK is based on scoring and clustering points on the protein's Connolly surface. Ligandability score of individual points is determined by a machine learning model (Random Forests by default).
+
+Slides: http://bit.ly/p2rank_slides (somewhat dated introduction)
+
 
 Usage Examples
 --------------
