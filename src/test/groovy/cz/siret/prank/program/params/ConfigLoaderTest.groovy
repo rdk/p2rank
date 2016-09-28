@@ -15,7 +15,7 @@ public class ConfigLoaderTest {
 
     @Test
     public void testDefaultParams() throws Exception {
-        File f = new File("./distro/config/dafault.groovy")
+        File f = new File("./distro/config/default.groovy")
         Params p = new Params()
         ConfigLoader.overrideConfig(p, f)
 
