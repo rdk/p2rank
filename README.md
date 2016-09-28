@@ -18,7 +18,7 @@ Ligand-binding site prediction tool based on machine learning.
 
 P2RANK requires no installation. Binary packages can be downloaded from project website.
 
-* Download: http://siret.ms.mff.cuni.cz/p2rank
+* **Download**: http://siret.ms.mff.cuni.cz/p2rank
 * Source code: https://github.com/rdk/p2rank
 * Datasets: https://github.com/rdk/p2rank-datasets
 
