@@ -71,7 +71,7 @@ prank rescore -c example.groovy        fpocket.ds
 ~~~
 
 
-### It is also possible to override default params on a command line with their full name:
+### It is also possible to override default params on the command line with their full name:
  (to see complete list of params look into config/default.groovy)
 
 ~~~
@@ -88,3 +88,4 @@ prank eval-rescore -m default.model       fpocket-pairs.ds
 prank eval-rescore -m other.model         fpocket-pairs.ds
 prank eval-rescore -m other.model         fpocket-pairs.ds -o output_dir
 ~~~
+

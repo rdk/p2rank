@@ -99,7 +99,7 @@ prank rescore -c example.groovy        fpocket.ds
 ~~~
 
 
-### It is also possible to override default params on a command line with their full name:
+### It is also possible to override default params on the command line with their full name:
  (to see complete list of params look into config/default.groovy)
 
 ~~~
@@ -116,3 +116,8 @@ prank eval-rescore -m default.model       fpocket-pairs.ds
 prank eval-rescore -m other.model         fpocket-pairs.ds
 prank eval-rescore -m other.model         fpocket-pairs.ds -o output_dir
 ~~~
+
+
+## Contributing
+
+We welcome any bug reports, enhancement requests, and other contributions. To submit a bug report or enhancement request, please use the [GitHub issues tracker](https://github.com/rdk/p2rank/issues). For more substantial contributions, please fork this repo, push your changes to your fork, and submit a pull request with a good commit message. 
