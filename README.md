@@ -36,7 +36,7 @@ To compile P2RANK you need Gradle (https://gradle.org/). Build with `./make.sh` 
 
 ### Algorithm
 
-P2RANK makes predictions by scoring and clustering points on the protein's Connolly surface. Ligandability score of individual points is determined by a machine learning based model.
+P2RANK makes predictions by scoring and clustering points on the protein's Connolly surface. Ligandability score of individual points is determined by a machine learning based model trained on a dataset of known protein-ligand complexes.
 
 Slides: http://bit.ly/p2rank_slides (somewhat dated introduction)
 
