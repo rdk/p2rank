@@ -3,6 +3,8 @@
 
 Ligand-binding site prediction tool based on machine learning.
 
+![P2RANK predictions](http://siret.ms.mff.cuni.cz/krivak/p2rank/figures/points2_small.png =750x)
+
 
 ## Requirements
 
@@ -10,7 +12,7 @@ Ligand-binding site prediction tool based on machine learning.
 * PyMOL 1.7.x for viewing visualizations
 
 
-## Example commands 
+## Example usage
 
 Following commands can be executed in the installation directory.
 
