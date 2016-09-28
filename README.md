@@ -3,7 +3,7 @@
 
 Ligand-binding site prediction tool based on machine learning.
 
-<img src="http://siret.ms.mff.cuni.cz/krivak/p2rank/figures/points2_small.png" width="700">
+<img align="center" src="http://siret.ms.mff.cuni.cz/krivak/p2rank/figures/points2_small.png" width="600">
 
 ## Requirements
 
