@@ -3,7 +3,7 @@ P2RANK
 ======
 > Ligand-binding site prediction tool based on machine learning.
 
-[![Build Status](https://travis-ci.org/rdk/p2rank.svg?branch=master)](https://travis-ci.org/rdk/p2rank)
+[![GitHub version](https://badge.fury.io/gh/rdk%2Fp2rank.svg)](https://badge.fury.io/gh/rdk%2Fp2rank) [![Build Status](https://travis-ci.org/rdk/p2rank.svg?branch=master)](https://travis-ci.org/rdk/p2rank)
 
 <p align="center">
     <img src="http://siret.ms.mff.cuni.cz/krivak/p2rank/figures/points2_small.png" width="600">
