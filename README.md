@@ -120,7 +120,7 @@ prank eval-rescore -m other.model         fpocket-pairs.ds -o output_dir
 
 ## Thanks
 
-This program builds upon software written by other people, either through library dependencies or code included in it's source tree (where no library builds were available). Notably:
+This program builds upon software written by other people, either through library dependencies or through code included in it's source tree (where no library builds were available). Notably:
 * FastRandomForest by Fran Supek (https://code.google.com/archive/p/fast-random-forest/)
 * KDTree by Rednaxela (http://robowiki.net/wiki/User:Rednaxela/kD-Tree)
 * BioJava (https://github.com/biojava)
