@@ -18,17 +18,17 @@ Ligand-binding site prediction tool based on machine learning.
 
 P2RANK requires no installation. Binary packages can be downloaded from project website.
 
-* Binary packages: http://siret.ms.mff.cuni.cz/p2rank
+* Download: http://siret.ms.mff.cuni.cz/p2rank
 * Source code: https://github.com/rdk/p2rank
 * Datasets: https://github.com/rdk/p2rank-datasets
 
 ### Usage
 
 <pre>
-<b>prank</b> predict -f test_data/1fbl.pdb         # run on single pdb file 
+<b>prank</b> predict -f test_data/1fbl.pdb         # predict pockets on a single pdb file 
 </pre>  
 
-See more examples below...
+See more usage examples below...
 
 ### Compilation
 
