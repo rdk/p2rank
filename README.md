@@ -17,7 +17,7 @@ Ligand-binding site prediction tool based on machine learning.
 
 ### Setup
 
-P2RANK requires no installation. Binary packages can be downloaded from project website.
+P2RANK requires no installation. Binary packages can be downloaded from the project website.
 
 * **Download**: http://siret.ms.mff.cuni.cz/p2rank
 * Source code: https://github.com/rdk/p2rank
@@ -37,7 +37,7 @@ To compile P2RANK you need Gradle (https://gradle.org/). Build with `./make.sh` 
 
 ### Algorithm
 
-P2RANK makes predictions by scoring and clustering points on the protein's Connolly surface. Ligandability score of individual points is determined by a machine learning based model trained on a dataset of known protein-ligand complexes.
+P2RANK makes predictions by scoring and clustering points on the protein's Connolly surface. Ligandability score of individual points is determined by a machine learning based model trained on the dataset of known protein-ligand complexes.
 
 Slides: http://bit.ly/p2rank_slides (somewhat dated overview)
 
