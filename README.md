@@ -139,7 +139,7 @@ Some practical differences:
         + slower when running on a single protein (due to JVM startup cost)
         + approximately as fast on average running on a big dataset on a single core
         + due to parallel implementation potentionally much faster on multi core machines
-    - higher memory footprint (~1.5GB but doesn't grow much with more parallel threads)
+    - higher memory footprint (~750m but doesn't grow much with more parallel threads)
 
 Both Fpocket and P2RANK have many configurable parameters that influence behaviour of the algorithm and can be tweaked to achieve better results for particular requirements.
 
