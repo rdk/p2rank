@@ -118,6 +118,31 @@ prank rescore fpocket.ds -o output_dir   # test_output/ is default 'output_base_
 prank eval-rescore fpocket-pairs.ds
 ~~~
 
+## Comparison with Fpocket
+
+[Fpocket](http://fpocket.sourceforge.net/) is an awesome open source ligand binding site prediction program.
+It is fast, eazy to use and well documented. As such it was a great inspiration for this project.
+Fpocket is written in C and it is based on a very different algorith.
+
+Some practical differences:
+
+* Fpocket
+    - has much smaller memory footprint 
+    - runs faster when executed on a single protein
+    - produces a high number of less relevant pockets (and since the default scoring function isn't very effective the most relevant pockets often doesn't get to the top)
+    - contains MDpocket algorithm for pocket predictions from molecular trajectories 
+    - still better documented
+* P2RANK 
+    - achieves significantly better identification success rates when considering top-ranked pockets
+    - produces smaller number of more relevant pockets
+    - speed:
+        + slower when running on a single protein (due to JVM startup cost)
+        + approximately as fast on average running on a big dataset on a single core
+        + due to parallel implementation potentionally much faster on multi core machines
+    - higher memory footprint (~1.5GB but doesn't grow much with more parallel threads)
+
+Both Fpocket and P2RANK have many configurable parameters that influence behaviour of the algorithm and can be tweaked to achieve better results for particular requirements.
+
 
 ## Thanks
 
