@@ -68,7 +68,7 @@ prank predict -c predict2.groovy  test.ds         # specify configuration file (
 ~~~
 
 ### Evaluate prediction model
-...on file or dataset with known ligands.
+...on a file or a dataset with known ligands.
 
 ~~~
 prank eval-predict -f test_data/1fbl.pdb
