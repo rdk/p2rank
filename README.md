@@ -83,7 +83,7 @@ prank eval-predict test.ds
 
    If coordinates of Connolly points that belong to predicted pockets are needed they can be found
    in `visualizations/data/<pdb_file_name>_points.pdb`. There "Residue sequence number" (23-26) of HETATM record 
-   cocrresponds to the rank of corresponding pocket (points with value 0 do not belong to any pocket).
+   corresponds to the rank of corresponding pocket (points with value 0 do not belong to any pocket).
 
 ### Configuration
 
