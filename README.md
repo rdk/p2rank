@@ -120,7 +120,7 @@ prank eval-rescore fpocket-pairs.ds
 
 ## Comparison with Fpocket
 
-[Fpocket](http://fpocket.sourceforge.net/) is an awesome open source ligand binding site prediction program.
+[Fpocket](http://fpocket.sourceforge.net/) is widely used open source ligand binding site prediction program.
 It is fast, eazy to use and well documented. As such it was a great inspiration for this project.
 Fpocket is written in C and it is based on a very different algorithm.
 
