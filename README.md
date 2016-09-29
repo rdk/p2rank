@@ -47,7 +47,7 @@ Usage Examples
 
 Following commands can be executed in the installation directory.
 
-### Print help:
+### Print help
 
 ~~~
 prank help
@@ -61,18 +61,18 @@ prank predict test.ds                             # run on whole dataset (contai
 prank predict -f test_data/1fbl.pdb               # run on single pdb file
 prank predict -f test_data/1fbl.pdb.gz            # run on single gzipped pdb file
 
-prank predict -o output_here      test.ds         # explicitly specify output directory
 prank predict -threads 8          test.ds         # specify no. of working threads for parallel processing
+prank predict -o output_here      test.ds         # explicitly specify output directory
 prank predict -c predict2.groovy  test.ds         # specify configuration file (predict2.groovy uses 
                                                     different prediction model and combination of parameters)
 ~~~
 
 ### Evaluate prediction model
-...on files and datasets with known ligands.
+...on file or dataset with known ligands.
 
 ~~~
-prank eval-predict test.ds
 prank eval-predict -f test_data/1fbl.pdb
+prank eval-predict test.ds
 ~~~
 
 ### Prediction output notes
@@ -95,7 +95,7 @@ prank rescore -c example.groovy        fpocket.ds
 ~~~
 
 
-It is also possible to override default params on the command line with their full name. To see complete list of params look into `config/default.groovy`.
+It is also possible to override the default params on the command line with their full name. To see complete list of params look into `config/default.groovy`.
 
 ~~~
 prank rescore                   -seed 151 -threads 8  test_data/fpocket.ds
@@ -104,7 +104,7 @@ prank rescore -c example.groovy -seed 151 -threads 8  test_data/fpocket.ds
 
 ### Rescoring (PRANK algorithm)
 
-In addition to predicting new ligand binding sites, P2RANK is also able to rescore predictions made by other methods (Fpocket and ConCavity are supported so far).
+In addition to predicting new ligand binding sites, P2RANK is also able to rescore pockets predicted by other methods (Fpocket and ConCavity are supported so far).
 
 ~~~
 prank rescore test_data/fpocket.ds
