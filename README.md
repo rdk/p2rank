@@ -53,7 +53,7 @@ Following commands can be executed in the installation directory.
 prank help
 ~~~
 
-### Ligand binding site prediction (P2RANK algorithm):
+### Predict ligand binding sites (P2RANK algorithm)
 
 ~~~
 prank predict test.ds                             # run on whole dataset (containing list of pdb files)
@@ -67,14 +67,15 @@ prank predict -c predict2.groovy  test.ds         # specify configuration file (
                                                     different prediction model and combination of parameters)
 ~~~
 
-### Evaluate model for pocket prediction:
+### Evaluate prediction model
+...on files and datasets with known ligands.
 
 ~~~
 prank eval-predict test.ds
 prank eval-predict -f test_data/1fbl.pdb
 ~~~
 
-### Prediction output notes:
+### Prediction output notes
 
    For each file in the dataset program produces a CSV file in the output directory named 
    `<pdb_file_name>_predictions.csv`, which contains an ordered list of predicted pockets, their scores, coordinates 
@@ -84,15 +85,9 @@ prank eval-predict -f test_data/1fbl.pdb
    in `visualizations/data/<pdb_file_name>_points.pdb`. There "Residue sequence number" (23-26) of HETATM record 
    cocrresponds to the rank of corresponding pocket (points with value 0 do not belong to any pocket).
 
-### Rescore pocket detected by other methods (PRANK algorithm):
+### Configuration
 
-~~~
-prank rescore test_data/fpocket.ds
-prank rescore fpocket.ds                 # test_data/ is default 'dataset_base_dir'
-prank rescore fpocket.ds -o output_dir   # test_output/ is default 'output_base_dir'
-~~~
-
-### Override default params with custom config file:
+You can override default params with custom config file:
 
 ~~~
 prank rescore -c config/example.groovy test_data/fpocket.ds
@@ -100,22 +95,27 @@ prank rescore -c example.groovy        fpocket.ds
 ~~~
 
 
-### It is also possible to override default params on the command line with their full name:
- (to see complete list of params look into config/default.groovy)
+It is also possible to override default params on the command line with their full name. To see complete list of params look into `config/default.groovy`.
 
 ~~~
 prank rescore                   -seed 151 -threads 8  test_data/fpocket.ds
 prank rescore -c example.groovy -seed 151 -threads 8  test_data/fpocket.ds
 ~~~
 
-### Evaluate model for pocket rescoring:
+### Rescoring (PRANK algorithm)
+
+In addition to predicting new ligand binding sites, P2RANK is also able to rescore predictions made by other methods (Fpocket and ConCavity are supported so far).
 
 ~~~
-prank eval-rescore                        fpocket-pairs.ds
-prank eval-rescore -m model/default.model fpocket-pairs.ds
-prank eval-rescore -m default.model       fpocket-pairs.ds
-prank eval-rescore -m other.model         fpocket-pairs.ds
-prank eval-rescore -m other.model         fpocket-pairs.ds -o output_dir
+prank rescore test_data/fpocket.ds
+prank rescore fpocket.ds                 # test_data/ is default 'dataset_base_dir'
+prank rescore fpocket.ds -o output_dir   # test_output/ is default 'output_base_dir'
+~~~
+
+### Evaluate rescoring model
+
+~~~
+prank eval-rescore fpocket-pairs.ds
 ~~~
 
 
