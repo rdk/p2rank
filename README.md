@@ -75,13 +75,13 @@ prank eval-predict -f test_data/1fbl.pdb
 prank eval-predict test.ds
 ~~~
 
-### Prediction output notes
+### Prediction output 
 
    For each file in the dataset program produces a CSV file in the output directory named 
    `<pdb_file_name>_predictions.csv`, which contains an ordered list of predicted pockets, their scores, coordinates 
    of their centroids and list of PDBSerials of adjacent amino acids and solvent exposed atoms.
 
-   If coordinates connolly points that belong to individual pockets are needed they can be found
+   If coordinates of Connolly points that belong to predicted pockets are needed they can be found
    in `visualizations/data/<pdb_file_name>_points.pdb`. There "Residue sequence number" (23-26) of HETATM record 
    cocrresponds to the rank of corresponding pocket (points with value 0 do not belong to any pocket).
 
@@ -90,21 +90,21 @@ prank eval-predict test.ds
 You can override default params with custom config file:
 
 ~~~
-prank rescore -c config/example.groovy test_data/fpocket.ds
-prank rescore -c example.groovy        fpocket.ds
+prank predict -c config/example.groovy  test.ds
+prank predict -c example.groovy         test.ds
 ~~~
 
 
-It is also possible to override the default params on the command line with their full name. To see complete list of params look into `config/default.groovy`.
+It is also possible to override the default params on the command line using their full name. To see complete list of params look into `config/default.groovy`.
 
 ~~~
-prank rescore                   -seed 151 -threads 8  test_data/fpocket.ds
-prank rescore -c example.groovy -seed 151 -threads 8  test_data/fpocket.ds
+prank predict                   -seed 151 -threads 8  test.ds
+prank predict -c example.groovy -seed 151 -threads 8  test.ds
 ~~~
 
 ### Rescoring (PRANK algorithm)
 
-In addition to predicting new ligand binding sites, P2RANK is also able to rescore pockets predicted by other methods (Fpocket and ConCavity are supported so far).
+In addition to predicting new ligand binding sites, P2RANK is also able to rescore pockets predicted by other methods (Fpocket and ConCavity are supported at the moment).
 
 ~~~
 prank rescore test_data/fpocket.ds
