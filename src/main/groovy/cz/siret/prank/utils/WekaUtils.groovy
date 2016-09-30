@@ -145,6 +145,24 @@ class WekaUtils implements Writable {
         return [pos, neg]
     }
 
+    static int countClass(Instances data, double val) {
+        int sum = 0
+        for (Instance inst : data) {
+            if (inst.classValue() == val) {
+                sum++
+            }
+        }
+        sum
+    }
+
+    static int countPositives(Instances data) {
+        countClass(data, 1d)
+    }
+
+    static int countNegatives(Instances data) {
+        countClass(data, 0d)
+    }
+
     // == filters ===
 
     static Instances subsample(double keepPercentage, int seed, Instances data) {

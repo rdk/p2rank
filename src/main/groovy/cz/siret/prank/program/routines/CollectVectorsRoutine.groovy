@@ -90,11 +90,15 @@ class CollectVectorsRoutine extends Routine {
         write "extracted $count vectors...  positives:$positives negatives:$negatives ratio:$ratio"
 
         write "preparing data for weka...."
-        Instances instances = prepareDataForWeka(instList, vectf)
+        Instances data = prepareDataForWeka(instList, vectf)
+        positives = WekaUtils.countPositives(data)
+        negatives = WekaUtils.countNegatives(data)
+        count = positives + negatives
+
 
         logTime "collecting vectors finished in $timer.formatted"
 
-        return new Result(instances: instances, count: count, positives: positives, negatives: negatives)
+        return new Result(instances: data, count: count, positives: positives, negatives: negatives)
     }
 
 
