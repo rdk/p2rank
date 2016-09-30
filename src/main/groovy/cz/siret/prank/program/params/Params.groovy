@@ -1,5 +1,6 @@
 package cz.siret.prank.program.params
 
+import cz.siret.prank.program.Main
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
@@ -356,6 +357,20 @@ class Params {
      * stop processing the datsaset on the first unrecoverable error with a dataset item
      */
     boolean fail_fast = false
+
+    /**
+     * target class ratio of positives/negatives we train on.
+     * relates to subsampling and supersampling
+     */
+    double train_class_ratio = 0.1
+
+    boolean subsample = false
+
+//===========================================================================================================//
+
+    String getVersion() {
+        Main.getVersion()
+    }
 
 //===========================================================================================================//
 

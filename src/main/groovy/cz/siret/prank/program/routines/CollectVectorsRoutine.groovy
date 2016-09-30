@@ -1,5 +1,7 @@
 package cz.siret.prank.program.routines
 
+import cz.siret.prank.utils.MathUtils
+import cz.siret.prank.utils.PerfUtils
 import groovy.transform.TupleConstructor
 import groovy.util.logging.Slf4j
 import cz.siret.prank.collectors.DataPreProcessor
@@ -80,11 +82,12 @@ class CollectVectorsRoutine extends Routine {
         int positives = pos.get()
         int negatives = neg.get()
         int count = positives + negatives
+        double ratio = PerfUtils.round ( (double)positives / negatives , 3)
         int ligandCount = dataset.items.collect { it.predictionPair.liganatedProtein.ligands.size() }.sum()
 
 
         write "processed $ligandCount ligans in $dataset.size files"
-        write "extracted $count vectors...  positives:$positives negatives:$negatives"
+        write "extracted $count vectors...  positives:$positives negatives:$negatives ratio:$ratio"
 
         write "preparing data for weka...."
         Instances instances = prepareDataForWeka(instList, vectf)

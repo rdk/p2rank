@@ -17,7 +17,7 @@ import java.util.zip.ZipOutputStream
 
 @Slf4j
 @CompileStatic
-class WekaUtils {
+class WekaUtils implements Writable {
 
     private static final int BUFFER_SIZE = 10 * 1024 * 1024;
 
@@ -130,16 +130,43 @@ class WekaUtils {
         return res
     }
 
-    // == filters ===
+    static List<Instances> splitPositivesNegatives(Instances all) {
+        Instances pos = new Instances(all, 0)
+        Instances neg = new Instances(all, 0)
 
-    static Instances removePercentage(double pc, Instances data) {
-        RemovePercentage filter = new RemovePercentage()
-        filter.setInputFormat(data)
-        filter.setPercentage(pc)
-        return Filter.useFilter(data, filter)
+        for (Instance inst : all) {
+            if (inst.classValue() == 0) {
+                neg.add(inst)
+            } else {
+                pos.add(inst)
+            }
+        }
+
+        return [pos, neg]
     }
 
-    static Instances randomize(int seed, Instances data) {
+    // == filters ===
+
+    static Instances subsample(double keepPercentage, int seed, Instances data) {
+        assert keepPercentage>=0 && keepPercentage<=1
+
+        return removePercentage( randomize(data, seed), 1-keepPercentage)
+
+    }
+
+    /**
+     *
+     * @param pc
+     * @param data
+     * @return
+     */
+    static Instances removePercentage(Instances data, double pc) {
+        int keepCount = (int)Math.round(data.size() * (1d-pc))
+        Instances result = new Instances(data, 0, keepCount)
+        return result
+    }
+
+    static Instances randomize(Instances data, int seed) {
         Randomize filter = new Randomize()
         filter.setInputFormat(data)
         filter.setRandomSeed(seed)
