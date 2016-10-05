@@ -72,9 +72,11 @@ class PredictRoutine implements Parametrized, Writable {
                     new PyMolRenderer(visDir).visualizeHistograms(item, rescorer, pair)
                 }
 
-                PredictionSummary psum = new PredictionSummary(pair.prediction)
-                String outf = "$outdir/${item.label}_predictions.csv"
-                futils.overwrite(outf, psum.toCSV().toString())
+                if (!params.output_only_stats) {
+                    PredictionSummary psum = new PredictionSummary(pair.prediction)
+                    String outf = "$outdir/${item.label}_predictions.csv"
+                    futils.overwrite(outf, psum.toCSV().toString())
+                }
 
                 if (collectStats) {  // expects dataset with liganated proteins
                     stats.predictionsEval.addPrediction(pair, pair.prediction.reorderedPockets)
@@ -90,7 +92,6 @@ class PredictRoutine implements Parametrized, Writable {
         if (collectStats) {
             String modelLabel = classifier.class.simpleName + " ($modelf)"
             stats.logAndStore(outdir, modelLabel)
-
             stats.logMainResults(outdir, modelLabel)
         }
 

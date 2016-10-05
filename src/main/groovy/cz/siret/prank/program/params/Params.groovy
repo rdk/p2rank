@@ -366,6 +366,11 @@ class Params {
 
     boolean subsample = false
 
+    /**
+     * don't procuce prediction files for individual proteins (useful for long repetitive experments)
+     */
+    boolean output_only_stats = false
+
 //===========================================================================================================//
 
     String getVersion() {

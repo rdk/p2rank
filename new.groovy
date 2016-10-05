@@ -53,6 +53,8 @@ import cz.siret.prank.program.params.Params
      */
     feature_importances = false
 
+    output_only_stats = true
+
 
     // new optimizations in smichov project:
 
