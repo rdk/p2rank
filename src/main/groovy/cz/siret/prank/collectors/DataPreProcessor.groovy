@@ -1,15 +1,14 @@
 package cz.siret.prank.collectors
 
+import cz.siret.prank.features.chemproperties.ChemFeatureExtractor
+import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.PerfUtils
+import cz.siret.prank.utils.WekaUtils
 import cz.siret.prank.utils.Writable
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.utils.WekaUtils
-import weka.core.Instance
+import weka.core.Attribute
 import weka.core.Instances
-
-import javax.xml.crypto.Data
 
 @Slf4j
 @CompileStatic
@@ -27,7 +26,7 @@ class DataPreProcessor implements Parametrized, Writable {
         }
         if (removePercentage>0.0) {
             log.info "removing percentage $removePercentage"
-            data = WekaUtils.subsample(1-removePercentage, params.seed, data)
+            data = WekaUtils.randomSubsample(1-removePercentage, params.seed, data)
             log.info "instances left: " + data.size()
         }
 
@@ -51,16 +50,29 @@ class DataPreProcessor implements Parametrized, Writable {
 
             if (ratio < targetRatio) {
                 write "subsampling negatives (${descState(positives, negatives)})"
-//                double keepPercent = pc / nc*targetRatio
                 double keepPercent = ratio / targetRatio
                 write "keepPc: $keepPercent"
-                negatives = WekaUtils.subsample(keepPercent, seed, negatives)
+
+                if (params.subsampl_high_protrusion_negatives) {
+                    // sory by protrusion desc before subsampling
+                    Attribute attr = negatives.attribute(ChemFeatureExtractor.FEAT_PROTRUSION)
+                    if (attr!=null) {
+                        negatives.sort(attr)
+                        negatives = WekaUtils.reverse(negatives)
+                    }
+                    negatives = WekaUtils.removeRatio(negatives, 1d-keepPercent)
+                } else {
+                    // random subsampling
+                    negatives = WekaUtils.randomSubsample(keepPercent, seed, negatives)
+                }
+
+
                 write "negatives subsampled (${descState(positives, negatives)})"
             } else {
                 write "subsampling positives (${descState(positives, negatives)})"
                 double keepPercent = targetRatio / ratio
                 write "keepPc: $keepPercent"
-                positives = WekaUtils.subsample(keepPercent, seed, positives)
+                positives = WekaUtils.randomSubsample(keepPercent, seed, positives)
                 write "positives subsampled (${descState(positives, negatives)})"
             }
 

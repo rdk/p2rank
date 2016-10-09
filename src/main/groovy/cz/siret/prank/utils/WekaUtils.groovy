@@ -9,7 +9,6 @@ import weka.core.converters.ConverterUtils
 import weka.filters.Filter
 import weka.filters.unsupervised.attribute.NumericToNominal
 import weka.filters.unsupervised.instance.Randomize
-import weka.filters.unsupervised.instance.RemovePercentage
 
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
@@ -165,21 +164,21 @@ class WekaUtils implements Writable {
 
     // == filters ===
 
-    static Instances subsample(double keepPercentage, int seed, Instances data) {
+    static Instances randomSubsample(double keepPercentage, int seed, Instances data) {
         assert keepPercentage>=0 && keepPercentage<=1
 
-        return removePercentage( randomize(data, seed), 1-keepPercentage)
+        return removeRatio( randomize(data, seed), 1-keepPercentage)
 
     }
 
     /**
      *
-     * @param pc
+     * @param removeRatio
      * @param data
      * @return
      */
-    static Instances removePercentage(Instances data, double pc) {
-        int keepCount = (int)Math.round(data.size() * (1d-pc))
+    static Instances removeRatio(Instances data, double removeRatio) {
+        int keepCount = (int)Math.round(data.size() * (1d-removeRatio))
         Instances result = new Instances(data, 0, keepCount)
         return result
     }
@@ -189,6 +188,12 @@ class WekaUtils implements Writable {
         filter.setInputFormat(data)
         filter.setRandomSeed(seed)
         return Filter.useFilter(data, filter)
+    }
+
+    static Instances reverse(Instances data) {
+        Instances res = new Instances(data, data.size())
+        res.addAll(data.reverse())
+        return res
     }
 
     static Instances numericToNominal(String attributeIndices, Instances data) {

@@ -371,6 +371,11 @@ class Params {
      */
     boolean output_only_stats = false
 
+    /**
+     * sort negatives desc by protrusion before subsampling
+     */
+    boolean subsampl_high_protrusion_negatives = false
+
 //===========================================================================================================//
 
     String getVersion() {
