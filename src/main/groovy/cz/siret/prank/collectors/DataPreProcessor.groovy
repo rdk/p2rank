@@ -58,7 +58,7 @@ class DataPreProcessor implements Parametrized, Writable {
                     Attribute attr = negatives.attribute(ChemFeatureExtractor.FEAT_PROTRUSION)
                     if (attr!=null) {
                         negatives.sort(attr)
-                        negatives = WekaUtils.reverse(negatives)
+                        //negatives = WekaUtils.reverse(negatives)
                     }
                     negatives = WekaUtils.removeRatio(negatives, 1d-keepPercent)
                 } else {
