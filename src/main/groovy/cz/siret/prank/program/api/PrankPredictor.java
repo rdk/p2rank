@@ -6,7 +6,7 @@ import cz.siret.prank.program.params.Params;
 import java.nio.file.Path;
 
 /**
- * PrankPredictor
+ * Facade for making predictions with P2RANK algorithm.
  */
 public interface PrankPredictor {
 
@@ -33,6 +33,8 @@ public interface PrankPredictor {
 
     /**
      * Run prediction on a single file and write results to the filesystem to outDir.
+     *
+     * (beware of getParams().visualizations setting)
      *
      * @param proteinFile path to PDB file
      * @return prediction object containing structure, predicted pockets and labeled points

@@ -3,6 +3,7 @@ package cz.siret.prank.utils
 import com.google.common.io.Files
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+import org.apache.commons.io.FileUtils
 
 
 /**
@@ -133,9 +134,22 @@ class futils {
         return new File((String)name).exists()
     }
 
+    /**
+     * delete file or directory recursively if exists
+     */
     static boolean delete(String fname) {
         log.info "deleting " + fname
-        new File(fname).delete()
+
+        File f = new File(fname)
+
+        if (f.exists()) {
+            if (f.isDirectory()) {
+                FileUtils.deleteDirectory(f)
+            } else {
+                f.delete()
+            }
+        }
+
     }
 
     static void mkdirs(String s) {

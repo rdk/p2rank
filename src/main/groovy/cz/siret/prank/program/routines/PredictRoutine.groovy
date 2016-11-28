@@ -97,7 +97,9 @@ class PredictRoutine implements Parametrized, Writable {
                     }
                 }
 
-                item.cachedPair = null
+                if (!dataset.cached) {
+                    item.cachedPair = null
+                }
             }
         })
 

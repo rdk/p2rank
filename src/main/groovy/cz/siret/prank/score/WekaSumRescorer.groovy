@@ -83,7 +83,7 @@ class WekaSumRescorer extends PocketRescorer implements Parametrized  {
 
                 // classification
 
-                FeatureVector props = extractor.calcFeatureVector(point)
+                FeatureVector props = extractor.calcFeatureVector(point.point)
                 point.@hist = getDistributionForPoint(classifier, props)
 
                 // labels and statistics
@@ -94,7 +94,7 @@ class WekaSumRescorer extends PocketRescorer implements Parametrized  {
                 boolean observed = false
 
                 if (ligandAtoms!=null) {
-                    double closestLigandDistance = ligandAtoms.count > 0 ? ligandAtoms.dist(point) : Double.MAX_VALUE
+                    double closestLigandDistance = ligandAtoms.count > 0 ? ligandAtoms.dist(point.point) : Double.MAX_VALUE
                     observed = (closestLigandDistance <= POSITIVE_POINT_LIGAND_DISTANCE)
                 }
 

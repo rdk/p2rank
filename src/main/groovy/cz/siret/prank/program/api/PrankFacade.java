@@ -17,10 +17,10 @@ import java.nio.file.Paths;
  *      PrankPredictor prank = PrankFacade.createPredictor(Paths.get("/opt/p2rank"));
  *
  *      prank.loadConfig(Paths.get("/opt/p2rank/config/other-config.groovy")); // optional
- *      prank.getParams().setModel(...) // optional
- *      prank.getParams().setXxxx(...) // optional
+ *      prank.getParams().setModel(...)                                        // optional
+ *      prank.getParams().setXxxx(...)                                         // optional
  *
- *      Prediction pred = prank.predict(Paths.get("XXXX.pdb"));
+ *      Prediction pred = prank.predict(Paths.get("XXXX.pdb"));                // OR
  *      prank.runPrediction(Paths.get("XXXX.pdb"), Paths.get("/output/dir"));
  * </pre>
  */

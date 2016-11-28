@@ -7,19 +7,21 @@ import cz.siret.prank.program.api.PrankPredictor
 import cz.siret.prank.program.params.ConfigLoader
 import cz.siret.prank.program.params.Params
 import cz.siret.prank.program.routines.PredictRoutine
+import groovy.transform.CompileStatic
 
 import java.nio.file.Path
 
 /**
  *
  */
+@CompileStatic
 class DafaultPrankPredictor implements PrankPredictor {
 
-    private Params params = Params.INSTANCE;
-    private Path installDir;
+    private Params params = Params.INSTANCE
+    private Path installDir
 
     public DafaultPrankPredictor(Path installDir) {
-        this.installDir = installDir;
+        this.installDir = installDir
     }
 
     @Override
@@ -29,7 +31,7 @@ class DafaultPrankPredictor implements PrankPredictor {
 
     @Override
     public void loadConfig(Path configFile) {
-        ConfigLoader.overrideConfig(params, configFile.toFile());
+        ConfigLoader.overrideConfig(params, configFile.toFile())
     }
 
     /**
@@ -40,15 +42,20 @@ class DafaultPrankPredictor implements PrankPredictor {
      */
     @Override
     public Prediction predict(Path proteinFile) {
-        Dataset dataset = Dataset.createSingleFileDataset(proteinFile.toString());
+        Dataset dataset = Dataset.createSingleFileDataset(proteinFile.toString())
 
-        predict(dataset);
+        dataset.cached = true
+        params.fail_fast = true
 
-        return dataset.getItems().get(0).getPrediction();
+        predict(dataset)
+
+        return dataset.getItems().get(0).predictionPair.prediction
     }
 
     /**
      * Run prediction on a single file and write results to the filesystem to outDir.
+     *
+     * (beware of getParams().visualizations setting)
      *
      * @param proteinFile path to PDB file
      * @return prediction object containing structure, predicted pockets and labeled points
@@ -57,9 +64,12 @@ class DafaultPrankPredictor implements PrankPredictor {
     public Prediction runPrediction(Path proteinFile, Path outDir) {
         Dataset dataset = Dataset.createSingleFileDataset(proteinFile.toString());
 
-        runPrediction(dataset, outDir);
+        dataset.cached = true
+        params.fail_fast = true
 
-        return dataset.getItems().get(0).getPrediction();
+        runPrediction(dataset, outDir)
+
+        return dataset.getItems().get(0).predictionPair.prediction // TODO refactor so it's not dependent on dataset caching
     }
 
     /**
@@ -74,9 +84,9 @@ class DafaultPrankPredictor implements PrankPredictor {
         PredictRoutine predictRoutine = new PredictRoutine(
                 dataset,
                 Main.findModel(installDir.toString(), params),
-                outDir.toString());
+                outDir.toString())
 
-        return predictRoutine.execute();
+        return predictRoutine.execute()
 
     }
 
@@ -87,8 +97,8 @@ class DafaultPrankPredictor implements PrankPredictor {
      * @return
      */
     protected Dataset.Result predict(Dataset dataset) {
-        PredictRoutine predictRoutine = PredictRoutine.createForInternalUse(dataset, Main.findModel(installDir.toString(), params));
-        return predictRoutine.execute();
+        PredictRoutine predictRoutine = PredictRoutine.createForInternalUse(dataset, Main.findModel(installDir.toString(), params))
+        return predictRoutine.execute()
     }
 
 }
