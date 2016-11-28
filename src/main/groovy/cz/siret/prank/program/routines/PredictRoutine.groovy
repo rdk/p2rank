@@ -24,21 +24,33 @@ class PredictRoutine implements Parametrized, Writable {
     String outdir
 
     boolean collectStats = false
+    boolean produceVisualizations = params.visualizations
+    boolean produceFilesystemOutput = true
 
-    PredictRoutine(Dataset dataSet, String modelf, String outdir) {
-        this.dataset = dataSet
+    PredictRoutine(Dataset dataset, String modelf, String outdir) {
+        this.dataset = dataset
         this.modelf = modelf
         this.outdir = outdir
     }
 
+    static PredictRoutine createForInternalUse(Dataset dataset, String modelf) {
+        PredictRoutine routine = new PredictRoutine(dataset, modelf, null)
+        routine.produceFilesystemOutput = false
+        routine.produceVisualizations = false
+        return routine
+    }
+
+
     Dataset.Result execute() {
         def timer = ATimer.start()
 
-        futils.mkdirs(outdir)
-        futils.overwrite("$outdir/params.txt", params.toString())
-
         write "predicting pockets for proteins from dataset [$dataset.name]"
-        log.info "outdir: $outdir"
+
+        if (produceFilesystemOutput) {
+            futils.mkdirs(outdir)
+            futils.overwrite("$outdir/params.txt", params.toString())
+            log.info "outdir: $outdir"
+        }
 
         Classifier classifier = WekaUtils.loadClassifier(modelf)
 
@@ -50,7 +62,7 @@ class PredictRoutine implements Parametrized, Writable {
         }
 
         String visDir = "$outdir/visualizations"
-        if (params.visualizations) {
+        if (produceVisualizations) {
             futils.mkdirs(visDir)
         }
 
@@ -68,13 +80,15 @@ class PredictRoutine implements Parametrized, Writable {
                 PocketRescorer rescorer = new WekaSumRescorer(classifier, extractor)
                 rescorer.reorderPockets(pair.prediction) // in this context reorderPockets() makes predictions
 
-                if (params.visualizations) {
+                if (produceVisualizations) {
                     new PyMolRenderer(visDir).visualizeHistograms(item, rescorer, pair)
                 }
 
-                PredictionSummary psum = new PredictionSummary(pair.prediction)
-                String outf = "$outdir/${item.label}_predictions.csv"
-                futils.overwrite(outf, psum.toCSV().toString())
+                if (produceFilesystemOutput) {
+                    PredictionSummary psum = new PredictionSummary(pair.prediction)
+                    String outf = "$outdir/${item.label}_predictions.csv"
+                    futils.overwrite(outf, psum.toCSV().toString())
+                }
 
                 if (collectStats) {  // expects dataset with liganated proteins
                     stats.predictionsEval.addPrediction(pair, pair.prediction.reorderedPockets)
@@ -95,7 +109,11 @@ class PredictRoutine implements Parametrized, Writable {
         }
 
         write "predicting pockets finished in $timer.formatted"
-        write "results saved to directory [${futils.absPath(outdir)}]"
+
+        if (produceFilesystemOutput) {
+            write "results saved to directory [${futils.absPath(outdir)}]"
+        }
+
 
         return result
     }

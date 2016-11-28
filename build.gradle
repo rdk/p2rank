@@ -4,7 +4,7 @@ apply plugin: 'idea'
 
 
 group = 'cz.siret'
-version = '2.0-rc.2'
+version = '2.0-rc.2_JAVAAPI'
 
 
 description = 'Ligand binding site prediction based on machine learning.'
@@ -76,6 +76,11 @@ jar {
 
     manifest {
         attributes 'Main-Class': 'cz.siret.p2rank.program.Main'
+    }
+
+    //fat jar: include all dependencies
+    from {
+        configurations.compile.filter( {! (it.name =~ /.*\.pom/ )}).collect { it.isDirectory() ? it : zipTree(it) }
     }
 }
 

@@ -105,7 +105,9 @@ class WekaSumRescorer extends PocketRescorer implements Parametrized  {
 
             // generate predictions
             if (params.predictions) {
-                prediction.reorderedPockets = new PocketPredictor().predictPockets(labeledPoints, prediction.protein)
+                prediction.pockets = new PocketPredictor().predictPockets(labeledPoints, prediction.protein)
+                prediction.reorderedPockets = prediction.pockets
+                prediction.labeledPoints = labeledPoints
             }
         }
 

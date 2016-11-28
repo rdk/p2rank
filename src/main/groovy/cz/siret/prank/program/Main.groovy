@@ -90,7 +90,7 @@ class Main implements Parametrized, Writable {
         return dir
     }
 
-    String findModel() {
+    public static String findModel(String installDir, Params params) {
         String modelName = params.model
 
         String modelf = modelName
@@ -102,6 +102,10 @@ class Main implements Parametrized, Writable {
             throw new PrankException("model not found")
         }
         return modelf
+    }
+
+    String findModel() {
+        return findModel(installDir, params)
     }
 
     static String findDataset(String dataf) {

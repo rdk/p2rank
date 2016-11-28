@@ -9,6 +9,8 @@ class ConfigLoader {
 
     static overrideConfig(Params ps, File paramsGroovyFile) {
 
+        log.debug("Overriding default config with [$paramsGroovyFile.path]")
+
         assert paramsGroovyFile.exists(), "params file not fund! ($paramsGroovyFile.path)"
 
         def imports = new ImportCustomizer()

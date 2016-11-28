@@ -7,14 +7,14 @@ import org.biojava.nbio.structure.Atom
  * Annotated point used for generating visualizations and pocket predictions.
  */
 @CompileStatic
-final class LabeledPoint implements Atom {
+class LabeledPoint implements Atom {
 
     @Delegate Atom point
     int PDBserial
 
     /**
      * ligandability score histogram - direct output of classifier (hist[0]=unligandable,hist[1]=ligandable)
-     * always length 2
+     * always length=2
      */
     double[] hist  // length=2
 
@@ -26,6 +26,7 @@ final class LabeledPoint implements Atom {
      * 0 = no pocket
      */
     int pocket = 0
+
 
     LabeledPoint(Atom point, double[] hist, boolean observed, boolean predicted) {
         this.point = point
@@ -54,5 +55,17 @@ final class LabeledPoint implements Atom {
     void setPDBserial(int PDBserial) {
         this.PDBserial = PDBserial
     }
+
+//    /**
+//     * @return predicted lgandability score from interval <0,1> (aggregated from histogram)
+//     */
+//    double getLigandabilityScore() {
+//        hist[1] / (hist[0]+hist[1])
+//    }
+
+//===========================================================================================================//
+
+
+
 
 }
