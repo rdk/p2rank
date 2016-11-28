@@ -218,7 +218,7 @@ abstract class CompositeRoutine extends Routine {
             m.LIG_COUNT_DISTANT = originalEval.distantLigandCount / runs
             m.AVG_LIG_PROT_DIST = originalEval.avgLigCenterToProtDist
 
-            m.DCA40_IDENTIFIED = m.DCA4_0 * m.LIG_COUNT
+            m.DCA40_NOMINAL = m.DCA4_0 * m.LIG_COUNT
 
             m.AVG_POCKETS = rescoredEval.avgPockets
             m.AVG_CLOSTES_POCKET_DIST = rescoredEval.avgClosestPocketDist
@@ -234,6 +234,11 @@ abstract class CompositeRoutine extends Routine {
             m.TRAIN_NEGATIVES = avgTrainNegatives
             m.TRAIN_POS_RATIO = trainPositivesRatio
 
+            m.TP = classifierStats.tp
+            m.TN = classifierStats.tn
+            m.FP = classifierStats.fp
+            m.FN = classifierStats.fn
+
             m.ACC = classifierStats.ACC
             m.SPC = classifierStats.SPC
             m.NPV = classifierStats.NPV
@@ -243,6 +248,7 @@ abstract class CompositeRoutine extends Routine {
             m.F1 = classifierStats.f1
             m.F2 = classifierStats.f2
             m.F05 = classifierStats.f05
+            m.TPX = classifierStats.getTPX()
 
             m.ME     = classifierStats.ME
             m.MEpos  = classifierStats.MEpos

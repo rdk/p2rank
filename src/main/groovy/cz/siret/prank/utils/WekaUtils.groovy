@@ -9,7 +9,6 @@ import weka.core.converters.ConverterUtils
 import weka.filters.Filter
 import weka.filters.unsupervised.attribute.NumericToNominal
 import weka.filters.unsupervised.instance.Randomize
-import weka.filters.unsupervised.instance.RemovePercentage
 
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
@@ -17,7 +16,7 @@ import java.util.zip.ZipOutputStream
 
 @Slf4j
 @CompileStatic
-class WekaUtils {
+class WekaUtils implements Writable {
 
     private static final int BUFFER_SIZE = 10 * 1024 * 1024;
 
@@ -130,20 +129,71 @@ class WekaUtils {
         return res
     }
 
-    // == filters ===
+    static List<Instances> splitPositivesNegatives(Instances all) {
+        Instances pos = new Instances(all, 0)
+        Instances neg = new Instances(all, 0)
 
-    static Instances removePercentage(double pc, Instances data) {
-        RemovePercentage filter = new RemovePercentage()
-        filter.setInputFormat(data)
-        filter.setPercentage(pc)
-        return Filter.useFilter(data, filter)
+        for (Instance inst : all) {
+            if (inst.classValue() == 0) {
+                neg.add(inst)
+            } else {
+                pos.add(inst)
+            }
+        }
+
+        return [pos, neg]
     }
 
-    static Instances randomize(int seed, Instances data) {
+    static int countClass(Instances data, double val) {
+        int sum = 0
+        for (Instance inst : data) {
+            if (inst.classValue() == val) {
+                sum++
+            }
+        }
+        sum
+    }
+
+    static int countPositives(Instances data) {
+        countClass(data, 1d)
+    }
+
+    static int countNegatives(Instances data) {
+        countClass(data, 0d)
+    }
+
+    // == filters ===
+
+    static Instances randomSubsample(double keepPercentage, int seed, Instances data) {
+        assert keepPercentage>=0 && keepPercentage<=1
+
+        return removeRatio( randomize(data, seed), 1-keepPercentage)
+
+    }
+
+    /**
+     *
+     * @param removeRatio
+     * @param data
+     * @return
+     */
+    static Instances removeRatio(Instances data, double removeRatio) {
+        int keepCount = (int)Math.round(data.size() * (1d-removeRatio))
+        Instances result = new Instances(data, 0, keepCount)
+        return result
+    }
+
+    static Instances randomize(Instances data, int seed) {
         Randomize filter = new Randomize()
         filter.setInputFormat(data)
         filter.setRandomSeed(seed)
         return Filter.useFilter(data, filter)
+    }
+
+    static Instances reverse(Instances data) {
+        Instances res = new Instances(data, data.size())
+        res.addAll(data.reverse())
+        return res
     }
 
     static Instances numericToNominal(String attributeIndices, Instances data) {

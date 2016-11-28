@@ -4,7 +4,7 @@ apply plugin: 'idea'
 
 
 group = 'cz.siret'
-version = '2.0-rc.2_JAVAAPI'
+version = '2.0-rc.3_JAVAAPI'
 
 
 description = 'Ligand binding site prediction based on machine learning.'
@@ -64,6 +64,12 @@ task copyBinaryToDist( type: Copy ) {
     include "*.jar"
 }
 
+// task fatJar(type: Jar) {
+//     baseName = project.name + '-all'
+//     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+//     with jar
+// }
+
 assemble {
     dependsOn processResources
     dependsOn copyBinaryToDist
@@ -103,6 +109,7 @@ dependencies {
 
     compile 'org.openscience.cdk:cdk-qsarmolecular:1.5.13'    // for NumericalSurface class
     compile 'org.openscience.cdk:cdk-data:1.5.13'             // for Atom class
+    // compile 'com.github.fommil.netlib:all:1.1.2'              // for weka
     compile 'nz.ac.waikato.cms.weka:weka-dev:3.9.0'
     compile files('lib/biojava-structure-4.2.4-rdk1.jar')     // customized fork for pocket-rank
     compile fileTree(dir: 'lib', include: '*.jar')

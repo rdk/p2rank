@@ -48,6 +48,13 @@ class Protein implements Parametrized {
 
 //===========================================================================================================//
 
+    /**
+     * secondary data calculated by feature calculators (see FeatureCalculator)
+     */
+    Map<String, Object> secondaryData = new HashMap<>()
+
+//===========================================================================================================//
+
     void calcuateSurfaceAndExposedAtoms() {
         if (exposedAtoms==null) {
             if (proteinAtoms.empty) {

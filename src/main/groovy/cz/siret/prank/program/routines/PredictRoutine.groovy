@@ -104,7 +104,6 @@ class PredictRoutine implements Parametrized, Writable {
         if (collectStats) {
             String modelLabel = classifier.class.simpleName + " ($modelf)"
             stats.logAndStore(outdir, modelLabel)
-
             stats.logMainResults(outdir, modelLabel)
         }
 

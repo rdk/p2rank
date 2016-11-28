@@ -339,4 +339,9 @@ import cz.siret.prank.program.params.Params
      * stop processing the datsaset on the first unrecoverable error with a dataset item
      */
     fail_fast = false
+
+    /**
+     * don't procuce prediction files for individual proteins (useful for long repetitive experments)
+     */
+    output_only_stats = false
 }

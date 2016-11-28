@@ -1,5 +1,6 @@
 package cz.siret.prank.program.params
 
+import cz.siret.prank.program.Main
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
@@ -356,6 +357,30 @@ class Params {
      * stop processing the datsaset on the first unrecoverable error with a dataset item
      */
     boolean fail_fast = false
+
+    /**
+     * target class ratio of positives/negatives we train on.
+     * relates to subsampling and supersampling
+     */
+    double train_class_ratio = 0.1
+
+    boolean subsample = false
+
+    /**
+     * don't procuce prediction files for individual proteins (useful for long repetitive experments)
+     */
+    boolean output_only_stats = false
+
+    /**
+     * sort negatives desc by protrusion before subsampling
+     */
+    boolean subsampl_high_protrusion_negatives = false
+
+//===========================================================================================================//
+
+    String getVersion() {
+        Main.getVersion()
+    }
 
 //===========================================================================================================//
 

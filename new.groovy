@@ -12,7 +12,7 @@ import cz.siret.prank.program.params.Params
      * all output of the prorgam will be stored in subdirectores of this directory
      * (set absolute path or path relative to install dir, null defaults to working dir)
      */
-    output_base_dir = "../../p2rank-results/2.0-rc.2"
+    output_base_dir = "../../p2rank-results/${version}"
 
     visualizations = false
 
@@ -53,17 +53,18 @@ import cz.siret.prank.program.params.Params
      */
     feature_importances = false
 
+    output_only_stats = true
+
 
     // new optimizations in smichov project:
 
     //residue_table_features = ["RAx"]
     //atom_table_feat_pow = 8
 
-
     atom_table_feat_keep_sgn = true
 
-    neighbourhood_radius = 8
+    //neighbourhood_radius = 8
 
-    atom_table_features = ["ap5sasaValids","ap5sasaInvalids"] // "apRawValids","apRawInvalids","atomicHydrophobicity"
+    //atom_table_features = ["ap5sasaValids","ap5sasaInvalids"] // "apRawValids","apRawInvalids","atomicHydrophobicity"
 
 }

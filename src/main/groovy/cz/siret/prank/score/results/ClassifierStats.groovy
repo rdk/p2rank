@@ -147,6 +147,10 @@ class ClassifierStats {
         div( (tp + tn) , count )  // accuraccy
     }
 
+    double getTPX() {
+        div tp, tp + fn + fp
+    }
+
 //===========================================================================================================//
 
     double getME()         { div sumE, count        }
