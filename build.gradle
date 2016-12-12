@@ -73,7 +73,7 @@ task copyBinaryToDist( type: Copy ) {
 assemble {
     dependsOn processResources
     dependsOn copyBinaryToDist
-    dependsOn copyDependenciesToDist
+    //dependsOn copyDependenciesToDist
 }
 
 jar {
