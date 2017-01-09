@@ -8,7 +8,7 @@ import cz.siret.prank.features.chemproperties.ChemFeatureExtractor
 import cz.siret.prank.geom.Atoms
 
 /**
- * calculates feature vectors for pocket
+ * calculates feature vectors for pocket (PRANK) or whole protein (P2RANK)
  */
 @CompileStatic
 abstract class FeatureExtractor<P extends FeatureVector> {

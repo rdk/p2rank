@@ -1,6 +1,6 @@
 package cz.siret.prank.collectors
 
-import cz.siret.prank.features.chemproperties.ChemFeatureExtractor
+import cz.siret.prank.features.implementation.ProtrusionFeature
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.PerfUtils
 import cz.siret.prank.utils.WekaUtils
@@ -13,7 +13,6 @@ import weka.core.Instances
 @Slf4j
 @CompileStatic
 class DataPreProcessor implements Parametrized, Writable {
-
 
     Instances preProcessTrainData(Instances data) {
         double removePercentage = 0
@@ -55,7 +54,7 @@ class DataPreProcessor implements Parametrized, Writable {
 
                 if (params.subsampl_high_protrusion_negatives) {
                     // sory by protrusion desc before subsampling
-                    Attribute attr = negatives.attribute(ChemFeatureExtractor.FEAT_PROTRUSION)
+                    Attribute attr = negatives.attribute(ProtrusionFeature.NAME)
                     if (attr!=null) {
                         negatives.sort(attr)
                         //negatives = WekaUtils.reverse(negatives)
@@ -80,12 +79,6 @@ class DataPreProcessor implements Parametrized, Writable {
             data = WekaUtils.randomize(data, seed)
 
         }
-
-
-
-
-
-
 
         return data
     }

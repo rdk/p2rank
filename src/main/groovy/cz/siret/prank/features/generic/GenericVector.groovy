@@ -28,8 +28,14 @@ class GenericVector {
         return data[header.getColIndex(colName)]
     }
 
-    double set(String colName, double value) {
+    void set(String colName, double value) {
         data[header.getColIndex(colName)] = value
+    }
+
+    void setValues(List<String> valuesHeader, double[] values) {
+        String firstColName = valuesHeader[0]
+        int start = header.getColIndex(firstColName)
+        System.arraycopy(values, 0, data, start, values.length)
     }
 
     List<Double> toList() {

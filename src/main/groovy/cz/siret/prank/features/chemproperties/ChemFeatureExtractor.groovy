@@ -1,26 +1,29 @@
 package cz.siret.prank.features.chemproperties
 
-import groovy.transform.CompileStatic
-import groovy.util.logging.Slf4j
-import org.biojava.nbio.structure.Atom
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.features.FeatureVector
+import cz.siret.prank.features.api.FeatureCalculator
+import cz.siret.prank.features.api.SasFeatureCalculationContext
 import cz.siret.prank.features.generic.GenericHeader
 import cz.siret.prank.features.weight.WeightFun
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Struct
 import cz.siret.prank.geom.samplers.PointSampler
 import cz.siret.prank.program.params.Parametrized
+import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
+import org.biojava.nbio.structure.Atom
 
+/**
+ * Handles the process of calculation of features.
+ * At first it calculates features for solvent exposed atoms of the protein.
+ * Then it projects them onto ASA points and calculates additional features for ASA point vector.
+ */
 @Slf4j
 @CompileStatic
 class ChemFeatureExtractor extends FeatureExtractor<ChemVector> implements Parametrized {
-
-    public static final String FEAT_PROTRUSION = "protrusion"
-    public static final String FEAT_SURF_PROTRUSION = "surfprot"
-    public static final String FEAT_BFACTOR = "bfactor"
 
     /** properties of atom itself */
     private Map<Integer, FeatureVector> properties = new HashMap<>()
@@ -28,13 +31,10 @@ class ChemFeatureExtractor extends FeatureExtractor<ChemVector> implements Param
     private Map<Integer, FeatureVector> smoothRepresentations = new HashMap<>()
 
     GenericHeader headerAdditionalFeatures // header of additional generic vector
-    List<String> extraFeatures
+    List<String> extraFeaturesHeader
     List<String> atomTableFeatures
     List<String> residueTableFeatures
 
-    boolean useFeatProtrusion
-    boolean useFeatBfactor
-    boolean useFeatSurfProtrusion
 
     // tied to a protein
     private PointSampler pocketPointSampler
@@ -48,7 +48,6 @@ class ChemFeatureExtractor extends FeatureExtractor<ChemVector> implements Param
     private boolean DO_SMOOTH_REPRESENTATION = params.smooth_representation
     private double SMOOTHING_CUTOFF_DIST = params.smoothing_radius
     private final boolean AVERAGE_FEAT_VECTORS = params.average_feat_vectors
-    private final double PROTRUSION_RADIUS = params.protrusion_radius
 
     private final WeightFun weightFun = WeightFun.create(params.weight_function)
 
@@ -57,6 +56,8 @@ class ChemFeatureExtractor extends FeatureExtractor<ChemVector> implements Param
     Atoms surfaceLayerAtoms
     Atoms deepSurrounding    // for protrusion
     Atoms sampledPoints
+
+    ExtraFeatureSetup extraFeatureSetup
 
 //===========================================================================================================//
 
@@ -73,14 +74,16 @@ class ChemFeatureExtractor extends FeatureExtractor<ChemVector> implements Param
 
     private void initHeader() {
 
-        extraFeatures = params.extra_features
+        extraFeatureSetup = new ExtraFeatureSetup(params.extra_features)
+
+        extraFeaturesHeader = extraFeatureSetup.jointHeader
         atomTableFeatures = params.atom_table_features // ,"apRawInvalids","ap5sasaValids","ap5sasaInvalids"
         residueTableFeatures = params.residue_table_features
 
         headerAdditionalFeatures = new GenericHeader([
-                *extraFeatures,
                 *atomTableFeatures,
-                *residueTableFeatures
+                *residueTableFeatures,
+                *extraFeaturesHeader,
         ] as List<String>)
 
     }
@@ -110,14 +113,11 @@ class ChemFeatureExtractor extends FeatureExtractor<ChemVector> implements Param
         this.MASK_UNKNOWN_RESIDUES = proteinPrototype.MASK_UNKNOWN_RESIDUES
         this.headerAdditionalFeatures = proteinPrototype.headerAdditionalFeatures
         this.pocketPointSampler    = proteinPrototype.pocketPointSampler
-        this.extraFeatures         = proteinPrototype.extraFeatures
+        this.extraFeaturesHeader         = proteinPrototype.extraFeaturesHeader
         this.atomTableFeatures     = proteinPrototype.atomTableFeatures
         this.residueTableFeatures  = proteinPrototype.residueTableFeatures
         this.trainingExtractor     = proteinPrototype.trainingExtractor
-
-        useFeatProtrusion = extraFeatures.contains(FEAT_PROTRUSION)
-        useFeatSurfProtrusion = extraFeatures.contains(FEAT_SURF_PROTRUSION)
-        useFeatBfactor = extraFeatures.contains(FEAT_BFACTOR)
+        this.extraFeatureSetup     = extraFeatureSetup
 
         if (pocket!=null) {
             if (pocket.surfaceAtoms.count==0) {
@@ -219,12 +219,12 @@ class ChemFeatureExtractor extends FeatureExtractor<ChemVector> implements Param
 
     /**
      *
-     * @param point
-     * @param fromAtoms
+     * @param point SAS point
+     * @param neighbourhoodAtoms neighbourhood protein atoms
      * @param fromVectors  must match atoms
      * @return
      */
-    private ChemVector calcFeatVectorFromVectors(Atom point, Atoms fromAtoms, Map<Integer, FeatureVector> fromVectors) {
+    private ChemVector calcFeatVectorFromVectors(Atom point, Atoms neighbourhoodAtoms, Map<Integer, FeatureVector> fromVectors) {
         ChemVector res = new ChemVector(headerAdditionalFeatures)
 
         //if (fromAtoms.count==0) {
@@ -232,14 +232,14 @@ class ChemFeatureExtractor extends FeatureExtractor<ChemVector> implements Param
         //    return null
         //}
 
-        int n = fromAtoms.count
+        int n = neighbourhoodAtoms.count
 
         //if (n==1) {
         //    Atom a = fromAtoms.get(0)
         //    log.warn "calc from only 1 atom: $a.name $a"
         //}
 
-        for (Atom a : fromAtoms) {
+        for (Atom a : neighbourhoodAtoms) {
             ChemVector props = (ChemVector) fromVectors.get(a.PDBserial)
 
             //assert props!=null, "!!! properties not precalculated "
@@ -261,25 +261,13 @@ class ChemFeatureExtractor extends FeatureExtractor<ChemVector> implements Param
 
         res.atoms = n
 
-        if (useFeatProtrusion) {
 
-            // brute force ... O(N*M) where N is number of atoms and M number of Connolly points
-            // deepSurrounding conmtains often nearly all of the protein atoms
-            // and this is one of the most expensive part od the algorithm when making predictions
-            // (apart from classification and Connolly surface generation)
-            // better solution would be to build triangulation over protein atoms or to use KD-tree with range search
-            // or at least some space compartmentalization
+        // calculate extra SAS features
 
-            // optimization? - we need ~250 for protrusion=10 and in this case it is sower
-            //int MAX_PROTRUSION_ATOMS = 250
-            //Atoms deepSurrounding = this.deepSurrounding.withKdTree().kdTree.findNearestNAtoms(point, MAX_PROTRUSION_ATOMS, false)
-
-            int protAtoms = deepSurrounding.cutoffAtomsAround(point, PROTRUSION_RADIUS).count
-            res.additionalVector.set(FEAT_PROTRUSION, protAtoms)
-        }
-        if (useFeatSurfProtrusion) {
-            int sp = protein.exposedAtoms.cutoffAtomsAround(point, PROTRUSION_RADIUS).count
-            res.additionalVector.set(FEAT_SURF_PROTRUSION, sp)
+        SasFeatureCalculationContext context = new SasFeatureCalculationContext(protein, neighbourhoodAtoms, this)
+        for (FeatureCalculator feature : extraFeatureSetup.enabledSasFeatures) {
+            double[] values = feature.calculateForSasPoint(point, context)
+            res.additionalVector.setValues(feature.header, values)
         }
 
         return res
@@ -289,11 +277,11 @@ class ChemFeatureExtractor extends FeatureExtractor<ChemVector> implements Param
      *
      * @param point
      * @param useSmoothRepresentations or use basic properties for first run
-     * @param fromAtoms
+     * @param neighbourhoodAtoms
      * @param store
      * @return
      */
-    private ChemVector calcFeatureVectorFromAtoms(Atom point, boolean useSmoothRepresentations, Atoms fromAtoms) {
+    private ChemVector calcFeatureVectorFromAtoms(Atom point, boolean useSmoothRepresentations, Atoms neighbourhoodAtoms) {
         Map<Integer, FeatureVector> fromVectors
         if (useSmoothRepresentations) {
             fromVectors = smoothRepresentations
@@ -305,7 +293,7 @@ class ChemFeatureExtractor extends FeatureExtractor<ChemVector> implements Param
             log.error "!!! can't calculate representation from no vectors"
         }
 
-        return calcFeatVectorFromVectors(point, fromAtoms, fromVectors)
+        return calcFeatVectorFromVectors(point, neighbourhoodAtoms, fromVectors)
     }
 
     private double calcWeight(double dist) {

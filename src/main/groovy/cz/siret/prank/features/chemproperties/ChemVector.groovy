@@ -1,10 +1,8 @@
 package cz.siret.prank.features.chemproperties
 
-import groovy.transform.CompileStatic
-import groovy.util.logging.Slf4j
-import org.biojava.nbio.structure.Atom
-import org.biojava.nbio.structure.Element
 import cz.siret.prank.features.FeatureVector
+import cz.siret.prank.features.api.AtomFeatureCalculationContext
+import cz.siret.prank.features.api.FeatureCalculator
 import cz.siret.prank.features.generic.GenericHeader
 import cz.siret.prank.features.generic.GenericVector
 import cz.siret.prank.features.tables.PropertyTable
@@ -12,6 +10,10 @@ import cz.siret.prank.features.volsite.VolSitePharmacophore
 import cz.siret.prank.program.params.Params
 import cz.siret.prank.utils.PDBUtils
 import cz.siret.prank.utils.futils
+import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
+import org.biojava.nbio.structure.Atom
+import org.biojava.nbio.structure.Element
 
 /**
  * Feature vector of Physico-Chemical Properties (and everything else contained in GenericVector additionalVector)
@@ -288,8 +290,12 @@ public class ChemVector extends FeatureVector implements Cloneable {
             additionalVector.set(property, val)
         }
 
-        if (extractor.useFeatBfactor) {
-            additionalVector.set(ChemFeatureExtractor.FEAT_BFACTOR, atom.getTempFactor())
+        // Calculate extra atom features
+
+        AtomFeatureCalculationContext context = new AtomFeatureCalculationContext(extractor.protein)
+        for (FeatureCalculator feature : extractor.extraFeatureSetup.enabledAtomFeatures) {
+            double[] values = feature.calculateForAtom(atom, context)
+            additionalVector.setValues(feature.header, values)
         }
 
     }
