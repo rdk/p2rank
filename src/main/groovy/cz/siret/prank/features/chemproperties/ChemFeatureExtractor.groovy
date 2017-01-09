@@ -92,6 +92,12 @@ class ChemFeatureExtractor extends FeatureExtractor<ChemVector> implements Param
     FeatureExtractor createPrototypeForProtein(Protein protein) {
         ChemFeatureExtractor res = new ChemFeatureExtractor(protein)
         res.trainingExtractor = this.trainingExtractor
+
+        // init features
+        for (FeatureCalculator feature : extraFeatureSetup.enabledFeatures) {
+            feature.preProcessProtein(protein)
+        }
+
         return res
     }
 
@@ -117,7 +123,7 @@ class ChemFeatureExtractor extends FeatureExtractor<ChemVector> implements Param
         this.atomTableFeatures     = proteinPrototype.atomTableFeatures
         this.residueTableFeatures  = proteinPrototype.residueTableFeatures
         this.trainingExtractor     = proteinPrototype.trainingExtractor
-        this.extraFeatureSetup     = extraFeatureSetup
+        this.extraFeatureSetup     = proteinPrototype.extraFeatureSetup
 
         if (pocket!=null) {
             if (pocket.surfaceAtoms.count==0) {
@@ -183,9 +189,19 @@ class ChemFeatureExtractor extends FeatureExtractor<ChemVector> implements Param
         }
         res.sampledPoints = protein.getSurface(trainingExtractor).points
 
+
+
         log.info "P2R protein:$protein.proteinAtoms.count  exposedAtoms:$res.surfaceLayerAtoms.count  deepSurrounding:$res.deepSurrounding.count connollyPoints:$res.sampledPoints.count"
 
         return res
+    }
+
+    @Override
+    void finalizeProteinPrototype() {
+        // finalize features
+        for (FeatureCalculator feature : extraFeatureSetup.enabledFeatures) {
+            feature.postProcessProtein(protein)
+        }
     }
 
 //===========================================================================================================//

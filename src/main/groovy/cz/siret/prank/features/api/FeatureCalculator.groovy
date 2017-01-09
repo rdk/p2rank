@@ -53,7 +53,7 @@ interface FeatureCalculator {
      * @param protein
      * @return
      */
-    double[] calculateForAtom(Atom proteinSurfaceAtom, AtomFeatureCalculationContext protein)
+    double[] calculateForAtom(Atom proteinSurfaceAtom, AtomFeatureCalculationContext context)
 
     /**
      * (Optionally) perform post processing on the whole protein.

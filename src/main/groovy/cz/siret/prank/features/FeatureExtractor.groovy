@@ -54,6 +54,11 @@ abstract class FeatureExtractor<P extends FeatureVector> {
     abstract FeatureExtractor createInstanceForPocket(Pocket pocket)
 
     /**
+     * Called after all extraction on the protein is done
+     */
+    void finalizeProteinPrototype() { }
+
+    /**
      * @return abstract factory method to create factory :p
      */
     static FeatureExtractor createFactory() {

@@ -14,4 +14,5 @@ class AtomFeatureCalculationContext {
     AtomFeatureCalculationContext(Protein protein) {
         this.protein = protein
     }
+
 }

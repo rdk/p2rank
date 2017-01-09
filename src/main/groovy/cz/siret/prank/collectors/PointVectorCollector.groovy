@@ -80,6 +80,8 @@ class PointVectorCollector extends VectorCollector implements Parametrized {
             }
         }
 
+        proteinExtractorPrototype.finalizeProteinPrototype()
+
         return finalRes
     }
 

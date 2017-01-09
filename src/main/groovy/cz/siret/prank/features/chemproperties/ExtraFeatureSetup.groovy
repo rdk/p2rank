@@ -10,15 +10,17 @@ import groovy.transform.CompileStatic
 @CompileStatic
 class ExtraFeatureSetup {
 
+    List<FeatureCalculator> enabledFeatures = new ArrayList<>()
+
     List<FeatureCalculator> enabledAtomFeatures = new ArrayList<>()
     List<FeatureCalculator> enabledSasFeatures = new ArrayList<>()
 
     List<String> jointHeader = new ArrayList<>()
 
 
-    ExtraFeatureSetup(List<String> enabledFeatures) {
+    ExtraFeatureSetup(List<String> enabledFeaturesNames) {
 
-        for (String name : enabledFeatures) {
+        for (String name : enabledFeaturesNames) {
             FeatureCalculator calculator = FeatureRegistry.featureImplementations.get(name)
 
             if (calculator!=null) {
@@ -33,10 +35,9 @@ class ExtraFeatureSetup {
 
         }
 
-        for (FeatureCalculator calculator : enabledAtomFeatures) {
-            jointHeader.addAll(calculator.header)
-        }
-        for (FeatureCalculator calculator : enabledSasFeatures) {
+        enabledFeatures = enabledAtomFeatures + enabledSasFeatures
+
+        for (FeatureCalculator calculator : enabledFeatures) {
             jointHeader.addAll(calculator.header)
         }
 
