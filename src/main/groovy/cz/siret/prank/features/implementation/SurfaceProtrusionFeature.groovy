@@ -6,7 +6,7 @@ import cz.siret.prank.program.params.Parametrized
 import org.biojava.nbio.structure.Atom
 
 /**
- *
+ *  Similar as ProtrusionFeature but takes number of protein atoms only from protein solvent exposed atoms.
  */
 class SurfaceProtrusionFeature extends SasFeatureCalculator implements Parametrized {
 

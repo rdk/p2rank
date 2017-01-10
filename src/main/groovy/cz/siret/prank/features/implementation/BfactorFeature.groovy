@@ -5,7 +5,7 @@ import cz.siret.prank.features.api.AtomFeatureCalculator
 import org.biojava.nbio.structure.Atom
 
 /**
- *
+ * Simple single value Atom feature that adds B-factor (temperature factor) from PDB to Atom feature vector.
  */
 class BfactorFeature extends AtomFeatureCalculator {
 

@@ -4,7 +4,9 @@ import cz.siret.prank.domain.Protein
 import groovy.transform.CompileStatic
 
 /**
+ * Common FeatureCalculator implementation base.
  *
+ * To implement new features extend AtomFeatureCalculator or SasFeatureCalculator.
  */
 @CompileStatic
 abstract class AbstractFeatureCalculator implements FeatureCalculator {

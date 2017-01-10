@@ -4,7 +4,7 @@ import cz.siret.prank.domain.Protein
 import groovy.transform.CompileStatic
 
 /**
- *
+ * Context for calculation of atom feature.
  */
 @CompileStatic
 class AtomFeatureCalculationContext {

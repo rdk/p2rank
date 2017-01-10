@@ -6,7 +6,7 @@ import cz.siret.prank.geom.Atoms
 import groovy.transform.CompileStatic
 
 /**
- *
+ * Context for calculation of SAS feature.
  */
 @CompileStatic
 class SasFeatureCalculationContext {

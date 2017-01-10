@@ -7,7 +7,8 @@ import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
 
 /**
- *
+ * Simple single value SAS feature that adds "ptortusion" of protein surface to SAS feature vector.
+ * Protrusion is simply a number of protein atoms in params.protrusion_radius around SAS point.
  */
 @CompileStatic
 class ProtrusionFeature extends SasFeatureCalculator implements Parametrized {
@@ -31,7 +32,7 @@ class ProtrusionFeature extends SasFeatureCalculator implements Parametrized {
         //int MAX_PROTRUSION_ATOMS = 250
         //Atoms deepSurrounding = this.deepSurrounding.withKdTree().kdTree.findNearestNAtoms(point, MAX_PROTRUSION_ATOMS, false)
 
-        double protAtoms = context.extractor.deepSurrounding.cutoffAtomsAround(sasPoint, params.protrusion_radius).count
+        double protAtoms = context.extractor.deepSurrounding.cutoffAtomsAround(sasPoint, params.protrusion_radius).count  // deepSurrounding is previously generated in ChemFeatureExtractor, depth is params.protrusion_radius
         return [protAtoms] as double[]
     }
 

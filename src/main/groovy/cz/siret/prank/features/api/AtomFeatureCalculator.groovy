@@ -4,7 +4,11 @@ import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
 
 /**
+ * Extend this class to implement new feature that adds values to Atom feature vector.
+ * Values are then projected to SAS points to SAS featre vector by P2RANK.
  *
+ * Register implementation in FeatureRegistry.
+ * To use feature in experiments add feature name (FeatureCalculator.getName()) to Params.extra_features.
  */
 @CompileStatic
 abstract class AtomFeatureCalculator extends AbstractFeatureCalculator {

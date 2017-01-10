@@ -8,6 +8,8 @@ import org.biojava.nbio.structure.Atom
  * Calculator for a single composite feature. Composite feature consists of the vector of doubles with the header.
  *
  * Implementations should be stateless.
+ *
+ * To implement new features extend AtomFeatureCalculator or SasFeatureCalculator.
  */
 @CompileStatic
 interface FeatureCalculator {
