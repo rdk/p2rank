@@ -19,7 +19,7 @@ import cz.siret.prank.program.params.Params
      * default model
      * (set path relative to install_dir/models/)
      */
-    model = "p2rank_a.model"
+    model = "prank.model"
 
     /**
      * Random seed
@@ -51,9 +51,9 @@ import cz.siret.prank.program.params.Params
      */
     use_volsite_features = true
 
-    atom_table_features = ["apRawValids","apRawInvalids","atomicHydrophobicity"]
-
     extra_features = ["protrusion","bfactor"]
+
+    atom_table_features = ["ap5sasaValids","ap5sasaInvalids"] // "apRawValids","apRawInvalids","atomicHydrophobicity"
 
     atom_table_feat_pow = 2
 
@@ -110,7 +110,7 @@ import cz.siret.prank.program.params.Params
     /**
      * cutoff around ligand that defines positives
      */
-    positive_point_ligand_distance = 2.6
+    positive_point_ligand_distance = 2.5
 
     /**
      * points between [positive_point_ligand_distance,neutral_point_margin] will be left out form training
@@ -122,7 +122,7 @@ import cz.siret.prank.program.params.Params
     /**
      * chem. properties representation neighbourhood radius in A
      */
-    neighbourhood_radius = 6
+    neighbourhood_radius = 8
 
     /**
      * HETATM groups that are considered cofactor and ignored
@@ -194,7 +194,7 @@ import cz.siret.prank.program.params.Params
 
     point_score_pow = 2
 
-    delete_models = true
+    delete_models = false
 
     delete_vectors = true
 
@@ -247,12 +247,12 @@ import cz.siret.prank.program.params.Params
     /**
      * make own prank pocket predictions (P2RANK)
      */
-    predictions = true
+    predictions = false
 
     /**
      * minimum ligandability score for Connolly poto be considered ligandable
      */
-    pred_point_threshold = 0.35
+    pred_point_threshold = 0.4
 
     /**
      * minimum cluster size (of ligandable points) for initial clustering
@@ -262,7 +262,7 @@ import cz.siret.prank.program.params.Params
     /**
      * clustering distance for ligandable clusters for second phase clustering
      */
-    pred_clustering_dist = 3
+    pred_clustering_dist = 5
 
     /**
      * distance to extend clusters around hotspots
@@ -299,7 +299,7 @@ import cz.siret.prank.program.params.Params
     /**
      * cutoff for protein exposed atoms calculation (distance from connolly surface is solv.radius. + surf_cutoff)
      */
-    surface_additional_cutoff = 2.5
+    surface_additional_cutoff = 1.8
 
     /**
      * take negative points from all of the protein's surface (not just decoy pockets)
@@ -314,7 +314,7 @@ import cz.siret.prank.program.params.Params
     /**
      * n, use only top-n pockets to select training instances, 0=all
      */
-    train_pockets = 9
+    train_pockets = 0
 
     /**
      * clear secondary caches (protein surfaces etc.) when iterating params
@@ -344,5 +344,4 @@ import cz.siret.prank.program.params.Params
      * don't procuce prediction files for individual proteins (useful for long repetitive experments)
      */
     output_only_stats = false
-
 }

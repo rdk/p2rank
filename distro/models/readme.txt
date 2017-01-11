@@ -6,7 +6,6 @@ Model should be used in combination with the parameters or config file that was 
 The feature extraction has to be executed with the same parameters.
 
 
-dafault.model   ... for PRANK  (rescoring),   trained on bench-fpocket.ds dataset with config default.groovy
-p2rank_a.model ... for P2RANK (predictions), trained on bench-fpocket.ds dataset with config default-predict.groovy
-norfolk.model  ... for P2RANK (predictions), trained on bench-fpocket.ds dataset with config
+p2rank_a.model ... for P2RANK (predictions), trained on bench-fpocket.ds dataset with config default.groovy
+prank.model    ... for PRANK  (rescoring),   trained on bench-fpocket.ds dataset with config default-rescore.groovy
 

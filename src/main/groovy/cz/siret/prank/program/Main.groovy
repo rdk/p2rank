@@ -182,7 +182,6 @@ class Main implements Parametrized, Writable {
 //===========================================================================================================//
 
     void doRunPredict(String label, boolean evalPredict) {
-        initParams(params, "$installDir/config/default-predict.groovy")
 
         Dataset dataset = loadDatasetOrFile()
 
@@ -222,6 +221,8 @@ class Main implements Parametrized, Writable {
 
     void runRescore() {
 
+        initRescoreDefaultParams()
+
         Dataset dataset = loadDatasetOrFile()
 
         Dataset.Result result = new RescoreRoutine(
@@ -234,6 +235,8 @@ class Main implements Parametrized, Writable {
 
     void runEvalRescore() {
 
+        initRescoreDefaultParams()
+
         Dataset dataset = loadDataset()
 
         new EvaluateRoutine(
@@ -245,14 +248,10 @@ class Main implements Parametrized, Writable {
 
     private runExperiment(String routineName) {
 
-        initPredictDefaultParams()
-
         new Experiments(args, this).execute(routineName)
     }
 
     private runCrossvalidation() {
-
-        initPredictDefaultParams()
 
         Dataset dataset = loadDataset()
         String outdir = findOutdir("crossval_" + dataset.label)
@@ -267,8 +266,9 @@ class Main implements Parametrized, Writable {
         println futils.readResource('/help.txt')
     }
 
-    void initPredictDefaultParams() {
-        initParams(params, "$installDir/config/default-predict.groovy")
+
+    void initRescoreDefaultParams() {
+        initParams(params, "$installDir/config/default-rescore.groovy")
     }
 
     /**
