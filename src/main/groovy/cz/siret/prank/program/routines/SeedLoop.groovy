@@ -23,7 +23,7 @@ class SeedLoop extends CompositeRoutine {
         int origSeed = params.seed
         int n = params.loop
         for (int seedi in 1..n) {
-            write "seedloop iteration: $seedi/$n"
+            write "random seed iteration: $seedi/$n"
 
             String label = "seed.${params.seed}"
             routine.outdir = "$outdir/$label"
@@ -42,7 +42,7 @@ class SeedLoop extends CompositeRoutine {
         }
         params.seed = origSeed // set seed back for other experiments
 
-        logTime "seedloop finished in $timer.formatted"
+        logTime "random seed iteration finished in $timer.formatted"
         write "results saved to directory [${futils.absPath(outdir)}]"
 
 

@@ -227,7 +227,7 @@ class Params {
     boolean cache_datasets = false
 
     /**
-     * calculate feature importance
+     * calculate feature importances
      * available only for some classifiers
      */
     boolean feature_importances = false

@@ -9,7 +9,7 @@ import cz.siret.prank.utils.CmdLineArgs
 import cz.siret.prank.utils.futils
 
 /**
- * ploop and seedloop routines for oprimization experiments
+ * ploop and traineval routines for oprimization experiments
  */
 @Slf4j
 class Experiments extends Routine {
@@ -62,7 +62,7 @@ class Experiments extends Routine {
     /**
      * train/eval on different datasets for different seeds
      */
-    CompositeRoutine.Results seedloop() {
+    CompositeRoutine.Results traineval() {
 
         TrainEvalIteration iter = new TrainEvalIteration()
         iter.outdir = outdir
@@ -113,7 +113,7 @@ class Experiments extends Routine {
                 CompositeRoutine routine = new CrossValidation(outdir, trainDataSet)
                 res = new SeedLoop(routine, outdir).execute()
             } else {
-                res = seedloop()
+                res = traineval()
             }
 
             if (params.clear_prim_caches) {

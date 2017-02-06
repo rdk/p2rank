@@ -83,8 +83,8 @@ quick() {
     test ./prank.sh eval-rescore fpocket-pairs.ds                                 -out_subdir TESTS
     test ./prank.sh eval-rescore concavity-pairs.ds                               -out_subdir TESTS
 
-    test ./prank.sh seedloop -loop 1 -t fpocket-pairs.ds -e test.ds               -fail_fast 1 -out_subdir TESTS
-    test ./prank.sh crossval -loop 1 fpocket-pairs.ds                             -fail_fast 1 -out_subdir TESTS
+    test ./prank.sh traineval -loop 1 -t fpocket-pairs.ds -e test.ds               -fail_fast 1 -out_subdir TESTS
+    test ./prank.sh crossval -loop 1 fpocket-pairs.ds                              -fail_fast 1 -out_subdir TESTS
 }
 
 basic() {
@@ -93,9 +93,9 @@ basic() {
 
     test ./prank.sh eval-predict chen11.ds                             -c working                        -out_subdir TESTS
     test ./prank.sh eval-predict mlig-joined.ds                        -c working                        -out_subdir TESTS
-    test ./prank.sh seedloop -t chen11-fpocket.ds -e chen11-fpocket.ds -c working  -loop 1  -fail_fast 1 -out_subdir TESTS
-    test ./prank.sh seedloop -t chen11-fpocket.ds -e mlig-joined.ds    -c working  -loop 1  -fail_fast 1 -out_subdir TESTS
-    test ./prank.sh crossval chen11-fpocket.ds                         -c working  -loop 1  -fail_fast 1 -out_subdir TESTS
+    test ./prank.sh traineval -t chen11-fpocket.ds -e chen11-fpocket.ds -c working  -loop 1  -fail_fast 1 -out_subdir TESTS
+    test ./prank.sh traineval -t chen11-fpocket.ds -e mlig-joined.ds    -c working  -loop 1  -fail_fast 1 -out_subdir TESTS
+    test ./prank.sh crossval chen11-fpocket.ds                          -c working  -loop 1  -fail_fast 1 -out_subdir TESTS
 
     #test ./prank.sh eval-predict mlig-joined.ds   -c working -visualizations 1 -tessellation 3 -l VISUALIZATIONS_TES3 -c working -out_subdir TESTS
     #test ./prank.sh eval-predict mlig-joined.ds   -c working -visualizations 1  -l VISUALIZATIONS                     -c working -out_subdir TESTS
@@ -158,8 +158,8 @@ eval_train() {
     title TRAIN/EVAL ON MAIN DATASETS
 
     test ./prank.sh crossval chen11-fpocket.ds                        -c working -loop 10                    -out_subdir EVAL_TRAIN
-    test ./prank.sh seedloop -t chen11-fpocket.ds -e joined.ds        -c working -loop 10                    -out_subdir EVAL_TRAIN
-    test ./prank.sh seedloop -t chen11-fpocket.ds -e holo4k.ds        -c working -loop 3   -cache_datasets 0 -out_subdir EVAL_TRAIN
+    test ./prank.sh traineval -t chen11-fpocket.ds -e joined.ds        -c working -loop 10                    -out_subdir EVAL_TRAIN
+    test ./prank.sh traineval -t chen11-fpocket.ds -e holo4k.ds        -c working -loop 3   -cache_datasets 0 -out_subdir EVAL_TRAIN
 }
 
 eval_train_rest() {
@@ -167,25 +167,25 @@ eval_train_rest() {
     title TRAIN/EVAL ON OTHER DATASETS
 
     # train=test for the reference
-    test ./prank.sh seedloop -t chen11-fpocket.ds -e chen11-fpocket.ds -c working -loop 10                    -out_subdir EVAL_TRAIN
+    test ./prank.sh traineval -t chen11-fpocket.ds -e chen11-fpocket.ds -c working -loop 10                    -out_subdir EVAL_TRAIN
 
-    test ./prank.sh seedloop -t chen11-fpocket.ds -e b48.ds           -c working -loop 10                     -out_subdir EVAL_TRAIN
-    test ./prank.sh seedloop -t chen11-fpocket.ds -e u48.ds           -c working -loop 10                     -out_subdir EVAL_TRAIN
-    test ./prank.sh seedloop -t chen11-fpocket.ds -e astex.ds         -c working -loop 10                     -out_subdir EVAL_TRAIN
-    test ./prank.sh seedloop -t chen11-fpocket.ds -e dt198.ds         -c working -loop 10                     -out_subdir EVAL_TRAIN
-    test ./prank.sh seedloop -t chen11-fpocket.ds -e b210.ds          -c working -loop 10                     -out_subdir EVAL_TRAIN
-    test ./prank.sh seedloop -t chen11-fpocket.ds -e fptrain.ds       -c working -loop 10                     -out_subdir EVAL_TRAIN
+    test ./prank.sh traineval -t chen11-fpocket.ds -e b48.ds           -c working -loop 10                     -out_subdir EVAL_TRAIN
+    test ./prank.sh traineval -t chen11-fpocket.ds -e u48.ds           -c working -loop 10                     -out_subdir EVAL_TRAIN
+    test ./prank.sh traineval -t chen11-fpocket.ds -e astex.ds         -c working -loop 10                     -out_subdir EVAL_TRAIN
+    test ./prank.sh traineval -t chen11-fpocket.ds -e dt198.ds         -c working -loop 10                     -out_subdir EVAL_TRAIN
+    test ./prank.sh traineval -t chen11-fpocket.ds -e b210.ds          -c working -loop 10                     -out_subdir EVAL_TRAIN
+    test ./prank.sh traineval -t chen11-fpocket.ds -e fptrain.ds       -c working -loop 10                     -out_subdir EVAL_TRAIN
     
-    test ./prank.sh seedloop -t chen11-fpocket.ds -e mlig-joined.ds   -c working -loop 10                     -out_subdir EVAL_TRAIN
-    test ./prank.sh seedloop -t chen11-fpocket.ds -e mlig-holo4k.ds   -c working -loop 3   -cache_datasets 0  -out_subdir EVAL_TRAIN
+    test ./prank.sh traineval -t chen11-fpocket.ds -e mlig-joined.ds   -c working -loop 10                     -out_subdir EVAL_TRAIN
+    test ./prank.sh traineval -t chen11-fpocket.ds -e mlig-holo4k.ds   -c working -loop 3   -cache_datasets 0  -out_subdir EVAL_TRAIN
 }
 
 quick_train_new() {
-    test ./prank.sh seedloop -t chen11-fpocket.ds -e mlig-joined.ds   -c new -loop 3                     -out_subdir EVAL_TRAIN
-    test ./prank.sh seedloop -t chen11-fpocket.ds -e      joined.ds   -c new -loop 3                     -out_subdir EVAL_TRAIN
-    test ./prank.sh seedloop -t chen11-fpocket.ds -e mlig-holo4k.ds   -c new -loop 1   -cache_datasets 0 -out_subdir EVAL_TRAIN
-    test ./prank.sh seedloop -t chen11-fpocket.ds -e      holo4k.ds   -c new -loop 1   -cache_datasets 0 -out_subdir EVAL_TRAIN
-    test ./prank.sh crossval chen11-fpocket.ds                        -c new -loop 3                     -out_subdir EVAL_TRAIN
+    test ./prank.sh traineval -t chen11-fpocket.ds -e mlig-joined.ds   -c new -loop 3                     -out_subdir EVAL_TRAIN
+    test ./prank.sh traineval -t chen11-fpocket.ds -e      joined.ds   -c new -loop 3                     -out_subdir EVAL_TRAIN
+    test ./prank.sh traineval -t chen11-fpocket.ds -e mlig-holo4k.ds   -c new -loop 1   -cache_datasets 0 -out_subdir EVAL_TRAIN
+    test ./prank.sh traineval -t chen11-fpocket.ds -e      holo4k.ds   -c new -loop 1   -cache_datasets 0 -out_subdir EVAL_TRAIN
+    test ./prank.sh crossval chen11-fpocket.ds                         -c new -loop 3                     -out_subdir EVAL_TRAIN
 }
 
 speed() {
