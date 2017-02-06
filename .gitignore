@@ -24,4 +24,5 @@ logs/*
 !*.pdb
 !releases
 !lib/*
+!*.md
 
