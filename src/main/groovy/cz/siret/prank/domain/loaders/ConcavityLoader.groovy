@@ -27,7 +27,7 @@ class ConcavityLoader extends PredictionLoader {
      * @return
      */
     @Override
-    Prediction loadPrediction(String ppOutputFile) {
+    Prediction loadPrediction(String ppOutputFile, Protein liganatedProtein) {
 
         // a.001.001.001_1s69a_xxxxx_residue.pdb in the same dir
         String proteinFile = ppOutputFile.replaceFirst("_pocket.pdb\$", "_residue.pdb")

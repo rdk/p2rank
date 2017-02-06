@@ -38,7 +38,7 @@ class FPockeLoader extends PredictionLoader {
     }
 
     @Override
-    Prediction loadPrediction(String pocketPredictionOutputFile) {
+    Prediction loadPrediction(String pocketPredictionOutputFile, Protein liganatedProtein) {
         
         return loadResultFromFile(pocketPredictionOutputFile)
     }
