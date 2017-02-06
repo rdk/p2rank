@@ -1,5 +1,6 @@
 package cz.siret.prank.utils
 
+import com.google.common.base.CharMatcher
 import com.google.common.base.Splitter
 import groovy.transform.CompileStatic
 import org.apache.commons.lang3.SystemUtils
@@ -45,8 +46,14 @@ class StrUtils {
         DATE_LABEL_FORMAT.format(new Date())
     }
 
+
+
     static List<String> split(String str, String splitter) {
         Splitter.on(splitter).omitEmptyStrings().trimResults().split(str).toList()
+    }
+
+    static List<String> splitOnWhitespace(String str) {
+        Splitter.on(CharMatcher.whitespace()).omitEmptyStrings().trimResults().split(str).toList()
     }
 
     static List<String> split(String str) {
