@@ -6,10 +6,10 @@ This file should provide interduction for people who want to train and evaluate 
 ## Kick-start examples
 
 ~~~
-prank traineval -t <training_dataset> -e <evaluation_dataset>  # train and evaluate model (run n experiments with difefrent random seed, see -loop and -seed params)
+prank traineval -t <training_dataset> -e <evaluation_dataset>  # train and evaluate model (execute n run with difefrent random seed, see -loop and -seed params)
 prank crossval <dataset>                                       # run crossvalidation on a single dataset (see -folds param)
 
-prank ploop -t <training_dataset> -e <evaluation_dataset> -paramA '[min,max,step]'  # iterate through param values
+prank ploop -t <training_dataset> -e <evaluation_dataset> -paramA '[min:max:step]'  # iterate through param values
 prank ploop -t <training_dataset>                         -paramB '(1,2,3,4)'       # iterate through param values (crossvalidation)
 ~~~
 
