@@ -81,9 +81,9 @@ class ChemFeatureExtractor extends FeatureExtractor<ChemVector> implements Param
         residueTableFeatures = params.residue_table_features
 
         headerAdditionalFeatures = new GenericHeader([
+                *extraFeaturesHeader,
                 *atomTableFeatures,
                 *residueTableFeatures,
-                *extraFeaturesHeader,
         ] as List<String>)
 
     }

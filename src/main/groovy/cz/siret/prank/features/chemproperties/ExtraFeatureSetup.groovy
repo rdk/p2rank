@@ -10,6 +10,9 @@ import groovy.transform.CompileStatic
 @CompileStatic
 class ExtraFeatureSetup {
 
+    /**
+     * preserves order of features from enabledFeatureNames
+     */
     List<FeatureCalculator> enabledFeatures = new ArrayList<>()
 
     List<FeatureCalculator> enabledAtomFeatures = new ArrayList<>()
@@ -17,10 +20,13 @@ class ExtraFeatureSetup {
 
     List<String> jointHeader = new ArrayList<>()
 
+    List<String> enabledFeatureNames
 
-    ExtraFeatureSetup(List<String> enabledFeaturesNames) {
 
-        for (String name : enabledFeaturesNames) {
+    ExtraFeatureSetup(List<String> enabledFeatureNames) {
+        this.enabledFeatureNames = enabledFeatureNames
+
+        for (String name : enabledFeatureNames) {
             FeatureCalculator calculator = FeatureRegistry.featureImplementations.get(name)
 
             if (calculator!=null) {
@@ -29,13 +35,11 @@ class ExtraFeatureSetup {
                 } else {
                     enabledSasFeatures.add(calculator)
                 }
+                enabledFeatures.add(calculator)
             } else {
                 throw new IllegalStateException("Feature implementation not found: " + name)
             }
-
         }
-
-        enabledFeatures = enabledAtomFeatures + enabledSasFeatures
 
         for (FeatureCalculator calculator : enabledFeatures) {
             jointHeader.addAll(calculator.header)
