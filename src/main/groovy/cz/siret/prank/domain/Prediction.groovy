@@ -29,7 +29,7 @@ class Prediction {
     List<LabeledPoint> labeledPoints = null
 
 
-    Prediction(Protein protein, List<Pocket> pockets) {
+    Prediction(Protein protein, List<? extends Pocket> pockets) {
         this.protein = protein
         this.pockets = pockets
     }
