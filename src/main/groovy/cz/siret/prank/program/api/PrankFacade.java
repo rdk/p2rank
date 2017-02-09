@@ -35,7 +35,7 @@ public abstract class PrankFacade {
     public static PrankPredictor createPredictor(Path prankInstallDir) {
         PrankPredictor predictor = new DafaultPrankPredictor(prankInstallDir);
 
-        Path defaultConfigFile = Paths.get(prankInstallDir.toString(), "config", "default-predict.groovy");
+        Path defaultConfigFile = Paths.get(prankInstallDir.toString(), "config", "default.groovy");
         predictor.loadConfig(defaultConfigFile);
 
         return predictor;
