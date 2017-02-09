@@ -1,27 +1,24 @@
 package cz.siret.prank.domain.loaders
 
-import com.google.common.base.Splitter
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Prediction
 import cz.siret.prank.domain.Protein
-import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Point
-import cz.siret.prank.geom.Struct
-import cz.siret.prank.utils.PDBUtils
 import cz.siret.prank.utils.StrUtils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-import org.biojava.nbio.structure.Atom
-import org.biojava.nbio.structure.Element
-import org.biojava.nbio.structure.Group
-import org.biojava.nbio.structure.Structure
 
 /**
  *
  */
 @Slf4j
 @CompileStatic
-class SiteHoundLoader {
+class SiteHoundLoader extends PredictionLoader {
+
+    /**
+     * cutoff for determining surface atoms around centroid
+     */
+    double SURFACE_ATOMS_CUTOFF = 8
 
 
     /**
@@ -47,12 +44,12 @@ class SiteHoundLoader {
     @Override
     Prediction loadPrediction(String predictionOutputFile, Protein liganatedProtein) {
 
-        List<SiteHoundPocket> pockets = loadSitehoundPockets(predictionOutputFile)
+        List<SiteHoundPocket> pockets = loadSitehoundPockets(predictionOutputFile, liganatedProtein)
 
         return new Prediction(liganatedProtein, pockets)
     }
 
-    List<SiteHoundPocket> loadSitehoundPockets(String predictionOutputFile) {
+    List<SiteHoundPocket> loadSitehoundPockets(String predictionOutputFile, Protein liganatedProtein) {
 
         List<SiteHoundPocket> res = new ArrayList<>()
 
@@ -73,6 +70,9 @@ class SiteHoundLoader {
             double z = cols[5].toDouble()
 
             poc.centroid = new Point(x, y, z)
+            if (liganatedProtein==null) {
+                poc.surfaceAtoms = liganatedProtein.exposedAtoms.cutoffAtomsAround(poc.centroid, SURFACE_ATOMS_CUTOFF)
+            }
 
             res.add(poc)
         }
@@ -80,9 +80,7 @@ class SiteHoundLoader {
         return res
     }
 
-    public static class SiteHoundPocket extends Pocket {
-
-        Atoms gridPoints
+    static class SiteHoundPocket extends Pocket {
 
         double volume
         double totalInteractionEnergy

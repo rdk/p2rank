@@ -1,5 +1,6 @@
 package cz.siret.prank.domain.loaders
 
+import com.sun.istack.internal.Nullable
 import cz.siret.prank.domain.LoaderParams
 import cz.siret.prank.domain.Prediction
 import cz.siret.prank.domain.PredictionPair
@@ -36,8 +37,18 @@ abstract class PredictionLoader {
 
     /**
      * @param predictionOutputFile main pocket prediction output file
+     * @param protein to which this prediction is related. may be null!
      * @return
      */
-    abstract Prediction loadPrediction(String predictionOutputFile, Protein liganatedProtein)
+    abstract Prediction loadPrediction(String predictionOutputFile, @Nullable Protein liganatedProtein)
+
+    /**
+     * used when running 'prank rescore' on a dataset with one column 'predictionOutputFile'
+     * @param predictionOutputFile
+     * @return
+     */
+    Prediction loadPredictionWithoutProtein(String predictionOutputFile) {
+        loadPrediction(predictionOutputFile, null)
+    }
 
 }

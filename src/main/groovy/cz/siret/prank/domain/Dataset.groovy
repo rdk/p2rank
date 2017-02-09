@@ -1,6 +1,7 @@
 package cz.siret.prank.domain
 
 import cz.siret.prank.domain.loaders.PredictionLoader
+import cz.siret.prank.domain.loaders.SiteHoundLoader
 import groovy.util.logging.Slf4j
 import groovyx.gpars.GParsPool
 import cz.siret.prank.domain.loaders.ConcavityLoader
@@ -42,7 +43,7 @@ class Dataset implements Parametrized {
         Prediction getPrediction() {
             // when running 'prank rescore' on a dataset with one column prediction is in proteinFile
             String file = pocketPredictionFile ?: proteinFile
-            return getLoader(this).loadPrediction(file)
+            return getLoader(this).loadPredictionWithoutProtein(file)
         }
 
         PredictionPair getPredictionPair() {
@@ -239,6 +240,9 @@ class Dataset implements Parametrized {
                 break
             case "concavity":
                 res = new ConcavityLoader()
+                break
+            case "sitehound":
+                res = new SiteHoundLoader()
                 break
             default:
                 res = new FPockeLoader()
