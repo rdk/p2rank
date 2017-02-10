@@ -72,7 +72,7 @@ class SiteHoundLoader extends PredictionLoader {
             double z = cols[5].toDouble()
 
             poc.centroid = new Point(x, y, z)
-            if (liganatedProtein==null) {
+            if (liganatedProtein!=null) {
                 poc.surfaceAtoms = liganatedProtein.exposedAtoms.cutoffAtomsAround(poc.centroid, SURFACE_ATOMS_CUTOFF)
             }
 
