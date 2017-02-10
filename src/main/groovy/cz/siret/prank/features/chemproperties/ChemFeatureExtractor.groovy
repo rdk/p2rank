@@ -148,12 +148,7 @@ class ChemFeatureExtractor extends FeatureExtractor<ChemVector> implements Param
         this.smoothRepresentations = proteinPrototype.smoothRepresentations
 
 
-        if (pocket!=null) {
-            if (pocket.surfaceAtoms.count==0) {
-                log.error "pocket with no surface atoms! [$protein.name]"
-            }
-            initForPocket()
-        }
+
 
     }
 
@@ -164,6 +159,7 @@ class ChemFeatureExtractor extends FeatureExtractor<ChemVector> implements Param
         if (pocket.surfaceAtoms.count==0) {
             log.error "pocket with no surface atoms! [$protein.name]"
         }
+        res.initForPocket()
 
         return res
     }
