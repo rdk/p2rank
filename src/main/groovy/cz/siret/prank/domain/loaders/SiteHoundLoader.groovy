@@ -20,6 +20,8 @@ class SiteHoundLoader extends PredictionLoader {
      */
     double SURFACE_ATOMS_CUTOFF = 8
 
+    int POCKET_LIMIT = 12
+
 
     /**
      * @param *_summary.dat output file from SiteHound (i.e. a.001.001.001_1s69a_CMET_summary.dat)
@@ -75,6 +77,10 @@ class SiteHoundLoader extends PredictionLoader {
             }
 
             res.add(poc)
+
+            if (res.size()>=POCKET_LIMIT) {
+                break
+            }
         }
 
         return res
