@@ -93,6 +93,8 @@ class ChemFeatureExtractor extends FeatureExtractor<ChemVector> implements Param
         ChemFeatureExtractor res = new ChemFeatureExtractor(protein)
         res.trainingExtractor = this.trainingExtractor
 
+        res.deepSurrounding = protein.proteinAtoms.cutoffAtoms(protein.exposedAtoms, params.protrusion_radius).buildKdTree()
+
         // init features
         for (FeatureCalculator feature : extraFeatureSetup.enabledFeatures) {
             feature.preProcessProtein(protein)
@@ -124,6 +126,7 @@ class ChemFeatureExtractor extends FeatureExtractor<ChemVector> implements Param
         this.residueTableFeatures  = proteinPrototype.residueTableFeatures
         this.trainingExtractor     = proteinPrototype.trainingExtractor
         this.extraFeatureSetup     = proteinPrototype.extraFeatureSetup
+        this.deepSurrounding = proteinPrototype.deepSurrounding
 
         if (pocket!=null) {
             if (pocket.surfaceAtoms.count==0) {
@@ -148,7 +151,7 @@ class ChemFeatureExtractor extends FeatureExtractor<ChemVector> implements Param
     private void initForPocket() {
         log.debug "extractorFactory initForPocket for pocket $pocket.name"
 
-        deepSurrounding = protein.proteinAtoms.cutoffAtoms(pocket.surfaceAtoms, params.protrusion_radius)
+        //deepSurrounding = protein.proteinAtoms.cutoffAtoms(pocket.surfaceAtoms, params.protrusion_radius)
 
         if (params.deep_surrounding) {
             surfaceLayerAtoms = deepSurrounding
@@ -181,7 +184,7 @@ class ChemFeatureExtractor extends FeatureExtractor<ChemVector> implements Param
         protein.calcuateSurfaceAndExposedAtoms()
 
         res.surfaceLayerAtoms = protein.exposedAtoms
-        res.deepSurrounding = protein.proteinAtoms.cutoffAtoms(protein.exposedAtoms, params.protrusion_radius).buildKdTree()
+
 
         res.preEvaluateProperties(res.surfaceLayerAtoms)
         if (DO_SMOOTH_REPRESENTATION) {
