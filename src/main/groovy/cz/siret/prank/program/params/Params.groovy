@@ -58,7 +58,7 @@ class Params {
 
     /**
      * defines witch atoms around the ligand are considered to be part of the pocket
-     * ligands with longer min. contact distance are considered irrelevant
+     * (ligands with longer distance are considered irrelevant floating ligands)
      */
     double ligand_protein_contact_distance = 4
 

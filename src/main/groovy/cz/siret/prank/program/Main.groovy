@@ -1,5 +1,6 @@
 package cz.siret.prank.program
 
+import cz.siret.prank.program.routines.AnalyzeRoutine
 import cz.siret.prank.program.routines.CrossValidation
 import cz.siret.prank.program.routines.EvaluateRoutine
 import cz.siret.prank.program.routines.Experiments
@@ -262,6 +263,10 @@ class Main implements Parametrized, Writable {
         new SeedLoop(routine, outdir).execute()
     }
 
+    private runAnalyze() {
+        new AnalyzeRoutine(args, this).execute()
+    }
+
     void runHelp() {
         println futils.readResource('/help.txt')
     }
@@ -301,6 +306,8 @@ class Main implements Parametrized, Writable {
             case 'eval-rescore':  runEvalRescore()
                 break
             case 'crossval':      runCrossvalidation()
+                break
+            case 'analyze':       runAnalyze()
                 break
             case 'run':           runExperiment(args.unnamedArgs[0])
                 break

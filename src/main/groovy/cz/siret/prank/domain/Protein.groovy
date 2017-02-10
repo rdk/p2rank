@@ -34,7 +34,7 @@ class Protein implements Parametrized {
 
 //===========================================================================================================//
 
-    /* ligands counted in predictions */
+    /* relevant ligands (counted in prediction evaluation) */
     List<Ligand> ligands = new ArrayList<>()
 
     /* too small ligands */
@@ -54,6 +54,10 @@ class Protein implements Parametrized {
     Map<String, Object> secondaryData = new HashMap<>()
 
 //===========================================================================================================//
+
+    int getLigandCount() {
+        ligands.size()
+    }
 
     void calcuateSurfaceAndExposedAtoms() {
         if (exposedAtoms==null) {
