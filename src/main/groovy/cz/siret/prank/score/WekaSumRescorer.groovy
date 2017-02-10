@@ -117,6 +117,8 @@ class WekaSumRescorer extends PocketRescorer implements Parametrized  {
 
     private void doRescore(Prediction prediction, FeatureExtractor proteinExtractor) {
 
+        proteinExtractor.prepareProteinPrototypeForPockets()
+
         for (Pocket pocket in prediction.pockets) {
             FeatureExtractor extractor = proteinExtractor.createInstanceForPocket(pocket)
 

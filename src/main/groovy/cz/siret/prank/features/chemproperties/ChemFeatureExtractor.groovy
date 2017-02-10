@@ -69,11 +69,9 @@ class ChemFeatureExtractor extends FeatureExtractor<ChemVector> implements Param
         super(protein)
 
         initHeader()
-        initProteinPrototypeForPockets()
     }
 
     private void initHeader() {
-
         extraFeatureSetup = new ExtraFeatureSetup(params.extra_features)
 
         extraFeaturesHeader = extraFeatureSetup.jointHeader
@@ -93,6 +91,7 @@ class ChemFeatureExtractor extends FeatureExtractor<ChemVector> implements Param
         ChemFeatureExtractor res = new ChemFeatureExtractor(protein)
         res.trainingExtractor = this.trainingExtractor
 
+        protein.calcuateSurfaceAndExposedAtoms()
         res.deepSurrounding = protein.proteinAtoms.cutoffAtoms(protein.exposedAtoms, params.protrusion_radius).buildKdTree()
 
         // init features
@@ -103,9 +102,25 @@ class ChemFeatureExtractor extends FeatureExtractor<ChemVector> implements Param
         return res
     }
 
-    private void initProteinPrototypeForPockets() {
-        protein.calcuateSurfaceAndExposedAtoms()
+
+    @Override
+    void prepareProteinPrototypeForPockets() {
         pocketPointSampler = PointSampler.create(protein, trainingExtractor)
+
+        if (params.deep_surrounding) {
+            surfaceLayerAtoms = deepSurrounding
+        } else {
+            // surfaceLayerAtoms = protein.proteinAtoms.cutoffAtomsAround(pocket.surfaceAtoms, 1)  // shallow
+            //surfaceLayerAtoms = protein.exposedAtoms.cutoffAtoms(pocket.surfaceAtoms, 6) //XXX
+            surfaceLayerAtoms = protein.exposedAtoms
+        }
+
+        log.debug "surfaceLayerAtoms:$surfaceLayerAtoms.count (surfaceAtoms: $pocket.surfaceAtoms.count) "
+
+        preEvaluateProperties(surfaceLayerAtoms)
+        if (DO_SMOOTH_REPRESENTATION) {
+            preEvaluateSmoothRepresentations(surfaceLayerAtoms)
+        }
     }
 
     /**
@@ -126,7 +141,12 @@ class ChemFeatureExtractor extends FeatureExtractor<ChemVector> implements Param
         this.residueTableFeatures  = proteinPrototype.residueTableFeatures
         this.trainingExtractor     = proteinPrototype.trainingExtractor
         this.extraFeatureSetup     = proteinPrototype.extraFeatureSetup
+
         this.deepSurrounding = proteinPrototype.deepSurrounding
+        this.surfaceLayerAtoms = proteinPrototype.surfaceLayerAtoms
+        this.properties = proteinPrototype.properties
+        this.smoothRepresentations = proteinPrototype.smoothRepresentations
+
 
         if (pocket!=null) {
             if (pocket.surfaceAtoms.count==0) {
@@ -151,21 +171,8 @@ class ChemFeatureExtractor extends FeatureExtractor<ChemVector> implements Param
     private void initForPocket() {
         log.debug "extractorFactory initForPocket for pocket $pocket.name"
 
-        //deepSurrounding = protein.proteinAtoms.cutoffAtoms(pocket.surfaceAtoms, params.protrusion_radius)
-
-        if (params.deep_surrounding) {
-            surfaceLayerAtoms = deepSurrounding
-        } else {
-            // surfaceLayerAtoms = protein.proteinAtoms.cutoffAtomsAround(pocket.surfaceAtoms, 1)  // shallow
-            surfaceLayerAtoms = protein.exposedAtoms.cutoffAtoms(pocket.surfaceAtoms, 6) //XXX
-        }
-
+        //surfaceLayerAtoms = surfaceLayerAtoms.cutoffAtoms(pocket.surfaceAtoms, 6) //XXX
         log.debug "surfaceLayerAtoms:$surfaceLayerAtoms.count (surfaceAtoms: $pocket.surfaceAtoms.count) "
-
-        preEvaluateProperties(surfaceLayerAtoms)
-        if (DO_SMOOTH_REPRESENTATION) {
-            preEvaluateSmoothRepresentations(surfaceLayerAtoms)
-        }
 
         sampledPoints = pocketPointSampler.samplePointsForPocket(pocket)
 

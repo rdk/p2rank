@@ -43,6 +43,7 @@ abstract class FeatureExtractor<P extends FeatureVector> {
      *
      * FeatureExtractor factory = FeatureExtractor.createFactory()
      * FeatureExtractor prototype = factory.createPrototypeForProtein(protein)
+     * prototype.prepareProteinPrototypeForPockets()
      * FeatureExtractor extractor = prototype.createInstanceForPocket(pocket)
      * extractor.calcFeatureVector(...)
      */
@@ -67,4 +68,9 @@ abstract class FeatureExtractor<P extends FeatureVector> {
         return res
     }
 
+    /**
+     * Precalculates data common for all pockets.
+     * Call before calling createInstanceForPocket() method.
+     */
+    void prepareProteinPrototypeForPockets() {}
 }
