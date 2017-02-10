@@ -67,7 +67,7 @@ class PLBIndexRescorer extends PocketRescorer {
 
         for (ExtPocket p : extPockets) {
             p.ZPLB = (p.PLBi - mu) / sig
-            p.pocket.newScore = - p.ZPLB
+            p.pocket.newScore = p.ZPLB
 
             log.info StrUtils.toStr(p)
         }
