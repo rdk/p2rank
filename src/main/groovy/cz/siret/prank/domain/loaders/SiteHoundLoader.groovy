@@ -64,7 +64,7 @@ class SiteHoundLoader extends PredictionLoader {
             poc.rank = cols[0].toInteger()
             poc.name =  "pocket." + poc.rank
             poc.totalInteractionEnergy = cols[1].toDouble()
-            poc.newScore = - poc.totalInteractionEnergy
+            //poc.score = - poc.totalInteractionEnergy
             poc.volume = cols[2].toDouble()
 
             double x = cols[3].toDouble()
