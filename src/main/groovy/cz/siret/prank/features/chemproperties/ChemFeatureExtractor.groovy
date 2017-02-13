@@ -136,7 +136,7 @@ class ChemFeatureExtractor extends FeatureExtractor<ChemVector> implements Param
         this.MASK_UNKNOWN_RESIDUES = proteinPrototype.MASK_UNKNOWN_RESIDUES
         this.headerAdditionalFeatures = proteinPrototype.headerAdditionalFeatures
         this.pocketPointSampler    = proteinPrototype.pocketPointSampler
-        this.extraFeaturesHeader         = proteinPrototype.extraFeaturesHeader
+        this.extraFeaturesHeader   = proteinPrototype.extraFeaturesHeader
         this.atomTableFeatures     = proteinPrototype.atomTableFeatures
         this.residueTableFeatures  = proteinPrototype.residueTableFeatures
         this.trainingExtractor     = proteinPrototype.trainingExtractor

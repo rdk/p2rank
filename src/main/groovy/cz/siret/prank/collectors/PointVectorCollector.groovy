@@ -56,13 +56,11 @@ class PointVectorCollector extends VectorCollector implements Parametrized {
         }
 
         if (params.train_all_surface) {
-
             finalRes = collectWholeSurface(ligandAtoms, proteinExtractorPrototype)
-
         } else {
+            proteinExtractorPrototype.prepareProteinPrototypeForPockets()
 
             List<Pocket> usePockets = pair.prediction.pockets  // use all pockets
-
             if (params.train_pockets>0) {
                 usePockets = [ *pair.getCorrectlyPredictedPockets(criterion) , *ListUtils.head(params.train_pockets, pair.getFalsePositivePockets(criterion)) ]
             }
