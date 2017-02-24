@@ -58,6 +58,11 @@ class Dataset implements Parametrized {
             }
         }
 
+        // for one column datasets
+        Protein getProtein() {
+            getPredictionPair().liganatedProtein
+        }
+
         PredictionPair loadPredictionPair() {
             getLoader(this).loadPredictionPair(proteinFile, pocketPredictionFile)
         }
@@ -166,6 +171,13 @@ class Dataset implements Parametrized {
             }
         }
         return ok
+    }
+
+    /**
+     * Process all dataset items with provided processor.
+     */
+    Result processItems(final Processor processor) {
+        return processItems(params.parallel, processor)
     }
 
     /**
