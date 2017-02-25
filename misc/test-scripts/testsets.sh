@@ -101,6 +101,26 @@ basic() {
     #test ./prank.sh eval-predict mlig-joined.ds   -c working -visualizations 1  -l VISUALIZATIONS                     -c working -out_subdir TESTS
 }
 
+# test predieciton on all datasets
+predict() {
+
+   title PREDICTIONS ON ALL DATASETS
+
+   test ./prank.sh predict joined.ds       -c workdef -log_cases 1   -out_subdir PREDICT
+   test ./prank.sh predict holo4k.ds       -c workdef -log_cases 1   -out_subdir PREDICT
+
+   test ./prank.sh predict chen11.ds       -c workdef -log_cases 1   -out_subdir PREDICT
+   test ./prank.sh predict b48.ds          -c workdef -log_cases 1   -out_subdir PREDICT
+   test ./prank.sh predict u48.ds          -c workdef -log_cases 1   -out_subdir PREDICT
+   test ./prank.sh predict astex.ds        -c workdef -log_cases 1   -out_subdir PREDICT
+   test ./prank.sh predict dt198.ds        -c workdef -log_cases 1   -out_subdir PREDICT
+   test ./prank.sh predict b210.ds         -c workdef -log_cases 1   -out_subdir PREDICT
+   test ./prank.sh predict fptrain.ds      -c workdef -log_cases 1   -out_subdir PREDICT
+   test ./prank.sh predict mlig-joined.ds  -c workdef -log_cases 1   -out_subdir PREDICT
+   test ./prank.sh predict mlig-holo4k.ds  -c workdef -log_cases 1   -out_subdir PREDICT
+
+}
+
 
 # evaluate default model/settings on main datasets
 eval_predict() {
@@ -157,7 +177,7 @@ eval_train() {
 
     title TRAIN/EVAL ON MAIN DATASETS
 
-    test ./prank.sh crossval chen11-fpocket.ds                        -c working -loop 10                    -out_subdir EVAL_TRAIN
+    test ./prank.sh crossval chen11-fpocket.ds                         -c working -loop 10                    -out_subdir EVAL_TRAIN
     test ./prank.sh traineval -t chen11-fpocket.ds -e joined.ds        -c working -loop 10                    -out_subdir EVAL_TRAIN
     test ./prank.sh traineval -t chen11-fpocket.ds -e holo4k.ds        -c working -loop 3   -cache_datasets 0 -out_subdir EVAL_TRAIN
 }
@@ -200,8 +220,8 @@ speed_quick() {
 
     title "SPEED TESTS (QUICK)"
 
-    misc/test-scripts/benchmark.sh 1 "U48"   "1 2 4 5 6 7 8 9 10 11 12 16 20 24"  "./prank.sh predict u48.ds -c workdef -out_subdir SPEED"
-    misc/test-scripts/benchmark.sh 3 "1FILE" "1"                    "./prank.sh predict -f distro/test_data/liganated/1aaxa.pdb -c workdef -out_subdir SPEED"
+    misc/test-scripts/benchmark.sh 3  "U48"   "1 2 4 5 8 9 12 13 24"  "./prank.sh predict u48.ds -c workdef -out_subdir SPEED"
+    misc/test-scripts/benchmark.sh 10 "1FILE" "1"                     "./prank.sh predict -f distro/test_data/liganated/1aaxa.pdb -c workdef -out_subdir SPEED"
 }
 
 
@@ -229,6 +249,7 @@ tests() {
 
 all() {
     tests
+    predict
     eval_predict_all
     eval_rescore
     eval_train_all
