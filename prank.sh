@@ -20,9 +20,8 @@ export JAVA_OPTS="$JAVA_OPTS $JAVA_LOCALENV_PARAMS"
 THIS_SCRIPT_DIR_REL_PATH="$( dirname "${BASH_SOURCE[0]}" )"
 export POCKET_RANK_BASE_DIR="$THIS_SCRIPT_DIR_REL_PATH/distro"
 
-UNAME=`uname -a`
-if [[ "$UNAME" = MINGW* ]] ; then
-    PATH_SEPARATOR=';' # for win
+if [[ "$OSTYPE" = msys* ]] ; then
+    PATH_SEPARATOR=';' # for win ... we want this script to run on Windows with MSYS / Git Bash
 else
     PATH_SEPARATOR=':' # for unix
 fi

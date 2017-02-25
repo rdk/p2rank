@@ -16,9 +16,8 @@ export JAVA_OPTS="$JAVA_OPTS -Xmx2048m"
 # -XX:+UseG1GC
 export JAVA_OPTS="$JAVA_OPTS -XX:+CMSClassUnloadingEnabled -XX:+UseConcMarkSweepGC"
 
-UNAME=`uname -a`
-if [[ "$UNAME" = MINGW* ]] ; then
-    PATH_SEPARATOR=';' # for win
+if [[ "$OSTYPE" = msys* ]] ; then
+    PATH_SEPARATOR=';' # for win ... we want this script to run on Windows with MSYS / Git Bash
 else
     PATH_SEPARATOR=':' # for unix
 fi
