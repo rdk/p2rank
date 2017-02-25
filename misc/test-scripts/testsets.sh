@@ -232,6 +232,14 @@ speed_joined() {
     misc/test-scripts/benchmark.sh 10 "1FILE" "1"                              "./prank.sh predict -f distro/test_data/liganated/1aaxa.pdb -c workdef -out_subdir SPEED"
 }
 
+speed_joined16() {
+
+    title SPEED TESTS
+
+    misc/test-scripts/benchmark.sh 3  "U48"   "1 2 3 4 5 6 7 8 9 10 12 15 16 17"  "./prank.sh predict joined.ds -c workdef -out_subdir SPEED"
+    misc/test-scripts/benchmark.sh 10 "1FILE" "1"                                 "./prank.sh predict -f distro/test_data/liganated/1aaxa.pdb -c workdef -out_subdir SPEED"
+}
+
 
 dummy_speed() {
     misc/test-scripts/benchmark.sh 10 "U48"   "1 2 4 8 12 16 20 24"  "echo dummy"
