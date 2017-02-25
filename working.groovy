@@ -25,7 +25,7 @@ import cz.siret.prank.program.params.Params
     /**
      * stop processing a datsaset on the first unrecoverable error with a dataset item
      */
-    fail_fast = false
+    fail_fast = true
 
     classifier="FastRandomForest"
 

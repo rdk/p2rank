@@ -20,5 +20,7 @@ import cz.siret.prank.program.params.Params
 
     visualizations = false
 
+    fail_fast = true
+
 
 }
