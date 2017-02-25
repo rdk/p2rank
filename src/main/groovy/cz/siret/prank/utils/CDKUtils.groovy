@@ -22,24 +22,17 @@ class CDKUtils {
     static IAtom bioJavaToCDKAtom(Atom atom) {
         Point3d point = new Point3d(atom.coords)
 
-        assert atom!=null
-
         String elementSymbol = "C"
         if (atom.element!=null) {
             elementSymbol = atom.element.name()
         }
 
         if (Elements.ofString(elementSymbol).equals(Elements.Unknown)) {
-
-            String bad = elementSymbol
-
-
+            //String bad = elementSymbol
             elementSymbol = atom.name.substring(0,1)
-
             if (Elements.ofString(elementSymbol).equals(Elements.Unknown)) {
                 elementSymbol = "C"
             }
-
             //log.warn "Element unknown to CDK: $bad (from {}) - using {}", atom.name, elementSymbol
         }
 

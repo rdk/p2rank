@@ -192,9 +192,18 @@ speed() {
 
     title SPEED TESTS
 
-    misc/test-scripts/benchmark.sh 10 "U48"   "1 2 4 8 12 16 20 24"  "./prank.sh predict u48.ds -c workdef -out_subdir SPEED"
-    misc/test-scripts/benchmark.sh 50 "1FILE" "1"                    "./prank.sh predict -f distro/test_data/liganated/1aaxa.pdb -c workdef -out_subdir SPEED"
+    misc/test-scripts/benchmark.sh 5  "U48"   "1 2 4 8 12 16 20 24"  "./prank.sh predict u48.ds -c workdef -out_subdir SPEED"
+    misc/test-scripts/benchmark.sh 25 "1FILE" "1"                    "./prank.sh predict -f distro/test_data/liganated/1aaxa.pdb -c workdef -out_subdir SPEED"
 }
+
+speed_quick() {
+
+    title "SPEED TESTS (QUICK)"
+
+    misc/test-scripts/benchmark.sh 1 "U48"   "1 2 4 5 6 7 8 9 10 11 12 16 20 24"  "./prank.sh predict u48.ds -c workdef -out_subdir SPEED"
+    misc/test-scripts/benchmark.sh 3 "1FILE" "1"                    "./prank.sh predict -f distro/test_data/liganated/1aaxa.pdb -c workdef -out_subdir SPEED"
+}
+
 
 dummy_speed() {
     misc/test-scripts/benchmark.sh 10 "U48"   "1 2 4 8 12 16 20 24"  "echo dummy"
