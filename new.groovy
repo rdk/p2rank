@@ -20,8 +20,6 @@ import cz.siret.prank.program.params.Params
 
     delete_vectors = true
 
-    cache_eval_dataset = true
-
     max_train_instances = 0
 
     /**
@@ -42,8 +40,10 @@ import cz.siret.prank.program.params.Params
     crossval_threads = 5
 
     cache_eval_dataset = true
-
     cache_datasets = true
+    clear_sec_caches = false
+    clear_prim_caches = false
+
 
     log_cases = true
 
@@ -66,5 +66,10 @@ import cz.siret.prank.program.params.Params
     //neighbourhood_radius = 8
 
     //atom_table_features = ["ap5sasaValids","ap5sasaInvalids"] // "apRawValids","apRawInvalids","atomicHydrophobicity"
+
+    atom_table_features = ["apRawValids","apRawInvalids","atomicHydrophobicity"]
+
+    extra_features = ["protrusion","bfactor"]
+
 
 }
