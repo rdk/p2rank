@@ -23,7 +23,7 @@ class RExecutor {
 
     int runScript(String scriptFile, String dir=null) {
 
-        log.info "executing R script [{$scriptFile}]"
+        log.info "executing R script [${scriptFile}]"
 
         if (dir==null) {
             dir = futils.dir(scriptFile)
@@ -31,8 +31,8 @@ class RExecutor {
 
         futils.mkdirs(dir)
 
-        def command = "$RCommand \"$scriptFile\"" // Create the String
-        Process proc = command.execute((List)null, new File(dir))
+        def command = "$RCommand '$scriptFile'" // Create the String
+        Process proc = command.execute((List)nnull, new File(dir))
         proc.waitFor()
 
         StringBuilder out = new StringBuilder("")
@@ -47,6 +47,10 @@ class RExecutor {
             log.info "R stdout:\n{}", out
         if (err)
             log.info "R stderr:\n{}", err
+
+        if (exitcode!=0) {
+            log.error "Rscript finished with error on [$scriptFile]"
+        }
 
         return exitcode
     }
