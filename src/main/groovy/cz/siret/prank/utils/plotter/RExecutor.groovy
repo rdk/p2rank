@@ -31,7 +31,7 @@ class RExecutor {
 
         futils.mkdirs(dir)
 
-        def command = "$RCommand '$scriptFile'" // Create the String
+        def command = "$RCommand $scriptFile" 
         Process proc = command.execute((List)null, new File(dir))
         proc.waitFor()
 
