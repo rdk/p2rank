@@ -71,10 +71,10 @@ class StrUtils {
 
         String splitter = ","
         if (!liststr.contains(splitter)) {
-            splitter = "_"
+            splitter = "."                    // lis in ranged param lists (when running prank ploop) have to use oyher splitter
         }
 
-        liststr = liststr.substring(1, liststr.length()-1)
+        liststr = liststr.substring(1, liststr.length()-1) // list is in parentheses "(...)"
 
         return split(liststr, splitter)
     }
