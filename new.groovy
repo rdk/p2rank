@@ -58,18 +58,17 @@ import cz.siret.prank.program.params.Params
 
     // new optimizations in smichov project:
 
-    //residue_table_features = ["RAx"]
     //atom_table_feat_pow = 8
 
     atom_table_feat_keep_sgn = true
 
     //neighbourhood_radius = 8
 
-    //atom_table_features = ["ap5sasaValids","ap5sasaInvalids"] // "apRawValids","apRawInvalids","atomicHydrophobicity"
 
-    atom_table_features = ["apRawValids","apRawInvalids","atomicHydrophobicity"]
+    atom_table_features = ["ap5sasaValids","ap5sasaInvalids","apRawValids","apRawInvalids","atomicHydrophobicity"]
 
     extra_features = ["protrusion","bfactor"]
 
+    residue_table_features = ["RAx"]
 
 }
