@@ -136,7 +136,7 @@ class RPlotter implements Parametrized {
                     width = 5*300,        # 5 x 300 pixels
                     height = 5*300,
                     res = 300,            # 300 pixels per inch
-                    pointsize = 8)        # smaller font size
+                    pointsize = 6)        # smaller font size
 
 
                 #par(cex.main=1.5) # increase ception font size
