@@ -9,6 +9,9 @@ Ligand-binding site prediction tool based on machine learning.
 
 [![Build Status](https://travis-ci.org/rdk/p2rank.svg?branch=master)](https://travis-ci.org/rdk/p2rank)
 
+### Description
+
+P2RANK is a standalone command line program that predicts ligand-binding pockets from a protein structure. It achieves high prediction success rates without relying on an external software for computation of complex features or on a database of known protein-ligand templates. 
 
 ### Requirements
 
@@ -37,10 +40,16 @@ To compile P2RANK you need Gradle (https://gradle.org/). Build with `./make.sh` 
 
 ### Algorithm
 
-P2RANK makes predictions by scoring and clustering points on the protein's Connolly surface. Ligandability score of individual points is determined by a machine learning based model trained on the dataset of known protein-ligand complexes.
+P2RANK makes predictions by scoring and clustering points on the protein's solvent accessible surface. Ligandability score of individual points is determined by a machine learning based model trained on the dataset of known protein-ligand complexes. For more details see slides and publications.
 
-Slides: http://bit.ly/p2rank_slides (somewhat dated overview)
+Slides: http://bit.ly/p2rank_slides 
 
+### Publications
+
+If you use P2RANK, please cite the following papers:
+
+* [Conference paper](http://bit.ly/p2rank_conference_paper) inroducing P2RANK prediction algorithm
+* [Research article](http://bit.ly/prank_paper) in JChem about PRANK rescoring algorithm
 
 Usage Examples
 --------------
