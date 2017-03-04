@@ -63,14 +63,14 @@ class DataPreProcessor implements Parametrized, Writable {
             if (ratio < targetRatio) {
                 write "supersampling positives (${descState(positives, negatives)})"
                 double addPercent = targetRatio/ratio - 1
-                write "addPercent: $addPercent"
+                write "addPercent: ${addPercent*100}"
                 Instances addition = WekaUtils.randomSubsample(addPercent, seed, positives)
                 positives.addAll(addition)
                 write "positives supersampled (${descState(positives, negatives)})"
             } else {
                 write "supersampling negatives (${descState(positives, negatives)})"
                 double addPercent = ratio/targetRatio - 1
-                write "addPercent: $addPercent"
+                write "addPercent: ${addPercent*100}"
                 Instances addition = WekaUtils.randomSubsample(addPercent, seed, negatives)
                 negatives.addAll(addition)
                 write "negatives supersampled (${descState(positives, negatives)})"
@@ -79,7 +79,7 @@ class DataPreProcessor implements Parametrized, Writable {
             if (ratio < targetRatio) {
                 write "subsampling negatives (${descState(positives, negatives)})"
                 double keepPercent = ratio / targetRatio
-                write "keepPc: $keepPercent"
+                write "keepPercent: ${keepPercent*100}"
 
                 if (params.subsampl_high_protrusion_negatives) {
                     // sory by protrusion desc before subsampling
@@ -97,7 +97,7 @@ class DataPreProcessor implements Parametrized, Writable {
             } else {
                 write "subsampling positives (${descState(positives, negatives)})"
                 double keepPercent = targetRatio / ratio
-                write "keepPc: $keepPercent"
+                write "keepPc: ${keepPercent*100}"
                 positives = WekaUtils.randomSubsample(keepPercent, seed, positives)
                 write "positives subsampled (${descState(positives, negatives)})"
             }
