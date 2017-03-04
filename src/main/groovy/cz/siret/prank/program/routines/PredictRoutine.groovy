@@ -73,6 +73,8 @@ class PredictRoutine implements Parametrized, Writable {
             LoaderParams.ignoreLigandsSwitch = true
         }
 
+        boolean outputPredictionFiles = produceFilesystemOutput && !params.output_only_stats
+
         Dataset.Result result = dataset.processItems(params.parallel, new Dataset.Processor() {
             void processItem(Dataset.Item item) {
 
@@ -84,7 +86,7 @@ class PredictRoutine implements Parametrized, Writable {
                     new PyMolRenderer(visDir).visualizeHistograms(item, rescorer, pair)
                 }
 
-                if (produceFilesystemOutput) {
+                if (outputPredictionFiles) {
                     PredictionSummary psum = new PredictionSummary(pair.prediction)
                     String outf = "$outdir/${item.label}_predictions.csv"
                     futils.overwrite(outf, psum.toCSV().toString())
@@ -103,7 +105,7 @@ class PredictRoutine implements Parametrized, Writable {
             }
         })
 
-        if (collectStats) {
+        if (collectStats && produceFilesystemOutput) {
             String modelLabel = classifier.class.simpleName + " ($modelf)"
             stats.logAndStore(outdir, modelLabel)
             stats.logMainResults(outdir, modelLabel)

@@ -167,4 +167,7 @@ class WekaSumRescorer extends PocketRescorer implements Parametrized  {
         return classifier.distributionForInstance(auxInst)
     }
 
+    ClassifierStats getStats() {
+        return stats
+    }
 }

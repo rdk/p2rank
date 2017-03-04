@@ -362,19 +362,25 @@ class Params {
      * target class ratio of positives/negatives we train on.
      * relates to subsampling and supersampling
      */
-    double train_class_ratio = 0.1
+    double target_class_ratio = 0.1
 
     boolean subsample = false
 
     /**
-     * don't procuce prediction files for individual proteins (useful for long repetitive experments)
+     *
      */
-    boolean output_only_stats = false
+    boolean supersample = false
+
 
     /**
      * sort negatives desc by protrusion before subsampling
      */
     boolean subsampl_high_protrusion_negatives = false
+
+    /**
+     * don't procuce prediction files for individual proteins (useful for long repetitive experiments)
+     */
+    boolean output_only_stats = false
 
     /**
      * compress results of ploop runs
