@@ -4,6 +4,7 @@ import com.google.common.io.Files
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.apache.commons.io.FileUtils
+import org.zeroturnaround.zip.ZipUtil
 
 
 /**
@@ -160,6 +161,12 @@ class futils {
 
     static void copy(String from, String to) {
         Files.copy(new File(from), new File(to))
+    }
+
+
+    static void zipAndDelete(String fileOrDirectory) {
+        ZipUtil.pack(new File(fileOrDirectory), new File(fileOrDirectory + '.zip'))
+        delete(fileOrDirectory)
     }
 
 }

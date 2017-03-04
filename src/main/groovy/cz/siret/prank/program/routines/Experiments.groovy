@@ -116,6 +116,10 @@ class Experiments extends Routine {
                 res = traineval()
             }
 
+            if (params.zip_ploop_runs) {
+                Thread.start { futils.zipAndDelete(outdir) }
+            }
+
             if (params.clear_prim_caches) {
                 trainDataSet.clearPrimaryCaches()
                 evalDataSet?.clearPrimaryCaches()

@@ -100,6 +100,7 @@ dependencies {
     compile "org.apache.commons:commons-lang3:3.5"
     compile "commons-io:commons-io:2.5"
     compile "com.google.guava:guava:21.0"
+    compile 'org.zeroturnaround:zt-zip:1.11'
 
     compile 'org.slf4j:slf4j-api:1.7.23'
     compile 'org.apache.logging.log4j:log4j-slf4j-impl:2.5'

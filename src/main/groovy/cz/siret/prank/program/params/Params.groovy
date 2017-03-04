@@ -376,6 +376,11 @@ class Params {
      */
     boolean subsampl_high_protrusion_negatives = false
 
+    /**
+     * compress results of ploop runs
+     */
+    boolean zip_ploop_runs = true
+
 //===========================================================================================================//
 
     String getVersion() {
