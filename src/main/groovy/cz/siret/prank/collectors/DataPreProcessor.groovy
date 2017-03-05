@@ -8,6 +8,7 @@ import cz.siret.prank.utils.Writable
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import weka.core.Attribute
+import weka.core.Instance
 import weka.core.Instances
 
 @Slf4j
@@ -33,8 +34,13 @@ class DataPreProcessor implements Parametrized, Writable {
             data = handleClassImbalances(data)
         }
 
+        if (params.balance_class_weights) {
+            data = balanceClassWeights(data)
+        }
+
         return data
     }
+
 
     private Instances handleClassImbalances(Instances data) {
 
@@ -104,12 +110,39 @@ class DataPreProcessor implements Parametrized, Writable {
         return data
     }
 
-    private descState(Instances positives, Instances negatives) {
+    private static String descState(Instances positives, Instances negatives) {
         int pos = positives.size()
         int neg = negatives.size()
 
         double ratio = PerfUtils.round( (double)pos / neg, 6 )
+
         "positives: $pos, negatives: $neg, ratio: $ratio"
+    }
+
+    /**
+     * modyfying data weights in place
+     */
+    private Instances balanceClassWeights(Instances data) {
+
+        def split = WekaUtils.splitPositivesNegatives(data)
+        Instances positives = split[0]
+        Instances negatives = split[1]
+
+        int pc = positives.size()
+        int nc = negatives.size()
+
+        double ratio = (double) pc / nc
+        double targetWeightRatio = params.target_class_weight_ratio
+
+        double posWeight = targetWeightRatio / ratio
+
+        write "balancing class weights ... ratio: $ratio  target ratio: $targetWeightRatio  positves weight: $posWeight"
+
+        for (Instance inst : positives) {
+            inst.setWeight(posWeight)
+        }
+
+        return data
     }
 
 }
