@@ -387,12 +387,28 @@ class Params {
      */
     boolean zip_ploop_runs = true
 
-
+    /**
+     * logging level (TRACE/DEBUG/INFO/WARN/ERROR)
+     */
     String log_level = "INFO"
 
+    /**
+     * print log messages to console
+     */
     boolean log_to_console = true
-    
+
+    /**
+     * print log messages to file (run.log in outdir)
+     */
     boolean log_to_file = false
+
+    /**
+     * limit the number of proteins that used for training. random subset of proteins from the dataset is used each run in seedloop
+     * 0 = no limit
+     */
+    int train_ptorein_limit = 0
+
+
 
 //===========================================================================================================//
 

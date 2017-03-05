@@ -270,6 +270,17 @@ class Dataset implements Parametrized {
         return res
     }
 
+    public Dataset randomSubset(int subsetSize, long seed) {
+        if (subsetSize >= this.size) {
+            return this
+        }
+
+        List<Item> shuffledItems = new ArrayList<>(items)
+        Collections.shuffle(shuffledItems, new Random(seed))
+
+        return createSubset( shuffledItems.subList(0, subsetSize), this.name + " (random subset of size $subsetSize)" )
+    }
+
     List<Fold> sampleFolds(int k, long seed) {
         if (size < k)
             throw new PrankException("There is less dataset items than folds! ($k < $size)")

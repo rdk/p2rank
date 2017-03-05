@@ -1,9 +1,5 @@
 package cz.siret.prank.program.routines
 
-import cz.siret.prank.utils.MathUtils
-import cz.siret.prank.utils.PerfUtils
-import groovy.transform.TupleConstructor
-import groovy.util.logging.Slf4j
 import cz.siret.prank.collectors.DataPreProcessor
 import cz.siret.prank.collectors.PointVectorCollector
 import cz.siret.prank.collectors.VectorCollector
@@ -14,8 +10,11 @@ import cz.siret.prank.features.FeatureVector
 import cz.siret.prank.score.criteria.DCA
 import cz.siret.prank.score.criteria.IdentificationCriterium
 import cz.siret.prank.utils.ATimer
+import cz.siret.prank.utils.PerfUtils
 import cz.siret.prank.utils.WekaUtils
 import cz.siret.prank.utils.futils
+import groovy.transform.TupleConstructor
+import groovy.util.logging.Slf4j
 import weka.core.Instances
 
 import java.util.concurrent.atomic.AtomicInteger
@@ -36,6 +35,14 @@ class CollectVectorsRoutine extends Routine {
         this.dataset = dataSet
         this.outdir = outdir
         this.vectf = vectf
+    }
+
+    private Dataset prepareDataset(Dataset dataset) {
+        if (params.train_ptorein_limit>0 && params.train_ptorein_limit < dataset.size) {
+            write "training on random subset of size $params.train_ptorein_limit"
+            dataset = dataset.randomSubset(params.train_ptorein_limit, params.seed)
+        }
+        return dataset
     }
 
     /**
@@ -59,6 +66,7 @@ class CollectVectorsRoutine extends Routine {
         final AtomicInteger neg = new AtomicInteger(0)
         final List<Instances> instList = Collections.synchronizedList( new ArrayList<>(dataset.size))
 
+        dataset = prepareDataset(dataset)
 
         dataset.processItems(params.parallel, new Dataset.Processor() {
             void processItem(Dataset.Item item) {
