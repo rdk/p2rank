@@ -18,6 +18,17 @@ import cz.siret.prank.utils.StrUtils
 import cz.siret.prank.utils.Writable
 import cz.siret.prank.utils.futils
 import cz.siret.prank.utils.CmdLineArgs
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.core.Appender
+import org.apache.logging.log4j.core.Layout
+import org.apache.logging.log4j.core.LoggerContext
+import org.apache.logging.log4j.core.appender.FileAppender
+import org.apache.logging.log4j.core.config.AppenderRef
+import org.apache.logging.log4j.core.config.Configuration
+import org.apache.logging.log4j.core.config.LoggerConfig
+import org.apache.logging.log4j.core.config.plugins.PluginAttribute
+import org.apache.logging.log4j.core.config.plugins.PluginElement
+import org.apache.logging.log4j.core.layout.PatternLayout
 
 @Slf4j
 class Main implements Parametrized, Writable {
@@ -318,6 +329,9 @@ class Main implements Parametrized, Writable {
         return error
     }
 
+    void configureLoggers(String outdir) {
+        LoggerConfigurator.configureLoggers(params.log_level, params.log_to_console, params.log_to_file, outdir)
+    }
 
 
 //===========================================================================================================//

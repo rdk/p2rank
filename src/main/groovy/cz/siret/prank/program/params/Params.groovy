@@ -387,6 +387,13 @@ class Params {
      */
     boolean zip_ploop_runs = true
 
+
+    String log_level = "INFO"
+
+    boolean log_to_console = true
+    
+    boolean log_to_file = false
+
 //===========================================================================================================//
 
     String getVersion() {

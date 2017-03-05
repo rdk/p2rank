@@ -71,4 +71,8 @@ import cz.siret.prank.program.params.Params
 
     residue_table_features = ["RAx"]
 
+    log_to_console = false
+
+    log_to_file = true
+
 }
