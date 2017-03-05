@@ -59,7 +59,7 @@ class DataPreProcessor implements Parametrized, Writable {
 
         if (params.supersample || params.supersample) {
 
-            write descState(positives, negatives)
+            write "instances: " + descState(positives, negatives)
 
             if (params.supersample) {
                 if (ratio < targetRatio) {
@@ -95,7 +95,7 @@ class DataPreProcessor implements Parametrized, Writable {
                 }
             }
 
-            write descState(positives, negatives)
+            write "instances: " + descState(positives, negatives)
         }
 
         data = WekaUtils.joinInstances([positives, negatives])
