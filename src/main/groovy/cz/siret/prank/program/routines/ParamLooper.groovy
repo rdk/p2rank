@@ -96,7 +96,9 @@ class ParamLooper extends Routine {
     }
 
     private make2DPlots() {
-        GParsPool.withExistingPool(ThreadPoolFactory.pool) {
+        int threads = Math.min(params.threads, 4)
+        GParsPool.withPool(threads) {
+//        GParsPool.withExistingPool(ThreadPoolFactory.pool) {
             tables2D.entrySet().eachParallel {
                 String fname = futils.absSafePath(it.value)
                 String label = it.key

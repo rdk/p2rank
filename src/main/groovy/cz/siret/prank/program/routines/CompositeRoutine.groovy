@@ -198,19 +198,19 @@ abstract class CompositeRoutine extends Routine {
             m.TIME_TRAIN = trainTime
             m.TIME_EVAL = evalTime
 
-            m.DCA4_0 = rescoredEval.getStandardAssessorSuccRate(0)
-            m.DCA4_1 = rescoredEval.getStandardAssessorSuccRate(1)
-            m.DCA4_2 = rescoredEval.getStandardAssessorSuccRate(2)
-            m.DCA4_4 = rescoredEval.getStandardAssessorSuccRate(4)
-            m.DCA4_99 = rescoredEval.getStandardAssessorSuccRate(99)
+            m.DCA_4_0 = rescoredEval.getStandardAssessorSuccRate(0)
+            m.DCA_4_1 = rescoredEval.getStandardAssessorSuccRate(1)
+            m.DCA_4_2 = rescoredEval.getStandardAssessorSuccRate(2)
+            m.DCA_4_4 = rescoredEval.getStandardAssessorSuccRate(4)
+            m.DCA_4_99 = rescoredEval.getStandardAssessorSuccRate(99)
 
             // compare to getDefaultEvalCrtieria()
-            m.DCC4_0 = rescoredEval.calcSuccRate(18,0)
-            m.DCC4_2 = rescoredEval.calcSuccRate(18,2)
-            m.DPA1_0 = rescoredEval.calcSuccRate(25,0)
-            m.DPA1_2 = rescoredEval.calcSuccRate(25,2)
-            m.DSA3_0 = rescoredEval.calcSuccRate(37,0)
-            m.DSA3_2 = rescoredEval.calcSuccRate(37,2)
+            m.DCC_4_0 = rescoredEval.calcSuccRate(18,0)
+            m.DCC_4_2 = rescoredEval.calcSuccRate(18,2)
+            m.DPA_1_0 = rescoredEval.calcSuccRate(25,0)
+            m.DPA_1_2 = rescoredEval.calcSuccRate(25,2)
+            m.DSA_3_0 = rescoredEval.calcSuccRate(37,0)
+            m.DSA_3_2 = rescoredEval.calcSuccRate(37,2)
 
             m.LIG_COUNT = originalEval.ligandCount / runs
             m.LIG_COUNT_IGNORED = originalEval.ignoredLigandCount / runs
@@ -218,14 +218,14 @@ abstract class CompositeRoutine extends Routine {
             m.LIG_COUNT_DISTANT = originalEval.distantLigandCount / runs
             m.AVG_LIG_PROT_DIST = originalEval.avgLigCenterToProtDist
 
-            m.DCA40_NOMINAL = m.DCA4_0 * m.LIG_COUNT
+            m.DCA_4_0_NOMINAL = m.DCA_4_0 * m.LIG_COUNT
 
             m.AVG_POCKETS = rescoredEval.avgPockets
             m.AVG_CLOSTES_POCKET_DIST = rescoredEval.avgClosestPocketDist
             m.AVG_POCKET_SURF_ATOMS = rescoredEval.avgPocketSurfAtoms
-            m.AVG_POCKET_SURF_ATOMS_TP = rescoredEval.avgPocketSurfAtomsTruePockets
+            m.AVG_POCKET_SURF_ATOMS_TRUE_POCKETS = rescoredEval.avgPocketSurfAtomsTruePockets
             m.AVG_POCKET_INNER_POINTS = rescoredEval.avgPocketInnerPoints
-            m.AVG_POCKET_INNER_POINTS_TP = rescoredEval.avgPocketInnerPointsTruePockets
+            m.AVG_POCKET_INNER_POINTS_TRUE_POCKETS = rescoredEval.avgPocketInnerPointsTruePockets
             m.AVG_PROT_EXPOSED_ATOMS = rescoredEval.avgExposedAtoms
             m.AVG_PROT_CONOLLY_POINTS = rescoredEval.avgProteinConollyPoints
 

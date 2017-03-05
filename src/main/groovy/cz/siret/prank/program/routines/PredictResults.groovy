@@ -25,19 +25,19 @@ class PredictResults implements Parametrized, Writable {
     Map getStats() {
         Map m = predictionsEval.stats
 
-        m.DCA4_0 = predictionsEval.getStandardAssessorSuccRate(0)
-        m.DCA4_1 = predictionsEval.getStandardAssessorSuccRate(1)
-        m.DCA4_2 = predictionsEval.getStandardAssessorSuccRate(2)
-        m.DCA4_4 = predictionsEval.getStandardAssessorSuccRate(4)
-        m.DCA4_99 = predictionsEval.getStandardAssessorSuccRate(99)
+        m.DCA_4_0 = predictionsEval.getStandardAssessorSuccRate(0)
+        m.DCA_4_1 = predictionsEval.getStandardAssessorSuccRate(1)
+        m.DCA_4_2 = predictionsEval.getStandardAssessorSuccRate(2)
+        m.DCA_4_4 = predictionsEval.getStandardAssessorSuccRate(4)
+        m.DCA_4_99 = predictionsEval.getStandardAssessorSuccRate(99)
 
-        // compare to getDefaultEvalCrtieria()
-        m.DCC4_0 = predictionsEval.calcSuccRate(18,0)
-        m.DCC4_2 = predictionsEval.calcSuccRate(18,2)
-        m.DPA1_0 = predictionsEval.calcSuccRate(25,0)
-        m.DPA1_2 = predictionsEval.calcSuccRate(25,2)
-        m.DSA3_0 = predictionsEval.calcSuccRate(37,0)
-        m.DSA3_2 = predictionsEval.calcSuccRate(37,2)
+        // for magic numbers see getDefaultEvalCrtieria()
+        m.DCC_4_0 = predictionsEval.calcSuccRate(18,0)
+        m.DCC_4_2 = predictionsEval.calcSuccRate(18,2)
+        m.DPA_1_0 = predictionsEval.calcSuccRate(25,0)
+        m.DPA_1_2 = predictionsEval.calcSuccRate(25,2)
+        m.DSA_3_0 = predictionsEval.calcSuccRate(37,0)
+        m.DSA_3_2 = predictionsEval.calcSuccRate(37,2)
 
         m.LIG_COUNT = predictionsEval.ligandCount
         m.LIG_COUNT_IGNORED = predictionsEval.ignoredLigandCount
@@ -45,14 +45,14 @@ class PredictResults implements Parametrized, Writable {
         m.LIG_COUNT_DISTANT = predictionsEval.distantLigandCount
         m.AVG_LIG_PROT_DIST = predictionsEval.avgLigCenterToProtDist
 
-        m.DCA40_IDENTIFIED = m.DCA4_0 * m.LIG_COUNT
+        m.DCA_4_0_NOMINAL = m.DCA_4_0 * m.LIG_COUNT
 
         m.AVG_POCKETS = predictionsEval.avgPockets
         m.AVG_CLOSTES_POCKET_DIST = predictionsEval.avgClosestPocketDist
         m.AVG_POCKET_SURF_ATOMS = predictionsEval.avgPocketSurfAtoms
-        m.AVG_POCKET_SURF_ATOMS_TP = predictionsEval.avgPocketSurfAtomsTruePockets
+        m.AVG_POCKET_SURF_ATOMS_TRUE_POCKETS = predictionsEval.avgPocketSurfAtomsTruePockets
         m.AVG_POCKET_INNER_POINTS = predictionsEval.avgPocketInnerPoints
-        m.AVG_POCKET_INNER_POINTS_TP = predictionsEval.avgPocketInnerPointsTruePockets
+        m.AVG_POCKET_INNER_POINTS_TRUE_POCKETS = predictionsEval.avgPocketInnerPointsTruePockets
         m.AVG_PROT_EXPOSED_ATOMS = predictionsEval.avgExposedAtoms
         m.AVG_PROT_CONOLLY_POINTS = predictionsEval.avgProteinConollyPoints
 
@@ -159,8 +159,8 @@ class PredictResults implements Parametrized, Writable {
         m.ligands =  predictionsEval.ligandCount
         m.pockets =  predictionsEval.pocketCount
 
-        m.DCA4_0 = pc predictionsEval.getStandardAssessorSuccRate(0)
-        m.DCA4_2 = pc predictionsEval.getStandardAssessorSuccRate(2)
+        m.DCA_4_0 = pc predictionsEval.getStandardAssessorSuccRate(0)
+        m.DCA_4_2 = pc predictionsEval.getStandardAssessorSuccRate(2)
 
         m.P =   fmt classifierStats.p
         m.R =   fmt classifierStats.r

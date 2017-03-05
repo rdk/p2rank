@@ -57,7 +57,7 @@ class DataPreProcessor implements Parametrized, Writable {
             return data
         }
 
-        if (params.supersample || params.supersample) {
+        if (params.supersample || params.subsample) {
 
             write "instances: " + descState(positives, negatives)
 
@@ -108,7 +108,7 @@ class DataPreProcessor implements Parametrized, Writable {
         int pos = positives.size()
         int neg = negatives.size()
 
-        double ratio = PerfUtils.round( (double)pos / neg, 3 )
+        double ratio = PerfUtils.round( (double)pos / neg, 6 )
         "positives: $pos, negatives: $neg, ratio: $ratio"
     }
 

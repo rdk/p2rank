@@ -408,6 +408,17 @@ class Params {
      */
     int train_ptorein_limit = 0
 
+    /**
+     * add weights to instances to achieve target_weight_ratio (if classifier algorithm supports it)
+     *
+     */
+    boolean balance_class_weights = false
+
+    /**
+     * target weighted ratio of positive/negative instances when balancing class weights (balance_class_weights=true)
+     */
+    double target_class_weight_ratio = 0.5
+
 
 
 //===========================================================================================================//
