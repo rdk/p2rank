@@ -196,11 +196,14 @@ class Main implements Parametrized, Writable {
     void doRunPredict(String label, boolean evalPredict) {
 
         Dataset dataset = loadDatasetOrFile()
+        String outdir = findOutdir("${label}_$dataset.label")
+
+        configureLoggers(outdir)
 
         PredictRoutine predictRoutine = new PredictRoutine(
                 dataset,
                 findModel(),
-                findOutdir("${label}_$dataset.label"))
+                outdir)
 
         if (evalPredict) {
             predictRoutine.collectStats = true
@@ -236,11 +239,14 @@ class Main implements Parametrized, Writable {
         initRescoreDefaultParams()
 
         Dataset dataset = loadDatasetOrFile()
+        String outdir = findOutdir("rescore_$dataset.label")
+
+        configureLoggers(outdir)
 
         Dataset.Result result = new RescoreRoutine(
                 dataset,
                 findModel(),
-                findOutdir("rescore_$dataset.label")).execute()
+                outdir).execute()
 
         finalizeDatasetResult(result)
     }
@@ -250,11 +256,14 @@ class Main implements Parametrized, Writable {
         initRescoreDefaultParams()
 
         Dataset dataset = loadDataset()
+        String outdir = findOutdir("eval_rescore_$dataset.label")
+
+        configureLoggers(outdir)
 
         new EvaluateRoutine(
                 dataset,
                 findModel(),
-                findOutdir("eval_rescore_$dataset.label")).execute()
+                outdir).execute()
 
     }
 
@@ -267,6 +276,8 @@ class Main implements Parametrized, Writable {
 
         Dataset dataset = loadDataset()
         String outdir = findOutdir("crossval_" + dataset.label)
+
+        configureLoggers(outdir)
 
         futils.overwrite("$outdir/params.txt", params.toString())
 
