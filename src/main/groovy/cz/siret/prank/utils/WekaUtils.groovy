@@ -164,11 +164,30 @@ class WekaUtils implements Writable {
 
     // == filters ===
 
-    static Instances randomSubsample(double keepPercentage, int seed, Instances data) {
-        assert keepPercentage>=0 && keepPercentage<=1
+    static Instances randomSubsample(double keepRatio, int seed, Instances data) {
+        assert keepRatio>=0 && keepRatio<=1, "Invalid ratio for subsample: $keepRatio"
 
-        return removeRatio( randomize(data, seed), 1-keepPercentage)
+        return removeRatio( randomize(data, seed), 1-keepRatio)
+    }
 
+    /**
+     * subsample or supersample by copying data n times and adding random subsample
+     */
+    static Instances randomSample(double ratio, int seed, Instances data) {
+        assert ratio>=0, "Invalid ratio for sampling: $ratio"
+
+        if (ratio < 1) {
+            return randomSubsample(ratio, seed, data)
+        } else {
+            Instances result = new Instances(data, 0, data.size())
+            ratio -= 1
+            while (ratio>=1) {
+                result.addAll(data)
+                ratio -= 1
+            }
+            result.addAll( randomSubsample(ratio, seed, data) )
+            return result
+        }
     }
 
     /**
