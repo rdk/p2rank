@@ -16,4 +16,10 @@ git-push() {
 
 ./prank.sh "$@"
 
-( cd ../p2rank-results && git-push ) 
+if [ $? -eq 0 ]; then
+    echo EXPERIMENT WENT OK. Pushing results to git...
+    ( cd ../p2rank-results && git-push )
+else
+    echo FAILED
+fi
+
