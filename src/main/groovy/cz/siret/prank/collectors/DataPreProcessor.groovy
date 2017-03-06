@@ -136,13 +136,30 @@ class DataPreProcessor implements Parametrized, Writable {
 
         double posWeight = targetWeightRatio / ratio
 
-        write "balancing class weights ... ratio: $ratio  target ratio: $targetWeightRatio  positves weight: $posWeight"
+        write "balancing class weights ... ratio: $ratio  target ratio: $targetWeightRatio  pos. weight: $posWeight"
 
         for (Instance inst : positives) {
             inst.setWeight(posWeight)
         }
 
+        write "weighted ratio: ${weightedRatio(data)}"
+
         return data
+    }
+
+    private static double weightedRatio(Instances data) {
+        double wp = 0
+        double wn = 0
+
+        for (Instance inst : data) {
+            if (inst.classValue() == 0) {
+                wn += inst.weight()
+            } else {
+                wp += inst.weight()
+            }
+        }
+
+        return wp / wn
     }
 
 }
