@@ -11,6 +11,8 @@ import weka.core.Attribute
 import weka.core.Instance
 import weka.core.Instances
 
+import static cz.siret.prank.utils.WekaUtils.isPositiveInstance
+
 @Slf4j
 @CompileStatic
 class DataPreProcessor implements Parametrized, Writable {
@@ -138,8 +140,10 @@ class DataPreProcessor implements Parametrized, Writable {
 
         write "balancing class weights ... ratio: $ratio  target ratio: $targetWeightRatio  pos. weight: $posWeight"
 
-        for (Instance inst : positives) {
-            inst.setWeight(posWeight)
+        for (Instance inst : data) {
+            if (isPositiveInstance(inst)) {
+                inst.setWeight(posWeight)
+            }
         }
 
         write "weighted ratio: ${weightedRatio(data)}"
@@ -152,10 +156,10 @@ class DataPreProcessor implements Parametrized, Writable {
         double wn = 0
 
         for (Instance inst : data) {
-            if (inst.classValue() == 0) {
-                wn += inst.weight()
-            } else {
+            if (isPositiveInstance(inst)) {
                 wp += inst.weight()
+            } else {
+                wn += inst.weight()
             }
         }
 

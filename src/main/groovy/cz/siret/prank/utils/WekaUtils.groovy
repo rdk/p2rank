@@ -134,14 +134,18 @@ class WekaUtils implements Writable {
         Instances neg = new Instances(all, 0)
 
         for (Instance inst : all) {
-            if (inst.classValue() == 0) {
-                neg.add(inst)
-            } else {
+            if (isPositiveInstance(inst)) {
                 pos.add(inst)
+            } else {
+                neg.add(inst)  // note: this is copying the instance!
             }
         }
 
         return [pos, neg]
+    }
+
+    static isPositiveInstance(Instance inst) {
+        inst.classValue() != 0    
     }
 
     static int countClass(Instances data, double val) {
