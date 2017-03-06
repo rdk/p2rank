@@ -195,7 +195,7 @@ class Params {
     double weight_sigma = 2.2
     double weight_dist_param = 4.5
 
-    WeightFun.Option weight_function = WeightFun.Option.INV
+    String weight_function = "INV"
 
     boolean deep_surrounding = false
 

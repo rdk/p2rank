@@ -177,7 +177,7 @@ import cz.siret.prank.program.params.Params
     weight_sigma = 2.2
     weight_dist_param = 4.5
 
-    weight_function = WeightFun.Option.INV
+    weight_function = "INV"
 
     deep_surrounding = false
 

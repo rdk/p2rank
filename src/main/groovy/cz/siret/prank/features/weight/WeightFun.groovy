@@ -15,7 +15,11 @@ abstract class WeightFun implements Parametrized {
 
     abstract double weight(double dist);
 
-    static WeightFun create(Option option) {
+    static WeightFun create(String name) {
+        createFunction(Option.valueOf(name))
+    }
+    
+    static WeightFun createFunction(Option option) {
         // creating new instances since they are parametrized
         switch (option)  {
             case Option.ONE   : return new One()
