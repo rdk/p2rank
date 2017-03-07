@@ -19,14 +19,23 @@ import org.apache.logging.log4j.core.layout.PatternLayout
  *
  */
 @CompileStatic
-class LoggerConfigurator implements Writable {
+class LogManager implements Writable {
 
-    static void configureLoggers(Main main, String logLevel, boolean logToConsole, boolean logToFile, String outdir) {
+    static final String LOGGER_NAME = "cz.siret.prank"
+    static final String CONSOLE_APPENDER_NAME = "Console"
+    static final String FILE_APPENDER_NAME = "File"
 
-        String loggerName = "cz.siret.prank"
+    boolean loggingToFile = false
+    String logFile
+
+    Appender fileAppender
+
+    void configureLoggers(String logLevel, boolean logToConsole, boolean logToFile, String outdir) {
+
+        String loggerName = LOGGER_NAME
         Level level = Level.getLevel(logLevel)
 
-        LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
+        LoggerContext ctx = (LoggerContext) org.apache.logging.log4j.LogManager.getContext(false);
         Configuration config = ctx.getConfiguration();
         LoggerConfig loggerConfig = config.getLoggerConfig(loggerName)
 
@@ -37,13 +46,14 @@ class LoggerConfigurator implements Writable {
         loggerConfig.setLevel(level)
 
         if (logToFile) {
-            main.logFile = addFileAppender(config, loggerName, outdir, level)
-            main.loggingToFile = true
+            logFile = "$outdir/run.log"
+            fileAppender = addFileAppender(config, loggerName, logFile, level)
+            loggingToFile = true
         }
         if (!logToConsole) {
-            config.getAppender("Console").stop()
-            loggerConfig.removeAppender("Console")
-            config.rootLogger.removeAppender("Console")
+            config.getAppender(CONSOLE_APPENDER_NAME).stop()
+            loggerConfig.removeAppender(CONSOLE_APPENDER_NAME)
+            config.rootLogger.removeAppender(CONSOLE_APPENDER_NAME)
 
             if (!logToFile) {
                 config.removeLogger(loggerName)
@@ -55,12 +65,12 @@ class LoggerConfigurator implements Writable {
         loggerConfig.getAppenders().each { System.out.println "APPENDER: " + it.value.name }
     }
 
-    private static String addFileAppender(Configuration config, String loggerName, String outdir, Level level) {
-        String file = "$outdir/run.log"
+    private static Appender addFileAppender(Configuration config, String loggerName, String logFile, Level level) {
+
         String pattern = "[%level] %logger{0} - %msg%n"
         int bufferSize = 5000
 
-        futils.delete(file)
+        futils.delete(logFile)
 
         Layout layout = PatternLayout.newBuilder()
                 .withConfiguration(config)
@@ -68,7 +78,7 @@ class LoggerConfigurator implements Writable {
                 .build()
 
         Appender appender = FileAppender.createAppender(
-                file,               // fileName,
+                logFile,               // fileName,
                 "false",            // append,
                 "false",            // locking,
                 "File",             // name,
@@ -85,13 +95,19 @@ class LoggerConfigurator implements Writable {
         appender.start();
         config.addAppender(appender);
 
-        AppenderRef ref = AppenderRef.createAppenderRef("File", null, null);
+        AppenderRef ref = AppenderRef.createAppenderRef(FILE_APPENDER_NAME, null, null);
         AppenderRef[] refs = (AppenderRef[]) [ref].toArray();
 
         LoggerConfig loggerConfig = config.getLoggerConfig(loggerName)
         loggerConfig.addAppender(appender, level, null);
 
-        return file
+        return appender
+    }
+
+    void stopFileAppender() {
+        if (fileAppender!=null) {
+            fileAppender.stop()
+        }
     }
 
 

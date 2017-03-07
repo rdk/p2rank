@@ -409,6 +409,11 @@ class Params {
     boolean log_to_file = false
 
     /**
+     * cmompress and delete log file at the end (if log_to_file)
+     */
+    boolean zip_log_file = false
+
+    /**
      * limit the number of proteins that used for training. random subset of proteins from the dataset is used each run in seedloop
      * 0 = no limit
      */

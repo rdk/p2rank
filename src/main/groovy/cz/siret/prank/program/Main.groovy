@@ -18,17 +18,6 @@ import cz.siret.prank.utils.StrUtils
 import cz.siret.prank.utils.Writable
 import cz.siret.prank.utils.futils
 import cz.siret.prank.utils.CmdLineArgs
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.core.Appender
-import org.apache.logging.log4j.core.Layout
-import org.apache.logging.log4j.core.LoggerContext
-import org.apache.logging.log4j.core.appender.FileAppender
-import org.apache.logging.log4j.core.config.AppenderRef
-import org.apache.logging.log4j.core.config.Configuration
-import org.apache.logging.log4j.core.config.LoggerConfig
-import org.apache.logging.log4j.core.config.plugins.PluginAttribute
-import org.apache.logging.log4j.core.config.plugins.PluginElement
-import org.apache.logging.log4j.core.layout.PatternLayout
 
 @Slf4j
 class Main implements Parametrized, Writable {
@@ -39,8 +28,7 @@ class Main implements Parametrized, Writable {
     String command
     String installDir
 
-    boolean loggingToFile = false
-    String logFile
+    LogManager logManager = new LogManager()
 
     boolean error = false
 
@@ -340,13 +328,20 @@ class Main implements Parametrized, Writable {
                 runExperiment(command)
         }
 
-        
+        finalizeLog()
 
         return error
     }
 
     void configureLoggers(String outdir) {
-        LoggerConfigurator.configureLoggers(this, params.log_level, params.log_to_console, params.log_to_file, outdir)
+        logManager.configureLoggers(params.log_level, params.log_to_console, params.log_to_file, outdir)
+    }
+
+    void finalizeLog() {
+        if (logManager.loggingToFile && params.zip_log_file) {
+            logManager.stopFileAppender()
+            futils.zipAndDelete(logManager.logFile)
+        }
     }
 
 
@@ -367,14 +362,12 @@ class Main implements Parametrized, Writable {
 
     static void main(String[] args) {
         ATimer timer = ATimer.start()
-
         CmdLineArgs parsedArgs = CmdLineArgs.parse(args)
 
         if (parsedArgs.hasSwitch("v", "version")) {
             write "$versionName"
             return
         }
-
 
         write "----------------------------------------------------------------------------------------------"
         write " $versionName"
@@ -407,8 +400,6 @@ class Main implements Parametrized, Writable {
         if (error) {
             System.exit(1)
         }
-
-        //CutoffAtomsCallLog.INST.printOut("local-cutoffAtomsAround");
 
     }
 
