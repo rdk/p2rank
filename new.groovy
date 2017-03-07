@@ -75,4 +75,6 @@ import cz.siret.prank.program.params.Params
 
     log_to_file = true
 
+    ploop_delete_runs = true
+
 }

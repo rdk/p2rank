@@ -383,9 +383,15 @@ class Params {
     boolean output_only_stats = false
 
     /**
-     * compress results of ploop runs
+     * compress results of individual ploop runs
      */
-    boolean zip_ploop_runs = true
+    boolean ploop_zip_runs = true
+
+    /**
+     * delete results of individual ploop runs
+     */
+    boolean ploop_delete_runs = false
+
 
     /**
      * logging level (TRACE/DEBUG/INFO/WARN/ERROR)

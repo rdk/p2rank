@@ -39,6 +39,9 @@ class Main implements Parametrized, Writable {
     String command
     String installDir
 
+    boolean loggingToFile = false
+    String logFile
+
     boolean error = false
 
 //===========================================================================================================//
@@ -337,11 +340,13 @@ class Main implements Parametrized, Writable {
                 runExperiment(command)
         }
 
+        
+
         return error
     }
 
     void configureLoggers(String outdir) {
-        LoggerConfigurator.configureLoggers(params.log_level, params.log_to_console, params.log_to_file, outdir)
+        LoggerConfigurator.configureLoggers(this, params.log_level, params.log_to_console, params.log_to_file, outdir)
     }
 
 

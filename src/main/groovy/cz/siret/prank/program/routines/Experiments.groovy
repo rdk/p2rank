@@ -1,5 +1,6 @@
 package cz.siret.prank.program.routines
 
+import cz.siret.prank.utils.ThreadUtils
 import groovy.util.logging.Slf4j
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.domain.DatasetCachedLoader
@@ -7,6 +8,8 @@ import cz.siret.prank.program.Main
 import cz.siret.prank.program.params.RangeParam
 import cz.siret.prank.utils.CmdLineArgs
 import cz.siret.prank.utils.futils
+
+import static cz.siret.prank.utils.ThreadUtils.async
 
 /**
  * ploop and traineval routines for oprimization experiments
@@ -119,8 +122,10 @@ class Experiments extends Routine {
                 res = traineval()
             }
 
-            if (params.zip_ploop_runs) {
-                Thread.start { futils.zipAndDelete(outdir) }
+            if (params.ploop_delete_runs) {
+                async { futils.delete(outdir) }
+            } else if (params.ploop_zip_runs) {
+                async { futils.zipAndDelete(outdir) }
             }
 
             if (params.clear_prim_caches) {

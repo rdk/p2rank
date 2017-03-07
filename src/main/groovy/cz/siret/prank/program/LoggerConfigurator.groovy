@@ -21,7 +21,7 @@ import org.apache.logging.log4j.core.layout.PatternLayout
 @CompileStatic
 class LoggerConfigurator implements Writable {
 
-    static void configureLoggers(String logLevel, boolean logToConsole, boolean logToFile, String outdir) {
+    static void configureLoggers(Main main, String logLevel, boolean logToConsole, boolean logToFile, String outdir) {
 
         String loggerName = "cz.siret.prank"
         Level level = Level.getLevel(logLevel)
@@ -37,7 +37,8 @@ class LoggerConfigurator implements Writable {
         loggerConfig.setLevel(level)
 
         if (logToFile) {
-            addFileAppender(config, loggerName, outdir, level)
+            main.logFile = addFileAppender(config, loggerName, outdir, level)
+            main.loggingToFile = true
         }
         if (!logToConsole) {
             config.getAppender("Console").stop()
@@ -54,7 +55,7 @@ class LoggerConfigurator implements Writable {
         loggerConfig.getAppenders().each { System.out.println "APPENDER: " + it.value.name }
     }
 
-    private static void addFileAppender(Configuration config, String loggerName, String outdir, Level level) {
+    private static String addFileAppender(Configuration config, String loggerName, String outdir, Level level) {
         String file = "$outdir/run.log"
         String pattern = "[%level] %logger{0} - %msg%n"
         int bufferSize = 5000
@@ -89,6 +90,8 @@ class LoggerConfigurator implements Writable {
 
         LoggerConfig loggerConfig = config.getLoggerConfig(loggerName)
         loggerConfig.addAppender(appender, level, null);
+
+        return file
     }
 
 
