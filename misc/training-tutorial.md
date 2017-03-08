@@ -51,11 +51,11 @@ Related parameters:
 * `-feature_importances <bool>`: calculate feature importances (works only if `classifier = "FastRandomForest"`)
 * `-fail_fast <bool>`: stop processing the datsaset on the first unrecoverable error with a dataset item
 
-### Note on the dataset format (!important)
+### Note on the dataset format (important!)
 Parameter `-sample_negatives_from_decoys` determins how points are sampled from the proteins in a training dataset. 
 If `sample_negatives_from_decoys = false` all of the points from the protein surface are used. 
 If `sample_negatives_from_decoys = true` only points from decoy pockets (not true ligand binding sites found by other method like Fpocket) are used. 
-For that you need to supply dataset that contains pocket predictions by other method (i.e. for predictions of Fpocket use `joined-fpocket.ds` instead of `joined.ds`). 
+For that **you need to supply a training dataset that contains pocket predictions by other method** (i.e. for predictions of Fpocket use `joined-fpocket.ds` instead of `joined.ds`). 
 
 `sample_negatives_from_decoys = true` in combination with Fpocket predictions was historically giving slightly better results. 
 It focuses classifier to learn to distinguish between true and decoy pockets which is in theory harder task than to distinguish between ligandable vs. unligandable protein surface.
