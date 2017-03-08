@@ -55,7 +55,7 @@ class PointVectorCollector extends VectorCollector implements Parametrized {
             log.error "no ligands! [{}]", pair.liganatedProtein.name
         }
 
-        if (params.train_all_surface) {
+        if (!params.sample_negatives_from_decoys) {
             finalRes = collectWholeSurface(ligandAtoms, proteinExtractorPrototype)
         } else {
             proteinExtractorPrototype.prepareProteinPrototypeForPockets()

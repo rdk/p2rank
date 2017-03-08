@@ -302,12 +302,14 @@ import cz.siret.prank.program.params.Params
     surface_additional_cutoff = 2.5
 
     /**
-     * take negative points from all of the protein's surface (not just decoy pockets)
+     * collect negatives just from decoy pockets found by other method
+     * (alternatively take negative points from all of the protein's surface)
      */
-    train_all_surface = false
+    sample_negatives_from_decoys = true
 
     /**
-     * if train_all_surface=true cutoff atound ligand atoms to select negatives, 0=all
+     * cutoff atound ligand atoms to select negatives, 0=all
+     * valid if training from whole surface (collenct_negatives_from_decoys=false)
      */
     train_lig_cutoff = 0
 

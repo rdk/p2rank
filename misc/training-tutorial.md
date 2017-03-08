@@ -51,13 +51,47 @@ Related parameters:
 * `-feature_importances <bool>`: calculate feature importances (works only if `classifier = "FastRandomForest"`)
 * `-fail_fast <bool>`: stop processing the datsaset on the first unrecoverable error with a dataset item
 
-### Note on dataset format
-Parameter `-train_all_surface` determins how are points sampled from proteins in training dataset. 
-If `train_all_surface = true` all all of the points from the protein surface are used. 
-If `train_all_surface = false` only points from decoy pockets (not true ligand binding sites found by other method like Fpocket) are used. 
-For that you need to suply dataset that contains Fpocket predictions (i.e. `joined-fpocket.ds` instead of `joined.ds`). 
+### Note on the dataset format (!important)
+Parameter `-sample_negatives_from_decoys` determins how points are sampled from the proteins in a training dataset. 
+If `sample_negatives_from_decoys = false` all of the points from the protein surface are used. 
+If `sample_negatives_from_decoys = true` only points from decoy pockets (not true ligand binding sites found by other method like Fpocket) are used. 
+For that you need to supply dataset that contains pocket predictions by other method (i.e. for predictions of Fpocket use `joined-fpocket.ds` instead of `joined.ds`). 
 
-`train_all_surface = false` ususlly gives slightly better results. When using `train_all_surface = true` you may need to play with subsampling. 
+`sample_negatives_from_decoys = true` in combination with Fpocket predictions was historically giving slightly better results. 
+It focuses classifier to learn to distinguish between true and decoy pockets which is in theory harder task than to distinguish between ligandable vs. unligandable protein surface.
+It also changes the ratio of sampled positives/negatives in favour of positives.
+
+I recent versions it might be possible to achieve better results by training from whole protein surface in combination with class balancing techniques (see the next section).
+Note that default values of other parameters (related to feature extraction and classification results aggregation) were optimized for the case where `sample_negatives_from_decoys = true`.
+
+Here are the most relevant ones (for descrptions see `Params.groovy`):
+* `-protrusion_radius` and `-neighbourhood_radius`
+* `-average_feat_vectors`
+* `-weight_function`
+* `-pred_point_threshold`
+* `-pred_min_cluster_size` 
+
+Their vallues may need to be optimized again for case of `sample_negatives_from_decoys = false`.
+
+### Dealing with class imbalances
+
+When using all of the protein surface for traning (`sample_negatives_from_decoys = false`) you may need to deal with class imbalances to achieve good results.
+Typically the ratio of positives vs. negatives will be around (1:30) depending on chosen cutoffs and margins. 
+
+Ways to deal with class imbalances:
+ 
+* cutoffs and margins (in relation to distance `D = <dist. to closest ligand atom>`)
+    - `-positive_point_ligand_distance` points with `D < positive_point_ligand_distance` are considered positives
+    - `-neutral_points_margin` if `> 0` points between `(positive_point_ligand_distance, neutral_point_margin)` are ignored  
+    - `-train_lig_cutoff` if `> 0` points with `train_lig_cutoff < D` are ignored
+* subsampling and supersampling
+    - `-subsample`
+    - `-supersample`
+    - use in combination with `-target_class_ratio`
+* class weight balancing
+    - use `-balance_class_weights 1` in combination with `-target_class_weight_ratio`
+    - works only with weight sensitive classifiers (`RandomForest`, `FastRandomForest`)
+
 
 ## Crossvalidation
 To run crossvalidation on a single dataset use `prank crossval` command.

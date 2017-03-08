@@ -320,12 +320,14 @@ class Params {
     double surface_additional_cutoff = 1.8
 
     /**
-     * take negative points from all of the protein's surface (not just decoy pockets)
+     * collect negatives just from decoy pockets found by other method
+     * (alternatively take negative points from all of the protein's surface)
      */
-    boolean train_all_surface = false
+    boolean sample_negatives_from_decoys = true
 
     /**
-     * if train_all_surface=true cutoff atound ligand atoms to select negatives, 0=all
+     * cutoff atound ligand atoms to select negatives, 0=all
+     * valid if training from whole surface (sample_negatives_from_decoys=false)
      */
     double train_lig_cutoff = 0
 
@@ -426,9 +428,9 @@ class Params {
     boolean balance_class_weights = false
 
     /**
-     * target weighted ratio of positive/negative instances when balancing class weights (balance_class_weights=true)
+     * target ratio of weighted sums of positive/negative instances when balancing class weights (balance_class_weights=true)
      */
-    double target_class_weight_ratio = 0.5
+    double target_class_weight_ratio = 0.1
 
 
 

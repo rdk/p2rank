@@ -55,8 +55,11 @@ import cz.siret.prank.program.params.Params
 
     output_only_stats = true
 
-
-    // new optimizations in smichov project:
+    /**
+     * collect negatives just from decoy pockets found by other method
+     * (alternatively take negative points from all of the protein's surface)
+     */
+    sample_negatives_from_decoys = false
 
     //atom_table_feat_pow = 8
 
@@ -78,4 +81,5 @@ import cz.siret.prank.program.params.Params
     ploop_delete_runs = true
 
     zip_log_file = true
+
 }
