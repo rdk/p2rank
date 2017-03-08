@@ -4,7 +4,7 @@ apply plugin: 'idea'
 
 
 group = 'cz.siret'
-version = '2.0-rc.5' // 2.0-dev.6_SNAPSHOT
+version = '2.0-dev.6_SNAPSHOT' 
 
 
 description = 'Ligand binding site prediction based on machine learning.'
@@ -104,7 +104,7 @@ test {
 }
 
 dependencies {
-    compile 'org.codehaus.groovy:groovy-all:2.4.8'
+    compile 'org.codehaus.groovy:groovy-all:2.4.9'
     compile 'org.codehaus.gpars:gpars:1.2.1'
     compile "org.apache.commons:commons-lang3:3.5"
     compile "commons-io:commons-io:2.5"
