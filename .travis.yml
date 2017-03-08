@@ -1,5 +1,8 @@
-
 language: groovy
+
+env:
+  global:
+    - GRADLE_OPTS=-Xmx1500m
 
 jdk:
   - oraclejdk8
