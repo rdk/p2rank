@@ -64,12 +64,6 @@ task copyBinaryToDist( type: Copy ) {
     include "*.jar"
 }
 
-// task fatJar(type: Jar) {
-//     baseName = project.name + '-all'
-//     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-//     with jar
-// }
-
 assemble {
     dependsOn processResources
     dependsOn copyBinaryToDist
@@ -83,11 +77,6 @@ jar {
     manifest {
         attributes 'Main-Class': 'cz.siret.prank.program.Main'
     }
-
-    //make fat jar: include all dependencies
-    //    from {
-    //        configurations.compile.filter( {! (it.name =~ /.*\.pom/ )}).collect { it.isDirectory() ? it : zipTree(it) }
-    //    }
 }
 
 clean {
@@ -108,9 +97,9 @@ test {
     }
 
     // listen to standard out and standard error of the test JVM(s)
-    onOutput { descriptor, event ->
-        logger.lifecycle("Test: " + descriptor + " produced standard out/err: " + event.message )
-    }
+    //    onOutput { descriptor, event ->
+    //        logger.lifecycle("Test: " + descriptor + " produced standard out/err: " + event.message )
+    //    }
     
 }
 
