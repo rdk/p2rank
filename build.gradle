@@ -94,6 +94,26 @@ clean {
     delete "$buildDir/../distro/bin/lib"
 }
 
+test {
+
+    // show standard out and standard error of the test JVM(s) on the console
+    testLogging.showStandardStreams = true
+
+    // set heap size for the test JVM(s)
+    maxHeapSize = "1512m"
+
+    // listen to events in the test execution lifecycle
+    beforeTest { descriptor ->
+        logger.lifecycle("Running test: " + descriptor)
+    }
+
+    // listen to standard out and standard error of the test JVM(s)
+    onOutput { descriptor, event ->
+        logger.lifecycle("Test: " + descriptor + " produced standard out/err: " + event.message )
+    }
+    
+}
+
 dependencies {
     compile 'org.codehaus.groovy:groovy-all:2.4.8'
     compile 'org.codehaus.gpars:gpars:1.2.1'

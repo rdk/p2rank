@@ -7,8 +7,13 @@ env:
 jdk:
   - oraclejdk8
 
+addons:
+  apt:
+    packages:
+      - oracle-java8-installer
+
 script:
   - java -version
   - gradle -version
   - gradle --stop
-  - gradle --refresh-dependencies clean check -Dscan --info -Xmx1524m
+  - gradle --refresh-dependencies clean check -Dscan --info 
