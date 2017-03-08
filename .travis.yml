@@ -10,4 +10,5 @@ jdk:
 script:
   - java -version
   - gradle -version
+  - gradle --stop
   - gradle --refresh-dependencies clean check -Dscan --info
