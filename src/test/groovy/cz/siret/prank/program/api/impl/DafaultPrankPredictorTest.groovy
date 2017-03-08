@@ -2,21 +2,18 @@ package cz.siret.prank.program.api.impl
 
 import cz.siret.prank.domain.LoaderParams
 import cz.siret.prank.domain.Prediction
-import cz.siret.prank.domain.Protein;
-import cz.siret.prank.program.api.PrankFacade;
+import cz.siret.prank.domain.Protein
+import cz.siret.prank.program.api.PrankFacade
 import cz.siret.prank.program.api.PrankPredictor
-import cz.siret.prank.utils.PathUtils
-import cz.siret.prank.utils.StrUtils
-import org.biojava.nbio.structure.Atom;
-import org.junit.Test;
+import cz.siret.prank.utils.futils
+import org.biojava.nbio.structure.Atom
+import org.junit.Test
 
-import java.nio.file.Path;
+import java.nio.file.Path
 import java.nio.file.Paths
 
-import static cz.siret.prank.utils.PathUtils.path;
-import static org.junit.Assert.*;
-
-import cz.siret.prank.utils.futils
+import static cz.siret.prank.utils.PathUtils.path
+import static org.junit.Assert.assertTrue
 
 /**
  *
