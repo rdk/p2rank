@@ -1,3 +1,9 @@
+plugins {
+    id 'com.github.ben-manes.versions' version '0.14.0'
+    // run "gradle dependencyUpdates -Drevision=release" to check dependency updates
+}
+
+
 apply plugin: 'groovy'
 apply plugin: 'java'
 apply plugin: 'idea'
@@ -5,7 +11,6 @@ apply plugin: 'idea'
 
 group = 'cz.siret'
 version = '2.0-dev.6_SNAPSHOT' 
-
 
 description = 'Ligand binding site prediction based on machine learning.'
 
@@ -30,6 +35,8 @@ repositories {
 
     flatDir(dirs: 'lib')
 }
+
+
 
 sourceSets {
     main {
@@ -103,6 +110,7 @@ test {
     
 }
 
+
 dependencies {
     compile 'org.codehaus.groovy:groovy-all:2.4.9'
     compile 'org.codehaus.gpars:gpars:1.2.1'
@@ -112,7 +120,7 @@ dependencies {
     compile 'org.zeroturnaround:zt-zip:1.11'
 
     compile 'org.slf4j:slf4j-api:1.7.24'
-    compile 'org.apache.logging.log4j:log4j-slf4j-impl:2.5'
+    compile 'org.apache.logging.log4j:log4j-slf4j-impl:2.5' // 2.8 was causing problem with biojava
 
 	compile 'org.biojava:biojava-core:4.2.6'
 	compile 'org.biojava:biojava-alignment:4.2.6'
