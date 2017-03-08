@@ -97,7 +97,7 @@ clean {
 test {
 
     // show standard out and standard error of the test JVM(s) on the console
-    testLogging.showStandardStreams = true
+    // testLogging.showStandardStreams = true
 
     // set heap size for the test JVM(s)
     maxHeapSize = "1512m"
