@@ -146,7 +146,7 @@ Location of output directory for any given run is influenced by several paramate
 * `-o <dir>`: overrides previous params and places output in specified directory
 
 
-## Case study: implementing evaluating new feature
+## Case study: Implementing and evaluating new feature
 
 If you are reading ths tutorial there is a good chance you want to implement a new feature and evaluate if it contributes to prediction success rates.
 
