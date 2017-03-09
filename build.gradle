@@ -3,7 +3,6 @@ plugins {
     // run "gradle dependencyUpdates -Drevision=release" to check dependency updates
 }
 
-
 apply plugin: 'groovy'
 apply plugin: 'java'
 apply plugin: 'idea'
