@@ -3,7 +3,6 @@ package cz.siret.prank.program.routines
 import groovy.transform.TupleConstructor
 import groovy.util.logging.Slf4j
 import groovyx.gpars.GParsPool
-import cz.siret.prank.program.ThreadPoolFactory
 import cz.siret.prank.program.params.Params
 import cz.siret.prank.program.params.RangeParam
 import cz.siret.prank.utils.ATimer
@@ -44,7 +43,7 @@ class ParamLooper extends Routine {
         log.info "STEPS: " + steps.toListString().replace("Step","\nStep")
 
         paramsTableFile = "$outdir/param_stats.csv"
-        PrintWriter table = futils.overwrite paramsTableFile
+        PrintWriter table = futils.getWriter paramsTableFile
 
         boolean doheader = true
         for (Step step in steps) {

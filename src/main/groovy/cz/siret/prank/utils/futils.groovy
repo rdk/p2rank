@@ -6,6 +6,8 @@ import groovy.util.logging.Slf4j
 import org.apache.commons.io.FileUtils
 import org.zeroturnaround.zip.ZipUtil
 
+import java.util.zip.GZIPOutputStream
+
 
 /**
  * Safe file utility methods
@@ -16,6 +18,8 @@ import org.zeroturnaround.zip.ZipUtil
 @Slf4j
 @CompileStatic
 class futils {
+
+    static final int OUTPUT_BUFFER_SIZE = 10000
 
     static String normalize(String path) {
         if (path==null) return null
@@ -88,14 +92,32 @@ class futils {
         return res
     }
 
-    static PrintWriter overwrite(String fname) {
+    /**
+     * Overwrites the file if exists and returns the writer
+     */
+    static PrintWriter getWriter(String fname) {
         File file = new File(fname)
         if (file.exists()) {
             file.delete()
         }
         file.createNewFile()
 
-        return new PrintWriter(new BufferedWriter(new FileWriter(file), 10000))
+        return new PrintWriter(new BufferedWriter(new FileWriter(file), OUTPUT_BUFFER_SIZE))
+    }
+
+    /**
+     * Overwrites the file if exists and returns the writer to gzipped output stream
+     */
+    static PrintWriter getGzipWriter(String fname) {
+        File file = new File(fname)
+        if (file.exists()) {
+            file.delete()
+        }
+        file.createNewFile()
+
+        GZIPOutputStream gos = new GZIPOutputStream(new FileOutputStream(file), OUTPUT_BUFFER_SIZE)
+
+        return new PrintWriter(new BufferedWriter(new OutputStreamWriter(gos), OUTPUT_BUFFER_SIZE))
     }
 
     static void overwrite(String fname, Object text) {

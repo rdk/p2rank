@@ -122,7 +122,7 @@ class TrainEvalIteration extends CompositeRoutine implements Parametrized  {
                 featureImportances = (classifier as FastRandomForest).featureImportances.toList()
                 List<String> names = FeatureExtractor.createFactory().vectorHeader
 
-                Writer file = futils.overwrite("$outdir/feature_importances.csv")
+                Writer file = futils.getWriter("$outdir/feature_importances.csv")
                 file << names.join(',') << "\n"
                 file << CSV.fromDoubles(featureImportances) << "\n"
                 file.close()
