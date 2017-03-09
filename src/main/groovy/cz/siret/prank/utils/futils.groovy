@@ -164,9 +164,22 @@ class futils {
     }
 
 
+    static void zip(String fileOrDirectory) {
+        File fileOrDir = new File(fileOrDirectory)
+        File zipFile = new File(fileOrDirectory + '.zip')
+
+        if (fileOrDir.isDirectory()) {
+            ZipUtil.pack(fileOrDir, zipFile)
+        } else {
+            ZipUtil.packEntry(fileOrDir, zipFile)
+        }
+    }
+
     static void zipAndDelete(String fileOrDirectory) {
-        ZipUtil.pack(new File(fileOrDirectory), new File(fileOrDirectory + '.zip'))
+        zip(fileOrDirectory)
         delete(fileOrDirectory)
     }
+
+
 
 }

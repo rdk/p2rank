@@ -28,7 +28,10 @@ class LogManager implements Writable {
     boolean loggingToFile = false
     String logFile
 
+
     Appender fileAppender
+    Configuration config
+    LoggerConfig loggerConfig
 
     void configureLoggers(String logLevel, boolean logToConsole, boolean logToFile, String outdir) {
 
@@ -36,8 +39,8 @@ class LogManager implements Writable {
         Level level = Level.getLevel(logLevel)
 
         LoggerContext ctx = (LoggerContext) org.apache.logging.log4j.LogManager.getContext(false);
-        Configuration config = ctx.getConfiguration();
-        LoggerConfig loggerConfig = config.getLoggerConfig(loggerName)
+        config = ctx.getConfiguration();
+        loggerConfig = config.getLoggerConfig(loggerName)
 
         loggerConfig.getAppenders().each { System.out.println "APPENDER: " + it.value.name }
         write "logToConsole: $logToConsole"
@@ -108,6 +111,8 @@ class LogManager implements Writable {
         if (fileAppender!=null) {
             fileAppender.stop()
         }
+        loggerConfig.removeAppender(FILE_APPENDER_NAME)
+        config.rootLogger.removeAppender(FILE_APPENDER_NAME)
     }
 
 
