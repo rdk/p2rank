@@ -337,14 +337,16 @@ class Params {
     int train_pockets = 0
 
     /**
-     * clear secondary caches (protein surfaces etc.) when iterating params
+     * clear primary caches (protein structures) between runs (when iterating params or seed)
+     */
+    boolean clear_prim_caches = false
+
+    /**
+     * clear secondary caches (protein surfaces etc.) between runs (when iterating params or seed)
      */
     boolean clear_sec_caches = true
 
-    /**
-     * clear primary caches (protein structures) when iterating params
-     */
-    boolean clear_prim_caches = false
+
 
     /**
      * acceptable distance between ligand center and closest protein atom for relevant ligands
