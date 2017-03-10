@@ -222,7 +222,7 @@ abstract class CompositeRoutine extends Routine {
             m.TRAIN_POS_RATIO = trainPositivesRatio
 
             m.putAll classifierStats.statsMap
-            if (params.classifier_train_stats) {
+            if (params.classifier_train_stats && classifierTrainStats!=null) {
                 m.putAll classifierTrainStats.statsMap.collectEntries { key, value -> ["train_" + key, value] }
             }
                                                                                              
