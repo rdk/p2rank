@@ -18,7 +18,7 @@ class PointScoreCalculator implements Parametrized {
      * @return
      */
     static double predictedScore(double[] hist) {
-        hist[1] / hist[0] + hist[1]
+        hist[1] / (hist[0] + hist[1])
     }
 
     /**
