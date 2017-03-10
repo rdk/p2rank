@@ -176,7 +176,7 @@ class Evaluation {
         return res
     }
 
-    double getStandardAssessorSuccRate(int tolerance) {
+    double calcDefaultCriteriumSuccessRate(int tolerance) {
         return calcSuccRate(3, tolerance)
     }
 
@@ -288,26 +288,48 @@ class Evaluation {
 
     Map getStats() {
         def m = new LinkedHashMap() // keep insertion order
-        m.proteins = proteinCount
-        m.ligands = ligandCount
-        m.pockets = pocketCount
 
-        if (pocketCount==0) pocketCount=1 // to avoid undefined division
+        m.PROTEINS = proteinCount
+        m.POCKETS = pocketCount
+        m.LIGANDS_RELEVANT = ligandCount
+        m.LIGANDS_IGNORED = ignoredLigandCount
+        m.LIGANDS_SMALL = smallLigandCount
+        m.LIGANDS_DISTANT = distantLigandCount
 
-        m.avg_ligand_atoms =  avgLigandAtoms
-        m.avg_pocket_volume =  avgPocketVolume
-        m.avg_pocket_volume_true_pockets =  avgPocketVolumeTruePockets
-        m.avg_pocket_surf_atoms =  avgPocketSurfAtoms
-        m.avg_pocket_surf_atoms_true_pockets =  avgPocketSurfAtomsTruePockets
-        m.avg_pocket_connoly_points =  avgPocketInnerPoints
-        m.avg_pocket_connoly_points_true_pockets =  avgPocketInnerPointsTruePockets
-        m.avg_protein_atoms =  avgProteinAtoms
-        m.avg_protein_exposed_atoms =  avgExposedAtoms
-        m.avg_protein_connolly_points =  avgProteinConollyPoints
-        m.avg_lig_closest_pocket_dist =  avgClosestPocketDist
-        m.lig_small = smallLigandCount
-        m.lig_ignored = ignoredLigandCount
-        m.lig_distant = distantLigandCount
+        if (pocketCount==0) pocketCount=1 // to avoid undefined division in calculations
+
+        m.AVG_LIGAND_ATOMS = avgLigandAtoms
+        m.AVG_PROT_ATOMS =  avgProteinAtoms
+        m.AVG_PROT_EXPOSED_ATOMS = avgExposedAtoms
+        m.AVG_PROT_SAS_POINTS =  avgProteinConollyPoints
+
+        m.AVG_LIG_CENTER_TO_PROT_DIST = avgLigCenterToProtDist
+        m.AVG_LIG_CLOSTES_POCKET_DIST = avgClosestPocketDist
+
+        m.AVG_POCKETS = avgPockets
+        m.AVG_POCKET_SURF_ATOMS = avgPocketSurfAtoms
+        m.AVG_POCKET_SURF_ATOMS_TRUE_POCKETS = avgPocketSurfAtomsTruePockets
+        m.AVG_POCKET_SAS_POINTS = avgPocketInnerPoints
+        m.AVG_POCKET_SAS_POINTS_TRUE_POCKETS = avgPocketInnerPointsTruePockets
+        m.AVG_POCKET_VOLUME =  avgPocketVolume
+        m.AVG_POCKET_VOLUME_TRUE_POCKETS =  avgPocketVolumeTruePockets
+
+        m.DCA_4_0 = calcDefaultCriteriumSuccessRate(0)
+        m.DCA_4_1 = calcDefaultCriteriumSuccessRate(1)
+        m.DCA_4_2 = calcDefaultCriteriumSuccessRate(2)
+        m.DCA_4_4 = calcDefaultCriteriumSuccessRate(4)
+        m.DCA_4_99 = calcDefaultCriteriumSuccessRate(99)
+
+        // compare to getDefaultEvalCrtieria()
+        m.DCC_4_0 = calcSuccRate(18,0)
+        m.DCC_4_2 = calcSuccRate(18,2)
+        m.DPA_1_0 = calcSuccRate(25,0)
+        m.DPA_1_2 = calcSuccRate(25,2)
+        m.DSA_3_0 = calcSuccRate(33,0)
+        m.DSA_3_2 = calcSuccRate(33,2)
+
+        m.DCA_4_0_NOMINAL = m.DCA_4_0 * m.LIG_COUNT
+
         return m
     }
 

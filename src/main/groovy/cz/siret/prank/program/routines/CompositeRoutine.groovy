@@ -50,14 +50,14 @@ abstract class CompositeRoutine extends Routine {
         int ligands = results.originalEval.ligandCount
         int pockets = results.rescoredEval.pocketCount
 
-        double top1 = results.originalEval.getStandardAssessorSuccRate(0)
-        double all = results.rescoredEval.getStandardAssessorSuccRate(999)
-        double rescored = results.rescoredEval.getStandardAssessorSuccRate(0)
+        double top1 = results.originalEval.calcDefaultCriteriumSuccessRate(0)
+        double all = results.rescoredEval.calcDefaultCriteriumSuccessRate(999)
+        double rescored = results.rescoredEval.calcDefaultCriteriumSuccessRate(0)
 
-        double orig_DCA4_0 = results.originalEval.getStandardAssessorSuccRate(0)
-        double orig_DCA4_2 = results.originalEval.getStandardAssessorSuccRate(2)
-        double DCA4_0 = results.rescoredEval.getStandardAssessorSuccRate(0)
-        double DCA4_2 = results.rescoredEval.getStandardAssessorSuccRate(2)
+        double orig_DCA4_0 = results.originalEval.calcDefaultCriteriumSuccessRate(0)
+        double orig_DCA4_2 = results.originalEval.calcDefaultCriteriumSuccessRate(2)
+        double DCA4_0 = results.rescoredEval.calcDefaultCriteriumSuccessRate(0)
+        double DCA4_2 = results.rescoredEval.calcDefaultCriteriumSuccessRate(2)
 
         double diff = rescored - top1
         double possible = all - top1
@@ -185,53 +185,36 @@ abstract class CompositeRoutine extends Routine {
             train_positives / (train_positives + train_negatives)
         }
 
+        double getTrainRatio() {
+            if (train_negatives==0) return 1
+
+            train_positives / train_negatives
+        }
+
         Map getStats() {
             Map m = rescoredEval.stats
 
-            m.avg_train_vectors = avgTrainVectors
-            m.avg_train_positives = avgTrainPositives
-            m.avg_train_negatives = avgTrainNegatives
-            m.train_positives_ratio = trainPositivesRatio
-            
+            m.PROTEINS         /= runs
+            m.POCKETS          /= runs
+            m.LIGANDS_RELEVANT /= runs
+            m.LIGANDS_IGNORED  /= runs
+            m.LIGANDS_SMALL    /= runs
+            m.LIGANDS_DISTANT  /= runs
+
+            // m.LIG_COUNT = originalEval.ligandCount / runs
+            // m.LIG_COUNT_IGNORED = originalEval.ignoredLigandCount / runs
+            // m.LIG_COUNT_SMALL = originalEval.smallLigandCount / runs
+            // m.LIG_COUNT_DISTANT = originalEval.distantLigandCount / runs
+
             //===========================================================================================================//
 
             m.TIME_TRAIN = trainTime
             m.TIME_EVAL = evalTime
 
-            m.DCA_4_0 = rescoredEval.getStandardAssessorSuccRate(0)
-            m.DCA_4_1 = rescoredEval.getStandardAssessorSuccRate(1)
-            m.DCA_4_2 = rescoredEval.getStandardAssessorSuccRate(2)
-            m.DCA_4_4 = rescoredEval.getStandardAssessorSuccRate(4)
-            m.DCA_4_99 = rescoredEval.getStandardAssessorSuccRate(99)
-
-            // compare to getDefaultEvalCrtieria()
-            m.DCC_4_0 = rescoredEval.calcSuccRate(18,0)
-            m.DCC_4_2 = rescoredEval.calcSuccRate(18,2)
-            m.DPA_1_0 = rescoredEval.calcSuccRate(25,0)
-            m.DPA_1_2 = rescoredEval.calcSuccRate(25,2)
-            m.DSA_3_0 = rescoredEval.calcSuccRate(33,0)
-            m.DSA_3_2 = rescoredEval.calcSuccRate(33,2)
-
-            m.LIG_COUNT = originalEval.ligandCount / runs
-            m.LIG_COUNT_IGNORED = originalEval.ignoredLigandCount / runs
-            m.LIG_COUNT_SMALL = originalEval.smallLigandCount / runs
-            m.LIG_COUNT_DISTANT = originalEval.distantLigandCount / runs
-            m.AVG_LIG_PROT_DIST = originalEval.avgLigCenterToProtDist
-
-            m.DCA_4_0_NOMINAL = m.DCA_4_0 * m.LIG_COUNT
-
-            m.AVG_POCKETS = rescoredEval.avgPockets
-            m.AVG_CLOSTES_POCKET_DIST = rescoredEval.avgClosestPocketDist
-            m.AVG_POCKET_SURF_ATOMS = rescoredEval.avgPocketSurfAtoms
-            m.AVG_POCKET_SURF_ATOMS_TRUE_POCKETS = rescoredEval.avgPocketSurfAtomsTruePockets
-            m.AVG_POCKET_INNER_POINTS = rescoredEval.avgPocketInnerPoints
-            m.AVG_POCKET_INNER_POINTS_TRUE_POCKETS = rescoredEval.avgPocketInnerPointsTruePockets
-            m.AVG_PROT_EXPOSED_ATOMS = rescoredEval.avgExposedAtoms
-            m.AVG_PROT_CONOLLY_POINTS = rescoredEval.avgProteinConollyPoints
-
             m.TRAIN_VECTORS = avgTrainVectors
             m.TRAIN_POSITIVES = avgTrainPositives
             m.TRAIN_NEGATIVES = avgTrainNegatives
+            m.TRAIN_RATIO = trainRatio
             m.TRAIN_POS_RATIO = trainPositivesRatio
 
             m.putAll( classifierStats.statsMap )
