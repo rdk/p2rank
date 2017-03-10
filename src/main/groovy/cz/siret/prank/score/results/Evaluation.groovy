@@ -226,9 +226,9 @@ class Evaluation {
         return new DecimalFormat("##.0").format(x*100)
     }
 
-    String toSuccRatesCSV(List<Integer> tolerances) {
-        return formatSuccRatesCSV(tolerances, calcSuccessRates(tolerances))
-    }
+
+
+//===========================================================================================================//
 
     double getAvgPockets() {
         pocketCount / proteinCount
@@ -333,6 +333,12 @@ class Evaluation {
         return m
     }
 
+//===========================================================================================================//
+
+    String toSuccRatesCSV(List<Integer> tolerances) {
+        return formatSuccRatesCSV(tolerances, calcSuccessRates(tolerances))
+    }
+
     String getMiscStatsCSV() {
 
         stats.collect { "$it.key, ${fmt it.value}" }.join("\n")
@@ -409,6 +415,8 @@ class Evaluation {
 
         return csv.toString()
     }
+
+//===========================================================================================================//
 
     static class ProteinRow {
         String name

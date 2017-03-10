@@ -27,6 +27,10 @@ class ClassifierStats {
         this.nclasses = nclases
     }
 
+    ClassifierStats() {
+        ClassifierStats(2)
+    }
+
     void addAll(ClassifierStats add) {
         for (int i=0; i!=nclasses; ++i)
             for (int j=0; j!=nclasses; ++j)

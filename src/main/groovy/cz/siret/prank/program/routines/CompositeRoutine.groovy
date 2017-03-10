@@ -103,7 +103,7 @@ abstract class CompositeRoutine extends Routine {
     }
 
     /**
-     * results for eval-rescore routine
+     * results for eval-rescore, traineval and ploop routines
      */
     static class Results implements Parametrized, Writable  {
         int runs = 0
@@ -111,6 +111,7 @@ abstract class CompositeRoutine extends Routine {
         Evaluation originalEval
         Evaluation rescoredEval
         ClassifierStats classifierStats
+        ClassifierStats classifierTrainStats // classifier stats on train data
 
         Dataset.Result datasetResult
 
@@ -154,6 +155,9 @@ abstract class CompositeRoutine extends Routine {
             originalEval.addAll(other.originalEval)
             rescoredEval.addAll(other.rescoredEval)
             classifierStats.addAll(other.classifierStats)
+            if (classifierTrainStats!=null && other.classifierTrainStats!=null) {
+                classifierTrainStats.addAll(other.classifierTrainStats)
+            }
 
             // set only once to because of varoius caching
             if (trainTime==null) trainTime = other.trainTime
@@ -196,7 +200,7 @@ abstract class CompositeRoutine extends Routine {
 
             m.PROTEINS         /= runs
             m.POCKETS          /= runs
-            m.LIGANDS_RELEVANT /= runs
+            m.LIGANDS          /= runs
             m.LIGANDS_IGNORED  /= runs
             m.LIGANDS_SMALL    /= runs
             m.LIGANDS_DISTANT  /= runs
@@ -217,8 +221,11 @@ abstract class CompositeRoutine extends Routine {
             m.TRAIN_RATIO = trainRatio
             m.TRAIN_POS_RATIO = trainPositivesRatio
 
-            m.putAll( classifierStats.statsMap )
-
+            m.putAll classifierStats.statsMap
+            if (params.classifier_train_stats) {
+                m.putAll classifierTrainStats.statsMap.collectEntries { key, value -> ["train_" + key, value] }
+            }
+                                                                                             
             if (params.feature_importances && featureImportances!=null) {
                 featureImportances = featureImportances.collect { it/runs }.toList()
                 getNamedImportances().each {

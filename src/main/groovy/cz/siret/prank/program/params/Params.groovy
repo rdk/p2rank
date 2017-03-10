@@ -452,6 +452,10 @@ class Params {
      */
     double target_class_weight_ratio = 0.1
 
+    /**
+     * produce classifier stats also for train dataset
+     */
+    boolean classifier_train_stats = false
 
 
 //===========================================================================================================//

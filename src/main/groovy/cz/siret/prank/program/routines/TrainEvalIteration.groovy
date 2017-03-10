@@ -1,6 +1,8 @@
 package cz.siret.prank.program.routines
 
 import cz.siret.prank.program.ml.ClassifierFactory
+import cz.siret.prank.score.prediction.PointScoreCalculator
+import cz.siret.prank.score.results.ClassifierStats
 import groovy.util.logging.Slf4j
 import hr.irb.fastRandomForest.FastRandomForest
 import cz.siret.prank.domain.Dataset
@@ -11,6 +13,7 @@ import cz.siret.prank.utils.CSV
 import cz.siret.prank.utils.WekaUtils
 import cz.siret.prank.utils.futils
 import weka.classifiers.Classifier
+import weka.core.Instance
 import weka.core.Instances
 
 @Slf4j
@@ -82,6 +85,26 @@ class TrainEvalIteration extends CompositeRoutine implements Parametrized  {
         futils.delete(evalVectorFile)
     }
 
+    ClassifierStats calculateTrainStats(Classifier classifier, Instances trainVectors) {
+        if (params.classifier_train_stats) {
+            ClassifierStats trainStats = new ClassifierStats()
+
+            for (Instance inst : trainVectors) {
+                double[] hist = classifier.distributionForInstance(inst)
+                double score = PointScoreCalculator.predictedScore(hist)
+                boolean predicted = hist[1] > hist[0]
+                boolean observed = inst.classValue() > 0
+
+                trainStats.addCase(observed, predicted, score)
+            }
+
+            return trainStats
+
+        } else {
+            return null
+        }
+    }
+
     Results trainAndEvalModel() {
         def timer = ATimer.start()
 
@@ -103,6 +126,8 @@ class TrainEvalIteration extends CompositeRoutine implements Parametrized  {
             WekaUtils.saveClassifier(classifier, modelf)
             write "model saved to file $modelf (${futils.sizeMBFormatted(modelf)} MB)"
         }
+
+        ClassifierStats trainStats = calculateTrainStats(classifier, trainVectors)
 
         List<Double> featureImportances
 
@@ -130,6 +155,8 @@ class TrainEvalIteration extends CompositeRoutine implements Parametrized  {
         res.train_positives = train_positives
         res.train_negatives = train_negatives
         res.featureImportances = featureImportances
+        res.classifierTrainStats = trainStats
+
 
         logTime "evaluation routine on dataset [$evalDataSet.name] finished in " + timer.formatted
 
