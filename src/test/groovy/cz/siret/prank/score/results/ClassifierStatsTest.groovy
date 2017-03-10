@@ -6,7 +6,7 @@ class ClassifierStatsTest {
 
     @Test
     void testCalcMCC() {
-        ClassifierStats stats = new ClassifierStats(2)
+        ClassifierStats stats = new ClassifierStats()
 
         System.println stats.calcMCC(23861,15594,1411622,109115)
     }

@@ -37,7 +37,7 @@ class WekaSumRescorer extends PocketRescorer implements Parametrized  {
 
     private FeatureExtractor extractorFactory
     private Classifier  classifier
-    private ClassifierStats stats = new ClassifierStats(2)
+    private ClassifierStats stats = new ClassifierStats()
 
     boolean collectPoints = params.visualizations || params.predictions
     boolean visualizeAllSurface = params.vis_all_surface

@@ -4,6 +4,9 @@ import groovy.transform.CompileStatic
 
 import java.text.DecimalFormat
 
+/**
+ * Binary classifier statistics collector and calculator
+ */
 @CompileStatic
 class ClassifierStats {
 
@@ -22,13 +25,9 @@ class ClassifierStats {
 
     Stats stats = new Stats()
 
-    ClassifierStats(int nclases) {
-        op = new int[nclases][nclases]
-        this.nclasses = nclases
-    }
-
     ClassifierStats() {
-        ClassifierStats(2)
+        nclasses = 2
+        op = new int[nclasses][nclasses]
     }
 
     void addAll(ClassifierStats add) {

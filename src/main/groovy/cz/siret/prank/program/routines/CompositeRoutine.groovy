@@ -127,7 +127,7 @@ abstract class CompositeRoutine extends Routine {
             this.runs = runs
             originalEval = new Evaluation( getDefaultEvalCrtieria() )
             rescoredEval = new Evaluation( getDefaultEvalCrtieria() )
-            classifierStats = new ClassifierStats(2)
+            classifierStats = new ClassifierStats()
         }
 
         private static List<Double> repeat(Double value, int times) {

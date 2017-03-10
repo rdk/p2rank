@@ -19,7 +19,7 @@ class PredictResults implements Parametrized, Writable {
 
     PredictResults() {
         predictionsEval = new Evaluation(CompositeRoutine.getDefaultEvalCrtieria())
-        classifierStats = new ClassifierStats(2)
+        classifierStats = new ClassifierStats()
     }
 
     Map getStats() {
