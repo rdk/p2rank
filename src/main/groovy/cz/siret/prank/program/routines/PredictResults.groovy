@@ -115,10 +115,10 @@ class PredictResults implements Parametrized, Writable {
         m.DCA_4_0 = pc predictionsEval.calcDefaultCriteriumSuccessRate(0)
         m.DCA_4_2 = pc predictionsEval.calcDefaultCriteriumSuccessRate(2)
 
-        m.P =   fmt classifierStats.p
-        m.R =   fmt classifierStats.r
-        m.FM =  fmt classifierStats.f1
-        m.MCC = fmt classifierStats.MCC
+        m.P =   fmt classifierStats.stats.p
+        m.R =   fmt classifierStats.stats.r
+        m.FM =  fmt classifierStats.stats.f1
+        m.MCC = fmt classifierStats.stats.MCC
 
         m.ligSize =    fmt predictionsEval.avgLigandAtoms
         m.pocketVol =  fmt predictionsEval.avgPocketVolume
