@@ -196,9 +196,9 @@ class ClassifierStats {
         double getMEneg()      { div sumEneg, count     }
         double getMEbalanced() { (MEneg + MEpos) / 2    }
 
-        double getMSE()       { sumSE / count      }
-        double getMSEpos()    { sumSEpos / count      }
-        double getMSEneg()    { sumSEneg / count      }
+        double getMSE()       { div sumSE, count      }
+        double getMSEpos()    { div sumSEpos, count      }
+        double getMSEneg()    { div sumSEneg, count      }
         double getMSEbalanced() { (MSEneg + MSEpos) / 2    }
 
         private double getFWeighted(double beta) {

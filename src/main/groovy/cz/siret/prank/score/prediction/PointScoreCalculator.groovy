@@ -32,7 +32,7 @@ class PointScoreCalculator implements Parametrized {
         double score
 
         if (USE_ONLY_POSITIVE_SCORE) {
-            score = hist[0]
+            score = hist[1]  
         } else {
             score = predictedScore(hist)
         }
