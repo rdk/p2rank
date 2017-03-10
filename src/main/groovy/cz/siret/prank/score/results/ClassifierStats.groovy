@@ -20,6 +20,8 @@ class ClassifierStats {
 
     String name
 
+    Stats stats
+
     ClassifierStats(int nclases) {
         op = new int[nclases][nclases]
         this.nclasses = nclases
@@ -40,15 +42,16 @@ class ClassifierStats {
         sumSEneg += add.sumSEneg
     }
 
-    void addCase(int observed, int predicted) {
-        op[observed][predicted]++
-        count++
-    }
-
-    void addCase(boolean obs, boolean pred, double p1) {
+    /**
+     *
+     * @param obs
+     * @param pred
+     * @param score predicted score from iterval <0,1>
+     */
+    void addCase(boolean obs, boolean pred, double score) {
 
         double obsv = obs ? 1 : 0
-        double e = Math.abs(obsv-p1)
+        double e = Math.abs(obsv-score)
         double se = e*e
 
         sumE += e
@@ -62,8 +65,8 @@ class ClassifierStats {
             sumSEneg += se
         }
 
-
-        addCase(obs?1:0, pred?1:0)
+        op[obs?1:0][pred?1:0]++
+        count++
     }
 
     double fmt(double x) {
@@ -102,157 +105,179 @@ class ClassifierStats {
 
 //===========================================================================================================//
 
-    double getTp() { op[1][1] }
-    double getFp() { op[0][1] }
-    double getTn() { op[0][0] }
-    double getFn() { op[1][0] }
+    /**
+     * flyweight class for 1D statistics 
+     */
+    class Stats {
 
-    double getP() {
-        div tp , (tp + fp)
+        double getTp() { op[1][1] }
+        double getFp() { op[0][1] }
+        double getTn() { op[0][0] }
+        double getFn() { op[1][0] }
+
+        double getP() {
+            div tp , (tp + fp)
+        }
+        double getR() {
+            div tp , (tp + fn)
+        }
+
+        double getF1() {
+            div( (2*(p*r)) , (p+r) )
+        }
+
+        double getF2() {
+            getFWeighted(2)
+        }
+        double getF05() {
+            getFWeighted(0.5)
+        }
+
+        double getMCC() {
+            calcMCC(tp, fp, tn, fn)
+        }
+
+        /** negative predictive value */
+        double getNPV() {
+            div tn , (tn + fn)
+        }
+
+        /** specificity = true negative rate */
+        double getSPC() {
+            div tn , (tn + fp)
+        }
+
+        /** accuraccy */
+        double getACC() {
+            div( (tp + tn) , count )
+        }
+
+        double getTPX() {
+            div tp, tp + fn + fp
+        }
+
+        /** false positive rate */
+        double getFPR() {
+            div fp , (fp + tn)
+        }
+
+        /** false negative rate */
+        double getFNR() {
+            div fn , (tp + fn)
+        }
+
+        /** positive likelihood ratio */
+        double getPLR() {
+            div r, FPR
+        }
+
+        /** negative likelihood ratio */
+        double getNLR() {
+            div FNR, SPC
+        }
+
+        /** diagnostic odds ratio */
+        double getDOR() {
+            div PLR, NLR
+        }
+
+        /** false discovery rate */
+        double getFDR() {
+            div fp , (tp + fp)
+        }
+
+        /** false ommision rate */
+        double getFOR() {
+            div fn , (fn + tn)
+        }
+
+        double getME()         { div sumE, count        }
+        double getMEpos()      { div sumEpos, count     }
+        double getMEneg()      { div sumEneg, count     }
+        double getMEbalanced() { (MEneg + MEpos) / 2    }
+
+        double getMSE()       { sumSE / count      }
+        double getMSEpos()    { sumSEpos / count      }
+        double getMSEneg()    { sumSEneg / count      }
+        double getMSEbalanced() { (MSEneg + MSEpos) / 2    }
+
+        private double getFWeighted(double beta) {
+            double betaSqr = beta*beta
+            div ( (1+betaSqr)*p*r , r + betaSqr*p  )
+        }
+
+        Map<String, Double> toMap() {
+            Map<String, Double> res = new HashMap<>()
+            for (PropertyValue pv : this.metaPropertyValues) {
+                if (pv.type == Double.class) {
+                    res.put( pv.name.toUpperCase(), (Double) pv.value )
+                }
+            }
+            return res
+        }
+
     }
-    double getR() {
-        div tp , (tp + fn)
+
+    //===========================================================================================================//
+
+    Map<String, Double> getStatsMap() {
+        stats.toMap()
     }
-
-
-
-    double getF1() {
-        div( (2*(p*r)) , (p+r) )
-    }
-
-    double getF2() {
-        getFWeighted(2)
-    }
-    double getF05() {
-        getFWeighted(0.5)
-    }
-
-
-    double getMCC() {
-        calcMCC(tp, fp, tn, fn)
-    }
-
-    /** negative predictive value */
-    double getNPV() {
-        div tn , (tn + fn)
-    }
-
-    /** specificity = true negative rate */
-    double getSPC() {
-        div tn , (tn + fp)
-    }
-
-    /** accuraccy */
-    double getACC() {
-        div( (tp + tn) , count )
-    }
-
-    double getTPX() {
-        div tp, tp + fn + fp
-    }
-
-    /** false positive rate */
-    double getFPR() {
-        div fp , (fp + tn)
-    }
-
-    /** false negative rate */
-    double getFNR() {
-        div fn , (tp + fn)
-    }
-
-    /** positive likelihood ratio */
-    double getPLR() {
-        div r, FPR
-    }
-
-    /** negative likelihood ratio */
-    double getNLR() {
-        div FNR, SPC
-    }
-
-    /** diagnostic odds ratio */
-    double getDOR() {
-        div PLR, NLR
-    }
-
-    /** false discovery rate */
-    double getFDR() {
-        div fp , (tp + fp)
-    }
-
-    /** false ommision rate */
-    double getFOR() {
-        div fn , (fn + tn)
-    }
-
-
-    double getFWeighted(double beta) {
-        double betaSqr = beta*beta
-        div ( (1+betaSqr)*p*r , r + betaSqr*p  )
-    }
-
-//===========================================================================================================//
-
-    double getME()         { div sumE, count        }
-    double getMEpos()      { div sumEpos, count     }
-    double getMEneg()      { div sumEneg, count     }
-    double getMEbalanced() { (MEneg + MEpos) / 2    }
-
-    double getMSE()       { sumSE / count      }
-    double getMSEpos()    { sumSEpos / count      }
-    double getMSEneg()    { sumSEneg / count      }
-    double getMSEbalanced() { (MSEneg + MSEpos) / 2    }
 
     //===========================================================================================================//
 
     //@CompileStatic
     String toCSV(String classifierDesc) {
 
-        double P = p      // precision / positive predictive value
-        double R = r       // recall / sensitivity / true positive rate
+        Stats s = stats
 
-        StringBuilder s = new StringBuilder()
-        s << "classifier: ${classifierDesc}\n"
-        s << "\n"
-        s << "n:,$count\n"
-        s << "\n"
-        s << ",TN   , FP, (spc)\n"
-        s << ",FN   , TP, (r)\n"
-        s << ",(npv),(p)\n"
-        s << "\n"
-        s << "pred:  , [0], [1]\n"
-        s << "obs[0] , ${tn}, ${fp}, ${pc(SPC)}\n"
-        s << "obs[1] , ${fn}, ${tp}, ${pc(R)}\n"
-        s << "       , ${pc(NPV)}, ${pc(P)}\n"
-        s << "\n"
-        s << "%:\n"
-        s << ", ${rel(tn)}, ${rel(fp)}\n"
-        s << ", ${rel(fn)}, ${rel(tp)}\n"
-        s << "\n"
-        s << "ACC:, ${format(ACC)}, accuracy\n"
-        s << "\n"
-        s << "P:, ${format(P)}, precision / positive predictive value    ,,TP / (TP + FP)\n"
-        s << "R:, ${format(R)}, recall / sensitivity / true positive rate,,TP / (TP + FN)\n"
-        s << "\n"
-        s << "NPV:, ${format(NPV)}, negative predictive value       ,,TN / (TN + FN)\n"
-        s << "SPC:, ${format(SPC)}, specificity / true negative rate,,TN / (TN + FP)\n"
-        s << "\n"
-        s << "FM:, ${format(f1)}, F-measure\n"
-        s << "MCC:, ${format(MCC)}, Matthews correlation coefficient\n"
+        double P = s.p      // precision / positive predictive value
+        double R = s.r       // recall / sensitivity / true positive rate
 
-        s << "\n"
-        s << "ME:, ${format(ME)}, Mean error\n"
-        s << "MEpos:, ${format(MEpos)}, ME on positive observations\n"
-        s << "MEneg:, ${format(MEneg)}, Mean error on negative observations\n"
-        s << "MEbal:, ${format(MEbalanced)}, Mean error balanced\n"
-        s << "\n"
-        s << "MSE:, ${format(MSE)}, Mean squared error\n"
-        s << "MSEpos:, ${format(MSEpos)}, MSE on positive observations\n"
-        s << "MSEneg:, ${format(MSEneg)}, MSE on negative observations\n"
-        s << "MSEbal:, ${format(MSEbalanced)}, Mean error balanced\n"
+        StringBuilder sb = new StringBuilder()
 
-        return s.toString()
+        stats.with {
+            sb << "classifier: ${classifierDesc}\n"
+            sb << "\n"
+            sb << "n:,$count\n"
+            sb << "\n"
+            sb << ",TN   , FP, (spc)\n"
+            sb << ",FN   , TP, (r)\n"
+            sb << ",(npv),(p)\n"
+            sb << "\n"
+            sb << "pred:  , [0], [1]\n"
+            sb << "obs[0] , ${tn}, ${fp}, ${pc(SPC)}\n"
+            sb << "obs[1] , ${fn}, ${tp}, ${pc(R)}\n"
+            sb << "       , ${pc(NPV)}, ${pc(P)}\n"
+            sb << "\n"
+            sb << "%:\n"
+            sb << ", ${rel(tn)}, ${rel(fp)}\n"
+            sb << ", ${rel(fn)}, ${rel(tp)}\n"
+            sb << "\n"
+            sb << "ACC:, ${format(ACC)}, accuracy\n"
+            sb << "\n"
+            sb << "P:, ${format(P)}, precision / positive predictive value    ,,TP / (TP + FP)\n"
+            sb << "R:, ${format(R)}, recall / sensitivity / true positive rate,,TP / (TP + FN)\n"
+            sb << "\n"
+            sb << "NPV:, ${format(NPV)}, negative predictive value       ,,TN / (TN + FN)\n"
+            sb << "SPC:, ${format(SPC)}, specificity / true negative rate,,TN / (TN + FP)\n"
+            sb << "\n"
+            sb << "FM:, ${format(f1)}, F-measure\n"
+            sb << "MCC:, ${format(MCC)}, Matthews correlation coefficient\n"
+
+            sb << "\n"
+            sb << "ME:, ${format(ME)}, Mean error\n"
+            sb << "MEpos:, ${format(MEpos)}, ME on positive observations\n"
+            sb << "MEneg:, ${format(MEneg)}, Mean error on negative observations\n"
+            sb << "MEbal:, ${format(MEbalanced)}, Mean error balanced\n"
+            sb << "\n"
+            sb << "MSE:, ${format(MSE)}, Mean squared error\n"
+            sb << "MSEpos:, ${format(MSEpos)}, MSE on positive observations\n"
+            sb << "MSEneg:, ${format(MSEneg)}, MSE on negative observations\n"
+            sb << "MSEbal:, ${format(MSEbalanced)}, Mean error balanced\n"
+        }
+
+        return sb.toString()
     }
 
 }

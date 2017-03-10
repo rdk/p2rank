@@ -206,14 +206,32 @@ class Params {
 
     double smoothing_radius = 4.5
 
+    /**
+     * determines how atom feature vectors are projected on to SAS point feature vector
+     * if true, atom feature vectors are averaged
+     * else they are only summed up
+     */
     boolean average_feat_vectors = false
 
     double avg_pow = 1
 
+    /**
+     * exponent of point ligandabitity score (before adding it to pocket score)
+     */
     double point_score_pow = 2
+
+    /**
+     * Binary classifiers produces historgam of scores for class0 and class1
+     * if true only score for class1 is considered
+     * makes a difference only if histogram produced by classifier doesn't sum up to 1
+     */
+    boolean use_only_positive_score = true
 
     boolean delete_models = false
 
+    /**
+     * delete filec sontaining trainint/evaluation feature vectors
+     */
     boolean delete_vectors = true
 
     /**
@@ -265,7 +283,7 @@ class Params {
     /**
      * make own prank pocket predictions (P2RANK)
      */
-    boolean predictions = false
+    boolean predictions = true
 
     /**
      * minimum ligandability score for Connolly point to be considered ligandable

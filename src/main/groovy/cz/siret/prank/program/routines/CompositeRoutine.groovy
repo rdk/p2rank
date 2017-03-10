@@ -63,10 +63,10 @@ abstract class CompositeRoutine extends Routine {
         double possible = all - top1
         double pcPossible = diff / possible
 
-        double P = results.classifierStats.p
-        double R = results.classifierStats.r
-        double FM = results.classifierStats.f1
-        double MCC = results.classifierStats.MCC
+        double P = results.classifierStats.stats.p
+        double R = results.classifierStats.stats.r
+        double FM = results.classifierStats.stats.f1
+        double MCC = results.classifierStats.stats.MCC
 
         double ligSize = results.rescoredEval.avgLigandAtoms
         double pocketVol = results.rescoredEval.avgPocketVolume
@@ -99,7 +99,7 @@ abstract class CompositeRoutine extends Routine {
      * get list of evaluation criteria used during eval routines
      */
     static List<IdentificationCriterium> getDefaultEvalCrtieria() {
-        ((1..15).collect { new DCA(it) }) + ((1..10).collect { new DCC(it) }) + ((1..10).collect { new DPA(it) }) + ((1..10).collect { new DSA(it) })
+        ((1..15).collect { new DCA(it) }) + ((1..10).collect { new DCC(it) }) + ((1..6).collect { new DPA(it) }) + ((1..6).collect { new DSA(it) })
     }
 
     /**
@@ -209,8 +209,8 @@ abstract class CompositeRoutine extends Routine {
             m.DCC_4_2 = rescoredEval.calcSuccRate(18,2)
             m.DPA_1_0 = rescoredEval.calcSuccRate(25,0)
             m.DPA_1_2 = rescoredEval.calcSuccRate(25,2)
-            m.DSA_3_0 = rescoredEval.calcSuccRate(37,0)
-            m.DSA_3_2 = rescoredEval.calcSuccRate(37,2)
+            m.DSA_3_0 = rescoredEval.calcSuccRate(33,0)
+            m.DSA_3_2 = rescoredEval.calcSuccRate(33,2)
 
             m.LIG_COUNT = originalEval.ligandCount / runs
             m.LIG_COUNT_IGNORED = originalEval.ignoredLigandCount / runs
@@ -234,37 +234,7 @@ abstract class CompositeRoutine extends Routine {
             m.TRAIN_NEGATIVES = avgTrainNegatives
             m.TRAIN_POS_RATIO = trainPositivesRatio
 
-            m.TP = classifierStats.tp
-            m.TN = classifierStats.tn
-            m.FP = classifierStats.fp
-            m.FN = classifierStats.fn
-
-            m.ACC = classifierStats.ACC
-            m.SPC = classifierStats.SPC
-            m.NPV = classifierStats.NPV
-            m.P = classifierStats.p
-            m.R = classifierStats.r
-            m.MCC = classifierStats.MCC
-            m.F1 = classifierStats.f1
-            m.F2 = classifierStats.f2
-            m.F05 = classifierStats.f05
-            m.TPX = classifierStats.TPX
-
-            m.FPR = classifierStats.FPR
-            m.FNR = classifierStats.FNR
-            m.PLR = classifierStats.PLR
-            m.NLR = classifierStats.NLR
-            m.DOR = classifierStats.DOR
-            m.FDR = classifierStats.FDR
-            m.FOR = classifierStats.FOR
-
-            m.ME     = classifierStats.ME
-            m.MEpos  = classifierStats.MEpos
-            m.MEneg  = classifierStats.MEneg
-            m.MEbal  = classifierStats.MEbalanced
-            m.MSEpos = classifierStats.MSEpos
-            m.MSEneg = classifierStats.MSEneg
-            m.MSEbal = classifierStats.MSEbalanced
+            m.putAll( classifierStats.statsMap )
 
             if (params.feature_importances && featureImportances!=null) {
                 featureImportances = featureImportances.collect { it/runs }.toList()
