@@ -1,4 +1,4 @@
-package cz.siret.prank.program.params
+package cz.siret.prank.program.ml
 
 public enum ClassifierOption {
 
