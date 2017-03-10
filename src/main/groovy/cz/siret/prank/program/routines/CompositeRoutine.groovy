@@ -83,7 +83,7 @@ abstract class CompositeRoutine extends Routine {
         return s
     }
 
-    void logMainResults(String label, String model, Results results) {
+    void logSummaryResults(String label, String model, Results results) {
         String mainRes = toMainResultsCsv(label, model, results)
         futils.overwrite "$outdir/summary.csv", mainRes
 
@@ -248,7 +248,15 @@ abstract class CompositeRoutine extends Routine {
             m.F1 = classifierStats.f1
             m.F2 = classifierStats.f2
             m.F05 = classifierStats.f05
-            m.TPX = classifierStats.getTPX()
+            m.TPX = classifierStats.TPX
+
+            m.FPR = classifierStats.FPR
+            m.FNR = classifierStats.FNR
+            m.PLR = classifierStats.PLR
+            m.NLR = classifierStats.NLR
+            m.DOR = classifierStats.DOR
+            m.FDR = classifierStats.FDR
+            m.FOR = classifierStats.FOR
 
             m.ME     = classifierStats.ME
             m.MEpos  = classifierStats.MEpos

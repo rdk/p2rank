@@ -133,7 +133,8 @@ class TrainEvalIteration extends CompositeRoutine implements Parametrized  {
 
         logTime "evaluation routine on dataset [$evalDataSet.name] finished in " + timer.formatted
 
-        if (deleteModel) futils.delete(modelf)
+        if (deleteModel)
+            futils.delete(modelf)
 
         return res
     }

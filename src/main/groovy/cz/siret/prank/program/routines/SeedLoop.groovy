@@ -36,9 +36,9 @@ class SeedLoop extends CompositeRoutine {
         results.logAndStore(outdir, params.classifier)
         if (routine instanceof CrossValidation) {
             CrossValidation cv = (CrossValidation) routine
-            logMainResults(cv.dataset.label, "crossvalidation", results)
+            logSummaryResults(cv.dataset.label, "crossvalidation", results)
         } else {
-            logMainResults("--", "evaluation", results)
+            logSummaryResults("--", "evaluation", results)
         }
         params.seed = origSeed // set seed back for other experiments
 

@@ -100,7 +100,7 @@ class EvaluateRoutine extends CompositeRoutine {
         });
 
         results.logAndStore(outdir, classifier.class.simpleName)
-        logMainResults(dataset.label, label, results)
+        logSummaryResults(dataset.label, label, results)
 
         write "processed $results.originalEval.ligandCount ligands in $dataset.size files"
         logTime "model evaluation finished in $timer.formatted"

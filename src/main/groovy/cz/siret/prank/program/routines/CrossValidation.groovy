@@ -65,7 +65,7 @@ class CrossValidation extends CompositeRoutine {
         results.train_positives = train_positives
 
         results.logAndStore(outdir, params.classifier)
-        logMainResults(dataset.label, "crossvalidation", results)
+        logSummaryResults(dataset.label, "crossvalidation", results)
 
         write "processed $results.originalEval.ligandCount ligands in $dataset.size files"
         write "crossvalidation finished in $timer.formatted"

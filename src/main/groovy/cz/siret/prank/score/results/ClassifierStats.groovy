@@ -114,10 +114,7 @@ class ClassifierStats {
         div tp , (tp + fn)
     }
 
-    double getFWeighted(double beta) {
-        double betaSqr = beta*beta
-        div ( (1+betaSqr)*p*r , r + betaSqr*p  )
-    }
+
 
     double getF1() {
         div( (2*(p*r)) , (p+r) )
@@ -135,20 +132,64 @@ class ClassifierStats {
         calcMCC(tp, fp, tn, fn)
     }
 
+    /** negative predictive value */
     double getNPV() {
-        div tn , (tn + fn)     // negative predictive value
+        div tn , (tn + fn)
     }
 
+    /** specificity = true negative rate */
     double getSPC() {
-        div tn , (tn + fp)     // specificity = true negative rate
+        div tn , (tn + fp)
     }
 
+    /** accuraccy */
     double getACC() {
-        div( (tp + tn) , count )  // accuraccy
+        div( (tp + tn) , count )
     }
 
     double getTPX() {
         div tp, tp + fn + fp
+    }
+
+    /** false positive rate */
+    double getFPR() {
+        div fp , (fp + tn)
+    }
+
+    /** false negative rate */
+    double getFNR() {
+        div fn , (tp + fn)
+    }
+
+    /** positive likelihood ratio */
+    double getPLR() {
+        div r, FPR
+    }
+
+    /** negative likelihood ratio */
+    double getNLR() {
+        div FNR, SPC
+    }
+
+    /** diagnostic odds ratio */
+    double getDOR() {
+        div PLR, NLR
+    }
+
+    /** false discovery rate */
+    double getFDR() {
+        div fp , (tp + fp)
+    }
+
+    /** false ommision rate */
+    double getFOR() {
+        div fn , (fn + tn)
+    }
+
+
+    double getFWeighted(double beta) {
+        double betaSqr = beta*beta
+        div ( (1+betaSqr)*p*r , r + betaSqr*p  )
     }
 
 //===========================================================================================================//
