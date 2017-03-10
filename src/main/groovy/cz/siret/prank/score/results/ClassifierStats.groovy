@@ -20,7 +20,7 @@ class ClassifierStats {
 
     String name
 
-    Stats stats
+    Stats stats = new Stats()
 
     ClassifierStats(int nclases) {
         op = new int[nclases][nclases]
