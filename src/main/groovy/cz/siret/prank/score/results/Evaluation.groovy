@@ -291,7 +291,7 @@ class Evaluation {
 
         m.PROTEINS = proteinCount
         m.POCKETS = pocketCount
-        m.LIGANDS_RELEVANT = ligandCount
+        m.LIGANDS = ligandCount
         m.LIGANDS_IGNORED = ignoredLigandCount
         m.LIGANDS_SMALL = smallLigandCount
         m.LIGANDS_DISTANT = distantLigandCount
@@ -328,7 +328,7 @@ class Evaluation {
         m.DSA_3_0 = calcSuccRate(33,0)
         m.DSA_3_2 = calcSuccRate(33,2)
 
-        m.DCA_4_0_NOMINAL = m.DCA_4_0 * m.LIG_COUNT
+        m.DCA_4_0_NOMINAL = m.DCA_4_0 * m.LIGANDS
 
         return m
     }
