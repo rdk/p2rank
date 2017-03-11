@@ -1,7 +1,7 @@
 package cz.siret.prank.program
 
 import cz.siret.prank.utils.Writable
-import cz.siret.prank.utils.futils
+import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.core.Appender
@@ -71,7 +71,7 @@ class LogManager implements Writable {
         String pattern = "[%level] %logger{0} - %msg%n"
         int bufferSize = 5000
 
-        futils.delete(logFile)
+        Futils.delete(logFile)
 
         Layout layout = PatternLayout.newBuilder()
                 .withConfiguration(config)

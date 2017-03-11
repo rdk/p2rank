@@ -5,7 +5,7 @@ import cz.siret.prank.domain.DatasetCachedLoader
 import cz.siret.prank.program.Main
 import cz.siret.prank.program.params.RangeParam
 import cz.siret.prank.utils.CmdLineArgs
-import cz.siret.prank.utils.futils
+import cz.siret.prank.utils.Futils
 import groovy.util.logging.Slf4j
 
 import static cz.siret.prank.utils.ThreadUtils.async
@@ -59,7 +59,7 @@ class Experiments extends Routine {
     void execute(String routineName) {
         log.info "executing $routineName()"
         this."$routineName"()  // dynamic exec method
-        log.info "results saved to directory [${futils.absPath(outdir)}]"
+        log.info "results saved to directory [${Futils.absPath(outdir)}]"
     }
 
 //===========================================================================================================//
@@ -122,9 +122,9 @@ class Experiments extends Routine {
             }
 
             if (params.ploop_delete_runs) {
-                async { futils.delete(outdir) }
+                async { Futils.delete(outdir) }
             } else if (params.ploop_zip_runs) {
-                async { futils.zipAndDelete(outdir) }
+                async { Futils.zipAndDelete(outdir) }
             }
 
             if (params.clear_prim_caches) {

@@ -1,7 +1,7 @@
 package cz.siret.prank.program.routines
 
 import cz.siret.prank.utils.ATimer
-import cz.siret.prank.utils.futils
+import cz.siret.prank.utils.Futils
 import groovy.util.logging.Slf4j
 
 @Slf4j
@@ -43,7 +43,7 @@ class SeedLoop extends CompositeRoutine {
         params.seed = origSeed // set seed back for other experiments
 
         logTime "random seed iteration finished in $timer.formatted"
-        write "results saved to directory [${futils.absPath(outdir)}]"
+        write "results saved to directory [${Futils.absPath(outdir)}]"
 
 
         return results

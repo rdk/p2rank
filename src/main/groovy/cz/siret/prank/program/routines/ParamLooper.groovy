@@ -3,7 +3,7 @@ package cz.siret.prank.program.routines
 import cz.siret.prank.program.params.Params
 import cz.siret.prank.program.params.RangeParam
 import cz.siret.prank.utils.ATimer
-import cz.siret.prank.utils.futils
+import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.plotter.RPlotter
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
@@ -41,13 +41,13 @@ class ParamLooper extends Routine {
     public void iterateParams(Closure<CompositeRoutine.Results> closure) {
         def timer = ATimer.start()
 
-        futils.mkdirs(outdir)
+        Futils.mkdirs(outdir)
 
         steps = generateSteps()
         log.info "STEPS: " + steps.toListString().replace("Step","\nStep")
 
         paramsTableFile = "$outdir/param_stats.csv"
-        PrintWriter table = futils.getWriter paramsTableFile
+        PrintWriter table = Futils.getWriter paramsTableFile
 
         boolean doheader = true
         for (Step step in steps) {
@@ -71,7 +71,7 @@ class ParamLooper extends Routine {
         table.close()
 
         logTime "param iteration finished in $timer.formatted"
-        write "results saved to directory [${futils.absPath(outdir)}]"
+        write "results saved to directory [${Futils.absPath(outdir)}]"
 
         makePlots()
     }
@@ -90,7 +90,7 @@ class ParamLooper extends Routine {
 
     private makePlots() {
         write "generating R plots..."
-        futils.mkdirs(plotsDir)
+        Futils.mkdirs(plotsDir)
         if (paramsCount==1) {
             make1DPlots()
         } else if (paramsCount==2) {
@@ -108,7 +108,7 @@ class ParamLooper extends Routine {
             tables2D.keySet().eachParallel { String key ->
                 String value = tables2D.get(key)
                 String label = key
-                String fname = futils.absSafePath(value)
+                String fname = Futils.absSafePath(value)
                 String labelX = rparams[1].name
                 String labelY = rparams[0].name
                 new RPlotter(plotsDir).plotHeatMapTable(fname, label, labelX, labelY)
@@ -142,7 +142,7 @@ class ParamLooper extends Routine {
 
         String fname = "$tablesDir/${statName}.csv"
         tables2D.put(statName, fname)
-        futils.overwrite fname, sb.toString()
+        Futils.overwrite fname, sb.toString()
     }
 
     private List<Step> generateSteps() {

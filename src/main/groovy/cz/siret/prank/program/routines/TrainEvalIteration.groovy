@@ -9,7 +9,7 @@ import cz.siret.prank.score.results.ClassifierStats
 import cz.siret.prank.utils.ATimer
 import cz.siret.prank.utils.CSV
 import cz.siret.prank.utils.WekaUtils
-import cz.siret.prank.utils.futils
+import cz.siret.prank.utils.Futils
 import groovy.util.logging.Slf4j
 import hr.irb.fastRandomForest.FastRandomForest
 import weka.classifiers.Classifier
@@ -81,8 +81,8 @@ class TrainEvalIteration extends CompositeRoutine implements Parametrized  {
     }
 
     void deleteVectorFiles() {
-        futils.delete(trainVectorFile)
-        futils.delete(evalVectorFile)
+        Futils.delete(trainVectorFile)
+        Futils.delete(evalVectorFile)
     }
 
     ClassifierStats calculateTrainStats(Classifier classifier, Instances trainVectors) {
@@ -124,7 +124,7 @@ class TrainEvalIteration extends CompositeRoutine implements Parametrized  {
         long trainTime = timer.time
         if (!params.delete_models) {
             WekaUtils.saveClassifier(classifier, modelf)
-            write "model saved to file $modelf (${futils.sizeMBFormatted(modelf)} MB)"
+            write "model saved to file $modelf (${Futils.sizeMBFormatted(modelf)} MB)"
         }
 
         ClassifierStats trainStats = calculateTrainStats(classifier, trainVectors)
@@ -137,7 +137,7 @@ class TrainEvalIteration extends CompositeRoutine implements Parametrized  {
                 featureImportances = (classifier as FastRandomForest).featureImportances.toList()
                 List<String> names = FeatureExtractor.createFactory().vectorHeader
 
-                Writer file = futils.getWriter("$outdir/feature_importances.csv")
+                Writer file = Futils.getWriter("$outdir/feature_importances.csv")
                 file << names.join(',') << "\n"
                 file << CSV.fromDoubles(featureImportances) << "\n"
                 file.close()
@@ -161,7 +161,7 @@ class TrainEvalIteration extends CompositeRoutine implements Parametrized  {
         logTime "evaluation routine on dataset [$evalDataSet.name] finished in " + timer.formatted
 
         if (deleteModel)
-            futils.delete(modelf)
+            Futils.delete(modelf)
 
         return res
     }

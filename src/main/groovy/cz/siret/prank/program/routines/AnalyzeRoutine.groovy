@@ -9,7 +9,7 @@ import cz.siret.prank.program.Main
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.utils.CmdLineArgs
 import cz.siret.prank.utils.Writable
-import cz.siret.prank.utils.futils
+import cz.siret.prank.utils.Futils
 import groovy.util.logging.Slf4j
 
 /**
@@ -45,7 +45,7 @@ class AnalyzeRoutine extends Routine implements Writable {
 
         commandRegister.get(subCommand).call()
 
-        write "results saved to directory [${futils.absPath(outdir)}]"
+        write "results saved to directory [${Futils.absPath(outdir)}]"
     }
     
  //===========================================================================================================//
@@ -76,7 +76,7 @@ class AnalyzeRoutine extends Routine implements Writable {
                 summary << msg + "\n"
 
                 String outf = "$outdir/${p.name}_binding-residues.txt"
-                futils.overwrite outf, bindingResidueIds.join("\n")
+                Futils.overwrite outf, bindingResidueIds.join("\n")
 
             }
         })

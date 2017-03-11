@@ -4,7 +4,7 @@ import cz.siret.prank.collectors.DataPreProcessor
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.utils.ATimer
 import cz.siret.prank.utils.WekaUtils
-import cz.siret.prank.utils.futils
+import cz.siret.prank.utils.Futils
 import groovy.util.logging.Slf4j
 import groovyx.gpars.GParsPool
 import weka.core.Instances
@@ -30,7 +30,7 @@ class CrossValidation extends CompositeRoutine {
         results = new Results(0) // joint results
         numFolds = params.folds
         samplingSeed = params.seed
-        futils.mkdirs(outdir)
+        Futils.mkdirs(outdir)
     }
 
     Results execute() {
@@ -69,8 +69,8 @@ class CrossValidation extends CompositeRoutine {
 
         write "processed $results.originalEval.ligandCount ligands in $dataset.size files"
         write "crossvalidation finished in $timer.formatted"
-        write "results saved to directory [${futils.absPath(outdir)}]"
-        futils.overwrite("$outdir/time.log", "finished in $timer.formatted")
+        write "results saved to directory [${Futils.absPath(outdir)}]"
+        Futils.overwrite("$outdir/time.log", "finished in $timer.formatted")
 
         return results
     }

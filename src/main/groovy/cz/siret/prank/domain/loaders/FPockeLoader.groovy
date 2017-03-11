@@ -6,7 +6,7 @@ import cz.siret.prank.domain.Prediction
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.utils.PDBUtils
-import cz.siret.prank.utils.futils
+import cz.siret.prank.utils.Futils
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.*
 
@@ -110,7 +110,7 @@ class FPockeLoader extends PredictionLoader {
      */
     private Structure loadPocketStructureAndDetails(String pocketAtmFileName, FPocketPocket fpocket) {
 
-        if (!futils.exists(pocketAtmFileName)) {
+        if (!Futils.exists(pocketAtmFileName)) {
             throw new FileNotFoundException(pocketAtmFileName)
         }
 

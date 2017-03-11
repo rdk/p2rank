@@ -6,7 +6,7 @@ import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.score.WekaSumRescorer
 import cz.siret.prank.utils.ColorUtils
-import cz.siret.prank.utils.futils
+import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
@@ -58,21 +58,21 @@ class PyMolRenderer implements Parametrized {
         String pmlf = "$outdir/${label}.pml"
         String pointsDir = "$outdir/data"
 
-        futils.mkdirs(pointsDir)
+        Futils.mkdirs(pointsDir)
 
         String pointsf = "$pointsDir/${label}_points.pdb.gz"
         String pointsfRelName = "data/${label}_points.pdb.gz"
         String pointsf0 = "$pointsDir/${label}_points0.pdb"
         String pointsf0RelName = "data/${label}_points0.pdb"
 
-        String proteinf = futils.absPath(item.proteinFile)
+        String proteinf = Futils.absPath(item.proteinFile)
         if (params.vis_copy_proteins) {
-            String name = futils.shortName(proteinf)
+            String name = Futils.shortName(proteinf)
             String newf = "$pointsDir/$name"
             String newfrel = "data/$name"
 
             log.info "copying [$proteinf] to [$newf]"
-            futils.copy(proteinf, newf)
+            Futils.copy(proteinf, newf)
 
             proteinf = newfrel
         }
@@ -89,7 +89,7 @@ class PyMolRenderer implements Parametrized {
           //#set antialias, 2
 //        set bg_rgb_top, [10,10,10]
 //        set bg_rgb_bottom, [36,36,85]
-        futils.overwrite(pmlf, """
+        Futils.overwrite(pmlf, """
 from pymol import cmd,stored
 
 set depth_cue, 1
@@ -174,7 +174,7 @@ orient
         // http://cupnet.net/pdb_format/
         // http://www.pymolwiki.org/index.php/Colorama
 
-        Writer pdb = futils.getGzipWriter(pointsf)
+        Writer pdb = Futils.getGzipWriter(pointsf)
         int i = 0
         for (LabeledPoint lp : rescorer.labeledPoints) {
             double beta = lp.hist[1]

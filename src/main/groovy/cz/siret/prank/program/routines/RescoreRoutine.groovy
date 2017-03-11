@@ -8,7 +8,7 @@ import cz.siret.prank.score.WekaSumRescorer
 import cz.siret.prank.score.results.ReorderingSummary
 import cz.siret.prank.utils.ATimer
 import cz.siret.prank.utils.WekaUtils
-import cz.siret.prank.utils.futils
+import cz.siret.prank.utils.Futils
 import groovy.util.logging.Slf4j
 import weka.classifiers.Classifier
 
@@ -31,7 +31,7 @@ class RescoreRoutine extends Routine {
     Dataset.Result execute() {
         def timer = ATimer.start()
 
-        futils.mkdirs(outdir)
+        Futils.mkdirs(outdir)
         writeParams(outdir)
 
         write "rescoring pockets on proteins from dataset [$dataset.name]"
@@ -56,14 +56,14 @@ class RescoreRoutine extends Routine {
 
                 ReorderingSummary rsumm = new ReorderingSummary(prediction)
                 String outf = "$outdir/${item.label}_rescored.csv"
-                futils.overwrite(outf, rsumm.toCSV().toString())
+                Futils.overwrite(outf, rsumm.toCSV().toString())
                 log.info "\n\nRescored pockets for [$item.label]: \n\n" + rsumm.toTable() + "\n"
 
             }
         })
 
         write "rescoring finished in $timer.formatted"
-        write "results saved to directory [${futils.absPath(outdir)}]"
+        write "results saved to directory [${Futils.absPath(outdir)}]"
 
         return result
     }

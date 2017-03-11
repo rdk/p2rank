@@ -1,6 +1,6 @@
 package cz.siret.prank.utils.plotter
 
-import cz.siret.prank.utils.futils
+import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
@@ -25,10 +25,10 @@ class RExecutor {
         log.info "executing R script [${scriptFile}]"
 
         if (dir==null) {
-            dir = futils.dir(scriptFile)
+            dir = Futils.dir(scriptFile)
         }
 
-        futils.mkdirs(dir)
+        Futils.mkdirs(dir)
 
         def command = "$RCommand $scriptFile" 
         Process proc = command.execute((List)null, new File(dir))
@@ -66,8 +66,8 @@ class RExecutor {
         }
 
         String scriptf = "$scriptDir/${name}.R"
-        scriptf = futils.absPath(scriptf)
-        futils.overwrite scriptf, code
+        scriptf = Futils.absPath(scriptf)
+        Futils.overwrite scriptf, code
 
         return runScript(scriptf, outdir)
     }

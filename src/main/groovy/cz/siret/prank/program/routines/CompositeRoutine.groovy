@@ -9,7 +9,7 @@ import cz.siret.prank.score.results.Evaluation
 import cz.siret.prank.utils.CSV
 import cz.siret.prank.utils.PerfUtils
 import cz.siret.prank.utils.Writable
-import cz.siret.prank.utils.futils
+import cz.siret.prank.utils.Futils
 import groovy.util.logging.Slf4j
 
 /**
@@ -85,7 +85,7 @@ abstract class CompositeRoutine extends Routine {
 
     void logSummaryResults(String label, String model, Results results) {
         String mainRes = toMainResultsCsv(label, model, results)
-        futils.overwrite "$outdir/summary.csv", mainRes
+        Futils.overwrite "$outdir/summary.csv", mainRes
 
         // collecting results
         File collectedf = new File("$outdir/../runs.csv")
@@ -252,7 +252,7 @@ abstract class CompositeRoutine extends Routine {
                 logIndividualCases = params.log_cases
             }
 
-            futils.mkdirs(outdir)
+            Futils.mkdirs(outdir)
 
             List<Integer> tolerances = params.eval_tolerances
 
@@ -262,30 +262,30 @@ abstract class CompositeRoutine extends Routine {
             String classifier_stats    = classifierStats.toCSV(" $classifierName ")
             String stats               = getMiscStatsCSV()
 
-            futils.overwrite "$outdir/success_rates_original.csv", succ_rates
-            futils.overwrite "$outdir/success_rates.csv", succ_rates_rescored
-            futils.overwrite "$outdir/success_rates_diff.csv", succ_rates_diff
-            futils.overwrite "$outdir/classifier.csv", classifier_stats
-            futils.overwrite "$outdir/stats.csv", stats
+            Futils.overwrite "$outdir/success_rates_original.csv", succ_rates
+            Futils.overwrite "$outdir/success_rates.csv", succ_rates_rescored
+            Futils.overwrite "$outdir/success_rates_diff.csv", succ_rates_diff
+            Futils.overwrite "$outdir/classifier.csv", classifier_stats
+            Futils.overwrite "$outdir/stats.csv", stats
 
             if (logIndividualCases) {
                 originalEval.sort()
                 rescoredEval.sort()
 
                 String casedir = "$outdir/cases"
-                futils.mkdirs(casedir)
-                futils.overwrite "$casedir/proteins.csv", originalEval.toProteinsCSV()
-                futils.overwrite "$casedir/ligands.csv", rescoredEval.toLigandsCSV()
-                futils.overwrite "$casedir/pockets.csv", rescoredEval.toPocketsCSV()
-                futils.overwrite "$casedir/ranks.csv", originalEval.toRanksCSV()
-                futils.overwrite "$casedir/ranks_rescored.csv", rescoredEval.toRanksCSV()
+                Futils.mkdirs(casedir)
+                Futils.overwrite "$casedir/proteins.csv", originalEval.toProteinsCSV()
+                Futils.overwrite "$casedir/ligands.csv", rescoredEval.toLigandsCSV()
+                Futils.overwrite "$casedir/pockets.csv", rescoredEval.toPocketsCSV()
+                Futils.overwrite "$casedir/ranks.csv", originalEval.toRanksCSV()
+                Futils.overwrite "$casedir/ranks_rescored.csv", rescoredEval.toRanksCSV()
             }
 
             if (params.feature_importances && featureImportances!=null) {
                 List<FeatureImportance> namedImportances = getNamedImportances()
                 namedImportances.sort { -it.importance } // descending
                 String sortedCsv = namedImportances.collect { it.name + ", " + PerfUtils.formatDouble(it.importance) }.join("\n") + "\n"
-                futils.overwrite("$outdir/feature_importances_sorted.csv", sortedCsv)
+                Futils.overwrite("$outdir/feature_importances_sorted.csv", sortedCsv)
             }
 
             log.info "\n" + CSV.tabulate(classifier_stats) + "\n\n"

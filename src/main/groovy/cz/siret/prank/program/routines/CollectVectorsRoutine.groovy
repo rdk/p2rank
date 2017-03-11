@@ -12,7 +12,7 @@ import cz.siret.prank.score.criteria.IdentificationCriterium
 import cz.siret.prank.utils.ATimer
 import cz.siret.prank.utils.PerfUtils
 import cz.siret.prank.utils.WekaUtils
-import cz.siret.prank.utils.futils
+import cz.siret.prank.utils.Futils
 import groovy.transform.TupleConstructor
 import groovy.util.logging.Slf4j
 import weka.core.Instances
@@ -53,7 +53,7 @@ class CollectVectorsRoutine extends Routine {
 
         write "collecting vectors from dataset [$dataset.name]"
 
-        futils.mkdirs(outdir)
+        Futils.mkdirs(outdir)
         writeParams(outdir)
 
 //===========================================================================================================//

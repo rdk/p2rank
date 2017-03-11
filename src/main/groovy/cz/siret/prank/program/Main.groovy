@@ -12,7 +12,7 @@ import org.apache.commons.lang3.StringUtils
 @Slf4j
 class Main implements Parametrized, Writable {
 
-    static Properties buildProperties = futils.loadProperties('/build.properties')
+    static Properties buildProperties = Futils.loadProperties('/build.properties')
 
     CmdLineArgs args
     String command
@@ -34,7 +34,7 @@ class Main implements Parametrized, Writable {
 
     void initParams(Params params, String defaultConfigFile) {
 
-        log.info "loading default config from [${futils.absPath(defaultConfigFile)}]"
+        log.info "loading default config from [${Futils.absPath(defaultConfigFile)}]"
         File defaultParams = new File(defaultConfigFile)
         ConfigLoader.overrideConfig(params, defaultParams)
         String configParam = configFileParam
@@ -42,7 +42,7 @@ class Main implements Parametrized, Writable {
         // TODO allow multiple -c params override default+dev+working
         if (configParam!=null) {
 
-            if (!configParam.endsWith(".groovy") && futils.exists(configParam+".groovy"))  {
+            if (!configParam.endsWith(".groovy") && Futils.exists(configParam+".groovy"))  {
                 configParam = configParam + ".groovy"
             }
 
@@ -51,7 +51,7 @@ class Main implements Parametrized, Writable {
                 customParams = new File("$installDir/config/$configParam")
             }
 
-            log.info "overriding default config with [${futils.absPath(customParams.path)}]"
+            log.info "overriding default config with [${Futils.absPath(customParams.path)}]"
             ConfigLoader.overrideConfig(params, customParams)
         }
 
@@ -78,7 +78,7 @@ class Main implements Parametrized, Writable {
             }
         }
         assert dir != null
-        dir = futils.normalize(dir)
+        dir = Futils.normalize(dir)
         assert dir != null
         return dir
     }
@@ -87,10 +87,10 @@ class Main implements Parametrized, Writable {
         String modelName = params.model
 
         String modelf = modelName
-        if (!futils.exists(modelf)) {
+        if (!Futils.exists(modelf)) {
             modelf = "$installDir/models/$modelf"
         }
-        if (!futils.exists(modelf)) {
+        if (!Futils.exists(modelf)) {
             log.error "Model file [$modelName] not found!"
             throw new PrankException("model not found")
         }
@@ -106,11 +106,11 @@ class Main implements Parametrized, Writable {
             throw new PrankException('dataset not specified!')
         }
 
-        if (!futils.exists(dataf)) {
-            log.info "looking for dataset in working dir [${futils.absPath(dataf)}]... failed"
+        if (!Futils.exists(dataf)) {
+            log.info "looking for dataset in working dir [${Futils.absPath(dataf)}]... failed"
             dataf = "${Params.inst.dataset_base_dir}/$dataf"
         }
-        log.info "looking for dataset in dataset_base_dir [${futils.absPath(dataf)}]..."
+        log.info "looking for dataset in dataset_base_dir [${Futils.absPath(dataf)}]..."
         return dataf
     }
 
@@ -146,7 +146,7 @@ class Main implements Parametrized, Writable {
             }
         }
 
-        futils.mkdirs(outdir)
+        Futils.mkdirs(outdir)
         return outdir
     }
 
@@ -168,7 +168,7 @@ class Main implements Parametrized, Writable {
         String path = Main.class.getProtectionDomain().getCodeSource().getLocation().getPath();
         String decodedPath = URLDecoder.decode(path, "UTF-8");
 
-        return futils.normalize(futils.dir(decodedPath) + "/../")
+        return Futils.normalize(Futils.dir(decodedPath) + "/../")
 
     }
 
@@ -270,7 +270,7 @@ class Main implements Parametrized, Writable {
     }
 
     void runHelp() {
-        println futils.readResource('/help.txt')
+        println Futils.readResource('/help.txt')
     }
 
 
@@ -329,7 +329,7 @@ class Main implements Parametrized, Writable {
     void finalizeLog() {
         if (logManager.loggingToFile && params.zip_log_file) {
             logManager.stopFileAppender()
-            futils.zipAndDelete(logManager.logFile)
+            Futils.zipAndDelete(logManager.logFile)
         }
     }
 

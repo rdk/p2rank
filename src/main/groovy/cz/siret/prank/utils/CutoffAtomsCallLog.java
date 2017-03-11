@@ -38,7 +38,7 @@ public class CutoffAtomsCallLog {
 
     public void printOut(String fnamePrefix) {
         String csv = Joiner.on('\n').join(calls.stream().map(a -> "" + a[0] + "," + a[1]).collect(Collectors.toList()));
-        futils.overwrite(fnamePrefix + "_calls.csv", csv);
+        Futils.overwrite(fnamePrefix + "_calls.csv", csv);
 
         StringBuilder ss = new StringBuilder();
         ss.append("atoms,calls,sum_time,avg_returned\n");
@@ -46,7 +46,7 @@ public class CutoffAtomsCallLog {
             double avgret = (ncalls[i] == 0) ? 0 : returned[i] / ncalls[i];
             ss.append("" + (i) + "," + ncalls[i] + "," + times[i] + "," + PerfUtils.formatDouble(avgret) + "\n");
         }
-        futils.overwrite(fnamePrefix + "_stats.csv", ss.toString());
+        Futils.overwrite(fnamePrefix + "_stats.csv", ss.toString());
 
     }
 

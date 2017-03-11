@@ -2,7 +2,7 @@ package cz.siret.prank.utils.plotter
 
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.StrUtils
-import cz.siret.prank.utils.futils
+import cz.siret.prank.utils.Futils
 import groovyx.gpars.GParsPool
 
 /**
@@ -46,14 +46,14 @@ class RPlotter implements Parametrized {
     }
 
     void cleanup() {
-        futils.delete("$outdir/Rplots.pdf")
+        Futils.delete("$outdir/Rplots.pdf")
     }
 
     void plot1D(int colnum) {
 
         String label = header[colnum]
 
-        String tabf = "../"+futils.shortName(csvfile) //FileUtils.relativize(csvfile, outdir)
+        String tabf = "../"+Futils.shortName(csvfile) //FileUtils.relativize(csvfile, outdir)
 
         String rcode = """
             if (!require("ggplot2")) {

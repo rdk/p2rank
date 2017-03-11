@@ -10,7 +10,7 @@ import cz.siret.prank.score.WekaSumRescorer
 import cz.siret.prank.score.results.PredictionSummary
 import cz.siret.prank.utils.ATimer
 import cz.siret.prank.utils.WekaUtils
-import cz.siret.prank.utils.futils
+import cz.siret.prank.utils.Futils
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
@@ -59,7 +59,7 @@ class PredictRoutine extends Routine {
         write "predicting pockets for proteins from dataset [$dataset.name]"
 
         if (produceFilesystemOutput) {
-            futils.mkdirs(outdir)
+            Futils.mkdirs(outdir)
             writeParams(outdir)
             log.info "outdir: $outdir"
         }
@@ -69,7 +69,7 @@ class PredictRoutine extends Routine {
 
         String visDir = "$outdir/visualizations"
         if (produceVisualizations) {
-            futils.mkdirs(visDir)
+            Futils.mkdirs(visDir)
         }
 
         PredictResults stats = new PredictResults()
@@ -95,7 +95,7 @@ class PredictRoutine extends Routine {
                 if (outputPredictionFiles) {
                     PredictionSummary psum = new PredictionSummary(pair.prediction)
                     String outf = "$outdir/${item.label}_predictions.csv"
-                    futils.overwrite(outf, psum.toCSV().toString())
+                    Futils.overwrite(outf, psum.toCSV().toString())
                 }
 
                 if (collectStats) {  // expects dataset with liganated proteins
@@ -120,7 +120,7 @@ class PredictRoutine extends Routine {
         write "predicting pockets finished in $timer.formatted"
 
         if (produceFilesystemOutput) {
-            write "results saved to directory [${futils.absPath(outdir)}]"
+            write "results saved to directory [${Futils.absPath(outdir)}]"
         }
 
 

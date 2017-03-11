@@ -9,7 +9,7 @@ import cz.siret.prank.features.tables.PropertyTable
 import cz.siret.prank.features.volsite.VolSitePharmacophore
 import cz.siret.prank.program.params.Params
 import cz.siret.prank.utils.PDBUtils
-import cz.siret.prank.utils.futils
+import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
@@ -22,11 +22,11 @@ import org.biojava.nbio.structure.Element
 @CompileStatic
 public class ChemVector extends FeatureVector implements Cloneable {
 
-    static final PropertyTable aa5FactorsTable   = PropertyTable.parse(futils.readResource("/tables/aa-5factors.csv"))
-    static final PropertyTable aa5PropensitiesTable   = PropertyTable.parse(futils.readResource("/tables/aa-propensities.csv"))
+    static final PropertyTable aa5FactorsTable   = PropertyTable.parse(Futils.readResource("/tables/aa-5factors.csv"))
+    static final PropertyTable aa5PropensitiesTable   = PropertyTable.parse(Futils.readResource("/tables/aa-propensities.csv"))
 
     static final PropertyTable aaPropertyTable   = aa5FactorsTable.join(aa5PropensitiesTable)
-    static final PropertyTable atomPropertyTable = PropertyTable.parse(futils.readResource("/tables/atomic-properties.csv"))
+    static final PropertyTable atomPropertyTable = PropertyTable.parse(Futils.readResource("/tables/atomic-properties.csv"))
 
     boolean includeVsProps() {
         return Params.INSTANCE.@use_volsite_features

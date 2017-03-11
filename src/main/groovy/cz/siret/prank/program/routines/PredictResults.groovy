@@ -5,7 +5,7 @@ import cz.siret.prank.score.results.ClassifierStats
 import cz.siret.prank.score.results.Evaluation
 import cz.siret.prank.utils.CSV
 import cz.siret.prank.utils.Writable
-import cz.siret.prank.utils.futils
+import cz.siret.prank.utils.Futils
 import groovy.util.logging.Slf4j
 
 /**
@@ -46,7 +46,7 @@ class PredictResults implements Parametrized, Writable {
             logIndividualCases = params.log_cases
         }
 
-        futils.mkdirs(outdir)
+        Futils.mkdirs(outdir)
 
         List<Integer> tolerances = params.eval_tolerances
 
@@ -54,21 +54,21 @@ class PredictResults implements Parametrized, Writable {
         String classifier_stats    = classifierStats.toCSV(" $classifierName ")
         String stats             = getMiscStatsCSV()
 
-        futils.overwrite "$outdir/success_rates.csv", succ_rates
-        futils.overwrite "$outdir/classifier.csv", classifier_stats
-        futils.overwrite "$outdir/stats.csv", stats
+        Futils.overwrite "$outdir/success_rates.csv", succ_rates
+        Futils.overwrite "$outdir/classifier.csv", classifier_stats
+        Futils.overwrite "$outdir/stats.csv", stats
 
         if (logIndividualCases) {
             predictionsEval.sort()
 
             String casedir = "$outdir/cases"
-            futils.mkdirs(casedir)
+            Futils.mkdirs(casedir)
 
-            futils.overwrite "$casedir/proteins.csv", predictionsEval.toProteinsCSV()
-            futils.overwrite "$casedir/ligands.csv", predictionsEval.toLigandsCSV()
-            futils.overwrite "$casedir/pockets.csv", predictionsEval.toPocketsCSV()
-            futils.overwrite "$casedir/ranks.csv", predictionsEval.toRanksCSV()
-            futils.overwrite "$casedir/ranks_rescored.csv", predictionsEval.toRanksCSV()
+            Futils.overwrite "$casedir/proteins.csv", predictionsEval.toProteinsCSV()
+            Futils.overwrite "$casedir/ligands.csv", predictionsEval.toLigandsCSV()
+            Futils.overwrite "$casedir/pockets.csv", predictionsEval.toPocketsCSV()
+            Futils.overwrite "$casedir/ranks.csv", predictionsEval.toRanksCSV()
+            Futils.overwrite "$casedir/ranks_rescored.csv", predictionsEval.toRanksCSV()
         }
 
         log.info "\n" + CSV.tabulate(classifier_stats) + "\n\n"
@@ -130,7 +130,7 @@ class PredictResults implements Parametrized, Writable {
 
     void logMainResults(String outdir, String label) {
         String mainRes = toMainResultsCsv(outdir, label)
-        futils.overwrite "$outdir/summary.csv", mainRes
+        Futils.overwrite "$outdir/summary.csv", mainRes
 
         // collecting results
         File collectedf = new File("$outdir/../runs_pred.csv")

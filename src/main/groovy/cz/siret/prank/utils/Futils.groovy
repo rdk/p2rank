@@ -17,7 +17,7 @@ import java.util.zip.GZIPOutputStream
  */
 @Slf4j
 @CompileStatic
-class futils {
+class Futils {
 
     static final int OUTPUT_BUFFER_SIZE = 10000
 
@@ -80,7 +80,7 @@ class futils {
      * reads text file from classpath
      */
     static String readResource(String path) {
-        return futils.class.getResourceAsStream(path).newReader().getText()
+        return Futils.class.getResourceAsStream(path).newReader().getText()
     }
 
     /**
@@ -88,7 +88,7 @@ class futils {
      */
     static Properties loadProperties(String path) {
         Properties res = new Properties()
-        res.load(futils.class.getResourceAsStream(path))
+        res.load(Futils.class.getResourceAsStream(path))
         return res
     }
 

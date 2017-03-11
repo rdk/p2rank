@@ -7,7 +7,7 @@ import cz.siret.prank.program.rendering.PyMolRenderer
 import cz.siret.prank.score.*
 import cz.siret.prank.utils.ATimer
 import cz.siret.prank.utils.WekaUtils
-import cz.siret.prank.utils.futils
+import cz.siret.prank.utils.Futils
 import groovy.util.logging.Slf4j
 import weka.classifiers.Classifier
 
@@ -62,11 +62,11 @@ class EvaluateRoutine extends CompositeRoutine {
         def timer = ATimer.start()
 
         write "evaluating results on dataset [$dataset.name]"
-        futils.mkdirs(outdir)
+        Futils.mkdirs(outdir)
         writeParams(outdir)
         String visDir = "$outdir/visualizations"
         if (params.visualizations) {
-            futils.mkdirs(visDir)
+            Futils.mkdirs(visDir)
         }
 
         results = new Results(1)
@@ -100,7 +100,7 @@ class EvaluateRoutine extends CompositeRoutine {
 
         write "processed $results.originalEval.ligandCount ligands in $dataset.size files"
         logTime "model evaluation finished in $timer.formatted"
-        write "results saved to directory [${futils.absPath(outdir)}]"
+        write "results saved to directory [${Futils.absPath(outdir)}]"
 
         results.evalTime = timer.time
         results.datasetResult = datasetResult

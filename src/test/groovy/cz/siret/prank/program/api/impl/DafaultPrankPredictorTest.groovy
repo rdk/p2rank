@@ -5,7 +5,7 @@ import cz.siret.prank.domain.Prediction
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.program.api.PrankFacade
 import cz.siret.prank.program.api.PrankPredictor
-import cz.siret.prank.utils.futils
+import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
 import org.junit.Test
@@ -76,15 +76,15 @@ class DafaultPrankPredictorTest {
     @Test
     public void runPrediction() throws Exception {
 
-        futils.delete(outDir.toString())
+        Futils.delete(outDir.toString())
 
         Path testOutDir = path(outDir, "predict_2W83_test")
         predictor.runPrediction( testFile1, testOutDir )
 
         def outf = testOutDir.toString() + "/2W83.pdb_predictions.csv"
 
-        assertTrue futils.exists(outf)
-        assertTrue futils.size(outf) > 0
+        assertTrue Futils.exists(outf)
+        assertTrue Futils.size(outf) > 0
     }
 
 }

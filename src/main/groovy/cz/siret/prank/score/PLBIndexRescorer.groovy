@@ -5,7 +5,7 @@ import cz.siret.prank.domain.Prediction
 import cz.siret.prank.features.tables.PropertyTable
 import cz.siret.prank.utils.PDBUtils
 import cz.siret.prank.utils.StrUtils
-import cz.siret.prank.utils.futils
+import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
@@ -19,7 +19,7 @@ import org.biojava.nbio.structure.Group
 @CompileStatic
 class PLBIndexRescorer extends PocketRescorer {
 
-    static final PropertyTable aaPropensitiesTable   = PropertyTable.parse(futils.readResource("/tables/aa-propensities.csv"))
+    static final PropertyTable aaPropensitiesTable   = PropertyTable.parse(Futils.readResource("/tables/aa-propensities.csv"))
 
     @Override
     void rescorePockets(Prediction prediction) {
