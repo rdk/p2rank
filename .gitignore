@@ -12,6 +12,7 @@ bin/
 *.iws
 *.class
 
+
 distro/bin/
 distro/log/*
 distro/test_output/
