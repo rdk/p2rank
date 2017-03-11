@@ -70,7 +70,7 @@ class CrossValidation extends CompositeRoutine {
         write "processed $results.originalEval.ligandCount ligands in $dataset.size files"
         write "crossvalidation finished in $timer.formatted"
         write "results saved to directory [${Futils.absPath(outdir)}]"
-        Futils.overwrite("$outdir/time.log", "finished in $timer.formatted")
+        Futils.writeFile("$outdir/time.log", "finished in $timer.formatted")
 
         return results
     }

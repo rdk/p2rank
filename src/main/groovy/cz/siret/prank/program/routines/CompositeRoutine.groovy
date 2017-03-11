@@ -9,8 +9,11 @@ import cz.siret.prank.score.results.Evaluation
 import cz.siret.prank.utils.CSV
 import cz.siret.prank.utils.PerfUtils
 import cz.siret.prank.utils.Writable
-import cz.siret.prank.utils.Futils
+import cz.siret.prank.utils.stat.Histogram
 import groovy.util.logging.Slf4j
+
+import static cz.siret.prank.utils.Futils.mkdirs
+import static cz.siret.prank.utils.Futils.writeFile
 
 /**
  * CompositeRoutine that can be composed of subroutines with collected Results (ststs)
@@ -85,7 +88,7 @@ abstract class CompositeRoutine extends Routine {
 
     void logSummaryResults(String label, String model, Results results) {
         String mainRes = toMainResultsCsv(label, model, results)
-        Futils.overwrite "$outdir/summary.csv", mainRes
+        writeFile "$outdir/summary.csv", mainRes
 
         // collecting results
         File collectedf = new File("$outdir/../runs.csv")
@@ -240,6 +243,20 @@ abstract class CompositeRoutine extends Routine {
             stats.collect { "$it.key, ${fmt(it.value)}" }.join("\n")
         }
 
+
+
+        static void logClassifierStats(ClassifierStats cs, String outdir) {
+            String dir = "$outdir/classifier"
+            mkdirs(dir)
+
+            cs.histograms.properties.each { key, value ->
+                String label = key
+                Histogram hist = (Histogram) value
+                
+                writeFile "$dir/hist_${label}.csv", hist.toCSV()
+            }
+        }
+
         /**
          *
          * @param outdir
@@ -252,7 +269,7 @@ abstract class CompositeRoutine extends Routine {
                 logIndividualCases = params.log_cases
             }
 
-            Futils.mkdirs(outdir)
+            mkdirs(outdir)
 
             List<Integer> tolerances = params.eval_tolerances
 
@@ -262,30 +279,32 @@ abstract class CompositeRoutine extends Routine {
             String classifier_stats    = classifierStats.toCSV(" $classifierName ")
             String stats               = getMiscStatsCSV()
 
-            Futils.overwrite "$outdir/success_rates_original.csv", succ_rates
-            Futils.overwrite "$outdir/success_rates.csv", succ_rates_rescored
-            Futils.overwrite "$outdir/success_rates_diff.csv", succ_rates_diff
-            Futils.overwrite "$outdir/classifier.csv", classifier_stats
-            Futils.overwrite "$outdir/stats.csv", stats
+            writeFile "$outdir/success_rates_original.csv", succ_rates
+            writeFile "$outdir/success_rates.csv", succ_rates_rescored
+            writeFile "$outdir/success_rates_diff.csv", succ_rates_diff
+            writeFile "$outdir/classifier.csv", classifier_stats
+            writeFile "$outdir/stats.csv", stats
+            
+            logClassifierStats(classifierStats, outdir)
 
             if (logIndividualCases) {
                 originalEval.sort()
                 rescoredEval.sort()
 
                 String casedir = "$outdir/cases"
-                Futils.mkdirs(casedir)
-                Futils.overwrite "$casedir/proteins.csv", originalEval.toProteinsCSV()
-                Futils.overwrite "$casedir/ligands.csv", rescoredEval.toLigandsCSV()
-                Futils.overwrite "$casedir/pockets.csv", rescoredEval.toPocketsCSV()
-                Futils.overwrite "$casedir/ranks.csv", originalEval.toRanksCSV()
-                Futils.overwrite "$casedir/ranks_rescored.csv", rescoredEval.toRanksCSV()
+                mkdirs(casedir)
+                writeFile "$casedir/proteins.csv", originalEval.toProteinsCSV()
+                writeFile "$casedir/ligands.csv", rescoredEval.toLigandsCSV()
+                writeFile "$casedir/pockets.csv", rescoredEval.toPocketsCSV()
+                writeFile "$casedir/ranks.csv", originalEval.toRanksCSV()
+                writeFile "$casedir/ranks_rescored.csv", rescoredEval.toRanksCSV()
             }
 
             if (params.feature_importances && featureImportances!=null) {
                 List<FeatureImportance> namedImportances = getNamedImportances()
                 namedImportances.sort { -it.importance } // descending
                 String sortedCsv = namedImportances.collect { it.name + ", " + PerfUtils.formatDouble(it.importance) }.join("\n") + "\n"
-                Futils.overwrite("$outdir/feature_importances_sorted.csv", sortedCsv)
+                writeFile("$outdir/feature_importances_sorted.csv", sortedCsv)
             }
 
             log.info "\n" + CSV.tabulate(classifier_stats) + "\n\n"

@@ -89,7 +89,7 @@ class PyMolRenderer implements Parametrized {
           //#set antialias, 2
 //        set bg_rgb_top, [10,10,10]
 //        set bg_rgb_bottom, [36,36,85]
-        Futils.overwrite(pmlf, """
+        Futils.writeFile(pmlf, """
 from pymol import cmd,stored
 
 set depth_cue, 1

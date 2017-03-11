@@ -6,6 +6,8 @@ import cz.siret.prank.utils.Writable
 import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
 
+import static cz.siret.prank.utils.Futils.writeFile
+
 
 @CompileStatic
 class Routine implements Parametrized, Writable  {
@@ -19,7 +21,7 @@ class Routine implements Parametrized, Writable  {
 
     void writeParams(String outdir) {
         String v = "version: " + Main.version + "\n"
-        Futils.overwrite("$outdir/params.txt", v + params.toString())
+        writeFile("$outdir/params.txt", v + params.toString())
     }
     
 }

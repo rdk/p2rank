@@ -142,7 +142,7 @@ class ParamLooper extends Routine {
 
         String fname = "$tablesDir/${statName}.csv"
         tables2D.put(statName, fname)
-        Futils.overwrite fname, sb.toString()
+        Futils.writeFile fname, sb.toString()
     }
 
     private List<Step> generateSteps() {

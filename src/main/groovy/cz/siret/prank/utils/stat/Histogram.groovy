@@ -43,7 +43,7 @@ class Histogram {
         (int) ((value - min) / step)
     }
 
-    void putValue(double value) {
+    void put(double value) {
         bins[findBin(value)]++
         count++
     }
@@ -59,5 +59,22 @@ class Histogram {
         }
         return rbins
     }
-    
+
+//===========================================================================================================//
+
+
+    String toCSV(Histogram hist) {
+        StringBuilder sb = new StringBuilder()
+
+        double[] rbins = getRelativeBins()
+
+        sb << "BIN_MAX, I, N, RATIO \n"
+        for (int i=0; i!=nbins; ++i) {
+            double binMax = min + (i + 1)*step
+            sb << "$binMax $i, ${bins[i]}, ${rbins[i]} \n"
+        }
+
+        sb.toString()
+    }
+
 }

@@ -72,14 +72,14 @@ class ClassifierStats {
             sumSEneg += se
         }
 
-        histograms.score.putValue(score)
+        histograms.score.put(score)
         if (observed) {
-            histograms.scorePos.putValue(score)
+            histograms.scorePos.put(score)
         } else {
-            histograms.scoreNeg.putValue(score)
+            histograms.scoreNeg.put(score)
         }
-        histograms.score0.putValue(hist[0])
-        histograms.score1.putValue(hist[1])
+        histograms.score0.put(hist[0])
+        histograms.score1.put(hist[1])
 
         op[observed?1:0][predicted?1:0]++
         count++

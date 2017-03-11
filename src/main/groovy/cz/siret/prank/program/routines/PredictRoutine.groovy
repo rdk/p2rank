@@ -16,6 +16,9 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import weka.classifiers.Classifier
 
+import static cz.siret.prank.utils.Futils.writeFile
+import static cz.siret.prank.utils.Futils.mkdirs
+
 @Slf4j
 @CompileStatic
 class PredictRoutine extends Routine {
@@ -59,7 +62,7 @@ class PredictRoutine extends Routine {
         write "predicting pockets for proteins from dataset [$dataset.name]"
 
         if (produceFilesystemOutput) {
-            Futils.mkdirs(outdir)
+            mkdirs(outdir)
             writeParams(outdir)
             log.info "outdir: $outdir"
         }
@@ -69,7 +72,7 @@ class PredictRoutine extends Routine {
 
         String visDir = "$outdir/visualizations"
         if (produceVisualizations) {
-            Futils.mkdirs(visDir)
+            mkdirs(visDir)
         }
 
         PredictResults stats = new PredictResults()
@@ -95,7 +98,7 @@ class PredictRoutine extends Routine {
                 if (outputPredictionFiles) {
                     PredictionSummary psum = new PredictionSummary(pair.prediction)
                     String outf = "$outdir/${item.label}_predictions.csv"
-                    Futils.overwrite(outf, psum.toCSV().toString())
+                    writeFile(outf, psum.toCSV().toString())
                 }
 
                 if (collectStats) {  // expects dataset with liganated proteins

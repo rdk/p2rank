@@ -120,7 +120,12 @@ class Futils {
         return new PrintWriter(new BufferedWriter(new OutputStreamWriter(gos), OUTPUT_BUFFER_SIZE))
     }
 
-    static void overwrite(String fname, Object text) {
+    /**
+     * writeFile text file
+     * @param fname
+     * @param text
+     */
+    static void writeFile(String fname, Object text) {
 
         try {
             String dir = dir(fname)

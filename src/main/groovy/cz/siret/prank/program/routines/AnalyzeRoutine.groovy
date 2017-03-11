@@ -12,6 +12,8 @@ import cz.siret.prank.utils.Writable
 import cz.siret.prank.utils.Futils
 import groovy.util.logging.Slf4j
 
+import static cz.siret.prank.utils.Futils.writeFile
+
 /**
  * Various tools for analyzing datasets
  */
@@ -76,7 +78,7 @@ class AnalyzeRoutine extends Routine implements Writable {
                 summary << msg + "\n"
 
                 String outf = "$outdir/${p.name}_binding-residues.txt"
-                Futils.overwrite outf, bindingResidueIds.join("\n")
+                writeFile outf, bindingResidueIds.join("\n")
 
             }
         })

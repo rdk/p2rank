@@ -12,6 +12,8 @@ import cz.siret.prank.utils.Futils
 import groovy.util.logging.Slf4j
 import weka.classifiers.Classifier
 
+import static cz.siret.prank.utils.Futils.mkdirs
+
 /**
  * CompositeRoutine for rescoring pockets found by other methods (Fpocket, ConCavity) ... PRANK.
  */
@@ -31,7 +33,7 @@ class RescoreRoutine extends Routine {
     Dataset.Result execute() {
         def timer = ATimer.start()
 
-        Futils.mkdirs(outdir)
+        mkdirs(outdir)
         writeParams(outdir)
 
         write "rescoring pockets on proteins from dataset [$dataset.name]"
@@ -56,7 +58,7 @@ class RescoreRoutine extends Routine {
 
                 ReorderingSummary rsumm = new ReorderingSummary(prediction)
                 String outf = "$outdir/${item.label}_rescored.csv"
-                Futils.overwrite(outf, rsumm.toCSV().toString())
+                Futils.writeFile(outf, rsumm.toCSV().toString())
                 log.info "\n\nRescored pockets for [$item.label]: \n\n" + rsumm.toTable() + "\n"
 
             }

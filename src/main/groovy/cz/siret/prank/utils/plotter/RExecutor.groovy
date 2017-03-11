@@ -67,7 +67,7 @@ class RExecutor {
 
         String scriptf = "$scriptDir/${name}.R"
         scriptf = Futils.absPath(scriptf)
-        Futils.overwrite scriptf, code
+        Futils.writeFile scriptf, code
 
         return runScript(scriptf, outdir)
     }
