@@ -6,6 +6,7 @@ import cz.siret.prank.domain.Protein
 import cz.siret.prank.program.api.PrankFacade
 import cz.siret.prank.program.api.PrankPredictor
 import cz.siret.prank.utils.futils
+import groovy.transform.CompileStatic
 import groovyx.gpars.GParsPool
 import org.biojava.nbio.structure.Atom
 import org.junit.Test
@@ -19,6 +20,7 @@ import static org.junit.Assert.assertTrue
 /**
  *
  */
+@CompileStatic
 class DafaultPrankPredictorTest {
 
     Path installDir = Paths.get("distro").toAbsolutePath()
@@ -43,11 +45,12 @@ class DafaultPrankPredictorTest {
 
     @Test
     public void predict() throws Exception {
-        GParsPool.withPool {
-            testFiles.eachParallel {
-                doTestPredict(it)
-            }
-        }
+//        GParsPool.withPool {
+//            testFiles.eachParallel {
+//                doTestPredict(it)
+//            }
+//        }
+        testFiles.each { doTestPredict(it) }
     }
 
     private void doTestPredict(Path protFile) {

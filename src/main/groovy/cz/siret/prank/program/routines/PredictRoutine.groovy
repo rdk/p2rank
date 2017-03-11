@@ -17,11 +17,10 @@ import cz.siret.prank.utils.futils
 import weka.classifiers.Classifier
 
 @Slf4j
-class PredictRoutine implements Parametrized, Writable {
+class PredictRoutine extends Routine {
 
     Dataset dataset
     String modelf
-    String outdir
 
     boolean collectStats = false
     boolean produceVisualizations = params.visualizations
