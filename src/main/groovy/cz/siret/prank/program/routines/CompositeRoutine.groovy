@@ -249,10 +249,10 @@ abstract class CompositeRoutine extends Routine {
             String dir = "$outdir/classifier"
             mkdirs(dir)
 
-            cs.histograms.metaPropertyValues.each {
-                String label = it.name
+            cs.histograms.properties.findAll { it.value instanceof Histogram }.each {
+                String label = it.key
                 Histogram hist = (Histogram) it.value
-                
+
                 writeFile "$dir/hist_${label}.csv", hist.toCSV()
             }
         }
