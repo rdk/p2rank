@@ -73,7 +73,6 @@ class Experiments extends Routine {
         iter.outdir = outdir
         iter.trainDataSet = trainDataSet
         iter.evalDataSet = evalDataSet
-
         iter.collectTrainVectors()
         //iter.collectEvalVectors() // for further inspetion
 

@@ -42,6 +42,7 @@ class ParamLooper extends Routine {
         def timer = ATimer.start()
 
         Futils.mkdirs(outdir)
+        writeParams(outdir)
 
         steps = generateSteps()
         log.info "STEPS: " + steps.toListString().replace("Step","\nStep")
