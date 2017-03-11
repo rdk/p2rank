@@ -54,7 +54,7 @@ class CollectVectorsRoutine extends Routine {
         write "collecting vectors from dataset [$dataset.name]"
 
         futils.mkdirs(outdir)
-        futils.overwrite("$outdir/params.txt", params.toString())
+        writeParams(outdir)
 
 //===========================================================================================================//
 

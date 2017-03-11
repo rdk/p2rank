@@ -48,7 +48,7 @@ class PredictRoutine implements Parametrized, Writable {
 
         if (produceFilesystemOutput) {
             futils.mkdirs(outdir)
-            futils.overwrite("$outdir/params.txt", params.toString())
+            writeParams(outdir)
             log.info "outdir: $outdir"
         }
 

@@ -67,7 +67,7 @@ class EvaluateRoutine extends CompositeRoutine {
 
         write "evaluating results on dataset [$dataset.name]"
         futils.mkdirs(outdir)
-        futils.overwrite("$outdir/params.txt", params.toString())
+        writeParams(outdir)
         String visDir = "$outdir/visualizations"
         if (params.visualizations) {
             futils.mkdirs(visDir)

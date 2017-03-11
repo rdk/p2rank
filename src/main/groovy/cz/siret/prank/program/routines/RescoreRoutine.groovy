@@ -18,7 +18,7 @@ import weka.classifiers.Classifier
  * CompositeRoutine for rescoring pockets found by other methods (Fpocket, ConCavity) ... PRANK.
  */
 @Slf4j
-class RescoreRoutine implements Parametrized, Writable {
+class RescoreRoutine extends Routine {
 
     Dataset dataset
     String modelf
@@ -34,7 +34,7 @@ class RescoreRoutine implements Parametrized, Writable {
         def timer = ATimer.start()
 
         futils.mkdirs(outdir)
-        futils.overwrite("$outdir/params.txt", params.toString())
+        writeParams(outdir)
 
         write "rescoring pockets on proteins from dataset [$dataset.name]"
         log.info "outdir: $outdir"

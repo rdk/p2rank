@@ -270,7 +270,6 @@ class Main implements Parametrized, Writable {
 
         configureLoggers(outdir)
 
-        futils.overwrite("$outdir/params.txt", params.toString())
 
         CrossValidation routine = new CrossValidation(outdir, dataset)
         new SeedLoop(routine, outdir).execute()
