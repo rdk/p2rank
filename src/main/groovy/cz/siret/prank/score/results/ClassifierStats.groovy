@@ -1,5 +1,6 @@
 package cz.siret.prank.score.results
 
+import cz.siret.prank.utils.stat.Histogram
 import groovy.transform.CompileStatic
 
 import java.text.DecimalFormat
@@ -9,6 +10,10 @@ import java.text.DecimalFormat
  */
 @CompileStatic
 class ClassifierStats {
+
+    static final int HISTOGRAM_BINS = 100
+
+    String name
 
     int[][] op    // [observed][predicted]
     int count = 0
@@ -21,8 +26,7 @@ class ClassifierStats {
     double sumSEpos = 0
     double sumSEneg = 0
 
-    String name
-
+    Histograms histograms = new Histograms()
     Stats stats = new Stats()
 
     ClassifierStats() {
@@ -47,20 +51,20 @@ class ClassifierStats {
 
     /**
      *
-     * @param obs
-     * @param pred
+     * @param observed   observed class == 1
+     * @param predicted   predicted class == 1
      * @param score predicted score from iterval <0,1>
      */
-    void addCase(boolean obs, boolean pred, double score) {
+    void addCase(boolean observed, boolean predicted, double score, double[] hist) {
 
-        double obsv = obs ? 1 : 0
+        double obsv = observed ? 1 : 0
         double e = Math.abs(obsv-score)
         double se = e*e
 
         sumE += e
         sumSE += se
 
-        if (obs) {
+        if (observed) {
             sumEpos += e
             sumSEpos += se
         } else {
@@ -68,13 +72,20 @@ class ClassifierStats {
             sumSEneg += se
         }
 
-        op[obs?1:0][pred?1:0]++
+        histograms.score.putValue(score)
+        if (observed) {
+            histograms.scorePos.putValue(score)
+        } else {
+            histograms.scoreNeg.putValue(score)
+        }
+        histograms.score0.putValue(hist[0])
+        histograms.score1.putValue(hist[1])
+
+        op[observed?1:0][predicted?1:0]++
         count++
     }
 
-    double fmt(double x) {
-        return (double)Math.round(1000*x)/10
-    }
+
 
     double calcMCC(double TP, double FP, double TN, double FN) {
         double n = TP*TN - FP*FN
@@ -89,6 +100,10 @@ class ClassifierStats {
 
     static String format(double x) {
         return new DecimalFormat("#.####").format(x)
+    }
+
+    double fmt(double x) {
+        return (double)Math.round(1000*x)/10
     }
 
     private double rel(double x) {
@@ -108,6 +123,21 @@ class ClassifierStats {
 
 //===========================================================================================================//
 
+    class Histograms {
+
+        /** scores for all points */
+        Histogram score  = new Histogram(0, 1, HISTOGRAM_BINS)
+        /** scores for observed negatives */
+        Histogram scoreNeg  = new Histogram(0, 1, HISTOGRAM_BINS)
+        /** scores for observed positives */
+        Histogram scorePos  = new Histogram(0, 1, HISTOGRAM_BINS)
+
+        /** predicted hist[0] for all */
+        Histogram score0 = new Histogram(0, 1, HISTOGRAM_BINS)
+        /** predicted hist[1] for all */
+        Histogram score1 = new Histogram(0, 1, HISTOGRAM_BINS)
+    }
+
     /**
      * flyweight class for 1D statistics 
      */
@@ -118,9 +148,12 @@ class ClassifierStats {
         double getTn() { op[0][0] }
         double getFn() { op[1][0] }
 
+        /** Precision = Positive Predictive Value */
         double getP() {
             div tp , (tp + fp)
         }
+
+        /** Recall = Sensitivity = True Positive Rate  */
         double getR() {
             div tp , (tp + fn)
         }
@@ -192,6 +225,22 @@ class ClassifierStats {
         /** false ommision rate */
         double getFOR() {
             div fn , (fn + tn)
+        }
+
+        /** Youden's J statistic = Youden's index */
+        double getYJS() {
+            r + SPC -1
+        }
+
+        /** Discriminant Power ... <1 = poor, >3 = good, fair otherwise */
+        double DPOW() {
+            if (r==1 || SPC==1)
+                return Double.NaN
+            double x = r / (1-r)
+            double y = SPC / (1-SPC)
+            double c = Math.sqrt(3) / Math.PI
+
+            c * ( Math.log(x) + Math.log(y) )
         }
 
         double getME()         { div sumE, count        }

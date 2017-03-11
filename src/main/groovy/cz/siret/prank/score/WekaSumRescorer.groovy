@@ -106,7 +106,7 @@ class WekaSumRescorer extends PocketRescorer implements Parametrized  {
                 }
 
                 if (collectingStatistics) {
-                    stats.addCase(observed, predicted, predictedScore)
+                    stats.addCase(observed, predicted, predictedScore, hist)
                 }
             }
 
@@ -149,7 +149,7 @@ class WekaSumRescorer extends PocketRescorer implements Parametrized  {
                 if (collectingStatistics) {
                     double closestLigandDistance = ligandAtoms.count > 0 ? ligandAtoms.dist(point) : Double.MAX_VALUE
                     observed = (closestLigandDistance <= POSITIVE_POINT_LIGAND_DISTANCE)
-                    stats.addCase(observed, predicted, predictedScore)
+                    stats.addCase(observed, predicted, predictedScore, hist)
 
                 }
                 if (collectPoints) {

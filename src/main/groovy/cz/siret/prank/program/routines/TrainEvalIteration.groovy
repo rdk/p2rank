@@ -95,7 +95,7 @@ class TrainEvalIteration extends CompositeRoutine implements Parametrized  {
                 boolean predicted = hist[1] > hist[0]
                 boolean observed = inst.classValue() > 0
 
-                trainStats.addCase(observed, predicted, score)
+                trainStats.addCase(observed, predicted, score, hist)
             }
 
             return trainStats
