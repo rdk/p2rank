@@ -229,7 +229,7 @@ abstract class CompositeRoutine extends Routine {
 
             m.putAll classifierStats.statsMap
             if (params.classifier_train_stats && classifierTrainStats!=null) {
-                m.putAll classifierTrainStats.statsMap.collectEntries { key, value -> ["train_" + key, value] }
+                m.putAll classifierTrainStats.statsMap.collectEntries { key, value -> ["_train_" + key, value] }
             }
                                                                                              
             if (params.feature_importances && featureImportances!=null) {

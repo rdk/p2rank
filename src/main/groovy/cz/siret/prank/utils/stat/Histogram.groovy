@@ -44,8 +44,9 @@ class Histogram {
     }
 
     void put(double value) {
-        bins[findBin(value)]++
-        count++
+        int bin = findBin(value)
+        bins[bin] = bins[bin]+1
+        count++               
     }
 
     /**
@@ -71,7 +72,7 @@ class Histogram {
         sb << "BIN_MAX, I, N, RATIO \n"
         for (int i=0; i!=nbins; ++i) {
             double binMax = min + (i + 1)*step
-            sb << "$binMax $i, ${bins[i]}, ${rbins[i]} \n"
+            sb << "$binMax, $i, ${bins[i]}, ${rbins[i]} \n"
         }
 
         sb.toString()
