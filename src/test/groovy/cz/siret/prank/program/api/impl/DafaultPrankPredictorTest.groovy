@@ -6,6 +6,7 @@ import cz.siret.prank.domain.Protein
 import cz.siret.prank.program.api.PrankFacade
 import cz.siret.prank.program.api.PrankPredictor
 import cz.siret.prank.utils.futils
+import groovyx.gpars.GParsPool
 import org.biojava.nbio.structure.Atom
 import org.junit.Test
 
@@ -42,9 +43,11 @@ class DafaultPrankPredictorTest {
 
     @Test
     public void predict() throws Exception {
-
-        testFiles.each { doTestPredict(it) }
-
+        GParsPool.withPool {
+            testFiles.eachParallel {
+                doTestPredict(it)
+            }
+        }
     }
 
     private void doTestPredict(Path protFile) {
