@@ -1,9 +1,9 @@
 package cz.siret.prank.geom.clustering
 
-import groovy.transform.CompileStatic
-import org.biojava.nbio.structure.Atom
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Struct
+import groovy.transform.CompileStatic
+import org.biojava.nbio.structure.Atom
 
 /**
  * Clusterer wrapper for Atoms with euclidean distance.

@@ -1,8 +1,5 @@
 package cz.siret.prank.program.rendering
 
-import groovy.transform.CompileStatic
-import groovy.util.logging.Slf4j
-import org.biojava.nbio.structure.Atom
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.PredictionPair
@@ -10,6 +7,9 @@ import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.score.WekaSumRescorer
 import cz.siret.prank.utils.ColorUtils
 import cz.siret.prank.utils.futils
+import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
+import org.biojava.nbio.structure.Atom
 
 import java.awt.*
 import java.util.List

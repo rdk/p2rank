@@ -1,7 +1,7 @@
 package cz.siret.prank.features
 
-import groovy.transform.CompileStatic
 import cz.siret.prank.utils.CSV
+import groovy.transform.CompileStatic
 
 /**
  * superclass for all properties that can be assigned to atoms / pocket points

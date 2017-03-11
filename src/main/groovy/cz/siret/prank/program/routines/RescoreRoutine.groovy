@@ -1,17 +1,15 @@
 package cz.siret.prank.program.routines
 
-import groovy.util.logging.Slf4j
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.domain.Prediction
 import cz.siret.prank.features.FeatureExtractor
-import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.score.PocketRescorer
 import cz.siret.prank.score.WekaSumRescorer
 import cz.siret.prank.score.results.ReorderingSummary
 import cz.siret.prank.utils.ATimer
 import cz.siret.prank.utils.WekaUtils
-import cz.siret.prank.utils.Writable
 import cz.siret.prank.utils.futils
+import groovy.util.logging.Slf4j
 import weka.classifiers.Classifier
 
 /**

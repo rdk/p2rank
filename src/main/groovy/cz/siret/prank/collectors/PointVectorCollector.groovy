@@ -1,7 +1,5 @@
 package cz.siret.prank.collectors
 
-import groovy.util.logging.Slf4j
-import org.biojava.nbio.structure.Atom
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.features.FeatureExtractor
@@ -11,6 +9,8 @@ import cz.siret.prank.geom.Atoms
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.score.criteria.IdentificationCriterium
 import cz.siret.prank.utils.ListUtils
+import groovy.util.logging.Slf4j
+import org.biojava.nbio.structure.Atom
 
 /**
  * extracts vectors for sampled points in predicted pockets

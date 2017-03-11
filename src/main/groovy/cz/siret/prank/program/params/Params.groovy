@@ -1,12 +1,11 @@
 package cz.siret.prank.program.params
 
 import cz.siret.prank.program.Main
+import cz.siret.prank.utils.CmdLineArgs
+import cz.siret.prank.utils.StrUtils
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-import cz.siret.prank.features.weight.WeightFun
-import cz.siret.prank.utils.StrUtils
-import cz.siret.prank.utils.CmdLineArgs
 
 /**
  * global program parameters
@@ -50,6 +49,11 @@ class Params {
      * Number of computing threads
      */
     int threads = Runtime.getRuntime().availableProcessors() + 1
+
+    /**
+     *  Number for threads for generating R plots
+     */
+    int r_threads = 2
 
     /**
      * Number of folds to work on simultaneously

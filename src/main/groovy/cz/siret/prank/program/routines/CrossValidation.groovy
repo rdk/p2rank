@@ -1,12 +1,12 @@
 package cz.siret.prank.program.routines
 
-import groovy.util.logging.Slf4j
-import groovyx.gpars.GParsPool
 import cz.siret.prank.collectors.DataPreProcessor
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.utils.ATimer
 import cz.siret.prank.utils.WekaUtils
 import cz.siret.prank.utils.futils
+import groovy.util.logging.Slf4j
+import groovyx.gpars.GParsPool
 import weka.core.Instances
 
 @Slf4j

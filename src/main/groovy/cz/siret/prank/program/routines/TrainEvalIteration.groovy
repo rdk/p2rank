@@ -1,17 +1,17 @@
 package cz.siret.prank.program.routines
 
-import cz.siret.prank.program.ml.ClassifierFactory
-import cz.siret.prank.score.prediction.PointScoreCalculator
-import cz.siret.prank.score.results.ClassifierStats
-import groovy.util.logging.Slf4j
-import hr.irb.fastRandomForest.FastRandomForest
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.features.FeatureExtractor
+import cz.siret.prank.program.ml.ClassifierFactory
 import cz.siret.prank.program.params.Parametrized
+import cz.siret.prank.score.prediction.PointScoreCalculator
+import cz.siret.prank.score.results.ClassifierStats
 import cz.siret.prank.utils.ATimer
 import cz.siret.prank.utils.CSV
 import cz.siret.prank.utils.WekaUtils
 import cz.siret.prank.utils.futils
+import groovy.util.logging.Slf4j
+import hr.irb.fastRandomForest.FastRandomForest
 import weka.classifiers.Classifier
 import weka.core.Instance
 import weka.core.Instances

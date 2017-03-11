@@ -1,12 +1,12 @@
 package cz.siret.prank.program.routines
 
-import groovy.util.logging.Slf4j
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.score.results.ClassifierStats
 import cz.siret.prank.score.results.Evaluation
 import cz.siret.prank.utils.CSV
 import cz.siret.prank.utils.Writable
 import cz.siret.prank.utils.futils
+import groovy.util.logging.Slf4j
 
 /**
  * results for eval-predict routine

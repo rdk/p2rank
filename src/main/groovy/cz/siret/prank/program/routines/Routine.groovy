@@ -4,8 +4,10 @@ import cz.siret.prank.program.Main
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Writable
 import cz.siret.prank.utils.futils
+import groovy.transform.CompileStatic
 
 
+@CompileStatic
 class Routine implements Parametrized, Writable  {
 
     String outdir

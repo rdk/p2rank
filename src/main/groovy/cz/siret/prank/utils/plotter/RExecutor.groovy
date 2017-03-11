@@ -1,9 +1,8 @@
 package cz.siret.prank.utils.plotter
 
+import cz.siret.prank.utils.futils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-import cz.siret.prank.utils.futils
-
 
 @CompileStatic
 @Slf4j

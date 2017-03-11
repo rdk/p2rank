@@ -1,0 +1,45 @@
+  uasge:
+
+     prank <command> <dataset.ds> [options]
+
+  commands:
+
+     predict      ... predict pockets (P2RANK)
+
+     eval-predict ... evaluate model on a dataset with known ligands
+
+     rescore      ... rescore previously detected pockets (PRANK)
+
+     eval-rescore ... evaluate rescoring model on a dataset with known ligands
+
+  datasets:
+
+        Dataset files for prediction should contain list of pdb files.
+        Dataset files for rescoring should contain list of protein files
+        that are outputs of one of the supported pocket prediction methods
+        (fpocket, ConCavity). In datasets for evaluation and training they
+        must be paired with liganated-proteins (correct solutions).
+        See example datasets in test_data/ directory.
+
+  options:
+
+     -f <path>   run on single pdb file instead of a dataset
+
+     -c <path>   use configuration file that overrides default configuration
+                 in config/default.groovy, path relative to config/ directory
+
+     -m <path>   use previously trained classifier file relative to models/ directory
+                 default: models/default.model
+
+     -o <path>   specify output directory (relative to working dir)
+                 default: test_output/<comamnd>_<dataset>
+
+  other parameters:
+
+     -threads <int>         number of execution threads
+                            dafault: num. of processors + 1
+
+     -visualizations <0/1>  produce PyMOL visualizations
+                            default: true
+
+     -<param> <value>       for full list of parameters see config/default.groovy

@@ -1,8 +1,8 @@
 package cz.siret.prank.collectors
 
-import groovy.transform.CompileStatic
 import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.features.FeatureVector
+import groovy.transform.CompileStatic
 
 @CompileStatic
 abstract class VectorCollector {

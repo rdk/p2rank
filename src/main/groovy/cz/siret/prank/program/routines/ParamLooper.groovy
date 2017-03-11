@@ -1,21 +1,23 @@
 package cz.siret.prank.program.routines
 
-import groovy.transform.TupleConstructor
-import groovy.util.logging.Slf4j
-import groovyx.gpars.GParsPool
 import cz.siret.prank.program.params.Params
 import cz.siret.prank.program.params.RangeParam
 import cz.siret.prank.utils.ATimer
 import cz.siret.prank.utils.futils
 import cz.siret.prank.utils.plotter.RPlotter
+import groovy.transform.CompileDynamic
+import groovy.transform.CompileStatic
+import groovy.transform.TupleConstructor
+import groovy.util.logging.Slf4j
+import groovyx.gpars.GParsPool
 
 /**
  * routine for grid optimization. Loops through values of one or more RangeParam and produces resulting statistics and plots.
  */
 @Slf4j
+@CompileStatic
 class ParamLooper extends Routine {
 
-    String outdir
     List<RangeParam> rparams
 
     List<Step> steps
@@ -24,11 +26,11 @@ class ParamLooper extends Routine {
     String plotsDir
     String tablesDir
 
-    Map tables2D = new LinkedHashMap()
+    Map<String, String> tables2D = new LinkedHashMap()
 
     ParamLooper(String outdir, List<RangeParam> rparams) {
-        this.rparams = rparams
         this.outdir = outdir
+        this.rparams = rparams
         plotsDir = "$outdir/plots"
     }
 
@@ -38,6 +40,8 @@ class ParamLooper extends Routine {
      */
     public void iterateParams(Closure<CompositeRoutine.Results> closure) {
         def timer = ATimer.start()
+
+        futils.mkdirs(outdir)
 
         steps = generateSteps()
         log.info "STEPS: " + steps.toListString().replace("Step","\nStep")
@@ -94,45 +98,49 @@ class ParamLooper extends Routine {
         }
     }
 
+    private int getRThreads() {
+        Math.min(params.threads, params.r_threads)
+    }
+
+    @CompileDynamic
     private make2DPlots() {
-        int threads = Math.min(params.threads, 4)
-        GParsPool.withPool(threads) {
-//        GParsPool.withExistingPool(ThreadPoolFactory.pool) {
-            tables2D.entrySet().eachParallel {
-                String fname = futils.absSafePath(it.value)
-                String label = it.key
-                String xlab = rparams[1].name
-                String ylab = rparams[0].name
-                new RPlotter(plotsDir).plotHeatMapTable(fname, label, xlab, ylab)
+        GParsPool.withPool(RThreads) {
+            tables2D.keySet().eachParallel { String key ->
+                String value = tables2D.get(key)
+                String label = key
+                String fname = futils.absSafePath(value)
+                String labelX = rparams[1].name
+                String labelY = rparams[0].name
+                new RPlotter(plotsDir).plotHeatMapTable(fname, label, labelX, labelY)
             }
         }
     }
 
     private make1DPlots() {
-        new RPlotter( paramsTableFile, plotsDir).plot1DAll()
+        new RPlotter( paramsTableFile, plotsDir).plot1DAll(RThreads)
     }
 
     private make2DTable(String statName) {
-        RangeParam pa = rparams[0]
-        RangeParam pb = rparams[1]
+        RangeParam paramX = rparams[0]
+        RangeParam paramY = rparams[1]
 
-        Map map =[:]
+        Map<List, Double> valueMap = new HashMap()
         for (Step s : steps) {
             def key = [ s.params[0].value, s.params[1].value ]
-            map.put( key, s.results."$statName" )
+            valueMap.put( key, s.results.get(statName) )
         }
 
         StringBuilder sb = new StringBuilder()
         sb << "# resName \n"
-        sb << "${pa.name}/${pb.name}," + pb.values.collect { it }.join(",") + "\n"
+        sb << "${paramX.name}/${paramY.name}," + paramY.values.collect { it }.join(",") + "\n"
 
-        for (def va : pa.values) {
-            def row = pb.values.collect { vb -> map.get([va,vb]) }.collect { fmt it }.join(",")
+        for (def va : paramX.values) {
+            def row = paramY.values.collect { vb -> valueMap.get([va,vb]) }.collect { fmt it }.join(",")
 
-            sb << va + "," + row + "\n"
+            sb << "" + va + "," + row + "\n"
         }
 
-        def fname = "$tablesDir/${statName}.csv"
+        String fname = "$tablesDir/${statName}.csv"
         tables2D.put(statName, fname)
         futils.overwrite fname, sb.toString()
     }
@@ -165,7 +173,7 @@ class ParamLooper extends Routine {
     private static class Step {
 
         List<ParamVal> params = new ArrayList<>()
-        Map results = new LinkedHashMap()
+        Map<String, Double> results = new LinkedHashMap()
 
         void applyToParams(Params globalParams) {
             params.each { globalParams.setParam(it.name, it.value) }
@@ -183,6 +191,7 @@ class ParamLooper extends Routine {
             (params*.name).join(',') + ',' + results.keySet().join(',')
         }
 
+        @CompileDynamic
         String toCSV() {
             (params*.value).join(',') + ',' + results.values().collect{ fmt(it) }.join(',')
         }

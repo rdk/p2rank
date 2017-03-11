@@ -1,16 +1,16 @@
 package cz.siret.prank.domain
 
-import cz.siret.prank.domain.loaders.PredictionLoader
-import cz.siret.prank.domain.loaders.SiteHoundLoader
-import groovy.util.logging.Slf4j
-import groovyx.gpars.GParsPool
 import cz.siret.prank.domain.loaders.ConcavityLoader
 import cz.siret.prank.domain.loaders.FPockeLoader
+import cz.siret.prank.domain.loaders.PredictionLoader
+import cz.siret.prank.domain.loaders.SiteHoundLoader
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.ThreadPoolFactory
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.StrUtils
 import cz.siret.prank.utils.futils
+import groovy.util.logging.Slf4j
+import groovyx.gpars.GParsPool
 
 import java.util.concurrent.atomic.AtomicInteger
 

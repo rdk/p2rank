@@ -1,14 +1,14 @@
 package cz.siret.prank.geom.samplers
 
-import groovy.transform.CompileStatic
-import groovy.util.logging.Slf4j
-import org.biojava.nbio.structure.Atom
-import org.biojava.nbio.structure.AtomImpl
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Box
 import cz.siret.prank.program.params.Parametrized
+import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
+import org.biojava.nbio.structure.Atom
+import org.biojava.nbio.structure.AtomImpl
 
 @Slf4j
 @CompileStatic

@@ -1,9 +1,9 @@
 package cz.siret.prank.program
 
-import groovy.transform.CompileStatic
-import jsr166y.ForkJoinPool
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.params.Params
+import groovy.transform.CompileStatic
+import jsr166y.ForkJoinPool
 
 @CompileStatic
 class ThreadPoolFactory implements Parametrized {

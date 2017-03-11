@@ -1,17 +1,15 @@
 package cz.siret.prank.geom;
 
-import com.google.common.collect.Lists       ;
-import org.biojava.nbio.structure.*          ;
-import org.slf4j.Logger                      ;
-import org.slf4j.LoggerFactory               ;
+import com.google.common.collect.Lists;
 import cz.siret.prank.geom.kdtree.AtomKdTree;
-import cz.siret.prank.utils.CutoffAtomsCallLog;
 import cz.siret.prank.utils.ATimer;
+import cz.siret.prank.utils.CutoffAtomsCallLog;
 import cz.siret.prank.utils.PerfUtils;
-import java.util.*;
+import org.biojava.nbio.structure.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import static org.codehaus.groovy.runtime.DefaultGroovyMethods.collect;
-import static org.openscience.cdk.smiles.smarts.parser.SMARTSParserConstants.n;
+import java.util.*;
 
 /**
  * list of atoms with additional properties

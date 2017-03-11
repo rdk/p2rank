@@ -1,14 +1,14 @@
 package cz.siret.prank.domain.loaders
 
 import cz.siret.prank.domain.LoaderParams
-import groovy.util.logging.Slf4j
-import org.biojava.nbio.structure.*
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Prediction
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.utils.PDBUtils
 import cz.siret.prank.utils.futils
+import groovy.util.logging.Slf4j
+import org.biojava.nbio.structure.*
 
 import java.util.regex.Matcher
 import java.util.regex.Pattern

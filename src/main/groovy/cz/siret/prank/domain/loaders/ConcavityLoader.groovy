@@ -1,16 +1,16 @@
 package cz.siret.prank.domain.loaders
 
-import groovy.util.logging.Slf4j
-import org.biojava.nbio.structure.Atom
-import org.biojava.nbio.structure.Element
-import org.biojava.nbio.structure.Group
-import org.biojava.nbio.structure.Structure
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Prediction
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Struct
 import cz.siret.prank.utils.PDBUtils
+import groovy.util.logging.Slf4j
+import org.biojava.nbio.structure.Atom
+import org.biojava.nbio.structure.Element
+import org.biojava.nbio.structure.Group
+import org.biojava.nbio.structure.Structure
 
 /**
  * Loader for predictions produced by ConCavity

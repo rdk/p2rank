@@ -1,9 +1,8 @@
 package cz.siret.prank.domain
 
-import groovy.transform.CompileStatic
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.params.Params
-
+import groovy.transform.CompileStatic
 
 @CompileStatic
 class DatasetCachedLoader implements Parametrized {

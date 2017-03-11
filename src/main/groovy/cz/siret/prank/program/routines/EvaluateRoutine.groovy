@@ -1,18 +1,14 @@
 package cz.siret.prank.program.routines
 
-import cz.siret.prank.score.PLBIndexRescorer
-import cz.siret.prank.score.PocketRescorer
-import cz.siret.prank.score.PocketVolumeRescorer
-import cz.siret.prank.score.RandomRescorer
-import cz.siret.prank.score.WekaSumRescorer
-import groovy.util.logging.Slf4j
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.program.rendering.PyMolRenderer
+import cz.siret.prank.score.*
 import cz.siret.prank.utils.ATimer
 import cz.siret.prank.utils.WekaUtils
 import cz.siret.prank.utils.futils
+import groovy.util.logging.Slf4j
 import weka.classifiers.Classifier
 
 /**

@@ -1,23 +1,13 @@
 package cz.siret.prank.program
 
-import cz.siret.prank.program.routines.AnalyzeRoutine
-import cz.siret.prank.program.routines.CrossValidation
-import cz.siret.prank.program.routines.EvaluateRoutine
-import cz.siret.prank.program.routines.Experiments
-import cz.siret.prank.program.routines.PredictRoutine
-import cz.siret.prank.program.routines.RescoreRoutine
-import cz.siret.prank.program.routines.SeedLoop
-import groovy.util.logging.Slf4j
-import org.apache.commons.lang3.StringUtils
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.program.params.ConfigLoader
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.params.Params
-import cz.siret.prank.utils.ATimer
-import cz.siret.prank.utils.StrUtils
-import cz.siret.prank.utils.Writable
-import cz.siret.prank.utils.futils
-import cz.siret.prank.utils.CmdLineArgs
+import cz.siret.prank.program.routines.*
+import cz.siret.prank.utils.*
+import groovy.util.logging.Slf4j
+import org.apache.commons.lang3.StringUtils
 
 @Slf4j
 class Main implements Parametrized, Writable {

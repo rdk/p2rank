@@ -1,7 +1,7 @@
 package cz.siret.prank.collectors
 
-import groovy.transform.CompileStatic
 import cz.siret.prank.features.FeatureVector
+import groovy.transform.CompileStatic
 
 @CompileStatic
 class DoubleVector extends FeatureVector {

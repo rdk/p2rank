@@ -1,8 +1,8 @@
 package cz.siret.prank.program.routines
 
-import groovy.util.logging.Slf4j
 import cz.siret.prank.utils.ATimer
 import cz.siret.prank.utils.futils
+import groovy.util.logging.Slf4j
 
 @Slf4j
 class SeedLoop extends CompositeRoutine {

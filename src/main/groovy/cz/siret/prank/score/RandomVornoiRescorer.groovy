@@ -1,9 +1,9 @@
 package cz.siret.prank.score
 
-import org.biojava.nbio.structure.Atom
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Prediction
 import cz.siret.prank.program.params.Parametrized
+import org.biojava.nbio.structure.Atom
 
 class RandomVornoiRescorer extends PocketRescorer implements Parametrized  {
 

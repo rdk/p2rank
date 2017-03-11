@@ -1,7 +1,5 @@
 package cz.siret.prank.score.results
 
-import groovy.util.logging.Slf4j
-import org.apache.commons.lang3.StringUtils
 import cz.siret.prank.domain.Ligand
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.PredictionPair
@@ -9,6 +7,8 @@ import cz.siret.prank.domain.Protein
 import cz.siret.prank.score.criteria.DCA
 import cz.siret.prank.score.criteria.IdentificationCriterium
 import cz.siret.prank.utils.Formatter
+import groovy.util.logging.Slf4j
+import org.apache.commons.lang3.StringUtils
 
 import java.text.DecimalFormat
 

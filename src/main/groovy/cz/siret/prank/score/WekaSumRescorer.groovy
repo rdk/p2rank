@@ -1,9 +1,5 @@
 package cz.siret.prank.score
 
-import cz.siret.prank.score.prediction.PointScoreCalculator
-import groovy.transform.CompileStatic
-import groovy.util.logging.Slf4j
-import org.biojava.nbio.structure.Atom
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Prediction
 import cz.siret.prank.features.FeatureExtractor
@@ -12,9 +8,13 @@ import cz.siret.prank.features.chemproperties.ChemFeatureExtractor
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.rendering.LabeledPoint
 import cz.siret.prank.score.prediction.PocketPredictor
+import cz.siret.prank.score.prediction.PointScoreCalculator
 import cz.siret.prank.score.results.ClassifierStats
 import cz.siret.prank.utils.PerfUtils
 import cz.siret.prank.utils.WekaUtils
+import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
+import org.biojava.nbio.structure.Atom
 import weka.classifiers.Classifier
 import weka.core.DenseInstance
 import weka.core.Instances

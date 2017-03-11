@@ -1,13 +1,13 @@
 package cz.siret.prank.score.prediction
 
-import groovy.util.logging.Slf4j
-import org.biojava.nbio.structure.Atom
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Struct
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.rendering.LabeledPoint
+import groovy.util.logging.Slf4j
+import org.biojava.nbio.structure.Atom
 
 /**
  * Calculates pockets from list of Connolly points with ligandability scores
