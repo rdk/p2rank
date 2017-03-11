@@ -261,7 +261,7 @@ class ClassifierStats {
         Map<String, Double> toMap() {
             (Map<String, Double>) this.properties
                     .<String, Object>findAll { it.value instanceof Double }
-                    .collectEntries { [it.key.toUpperCase(), it.value] }
+                    .collectEntries { [((String)it.key).toUpperCase(), it.value] }
         }
 
     }
