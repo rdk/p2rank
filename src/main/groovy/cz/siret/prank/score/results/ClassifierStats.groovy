@@ -261,9 +261,9 @@ class ClassifierStats {
         Map<String, Double> toMap() {
             Map<String, Double> res = new HashMap<>()
             for (PropertyValue pv : this.metaPropertyValues) {
-                if (pv.type == Double.class) {
+                //if (pv.type == Double.class) {
                     res.put( pv.name.toUpperCase(), (Double) pv.value )
-                }
+                //}
             }
             return res
         }

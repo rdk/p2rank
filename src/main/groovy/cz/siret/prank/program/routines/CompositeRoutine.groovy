@@ -249,9 +249,9 @@ abstract class CompositeRoutine extends Routine {
             String dir = "$outdir/classifier"
             mkdirs(dir)
 
-            cs.histograms.properties.each { key, value ->
-                String label = key
-                Histogram hist = (Histogram) value
+            cs.histograms.metaPropertyValues.each {
+                String label = it.name
+                Histogram hist = (Histogram) it.value
                 
                 writeFile "$dir/hist_${label}.csv", hist.toCSV()
             }
