@@ -8,8 +8,8 @@ import cz.siret.prank.features.generic.GenericVector
 import cz.siret.prank.features.tables.PropertyTable
 import cz.siret.prank.features.volsite.VolSitePharmacophore
 import cz.siret.prank.program.params.Params
-import cz.siret.prank.utils.PDBUtils
 import cz.siret.prank.utils.Futils
+import cz.siret.prank.utils.PDBUtils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom

@@ -7,8 +7,8 @@ import cz.siret.prank.program.rendering.PyMolRenderer
 import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.score.*
 import cz.siret.prank.utils.ATimer
-import cz.siret.prank.utils.WekaUtils
 import cz.siret.prank.utils.Futils
+import cz.siret.prank.utils.WekaUtils
 import groovy.util.logging.Slf4j
 import weka.classifiers.Classifier
 

@@ -1,6 +1,5 @@
 package cz.siret.prank.utils
 
-import cz.siret.prank.score.results.Evaluation
 import groovy.transform.CompileStatic
 
 import java.text.DecimalFormat

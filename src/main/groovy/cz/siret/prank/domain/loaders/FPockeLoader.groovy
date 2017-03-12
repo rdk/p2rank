@@ -5,8 +5,8 @@ import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Prediction
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.geom.Atoms
-import cz.siret.prank.utils.PDBUtils
 import cz.siret.prank.utils.Futils
+import cz.siret.prank.utils.PDBUtils
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.*
 

@@ -3,7 +3,6 @@ package cz.siret.prank.program.routines.results
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.score.criteria.*
 import cz.siret.prank.score.results.ClassifierStats
 import cz.siret.prank.score.results.Evaluation
 import cz.siret.prank.utils.CSV
@@ -11,7 +10,6 @@ import cz.siret.prank.utils.Formatter
 import cz.siret.prank.utils.PerfUtils
 import cz.siret.prank.utils.Writable
 import cz.siret.prank.utils.stat.Histogram
-import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 

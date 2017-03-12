@@ -4,8 +4,8 @@ import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Surface
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.utils.PDBUtils
 import cz.siret.prank.utils.Futils
+import cz.siret.prank.utils.PDBUtils
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Structure
 

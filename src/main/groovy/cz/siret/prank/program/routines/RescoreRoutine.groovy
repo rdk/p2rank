@@ -7,8 +7,8 @@ import cz.siret.prank.score.PocketRescorer
 import cz.siret.prank.score.WekaSumRescorer
 import cz.siret.prank.score.results.ReorderingSummary
 import cz.siret.prank.utils.ATimer
-import cz.siret.prank.utils.WekaUtils
 import cz.siret.prank.utils.Futils
+import cz.siret.prank.utils.WekaUtils
 import groovy.util.logging.Slf4j
 import weka.classifiers.Classifier
 

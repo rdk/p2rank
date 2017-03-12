@@ -8,7 +8,6 @@ import cz.siret.prank.geom.Atoms
 import cz.siret.prank.program.Main
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.utils.CmdLineArgs
-import cz.siret.prank.utils.Writable
 import cz.siret.prank.utils.Futils
 import groovy.util.logging.Slf4j
 

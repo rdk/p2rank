@@ -1,7 +1,7 @@
 package cz.siret.prank.program
 
-import cz.siret.prank.utils.Writable
 import cz.siret.prank.utils.Futils
+import cz.siret.prank.utils.Writable
 import groovy.transform.CompileStatic
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.core.Appender

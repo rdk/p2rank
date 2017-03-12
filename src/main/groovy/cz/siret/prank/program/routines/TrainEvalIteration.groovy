@@ -9,8 +9,8 @@ import cz.siret.prank.score.prediction.PointScoreCalculator
 import cz.siret.prank.score.results.ClassifierStats
 import cz.siret.prank.utils.ATimer
 import cz.siret.prank.utils.CSV
-import cz.siret.prank.utils.WekaUtils
 import cz.siret.prank.utils.Futils
+import cz.siret.prank.utils.WekaUtils
 import groovy.util.logging.Slf4j
 import hr.irb.fastRandomForest.FastRandomForest
 import weka.classifiers.Classifier

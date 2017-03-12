@@ -1,8 +1,6 @@
 package cz.siret.prank.program.routines
 
 import cz.siret.prank.program.routines.results.EvalResults
-import cz.siret.prank.score.results.Evaluation
-import cz.siret.prank.utils.Formatter
 import groovy.util.logging.Slf4j
 
 import static cz.siret.prank.utils.Formatter.fmt

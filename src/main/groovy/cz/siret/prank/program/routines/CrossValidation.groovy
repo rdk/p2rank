@@ -4,8 +4,8 @@ import cz.siret.prank.collectors.DataPreProcessor
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.utils.ATimer
-import cz.siret.prank.utils.WekaUtils
 import cz.siret.prank.utils.Futils
+import cz.siret.prank.utils.WekaUtils
 import groovy.util.logging.Slf4j
 import groovyx.gpars.GParsPool
 import weka.core.Instances

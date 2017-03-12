@@ -1,8 +1,8 @@
 package cz.siret.prank.utils.plotter
 
 import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.utils.StrUtils
 import cz.siret.prank.utils.Futils
+import cz.siret.prank.utils.StrUtils
 import groovyx.gpars.GParsPool
 
 /**

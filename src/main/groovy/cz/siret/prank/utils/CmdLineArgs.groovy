@@ -1,4 +1,5 @@
 package cz.siret.prank.utils
+
 /**
  * Represents parsed command line arguments
  * <p>

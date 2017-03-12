@@ -3,7 +3,6 @@ package cz.siret.prank.score.results
 import cz.siret.prank.domain.Prediction
 import cz.siret.prank.score.prediction.PrankPocket
 import cz.siret.prank.utils.CSV
-import cz.siret.prank.utils.PerfUtils
 
 import static cz.siret.prank.utils.PerfUtils.formatDouble
 

@@ -10,9 +10,9 @@ import cz.siret.prank.features.FeatureVector
 import cz.siret.prank.score.criteria.DCA
 import cz.siret.prank.score.criteria.IdentificationCriterium
 import cz.siret.prank.utils.ATimer
+import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.PerfUtils
 import cz.siret.prank.utils.WekaUtils
-import cz.siret.prank.utils.Futils
 import groovy.transform.TupleConstructor
 import groovy.util.logging.Slf4j
 import weka.core.Instances

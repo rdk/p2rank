@@ -3,9 +3,9 @@ package cz.siret.prank.score
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Prediction
 import cz.siret.prank.features.tables.PropertyTable
+import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.PDBUtils
 import cz.siret.prank.utils.StrUtils
-import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom

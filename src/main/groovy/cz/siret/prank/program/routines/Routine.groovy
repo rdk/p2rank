@@ -2,12 +2,11 @@ package cz.siret.prank.program.routines
 
 import cz.siret.prank.program.Main
 import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.utils.Writable
 import cz.siret.prank.utils.Futils
+import cz.siret.prank.utils.Writable
 import groovy.transform.CompileStatic
 
 import static cz.siret.prank.utils.Futils.writeFile
-
 
 @CompileStatic
 class Routine implements Parametrized, Writable  {

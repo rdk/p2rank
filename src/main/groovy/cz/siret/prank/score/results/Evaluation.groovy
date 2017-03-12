@@ -4,20 +4,11 @@ import cz.siret.prank.domain.Ligand
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.domain.Protein
-import cz.siret.prank.score.criteria.DCA
-import cz.siret.prank.score.criteria.DCC
-import cz.siret.prank.score.criteria.DPA
-import cz.siret.prank.score.criteria.DSA
-import cz.siret.prank.score.criteria.IdentificationCriterium
-import cz.siret.prank.utils.Formatter
+import cz.siret.prank.score.criteria.*
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.StringUtils
 
-import java.text.DecimalFormat
-
-import static cz.siret.prank.utils.Formatter.fmt
-import static cz.siret.prank.utils.Formatter.format
-import static cz.siret.prank.utils.Formatter.formatPercent
+import static cz.siret.prank.utils.Formatter.*
 
 /**
  * Represents evaluation of pocket prediction on a set of structures

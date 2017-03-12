@@ -7,8 +7,8 @@ import cz.siret.prank.domain.loaders.SiteHoundLoader
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.ThreadPoolFactory
 import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.utils.StrUtils
 import cz.siret.prank.utils.Futils
+import cz.siret.prank.utils.StrUtils
 import groovy.util.logging.Slf4j
 import groovyx.gpars.GParsPool
 
