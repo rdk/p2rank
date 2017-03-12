@@ -28,6 +28,10 @@ class ClassifierStats implements Parametrized {
     double sumSEneg = 0
 
     Histograms histograms = new Histograms()
+
+    /**
+     * Flyweight 1D stats accessor
+     */
     Stats stats = new Stats()
 
     boolean collecting = false
@@ -42,22 +46,24 @@ class ClassifierStats implements Parametrized {
         }
     }
 
-    void addAll(ClassifierStats add) {
+    void addAll(ClassifierStats other) {
         for (int i=0; i!=nclasses; ++i)
             for (int j=0; j!=nclasses; ++j)
-                op[i][j] += add.op[i][j]
+                op[i][j] += other.op[i][j]
 
-        count += add.count
+        count += other.count
 
-        sumE += add.sumE
-        sumEpos += add.sumEpos
-        sumEneg += add.sumEneg
-        sumSE += add.sumSE
-        sumSEpos += add.sumSEpos
-        sumSEneg += add.sumSEneg
+        sumE += other.sumE
+        sumEpos += other.sumEpos
+        sumEneg += other.sumEneg
+        sumSE += other.sumSE
+        sumSEpos += other.sumSEpos
+        sumSEneg += other.sumSEneg
 
-        if (predictions!=null && add.predictions!=null) {
-            predictions.addAll(add.predictions)
+        histograms.add(other.histograms)
+
+        if (predictions!=null && other.predictions!=null) {
+            predictions.addAll(other.predictions)
         }
     }
 
@@ -162,6 +168,14 @@ class ClassifierStats implements Parametrized {
         Histogram score0 = new Histogram(0, 1, HISTOGRAM_BINS)
         /** predicted hist[1] for all */
         Histogram score1 = new Histogram(0, 1, HISTOGRAM_BINS)
+
+        void add(Histograms other) {
+            score.add(other.score)
+            scoreNeg.add(other.scoreNeg)
+            scorePos.add(other.scorePos)
+            score0.add(other.score0)
+            score1.add(other.score1)
+        }
     }
 
     /**

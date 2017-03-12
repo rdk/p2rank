@@ -67,7 +67,7 @@ class TrainEvalIteration extends AbstractEvalRoutine implements Parametrized  {
     private Instances doCollectVectors(Dataset dataSet, String vectFileName) {
         ATimer timer = ATimer.start();
 
-        new File(outdir).mkdirs()
+        Futils.mkdirs(outdir)
 
         CollectVectorsRoutine collector = new CollectVectorsRoutine(dataSet, outdir, vectFileName)
 
@@ -89,7 +89,6 @@ class TrainEvalIteration extends AbstractEvalRoutine implements Parametrized  {
     ClassifierStats calculateTrainStats(Classifier classifier, Instances trainVectors) {
         if (params.classifier_train_stats) {
             ClassifierStats trainStats = new ClassifierStats()
-
             for (Instance inst : trainVectors) {
                 double[] hist = classifier.distributionForInstance(inst)
                 double score = PointScoreCalculator.predictedScore(hist)
@@ -98,9 +97,7 @@ class TrainEvalIteration extends AbstractEvalRoutine implements Parametrized  {
 
                 trainStats.addPrediction(observed, predicted, score, hist)
             }
-
             return trainStats
-
         } else {
             return null
         }

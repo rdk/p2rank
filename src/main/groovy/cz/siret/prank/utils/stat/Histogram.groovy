@@ -61,6 +61,20 @@ class Histogram {
         return rbins
     }
 
+    /**
+     * Add counts from other to this histogram.
+     * Number of bins of both must be the same.
+     * @param hist2
+     */
+    void add(Histogram other) {
+        assert nbins==other.nbins : "Unequal number of bins!"
+
+        count += other.count
+        for (int i=0; i!=nbins; ++i) {
+            bins[i] = bins[i] + other.bins[i]
+        }
+    }
+
 //===========================================================================================================//
 
 
