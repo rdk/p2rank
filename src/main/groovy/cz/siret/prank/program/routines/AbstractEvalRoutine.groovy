@@ -2,8 +2,11 @@ package cz.siret.prank.program.routines
 
 import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.score.results.Evaluation
+import cz.siret.prank.utils.Formatter
 import groovy.util.logging.Slf4j
 
+import static cz.siret.prank.utils.Formatter.fmt
+import static cz.siret.prank.utils.Formatter.pc
 import static cz.siret.prank.utils.Futils.writeFile
 
 /**
@@ -14,29 +17,6 @@ import static cz.siret.prank.utils.Futils.writeFile
 abstract class AbstractEvalRoutine extends Routine {
 
     abstract EvalResults execute()
-
-    String pc(double x) {
-        return Evaluation.formatPercent(x)
-    }
-
-    static String fmt(Object val) {
-        if (val==null)
-            "--"
-        else
-            fmtn(val)
-    }
-
-    static String fmtn(double x) {
-        //return ClassifierStats.format(x)
-            //return ClassifierStats.format(x)
-        sprintf "%8.2f", x
-    }
-
-    static String fmtn(int x) {
-        //return ClassifierStats.format(x)
-        //return ClassifierStats.format(x)
-        sprintf "%8d", x
-    }
 
     String toMainResultsCsv(String label, String model, EvalResults results) {
 

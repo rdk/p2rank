@@ -5,6 +5,8 @@ import cz.siret.prank.score.prediction.PrankPocket
 import cz.siret.prank.utils.CSV
 import cz.siret.prank.utils.PerfUtils
 
+import static cz.siret.prank.utils.PerfUtils.formatDouble
+
 /**
  *
  */
@@ -25,11 +27,11 @@ class PredictionSummary {
 
             PrankPocket p = (PrankPocket) pp
 
-            String fmtScore = PerfUtils.formatDouble(p.newScore)
+            String fmtScore = formatDouble(p.newScore)
 
-            def x = PerfUtils.formatDouble(p.centroid.x)
-            def y = PerfUtils.formatDouble(p.centroid.y)
-            def z = PerfUtils.formatDouble(p.centroid.z)
+            def x = formatDouble(p.centroid.x)
+            def y = formatDouble(p.centroid.y)
+            def z = formatDouble(p.centroid.z)
 
             def surfAtomIds = p.surfaceAtoms*.PDBserial.join(" ")
 

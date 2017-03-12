@@ -5,6 +5,9 @@ import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.score.criteria.DCA
+import cz.siret.prank.score.criteria.DCC
+import cz.siret.prank.score.criteria.DPA
+import cz.siret.prank.score.criteria.DSA
 import cz.siret.prank.score.criteria.IdentificationCriterium
 import cz.siret.prank.utils.Formatter
 import groovy.util.logging.Slf4j
@@ -12,8 +15,12 @@ import org.apache.commons.lang3.StringUtils
 
 import java.text.DecimalFormat
 
+import static cz.siret.prank.utils.Formatter.fmt
+import static cz.siret.prank.utils.Formatter.format
+import static cz.siret.prank.utils.Formatter.formatPercent
+
 /**
- * Represents evaluation of pocket prediction on set of structures
+ * Represents evaluation of pocket prediction on a set of structures
  *
  * allows to collects results for list of criteria simultaneously
  * threadsafe
@@ -37,6 +44,17 @@ class Evaluation {
 
     Evaluation(List<IdentificationCriterium> criteria) {
         this.criteria = criteria
+    }
+
+    Evaluation() {
+        this( getDefaultEvalCrtieria() )
+    }
+
+    /**
+     * get list of evaluation criteria used during eval routines
+     */
+    static List<IdentificationCriterium> getDefaultEvalCrtieria() {
+        ((1..15).collect { new DCA(it) }) + ((1..10).collect { new DCC(it) }) + ((1..6).collect { new DPA(it) }) + ((1..6).collect { new DSA(it) })
     }
 
     void sort() {
@@ -87,7 +105,7 @@ class Evaluation {
         protRow.smallLigands = lp.smallLigands.size()
         protRow.smallLigNames = lp.smallLigands.collect { "$it.name($it.size)" }.join(" ")
         protRow.distantLigands = lp.distantLigands.size()
-        protRow.distantLigNames = lp.distantLigands.collect { "$it.name($it.size|${Formatter.format(it.contactDistance,1)}|${Formatter.format(it.centerToProteinDist,1)})" }.join(" ")
+        protRow.distantLigNames = lp.distantLigands.collect { "$it.name($it.size|${format(it.contactDistance,1)}|${format(it.centerToProteinDist,1)})" }.join(" ")
         protRow.connollyPoints = pair.prediction.protein.connollySurface.points.count
 
         for (Ligand lig in pair.liganatedProtein.ligands) {
@@ -221,11 +239,6 @@ class Evaluation {
         }
         return a
     }
-
-    static String formatPercent(double x) {
-        return new DecimalFormat("##.0").format(x*100)
-    }
-
 
 
 //===========================================================================================================//
@@ -362,11 +375,6 @@ class Evaluation {
         }
 
         return str.toString()
-    }
-
-    static String fmt(double x) {
-        //return ClassifierStats.format(x)
-        sprintf "%8.2f", x
     }
 
     String toLigandsCSV() {

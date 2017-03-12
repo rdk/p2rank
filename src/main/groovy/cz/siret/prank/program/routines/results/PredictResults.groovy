@@ -1,40 +1,42 @@
 package cz.siret.prank.program.routines.results
 
 import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.program.routines.AbstractEvalRoutine
 import cz.siret.prank.score.results.ClassifierStats
 import cz.siret.prank.score.results.Evaluation
 import cz.siret.prank.utils.CSV
 import cz.siret.prank.utils.Writable
+import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
-import static cz.siret.prank.utils.Futils.writeFile
+import static cz.siret.prank.utils.Formatter.fmt
+import static cz.siret.prank.utils.Formatter.formatPercent
 import static cz.siret.prank.utils.Futils.mkdirs
+import static cz.siret.prank.utils.Futils.writeFile
 
 /**
  * results for eval-predict routine
  */
 @Slf4j
+@CompileStatic
 class PredictResults implements Parametrized, Writable {
 
-    Evaluation predictionsEval
-    ClassifierStats classifierStats
+    Evaluation evaluation
+    ClassifierStats classStats
 
     PredictResults() {
-        predictionsEval = new Evaluation(EvalResults.getDefaultEvalCrtieria())
-        classifierStats = new ClassifierStats()
+        evaluation = new Evaluation()
+        classStats = new ClassifierStats()
     }
 
     Map getStats() {
-        Map m = predictionsEval.stats
-
-        m.putAll( classifierStats.statsMap )
+        Map m = evaluation.stats
+        m.putAll( classStats.statsMap )
 
         return m
     }
 
     String getMiscStatsCSV() {
-        stats.collect { "$it.key, ${AbstractEvalRoutine.fmt ( it.value)}" }.join("\n")
+        stats.collect { "$it.key, ${fmt it.value}" }.join("\n")
     }
 
     /**
@@ -53,8 +55,8 @@ class PredictResults implements Parametrized, Writable {
 
         List<Integer> tolerances = params.eval_tolerances
 
-        String succ_rates          = predictionsEval.toSuccRatesCSV(tolerances)
-        String classifier_stats    = classifierStats.toCSV(" $classifierName ")
+        String succ_rates          = evaluation.toSuccRatesCSV(tolerances)
+        String classifier_stats    = classStats.toCSV(" $classifierName ")
         String stats             = getMiscStatsCSV()
 
         writeFile "$outdir/success_rates.csv", succ_rates
@@ -62,16 +64,16 @@ class PredictResults implements Parametrized, Writable {
         writeFile "$outdir/stats.csv", stats
 
         if (logIndividualCases) {
-            predictionsEval.sort()
+            evaluation.sort()
 
             String casedir = "$outdir/cases"
             mkdirs(casedir)
 
-            writeFile "$casedir/proteins.csv", predictionsEval.toProteinsCSV()
-            writeFile "$casedir/ligands.csv", predictionsEval.toLigandsCSV()
-            writeFile "$casedir/pockets.csv", predictionsEval.toPocketsCSV()
-            writeFile "$casedir/ranks.csv", predictionsEval.toRanksCSV()
-            writeFile "$casedir/ranks_rescored.csv", predictionsEval.toRanksCSV()
+            writeFile "$casedir/proteins.csv", evaluation.toProteinsCSV()
+            writeFile "$casedir/ligands.csv", evaluation.toLigandsCSV()
+            writeFile "$casedir/pockets.csv", evaluation.toPocketsCSV()
+            writeFile "$casedir/ranks.csv", evaluation.toRanksCSV()
+            writeFile "$casedir/ranks_rescored.csv", evaluation.toRanksCSV()
         }
 
         log.info "\n" + CSV.tabulate(classifier_stats) + "\n\n"
@@ -81,28 +83,8 @@ class PredictResults implements Parametrized, Writable {
 
 //===========================================================================================================//
 
-    String pc(double x) {
-        return Evaluation.formatPercent(x)
-    }
 
-    static String fmt(Object val) {
-        if (val==null)
-            "--"
-        else
-            fmtn(val)
-    }
 
-    static String fmtn(double x) {
-        //return ClassifierStats.format(x)
-        //return ClassifierStats.format(x)
-        sprintf "%8.2f", x
-    }
-
-    static String fmtn(int x) {
-        //return ClassifierStats.format(x)
-        //return ClassifierStats.format(x)
-        sprintf "%8d", x
-    }
 
     String toMainResultsCsv(String outdir, String label) {
 
@@ -111,21 +93,21 @@ class PredictResults implements Parametrized, Writable {
         m.dir = new File(outdir).name
         m.label = label
 
-        m.proteins = predictionsEval.proteinCount
-        m.ligands =  predictionsEval.ligandCount
-        m.pockets =  predictionsEval.pocketCount
+        m.proteins = evaluation.proteinCount
+        m.ligands =  evaluation.ligandCount
+        m.pockets =  evaluation.pocketCount
 
-        m.DCA_4_0 = pc predictionsEval.calcDefaultCriteriumSuccessRate(0)
-        m.DCA_4_2 = pc predictionsEval.calcDefaultCriteriumSuccessRate(2)
+        m.DCA_4_0 = formatPercent evaluation.calcDefaultCriteriumSuccessRate(0)
+        m.DCA_4_2 = formatPercent evaluation.calcDefaultCriteriumSuccessRate(2)
 
-        m.P =   fmt classifierStats.stats.p
-        m.R =   fmt classifierStats.stats.r
-        m.FM =  fmt classifierStats.stats.f1
-        m.MCC = fmt classifierStats.stats.MCC
+        m.P =   fmt classStats.stats.p
+        m.R =   fmt classStats.stats.r
+        m.F1 =  fmt classStats.stats.f1
+        m.MCC = fmt classStats.stats.MCC
 
-        m.ligSize =    fmt predictionsEval.avgLigandAtoms
-        m.pocketVol =  fmt predictionsEval.avgPocketVolume
-        m.pocketSurf = fmt predictionsEval.avgPocketSurfAtoms
+        m.ligSize =    fmt evaluation.avgLigandAtoms
+        m.pocketVol =  fmt evaluation.avgPocketVolume
+        m.pocketSurf = fmt evaluation.avgPocketSurfAtoms
 
 
         return m.keySet().join(",") + "\n" + m.values().join(",")

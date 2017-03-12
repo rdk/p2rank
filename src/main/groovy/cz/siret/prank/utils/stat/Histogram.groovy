@@ -78,7 +78,7 @@ class Histogram {
 //===========================================================================================================//
 
 
-    String toCSV(Histogram hist) {
+    String toCSV() {
         StringBuilder sb = new StringBuilder()
 
         double[] rbins = getRelativeBins()

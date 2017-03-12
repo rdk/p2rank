@@ -3,38 +3,26 @@ package cz.siret.prank.program.routines.results
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.program.routines.AbstractEvalRoutine
-import cz.siret.prank.score.criteria.DCA
-import cz.siret.prank.score.criteria.DCC
-import cz.siret.prank.score.criteria.DPA
-import cz.siret.prank.score.criteria.DSA
-import cz.siret.prank.score.criteria.IdentificationCriterium
+import cz.siret.prank.score.criteria.*
 import cz.siret.prank.score.results.ClassifierStats
 import cz.siret.prank.score.results.Evaluation
 import cz.siret.prank.utils.CSV
+import cz.siret.prank.utils.Formatter
 import cz.siret.prank.utils.PerfUtils
 import cz.siret.prank.utils.Writable
 import cz.siret.prank.utils.stat.Histogram
+import groovy.transform.CompileDynamic
+import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
 
 import static cz.siret.prank.utils.Futils.mkdirs
-import static cz.siret.prank.utils.Futils.mkdirs
-import static cz.siret.prank.utils.Futils.mkdirs
-import static cz.siret.prank.utils.Futils.writeFile
-import static cz.siret.prank.utils.Futils.writeFile
-import static cz.siret.prank.utils.Futils.writeFile
-import static cz.siret.prank.utils.Futils.writeFile
-import static cz.siret.prank.utils.Futils.writeFile
-import static cz.siret.prank.utils.Futils.writeFile
-import static cz.siret.prank.utils.Futils.writeFile
-import static cz.siret.prank.utils.Futils.writeFile
-import static cz.siret.prank.utils.Futils.writeFile
-import static cz.siret.prank.utils.Futils.writeFile
-import static cz.siret.prank.utils.Futils.writeFile
 import static cz.siret.prank.utils.Futils.writeFile
 
 /**
  * results for eval-rescore, traineval and ploop routines
  */
+@Slf4j
+@CompileStatic
 class EvalResults implements Parametrized, Writable  {
 
     /**
@@ -59,8 +47,8 @@ class EvalResults implements Parametrized, Writable  {
 
     EvalResults(int runs) {
         this.runs = runs
-        originalEval = new Evaluation( getDefaultEvalCrtieria() )
-        rescoredEval = new Evaluation( getDefaultEvalCrtieria() )
+        originalEval = new Evaluation()
+        rescoredEval = new Evaluation()
         classifierStats = new ClassifierStats()
         if (params.classifier_train_stats) {
             classifierTrainStats = new ClassifierStats()
@@ -88,13 +76,6 @@ class EvalResults implements Parametrized, Writable  {
         return res
     }
 
-    /**
-     * get list of evaluation criteria used during eval routines
-     */
-    static List<IdentificationCriterium> getDefaultEvalCrtieria() {
-        ((1..15).collect { new DCA(it) }) + ((1..10).collect { new DCC(it) }) + ((1..6).collect { new DPA(it) }) + ((1..6).collect { new DSA(it) })
-    }
-
     void addAll(EvalResults other) {
         originalEval.addAll(other.originalEval)
         rescoredEval.addAll(other.rescoredEval)
@@ -120,39 +101,35 @@ class EvalResults implements Parametrized, Writable  {
     }
 
     int getAvgTrainPositives() {
-        train_positives / runs
+        (double)train_positives / runs
     }
 
     int getAvgTrainNegatives() {
-        train_negatives / runs
+        (double)train_negatives / runs
     }
 
     double getTrainPositivesRatio() {
         if (train_positives + train_negatives==0) return 0
 
-        train_positives / (train_positives + train_negatives)
+        (double)train_positives / (train_positives + train_negatives)
     }
 
     double getTrainRatio() {
         if (train_negatives==0) return 1
 
-        train_positives / train_negatives
+        (double)train_positives / train_negatives
     }
+
 
     Map getStats() {
         Map m = rescoredEval.stats
 
-        m.PROTEINS         /= runs
-        m.POCKETS          /= runs
-        m.LIGANDS          /= runs
-        m.LIGANDS_IGNORED  /= runs
-        m.LIGANDS_SMALL    /= runs
-        m.LIGANDS_DISTANT  /= runs
-
-        // m.LIG_COUNT = originalEval.ligandCount / runs
-        // m.LIG_COUNT_IGNORED = originalEval.ignoredLigandCount / runs
-        // m.LIG_COUNT_SMALL = originalEval.smallLigandCount / runs
-        // m.LIG_COUNT_DISTANT = originalEval.distantLigandCount / runs
+        m.PROTEINS         = (Double)m.PROTEINS         / runs
+        m.POCKETS          = (Double)m.POCKETS          / runs
+        m.LIGANDS          = (Double)m.LIGANDS          / runs
+        m.LIGANDS_IGNORED  = (Double)m.LIGANDS_IGNORED  / runs
+        m.LIGANDS_SMALL    = (Double)m.LIGANDS_SMALL    / runs
+        m.LIGANDS_DISTANT  = (Double)m.LIGANDS_DISTANT  / runs
 
         //===========================================================================================================//
 
@@ -171,7 +148,7 @@ class EvalResults implements Parametrized, Writable  {
         }
 
         if (params.feature_importances && featureImportances!=null) {
-            featureImportances = featureImportances.collect { it/runs }.toList()
+            featureImportances = featureImportances.collect { (double)it/runs }.<Double>toList()
             getNamedImportances().each {
                 m.put "_FI_"+it.name, it.importance
             }
@@ -181,7 +158,7 @@ class EvalResults implements Parametrized, Writable  {
     }
 
     String getMiscStatsCSV() {
-        stats.collect { "$it.key, ${AbstractEvalRoutine.fmt(it.value)}" }.join("\n")
+        stats.collect { "$it.key, ${Formatter.fmt(it.value)}" }.join("\n")
     }
 
 
@@ -260,9 +237,10 @@ class EvalResults implements Parametrized, Writable  {
         List<String> names = FeatureExtractor.createFactory().vectorHeader
         List<FeatureImportance> namedImportances = new ArrayList<>()
 
-        [names, featureImportances].transpose().each {
-            namedImportances.add new FeatureImportance((String)it[0], (Double)it[1])
+        for (int i=0; i!=names.size(); ++i) {
+            namedImportances.add new FeatureImportance( names[i] , featureImportances[i])
         }
+     
         return namedImportances
     }
 

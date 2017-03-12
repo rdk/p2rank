@@ -6,6 +6,8 @@ import groovy.transform.CompileStatic
 
 import java.text.DecimalFormat
 
+import static cz.siret.prank.utils.Formatter.formatPercent
+
 /**
  * Binary classifier statistics collector and calculator
  */
@@ -119,23 +121,6 @@ class ClassifierStats implements Parametrized {
         }
 
         return n / d;
-    }
-
-    static String format(double x) {
-        return new DecimalFormat("#.####").format(x)
-    }
-
-    double fmt(double x) {
-        return (double)Math.round(1000*x)/10
-    }
-
-    private double rel(double x) {
-        return pc((double)x/count)
-    }
-
-    private double pc(double x) {
-        x *= 100
-        return ((double)Math.round(x*10)) / 10
     }
 
     double div(double a, double b) {
@@ -347,6 +332,15 @@ class ClassifierStats implements Parametrized {
 
     //===========================================================================================================//
 
+    private static String format(double x) {
+        return new DecimalFormat("#.####").format(x)
+    }
+
+    private String rel(double x) {
+        return formatPercent((double)x/count)
+    }
+
+
     //@CompileStatic
     String toCSV(String classifierDesc) {
 
@@ -367,9 +361,9 @@ class ClassifierStats implements Parametrized {
             sb << ",(npv),(p)\n"
             sb << "\n"
             sb << "pred:  , [0], [1]\n"
-            sb << "obs[0] , ${tn}, ${fp}, ${pc(SPC)}\n"
-            sb << "obs[1] , ${fn}, ${tp}, ${pc(R)}\n"
-            sb << "       , ${pc(NPV)}, ${pc(P)}\n"
+            sb << "obs[0] , ${tn}, ${fp}, ${formatPercent(SPC)}\n"
+            sb << "obs[1] , ${fn}, ${tp}, ${formatPercent(R)}\n"
+            sb << "       , ${formatPercent(NPV)}, ${formatPercent(P)}\n"
             sb << "\n"
             sb << "%:\n"
             sb << ", ${rel(tn)}, ${rel(fp)}\n"

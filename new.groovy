@@ -35,7 +35,7 @@ import cz.siret.prank.program.params.Params
 
     predictions = true
 
-    out_prefix_date = false
+    out_prefix_date = true
 
     crossval_threads = 5
 
