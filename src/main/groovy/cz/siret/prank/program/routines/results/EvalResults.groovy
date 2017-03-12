@@ -3,6 +3,7 @@ package cz.siret.prank.program.routines.results
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.program.params.Parametrized
+import cz.siret.prank.program.routines.AbstractEvalRoutine
 import cz.siret.prank.score.criteria.DCA
 import cz.siret.prank.score.criteria.DCC
 import cz.siret.prank.score.criteria.DPA
@@ -180,7 +181,7 @@ class EvalResults implements Parametrized, Writable  {
     }
 
     String getMiscStatsCSV() {
-        stats.collect { "$it.key, ${fmt(it.value)}" }.join("\n")
+        stats.collect { "$it.key, ${AbstractEvalRoutine.fmt(it.value)}" }.join("\n")
     }
 
 

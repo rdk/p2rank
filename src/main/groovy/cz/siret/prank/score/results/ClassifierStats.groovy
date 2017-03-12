@@ -169,12 +169,12 @@ class ClassifierStats implements Parametrized {
         /** predicted hist[1] for all */
         Histogram score1 = new Histogram(0, 1, HISTOGRAM_BINS)
 
-        void add(Histograms other) {
-            score.add(other.score)
-            scoreNeg.add(other.scoreNeg)
-            scorePos.add(other.scorePos)
-            score0.add(other.score0)
-            score1.add(other.score1)
+        void add(Histograms others) {
+            score.add(others.score)
+            scoreNeg.add(others.scoreNeg)
+            scorePos.add(others.scorePos)
+            score0.add(others.score0)
+            score1.add(others.score1)
         }
     }
 
