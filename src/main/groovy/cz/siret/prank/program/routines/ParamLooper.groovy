@@ -2,6 +2,7 @@ package cz.siret.prank.program.routines
 
 import cz.siret.prank.program.params.Params
 import cz.siret.prank.program.params.RangeParam
+import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.utils.ATimer
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.plotter.RPlotter
@@ -38,7 +39,7 @@ class ParamLooper extends Routine {
      *
      * @param routine takes label as param (e.g. "prram1.val1.param2.val2")
      */
-    public void iterateParams(Closure<CompositeRoutine.Results> closure) {
+    public void iterateParams(Closure<EvalResults> closure) {
         def timer = ATimer.start()
 
         Futils.mkdirs(outdir)
@@ -55,7 +56,7 @@ class ParamLooper extends Routine {
             step.applyToParams(params)
 
             def tim = ATimer.start()
-            CompositeRoutine.Results res = closure.call(step.label)
+            EvalResults res = closure.call(step.label)
 
             step.results.putAll( res.stats )
             step.results.TIME_MINUTES = tim.minutes

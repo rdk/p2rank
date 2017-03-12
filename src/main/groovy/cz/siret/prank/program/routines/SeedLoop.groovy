@@ -1,5 +1,6 @@
 package cz.siret.prank.program.routines
 
+import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.utils.ATimer
 import cz.siret.prank.utils.Futils
 import groovy.util.logging.Slf4j
@@ -8,20 +9,20 @@ import groovy.util.logging.Slf4j
  * Routine that iterates through different values of random seed param
  */
 @Slf4j
-class SeedLoop extends CompositeRoutine {
+class SeedLoop extends AbstractEvalRoutine {
 
-    CompositeRoutine routine  // routine to iterate on
+    AbstractEvalRoutine routine  // routine to iterate on
 
-    SeedLoop(CompositeRoutine routine, String outdir) {
+    SeedLoop(AbstractEvalRoutine routine, String outdir) {
         this.routine = routine
         this.outdir = outdir
     }
 
     @Override
-    Results execute() {
+    EvalResults execute() {
         def timer = ATimer.start()
 
-        Results results = new Results(0)
+        EvalResults results = new EvalResults(0)
 
         int origSeed = params.seed
         int n = params.loop

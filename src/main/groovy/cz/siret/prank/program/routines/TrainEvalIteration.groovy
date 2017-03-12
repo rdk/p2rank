@@ -4,6 +4,7 @@ import cz.siret.prank.domain.Dataset
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.program.ml.ClassifierFactory
 import cz.siret.prank.program.params.Parametrized
+import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.score.prediction.PointScoreCalculator
 import cz.siret.prank.score.results.ClassifierStats
 import cz.siret.prank.utils.ATimer
@@ -17,7 +18,7 @@ import weka.core.Instance
 import weka.core.Instances
 
 @Slf4j
-class TrainEvalIteration extends CompositeRoutine implements Parametrized  {
+class TrainEvalIteration extends AbstractEvalRoutine implements Parametrized  {
 
     Dataset trainDataSet
     Dataset evalDataSet
@@ -37,10 +38,10 @@ class TrainEvalIteration extends CompositeRoutine implements Parametrized  {
 
     EvaluateRoutine evalRoutine
 
-    Results execute() {
+    EvalResults execute() {
 
         collectTrainVectors()
-        Results res = trainAndEvalModel()
+        EvalResults res = trainAndEvalModel()
 
         if (deleteVectors)
             deleteVectorFiles()
@@ -105,7 +106,7 @@ class TrainEvalIteration extends CompositeRoutine implements Parametrized  {
         }
     }
 
-    Results trainAndEvalModel() {
+    EvalResults trainAndEvalModel() {
         def timer = ATimer.start()
 
         new File(outdir).mkdirs()
@@ -150,7 +151,7 @@ class TrainEvalIteration extends CompositeRoutine implements Parametrized  {
         timer.restart()
 
         evalRoutine = new EvaluateRoutine(evalDataSet, classifier, classifierLabel, outdir)
-        Results res = evalRoutine.execute()
+        EvalResults res = evalRoutine.execute()
         res.trainTime = trainTime
         res.train_positives = train_positives
         res.train_negatives = train_negatives

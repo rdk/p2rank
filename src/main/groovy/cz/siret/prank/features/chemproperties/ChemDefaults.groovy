@@ -4,6 +4,9 @@ import com.google.common.collect.ImmutableMap
 import com.google.common.collect.ImmutableSet
 import groovy.transform.CompileStatic
 
+/**
+ * TODO: move to aa-table
+ */
 final class ChemDefaults {
 
     static class ToImmutableMixin {
@@ -14,7 +17,6 @@ final class ChemDefaults {
 
     static {
         Map.metaClass.mixin(ToImmutableMixin)
-        Map m = [a:1, b:2].toImmutable()
     }
 
     public static final Map<String, Integer> HYDROPHOBIC = [
@@ -168,7 +170,7 @@ final class ChemDefaults {
 
 
     public static final Set<String> AACODES = ImmutableSet.copyOf(["Ala","Arg","Asn","Asp","Cys","Glu","Gln","Gly","His","Ile",
-                                        "Leu","Lys","Met","Phe","Pro","Ser","Thr","Trp","Tyr","Val",   "Stp"])
+                                                                   "Leu","Lys","Met","Phe","Pro","Ser","Thr","Trp","Tyr","Val",   "Stp"])
 
     /*
      * mapping AACODE to vector with default values

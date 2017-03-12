@@ -4,6 +4,7 @@ import cz.siret.prank.domain.Dataset
 import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.program.rendering.PyMolRenderer
+import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.score.*
 import cz.siret.prank.utils.ATimer
 import cz.siret.prank.utils.WekaUtils
@@ -12,15 +13,15 @@ import groovy.util.logging.Slf4j
 import weka.classifiers.Classifier
 
 /**
- * Evaluate model on dataset
+ * Evaluate a model on a dataset
  */
 @Slf4j
-class EvaluateRoutine extends CompositeRoutine {
+class EvaluateRoutine extends AbstractEvalRoutine {
 
     Dataset dataset
     Classifier classifier
     String label
-    Results results
+    EvalResults results
 
     EvaluateRoutine(Dataset dataSet, String modelf, String outdir) {
         this.dataset = dataSet
@@ -58,7 +59,8 @@ class EvaluateRoutine extends CompositeRoutine {
         return rescorer
     }
 
-    Results execute() {
+    @Override
+    EvalResults execute() {
         def timer = ATimer.start()
 
         write "evaluating results on dataset [$dataset.name]"
@@ -69,7 +71,7 @@ class EvaluateRoutine extends CompositeRoutine {
             Futils.mkdirs(visDir)
         }
 
-        results = new Results(1)
+        results = new EvalResults(1)
         FeatureExtractor extractor = FeatureExtractor.createFactory()
 
         Dataset.Result datasetResult = dataset.processItems(params.parallel, new Dataset.Processor() {

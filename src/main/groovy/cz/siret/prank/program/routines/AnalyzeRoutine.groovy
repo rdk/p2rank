@@ -18,7 +18,7 @@ import static cz.siret.prank.utils.Futils.writeFile
  * Various tools for analyzing datasets
  */
 @Slf4j
-class AnalyzeRoutine extends Routine implements Writable {
+class AnalyzeRoutine extends Routine {
 
     String subCommand
     String label

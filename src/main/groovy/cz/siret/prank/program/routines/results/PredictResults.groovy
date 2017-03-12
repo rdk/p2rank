@@ -1,6 +1,7 @@
-package cz.siret.prank.program.routines
+package cz.siret.prank.program.routines.results
 
 import cz.siret.prank.program.params.Parametrized
+import cz.siret.prank.program.routines.AbstractEvalRoutine
 import cz.siret.prank.score.results.ClassifierStats
 import cz.siret.prank.score.results.Evaluation
 import cz.siret.prank.utils.CSV
@@ -20,7 +21,7 @@ class PredictResults implements Parametrized, Writable {
     ClassifierStats classifierStats
 
     PredictResults() {
-        predictionsEval = new Evaluation(CompositeRoutine.getDefaultEvalCrtieria())
+        predictionsEval = new Evaluation(EvalResults.getDefaultEvalCrtieria())
         classifierStats = new ClassifierStats()
     }
 
@@ -33,7 +34,7 @@ class PredictResults implements Parametrized, Writable {
     }
 
     String getMiscStatsCSV() {
-        stats.collect { "$it.key, ${CompositeRoutine.fmt ( it.value)}" }.join("\n")
+        stats.collect { "$it.key, ${AbstractEvalRoutine.fmt ( it.value)}" }.join("\n")
     }
 
     /**

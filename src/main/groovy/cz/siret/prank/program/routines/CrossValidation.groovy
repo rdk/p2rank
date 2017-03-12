@@ -2,6 +2,7 @@ package cz.siret.prank.program.routines
 
 import cz.siret.prank.collectors.DataPreProcessor
 import cz.siret.prank.domain.Dataset
+import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.utils.ATimer
 import cz.siret.prank.utils.WekaUtils
 import cz.siret.prank.utils.Futils
@@ -10,13 +11,13 @@ import groovyx.gpars.GParsPool
 import weka.core.Instances
 
 @Slf4j
-class CrossValidation extends CompositeRoutine {
+class CrossValidation extends AbstractEvalRoutine {
 
     int numFolds
     int samplingSeed
     Dataset dataset
     List<Fold> folds
-    Results results
+    EvalResults results
 
     int train_positives
     int train_negatives
@@ -27,19 +28,20 @@ class CrossValidation extends CompositeRoutine {
     }
 
     void init() {
-        results = new Results(0) // joint results
+        results = new EvalResults(0) // joint results
         numFolds = params.folds
         samplingSeed = params.seed
         Futils.mkdirs(outdir)
     }
 
-    Results execute() {
+    @Override
+    EvalResults execute() {
         def timer = ATimer.start()
 
         init()
         prepareFolds()
 
-        List<Results> resultsList
+        List<EvalResults> resultsList
         GParsPool.withPool(params.crossval_threads) {
 
             resultsList = folds.collectParallel { Fold fold ->

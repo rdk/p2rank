@@ -6,6 +6,6 @@ package cz.siret.prank.utils.stat
 class ROCTools {
 
 
-    //static Curve
+    //TODO memory efficient AUC and AUPRC approximation calculation
 
 }

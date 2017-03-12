@@ -55,6 +55,10 @@ class ClassifierStats implements Parametrized {
         sumSE += add.sumSE
         sumSEpos += add.sumSEpos
         sumSEneg += add.sumSEneg
+
+        if (predictions!=null && add.predictions!=null) {
+            predictions.addAll(add.predictions)
+        }
     }
 
     /**

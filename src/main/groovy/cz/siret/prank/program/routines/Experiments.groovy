@@ -4,6 +4,7 @@ import cz.siret.prank.domain.Dataset
 import cz.siret.prank.domain.DatasetCachedLoader
 import cz.siret.prank.program.Main
 import cz.siret.prank.program.params.RangeParam
+import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.utils.CmdLineArgs
 import cz.siret.prank.utils.Futils
 import groovy.util.logging.Slf4j
@@ -67,7 +68,7 @@ class Experiments extends Routine {
     /**
      * train/eval on different datasets for different seeds
      */
-    CompositeRoutine.Results traineval() {
+    EvalResults traineval() {
 
         TrainEvalIteration iter = new TrainEvalIteration()
         iter.outdir = outdir
@@ -78,9 +79,9 @@ class Experiments extends Routine {
 
         String loop_outdir = outdir
 
-        CompositeRoutine trainRoutine = new CompositeRoutine() {
+        AbstractEvalRoutine trainRoutine = new AbstractEvalRoutine() {
             @Override
-            Results execute() {
+            EvalResults execute() {
                 iter.label = "seed.${params.seed}"
                 iter.outdir = "$loop_outdir/$iter.label"
                 iter.trainAndEvalModel()
@@ -111,10 +112,10 @@ class Experiments extends Routine {
         new ParamLooper(topOutdir, rparams).iterateParams { String label ->
             outdir = "$topOutdir/$label"
 
-            CompositeRoutine.Results res
+            EvalResults res
 
             if (doCrossValidation) {
-                CompositeRoutine routine = new CrossValidation(outdir, trainDataSet)
+                AbstractEvalRoutine routine = new CrossValidation(outdir, trainDataSet)
                 res = new SeedLoop(routine, outdir).execute()
             } else {
                 res = traineval()

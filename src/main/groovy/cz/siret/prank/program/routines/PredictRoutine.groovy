@@ -5,6 +5,7 @@ import cz.siret.prank.domain.LoaderParams
 import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.program.rendering.PyMolRenderer
+import cz.siret.prank.program.routines.results.PredictResults
 import cz.siret.prank.score.PocketRescorer
 import cz.siret.prank.score.WekaSumRescorer
 import cz.siret.prank.score.results.PredictionSummary

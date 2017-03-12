@@ -15,7 +15,7 @@ import weka.classifiers.Classifier
 import static cz.siret.prank.utils.Futils.mkdirs
 
 /**
- * CompositeRoutine for rescoring pockets found by other methods (Fpocket, ConCavity) ... PRANK.
+ * AbstractEvalRoutine for rescoring pockets found by other methods (Fpocket, ConCavity) ... PRANK.
  */
 @Slf4j
 class RescoreRoutine extends Routine {
