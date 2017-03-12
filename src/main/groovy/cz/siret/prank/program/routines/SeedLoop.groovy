@@ -4,6 +4,9 @@ import cz.siret.prank.utils.ATimer
 import cz.siret.prank.utils.Futils
 import groovy.util.logging.Slf4j
 
+/**
+ * Routine that iterates through different values of random seed param
+ */
 @Slf4j
 class SeedLoop extends CompositeRoutine {
 

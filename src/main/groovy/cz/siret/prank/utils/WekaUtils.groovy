@@ -3,6 +3,7 @@ package cz.siret.prank.utils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import weka.classifiers.Classifier
+import weka.classifiers.evaluation.Evaluation
 import weka.core.*
 import weka.core.converters.ArffSaver
 import weka.core.converters.ConverterUtils
@@ -227,4 +228,9 @@ class WekaUtils implements Writable {
         return Filter.useFilter(data, filter)
     }
 
+
+    {
+
+        Evaluation
+    }
 }

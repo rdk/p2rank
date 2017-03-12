@@ -1,5 +1,6 @@
 package cz.siret.prank.score.results
 
+import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.stat.Histogram
 import groovy.transform.CompileStatic
 
@@ -9,7 +10,7 @@ import java.text.DecimalFormat
  * Binary classifier statistics collector and calculator
  */
 @CompileStatic
-class ClassifierStats {
+class ClassifierStats implements Parametrized {
 
     static final int HISTOGRAM_BINS = 100
 
@@ -29,9 +30,16 @@ class ClassifierStats {
     Histograms histograms = new Histograms()
     Stats stats = new Stats()
 
+    boolean collecting = false
+    List<Pred> predictions
+
     ClassifierStats() {
         nclasses = 2
         op = new int[nclasses][nclasses]
+        collecting = params.stats_collect_predictions
+        if (collecting) {
+            predictions = new ArrayList<>()
+        }
     }
 
     void addAll(ClassifierStats add) {
@@ -55,7 +63,7 @@ class ClassifierStats {
      * @param predicted   predicted class == 1
      * @param score predicted score from iterval <0,1>
      */
-    void addCase(boolean observed, boolean predicted, double score, double[] hist) {
+    void addPrediction(boolean observed, boolean predicted, double score, double[] hist) {
 
         double obsv = observed ? 1 : 0
         double e = Math.abs(obsv-score)
@@ -81,8 +89,13 @@ class ClassifierStats {
         histograms.score0.put(hist[0])
         histograms.score1.put(hist[1])
 
+        if (collecting) {
+            predictions.add(new Pred(observed, score))
+        }
+
         op[observed?1:0][predicted?1:0]++
         count++
+
     }
 
 
@@ -123,6 +136,15 @@ class ClassifierStats {
 
 //===========================================================================================================//
 
+    static class Pred {
+        boolean observed   // true if observed class is 1
+        double score       // predicted score for class 1
+        Pred(boolean observed, double score) {
+            this.observed = observed
+            this.score = score
+        }
+    }
+
     class Histograms {
 
         /** scores for all points */
@@ -142,6 +164,8 @@ class ClassifierStats {
      * flyweight class for 1D statistics 
      */
     class Stats {
+
+        private Advanced advanced = null
 
         double getTp() { op[1][1] }
         double getFp() { op[0][1] }
@@ -233,7 +257,7 @@ class ClassifierStats {
         }
 
         /** Discriminant Power ... <1 = poor, >3 = good, fair otherwise */
-        double DPOW() {
+        double getDPOW() {
             if (r==1 || SPC==1)
                 return Double.NaN
             double x = r / (1-r)
@@ -253,6 +277,18 @@ class ClassifierStats {
         double getMSEneg()    { div sumSEneg, count      }
         double getMSEbalanced() { (MSEneg + MSEpos) / 2    }
 
+
+        double getAUC() {
+            if (advanced==null) advanced = calculateAdvanced()
+            advanced.wekaAUC
+        }
+
+        double getAUPRC() {
+            if (advanced==null) advanced = calculateAdvanced()
+            advanced.wekaAUPRC
+        }
+
+
         private double getFWeighted(double beta) {
             double betaSqr = beta*beta
             div ( (1+betaSqr)*p*r , r + betaSqr*p  )
@@ -264,7 +300,26 @@ class ClassifierStats {
                     .collectEntries { [((String)it.key).toUpperCase(), it.value] }
         }
 
+
+        Advanced calculateAdvanced() {
+            Advanced res = new Advanced()
+
+            if (collecting) {
+                WekaStatsHelper wekaHelper = new WekaStatsHelper(predictions)
+                res.wekaAUC = wekaHelper.areaUnderROC()
+                res.wekaAUPRC = wekaHelper.areaUnderPRC()
+            }
+
+            res
+        }
+
+        class Advanced {
+            double wekaAUC   = Double.NaN
+            double wekaAUPRC = Double.NaN
+        }
+        
     }
+
 
     //===========================================================================================================//
 

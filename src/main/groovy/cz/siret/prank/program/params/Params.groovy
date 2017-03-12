@@ -461,6 +461,13 @@ class Params {
      */
     boolean classifier_train_stats = false
 
+    /**
+     * Collect predictions for all points in the dataset.
+     * Allows calculation of AUC and AUPRC classifier statistics but consumes a lot of memory.
+     * (>1GB for holo4k dataset with tesselation=2)
+     */
+    boolean stats_collect_predictions = false
+
 
 //===========================================================================================================//
 
