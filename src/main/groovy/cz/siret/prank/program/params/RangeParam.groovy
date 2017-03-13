@@ -59,7 +59,7 @@ class RangeParam {
     }
 
     static boolean isRangedArgValue(String value) {
-        value.startsWith("[") || value.startsWith("(")
+        ( value.startsWith("[") && value.contains(":") ) || ( value.startsWith("(") && value.contains(",") )
     }
 
     static List<RangeParam> parseRangedArgs(CmdLineArgs args) {
