@@ -73,7 +73,6 @@ class PredictResults implements Parametrized, Writable {
             writeFile "$casedir/ligands.csv", evaluation.toLigandsCSV()
             writeFile "$casedir/pockets.csv", evaluation.toPocketsCSV()
             writeFile "$casedir/ranks.csv", evaluation.toRanksCSV()
-            writeFile "$casedir/ranks_rescored.csv", evaluation.toRanksCSV()
         }
 
         log.info "\n" + CSV.tabulate(classifier_stats) + "\n\n"

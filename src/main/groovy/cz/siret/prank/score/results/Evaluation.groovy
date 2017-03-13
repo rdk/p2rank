@@ -115,6 +115,8 @@ class Evaluation {
             Pocket closestPocket = closestPocket(lig, pockets)
             if (closestPocket!=null) {
                 row.closestPocketDist = lig.atoms.dist(closestPocket.centroid)
+            } else {
+                row.closestPocketDist = Double.NaN
             }
 
             tmpLigRows.add(row)
@@ -282,7 +284,7 @@ class Evaluation {
 
     public <T> double avg(List<T> list, Closure<T> closure) {
         if (list.size()==0) return Double.NaN
-        list.collect { closure(it) }.sum(0) / list.size()
+        list.collect { closure(it) }.findAll { it!=Double.NaN }.sum(0) / list.size()
 
     }
 
@@ -446,7 +448,7 @@ class Evaluation {
         String ligCode
         int ligCount
         int atoms = 0
-        double closestPocketDist = Double.POSITIVE_INFINITY
+        double closestPocketDist 
         double centerToProtDist
         int dca4rank = -1
 

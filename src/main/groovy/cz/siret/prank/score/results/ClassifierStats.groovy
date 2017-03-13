@@ -116,15 +116,15 @@ class ClassifierStats implements Parametrized {
         double n = TP*TN - FP*FN
         double d = (TP+FP)*(TP+FN)*(TN+FP)*(TN+FN)
         d = Math.sqrt(d);
-        if (d == 0) {
-            d = 1;
+        if (d == 0d) {
+            d = 1d;
         }
 
         return n / d;
     }
 
     double div(double a, double b) {
-        if (b==0)
+        if (b==0d)
             return Double.NaN
         return a / b
     }
@@ -298,9 +298,11 @@ class ClassifierStats implements Parametrized {
         }
 
         Map<String, Double> toMap() {
-            (Map<String, Double>) this.properties
-                    .<String, Object>findAll { it.value instanceof Double }
-                    .collectEntries { [((String)it.key).toUpperCase(), it.value] }
+            Map<String, Double> res = new TreeMap<>() // keep them sorted
+            this.properties.findAll { it.value instanceof Double }.each {
+                res.put( ((String)it.key).toUpperCase(), (Double)it.value )
+            }
+            return res
         }
 
 

@@ -43,6 +43,8 @@ class EvalResults implements Parametrized, Writable  {
 
     List<Double> featureImportances
 
+    boolean rescoring = !params.predictions  // new predictions vs. rescoring
+
     EvalResults(int runs) {
         this.runs = runs
         originalEval = new Evaluation()
@@ -195,9 +197,11 @@ class EvalResults implements Parametrized, Writable  {
         String classifier_stats    = classifierStats.toCSV(" $classifierName ")
         String stats               = getMiscStatsCSV()
 
-        writeFile "$outdir/success_rates_original.csv", succ_rates
         writeFile "$outdir/success_rates.csv", succ_rates_rescored
-        writeFile "$outdir/success_rates_diff.csv", succ_rates_diff
+        if (rescoring) {
+            writeFile "$outdir/success_rates_original.csv", succ_rates
+            writeFile "$outdir/success_rates_diff.csv", succ_rates_diff
+        }
         writeFile "$outdir/classifier.csv", classifier_stats
         writeFile "$outdir/stats.csv", stats
 
@@ -213,7 +217,9 @@ class EvalResults implements Parametrized, Writable  {
             writeFile "$casedir/ligands.csv", rescoredEval.toLigandsCSV()
             writeFile "$casedir/pockets.csv", rescoredEval.toPocketsCSV()
             writeFile "$casedir/ranks.csv", originalEval.toRanksCSV()
-            writeFile "$casedir/ranks_rescored.csv", rescoredEval.toRanksCSV()
+            if (rescoring) {
+                writeFile "$casedir/ranks_rescored.csv", rescoredEval.toRanksCSV()
+            }
         }
 
         if (params.feature_importances && featureImportances!=null) {
@@ -224,9 +230,13 @@ class EvalResults implements Parametrized, Writable  {
         }
 
         log.info "\n" + CSV.tabulate(classifier_stats) + "\n\n"
-        log.info "\nSucess Rates - Original:\n" + CSV.tabulate(succ_rates) + "\n"
+        if (rescoring) {
+            log.info "\nSucess Rates - Original:\n" + CSV.tabulate(succ_rates) + "\n"
+        }
         write    "\nSucess Rates:\n" + CSV.tabulate(succ_rates_rescored) + "\n"
-        log.info "\nSucess Rates - Diff:\n" + CSV.tabulate(succ_rates_diff) + "\n\n"
+        if (rescoring) {
+            log.info "\nSucess Rates - Diff:\n" + CSV.tabulate(succ_rates_diff) + "\n\n"
+        }
     }
 
     List<FeatureImportance> getNamedImportances() {
