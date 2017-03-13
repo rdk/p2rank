@@ -2,6 +2,7 @@ package cz.siret.prank.features.api
 
 import cz.siret.prank.features.implementation.BfactorFeature
 import cz.siret.prank.features.implementation.ProtrusionFeature
+import cz.siret.prank.features.implementation.ProtrusionHistogramFeature
 import cz.siret.prank.features.implementation.SurfaceProtrusionFeature
 import cz.siret.prank.program.PrankException
 import groovy.transform.CompileStatic
@@ -36,6 +37,7 @@ class FeatureRegistry {
         registerFeature(new ProtrusionFeature())
         registerFeature(new SurfaceProtrusionFeature())
         registerFeature(new BfactorFeature())
+        registerFeature(new ProtrusionHistogramFeature())
 
         // Register new feature implementations here
 

@@ -88,6 +88,11 @@ class Params {
 
     double protrusion_radius = 10
 
+    /**
+     * Number of bins for protr_hist feature, must be >=2
+     */
+    int protr_hist_bins = 5
+
     //== CLASSIFIERS ===================
 
     /**
