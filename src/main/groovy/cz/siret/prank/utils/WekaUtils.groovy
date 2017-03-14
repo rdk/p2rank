@@ -1,5 +1,6 @@
 package cz.siret.prank.utils
 
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import weka.classifiers.Classifier
@@ -73,6 +74,19 @@ class WekaUtils implements Writable {
             return (Classifier) SerializationHelper.read(zis)
         } catch (FileNotFoundException e) {
             log.error "model file doesn't exist! ($fileName)"
+        }
+    }
+
+    /**
+     * tries to make sure that classifer uses only one thread for each classification (we then parallelize dataset)
+     * @param classifier
+     */
+    @CompileDynamic
+    static void disableParallelism(Classifier classifier) {
+        String[] threadPropNames = ["numThreads","numExecutionSlots"]   // names used for num.threads property by different classifiers
+        threadPropNames.each { String name ->
+            if (classifier.hasProperty(name))
+                classifier."$name" = 1 // params.threads
         }
     }
 

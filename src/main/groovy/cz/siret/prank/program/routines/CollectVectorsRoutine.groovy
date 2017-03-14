@@ -13,11 +13,14 @@ import cz.siret.prank.utils.ATimer
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.PerfUtils
 import cz.siret.prank.utils.WekaUtils
+import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
 import groovy.util.logging.Slf4j
 import weka.core.Instances
 
 import java.util.concurrent.atomic.AtomicInteger
+
+import static cz.siret.prank.utils.ATimer.startTimer
 
 @Slf4j
 class CollectVectorsRoutine extends Routine {
@@ -49,7 +52,7 @@ class CollectVectorsRoutine extends Routine {
      * collects 
      */
     Result collectVectors() {
-        def timer = ATimer.start()
+        def timer = startTimer()
 
         write "collecting vectors from dataset [$dataset.name]"
 
@@ -91,7 +94,7 @@ class CollectVectorsRoutine extends Routine {
         int negatives = neg.get()
         int count = positives + negatives
         double ratio = PerfUtils.round ( (double)positives / negatives , 3)
-        int ligandCount = dataset.items.collect { it.predictionPair.liganatedProtein.ligands.size() }.sum()
+        int ligandCount = dataset.items.collect { it.predictionPair.liganatedProtein.ligands.size() }.sum(0) as int
 
 
         write "processed $ligandCount ligans in $dataset.size files"
@@ -117,7 +120,7 @@ class CollectVectorsRoutine extends Routine {
         log.info "instances: " + data.size()
         //data = WekaUtils.numericToNominal("last", data)
 
-        // TODO move up to TrainEvalIteration
+        // TODO move up to TrainEvalRoutine
         data = new DataPreProcessor().preProcessTrainData(data)
 
         if (!params.delete_vectors) {

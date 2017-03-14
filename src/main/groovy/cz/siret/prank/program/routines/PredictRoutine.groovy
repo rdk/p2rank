@@ -9,7 +9,6 @@ import cz.siret.prank.program.routines.results.PredictResults
 import cz.siret.prank.score.PocketRescorer
 import cz.siret.prank.score.WekaSumRescorer
 import cz.siret.prank.score.results.PredictionSummary
-import cz.siret.prank.utils.ATimer
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.WekaUtils
 import groovy.transform.CompileDynamic
@@ -17,9 +16,18 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import weka.classifiers.Classifier
 
+import static cz.siret.prank.utils.ATimer.startTimer
 import static cz.siret.prank.utils.Futils.mkdirs
 import static cz.siret.prank.utils.Futils.writeFile
 
+
+/**
+ * Routine for making (and evaluating) predictions
+ *
+ * Backs prank commands 'predict' and 'eval-predict'
+ *
+ *
+ */
 @Slf4j
 @CompileStatic
 class PredictRoutine extends Routine {
@@ -44,21 +52,10 @@ class PredictRoutine extends Routine {
         return routine
     }
 
-    /**
-     * tries to make sure that classifer uses only one thread for each classification (we then parallelize dataset)
-     * @param classifier
-     */
-    @CompileDynamic
-    static void forceClassifierSingleThread(Classifier classifier) {
-        String[] threadPropNames = ["numThreads","numExecutionSlots"]   // names used for num.threads property by different classifiers
-        threadPropNames.each { String name ->
-            if (classifier.hasProperty(name))
-                classifier."$name" = 1 // params.threads
-        }
-    }
+
 
     Dataset.Result execute() {
-        def timer = ATimer.start()
+        def timer = startTimer()
 
         write "predicting pockets for proteins from dataset [$dataset.name]"
 
@@ -69,7 +66,7 @@ class PredictRoutine extends Routine {
         }
 
         Classifier classifier = WekaUtils.loadClassifier(modelf)
-        forceClassifierSingleThread(classifier)
+        WekaUtils.disableParallelism(classifier)
 
         String visDir = "$outdir/visualizations"
         if (produceVisualizations) {

@@ -5,19 +5,22 @@ import cz.siret.prank.domain.Prediction
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.score.PocketRescorer
 import cz.siret.prank.score.WekaSumRescorer
-import cz.siret.prank.score.results.ReorderingSummary
-import cz.siret.prank.utils.ATimer
+import cz.siret.prank.score.results.RescoringSummary
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.WekaUtils
+import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import weka.classifiers.Classifier
 
+import static cz.siret.prank.utils.ATimer.startTimer
 import static cz.siret.prank.utils.Futils.mkdirs
+import static cz.siret.prank.utils.Futils.writeFile
 
 /**
- * AbstractEvalRoutine for rescoring pockets found by other methods (Fpocket, ConCavity) ... PRANK.
+ * EvalRoutine for rescoring pockets found by other methods (Fpocket, ConCavity) ... PRANK.
  */
 @Slf4j
+@CompileStatic
 class RescoreRoutine extends Routine {
 
     Dataset dataset
@@ -31,7 +34,7 @@ class RescoreRoutine extends Routine {
     }
 
     Dataset.Result execute() {
-        def timer = ATimer.start()
+        def timer = startTimer()
 
         mkdirs(outdir)
         writeParams(outdir)
@@ -40,12 +43,7 @@ class RescoreRoutine extends Routine {
         log.info "outdir: $outdir"
 
         Classifier classifier = WekaUtils.loadClassifier(modelf)
-
-        String[] threadPropNames = ["numThreads","numExecutionSlots"]   // names used for num.threads property by different classifiers
-        threadPropNames.each { name ->
-            if (classifier.hasProperty(name))
-                classifier."$name" = 1 // params.threads
-        }
+        WekaUtils.disableParallelism(classifier)
 
         FeatureExtractor extractor = FeatureExtractor.createFactory()
 
@@ -56,10 +54,9 @@ class RescoreRoutine extends Routine {
                 PocketRescorer rescorer = new  WekaSumRescorer(classifier, extractor)
                 rescorer.reorderPockets(prediction)
 
-                ReorderingSummary rsumm = new ReorderingSummary(prediction)
-                String outf = "$outdir/${item.label}_rescored.csv"
-                Futils.writeFile(outf, rsumm.toCSV().toString())
-                log.info "\n\nRescored pockets for [$item.label]: \n\n" + rsumm.toTable() + "\n"
+                RescoringSummary rsum = new RescoringSummary(prediction)
+                writeFile "$outdir/${item.label}_rescored.csv", rsum.toCSV()
+                log.info "\n\nRescored pockets for [$item.label]: \n\n" + rsum.toTable() + "\n"
 
             }
         })

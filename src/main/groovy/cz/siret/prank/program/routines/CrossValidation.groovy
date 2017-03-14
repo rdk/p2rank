@@ -10,8 +10,10 @@ import groovy.util.logging.Slf4j
 import groovyx.gpars.GParsPool
 import weka.core.Instances
 
+import static cz.siret.prank.utils.ATimer.startTimer
+
 @Slf4j
-class CrossValidation extends AbstractEvalRoutine {
+class CrossValidation extends EvalRoutine {
 
     int numFolds
     int samplingSeed
@@ -36,7 +38,7 @@ class CrossValidation extends AbstractEvalRoutine {
 
     @Override
     EvalResults execute() {
-        def timer = ATimer.start()
+        def timer = startTimer()
 
         init()
         prepareFolds()
@@ -46,7 +48,7 @@ class CrossValidation extends AbstractEvalRoutine {
 
             resultsList = folds.collectParallel { Fold fold ->
 
-                TrainEvalIteration iter = new TrainEvalIteration()
+                TrainEvalRoutine iter = new TrainEvalRoutine()
                 iter.label = "fold.${numFolds}.${fold.num}"
                 iter.outdir = "$outdir/$iter.label"
                 iter.trainDataSet = fold.data.trainset

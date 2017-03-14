@@ -11,14 +11,18 @@ import cz.siret.prank.utils.ATimer
 import cz.siret.prank.utils.CSV
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.WekaUtils
+import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import hr.irb.fastRandomForest.FastRandomForest
 import weka.classifiers.Classifier
 import weka.core.Instance
 import weka.core.Instances
 
+import static cz.siret.prank.utils.ATimer.startTimer
+
 @Slf4j
-class TrainEvalIteration extends AbstractEvalRoutine implements Parametrized  {
+@CompileStatic
+class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
 
     Dataset trainDataSet
     Dataset evalDataSet
@@ -36,7 +40,7 @@ class TrainEvalIteration extends AbstractEvalRoutine implements Parametrized  {
     private String trainVectorFile
     private String evalVectorFile
 
-    EvaluateRoutine evalRoutine
+    EvalModelRoutine evalRoutine
 
     EvalResults execute() {
 
@@ -65,7 +69,7 @@ class TrainEvalIteration extends AbstractEvalRoutine implements Parametrized  {
     }
 
     private Instances doCollectVectors(Dataset dataSet, String vectFileName) {
-        ATimer timer = ATimer.start();
+        ATimer timer = startTimer();
 
         Futils.mkdirs(outdir)
 
@@ -104,7 +108,7 @@ class TrainEvalIteration extends AbstractEvalRoutine implements Parametrized  {
     }
 
     EvalResults trainAndEvalModel() {
-        def timer = ATimer.start()
+        def timer = startTimer()
 
         new File(outdir).mkdirs()
 
@@ -127,7 +131,7 @@ class TrainEvalIteration extends AbstractEvalRoutine implements Parametrized  {
 
         ClassifierStats trainStats = calculateTrainStats(classifier, trainVectors)
 
-        List<Double> featureImportances
+        List<Double> featureImportances = null
 
         // feature importances
         if (params.feature_importances) {
@@ -147,7 +151,7 @@ class TrainEvalIteration extends AbstractEvalRoutine implements Parametrized  {
 
         timer.restart()
 
-        evalRoutine = new EvaluateRoutine(evalDataSet, classifier, classifierLabel, outdir)
+        evalRoutine = new EvalModelRoutine(evalDataSet, classifier, classifierLabel, outdir)
         EvalResults res = evalRoutine.execute()
         res.trainTime = trainTime
         res.train_positives = train_positives

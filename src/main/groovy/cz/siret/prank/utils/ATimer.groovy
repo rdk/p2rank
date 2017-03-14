@@ -11,7 +11,7 @@ class ATimer {
         restart()
     }
 
-    static ATimer start() {
+    static ATimer startTimer() {
         return new ATimer()
     }
 

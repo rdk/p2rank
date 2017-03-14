@@ -9,6 +9,8 @@ import cz.siret.prank.utils.*
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.StringUtils
 
+import static cz.siret.prank.utils.ATimer.startTimer
+
 @Slf4j
 class Main implements Parametrized, Writable {
 
@@ -241,7 +243,7 @@ class Main implements Parametrized, Writable {
 
         configureLoggers(outdir)
 
-        new EvaluateRoutine(
+        new EvalModelRoutine(
                 dataset,
                 findModel(),
                 outdir).execute()
@@ -329,7 +331,7 @@ class Main implements Parametrized, Writable {
     void finalizeLog() {
         if (logManager.loggingToFile && params.zip_log_file) {
             logManager.stopFileAppender()
-            Futils.zipAndDelete(logManager.logFile)
+            Futils.zipAndDelete(logManager.logFile, Futils.ZIP_BEST_COMPRESSION)
         }
     }
 
@@ -350,7 +352,7 @@ class Main implements Parametrized, Writable {
 
 
     static void main(String[] args) {
-        ATimer timer = ATimer.start()
+        ATimer timer = startTimer()
         CmdLineArgs parsedArgs = CmdLineArgs.parse(args)
 
         if (parsedArgs.hasSwitch("v", "version")) {

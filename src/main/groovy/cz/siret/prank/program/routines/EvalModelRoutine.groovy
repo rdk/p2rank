@@ -12,32 +12,36 @@ import cz.siret.prank.utils.WekaUtils
 import groovy.util.logging.Slf4j
 import weka.classifiers.Classifier
 
+import static cz.siret.prank.utils.ATimer.startTimer
+import static cz.siret.prank.utils.Futils.mkdirs
+
 /**
  * Evaluate a model on a dataset
+ * (when rescoring evaluate rescorer)
  */
 @Slf4j
-class EvaluateRoutine extends AbstractEvalRoutine {
+class EvalModelRoutine extends EvalRoutine {
 
     Dataset dataset
     Classifier classifier
     String label
     EvalResults results
 
-    EvaluateRoutine(Dataset dataSet, String modelf, String outdir) {
+    EvalModelRoutine(Dataset dataSet, String modelf, String outdir) {
         this.dataset = dataSet
         this.classifier = WekaUtils.loadClassifier(modelf)
-        this.label = new File(modelf).name
+        this.label = Futils.shortName(modelf)
         this.outdir = outdir
     }
 
-    EvaluateRoutine(Dataset dataSet, Classifier classifier, String classifierLabel, String outdir) {
+    EvalModelRoutine(Dataset dataSet, Classifier classifier, String classifierLabel, String outdir) {
         this.dataset = dataSet
         this.classifier = classifier
         this.label = classifierLabel
         this.outdir = outdir
     }
 
-    PocketRescorer createRescorer(PredictionPair pair, FeatureExtractor extractor) {
+    private PocketRescorer createRescorer(PredictionPair pair, FeatureExtractor extractor) {
         PocketRescorer rescorer
         switch ( params.rescorer ) {
             case "WekaSumRescorer":
@@ -61,14 +65,15 @@ class EvaluateRoutine extends AbstractEvalRoutine {
 
     @Override
     EvalResults execute() {
-        def timer = ATimer.start()
+        def timer = startTimer()
 
         write "evaluating results on dataset [$dataset.name]"
-        Futils.mkdirs(outdir)
+        mkdirs(outdir)
         writeParams(outdir)
+
         String visDir = "$outdir/visualizations"
         if (params.visualizations) {
-            Futils.mkdirs(visDir)
+            mkdirs(visDir)
         }
 
         results = new EvalResults(1)

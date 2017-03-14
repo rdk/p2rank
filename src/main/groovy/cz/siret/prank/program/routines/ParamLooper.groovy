@@ -12,8 +12,11 @@ import groovy.transform.TupleConstructor
 import groovy.util.logging.Slf4j
 import groovyx.gpars.GParsPool
 
+import static cz.siret.prank.utils.ATimer.startTimer
+import static cz.siret.prank.utils.Futils.mkdirs
+
 /**
- * routine for grid optimization. Loops through values of one or more RangeParam and produces resulting statistics and plots.
+ * Routine for grid optimization. Loops through values of one or more RangeParam and produces resulting statistics and plots.
  */
 @Slf4j
 @CompileStatic
@@ -36,46 +39,61 @@ class ParamLooper extends Routine {
     }
 
     /**
+     * Iterate through al steps running closue.
+     * Step is a particular assignment of flexible params, (e.g. "prram1=val1 param2=val2")
+     * @param closure takes outdir as param
      *
-     * @param routine takes label as param (e.g. "prram1.val1.param2.val2")
+     * TODO: merge with code in Experiments, there is no point in separation with closure
      */
-    public void iterateParams(Closure<EvalResults> closure) {
-        def timer = ATimer.start()
+    public void iterateSteps(Closure<EvalResults> closure) {
+        def timer = startTimer()
 
-        Futils.mkdirs(outdir)
+        mkdirs(outdir)
         writeParams(outdir)
+
+        String runsDir = "$outdir/runs"
+        mkdirs(runsDir)
 
         steps = generateSteps()
         log.info "STEPS: " + steps.toListString().replace("Step","\nStep")
 
         paramsTableFile = "$outdir/param_stats.csv"
-        PrintWriter table = Futils.getWriter paramsTableFile
+        PrintWriter tablef = Futils.getWriter paramsTableFile
 
         boolean doheader = true
         for (Step step in steps) {
+            def stepTimer = startTimer()
+
             step.applyToParams(params)
 
-            def tim = ATimer.start()
-            EvalResults res = closure.call(step.label)
+            String stepDir = "$runsDir/$step.label"
+            EvalResults res = closure.call(stepDir)  // execute the experiment for step
 
             step.results.putAll( res.stats )
-            step.results.TIME_MINUTES = tim.minutes
+            step.results.TIME_MINUTES = stepTimer.minutes
 
-            if (doheader) {
-                table << step.header + "\n";  doheader = false
+            if (doheader) {                             // use step with results to produce header
+                tablef << step.header + "\n";  doheader = false
             }
-            table << step.toCSV() + "\n"; table.flush()
+            tablef << step.toCSV() + "\n"; tablef.flush()
 
             if (paramsCount==2) {
                 make2DTables(step)
             }
         }
-        table.close()
+        tablef.close()
 
         logTime "param iteration finished in $timer.formatted"
         write "results saved to directory [${Futils.absPath(outdir)}]"
 
         makePlots()
+
+        if (params.ploop_delete_runs) {
+            Futils.delete(runsDir)
+        } else if (params.ploop_zip_runs) {
+            Futils.zipAndDelete(runsDir, Futils.ZIP_BEST_COMPRESSION)
+        }
+
     }
 
     private void make2DTables(Step step) {
@@ -92,7 +110,7 @@ class ParamLooper extends Routine {
 
     private makePlots() {
         write "generating R plots..."
-        Futils.mkdirs(plotsDir)
+        mkdirs(plotsDir)
         if (paramsCount==1) {
             make1DPlots()
         } else if (paramsCount==2) {

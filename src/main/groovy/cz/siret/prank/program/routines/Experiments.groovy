@@ -68,29 +68,27 @@ class Experiments extends Routine {
     /**
      * train/eval on different datasets for different seeds
      */
-    EvalResults traineval() {
+    EvalResults traineval(String dir) {
 
-        TrainEvalIteration iter = new TrainEvalIteration()
-        iter.outdir = outdir
+        TrainEvalRoutine iter = new TrainEvalRoutine()
+        iter.outdir = dir
         iter.trainDataSet = trainDataSet
         iter.evalDataSet = evalDataSet
         iter.collectTrainVectors()
         //iter.collectEvalVectors() // for further inspetion
 
-        String loop_outdir = outdir
-
-        AbstractEvalRoutine trainRoutine = new AbstractEvalRoutine() {
+        EvalRoutine trainRoutine = new EvalRoutine() {
             @Override
             EvalResults execute() {
                 iter.label = "seed.${params.seed}"
-                iter.outdir = "$loop_outdir/$iter.label"
+                iter.outdir = "$dir/$iter.label"
                 iter.trainAndEvalModel()
 
                 return iter.evalRoutine.results
             }
         }
 
-        return new SeedLoop(trainRoutine, outdir).execute()
+        return new SeedLoop(trainRoutine, dir).execute()
     }
 
 //===========================================================================================================//
@@ -109,22 +107,18 @@ class Experiments extends Routine {
 
         String topOutdir = outdir
 
-        new ParamLooper(topOutdir, rparams).iterateParams { String label ->
-            outdir = "$topOutdir/$label"
-
+        new ParamLooper(topOutdir, rparams).iterateSteps { String outdir ->
             EvalResults res
 
             if (doCrossValidation) {
-                AbstractEvalRoutine routine = new CrossValidation(outdir, trainDataSet)
+                EvalRoutine routine = new CrossValidation(outdir, trainDataSet)
                 res = new SeedLoop(routine, outdir).execute()
             } else {
-                res = traineval()
+                res = traineval(outdir)
             }
 
             if (params.ploop_delete_runs) {
                 async { Futils.delete(outdir) }
-            } else if (params.ploop_zip_runs) {
-                async { Futils.zipAndDelete(outdir) }
             }
 
             if (params.clear_prim_caches) {

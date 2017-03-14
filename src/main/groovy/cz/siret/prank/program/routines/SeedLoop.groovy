@@ -5,22 +5,24 @@ import cz.siret.prank.utils.ATimer
 import cz.siret.prank.utils.Futils
 import groovy.util.logging.Slf4j
 
+import static cz.siret.prank.utils.ATimer.startTimer
+
 /**
  * Routine that iterates through different values of random seed param
  */
 @Slf4j
-class SeedLoop extends AbstractEvalRoutine {
+class SeedLoop extends EvalRoutine {
 
-    AbstractEvalRoutine routine  // routine to iterate on
+    EvalRoutine routine  // routine to iterate on
 
-    SeedLoop(AbstractEvalRoutine routine, String outdir) {
+    SeedLoop(EvalRoutine routine, String outdir) {
         this.routine = routine
         this.outdir = outdir
     }
 
     @Override
     EvalResults execute() {
-        def timer = ATimer.start()
+        def timer = startTimer()
 
         EvalResults results = new EvalResults(0)
 

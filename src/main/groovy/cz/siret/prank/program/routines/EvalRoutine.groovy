@@ -1,6 +1,7 @@
 package cz.siret.prank.program.routines
 
 import cz.siret.prank.program.routines.results.EvalResults
+import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
 import static cz.siret.prank.utils.Formatter.fmt
@@ -8,11 +9,12 @@ import static cz.siret.prank.utils.Formatter.pc
 import static cz.siret.prank.utils.Futils.writeFile
 
 /**
- * AbstractEvalRoutine that can be composed of subroutines with collected EvalResults (ststs)
- * TODO: needs refactoring
+ * Routine that produces EvalResults.
+ * Can be composed of subroutines and produce joined EvalResults.
  */
 @Slf4j
-abstract class AbstractEvalRoutine extends Routine {
+@CompileStatic
+abstract class EvalRoutine extends Routine {
 
     abstract EvalResults execute()
 

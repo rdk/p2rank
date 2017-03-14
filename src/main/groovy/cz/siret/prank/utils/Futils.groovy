@@ -19,7 +19,9 @@ import java.util.zip.GZIPOutputStream
 @CompileStatic
 class Futils {
 
-    static final int OUTPUT_BUFFER_SIZE = 10000
+    public static final int ZIP_BEST_COMPRESSION = 9
+
+    private static final int OUTPUT_BUFFER_SIZE = 10000
 
     static String normalize(String path) {
         if (path==null) return null
@@ -192,18 +194,31 @@ class Futils {
 
 
     static void zip(String fileOrDirectory) {
+        zip(fileOrDirectory, ZipUtil.DEFAULT_COMPRESSION_LEVEL)
+    }
+
+    /**
+     *
+     * @param fileOrDirectory
+     * @param compressionLevel
+     */
+    static void zip(String fileOrDirectory, int compressionLevel) {
         File fileOrDir = new File(fileOrDirectory)
         File zipFile = new File(fileOrDirectory + '.zip')
 
         if (fileOrDir.isDirectory()) {
-            ZipUtil.pack(fileOrDir, zipFile)
+            ZipUtil.pack(fileOrDir, zipFile, compressionLevel)
         } else {
-            ZipUtil.packEntry(fileOrDir, zipFile)
+            ZipUtil.packEntries([fileOrDir] as File[], zipFile, compressionLevel)
         }
     }
 
     static void zipAndDelete(String fileOrDirectory) {
-        zip(fileOrDirectory)
+        zipAndDelete(fileOrDirectory, ZipUtil.DEFAULT_COMPRESSION_LEVEL)
+    }
+
+    static void zipAndDelete(String fileOrDirectory, int compressionLevel) {
+        zip(fileOrDirectory, compressionLevel)
         delete(fileOrDirectory)
     }
 

@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
+import static cz.siret.prank.utils.ATimer.startTimer;
+
 /**
  * list of atoms with additional properties
  */
@@ -254,7 +256,7 @@ public final class Atoms implements Iterable<Atom> {
 
 
     public Atoms cutoffAtomsAround_(Atom distanceTo, double dist) {
-        ATimer timer = ATimer.start();
+        ATimer timer = startTimer();
 
         Atoms res = doCutoffAtomsAround(distanceTo, dist);
 
