@@ -11,6 +11,7 @@ import groovyx.gpars.GParsPool
 import weka.core.Instances
 
 import static cz.siret.prank.utils.ATimer.startTimer
+import static cz.siret.prank.utils.Futils.writeFile
 
 @Slf4j
 class CrossValidation extends EvalRoutine {
@@ -25,7 +26,7 @@ class CrossValidation extends EvalRoutine {
     int train_negatives
 
     CrossValidation(String outdir, Dataset dataset) {
-        this.outdir = outdir
+        super(outdir)
         this.dataset = dataset
     }
 
@@ -48,9 +49,8 @@ class CrossValidation extends EvalRoutine {
 
             resultsList = folds.collectParallel { Fold fold ->
 
-                TrainEvalRoutine iter = new TrainEvalRoutine()
-                iter.label = "fold.${numFolds}.${fold.num}"
-                iter.outdir = "$outdir/$iter.label"
+                String label = "fold.${numFolds}.${fold.num}"
+                TrainEvalRoutine iter = new TrainEvalRoutine("$outdir/$label")
                 iter.trainDataSet = fold.data.trainset
                 iter.evalDataSet = fold.data.evalset
                 iter.trainVectors = fold.trainVectors // precollected vectors
@@ -74,7 +74,7 @@ class CrossValidation extends EvalRoutine {
         write "processed $results.originalEval.ligandCount ligands in $dataset.size files"
         write "crossvalidation finished in $timer.formatted"
         write "results saved to directory [${Futils.absPath(outdir)}]"
-        Futils.writeFile("$outdir/time.log", "finished in $timer.formatted")
+        logTime "finished in $timer.formatted"
 
         return results
     }

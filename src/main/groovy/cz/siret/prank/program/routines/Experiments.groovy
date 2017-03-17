@@ -31,6 +31,7 @@ class Experiments extends Routine {
     CmdLineArgs cmdLineArgs
 
     public Experiments(CmdLineArgs args, Main main) {
+        super(null)
         this.cmdLineArgs = args
 
         trainSetFile =  cmdLineArgs.get('train', 't')
@@ -53,7 +54,6 @@ class Experiments extends Routine {
         label = "run_" + trainDataSet.label + "_" + (doCrossValidation ? "crossval" : evalDataSet.label)
         outdir = main.findOutdir(label)
 
-
         main.configureLoggers(outdir)
     }
 
@@ -67,28 +67,30 @@ class Experiments extends Routine {
 
     /**
      * train/eval on different datasets for different seeds
+     *
+     * also used as command: 'prank traineval...  '
      */
-    EvalResults traineval(String dir) {
+    EvalResults traineval() {
 
-        TrainEvalRoutine iter = new TrainEvalRoutine()
-        iter.outdir = dir
+        TrainEvalRoutine iter = new TrainEvalRoutine(outdir)
         iter.trainDataSet = trainDataSet
         iter.evalDataSet = evalDataSet
         iter.collectTrainVectors()
         //iter.collectEvalVectors() // for further inspetion
 
-        EvalRoutine trainRoutine = new EvalRoutine() {
+        EvalRoutine trainRoutine = new EvalRoutine(outdir) {
             @Override
             EvalResults execute() {
+
                 iter.label = "seed.${params.seed}"
-                iter.outdir = "$dir/$iter.label"
+                iter.outdir = "$outdir/$iter.label"
                 iter.trainAndEvalModel()
 
                 return iter.evalRoutine.results
             }
         }
 
-        return new SeedLoop(trainRoutine, dir).execute()
+        return new SeedLoop(trainRoutine, outdir).execute()
     }
 
 //===========================================================================================================//
@@ -107,18 +109,18 @@ class Experiments extends Routine {
 
         String topOutdir = outdir
 
-        new ParamLooper(topOutdir, rparams).iterateSteps { String outdir ->
+        new ParamLooper(topOutdir, rparams).iterateSteps { String iterDir ->
             EvalResults res
 
             if (doCrossValidation) {
-                EvalRoutine routine = new CrossValidation(outdir, trainDataSet)
-                res = new SeedLoop(routine, outdir).execute()
+                EvalRoutine routine = new CrossValidation(iterDir, trainDataSet)
+                res = new SeedLoop(routine, iterDir).execute()
             } else {
-                res = traineval(outdir)
+                res = traineval()
             }
 
             if (params.ploop_delete_runs) {
-                async { Futils.delete(outdir) }
+                async { Futils.delete(iterDir) }
             }
 
             if (params.clear_prim_caches) {

@@ -256,12 +256,10 @@ class Main implements Parametrized, Writable {
     }
 
     private runCrossvalidation() {
-
         Dataset dataset = loadDataset()
         String outdir = findOutdir("crossval_" + dataset.label)
 
         configureLoggers(outdir)
-
 
         CrossValidation routine = new CrossValidation(outdir, dataset)
         new SeedLoop(routine, outdir).execute()
@@ -374,7 +372,8 @@ class Main implements Parametrized, Writable {
         } catch (PrankException e) {
 
             error = true
-            writeError e.getMessage()
+            writeError e.message
+            log.error(e.message, e)
 
         } catch (Exception e) {
 

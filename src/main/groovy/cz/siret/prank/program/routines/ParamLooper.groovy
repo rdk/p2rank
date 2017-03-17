@@ -33,7 +33,7 @@ class ParamLooper extends Routine {
     Map<String, String> tables2D = new LinkedHashMap()
 
     ParamLooper(String outdir, List<RangeParam> rparams) {
-        this.outdir = outdir
+        super(outdir)
         this.rparams = rparams
         plotsDir = "$outdir/plots"
     }
@@ -67,12 +67,12 @@ class ParamLooper extends Routine {
             step.applyToParams(params)
 
             String stepDir = "$runsDir/$step.label"
-            EvalResults res = closure.call(stepDir)  // execute the experiment for step
+            EvalResults res = closure.call(stepDir)     // execute an experiment in closure for a step
 
             step.results.putAll( res.stats )
             step.results.TIME_MINUTES = stepTimer.minutes
 
-            if (doheader) {                             // use step with results to produce header
+            if (doheader) {                             // use first step with results to produce header
                 tablef << step.header + "\n";  doheader = false
             }
             tablef << step.toCSV() + "\n"; tablef.flush()
@@ -94,6 +94,7 @@ class ParamLooper extends Routine {
             Futils.zipAndDelete(runsDir, Futils.ZIP_BEST_COMPRESSION)
         }
 
+        logTime "ploop routine finished in $timer.formatted"
     }
 
     private void make2DTables(Step step) {

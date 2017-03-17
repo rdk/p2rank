@@ -27,18 +27,15 @@ class EvalModelRoutine extends EvalRoutine {
     String label
     EvalResults results
 
-    EvalModelRoutine(Dataset dataSet, String modelf, String outdir) {
-        this.dataset = dataSet
-        this.classifier = WekaUtils.loadClassifier(modelf)
-        this.label = Futils.shortName(modelf)
-        this.outdir = outdir
-    }
-
     EvalModelRoutine(Dataset dataSet, Classifier classifier, String classifierLabel, String outdir) {
+        super(outdir)
         this.dataset = dataSet
         this.classifier = classifier
         this.label = classifierLabel
-        this.outdir = outdir
+    }
+
+    EvalModelRoutine(Dataset dataSet, String modelf, String outdir) {
+        this(dataSet, WekaUtils.loadClassifier(modelf), Futils.shortName(modelf), outdir)
     }
 
     private PocketRescorer createRescorer(PredictionPair pair, FeatureExtractor extractor) {

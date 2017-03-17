@@ -1,7 +1,6 @@
 package cz.siret.prank.program.routines
 
 import cz.siret.prank.program.routines.results.EvalResults
-import cz.siret.prank.utils.ATimer
 import cz.siret.prank.utils.Futils
 import groovy.util.logging.Slf4j
 
@@ -13,11 +12,11 @@ import static cz.siret.prank.utils.ATimer.startTimer
 @Slf4j
 class SeedLoop extends EvalRoutine {
 
-    EvalRoutine routine  // routine to iterate on
+    EvalRoutine innerRoutine  // routine to iterate on
 
     SeedLoop(EvalRoutine routine, String outdir) {
-        this.routine = routine
-        this.outdir = outdir
+        super(outdir)
+        this.innerRoutine = routine
     }
 
     @Override
@@ -32,16 +31,16 @@ class SeedLoop extends EvalRoutine {
             write "random seed iteration: $seedi/$n"
 
             String label = "seed.${params.seed}"
-            routine.outdir = "$outdir/$label"
+            innerRoutine.outdir = "$outdir/$label"
 
-            results.addAll(routine.execute())
+            results.addAll(innerRoutine.execute())
 
             params.seed += 1
         }
 
         results.logAndStore(outdir, params.classifier)
-        if (routine instanceof CrossValidation) {
-            CrossValidation cv = (CrossValidation) routine
+        if (innerRoutine instanceof CrossValidation) {
+            CrossValidation cv = (CrossValidation) innerRoutine
             logSummaryResults(cv.dataset.label, "crossvalidation", results)
         } else {
             logSummaryResults("--", "evaluation", results)

@@ -42,6 +42,10 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
 
     EvalModelRoutine evalRoutine
 
+    TrainEvalRoutine(String outdir) {
+        super(outdir)
+    }
+
     EvalResults execute() {
 
         collectTrainVectors()
@@ -113,7 +117,7 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
         new File(outdir).mkdirs()
 
         Classifier classifier = ClassifierFactory.createClassifier(params)
-        String classifierLabel = "${classifier.class.simpleName}_${label}"
+        String classifierLabel = "${classifier.class.simpleName}"
         String modelf = "$outdir/${classifierLabel}.model"
 
         if (trainVectors==null) {

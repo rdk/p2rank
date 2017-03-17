@@ -1,6 +1,7 @@
 package cz.siret.prank.program.routines
 
 import cz.siret.prank.program.Main
+import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.Writable
@@ -12,6 +13,20 @@ import static cz.siret.prank.utils.Futils.writeFile
 class Routine implements Parametrized, Writable  {
 
     String outdir
+
+    Routine(String outdir) {
+        this.outdir = outdir
+    }
+
+    void setOutdir(String outdir) {
+        if (outdir==null) {
+            throw new PrankException('fuck')
+        }
+        this.outdir = outdir
+    }
+
+    private Routine() {}
+
 
     void logTime(String timeMsg) {
         write timeMsg

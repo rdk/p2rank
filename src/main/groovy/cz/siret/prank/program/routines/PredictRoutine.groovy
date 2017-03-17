@@ -40,9 +40,9 @@ class PredictRoutine extends Routine {
     boolean produceFilesystemOutput = true
 
     PredictRoutine(Dataset dataset, String modelf, String outdir) {
+        super(outdir)
         this.dataset = dataset
         this.modelf = modelf
-        this.outdir = outdir
     }
 
     static PredictRoutine createForInternalUse(Dataset dataset, String modelf) {
@@ -51,8 +51,6 @@ class PredictRoutine extends Routine {
         routine.produceVisualizations = false
         return routine
     }
-
-
 
     Dataset.Result execute() {
         def timer = startTimer()
@@ -123,7 +121,6 @@ class PredictRoutine extends Routine {
         if (produceFilesystemOutput) {
             write "results saved to directory [${Futils.absPath(outdir)}]"
         }
-
 
         return result
     }

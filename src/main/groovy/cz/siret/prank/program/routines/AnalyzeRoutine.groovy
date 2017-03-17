@@ -25,6 +25,7 @@ class AnalyzeRoutine extends Routine {
     Dataset dataset
 
     AnalyzeRoutine(CmdLineArgs args, Main main) {
+        super(null)
 
         subCommand = args.unnamedArgs[0]
         if (!commandRegister.containsKey(subCommand)) {

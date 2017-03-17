@@ -167,11 +167,12 @@ class Futils {
     /**
      * delete file or directory recursively if exists
      */
-    static boolean delete(String fname) {
+    static void delete(String fname) {
+        if (fname==null) return
+
         log.info "deleting " + fname
 
         File f = new File(fname)
-
         if (f.exists()) {
             if (f.isDirectory()) {
                 FileUtils.deleteDirectory(f)
@@ -179,7 +180,6 @@ class Futils {
                 f.delete()
             }
         }
-
     }
 
     static void mkdirs(String s) {

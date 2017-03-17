@@ -16,6 +16,10 @@ import static cz.siret.prank.utils.Futils.writeFile
 @CompileStatic
 abstract class EvalRoutine extends Routine {
 
+    EvalRoutine(String outdir) {
+        super(outdir)
+    }
+
     abstract EvalResults execute()
 
     String toMainResultsCsv(String label, String model, EvalResults results) {

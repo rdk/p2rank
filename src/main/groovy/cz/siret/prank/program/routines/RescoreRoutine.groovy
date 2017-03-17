@@ -25,12 +25,11 @@ class RescoreRoutine extends Routine {
 
     Dataset dataset
     String modelf
-    String outdir
 
     RescoreRoutine(Dataset dataSet, String modelf, String outdir) {
+        super(outdir)
         this.dataset = dataSet
         this.modelf = modelf
-        this.outdir = outdir
     }
 
     Dataset.Result execute() {

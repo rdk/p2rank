@@ -140,7 +140,7 @@ class ClassifierStats implements Parametrized {
         }
     }
 
-    class Histograms {
+    class Histograms {          
 
         /** scores for all points */
         Histogram score  = new Histogram(0, 1, HISTOGRAM_BINS)
@@ -185,6 +185,7 @@ class ClassifierStats implements Parametrized {
             div tp , (tp + fn)
         }
 
+        /** F-measure */
         double getF1() {
             div( (2*(p*r)) , (p+r) )
         }

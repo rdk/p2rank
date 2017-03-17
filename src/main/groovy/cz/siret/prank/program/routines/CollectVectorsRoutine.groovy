@@ -35,8 +35,8 @@ class CollectVectorsRoutine extends Routine {
     }
 
     CollectVectorsRoutine(Dataset dataSet, String outdir, String vectf) {
+        super(outdir)
         this.dataset = dataSet
-        this.outdir = outdir
         this.vectf = vectf
     }
 
