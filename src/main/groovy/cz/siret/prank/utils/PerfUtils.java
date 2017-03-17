@@ -58,7 +58,7 @@ public class PerfUtils {
 
         for (Atom a : atoms.list) {     // this line was causes slow casting in groovy
                                         // at org.codehaus.groovy.runtime.ScriptBytecodeAdapter.castToType(ScriptBytecodeAdapter.java:599)
-                                        // at rdk.pockets.geom.Atoms.cutoffAtomsAround(Atoms.groovy:219)
+                                        // at rdk.pockets.geom.Atoms.cutoffAroundAtom(Atoms.groovy:219)
 
             if (PerfUtils.sqrDist(a.getCoords(), toCoords) <= sqrDist) {
                 res.add(a);

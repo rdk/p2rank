@@ -110,7 +110,7 @@ class ChemFeatureExtractor extends FeatureExtractor<ChemVector> implements Param
         if (params.deep_surrounding) {
             surfaceLayerAtoms = deepSurrounding
         } else {
-            // surfaceLayerAtoms = protein.proteinAtoms.cutoffAtomsAround(pocket.surfaceAtoms, 1)  // shallow
+            // surfaceLayerAtoms = protein.proteinAtoms.cutoffAroundAtom(pocket.surfaceAtoms, 1)  // shallow
             //surfaceLayerAtoms = protein.exposedAtoms.cutoffAtoms(pocket.surfaceAtoms, 6) //XXX
             surfaceLayerAtoms = protein.exposedAtoms
         }
@@ -329,7 +329,7 @@ class ChemFeatureExtractor extends FeatureExtractor<ChemVector> implements Param
      */
     private ChemVector calcSmoothRepresentation(Atom atom) {
 
-        Atoms neighbourhood = surfaceLayerAtoms.cutoffAtomsAround(atom, SMOOTHING_CUTOFF_DIST)
+        Atoms neighbourhood = surfaceLayerAtoms.cutoffAroundAtom(atom, SMOOTHING_CUTOFF_DIST)
 
         return calcFeatureVectorFromAtoms(atom, false, neighbourhood)
     }
@@ -346,7 +346,7 @@ class ChemFeatureExtractor extends FeatureExtractor<ChemVector> implements Param
     @Override
     public ChemVector calcFeatureVector(Atom point) {
 
-        Atoms neighbourhood = surfaceLayerAtoms.cutoffAtomsAround(point, NEIGH_CUTOFF_DIST)
+        Atoms neighbourhood = surfaceLayerAtoms.cutoffAroundAtom(point, NEIGH_CUTOFF_DIST)
 
         return calcFeatureVectorFromAtoms(point, DO_SMOOTH_REPRESENTATION, neighbourhood)
     }

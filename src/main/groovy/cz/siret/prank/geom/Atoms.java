@@ -255,17 +255,20 @@ public final class Atoms implements Iterable<Atom> {
     }
 
 
-    public Atoms cutoffAtomsAround_(Atom distanceTo, double dist) {
+    /**
+     * intercepting calls for further alalysis
+     */
+    public Atoms cutoffAroundAtom_(Atom distanceTo, double dist) {
         ATimer timer = startTimer();
 
-        Atoms res = doCutoffAtomsAround(distanceTo, dist);
+        Atoms res = doCutoffAroundAtom(distanceTo, dist);
 
         CutoffAtomsCallLog.INST.addCall(getCount(), res.getCount(), timer.getTime());
 
         return res;
     }
 
-    public Atoms doCutoffAtomsAround(Atom distanceTo, double dist) {
+    private Atoms doCutoffAroundAtom(Atom distanceTo, double dist) {
         List<Atom> res = new ArrayList<>();
         double sqrDist = dist*dist;
 
@@ -289,7 +292,7 @@ public final class Atoms implements Iterable<Atom> {
         return new Atoms(res);
     }
 
-    public Atoms cutoffAtomsAround(Atom distanceTo, double dist) {
+    public Atoms cutoffAroundAtom(Atom distanceTo, double dist) {
         List<Atom> res = new ArrayList<>();
         double sqrDist = dist*dist;
 
