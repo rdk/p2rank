@@ -1,7 +1,7 @@
-plugins {
-    id 'com.github.ben-manes.versions' version '0.14.0'
-    // run "gradle dependencyUpdates -Drevision=release" to check dependency updates
-}
+//plugins {
+//    id 'com.github.ben-manes.versions' version '0.14.0'
+//    // run "gradle dependencyUpdates -Drevision=release" to check dependency updates
+//}
 
 apply plugin: 'groovy'
 apply plugin: 'java'
