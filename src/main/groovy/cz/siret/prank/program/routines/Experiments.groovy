@@ -68,9 +68,10 @@ class Experiments extends Routine {
     /**
      * train/eval on different datasets for different seeds
      *
-     * also used as command: 'prank traineval...  '
+     *
+     * collecting train vectors only once and training+evaluatng many times
      */
-    EvalResults traineval() {
+    private EvalResults doTrainEval(String outdir) {
 
         TrainEvalRoutine iter = new TrainEvalRoutine(outdir)
         iter.trainDataSet = trainDataSet
@@ -81,16 +82,20 @@ class Experiments extends Routine {
         EvalRoutine trainRoutine = new EvalRoutine(outdir) {
             @Override
             EvalResults execute() {
-
-                iter.label = "seed.${params.seed}"
-                iter.outdir = "$outdir/$iter.label"
+                iter.outdir = this.outdir // is set to "../seed.xx" by SeedLoop
                 iter.trainAndEvalModel()
-
                 return iter.evalRoutine.results
             }
         }
 
         return new SeedLoop(trainRoutine, outdir).execute()
+    }
+
+    /**
+     * implements command: 'prank traineval...  '
+     */
+    EvalResults traineval() {
+        doTrainEval(outdir)
     }
 
 //===========================================================================================================//
@@ -116,7 +121,7 @@ class Experiments extends Routine {
                 EvalRoutine routine = new CrossValidation(iterDir, trainDataSet)
                 res = new SeedLoop(routine, iterDir).execute()
             } else {
-                res = traineval()
+                res = doTrainEval(iterDir)
             }
 
             if (params.ploop_delete_runs) {

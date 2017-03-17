@@ -31,7 +31,8 @@ class SeedLoop extends EvalRoutine {
             write "random seed iteration: $seedi/$n"
 
             String label = "seed.${params.seed}"
-            innerRoutine.outdir = "$outdir/$label"
+            innerRoutine.outdir = "$outdir/runs/$label"
+            Futils.mkdirs(innerRoutine.outdir)
 
             results.addAll(innerRoutine.execute())
 
