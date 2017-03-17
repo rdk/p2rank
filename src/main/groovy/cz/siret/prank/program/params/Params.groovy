@@ -93,6 +93,8 @@ class Params {
      */
     int protr_hist_bins = 5
 
+    boolean protr_hist_cumulative = false
+
     //== CLASSIFIERS ===================
 
     /**

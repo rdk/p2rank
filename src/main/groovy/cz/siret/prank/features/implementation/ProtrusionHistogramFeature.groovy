@@ -48,9 +48,15 @@ class ProtrusionHistogramFeature extends SasFeatureCalculator implements Paramet
         double step = (params.protrusion_radius - MIN_DIST) / (n - 1)
         double cutoff = maxDist
         for (int i = n - 1; i >= 0; i--) {
-            atoms =  atoms.cutoffAtomsAround(sasPoint, cutoff)
+            atoms = atoms.cutoffAtomsAround(sasPoint, cutoff)
             bins[i] = atoms.count
             cutoff -= step
+        }
+
+        if (!params.protr_hist_cumulative) {
+            for (int i = n-1; i >= 0; i--) {
+                bins[i] -= bins[i-1]
+            }
         }
 
         return bins
