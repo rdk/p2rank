@@ -163,7 +163,7 @@ class EvalResults implements Parametrized, Writable  {
 
 
 
-    static void logClassifierStats(ClassifierStats cs, String outdir) {
+    void logClassifierStats(ClassifierStats cs, String outdir) {
         String dir = "$outdir/classifier"
         mkdirs(dir)
 
@@ -174,7 +174,8 @@ class EvalResults implements Parametrized, Writable  {
             writeFile "$dir/hist_${label}.csv", hist.toCSV()
         }
 
-        writeFile "$dir/roc_curve.csv", Curves.roc(cs.predictions).toCSV()
+        if (cs.collecting && params.stats_curves)
+            writeFile "$dir/roc_curve.csv", Curves.roc(cs.predictions).toCSV()
     }
 
     /**

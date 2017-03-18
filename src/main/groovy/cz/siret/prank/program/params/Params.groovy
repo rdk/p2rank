@@ -475,6 +475,8 @@ class Params {
      */
     boolean stats_collect_predictions = false
 
+    /** produce ROC and PR curve graphs (not fully implemented yet) */
+    boolean stats_curves = false
 
 //===========================================================================================================//
 
