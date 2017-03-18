@@ -7,7 +7,7 @@ import cz.siret.prank.utils.CSV
 import static cz.siret.prank.utils.PerfUtils.formatDouble
 
 /**
- *
+ * Summary of predicted pockets for one protein.
  */
 class PredictionSummary {
 

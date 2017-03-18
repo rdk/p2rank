@@ -1,4 +1,4 @@
-package cz.siret.prank.score.results
+package cz.siret.prank.program.routines.results
 
 import cz.siret.prank.domain.Ligand
 import cz.siret.prank.domain.Pocket
@@ -11,10 +11,11 @@ import org.apache.commons.lang3.StringUtils
 import static cz.siret.prank.utils.Formatter.*
 
 /**
- * Represents evaluation of pocket prediction on a set of structures
+ * Represents evaluation of pocket prediction on a dataset of proteins
  *
- * allows to collects results for list of criteria simultaneously
- * threadsafe
+ * Allows to collect results for a set of different pocket identification success criteria simultaneously.
+ *
+ * Threadsafe.
  */
 @Slf4j
 class Evaluation {

@@ -10,7 +10,8 @@ import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 
 /**
- * Calculates pockets from list of Connolly points with ligandability scores
+ * Calculates pockets from list of SAS points with ligandability scores.
+ * (core of P2RANK algorithm)
  */
 @Slf4j
 class PocketPredictor implements Parametrized {

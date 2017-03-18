@@ -6,7 +6,7 @@ import cz.siret.prank.program.ml.ClassifierFactory
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.score.prediction.PointScoreCalculator
-import cz.siret.prank.score.results.ClassifierStats
+import cz.siret.prank.score.metrics.ClassifierStats
 import cz.siret.prank.utils.ATimer
 import cz.siret.prank.utils.CSV
 import cz.siret.prank.utils.Futils

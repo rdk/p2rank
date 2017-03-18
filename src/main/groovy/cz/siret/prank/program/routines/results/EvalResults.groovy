@@ -3,13 +3,13 @@ package cz.siret.prank.program.routines.results
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.score.results.ClassifierStats
-import cz.siret.prank.score.results.Evaluation
+import cz.siret.prank.score.metrics.ClassifierStats
+import cz.siret.prank.score.metrics.Curves
 import cz.siret.prank.utils.CSV
 import cz.siret.prank.utils.Formatter
 import cz.siret.prank.utils.PerfUtils
 import cz.siret.prank.utils.Writable
-import cz.siret.prank.utils.stat.Histogram
+import cz.siret.prank.score.metrics.Histogram
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
@@ -142,9 +142,9 @@ class EvalResults implements Parametrized, Writable  {
         m.TRAIN_RATIO = trainRatio
         m.TRAIN_POS_RATIO = trainPositivesRatio
 
-        m.putAll classifierStats.statsMap
+        m.putAll classifierStats.metricsMap
         if (params.classifier_train_stats && classifierTrainStats!=null) {
-            m.putAll classifierTrainStats.statsMap.collectEntries { key, value -> ["train_" + key, value] }
+            m.putAll classifierTrainStats.metricsMap.collectEntries { key, value -> ["train_" + key, value] }
         }
 
         if (params.feature_importances && featureImportances!=null) {
@@ -173,6 +173,8 @@ class EvalResults implements Parametrized, Writable  {
 
             writeFile "$dir/hist_${label}.csv", hist.toCSV()
         }
+
+        writeFile "$dir/roc_curve.csv", Curves.roc(cs.predictions).toCSV()
     }
 
     /**

@@ -41,10 +41,10 @@ abstract class EvalRoutine extends Routine {
         double possible = all - top1
         double pcPossible = diff / possible
 
-        double P = results.classifierStats.stats.p
-        double R = results.classifierStats.stats.r
-        double FM = results.classifierStats.stats.f1
-        double MCC = results.classifierStats.stats.MCC
+        double P = results.classifierStats.metrics.p
+        double R = results.classifierStats.metrics.r
+        double FM = results.classifierStats.metrics.f1
+        double MCC = results.classifierStats.metrics.MCC
 
         double ligSize = results.rescoredEval.avgLigandAtoms
         double pocketVol = results.rescoredEval.avgPocketVolume

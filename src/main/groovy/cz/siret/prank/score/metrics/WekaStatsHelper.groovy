@@ -1,5 +1,6 @@
-package cz.siret.prank.score.results
+package cz.siret.prank.score.metrics
 
+import cz.siret.prank.score.metrics.ClassifierStats
 import groovy.transform.CompileStatic
 import weka.classifiers.evaluation.NominalPrediction
 import weka.classifiers.evaluation.Prediction
@@ -14,18 +15,18 @@ import weka.core.Instances
 @CompileStatic
 class WekaStatsHelper {
 
-    List<ClassifierStats.Pred> preds
+    List<PPred> preds
     Instances wekaPreds
 
-    WekaStatsHelper(List<ClassifierStats.Pred> preds) {
+    WekaStatsHelper(List<PPred> preds) {
         this.preds = preds
 
         wekaPreds = new ThresholdCurve().getCurve(toWekaNominalPredictions(preds), 1)
     }
 
-    private ArrayList<Prediction> toWekaNominalPredictions(List<ClassifierStats.Pred> preds) {
+    private ArrayList<Prediction> toWekaNominalPredictions(List<PPred> preds) {
         ArrayList<Prediction> res = new ArrayList<>(preds.size())
-        for (ClassifierStats.Pred p : preds) {
+        for (PPred p : preds) {
             double actual = p.observed ? 1d : 0d
             double[] distribution = [1-p.score, p.score] as double[]
             res.add(new NominalPrediction(actual, distribution))

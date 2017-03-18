@@ -1,8 +1,7 @@
 package cz.siret.prank.program.routines.results
 
 import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.score.results.ClassifierStats
-import cz.siret.prank.score.results.Evaluation
+import cz.siret.prank.score.metrics.ClassifierStats
 import cz.siret.prank.utils.CSV
 import cz.siret.prank.utils.Writable
 import groovy.transform.CompileStatic
@@ -30,7 +29,7 @@ class PredictResults implements Parametrized, Writable {
 
     Map getStats() {
         Map m = evaluation.stats
-        m.putAll( classStats.statsMap )
+        m.putAll( classStats.metricsMap )
 
         return m
     }
@@ -99,10 +98,10 @@ class PredictResults implements Parametrized, Writable {
         m.DCA_4_0 = formatPercent evaluation.calcDefaultCriteriumSuccessRate(0)
         m.DCA_4_2 = formatPercent evaluation.calcDefaultCriteriumSuccessRate(2)
 
-        m.P =   fmt classStats.stats.p
-        m.R =   fmt classStats.stats.r
-        m.F1 =  fmt classStats.stats.f1
-        m.MCC = fmt classStats.stats.MCC
+        m.P =   fmt classStats.metrics.p
+        m.R =   fmt classStats.metrics.r
+        m.F1 =  fmt classStats.metrics.f1
+        m.MCC = fmt classStats.metrics.MCC
 
         m.ligSize =    fmt evaluation.avgLigandAtoms
         m.pocketVol =  fmt evaluation.avgPocketVolume

@@ -1,5 +1,6 @@
 package cz.siret.prank.score.results
 
+import cz.siret.prank.score.metrics.ClassifierStats
 import org.junit.Test
 
 class ClassifierStatsTest {

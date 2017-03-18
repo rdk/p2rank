@@ -1,4 +1,4 @@
-package cz.siret.prank.utils.stat
+package cz.siret.prank.score.metrics
 
 import groovy.transform.CompileStatic
 

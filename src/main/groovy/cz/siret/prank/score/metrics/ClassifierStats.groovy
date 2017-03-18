@@ -1,7 +1,6 @@
-package cz.siret.prank.score.results
+package cz.siret.prank.score.metrics
 
 import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.utils.stat.Histogram
 import groovy.transform.CompileStatic
 
 import java.text.DecimalFormat
@@ -32,12 +31,12 @@ class ClassifierStats implements Parametrized {
     Histograms histograms = new Histograms()
 
     /**
-     * Flyweight 1D stats accessor
+     * Flyweight 1D metrics accessor
      */
-    Stats stats = new Stats()
+    Metrics metrics = new Metrics()
 
-    boolean collecting = false
-    List<Pred> predictions
+    boolean collecting = false      // if true collect individual predictions
+    ArrayList<PPred> predictions
 
     ClassifierStats() {
         nclasses = 2
@@ -102,7 +101,7 @@ class ClassifierStats implements Parametrized {
         histograms.score1.put(hist[1])
 
         if (collecting) {
-            predictions.add(new Pred(observed, score))
+            predictions.add(new PPred(observed, score))
         }
 
         op[observed?1:0][predicted?1:0]++
@@ -131,16 +130,7 @@ class ClassifierStats implements Parametrized {
 
 //===========================================================================================================//
 
-    static class Pred {
-        boolean observed   // true if observed class is 1
-        double score       // predicted score for class 1
-        Pred(boolean observed, double score) {
-            this.observed = observed
-            this.score = score
-        }
-    }
-
-    class Histograms {          
+    class Histograms {
 
         /** scores for all points */
         Histogram score  = new Histogram(0, 1, HISTOGRAM_BINS)
@@ -166,7 +156,7 @@ class ClassifierStats implements Parametrized {
     /**
      * flyweight class for 1D statistics 
      */
-    class Stats {
+    class Metrics {
 
         private Advanced advanced = null
 
@@ -329,8 +319,8 @@ class ClassifierStats implements Parametrized {
 
     //===========================================================================================================//
 
-    Map<String, Double> getStatsMap() {
-        stats.toMap()
+    Map<String, Double> getMetricsMap() {
+        metrics.toMap()
     }
 
     //===========================================================================================================//
@@ -345,17 +335,17 @@ class ClassifierStats implements Parametrized {
 
 
     //@CompileStatic
-    String toCSV(String classifierDesc) {
+    String toCSV(String classifierLabel) {
 
-        Stats s = stats
+        Metrics s = metrics
 
         double P = s.p      // precision / positive predictive value
         double R = s.r       // recall / sensitivity / true positive rate
 
         StringBuilder sb = new StringBuilder()
 
-        stats.with {
-            sb << "classifier: ${classifierDesc}\n"
+        metrics.with {
+            sb << "classifier: ${classifierLabel}\n"
             sb << "\n"
             sb << "n:,$count\n"
             sb << "\n"

@@ -9,7 +9,7 @@ import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.rendering.LabeledPoint
 import cz.siret.prank.score.prediction.PocketPredictor
 import cz.siret.prank.score.prediction.PointScoreCalculator
-import cz.siret.prank.score.results.ClassifierStats
+import cz.siret.prank.score.metrics.ClassifierStats
 import cz.siret.prank.utils.PerfUtils
 import cz.siret.prank.utils.WekaUtils
 import groovy.transform.CompileStatic
