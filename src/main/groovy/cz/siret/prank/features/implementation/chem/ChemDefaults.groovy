@@ -2,7 +2,6 @@ package cz.siret.prank.features.implementation.chem
 
 import com.google.common.collect.ImmutableMap
 import com.google.common.collect.ImmutableSet
-import cz.siret.prank.features.PrankFeatureVector
 import groovy.transform.CompileStatic
 
 /**

@@ -2,7 +2,6 @@ package cz.siret.prank.features.implementation.chem
 
 import cz.siret.prank.features.api.AtomFeatureCalculationContext
 import cz.siret.prank.features.api.AtomFeatureCalculator
-import cz.siret.prank.features.implementation.volsite.VolSitePharmacophore
 import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
 

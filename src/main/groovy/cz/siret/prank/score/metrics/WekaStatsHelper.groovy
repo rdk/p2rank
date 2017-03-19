@@ -1,6 +1,5 @@
 package cz.siret.prank.score.metrics
 
-import cz.siret.prank.score.metrics.ClassifierStats
 import groovy.transform.CompileStatic
 import weka.classifiers.evaluation.NominalPrediction
 import weka.classifiers.evaluation.Prediction

@@ -3,7 +3,6 @@ package cz.siret.prank.program.routines
 import cz.siret.prank.collectors.DataPreProcessor
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.program.routines.results.EvalResults
-import cz.siret.prank.utils.ATimer
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.WekaUtils
 import groovy.util.logging.Slf4j
@@ -11,7 +10,6 @@ import groovyx.gpars.GParsPool
 import weka.core.Instances
 
 import static cz.siret.prank.utils.ATimer.startTimer
-import static cz.siret.prank.utils.Futils.writeFile
 
 @Slf4j
 class CrossValidation extends EvalRoutine {

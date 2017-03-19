@@ -11,7 +11,6 @@ import cz.siret.prank.score.WekaSumRescorer
 import cz.siret.prank.score.results.PredictionSummary
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.WekaUtils
-import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import weka.classifiers.Classifier
@@ -19,7 +18,6 @@ import weka.classifiers.Classifier
 import static cz.siret.prank.utils.ATimer.startTimer
 import static cz.siret.prank.utils.Futils.mkdirs
 import static cz.siret.prank.utils.Futils.writeFile
-
 
 /**
  * Routine for making (and evaluating) predictions

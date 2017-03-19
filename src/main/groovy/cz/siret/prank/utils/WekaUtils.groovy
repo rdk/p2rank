@@ -40,8 +40,8 @@ class WekaUtils implements Writable {
         return auxWekaDataset
     }
 
-    static Instance toInstance(List<Double> vector) {
-        return new DenseInstance(1, PerfUtils.toPrimitiveArray(vector))
+    static Instance toInstance(double[] vector) {
+        return new DenseInstance(1, vector)
     }
 
     // == classifiers ===

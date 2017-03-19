@@ -9,7 +9,9 @@ import groovy.transform.CompileStatic
 @CompileStatic
 abstract class FeatureVector {
 
-    abstract List<Double> getVector();
+    abstract double[] getArray()
+
+    abstract List<Double> getVector()
 
     abstract List<String> getHeader()
 

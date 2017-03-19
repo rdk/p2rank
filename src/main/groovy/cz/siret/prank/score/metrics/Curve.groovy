@@ -1,7 +1,4 @@
 package cz.siret.prank.score.metrics
-
-import groovy.transform.CompileDynamic
-
 /**
  * Arbitrary 2D curve
  */

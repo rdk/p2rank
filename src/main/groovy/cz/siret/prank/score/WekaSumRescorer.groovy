@@ -7,9 +7,9 @@ import cz.siret.prank.features.FeatureVector
 import cz.siret.prank.features.PrankFeatureExtractor
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.rendering.LabeledPoint
+import cz.siret.prank.score.metrics.ClassifierStats
 import cz.siret.prank.score.prediction.PocketPredictor
 import cz.siret.prank.score.prediction.PointScoreCalculator
-import cz.siret.prank.score.metrics.ClassifierStats
 import cz.siret.prank.utils.PerfUtils
 import cz.siret.prank.utils.WekaUtils
 import groovy.transform.CompileStatic
@@ -169,8 +169,8 @@ class WekaSumRescorer extends PocketRescorer implements Parametrized  {
 
     }
 
-    private final double[] getDistributionForPoint(Classifier classifier, FeatureVector prop) {
-        PerfUtils.toPrimitiveArray(prop.vector, alloc)
+    private final double[] getDistributionForPoint(Classifier classifier, FeatureVector vect) {
+        PerfUtils.arrayCopy(vect.array, alloc)
         return classifier.distributionForInstance(auxInst)
     }
 

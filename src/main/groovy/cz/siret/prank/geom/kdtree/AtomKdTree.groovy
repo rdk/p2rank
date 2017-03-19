@@ -1,6 +1,5 @@
 package cz.siret.prank.geom.kdtree
 
-import cz.siret.prank.geom.Atoms
 import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
 import cz.siret.prank.geom.Atoms

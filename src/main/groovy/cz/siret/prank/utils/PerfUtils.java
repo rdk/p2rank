@@ -19,6 +19,17 @@ public class PerfUtils {
         return to;
     }
 
+    public static void arrayCopy(double[] from, double[] to) {
+        System.arraycopy(from, 0, to, 0, from.length);
+    }
+
+    public static double[] extendArray(double[] aa, double x) {
+        double[] res = new double[aa.length+1];
+        arrayCopy(aa, res);
+        res[aa.length] = x;
+        return res;
+    }
+
     public static double[] toPrimitiveArray(List<Double> list) {
         return toPrimitiveArray(list, new double[list.size()]);
     }

@@ -3,7 +3,6 @@ package cz.siret.prank.program.routines
 import cz.siret.prank.program.params.Params
 import cz.siret.prank.program.params.RangeParam
 import cz.siret.prank.program.routines.results.EvalResults
-import cz.siret.prank.utils.ATimer
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.plotter.RPlotter
 import groovy.transform.CompileDynamic

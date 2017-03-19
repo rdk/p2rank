@@ -36,6 +36,11 @@ public class PrankFeatureVector extends FeatureVector implements Cloneable {
     }
 
     @Override
+    double[] getArray() {
+        return valueVector.@data
+    }
+
+    @Override
     final List<Double> getVector() {       
 
         return valueVector.toList()

@@ -9,6 +9,7 @@ import cz.siret.prank.geom.Atoms
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.score.criteria.IdentificationCriterium
 import cz.siret.prank.utils.ListUtils
+import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 
@@ -83,6 +84,7 @@ class PointVectorCollector extends VectorCollector implements Parametrized {
         return finalRes
     }
 
+    @CompileStatic
     Result collectWholeSurface(Atoms ligandAtoms, FeatureExtractor proteinExtractorPrototype) {
 
         FeatureExtractor proteinExtractor = (proteinExtractorPrototype as PrankFeatureExtractor).createInstanceForWholeProtein()
@@ -103,13 +105,10 @@ class PointVectorCollector extends VectorCollector implements Parametrized {
                 // points in between are left out from training
 
                 if (ligPoint || negPoint) {
-                    int clazz = ligPoint ? 1 : 0
+                    double clazz = ligPoint ? 1d : 0d
 
-                    FeatureVector prop = proteinExtractor.calcFeatureVector(point)
-
-                    List<Double> vect = prop.getVector()
-                    vect.add((double)clazz)
-                    res.add(vect)
+                    FeatureVector vect = proteinExtractor.calcFeatureVector(point)
+                    res.add(vect.array, clazz)
 
                     if (ligPoint) {
                         res.positives++
@@ -126,6 +125,7 @@ class PointVectorCollector extends VectorCollector implements Parametrized {
         return res
     }
 
+    @CompileStatic
     private Result collectForPocket(Pocket pocket, PredictionPair pair, Atoms ligandAtoms, FeatureExtractor pocketExtractor) {
         boolean ligPocket = pair.isCorrectlyPredictedPocket(pocket, criterion)
 
@@ -139,7 +139,7 @@ class PointVectorCollector extends VectorCollector implements Parametrized {
             boolean ligPoint = (closestLigandDistance <= POSITIVE_VC_LIGAND_DISTANCE)
 
             boolean includePoint = false
-            int clazz = ligPoint ? 1 : 0
+            double clazz = ligPoint ? 1d : 0d
 
             if (ligPoint) {
                 res.positives++
@@ -152,15 +152,10 @@ class PointVectorCollector extends VectorCollector implements Parametrized {
             }
 
             if (includePoint) {
-                FeatureVector prop = pocketExtractor.calcFeatureVector(point)
-
-                List<Double> vect = prop.getVector()
-                vect.add((double)clazz)
-                res.add(vect)
-
+                FeatureVector vect = pocketExtractor.calcFeatureVector(point)
+                res.add(vect.array, clazz)
                 //log.trace "TRAIN VECT: " + vect
             }
-
         }
 
         return res
