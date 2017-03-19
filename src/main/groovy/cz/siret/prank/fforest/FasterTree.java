@@ -47,7 +47,7 @@ import java.util.Random;
  * @author Fran Supek (fran.supek[AT]irb.hr) - adapted code
  * @version $Revision: 0.99$
  */
-class FastRandomTree
+class FasterTree
         extends AbstractClassifier
         implements OptionHandler, WeightedInstancesHandler, Runnable {
 
@@ -55,12 +55,12 @@ class FastRandomTree
   static final long serialVersionUID = 8934314652175299375L;
   
   /** The subtrees appended to this tree (node). */
-  protected FastRandomTree[] m_Successors;
+  protected FasterTree[] m_Successors;
   
   /**
    * For access to parameters of the RF (k, or maxDepth).
    */
-  protected FastRandomForest m_MotherForest;
+  protected FasterForest m_MotherForest;
 
   /** The attribute to split on. */
   protected int m_Attribute = -1;
@@ -514,9 +514,9 @@ class FastRandomTree
       int belowTheSplitStartsAt = splitDataNew(  m_Attribute, m_SplitPoint, sortedIndices, startAt, endAt );
       
 
-      m_Successors = new FastRandomTree[dist.length];  // dist.length now always == 2
+      m_Successors = new FasterTree[dist.length];  // dist.length now always == 2
       for (int i = 0; i < dist.length; i++) {
-        m_Successors[i] = new FastRandomTree();
+        m_Successors[i] = new FasterTree();
         m_Successors[i].m_MotherForest = this.m_MotherForest;
         m_Successors[i].data = this.data;
         // new in 0.99 - used in distributionSequentialAtt()
@@ -1358,7 +1358,7 @@ class FastRandomTree
    * @param argv the commandline parameters
    */
   public static void main(String[] argv) {
-    runClassifier(new FastRandomTree(), argv);
+    runClassifier(new FasterTree(), argv);
   }
 
 

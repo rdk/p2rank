@@ -79,7 +79,7 @@ public class Benchmark {
       classifiers[i].setOptions(new String[]{"-I", args[1],
         "-num-slots", Integer.toString(threadNums.get(i)) });
       
-      classifiers[i+1] = new FastRandomForest();
+      classifiers[i+1] = new FasterForest();
       classifiers[i+1].setOptions(new String[]{"-I", args[1], // "-import",
         "-threads", Integer.toString(threadNums.get(i)) });
       

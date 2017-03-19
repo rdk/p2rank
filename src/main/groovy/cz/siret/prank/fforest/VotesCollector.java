@@ -71,9 +71,9 @@ public class VotesCollector implements Callable<Double>{
 
       numVotes++;
       
-      FastRandomTree aTree;
-      if ( m_Classifiers[treeIdx] instanceof FastRandomTree)
-        aTree = (FastRandomTree) m_Classifiers[treeIdx];
+      FasterTree aTree;
+      if ( m_Classifiers[treeIdx] instanceof FasterTree)
+        aTree = (FasterTree) m_Classifiers[treeIdx];
       else
         throw new IllegalArgumentException("Only FastRandomTrees accepted in the VotesCollector.");
 

@@ -92,7 +92,7 @@ class FastRfBagging extends RandomizableIteratedSingleClassifierEnhancer
    * @throws Exception if the classifier could not be built successfully
    */
   public void buildClassifier(Instances data, int numThreads,
-                              FastRandomForest motherForest) throws Exception {
+                              FasterForest motherForest) throws Exception {
 
     // can classifier handle the vals?
     getCapabilities().testWithFail(data);
@@ -101,7 +101,7 @@ class FastRfBagging extends RandomizableIteratedSingleClassifierEnhancer
     data = new Instances(data);
     data.deleteWithMissingClass();
 
-    if (!(m_Classifier instanceof FastRandomTree))
+    if (!(m_Classifier instanceof FasterTree))
       throw new IllegalArgumentException("The FastRfBagging class accepts " +
         "only FastRandomTree as its base classifier.");
 
@@ -111,7 +111,7 @@ class FastRfBagging extends RandomizableIteratedSingleClassifierEnhancer
      * normally does. */
     m_Classifiers = new Classifier[m_NumIterations];
     for (int i = 0; i < m_Classifiers.length; i++) {
-      FastRandomTree curTree = new FastRandomTree();
+      FasterTree curTree = new FasterTree();
       // all parameters for training will be looked up in the motherForest (maxDepth, k_Value)
       curTree.m_MotherForest = motherForest;
       // 0.99: reference to these arrays will get passed down all nodes so the array can be re-used 
@@ -161,9 +161,9 @@ class FastRfBagging extends RandomizableIteratedSingleClassifierEnhancer
         inBag[treeIdx] = bagData.inBag; // store later for OOB error calculation
 
         // build the classifier
-        if (m_Classifiers[treeIdx] instanceof FastRandomTree) {
+        if (m_Classifiers[treeIdx] instanceof FasterTree) {
 
-          FastRandomTree aTree = (FastRandomTree) m_Classifiers[treeIdx];
+          FasterTree aTree = (FasterTree) m_Classifiers[treeIdx];
           aTree.data = bagData;
 
           Future<?> future = threadPool.submit(aTree);
@@ -384,7 +384,7 @@ class FastRfBagging extends RandomizableIteratedSingleClassifierEnhancer
    */
   public FastRfBagging() {
 
-    m_Classifier = new FastRandomTree();
+    m_Classifier = new FasterTree();
   }
 
 

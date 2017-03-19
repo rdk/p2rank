@@ -92,7 +92,7 @@ import java.util.Vector;
  * @author Fran Supek (fran.supek[AT]irb.hr) - adapted code
  * @version $Revision: 0.99$
  */
-public class FastRandomForest
+public class FasterForest
   extends AbstractClassifier
   implements OptionHandler, Randomizable, WeightedInstancesHandler,
              AdditionalMeasureProducer, TechnicalInformationHandler{
@@ -565,7 +565,7 @@ public class FastRandomForest
    * @return the capabilities of this classifier
    */
   public Capabilities getCapabilities(){
-    return new FastRandomTree().getCapabilities();
+    return new FasterTree().getCapabilities();
   }
 
 
@@ -609,7 +609,7 @@ public class FastRandomForest
     if(m_KValue > data.numAttributes() - 1) m_KValue = data.numAttributes() - 1;
     if(m_KValue < 1) m_KValue = (int)Utils.log2(data.numAttributes()) + 1;
 
-    FastRandomTree rTree = new FastRandomTree();
+    FasterTree rTree = new FasterTree();
     rTree.m_MotherForest = this; // allows to retrieve KValue and MaxDepth
     // some temporary arrays which need to be separate for every tree, so
     // that the trees can be trained in parallel in different threads
@@ -682,7 +682,7 @@ public class FastRandomForest
    * @param argv the options
    */
   public static void main(String[] argv){
-    runClassifier(new FastRandomForest(), argv);
+    runClassifier(new FasterForest(), argv);
   }
 
   public String getRevision(){
