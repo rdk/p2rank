@@ -1,12 +1,11 @@
-package cz.siret.prank.features.chemproperties
+package cz.siret.prank.features
 
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Protein
-import cz.siret.prank.features.FeatureExtractor
-import cz.siret.prank.features.FeatureVector
 import cz.siret.prank.features.api.FeatureCalculator
 import cz.siret.prank.features.api.SasFeatureCalculationContext
 import cz.siret.prank.features.generic.GenericHeader
+import cz.siret.prank.features.implementation.chem.ChemFeature
 import cz.siret.prank.features.weight.WeightFun
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Struct
@@ -17,13 +16,13 @@ import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 
 /**
- * Handles the process of calculation of features.
+ * Handles the process of calculating prank feature vectors.
  * At first it calculates features for solvent exposed atoms of the protein.
  * Then it projects them onto ASA points and calculates additional features for ASA point vector.
  */
 @Slf4j
 @CompileStatic
-class ChemFeatureExtractor extends FeatureExtractor<ChemVector> implements Parametrized {
+class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> implements Parametrized {
 
     /** properties of atom itself */
     private Map<Integer, FeatureVector> properties = new HashMap<>()
@@ -57,24 +56,24 @@ class ChemFeatureExtractor extends FeatureExtractor<ChemVector> implements Param
     Atoms deepSurrounding    // for protrusion
     Atoms sampledPoints
 
-    ExtraFeatureSetup extraFeatureSetup
+    FeatureSetup featureSetup
 
 //===========================================================================================================//
 
-    public ChemFeatureExtractor() {
+    public PrankFeatureExtractor() {
         initHeader()
     }
 
-    private ChemFeatureExtractor(Protein protein) {
+    private PrankFeatureExtractor(Protein protein) {
         super(protein)
 
         initHeader()
     }
 
     private void initHeader() {
-        extraFeatureSetup = new ExtraFeatureSetup(params.extra_features)
+        featureSetup = new FeatureSetup(params.extra_features)
 
-        extraFeaturesHeader = extraFeatureSetup.jointHeader
+        extraFeaturesHeader = featureSetup.jointHeader
         atomTableFeatures = params.atom_table_features // ,"apRawInvalids","ap5sasaValids","ap5sasaInvalids"
         residueTableFeatures = params.residue_table_features
 
@@ -88,14 +87,14 @@ class ChemFeatureExtractor extends FeatureExtractor<ChemVector> implements Param
 
     @Override
     FeatureExtractor createPrototypeForProtein(Protein protein) {
-        ChemFeatureExtractor res = new ChemFeatureExtractor(protein)
+        PrankFeatureExtractor res = new PrankFeatureExtractor(protein)
         res.trainingExtractor = this.trainingExtractor
 
         protein.calcuateSurfaceAndExposedAtoms()
         res.deepSurrounding = protein.proteinAtoms.cutoffAtoms(protein.exposedAtoms, params.protrusion_radius).buildKdTree()
 
         // init features
-        for (FeatureCalculator feature : extraFeatureSetup.enabledFeatures) {
+        for (FeatureCalculator feature : featureSetup.enabledFeatures) {
             feature.preProcessProtein(protein)
         }
 
@@ -129,7 +128,7 @@ class ChemFeatureExtractor extends FeatureExtractor<ChemVector> implements Param
      * @param pocket nay be null if it is an instance for whole protein
      * @param proteinPrototype
      */
-    private ChemFeatureExtractor(Protein protein, Pocket pocket, ChemFeatureExtractor proteinPrototype) {
+    private PrankFeatureExtractor(Protein protein, Pocket pocket, PrankFeatureExtractor proteinPrototype) {
         this.protein = protein
         this.pocket = pocket
 
@@ -140,7 +139,7 @@ class ChemFeatureExtractor extends FeatureExtractor<ChemVector> implements Param
         this.atomTableFeatures     = proteinPrototype.atomTableFeatures
         this.residueTableFeatures  = proteinPrototype.residueTableFeatures
         this.trainingExtractor     = proteinPrototype.trainingExtractor
-        this.extraFeatureSetup     = proteinPrototype.extraFeatureSetup
+        this.featureSetup     = proteinPrototype.featureSetup
 
         this.deepSurrounding = proteinPrototype.deepSurrounding
         this.surfaceLayerAtoms = proteinPrototype.surfaceLayerAtoms
@@ -154,7 +153,7 @@ class ChemFeatureExtractor extends FeatureExtractor<ChemVector> implements Param
 
     @Override
     FeatureExtractor createInstanceForPocket(Pocket pocket) {
-        ChemFeatureExtractor res = new ChemFeatureExtractor(protein, pocket, this)
+        PrankFeatureExtractor res = new PrankFeatureExtractor(protein, pocket, this)
 
         if (pocket.surfaceAtoms.count==0) {
             log.error "pocket with no surface atoms! [$protein.name]"
@@ -181,7 +180,7 @@ class ChemFeatureExtractor extends FeatureExtractor<ChemVector> implements Param
      */
     FeatureExtractor createInstanceForWholeProtein() {
 
-        ChemFeatureExtractor res = new ChemFeatureExtractor(protein, null, this)
+        PrankFeatureExtractor res = new PrankFeatureExtractor(protein, null, this)
 
         // init for whole protein
         protein.calcuateSurfaceAndExposedAtoms()
@@ -205,7 +204,7 @@ class ChemFeatureExtractor extends FeatureExtractor<ChemVector> implements Param
     @Override
     void finalizeProteinPrototype() {
         // finalize features
-        for (FeatureCalculator feature : extraFeatureSetup.enabledFeatures) {
+        for (FeatureCalculator feature : featureSetup.enabledFeatures) {
             feature.postProcessProtein(protein)
         }
     }
@@ -246,8 +245,8 @@ class ChemFeatureExtractor extends FeatureExtractor<ChemVector> implements Param
      * @param fromVectors  must match atoms
      * @return
      */
-    private ChemVector calcFeatVectorFromVectors(Atom point, Atoms neighbourhoodAtoms, Map<Integer, FeatureVector> fromVectors) {
-        ChemVector res = new ChemVector(headerAdditionalFeatures)
+    private PrankFeatureVector calcFeatVectorFromVectors(Atom point, Atoms neighbourhoodAtoms, Map<Integer, FeatureVector> fromVectors) {
+        PrankFeatureVector res = new PrankFeatureVector(headerAdditionalFeatures)
 
         //if (fromAtoms.count==0) {
         //    log.error "!!! can't calc representation from empty list "
@@ -262,7 +261,7 @@ class ChemFeatureExtractor extends FeatureExtractor<ChemVector> implements Param
         //}
 
         for (Atom a : neighbourhoodAtoms) {
-            ChemVector props = (ChemVector) fromVectors.get(a.PDBserial)
+            PrankFeatureVector props = (PrankFeatureVector) fromVectors.get(a.PDBserial)
 
             //assert props!=null, "!!! properties not precalculated "
 
@@ -276,20 +275,27 @@ class ChemFeatureExtractor extends FeatureExtractor<ChemVector> implements Param
             double multip = Math.pow(n, AVG_POW)
 
             res.multiply(1d/multip)
-            res.atomDensity *= multip
-            res.hDonorAtoms *= multip
-            res.hAcceptorAtoms *= multip
-        }
 
-        res.atoms = n
+            // special cases (TODO: move to ChemFeature)
+            if (featureSetup.enabledFeatureNames.contains(ChemFeature.NAME)) {
+                res.valueVector.multiply('atomDensity', multip)
+                res.valueVector.multiply('hDonorAtoms', multip)
+                res.valueVector.multiply('hAcceptorAtoms', multip)
+            }
+
+        }
+        // special cases (TODO: move to ChemFeature)
+        if (featureSetup.enabledFeatureNames.contains(ChemFeature.NAME)) {
+            res.valueVector.set('atoms', n)
+        }
 
 
         // calculate extra SAS features
 
         SasFeatureCalculationContext context = new SasFeatureCalculationContext(protein, neighbourhoodAtoms, this)
-        for (FeatureCalculator feature : extraFeatureSetup.enabledSasFeatures) {
+        for (FeatureCalculator feature : featureSetup.enabledSasFeatures) {
             double[] values = feature.calculateForSasPoint(point, context)
-            res.additionalVector.setValues(feature.header, values)
+            res.valueVector.setValues(feature.header, values)
         }
 
         return res
@@ -303,7 +309,7 @@ class ChemFeatureExtractor extends FeatureExtractor<ChemVector> implements Param
      * @param store
      * @return
      */
-    private ChemVector calcFeatureVectorFromAtoms(Atom point, boolean useSmoothRepresentations, Atoms neighbourhoodAtoms) {
+    private PrankFeatureVector calcFeatureVectorFromAtoms(Atom point, boolean useSmoothRepresentations, Atoms neighbourhoodAtoms) {
         Map<Integer, FeatureVector> fromVectors
         if (useSmoothRepresentations) {
             fromVectors = smoothRepresentations
@@ -327,7 +333,7 @@ class ChemFeatureExtractor extends FeatureExtractor<ChemVector> implements Param
     /**
      * initial atom smoothRepresentations that feature vectors are calculated from
      */
-    private ChemVector calcSmoothRepresentation(Atom atom) {
+    private PrankFeatureVector calcSmoothRepresentation(Atom atom) {
 
         Atoms neighbourhood = surfaceLayerAtoms.cutoffAroundAtom(atom, SMOOTHING_CUTOFF_DIST)
 
@@ -337,14 +343,14 @@ class ChemFeatureExtractor extends FeatureExtractor<ChemVector> implements Param
     /**
      * @return feature vector for individual atom
      */
-    private ChemVector calcAtomProperties(Atom atom) {
-        return ChemVector.forAtom(atom, this)
+    private PrankFeatureVector calcAtomProperties(Atom atom) {
+        return PrankFeatureVector.forAtom(atom, this)
     }
 
 //===========================================================================================================//
 
     @Override
-    public ChemVector calcFeatureVector(Atom point) {
+    public PrankFeatureVector calcFeatureVector(Atom point) {
 
         Atoms neighbourhood = surfaceLayerAtoms.cutoffAroundAtom(point, NEIGH_CUTOFF_DIST)
 
@@ -353,7 +359,7 @@ class ChemFeatureExtractor extends FeatureExtractor<ChemVector> implements Param
 
     @Override
     public List<String> getVectorHeader() {
-        return new ChemVector(headerAdditionalFeatures).getHeader()
+        return new PrankFeatureVector(headerAdditionalFeatures).getHeader()
     }
 
 }

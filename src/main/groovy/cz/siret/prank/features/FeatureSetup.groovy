@@ -1,14 +1,14 @@
-package cz.siret.prank.features.chemproperties
+package cz.siret.prank.features
 
 import cz.siret.prank.features.api.FeatureCalculator
 import cz.siret.prank.features.api.FeatureRegistry
 import groovy.transform.CompileStatic
 
 /**
- *
+ * particular setup of enabled features
  */
 @CompileStatic
-class ExtraFeatureSetup {
+class FeatureSetup {
 
     /**
      * preserves order of features from enabledFeatureNames
@@ -23,7 +23,7 @@ class ExtraFeatureSetup {
     List<String> enabledFeatureNames
 
 
-    ExtraFeatureSetup(List<String> enabledFeatureNames) {
+    FeatureSetup(List<String> enabledFeatureNames) {
         this.enabledFeatureNames = enabledFeatureNames
 
         for (String name : enabledFeatureNames) {

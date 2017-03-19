@@ -1,4 +1,4 @@
-package cz.siret.prank.features.volsite
+package cz.siret.prank.features.implementation.volsite
 
 import groovy.transform.CompileStatic
 

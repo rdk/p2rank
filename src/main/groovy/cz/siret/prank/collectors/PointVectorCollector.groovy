@@ -4,7 +4,7 @@ import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.features.FeatureVector
-import cz.siret.prank.features.chemproperties.ChemFeatureExtractor
+import cz.siret.prank.features.PrankFeatureExtractor
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.score.criteria.IdentificationCriterium
@@ -85,7 +85,7 @@ class PointVectorCollector extends VectorCollector implements Parametrized {
 
     Result collectWholeSurface(Atoms ligandAtoms, FeatureExtractor proteinExtractorPrototype) {
 
-        FeatureExtractor proteinExtractor = (proteinExtractorPrototype as ChemFeatureExtractor).createInstanceForWholeProtein()
+        FeatureExtractor proteinExtractor = (proteinExtractorPrototype as PrankFeatureExtractor).createInstanceForWholeProtein()
         Result res = new Result()
 
         Atoms points = proteinExtractor.sampledPoints

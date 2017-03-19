@@ -4,6 +4,8 @@ import cz.siret.prank.features.implementation.BfactorFeature
 import cz.siret.prank.features.implementation.ProtrusionFeature
 import cz.siret.prank.features.implementation.ProtrusionHistogramFeature
 import cz.siret.prank.features.implementation.SurfaceProtrusionFeature
+import cz.siret.prank.features.implementation.chem.ChemFeature
+import cz.siret.prank.features.implementation.volsite.VolsiteFeature
 import cz.siret.prank.program.PrankException
 import groovy.transform.CompileStatic
 
@@ -34,6 +36,8 @@ class FeatureRegistry {
 
     static {
 
+        registerFeature(new ChemFeature())
+        registerFeature(new VolsiteFeature())
         registerFeature(new ProtrusionFeature())
         registerFeature(new SurfaceProtrusionFeature())
         registerFeature(new BfactorFeature())

@@ -1,7 +1,8 @@
-package cz.siret.prank.features.chemproperties
+package cz.siret.prank.features.implementation.chem
 
 import com.google.common.collect.ImmutableMap
 import com.google.common.collect.ImmutableSet
+import cz.siret.prank.features.PrankFeatureVector
 import groovy.transform.CompileStatic
 
 /**
@@ -179,7 +180,7 @@ final class ChemDefaults {
     static {
         AACODES.each { String code ->
             ChemVector p = new ChemVector()
-            ChemDefaults.setAAProperties(p, code)
+            setAAProperties(p, code)
             AA_DEFAULTS.put(code, p)
         }
         AA_DEFAULTS = ImmutableMap.copyOf(AA_DEFAULTS)

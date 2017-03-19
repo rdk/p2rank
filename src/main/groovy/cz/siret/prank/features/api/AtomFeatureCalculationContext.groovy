@@ -11,8 +11,13 @@ class AtomFeatureCalculationContext {
 
     Protein protein
 
-    AtomFeatureCalculationContext(Protein protein) {
-        this.protein = protein
-    }
+    /**
+     * 3-letter code of amino adid residue of the atom
+     */
+    String residueCode
 
+    AtomFeatureCalculationContext(Protein protein, String residueCode) {
+        this.protein = protein
+        this.residueCode = residueCode
+    }
 }

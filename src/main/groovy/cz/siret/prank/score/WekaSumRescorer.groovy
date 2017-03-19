@@ -4,7 +4,7 @@ import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Prediction
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.features.FeatureVector
-import cz.siret.prank.features.chemproperties.ChemFeatureExtractor
+import cz.siret.prank.features.PrankFeatureExtractor
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.rendering.LabeledPoint
 import cz.siret.prank.score.prediction.PocketPredictor
@@ -78,7 +78,7 @@ class WekaSumRescorer extends PocketRescorer implements Parametrized  {
         // compute ligandability scores of connolly points for predictions and visualization
         if (params.predictions || visualizeAllSurface) {
 
-            FeatureExtractor extractor = (proteinExtractor as ChemFeatureExtractor).createInstanceForWholeProtein()
+            FeatureExtractor extractor = (proteinExtractor as PrankFeatureExtractor).createInstanceForWholeProtein()
 
             labeledPoints = new ArrayList<>(extractor.sampledPoints.count)
             for (Atom point in extractor.sampledPoints) {

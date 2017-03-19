@@ -2,7 +2,6 @@ package cz.siret.prank.features
 
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Protein
-import cz.siret.prank.features.chemproperties.ChemFeatureExtractor
 import cz.siret.prank.geom.Atoms
 import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
@@ -64,7 +63,7 @@ abstract class FeatureExtractor<P extends FeatureVector> {
      */
     static FeatureExtractor createFactory() {
 
-        FeatureExtractor res = new ChemFeatureExtractor()
+        FeatureExtractor res = new PrankFeatureExtractor()
         return res
     }
 

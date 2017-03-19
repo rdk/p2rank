@@ -9,12 +9,12 @@ import groovy.transform.CompileStatic
 @CompileStatic
 abstract class FeatureVector {
 
-    public String toCSV() {
-        return CSV.fromDoubles(getVector())
-    }
-
     abstract List<Double> getVector();
 
     abstract List<String> getHeader()
 
+    public String toCSV() {
+        return CSV.fromDoubles(getVector())
+    }
+    
 }
