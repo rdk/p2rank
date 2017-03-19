@@ -1,7 +1,6 @@
 package cz.siret.prank.features
 
 import cz.siret.prank.features.api.AtomFeatureCalculationContext
-import cz.siret.prank.features.api.FeatureCalculator
 import cz.siret.prank.features.generic.GenericHeader
 import cz.siret.prank.features.generic.GenericVector
 import cz.siret.prank.features.tables.PropertyTable
@@ -97,9 +96,9 @@ public class PrankFeatureVector extends FeatureVector implements Cloneable {
         // Calculate extra atom features
 
         AtomFeatureCalculationContext context = new AtomFeatureCalculationContext(extractor.protein, residueCode)
-        for (FeatureCalculator feature : extractor.featureSetup.enabledAtomFeatures) {
-            double[] values = feature.calculateForAtom(atom, context)
-            valueVector.setValues(feature.header, values)
+        for (FeatureSetup.Feature feature : extractor.featureSetup.enabledAtomFeatures) {
+            double[] values = feature.calculator.calculateForAtom(atom, context)
+            valueVector.setValues(feature.startIndex, values)
         }
 
     }

@@ -2,7 +2,6 @@ package cz.siret.prank.features
 
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Protein
-import cz.siret.prank.features.api.FeatureCalculator
 import cz.siret.prank.features.api.SasFeatureCalculationContext
 import cz.siret.prank.features.generic.GenericHeader
 import cz.siret.prank.features.implementation.chem.ChemFeature
@@ -94,8 +93,8 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
         res.deepSurrounding = protein.proteinAtoms.cutoffAtoms(protein.exposedAtoms, params.protrusion_radius).buildKdTree()
 
         // init features
-        for (FeatureCalculator feature : featureSetup.enabledFeatures) {
-            feature.preProcessProtein(protein)
+        for (FeatureSetup.Feature feature : featureSetup.enabledFeatures) {
+            feature.calculator.preProcessProtein(protein)
         }
 
         return res
@@ -204,8 +203,8 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
     @Override
     void finalizeProteinPrototype() {
         // finalize features
-        for (FeatureCalculator feature : featureSetup.enabledFeatures) {
-            feature.postProcessProtein(protein)
+        for (FeatureSetup.Feature feature : featureSetup.enabledFeatures) {
+            feature.calculator.postProcessProtein(protein)
         }
     }
 
@@ -293,9 +292,9 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
         // calculate extra SAS features
 
         SasFeatureCalculationContext context = new SasFeatureCalculationContext(protein, neighbourhoodAtoms, this)
-        for (FeatureCalculator feature : featureSetup.enabledSasFeatures) {
-            double[] values = feature.calculateForSasPoint(point, context)
-            res.valueVector.setValues(feature.header, values)
+        for (FeatureSetup.Feature feature : featureSetup.enabledSasFeatures) {
+            double[] values = feature.calculator.calculateForSasPoint(point, context)
+            res.valueVector.setValues(feature.startIndex, values)
         }
 
         return res

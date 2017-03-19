@@ -5,22 +5,22 @@ import cz.siret.prank.features.api.FeatureRegistry
 import groovy.transform.CompileStatic
 
 /**
- * particular setup of enabled features
+ * particular setup of features enabled for given run
  */
 @CompileStatic
 class FeatureSetup {
 
+    List<String> enabledFeatureNames
     /**
      * preserves order of features from enabledFeatureNames
      */
-    List<FeatureCalculator> enabledFeatures = new ArrayList<>()
+    List<Feature> enabledFeatures = new ArrayList<>()
 
-    List<FeatureCalculator> enabledAtomFeatures = new ArrayList<>()
-    List<FeatureCalculator> enabledSasFeatures = new ArrayList<>()
+    List<Feature> enabledAtomFeatures = new ArrayList<>()
+    List<Feature> enabledSasFeatures = new ArrayList<>()
 
     List<String> jointHeader = new ArrayList<>()
 
-    List<String> enabledFeatureNames
 
 
     FeatureSetup(List<String> enabledFeatureNames) {
@@ -30,21 +30,35 @@ class FeatureSetup {
             FeatureCalculator calculator = FeatureRegistry.featureImplementations.get(name)
 
             if (calculator!=null) {
+                Feature entry = new Feature(calculator)
                 if (calculator.type == FeatureCalculator.Type.ATOM) {
-                    enabledAtomFeatures.add(calculator)
+                    enabledAtomFeatures.add(entry)
                 } else {
-                    enabledSasFeatures.add(calculator)
+                    enabledSasFeatures.add(entry)
                 }
-                enabledFeatures.add(calculator)
+                enabledFeatures.add(entry)
             } else {
                 throw new IllegalStateException("Feature implementation not found: " + name)
             }
         }
 
-        for (FeatureCalculator calculator : enabledFeatures) {
-            jointHeader.addAll(calculator.header)
+        int start = 0
+        for (Feature feat : enabledFeatures) {
+            jointHeader.addAll(feat.calculator.header)
+            feat.startIndex = start
+            start += feat.calculator.header.size()
         }
 
+    }
+
+    static class Feature {
+        FeatureCalculator calculator
+        /** start index in feature vector */
+        int startIndex
+
+        Feature(FeatureCalculator calculator) {
+            this.calculator = calculator
+        }
     }
 
 }
