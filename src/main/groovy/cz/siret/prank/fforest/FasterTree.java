@@ -235,9 +235,9 @@ class FasterTree
    * destroys this tree in the process to fee up memory
    */
   public FasterTree toSlimVersion() {
-    FasterTree left = sucessorLeft.toSlimVersion();
+    FasterTree left = sucessorLeft==null ? null : sucessorLeft.toSlimVersion();
     sucessorLeft = null;
-    FasterTree right = sucessorRight.toSlimVersion();
+    FasterTree right = sucessorRight==null ? null : sucessorRight.toSlimVersion();
     sucessorRight = null;
 
     FasterTree res = new FasterTree();
