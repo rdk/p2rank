@@ -101,9 +101,9 @@ class FastRfBagging extends RandomizableIteratedSingleClassifierEnhancer
     data = new Instances(data);
     data.deleteWithMissingClass();
 
-    if (!(m_Classifier instanceof FasterTree))
+    if (!(m_Classifier instanceof FasterTreeTrainable))
       throw new IllegalArgumentException("The FastRfBagging class accepts " +
-        "only FastRandomTree as its base classifier.");
+        "only FasterTreeTrainable as its base classifier.");
 
     /* We fill the m_Classifiers array by creating lots of trees with new()
      * because this is much faster than using serialization to deep-copy the
@@ -111,7 +111,7 @@ class FastRfBagging extends RandomizableIteratedSingleClassifierEnhancer
      * normally does. */
     m_Classifiers = new Classifier[m_NumIterations];
     for (int i = 0; i < m_Classifiers.length; i++) {
-      FasterTree curTree = new FasterTree();
+      FasterTreeTrainable curTree = new FasterTreeTrainable();
       // all parameters for training will be looked up in the motherForest (maxDepth, k_Value)
       curTree.m_MotherForest = motherForest;
       // 0.99: reference to these arrays will get passed down all nodes so the array can be re-used 
@@ -161,9 +161,9 @@ class FastRfBagging extends RandomizableIteratedSingleClassifierEnhancer
         inBag[treeIdx] = bagData.inBag; // store later for OOB error calculation
 
         // build the classifier
-        if (m_Classifiers[treeIdx] instanceof FasterTree) {
+        if (m_Classifiers[treeIdx] instanceof FasterTreeTrainable) {
 
-          FasterTree aTree = (FasterTree) m_Classifiers[treeIdx];
+          FasterTreeTrainable aTree = (FasterTreeTrainable) m_Classifiers[treeIdx];
           aTree.data = bagData;
 
           Future<?> future = threadPool.submit(aTree);
@@ -179,8 +179,10 @@ class FastRfBagging extends RandomizableIteratedSingleClassifierEnhancer
       // make sure all trees have been trained before proceeding
       for (int treeIdx = 0; treeIdx < m_Classifiers.length; treeIdx++) {
         futures.get(treeIdx).get();
-
       }
+
+
+
 
       // calc OOB error?
       if (getCalcOutOfBag() || getComputeImportances()) {
@@ -209,6 +211,11 @@ class FastRfBagging extends RandomizableIteratedSingleClassifierEnhancer
           }
           //m_FeatureNames[j] = data.attribute(j).name();
         }
+      }
+
+      // transform all trees to slim versions, TODO: parallelize
+      for (int i=0; i!=m_Classifiers.length; ++i) {
+        m_Classifiers[i] = ((FasterTreeTrainable)m_Classifiers[i]).toSlimVersion();
       }
 
       threadPool.shutdown();
@@ -695,6 +702,6 @@ class FastRfBagging extends RandomizableIteratedSingleClassifierEnhancer
   }
 
   public String getRevision() {
-    return RevisionUtils.extract("$Revision: 0.99$");
+    return RevisionUtils.extract("$Revision: 0.99.1$");
   }
 }

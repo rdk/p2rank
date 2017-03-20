@@ -95,10 +95,10 @@ import java.util.Vector;
 public class FasterForest
   extends AbstractClassifier
   implements OptionHandler, Randomizable, WeightedInstancesHandler,
-             AdditionalMeasureProducer, TechnicalInformationHandler{
+             AdditionalMeasureProducer, TechnicalInformationHandler {
 
   /** for serialization */
-  static final long serialVersionUID = 4216839470751428700L;
+  static final long serialVersionUID = 4216839470751428701L;
 
   /** Number of trees in forest. */
   protected int m_numTrees = 100;
@@ -609,7 +609,7 @@ public class FasterForest
     if(m_KValue > data.numAttributes() - 1) m_KValue = data.numAttributes() - 1;
     if(m_KValue < 1) m_KValue = (int)Utils.log2(data.numAttributes()) + 1;
 
-    FasterTree rTree = new FasterTree();
+    FasterTreeTrainable rTree = new FasterTreeTrainable();
     rTree.m_MotherForest = this; // allows to retrieve KValue and MaxDepth
     // some temporary arrays which need to be separate for every tree, so
     // that the trees can be trained in parallel in different threads

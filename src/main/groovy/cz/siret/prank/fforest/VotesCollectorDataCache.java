@@ -73,9 +73,9 @@ public class VotesCollectorDataCache implements Callable<Double>{
 
       numVotes++;
       
-      FasterTree aTree;
+      FasterTreeTrainable aTree;
       if ( m_Classifiers[treeIdx] instanceof FasterTree)
-        aTree = (FasterTree) m_Classifiers[treeIdx];
+        aTree = (FasterTreeTrainable) m_Classifiers[treeIdx];
       else
         throw new IllegalArgumentException("Only FastRandomTrees accepted in the VotesCollector.");
 
