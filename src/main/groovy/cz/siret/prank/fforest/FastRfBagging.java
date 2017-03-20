@@ -95,11 +95,11 @@ class FastRfBagging extends RandomizableIteratedSingleClassifierEnhancer
                               FasterForest motherForest) throws Exception {
 
     // can classifier handle the vals?
-    getCapabilities().testWithFail(data);
+//    getCapabilities().testWithFail(data);
 
     // remove instances with missing class
-    data = new Instances(data);
-    data.deleteWithMissingClass();
+//   data = new Instances(data);
+//    data.deleteWithMissingClass();
 
     if (!(m_Classifier instanceof FasterTreeTrainable))
       throw new IllegalArgumentException("The FastRfBagging class accepts " +
@@ -147,7 +147,7 @@ class FastRfBagging extends RandomizableIteratedSingleClassifierEnhancer
     ExecutorService threadPool = Executors.newFixedThreadPool(
       numThreads > 0 ? numThreads : Runtime.getRuntime().availableProcessors());
     List<Future<?>> futures =
-      new ArrayList<Future<?>>(m_Classifiers.length);
+      new ArrayList<>(m_Classifiers.length);
 
     try {
 
@@ -186,7 +186,6 @@ class FastRfBagging extends RandomizableIteratedSingleClassifierEnhancer
 
       // calc OOB error?
       if (getCalcOutOfBag() || getComputeImportances()) {
-        //m_OutOfBagError = computeOOBError(data, inBag, threadPool);
         m_OutOfBagError = computeOOBError( myData, inBag, threadPool);
       } else {
         m_OutOfBagError = 0;

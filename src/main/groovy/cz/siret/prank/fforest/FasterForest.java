@@ -118,6 +118,16 @@ public class FasterForest
   /** Number of simultaneous threads to use in computation (0 = autodetect). */
   protected int m_NumThreads = 0;
 
+  /**
+   * Whether to calculate the out of bag error
+   */
+  protected boolean m_CalcOutOfBag = true;
+
+  /**
+   * The size of each bag sample, as a percentage of the training size
+   */
+  protected int m_BagSizePercent = 100;
+
   /** The bagger. */
   protected FastRfBagging m_bagger = null;
 
@@ -284,6 +294,21 @@ public class FasterForest
     m_MaxDepth = value;
   }
 
+  public boolean isCalcOutOfBag() {
+    return m_CalcOutOfBag;
+  }
+
+  public void setCalcOutOfBag(boolean m_CalcOutOfBag) {
+    this.m_CalcOutOfBag = m_CalcOutOfBag;
+  }
+
+  public int getBagSizePercent() {
+    return m_BagSizePercent;
+  }
+
+  public void setBagSizePercent(int m_BagSizePercent) {
+    this.m_BagSizePercent = m_BagSizePercent;
+  }
 
   /**
    * Returns the tip text for this property
@@ -618,9 +643,9 @@ public class FasterForest
     m_bagger.setClassifier(rTree);
     m_bagger.setSeed(m_randomSeed);
     m_bagger.setNumIterations(m_numTrees);
-    m_bagger.setCalcOutOfBag(true);
+    m_bagger.setBagSizePercent(m_BagSizePercent);
+    m_bagger.setCalcOutOfBag(m_CalcOutOfBag);
     m_bagger.setComputeImportances( this.getComputeImportances() );
-
     m_bagger.buildClassifier(data, m_NumThreads, this);
     
   }

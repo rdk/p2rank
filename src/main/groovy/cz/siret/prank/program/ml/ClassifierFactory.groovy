@@ -68,6 +68,7 @@ class ClassifierFactory implements Parametrized, Writable {
         cs.with {
             maxDepth = params.rf_depth
             numTrees = params.rf_trees
+            calcOutOfBag = false
             numFeatures = params.rf_features
             seed = params.seed
             numThreads = getRfThreads()

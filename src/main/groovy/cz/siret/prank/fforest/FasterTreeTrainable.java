@@ -831,7 +831,7 @@ public class FasterTreeTrainable extends FasterTree implements Runnable {
         //double[][] currDist = new double[2][data.numClasses];
 
         int i;
-        int sortedIndicesOfAttLength = endAt - startAt + 1;
+//        int sortedIndicesOfAttLength = endAt - startAt + 1;
 
         // find how many missing values we have for this attribute (they're always at the end)
         int lastNonmissingValIdx = endAt;
@@ -847,90 +847,90 @@ public class FasterTreeTrainable extends FasterTree implements Runnable {
         }
 
 
-        if ( data.isAttrNominal(attToExamine) ) { // ====================== nominal attributes
-
-            // 0.99: new routine - makes a one-vs-all split on categorical attributes
-
-            int numLvls = data.attNumVals[attToExamine];
-            int bestLvl = 0; // the index of the category which is best to "split out"
-
-            // note: if we have only two levels, it doesn't matter which one we "split out"
-            // we can thus safely check only the first one
-            if ( numLvls <= 2 ) {
-
-                bestLvl = 0; // this means that the category with index 0 always
-                // goes 'above' the split and category with index 1 goes 'below' the split
-                for (i = startAt; i <= lastNonmissingValIdx; i++) {
-                    int inst = sortedIndicesOfAtt[i];
-                    dist[ (int)data.vals[attToExamine][inst] ][ data.instClassValues[inst] ] += data.instWeights[inst];
-                }
-
-            } else {   // for >2 levels, we have to search different splits
-
-                // begin with moving all instances into second subset ("below split")
-                for (int j = startAt; j <= lastNonmissingValIdx; j++) {
-                    int inst = sortedIndicesOfAtt[j];
-                    currDist[1][ data.instClassValues[inst] ] += data.instWeights[inst];
-                }
-                // create a default dist[] which we'll modify after we find the best class to split out
-                copyDists(currDist, dist);
-
-                double currVal = -Double.MAX_VALUE; // current value of splitting criterion
-                double bestVal = -Double.MAX_VALUE; // best value of splitting criterion
-                int lastSeen = startAt;  // used to avoid looping through all instances for every lvl
-
-                for ( int lvl = 0; lvl < numLvls; lvl++ ) {
-
-                    // reset the currDist to the default (everything "below split") - conveniently stored in dist[][]
-                    copyDists(dist, currDist);
-
-                    for (i = lastSeen; i <= lastNonmissingValIdx; i++) {
-
-                        lastSeen = i;
-                        int inst = sortedIndicesOfAtt[i];
-                        if ( (int)data.vals[attToExamine][inst] < lvl ) {
-                            continue;
-                        } else if ( (int)data.vals[attToExamine][inst] == lvl ) {
-                            // move to "above split" from "below split"
-                            currDist[0][ data.instClassValues[ inst ] ] += data.instWeights[ inst ] ;
-                            currDist[1][ data.instClassValues[ inst ] ] -= data.instWeights[ inst ] ;
-                        } else {
-                            break;  // no need to loop forward, no more instances of this category
-                        }
-
-                    }
-
-                    // we filled the "dist" for the current level, find score and see if we like it
-                    currVal = -SplitCriteria.entropyConditionedOnRows(currDist);
-                    if ( currVal > bestVal ) {
-                        bestVal = currVal;
-                        bestLvl = lvl;
-                    }
-
-                }  // examine how well "splitting out" of individual levels works for us
-
-
-                // remember the contingency table from the best "lvl" and store it in "dist"
-                for (i = startAt; i <= lastNonmissingValIdx; i++) {
-
-                    int inst = sortedIndicesOfAtt[i];
-                    if ( (int)data.vals[attToExamine][inst] == bestLvl ) {
-                        // move to "above split" from "below split"
-                        dist[0][ data.instClassValues[ inst ] ] += data.instWeights[ inst ] ;
-                        dist[1][ data.instClassValues[ inst ] ] -= data.instWeights[ inst ] ;
-                    } else {
-                        break;  // no need to loop forward, no more instances of this category
-                    }
-
-                }
-
-            }
-
-            splitPoint = bestLvl; // signals we've found a sensible split point; by
-            // definition, a split on a nominal attribute
-            // will always be sensible
-
-        } else { // ============================================ numeric attributes
+//        if ( data.isAttrNominal(attToExamine) ) { // ====================== nominal attributes
+//
+//            // 0.99: new routine - makes a one-vs-all split on categorical attributes
+//
+//            int numLvls = data.attNumVals[attToExamine];
+//            int bestLvl = 0; // the index of the category which is best to "split out"
+//
+//            // note: if we have only two levels, it doesn't matter which one we "split out"
+//            // we can thus safely check only the first one
+//            if ( numLvls <= 2 ) {
+//
+//                bestLvl = 0; // this means that the category with index 0 always
+//                // goes 'above' the split and category with index 1 goes 'below' the split
+//                for (i = startAt; i <= lastNonmissingValIdx; i++) {
+//                    int inst = sortedIndicesOfAtt[i];
+//                    dist[ (int)data.vals[attToExamine][inst] ][ data.instClassValues[inst] ] += data.instWeights[inst];
+//                }
+//
+//            } else {   // for >2 levels, we have to search different splits
+//
+//                // begin with moving all instances into second subset ("below split")
+//                for (int j = startAt; j <= lastNonmissingValIdx; j++) {
+//                    int inst = sortedIndicesOfAtt[j];
+//                    currDist[1][ data.instClassValues[inst] ] += data.instWeights[inst];
+//                }
+//                // create a default dist[] which we'll modify after we find the best class to split out
+//                copyDists(currDist, dist);
+//
+//                double currVal = -Double.MAX_VALUE; // current value of splitting criterion
+//                double bestVal = -Double.MAX_VALUE; // best value of splitting criterion
+//                int lastSeen = startAt;  // used to avoid looping through all instances for every lvl
+//
+//                for ( int lvl = 0; lvl < numLvls; lvl++ ) {
+//
+//                    // reset the currDist to the default (everything "below split") - conveniently stored in dist[][]
+//                    copyDists(dist, currDist);
+//
+//                    for (i = lastSeen; i <= lastNonmissingValIdx; i++) {
+//
+//                        lastSeen = i;
+//                        int inst = sortedIndicesOfAtt[i];
+//                        if ( (int)data.vals[attToExamine][inst] < lvl ) {
+//                            continue;
+//                        } else if ( (int)data.vals[attToExamine][inst] == lvl ) {
+//                            // move to "above split" from "below split"
+//                            currDist[0][ data.instClassValues[ inst ] ] += data.instWeights[ inst ] ;
+//                            currDist[1][ data.instClassValues[ inst ] ] -= data.instWeights[ inst ] ;
+//                        } else {
+//                            break;  // no need to loop forward, no more instances of this category
+//                        }
+//
+//                    }
+//
+//                    // we filled the "dist" for the current level, find score and see if we like it
+//                    currVal = -SplitCriteria.entropyConditionedOnRows(currDist);
+//                    if ( currVal > bestVal ) {
+//                        bestVal = currVal;
+//                        bestLvl = lvl;
+//                    }
+//
+//                }  // examine how well "splitting out" of individual levels works for us
+//
+//
+//                // remember the contingency table from the best "lvl" and store it in "dist"
+//                for (i = startAt; i <= lastNonmissingValIdx; i++) {
+//
+//                    int inst = sortedIndicesOfAtt[i];
+//                    if ( (int)data.vals[attToExamine][inst] == bestLvl ) {
+//                        // move to "above split" from "below split"
+//                        dist[0][ data.instClassValues[ inst ] ] += data.instWeights[ inst ] ;
+//                        dist[1][ data.instClassValues[ inst ] ] -= data.instWeights[ inst ] ;
+//                    } else {
+//                        break;  // no need to loop forward, no more instances of this category
+//                    }
+//
+//                }
+//
+//            }
+//
+//            splitPoint = bestLvl; // signals we've found a sensible split point; by
+//            // definition, a split on a nominal attribute
+//            // will always be sensible
+//
+//        } else { // ============================================ numeric attributes
 
 
             // re-use the 2 x nClass temporary arrays created when tree was initialized
@@ -1001,7 +1001,7 @@ public class FasterTreeTrainable extends FasterTree implements Runnable {
 
             }
 
-        } // ================================================== nominal or numeric?
+      //  } // ================================================== nominal or numeric?
 
 
         // compute total weights for each branch (= props)
