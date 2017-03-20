@@ -225,6 +225,14 @@ speed_basic() {
     misc/test-scripts/benchmark.sh 3  "TRAINEVAL" "1"        "./prank.sh traineval -t chen11-fpocket.ds -e joined.ds -c working -loop 3 -out_subdir TEST/SPEED"
 }
 
+speed_ff() {
+
+    title SPEED TESTS - FASTER FOREST
+
+    misc/test-scripts/benchmark.sh 3  "TRAINEVAL" "1"        "./prank.sh traineval -t chen11-fpocket.ds -e joined.ds -c working -classifier FasterForest -loop 1 -out_subdir TEST/SPEED"
+    misc/test-scripts/benchmark.sh 3  "TRAINEVAL" "1"        "./prank.sh traineval -t chen11-fpocket.ds -e joined.ds -c working -classifier FasterForest -loop 3 -out_subdir TEST/SPEED"
+}
+
 speed_quick() {
 
     title "SPEED TESTS (QUICK)"
