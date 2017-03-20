@@ -1,5 +1,6 @@
 package cz.siret.prank.program.ml
 
+import cz.siret.prank.fforest.FasterForest
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.params.Params
 import cz.siret.prank.utils.Writable
@@ -62,6 +63,19 @@ class ClassifierFactory implements Parametrized, Writable {
         return cs
     }
 
+    FasterForest createFasterForest() {
+        FasterForest cs = new FasterForest()
+        cs.with {
+            maxDepth = params.rf_depth
+            numTrees = params.rf_trees
+            numFeatures = params.rf_features
+            seed = params.seed
+            numThreads = getRfThreads()
+            computeImportances = params.feature_importances
+        }
+        return cs
+    }
+
 
     Classifier createClassifier() {
 
@@ -74,6 +88,9 @@ class ClassifierFactory implements Parametrized, Writable {
 
             case ClassifierOption.FastRandomForest:
                 return createFastRandomForest()
+
+            case ClassifierOption.FasterForest:
+                return createFasterForest()
 
             case ClassifierOption.AdaBoostM1_RF:
                 AdaBoostM1 cs = new AdaBoostM1()
