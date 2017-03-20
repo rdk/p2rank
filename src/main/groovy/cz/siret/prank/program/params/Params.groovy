@@ -132,6 +132,11 @@ class Params {
     int rf_threads = 0
 
     /**
+     * size ot the bag: 1..100%
+     */
+    int rf_bagsize = 100
+
+    /**
      * cutoff for joining ligand atom groups into one ligand
      */
     double ligand_clustering_distance = 1.7 // covalent bond length

@@ -45,6 +45,7 @@ class ClassifierFactory implements Parametrized, Writable {
             numIterations = params.rf_trees
             numFeatures = params.rf_features
             seed = params.seed
+            bagSizePercent = params.rf_bagsize
             numExecutionSlots = getRfThreads()
         }
         return cs
@@ -69,6 +70,7 @@ class ClassifierFactory implements Parametrized, Writable {
             maxDepth = params.rf_depth
             numTrees = params.rf_trees
             calcOutOfBag = false
+            bagSizePercent = params.rf_bagsize
             numFeatures = params.rf_features
             seed = params.seed
             numThreads = getRfThreads()
