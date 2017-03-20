@@ -23,7 +23,6 @@
 
 package cz.siret.prank.fforest;
 
-import weka.classifiers.AbstractClassifier;
 import weka.classifiers.Classifier;
 import weka.core.*;
 import weka.core.Capabilities.Capability;
@@ -53,7 +52,11 @@ class FasterTree
 
   /** for serialization */
   static final long serialVersionUID = 8934314652175299376L;
-  
+
+  /** Minimum number of instances for leaf. */
+  protected static final int m_MinNum = 1;
+
+
   /** The subtrees appended to this tree (node). */
   //protected FasterTree[] m_Successors;
   protected FasterTree sucessorLeft;
@@ -73,12 +76,6 @@ class FasterTree
   protected double[] m_ClassProbs = null;
 
 
-
-
-
-  /** Minimum number of instances for leaf. */
-  protected static final int m_MinNum = 1;
-
   /**
    * Get the value of MinNum.
    *
@@ -89,7 +86,6 @@ class FasterTree
     return m_MinNum;
   }
 
-
   /**
    * Returns the tip text for this property
    * @return tip text for this property suitable for
@@ -98,9 +94,6 @@ class FasterTree
   public String KValueTipText() {
     return "Sets the number of randomly chosen attributes.";
   }
-
-
-
 
 
   /**
@@ -140,11 +133,6 @@ class FasterTree
     throw new Exception("FasterTree can be used only by FasterForest " +
             "and FastRfBagger classes, not directly.");
   }
-
-
-
-
-
 
 
   /**
