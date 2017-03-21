@@ -32,7 +32,7 @@ import cz.siret.prank.program.params.Params
      */
     fail_fast = true
 
-    classifier="FastRandomForest"
+    classifier="FasterForest"
 
     seed = 42
     loop = 10
