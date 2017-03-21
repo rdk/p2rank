@@ -68,11 +68,6 @@ class Params {
 
     //== FAETURES
 
-    /**
-     * include volsite pharmacophore properties
-     */
-    boolean use_volsite_features = true
-
     List<String> extra_features = ["protrusion","bfactor"]
 
     List<String> atom_table_features = ["apRawValids","apRawInvalids","atomicHydrophobicity"] // "ap5sasaValids","ap5sasaInvalids"

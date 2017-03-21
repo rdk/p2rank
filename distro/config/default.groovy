@@ -46,11 +46,6 @@ import cz.siret.prank.program.params.Params
 
     //== FAETURES
 
-    /**
-     * include volsite pharmacophore properties
-     */
-    use_volsite_features = true
-
     atom_table_features = ["apRawValids","apRawInvalids","atomicHydrophobicity"]
 
     extra_features = ["chem","volsite","protrusion","bfactor"]
