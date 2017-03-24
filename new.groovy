@@ -39,14 +39,9 @@ import cz.siret.prank.program.params.Params
 
     crossval_threads = 5
 
-    cache_datasets = true
-
-    clear_sec_caches = false
-
-    clear_prim_caches = false
 
 
-    log_cases = true
+
 
     /**
      * calculate feature importance
@@ -54,7 +49,7 @@ import cz.siret.prank.program.params.Params
      */
     feature_importances = false
 
-    output_only_stats = true
+
 
     /**
      * collect negatives just from decoy pockets found by other method
@@ -69,6 +64,26 @@ import cz.siret.prank.program.params.Params
     extra_features = ["protrusion","bfactor"]
 
     residue_table_features = ["RAx"]
+
+
+    average_feat_vectors = true
+    
+
+    
+
+
+
+    // technical
+
+    cache_datasets = true
+
+    clear_sec_caches = false
+
+    clear_prim_caches = false
+
+    log_cases = true
+
+    output_only_stats = true
 
     log_to_console = false
 
