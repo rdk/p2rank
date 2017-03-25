@@ -234,26 +234,38 @@ class Evaluation {
         return a
     }
 
+//===========================================================================================================//
+
+    public <T> double avg(List<T> list, Closure<T> closure) {
+        if (list.size()==0) return Double.NaN
+        list.collect { closure(it) }.findAll { it!=Double.NaN }.sum(0) / list.size()
+    }
+
+    double div(double a, double b) {
+        if (b==0d)
+            return Double.NaN
+        return a / b
+    }
 
 //===========================================================================================================//
 
     double getAvgPockets() {
-        pocketCount / proteinCount
+        div pocketCount, proteinCount
     }
 
     double getAvgLigandAtoms() {
-        ligandRows.collect {it.atoms}.sum(0) / ligandCount
+        div ligandRows.collect {it.atoms}.sum(0), ligandCount
     }
 
     double getAvgPocketVolume() {
-        pocketRows.collect { it.pocketVolume }.sum(0) / pocketCount
+        div pocketRows.collect { it.pocketVolume }.sum(0), pocketCount
     }
     double getAvgPocketVolumeTruePockets() {
         avg pocketRows.findAll { it.truePocket }, {PocketRow it -> it.pocketVolume }
     }
 
     double getAvgPocketSurfAtoms() {
-        pocketRows.collect { it.surfaceAtomCount }.sum(0) / pocketCount
+        div pocketRows.collect { it.surfaceAtomCount }.sum(0), pocketCount
     }
 
     double getAvgPocketSurfAtomsTruePockets() {
@@ -261,18 +273,18 @@ class Evaluation {
     }
 
     double getAvgPocketInnerPoints() {
-        pocketRows.collect { it.auxInfo.samplePoints }.sum(0) / pocketCount
+        div pocketRows.collect { it.auxInfo.samplePoints }.sum(0), pocketCount
     }
     double getAvgPocketInnerPointsTruePockets() {
         avg pocketRows.findAll { it.truePocket }, {PocketRow it -> it.auxInfo.samplePoints }
     }
 
     double getAvgProteinAtoms() {
-        proteinRows.collect { it.protAtoms }.sum(0) / proteinCount
+        div proteinRows.collect { it.protAtoms }.sum(0), proteinCount
     }
 
     double getAvgExposedAtoms() {
-        proteinRows.collect { it.exposedAtoms }.sum(0) / proteinCount
+        div proteinRows.collect { it.exposedAtoms }.sum(0), proteinCount
     }
 
     double getAvgProteinConollyPoints() {
@@ -283,11 +295,7 @@ class Evaluation {
         avg ligandRows, {LigRow it -> it.centerToProtDist}
     }
 
-    public <T> double avg(List<T> list, Closure<T> closure) {
-        if (list.size()==0) return Double.NaN
-        list.collect { closure(it) }.findAll { it!=Double.NaN }.sum(0) / list.size()
 
-    }
 
     double getAvgClosestPocketDist() {
         avg ligandRows, { LigRow row -> row.closestPocketDist }
