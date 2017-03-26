@@ -13,7 +13,7 @@ import org.biojava.nbio.structure.Atom
 @CompileStatic
 class ProtrusionHistogramFeature extends SasFeatureCalculator implements Parametrized {
 
-    static final double MIN_DIST = 2d
+    static final double MIN_DIST = 4
 
     @Override
     String getName() {
