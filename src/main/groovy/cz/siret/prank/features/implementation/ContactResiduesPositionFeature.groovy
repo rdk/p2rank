@@ -10,12 +10,15 @@ import cz.siret.prank.geom.Struct
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.PDBUtils
 import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.AminoAcid
+import org.biojava.nbio.structure.AminoAcidImpl
 import org.biojava.nbio.structure.Atom
 
 /**
  *
  */
+@Slf4j
 @CompileStatic
 class ContactResiduesPositionFeature extends SasFeatureCalculator implements Parametrized {
 
@@ -58,6 +61,8 @@ class ContactResiduesPositionFeature extends SasFeatureCalculator implements Par
 
         Atoms contactAtoms = context.neighbourhoodAtoms.cutoffAroundAtom(sasPoint, contactDist)
         List<AminoAcid> contactResidues = (List<AminoAcid>)(List)contactAtoms.getDistinctGroups().findAll{ it instanceof AminoAcid }.toList()
+
+        log.debug 'contact residues: ' + contactResidues.size()
 
         // TODO: this can be optmized
 
