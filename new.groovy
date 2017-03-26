@@ -35,8 +35,6 @@ import cz.siret.prank.program.params.Params
 
     predictions = true
 
-    out_prefix_date = true
-
     crossval_threads = 5
 
 
@@ -51,6 +49,7 @@ import cz.siret.prank.program.params.Params
 
 
 
+
     /**
      * collect negatives just from decoy pockets found by other method
      * (alternatively take negative points from all of the protein's surface)
@@ -61,17 +60,12 @@ import cz.siret.prank.program.params.Params
 
     atom_table_features = ["ap5sasaValids","ap5sasaInvalids","apRawValids","apRawInvalids","atomicHydrophobicity"]
 
-    extra_features = ["protrusion","bfactor"]
+    extra_features = ["chem","volsite","protrusion","bfactor"]
 
     residue_table_features = ["RAx"]
 
-
     average_feat_vectors = true
     
-
-    
-
-
 
     // technical
 
@@ -92,5 +86,7 @@ import cz.siret.prank.program.params.Params
     ploop_delete_runs = true
 
     zip_log_file = true
+
+    out_prefix_date = true
 
 }
