@@ -13,6 +13,7 @@ import groovyx.gpars.GParsPool
 
 import static cz.siret.prank.utils.ATimer.startTimer
 import static cz.siret.prank.utils.Futils.mkdirs
+import static cz.siret.prank.utils.Futils.writeFile
 
 /**
  * Routine for grid optimization. Loops through values of one or more RangeParam and produces resulting statistics and plots.

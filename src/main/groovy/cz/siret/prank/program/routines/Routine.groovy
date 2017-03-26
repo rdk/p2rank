@@ -3,6 +3,7 @@ package cz.siret.prank.program.routines
 import cz.siret.prank.program.Main
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.Parametrized
+import cz.siret.prank.program.params.Params
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.Writable
 import groovy.transform.CompileStatic
@@ -37,5 +38,5 @@ class Routine implements Parametrized, Writable  {
         String v = "version: " + Main.version + "\n"
         writeFile("$outdir/params.txt", v + params.toString())
     }
-    
+
 }
