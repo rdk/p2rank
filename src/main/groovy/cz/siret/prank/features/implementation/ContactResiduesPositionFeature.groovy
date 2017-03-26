@@ -25,6 +25,8 @@ class ContactResiduesPositionFeature extends SasFeatureCalculator implements Par
 
     final List<String> HEADER = new ArrayList<>()
 
+    double MAX_DIST = 20;
+
 //===========================================================================================================//
 
     double contactDist
@@ -72,22 +74,27 @@ class ContactResiduesPositionFeature extends SasFeatureCalculator implements Par
 
         int i = 0
         for (AA aa : AATYPES) {
+            double count = 0
+            double distclosest = MAX_DIST
+            double distca = MAX_DIST
+            double distcenter = MAX_DIST
+
             Collection<AminoAcid> residues = cresmap.get(aa)
-            if (residues!=null && !residues.isEmpty()) {
+            if (residues!=null && !residues.empty) {
 
                 AminoAcid closestResOfType = residues.min { Atoms.allFromGroup(it).dist(sasPoint)  }
                 Atoms ratoms = Atoms.allFromGroup(closestResOfType)
 
-                double count = residues.size()
-                double distclosest = ratoms.dist(sasPoint)
-                double distca = Struct.dist closestResOfType.CA, sasPoint
-                double distcenter = Struct.dist ratoms.centerOfMass, sasPoint
-
-                vect[i] = count
-                vect[i+1] = distca
-                vect[i+2] = distclosest
-                vect[i+3] = distcenter
+                count = residues.size()
+                distclosest = ratoms.dist(sasPoint)
+                distcenter = Struct.dist ratoms.centerOfMass, sasPoint
+                distca = (closestResOfType.CA==null) ? distcenter : Struct.dist(closestResOfType.CA, sasPoint)
             }
+
+            vect[i] = count
+            vect[i+1] = distca
+            vect[i+2] = distclosest
+            vect[i+3] = distcenter
 
             i += 4
         }
