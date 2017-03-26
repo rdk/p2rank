@@ -478,6 +478,11 @@ class Params {
     /** produce ROC and PR curve graphs (not fully implemented yet) */
     boolean stats_curves = false
 
+    /**
+     * Contact residues distance cutoff
+     */
+    double feat_crang_contact_dist = 3
+
 //===========================================================================================================//
 
     String getVersion() {
