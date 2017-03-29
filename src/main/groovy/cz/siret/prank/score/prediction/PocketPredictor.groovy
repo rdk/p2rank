@@ -20,7 +20,7 @@ class PocketPredictor implements Parametrized {
 
     private double POCKET_PROT_SURFACE_CUTOFF = params.pred_protein_surface_cutoff
     private int MIN_CLUSTER_SIZE = params.pred_min_cluster_size
-    private double SURROUNDING_DIST = params.pred_surrounding
+    private double EXTENDED_POCKET_CUTOFF = params.extended_pocket_cutoff
     private double CLUSTERING_DIST = params.pred_clustering_dist
     private double POINT_THRESHOLD = params.pred_point_threshold
     private boolean BALANCE_POINT_DENSITY = params.balance_density
@@ -66,9 +66,14 @@ class PocketPredictor implements Parametrized {
 
         List<PrankPocket> pockets = filteredClusters.collect { Atoms clusterPoints ->
 
-            Atoms extendedPocketPoints = connollyPoints.cutoffAtoms(clusterPoints, SURROUNDING_DIST)
-            double score = extendedPocketPoints.collect { score((LabeledPoint)it, connollyPoints) }.sum()
-            Atoms pocketSurfaceAtoms = protein.exposedAtoms.cutoffAtoms(extendedPocketPoints, POCKET_PROT_SURFACE_CUTOFF)
+            Atoms pocketPoints = clusterPoints
+            if (EXTENDED_POCKET_CUTOFF > 0d) {
+                Atoms extendedPocketPoints = connollyPoints.cutoffAtoms(clusterPoints, EXTENDED_POCKET_CUTOFF)
+                pocketPoints = extendedPocketPoints
+            }
+            
+            double score = (double) pocketPoints.collect { score((LabeledPoint)it, connollyPoints) }.sum(0)
+            Atoms pocketSurfaceAtoms = protein.exposedAtoms.cutoffAtoms(pocketPoints, POCKET_PROT_SURFACE_CUTOFF)
 
             PrankPocket p = new PrankPocket(clusterPoints.centerOfMass, score, clusterPoints) // or pocketPoints ?
             p.surfaceAtoms = pocketSurfaceAtoms

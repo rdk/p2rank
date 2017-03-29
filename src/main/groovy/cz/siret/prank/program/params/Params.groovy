@@ -301,6 +301,8 @@ class Params {
      */
     double pred_point_threshold = 0.4
 
+    boolean include_surrounding_score = false
+
     /**
      * minimum cluster size (of ligandable points) for initial clustering
      */
@@ -312,9 +314,9 @@ class Params {
     double pred_clustering_dist = 5
 
     /**
-     * distance to extend clusters around hotspots
+     * SAS points around ligandable points (an their score) will be included in the pocket
      */
-    double pred_surrounding = 3.5
+    double extended_pocket_cutoff = 3.5
 
     /**
      * cuttoff distance of protein surface atoms considered as part of the pocket

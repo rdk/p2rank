@@ -65,6 +65,10 @@ import cz.siret.prank.program.params.Params
     residue_table_features = ["RAx"]
 
     average_feat_vectors = true
+
+    balance_class_weights = true
+
+    target_class_weight_ratio = 0.055
     
 
     // technical
