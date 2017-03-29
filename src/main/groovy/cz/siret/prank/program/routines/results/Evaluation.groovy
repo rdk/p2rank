@@ -4,6 +4,8 @@ import cz.siret.prank.domain.Ligand
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.domain.Protein
+import cz.siret.prank.geom.Atoms
+import cz.siret.prank.program.rendering.LabeledPoint
 import cz.siret.prank.score.criteria.*
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.StringUtils
@@ -20,6 +22,9 @@ import static cz.siret.prank.utils.Formatter.*
 @Slf4j
 class Evaluation {
 
+    /** cutoff distance in A for determining which SAS points cover the ligand */
+    static final double LIG_SAS_CUTOFF = 2
+
     IdentificationCriterium standardCriterium = new DCA(4.0)
     List<IdentificationCriterium> criteria
     List<ProteinRow> proteinRows = Collections.synchronizedList(new ArrayList<>())
@@ -33,6 +38,9 @@ class Evaluation {
     int ignoredLigandCount
     int smallLigandCount
     int distantLigandCount
+
+    int ligSASPointsCount
+    int ligSASPointsCoveredCount
 
     Evaluation(List<IdentificationCriterium> criteria) {
         this.criteria = criteria
@@ -81,6 +89,8 @@ class Evaluation {
         List<PocketRow> tmpPockets = new ArrayList<>()
 
         Protein lp = pair.liganatedProtein
+        Atoms sasPoints = pair.prediction.protein.connollySurface.points
+        Atoms labeledPoints = new Atoms(pair.prediction.labeledPoints)
         
         ProteinRow protRow = new ProteinRow()
         protRow.name = pair.name
@@ -98,7 +108,14 @@ class Evaluation {
         protRow.smallLigNames = lp.smallLigands.collect { "$it.name($it.size)" }.join(" ")
         protRow.distantLigands = lp.distantLigands.size()
         protRow.distantLigNames = lp.distantLigands.collect { "$it.name($it.size|${format(it.contactDistance,1)}|${format(it.centerToProteinDist,1)})" }.join(" ")
-        protRow.connollyPoints = pair.prediction.protein.connollySurface.points.count
+        protRow.sasPoints = sasPoints.count
+
+        // ligand coverage
+        Atoms ligSasPoints = labeledPoints.cutoffAtoms(lp.allLigandAtoms, LIG_SAS_CUTOFF)
+        int n_ligSasPoints = ligSasPoints.count
+        int n_ligSasPointsCovered = ligSasPoints.findAll { ((LabeledPoint)it).predicted }.toList().size()
+
+
 
         for (Ligand lig in pair.liganatedProtein.ligands) {
             LigRow row = new LigRow()
@@ -155,6 +172,8 @@ class Evaluation {
             proteinRows.add(protRow)
             ligandRows.addAll(tmpLigRows)
             pocketRows.addAll(tmpPockets)
+            ligSASPointsCount += n_ligSasPoints
+            ligSASPointsCoveredCount += n_ligSasPointsCovered
         }
     }
 
@@ -168,6 +187,8 @@ class Evaluation {
         ignoredLigandCount += eval.ignoredLigandCount
         smallLigandCount += eval.smallLigandCount
         distantLigandCount += eval.distantLigandCount
+        ligSASPointsCount += eval.ligSASPointsCount
+        ligSASPointsCoveredCount += eval.ligSASPointsCoveredCount
     }
 
     double calcSuccRate(int assesorNum, int tolerance) {
@@ -288,14 +309,16 @@ class Evaluation {
     }
 
     double getAvgProteinConollyPoints() {
-        avg proteinRows, {ProteinRow it -> it.connollyPoints }
+        avg proteinRows, {ProteinRow it -> it.sasPoints }
     }
 
     double getAvgLigCenterToProtDist() {
         avg ligandRows, {LigRow it -> it.centerToProtDist}
     }
 
-
+    double getLigandCoverage() {
+        div ligSASPointsCoveredCount, ligSASPointsCount
+    }
 
     double getAvgClosestPocketDist() {
         avg ligandRows, { LigRow row -> row.closestPocketDist }
@@ -320,6 +343,7 @@ class Evaluation {
 
         m.AVG_LIG_CENTER_TO_PROT_DIST = avgLigCenterToProtDist
         m.AVG_LIG_CLOSTES_POCKET_DIST = avgClosestPocketDist
+        m.LIGAND_COVERAGE = ligandCoverage
 
         m.AVG_POCKETS = avgPockets
         m.AVG_POCKET_SURF_ATOMS = avgPocketSurfAtoms
@@ -448,7 +472,7 @@ class Evaluation {
         int distantLigands
         String distantLigNames
 
-        int connollyPoints
+        int sasPoints
     }
 
     static class LigRow {
