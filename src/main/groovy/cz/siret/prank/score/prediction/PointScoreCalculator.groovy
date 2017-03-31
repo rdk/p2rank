@@ -1,6 +1,7 @@
 package cz.siret.prank.score.prediction
 
 import cz.siret.prank.program.params.Parametrized
+import cz.siret.prank.program.params.Params
 import groovy.transform.CompileStatic
 
 /**
@@ -20,6 +21,11 @@ class PointScoreCalculator implements Parametrized {
     static double predictedScore(double[] hist) {
         hist[1] / (hist[0] + hist[1])
     }
+
+    static boolean predictedPositive(double predictedScore) {
+        predictedScore >= Params.inst.pred_point_threshold
+    }
+    
 
     /**
      * calculates ligandability score of the point form binary classification historgram

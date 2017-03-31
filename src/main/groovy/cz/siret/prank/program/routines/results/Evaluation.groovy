@@ -23,7 +23,7 @@ import static java.util.Collections.emptyList
 @Slf4j
 class Evaluation {
 
-    /** cutoff distance in A for determining which SAS points cover the ligand */
+    /** cutoff distance in A around ligand atoms that determins which SAS points cover the ligand */
     static final double LIG_SAS_CUTOFF = 2
 
     IdentificationCriterium standardCriterium = new DCA(4.0)
@@ -114,9 +114,8 @@ class Evaluation {
         // ligand coverage
         Atoms ligSasPoints = labeledPoints.cutoffAtoms(lp.allLigandAtoms, LIG_SAS_CUTOFF)
         int n_ligSasPoints = ligSasPoints.count
-        int n_ligSasPointsCovered = ligSasPoints.findAll { ((LabeledPoint)it).predicted }.toList().size()
-
-
+        int n_ligSasPointsCovered = ligSasPoints.toList().findAll { ((LabeledPoint)it).predicted }.toList().size()
+        log.debug "XXXX n_ligSasPoints: {} covered: {}", n_ligSasPoints, n_ligSasPointsCovered
 
         for (Ligand lig in pair.liganatedProtein.ligands) {
             LigRow row = new LigRow()
