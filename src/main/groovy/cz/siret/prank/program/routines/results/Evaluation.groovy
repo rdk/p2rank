@@ -11,6 +11,7 @@ import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.StringUtils
 
 import static cz.siret.prank.utils.Formatter.*
+import static java.util.Collections.emptyList
 
 /**
  * Represents evaluation of pocket prediction on a dataset of proteins
@@ -90,7 +91,7 @@ class Evaluation {
 
         Protein lp = pair.liganatedProtein
         Atoms sasPoints = pair.prediction.protein.connollySurface.points
-        Atoms labeledPoints = new Atoms(pair.prediction.labeledPoints)
+        Atoms labeledPoints = new Atoms(pair.prediction.labeledPoints ?: emptyList())
         
         ProteinRow protRow = new ProteinRow()
         protRow.name = pair.name
