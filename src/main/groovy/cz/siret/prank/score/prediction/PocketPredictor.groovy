@@ -39,8 +39,9 @@ class PocketPredictor implements Parametrized {
     }
 
     private boolean admitPoint(LabeledPoint point) {
-        double p = PointScoreCalculator.predictedScore(point.hist)
-        return p > POINT_THRESHOLD
+//        double p = PointScoreCalculator.predictedScore(point.hist)
+//        return p > POINT_THRESHOLD
+        point.predicted
     }
 
     /**

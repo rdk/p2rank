@@ -390,8 +390,8 @@ class ClassifierStats implements Parametrized {
         }
 
         class Advanced {
-            double wekaAUC   = NaN
-            double wekaAUPRC = NaN
+            double wekaAUC   = 0
+            double wekaAUPRC = 0
         }
         
     }
