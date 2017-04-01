@@ -1,6 +1,7 @@
 package cz.siret.prank.features.api
 
 import cz.siret.prank.features.implementation.AsaFeature
+import cz.siret.prank.features.implementation.AsaResiduesFeature
 import cz.siret.prank.features.implementation.BfactorFeature
 import cz.siret.prank.features.implementation.ContactResiduesPositionFeature
 import cz.siret.prank.features.implementation.ProtrusionFeature
@@ -46,6 +47,7 @@ class FeatureRegistry {
         registerFeature(new ProtrusionHistogramFeature())
         registerFeature(new ContactResiduesPositionFeature())
         registerFeature(new AsaFeature())
+        registerFeature(new AsaResiduesFeature())
 
         // Register new feature implementations here
 

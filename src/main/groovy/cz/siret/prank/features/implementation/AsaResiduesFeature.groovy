@@ -8,6 +8,8 @@ import cz.siret.prank.program.params.Parametrized
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
+import org.biojava.nbio.structure.Group
+import org.biojava.nbio.structure.ResidueNumber
 import org.biojava.nbio.structure.asa.AsaCalculator
 import org.biojava.nbio.structure.asa.GroupAsa
 
@@ -16,9 +18,9 @@ import org.biojava.nbio.structure.asa.GroupAsa
  */
 @Slf4j
 @CompileStatic
-class AsaFeature extends SasFeatureCalculator implements Parametrized {
+class AsaResiduesFeature extends SasFeatureCalculator implements Parametrized {
 
-    static final String NAME = "asa"
+    static final String NAME = "asares"
 
     @Override
     String getName() { NAME }
@@ -39,9 +41,9 @@ class AsaFeature extends SasFeatureCalculator implements Parametrized {
 
     @Override
     double[] calculateForSasPoint(Atom sasPoint, SasFeatureCalculationContext context) {
-        Atoms localAtoms = context.protein.exposedAtoms.cutoffAroundAtom(sasPoint, params.feat_asa_neigh_radius)
+        List<Group> groups = context.protein.exposedAtoms.cutoffAroundAtom(sasPoint, params.feat_asa_neigh_radius).distinctGroups
         ProtAsa protAsa = (ProtAsa) context.protein.secondaryData.get("prot_asa")
-        double localAsa = (double) localAtoms.collect { Atom a -> protAsa.atomAsas.get(a.PDBserial) ?: 0 }.sum(0)
+        double localAsa = (double) groups.collect { Group g -> protAsa.groupAsaMap.get(g.residueNumber) ?: 0 }.sum(0)
 
         return [localAsa] as double[]
     }
@@ -51,7 +53,7 @@ class AsaFeature extends SasFeatureCalculator implements Parametrized {
         Protein protein
         List<GroupAsa> groupAsas
 
-        Map<Integer, Double> atomAsas = new HashMap<>()
+        Map<ResidueNumber, Double> groupAsaMap = new HashMap<>()
 
         ProtAsa(Protein protein, List<GroupAsa> groupAsas) {
             this.protein = protein
@@ -59,22 +61,11 @@ class AsaFeature extends SasFeatureCalculator implements Parametrized {
 
             for (GroupAsa gasa : groupAsas) {
 
-                int n_asas = gasa.atomAsaCs.size()
-                int n_atoms = gasa.group.atoms.size()
+                double asa = gasa.asaC
+                ResidueNumber resNum = gasa?.group?.residueNumber
 
-                if (n_asas!=n_atoms) {
-                    log.warn "Number of atoms ({}) and calculated ASAs ({}) for a group ($gasa.group.PDBName) don't match! ", n_atoms, n_asas
-                }
-
-                int n = Math.min(n_asas, n_atoms)
-
-                for (int i=0; i<n; ++i) {
-                    Double asa = gasa.atomAsaCs[i] ?: 0d
-                    Atom atom = gasa.group.atoms[i]
-
-                    if (atom!=null) {
-                        atomAsas.put atom.PDBserial, asa
-                    }
+                if (resNum!=null) {
+                    groupAsaMap.put resNum, asa
                 }
             }
         }
