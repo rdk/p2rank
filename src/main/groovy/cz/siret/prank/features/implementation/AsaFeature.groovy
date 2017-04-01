@@ -60,7 +60,7 @@ class AsaFeature extends SasFeatureCalculator implements Parametrized {
             for (GroupAsa gasa : groupAsas) {
 
                 int n_asas = gasa.atomAsaUs.size()
-                int n_atoms = gasa.group.size()
+                int n_atoms = gasa.group.atoms.size()
 
                 if (n_asas!=n_atoms) {
                     log.warn "Number of atoms ({}) and calculated ASAs ({}) for a group ($gasa.group.PDBName) don't match! ", n_atoms, n_asas
@@ -72,7 +72,10 @@ class AsaFeature extends SasFeatureCalculator implements Parametrized {
                     Double asa = gasa.atomAsaUs[i] ?: 0d
                     Atom atom = gasa.group.atoms[i]
 
-                    atomAsas.put atom.PDBserial, asa
+                    if (atom!=null) {
+                        atomAsas.put atom.PDBserial, asa
+                    }
+
 
                     i++
                 }
