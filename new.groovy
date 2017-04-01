@@ -85,6 +85,8 @@ import cz.siret.prank.program.params.Params
 
     log_to_console = false
 
+    log_level = "WARN"
+
     log_to_file = true
 
     ploop_delete_runs = true
