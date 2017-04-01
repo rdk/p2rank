@@ -68,16 +68,13 @@ class AsaFeature extends SasFeatureCalculator implements Parametrized {
 
                 int n = Math.min(n_asas, n_atoms)
 
-                for (int i=0; i!=n; ++i) {
+                for (int i=0; i<n; ++i) {
                     Double asa = gasa.atomAsaUs[i] ?: 0d
                     Atom atom = gasa.group.atoms[i]
 
                     if (atom!=null) {
                         atomAsas.put atom.PDBserial, asa
                     }
-
-
-                    i++
                 }
             }
         }
