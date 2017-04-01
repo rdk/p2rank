@@ -6,6 +6,7 @@ import cz.siret.prank.features.api.SasFeatureCalculator
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.program.params.Parametrized
 import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 import org.biojava.nbio.structure.asa.AsaCalculator
 import org.biojava.nbio.structure.asa.GroupAsa
@@ -13,6 +14,7 @@ import org.biojava.nbio.structure.asa.GroupAsa
 /**
  * Local protein solvent accessible surface area feature
  */
+@Slf4j
 @CompileStatic
 class AsaFeature extends SasFeatureCalculator implements Parametrized {
 
@@ -56,11 +58,21 @@ class AsaFeature extends SasFeatureCalculator implements Parametrized {
             this.groupAsas = groupAsas
 
             for (GroupAsa gasa : groupAsas) {
-                int i = 0
-                for (double atomAsa : gasa.atomAsaUs) {
+
+                int n_asas = gasa.atomAsaUs.size()
+                int n_atoms = gasa.group.size()
+
+                if (n_asas!=n_atoms) {
+                    log.warn "Number of atoms ({}) and calculated ASAs ({}) for a group ($gasa.group.PDBName) don't match! ", n_atoms, n_asas
+                }
+
+                int n = Math.min(n_asas, n_atoms)
+
+                for (int i=0; i!=n; ++i) {
+                    double asa = gasa.atomAsaUs[i]
                     Atom atom = gasa.group.atoms[i]
 
-                    atomAsas.put atom.PDBserial, atomAsa
+                    atomAsas.put atom.PDBserial, asa
 
                     i++
                 }

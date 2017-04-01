@@ -370,15 +370,20 @@ class Main implements Parametrized, Writable {
 
         boolean error = false
 
+        Main main
         try {
 
-            error = new Main(parsedArgs).run()
+            main = new Main(parsedArgs)
+            error = main.run()
 
         } catch (PrankException e) {
 
             error = true
             writeError e.message
             log.error(e.message, e)
+            if (main.logManager.loggingToFile) {
+                write "For details see log file: '$main.logManager.logFile'"
+            }
 
         } catch (Exception e) {
 
