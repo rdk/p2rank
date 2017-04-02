@@ -9,7 +9,7 @@
 		</Console>
 	</appenders>
 	<loggers>
-		<Logger name="cz.siret.prank" level="DEBUG" />
+		<Logger name="cz.siret.prank" level="INFO" />
 		<root level="ERROR">
 			<AppenderRef ref="Console"/>
 		</root>

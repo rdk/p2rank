@@ -5,18 +5,19 @@ import cz.siret.prank.features.api.SasFeatureCalculationContext
 import cz.siret.prank.features.api.SasFeatureCalculator
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.program.params.Parametrized
+import cz.siret.prank.utils.Writable
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
+import org.biojava.nbio.structure.StructureTools
 import org.biojava.nbio.structure.asa.AsaCalculator
-import org.biojava.nbio.structure.asa.GroupAsa
 
 /**
  * Local protein solvent accessible surface area feature
  */
 @Slf4j
 @CompileStatic
-class AsaFeature extends SasFeatureCalculator implements Parametrized {
+class AsaFeature extends SasFeatureCalculator implements Parametrized, Writable {
 
     static final String NAME = "asa"
 
@@ -30,18 +31,25 @@ class AsaFeature extends SasFeatureCalculator implements Parametrized {
         int threads = 1
         boolean hetAtoms = false
 
+
+        Atom[] protAtoms = StructureTools.getAllNonHAtomArray(protein.structure, hetAtoms)
         AsaCalculator asaCalculator = new AsaCalculator(protein.structure, probeRadius, nSpherePoints, threads, hetAtoms)
+        double[] atomAsas = asaCalculator.calculateAsas()
+        protAtoms[0].getPDBserial()
 
-        List<GroupAsa> asas = asaCalculator.groupAsas.toList()
+        Map<Integer, Double> asaByAtom = new HashMap<>()
+        for (int i=0; i!= protAtoms.length; ++i) {
+            asaByAtom.put protAtoms[i].PDBserial, atomAsas[i]
+        }
 
-        protein.secondaryData.put "prot_asa", new ProtAsa(protein, asas)
+        protein.secondaryData.put "prot_atom_asa", new ProtAsa(protein, asaByAtom)
     }
 
     @Override
     double[] calculateForSasPoint(Atom sasPoint, SasFeatureCalculationContext context) {
         Atoms localAtoms = context.protein.exposedAtoms.cutoffAroundAtom(sasPoint, params.feat_asa_neigh_radius)
-        ProtAsa protAsa = (ProtAsa) context.protein.secondaryData.get("prot_asa")
-        double localAsa = (double) localAtoms.collect { Atom a -> protAsa.atomAsas.get(a.PDBserial) ?: 0 }.sum(0)
+        ProtAsa protAsa = (ProtAsa) context.protein.secondaryData.get("prot_atom_asa")
+        double localAsa = (double) localAtoms.collect { Atom a -> protAsa.asaByAtom.get(a.PDBserial) ?: 0 }.sum(0)
 
         return [localAsa] as double[]
     }
@@ -49,36 +57,12 @@ class AsaFeature extends SasFeatureCalculator implements Parametrized {
 
     static class ProtAsa {
         Protein protein
-        List<GroupAsa> groupAsas
+        Map<Integer, Double> asaByAtom
 
-        Map<Integer, Double> atomAsas = new HashMap<>()
-
-        ProtAsa(Protein protein, List<GroupAsa> groupAsas) {
+        ProtAsa(Protein protein, Map<Integer, Double> asaByAtom) {
             this.protein = protein
-            this.groupAsas = groupAsas
-
-            for (GroupAsa gasa : groupAsas) {
-
-                int n_asas = gasa.atomAsaCs.size()
-                int n_atoms = gasa.group.atoms.size()
-
-                if (n_asas!=n_atoms) {
-                    log.warn "Number of atoms ({}) and calculated ASAs ({}) for a group ($gasa.group.PDBName) don't match! ", n_atoms, n_asas
-                }
-
-                int n = Math.min(n_asas, n_atoms)
-
-                for (int i=0; i<n; ++i) {
-                    Double asa = gasa.atomAsaCs[i] ?: 0d
-                    Atom atom = gasa.group.atoms[i]
-
-                    if (atom!=null) {
-                        atomAsas.put atom.PDBserial, asa
-                    }
-                }
-            }
+            this.asaByAtom = asaByAtom
         }
-
     }
 
 }
