@@ -491,6 +491,11 @@ class Params {
     double feat_asa_probe_radius = 1.4
 
     /**
+     * probe radius for calculating accessible surface area for asa feature
+     */
+    double feat_asa_probe_radius2 = 1.4
+
+    /**
      * radius of the neighbourhood considered in asa feature
      */
     double feat_asa_neigh_radius = 6
