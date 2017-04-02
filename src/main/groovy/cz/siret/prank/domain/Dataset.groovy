@@ -142,8 +142,8 @@ class Dataset implements Parametrized {
     void clearSecondaryCaches() {
         items.each {
             if (it.cachedPair!=null) {
-                it.cachedPair.prediction.protein.clearCachedSurfaces()
-                it.cachedPair.liganatedProtein.clearCachedSurfaces()
+                it.cachedPair.prediction.protein.clearSecondaryData()
+                it.cachedPair.liganatedProtein.clearSecondaryData()
             }
         }
     }

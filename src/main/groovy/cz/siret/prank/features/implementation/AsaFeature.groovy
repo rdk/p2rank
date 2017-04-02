@@ -26,11 +26,14 @@ class AsaFeature extends SasFeatureCalculator implements Parametrized, Writable 
 
     @Override
     void preProcessProtein(Protein protein) {
+        if (protein.secondaryData.containsKey("prot_atom_asa")) {
+            return
+        }
+
         double probeRadius = params.feat_asa_probe_radius
         int nSpherePoints = AsaCalculator.DEFAULT_N_SPHERE_POINTS
         int threads = 1
         boolean hetAtoms = false
-
 
         Atom[] protAtoms = StructureTools.getAllNonHAtomArray(protein.structure, hetAtoms)
         AsaCalculator asaCalculator = new AsaCalculator(protein.structure, probeRadius, nSpherePoints, threads, hetAtoms)
