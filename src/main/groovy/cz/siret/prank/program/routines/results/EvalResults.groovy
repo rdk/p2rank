@@ -133,8 +133,8 @@ class EvalResults implements Parametrized, Writable  {
 
         //===========================================================================================================//
 
-        m.TIME_TRAIN = trainTime
-        m.TIME_EVAL = evalTime
+        m.TIME_TRAIN_M = trainTime / 60000
+        m.TIME_EVAL_M = evalTime / 60000
 
         m.TRAIN_VECTORS = avgTrainVectors
         m.TRAIN_POSITIVES = avgTrainPositives
