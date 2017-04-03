@@ -78,6 +78,9 @@ class Evaluation {
     }
 
     private double getAvgConservationForAtoms(Atoms atoms, ConservationScore score) {
+        if (atoms.distinctGroups.size() == 0) {
+            return 0.0
+        }
         return atoms.distinctGroups.stream().mapToDouble( {
             group->score.getScoreForResidue(group.getResidueNumber())})
                 .average().getAsDouble()
@@ -112,7 +115,7 @@ class Evaluation {
         ConservationScore score = lp.secondaryData.get(ConservationScore.conservationScoreKey)
         if (score != null) {
             protRow.avgConservation = getAvgConservationForAtoms(lp.proteinAtoms, score)
-            Atoms bindingAtoms = p.proteinAtoms.cutoffAtoms(p.allLigandAtoms, lp.params.ligand_protein_contact_distance)
+            Atoms bindingAtoms = lp.proteinAtoms.cutoffAtoms(lp.allLigandAtoms, lp.params.ligand_protein_contact_distance)
             protRow.avgBindingConservation = getAvgConservationForAtoms(bindingAtoms, score)
             Atoms nonBindingAtoms = lp.proteinAtoms - bindingAtoms
             protRow.avgNonBindingConservation = getAvgConservationForAtoms(nonBindingAtoms, score)
@@ -345,9 +348,9 @@ class Evaluation {
         m.AVG_POCKET_SAS_POINTS_TRUE_POCKETS = avgPocketInnerPointsTruePockets
         m.AVG_POCKET_VOLUME =  avgPocketVolume
         m.AVG_POCKET_VOLUME_TRUE_POCKETS =  avgPocketVolumeTruePockets
-        m.AVG_POCKET_CONSERVATION = avg pocketRows.collect { it.avgConservation }
+        m.AVG_POCKET_CONSERVATION = avg pocketRows, { it.avgConservation }
         m.AVG_TRUE_POCKET_CONSERVATION = avg pocketRows.findAll { it.truePocket }, { it.avgConservation }
-        m.AVG_FALSE_POCKET_CONSERVATION = avg pocketRows.findAll { it.truePocket }, { it.avgConservation }
+        m.AVG_FALSE_POCKET_CONSERVATION = avg pocketRows.findAll { !it.truePocket }, { it.avgConservation }
 
         m.DCA_4_0 = calcDefaultCriteriumSuccessRate(0)
         m.DCA_4_1 = calcDefaultCriteriumSuccessRate(1)

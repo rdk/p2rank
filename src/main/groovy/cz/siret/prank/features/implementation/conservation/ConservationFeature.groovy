@@ -19,12 +19,10 @@ class ConservationFeature extends AtomFeatureCalculator {
         "conservation"
     }
 
-    private static Random rand = Random.newInstance();
-
     @Override
     void preProcessProtein(Protein protein) {
         // Check if conservation is already loaded.
-        if (protein.secondaryData.getOrDefault(ConservationScore.conservationLoadedKey, false)) {
+        if (!protein.secondaryData.getOrDefault(ConservationScore.conservationLoadedKey, false)) {
             // Load conservation score.
             ConservationScore score = ConservationScore.fromFiles(protein.structure, protein.conservationPathForChain)
             protein.secondaryData.put(ConservationScore.conservationScoreKey, score)
@@ -44,7 +42,6 @@ class ConservationFeature extends AtomFeatureCalculator {
             return [0.0] as double[]
         } else {
             double value = score.getScoreForResidue(parentAA.getResidueNumber())
-            //double value = rand.nextDouble();
             return [value] as double[]
         }
     }

@@ -68,10 +68,10 @@ class Dataset implements Parametrized {
         PredictionPair loadPredictionPair() {
             PredictionPair pair = getLoader(this).loadPredictionPair(proteinFile, pocketPredictionFile)
             Path parentDir = Paths.get(Futils.absPath(proteinFile)).parent
-            String pdbBaseName = Futils.removeExtention(Futils.shortName(pdbFileName))
+            String pdbBaseName = Futils.removeExtention(Futils.shortName(proteinFile))
             // TODO: Rewrite when better parsing of dataset file is finished.
 
-            if (params.atom_table_features.any{s->s.contains("conservation")}) {
+            if (params.extra_features.any{s->s.contains("conservation")}) {
                 pair.liganatedProtein.setConservationPathForChain({ String chainId ->
                     parentDir.resolve(pdbBaseName + chainId + ".scores").toFile()
                 })
@@ -241,7 +241,7 @@ class Dataset implements Parametrized {
             processor.processItem(item)
 
         } catch (Exception e) {
-            String emsg = "error processing dataset item [$item.label]"
+            String emsg = "error processing dataset item [$item.label] \n ${e.toString()}"
             log.error(emsg, e)
             result.errorItems.add(item)
 
