@@ -4,6 +4,8 @@ import cz.siret.prank.domain.Ligand
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.domain.Protein
+import cz.siret.prank.features.implementation.conservation.ConservationScore
+import cz.siret.prank.geom.Atoms
 import cz.siret.prank.score.criteria.*
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.StringUtils
@@ -75,6 +77,12 @@ class Evaluation {
         return res
     }
 
+    private double getAvgConservationForAtoms(Atoms atoms, ConservationScore score) {
+        return atoms.distinctGroups.stream().mapToDouble( {
+            group->score.getScoreForResidue(group.getResidueNumber())})
+                .average().getAsDouble()
+    }
+
     void addPrediction(PredictionPair pair, List<Pocket> pockets) {
 
         List<LigRow> tmpLigRows = new ArrayList<>()
@@ -99,6 +107,16 @@ class Evaluation {
         protRow.distantLigands = lp.distantLigands.size()
         protRow.distantLigNames = lp.distantLigands.collect { "$it.name($it.size|${format(it.contactDistance,1)}|${format(it.centerToProteinDist,1)})" }.join(" ")
         protRow.connollyPoints = pair.prediction.protein.connollySurface.points.count
+
+        // Conservation stats
+        ConservationScore score = lp.secondaryData.get(ConservationScore.conservationScoreKey)
+        if (score != null) {
+            protRow.avgConservation = getAvgConservationForAtoms(lp.proteinAtoms, score)
+            Atoms bindingAtoms = p.proteinAtoms.cutoffAtoms(p.allLigandAtoms, lp.params.ligand_protein_contact_distance)
+            protRow.avgBindingConservation = getAvgConservationForAtoms(bindingAtoms, score)
+            Atoms nonBindingAtoms = lp.proteinAtoms - bindingAtoms
+            protRow.avgNonBindingConservation = getAvgConservationForAtoms(nonBindingAtoms, score)
+        }
 
         for (Ligand lig in pair.liganatedProtein.ligands) {
             LigRow row = new LigRow()
@@ -141,6 +159,10 @@ class Evaluation {
             prow.newRank = pocket.newRank
 
             prow.auxInfo = pocket.auxInfo
+
+            if (score != null) {
+                prow.avgConservation = getAvgConservationForAtoms(pocket.surfaceAtoms, score)
+            }
 
             tmpPockets.add(prow)
         }
@@ -309,6 +331,9 @@ class Evaluation {
         m.AVG_PROT_ATOMS =  avgProteinAtoms
         m.AVG_PROT_EXPOSED_ATOMS = avgExposedAtoms
         m.AVG_PROT_SAS_POINTS =  avgProteinConollyPoints
+        m.AVG_PROT_CONSERVATION = avg(proteinRows, {it -> it.avgConservation})
+        m.AVG_PROT_BINDING_CONSERVATION = avg(proteinRows, {it -> it.avgBindingConservation})
+        m.AVG_PROT_NON_BINDING_CONSERVATION = avg(proteinRows, {it -> it.avgNonBindingConservation})
 
         m.AVG_LIG_CENTER_TO_PROT_DIST = avgLigCenterToProtDist
         m.AVG_LIG_CLOSTES_POCKET_DIST = avgClosestPocketDist
@@ -320,6 +345,9 @@ class Evaluation {
         m.AVG_POCKET_SAS_POINTS_TRUE_POCKETS = avgPocketInnerPointsTruePockets
         m.AVG_POCKET_VOLUME =  avgPocketVolume
         m.AVG_POCKET_VOLUME_TRUE_POCKETS =  avgPocketVolumeTruePockets
+        m.AVG_POCKET_CONSERVATION = avg pocketRows.collect { it.avgConservation }
+        m.AVG_TRUE_POCKET_CONSERVATION = avg pocketRows.findAll { it.truePocket }, { it.avgConservation }
+        m.AVG_FALSE_POCKET_CONSERVATION = avg pocketRows.findAll { it.truePocket }, { it.avgConservation }
 
         m.DCA_4_0 = calcDefaultCriteriumSuccessRate(0)
         m.DCA_4_1 = calcDefaultCriteriumSuccessRate(1)
@@ -441,6 +469,10 @@ class Evaluation {
         String distantLigNames
 
         int connollyPoints
+
+        double avgConservation
+        double avgBindingConservation
+        double avgNonBindingConservation
     }
 
     static class LigRow {
@@ -471,6 +503,8 @@ class Evaluation {
         double newScore
 
         Pocket.AuxInfo auxInfo
+
+        double avgConservation
 
         boolean isTruePocket() {
             StringUtils.isNotEmpty(ligName)

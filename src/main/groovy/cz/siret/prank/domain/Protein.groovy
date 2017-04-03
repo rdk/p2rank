@@ -37,8 +37,8 @@ class Protein implements Parametrized {
 
     Surface trainSurface
 
-    /** conservation score from hssp or pipeline */
-    ConservationScore conservationScore
+    /** mapping function from chainId to conservation score file for given chain*/
+    Function<String, File> conservationPathForChain;
 
 //===========================================================================================================//
 
@@ -154,19 +154,6 @@ class Protein implements Parametrized {
             log.error "protein with no chain atoms! [$name]"
             throw new PrankException("Protein with no chain atoms [$name]!")
         }
-
-        // TODO: Check if conservation allowed
-        Path parentDir = Paths.get(Futils.absPath(pdbFileName)).parent
-        String pdbBaseName = Futils.removeExtention(Futils.shortName(pdbFileName))
-        Function<String, File> chainFileNameFnc = { chainId ->
-            if (parentDir.toString().contains("fpocket")) {
-                Path scorePath = parentDir.resolve("../../" + pdbBaseName.replace("_out", "") + chainId + ".scores")
-                return scorePath.toFile();
-            } else {
-                parentDir.resolve(pdbBaseName + chainId + ".scores").toFile()
-            }
-        }
-        conservationScore = ConservationScore.fromFiles(structure, chainFileNameFnc)
 
         if (loaderParams.ignoreLigands) return
 

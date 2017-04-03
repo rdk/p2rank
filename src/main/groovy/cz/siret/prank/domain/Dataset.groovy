@@ -12,6 +12,8 @@ import cz.siret.prank.utils.StrUtils
 import groovy.util.logging.Slf4j
 import groovyx.gpars.GParsPool
 
+import java.nio.file.Path
+import java.nio.file.Paths
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
@@ -64,7 +66,17 @@ class Dataset implements Parametrized {
         }
 
         PredictionPair loadPredictionPair() {
-            getLoader(this).loadPredictionPair(proteinFile, pocketPredictionFile)
+            PredictionPair pair = getLoader(this).loadPredictionPair(proteinFile, pocketPredictionFile)
+            Path parentDir = Paths.get(Futils.absPath(proteinFile)).parent
+            String pdbBaseName = Futils.removeExtention(Futils.shortName(pdbFileName))
+            // TODO: Rewrite when better parsing of dataset file is finished.
+
+            if (params.atom_table_features.any{s->s.contains("conservation")}) {
+                pair.liganatedProtein.setConservationPathForChain({ String chainId ->
+                    parentDir.resolve(pdbBaseName + chainId + ".scores").toFile()
+                })
+            }
+            return pair
         }
 
     }

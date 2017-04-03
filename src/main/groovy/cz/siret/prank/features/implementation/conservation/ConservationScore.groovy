@@ -33,6 +33,10 @@ import java.util.stream.Collectors;
 
 
 public class ConservationScore implements Parametrized {
+    /** conservation keys for secondaryData map in Protein class. */
+    public static String conservationLoadedKey = "isConservationLoaded"
+    public static String conservationScoreKey = "conservationScore"
+
     private Map<ResidueNumberWrapper, Double> scores;
     private final transient Logger logger = LoggerFactory.getLogger(getClass());
 

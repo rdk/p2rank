@@ -1,5 +1,6 @@
 package cz.siret.prank.features.implementation.conservation
 
+import cz.siret.prank.domain.Protein
 import cz.siret.prank.features.api.SasFeatureCalculationContext
 import cz.siret.prank.features.api.SasFeatureCalculator
 import cz.siret.prank.geom.Atoms
@@ -21,6 +22,17 @@ class ConservationCloudFeature extends SasFeatureCalculator implements Parametri
     String getName() { NAME }
 
     @Override
+    void preProcessProtein(Protein protein) {
+        // Check if conservation is already loaded.
+        if (protein.secondaryData.getOrDefault(ConservationScore.conservationLoadedKey, false)) {
+            // Load conservation score.
+            ConservationScore score = ConservationScore.fromFiles(protein.structure, protein.conservationPathForChain)
+            protein.secondaryData.put(ConservationScore.conservationScoreKey, score)
+            protein.secondaryData.put(ConservationScore.conservationLoadedKey, true)
+        }
+    }
+
+    @Override
     double[] calculateForSasPoint(Atom sasPoint, SasFeatureCalculationContext context) {
 
         // brute force ... O(N*M) where N is number of atoms and M number of Connolly points
@@ -33,10 +45,14 @@ class ConservationCloudFeature extends SasFeatureCalculator implements Parametri
         // optimization? - we need ~250 for protrusion=10 and in this case it is sower
         //int MAX_PROTRUSION_ATOMS = 250
         //Atoms deepSurrounding = this.deepSurrounding.withKdTree().kdTree.findNearestNAtoms(point, MAX_PROTRUSION_ATOMS, false)
+        ConservationScore score = (ConservationScore) context.protein.secondaryData.get(ConservationScore.conservationScoreKey)
+        if (score == null) {
+            return [0.0] as double[]
+        }
 
        Atoms surroundingAtoms = context.extractor.deepSurrounding.cutoffAroundAtom(sasPoint, params.protrusion_radius)
        double value = surroundingAtoms.getDistinctGroups().stream().mapToDouble({ Group group ->
-            context.protein.conservationScore.getScoreForResidue(group.getResidueNumber())
+            score.getScoreForResidue(group.getResidueNumber())
         }).average().getAsDouble(); 
         return [value] as double[]
     }
