@@ -169,6 +169,13 @@ class Evaluation {
 
             tmpPockets.add(prow)
         }
+        List<PocketRow> conservationSorted = tmpPockets.toSorted {it.avgConservation}.reverse(true)
+        List<PocketRow> combiSorted = tmpPockets.toSorted {it.avgConservation * it.newScore}.reverse(true)
+        for (PocketRow prow : tmpPockets) {
+            prow.conservationRank = conservationSorted.indexOf(prow) + 1
+            prow.combinedRank = combiSorted.indexOf(prow) + 1
+        }
+
 
         synchronized (this) {
             ligandCount += pair.ligandCount
@@ -348,9 +355,17 @@ class Evaluation {
         m.AVG_POCKET_SAS_POINTS_TRUE_POCKETS = avgPocketInnerPointsTruePockets
         m.AVG_POCKET_VOLUME =  avgPocketVolume
         m.AVG_POCKET_VOLUME_TRUE_POCKETS =  avgPocketVolumeTruePockets
+
         m.AVG_POCKET_CONSERVATION = avg pocketRows, { it.avgConservation }
         m.AVG_TRUE_POCKET_CONSERVATION = avg pocketRows.findAll { it.truePocket }, { it.avgConservation }
         m.AVG_FALSE_POCKET_CONSERVATION = avg pocketRows.findAll { !it.truePocket }, { it.avgConservation }
+
+        m.AVG_TRUE_POCKET_PRANK_RANK = avg pocketRows.findAll { it.truePocket }, { it.newRank }
+        m.AVG_FALSE_POCKET_PRANK_RANK = avg pocketRows.findAll { !it.truePocket }, { it.newRank }
+        m.AVG_TRUE_POCKET_CONSERVATION_RANK = avg pocketRows.findAll { it.truePocket }, { it.conservationRank }
+        m.AVG_FALSE_POCKET_CONSERVATION_RANK = avg pocketRows.findAll { !it.truePocket }, { it.conservationRank }
+        m.AVG_TRUE_POCKET_COMBINED_RANK = avg pocketRows.findAll { it.truePocket }, { it.combinedRank }
+        m.AVG_FALSE_POCKET_COMBINED_RANK = avg pocketRows.findAll { !it.truePocket }, { it.combinedRank }
 
         m.DCA_4_0 = calcDefaultCriteriumSuccessRate(0)
         m.DCA_4_1 = calcDefaultCriteriumSuccessRate(1)
@@ -504,6 +519,9 @@ class Evaluation {
         double score
         double newRank
         double newScore
+
+        int conservationRank
+        int combinedRank
 
         Pocket.AuxInfo auxInfo
 
