@@ -1,5 +1,6 @@
 package cz.siret.prank.domain
 
+import cz.siret.prank.features.implementation.conservation.ConservationScore
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Surface
 import cz.siret.prank.program.PrankException
@@ -8,6 +9,10 @@ import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.PDBUtils
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Structure
+
+import java.nio.file.Paths
+import java.nio.file.Path
+import java.util.function.Function
 
 /**
  * encapsulates protein structure with ligands
@@ -31,6 +36,9 @@ class Protein implements Parametrized {
     Surface connollySurface
 
     Surface trainSurface
+
+    /** conservation score from hssp or pipeline */
+    ConservationScore conservationScore
 
 //===========================================================================================================//
 
@@ -146,6 +154,19 @@ class Protein implements Parametrized {
             log.error "protein with no chain atoms! [$name]"
             throw new PrankException("Protein with no chain atoms [$name]!")
         }
+
+        // TODO: Check if conservation allowed
+        Path parentDir = Paths.get(Futils.absPath(pdbFileName)).parent
+        String pdbBaseName = Futils.removeExtention(Futils.shortName(pdbFileName))
+        Function<String, File> chainFileNameFnc = { chainId ->
+            if (parentDir.toString().contains("fpocket")) {
+                Path scorePath = parentDir.resolve("../../" + pdbBaseName.replace("_out", "") + chainId + ".scores")
+                return scorePath.toFile();
+            } else {
+                parentDir.resolve(pdbBaseName + chainId + ".scores").toFile()
+            }
+        }
+        conservationScore = ConservationScore.fromFiles(structure, chainFileNameFnc)
 
         if (loaderParams.ignoreLigands) return
 
