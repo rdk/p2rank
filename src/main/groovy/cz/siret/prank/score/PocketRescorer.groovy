@@ -1,12 +1,12 @@
 package cz.siret.prank.score
 
-import groovy.util.logging.Slf4j
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Prediction
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.ListUtils
+import groovy.util.logging.Slf4j
 
 @Slf4j
 abstract class PocketRescorer implements Parametrized {

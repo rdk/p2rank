@@ -1,23 +1,25 @@
 package cz.siret.prank.program.api.impl
 
-import cz.siret.prank.domain.Prediction;
-import cz.siret.prank.program.api.PrankFacade;
+import cz.siret.prank.domain.LoaderParams
+import cz.siret.prank.domain.Prediction
+import cz.siret.prank.domain.Protein
+import cz.siret.prank.program.api.PrankFacade
 import cz.siret.prank.program.api.PrankPredictor
-import cz.siret.prank.utils.PathUtils
-import cz.siret.prank.utils.StrUtils;
-import org.junit.Test;
+import cz.siret.prank.utils.Futils
+import groovy.transform.CompileStatic
+import org.biojava.nbio.structure.Atom
+import org.junit.Test
 
-import java.nio.file.Path;
+import java.nio.file.Path
 import java.nio.file.Paths
 
-import static cz.siret.prank.utils.PathUtils.path;
-import static org.junit.Assert.*;
-
-import cz.siret.prank.utils.futils
+import static cz.siret.prank.utils.PathUtils.path
+import static org.junit.Assert.assertTrue
 
 /**
  *
  */
+@CompileStatic
 class DafaultPrankPredictorTest {
 
     Path installDir = Paths.get("distro").toAbsolutePath()
@@ -27,7 +29,7 @@ class DafaultPrankPredictorTest {
     Path testFile1 = path dataDir, "2W83.pdb"
     Path testFile2 = path dataDir, "1fbl.pdb.gz"
 
-    List<Path> testFiles = [
+    List<Path> testFiles = [  //should be liganated proteins with easyli predicted bnding sites
             testFile1,
             testFile2,
             path(dataDir, "liganated", "1a82a.pdb"),
@@ -42,10 +44,12 @@ class DafaultPrankPredictorTest {
 
     @Test
     public void predict() throws Exception {
-
+//        GParsPool.withPool {
+//            testFiles.eachParallel {
+//                doTestPredict(it)
+//            }
+//        }
         testFiles.each { doTestPredict(it) }
-
-        //TODO: more comprehensive tests and messages
     }
 
     private void doTestPredict(Path protFile) {
@@ -53,22 +57,34 @@ class DafaultPrankPredictorTest {
 
         String fname = protFile.fileName.toString()
         
-        assertTrue "[$fname] SAS points empty", prediction.labeledPoints.size() > 0
-        assertTrue "[$fname] Predicted no pockets", prediction.pockets.size() > 0
+        assertTrue "SAS points empty! [$fname]", prediction.labeledPoints.size() > 0
+        assertTrue "Predicted no pockets! [$fname]", prediction.pockets.size() > 0
+        
+        // Test if the first predicted pocket binds a ligand (should be true for all proteins from testFiles)
+
+        Protein liganatedProtein = Protein.load(protFile.toString(), new LoaderParams(ignoreLigands: false))
+
+        assertTrue "Testing on protein with no ligands! [$fname]", liganatedProtein.ligandCount > 0
+
+        Atom pocketCenter = prediction.pockets.head().centroid
+        double dca = liganatedProtein.allLigandAtoms.dist(pocketCenter)
+
+        assertTrue "The first predicted pocket does not bind a ligand! [$fname]", dca <= 4.0
+
     }
 
     @Test
     public void runPrediction() throws Exception {
 
-        futils.delete(outDir.toString())
+        Futils.delete(outDir.toString())
 
         Path testOutDir = path(outDir, "predict_2W83_test")
         predictor.runPrediction( testFile1, testOutDir )
 
         def outf = testOutDir.toString() + "/2W83.pdb_predictions.csv"
 
-        assertTrue futils.exists(outf)
-        assertTrue futils.size(outf) > 0
+        assertTrue Futils.exists(outf)
+        assertTrue Futils.size(outf) > 0
     }
 
 }

@@ -19,6 +19,17 @@ public class PerfUtils {
         return to;
     }
 
+    public static void arrayCopy(double[] from, double[] to) {
+        System.arraycopy(from, 0, to, 0, from.length);
+    }
+
+    public static double[] extendArray(double[] aa, double x) {
+        double[] res = new double[aa.length+1];
+        arrayCopy(aa, res);
+        res[aa.length] = x;
+        return res;
+    }
+
     public static double[] toPrimitiveArray(List<Double> list) {
         return toPrimitiveArray(list, new double[list.size()]);
     }
@@ -58,7 +69,7 @@ public class PerfUtils {
 
         for (Atom a : atoms.list) {     // this line was causes slow casting in groovy
                                         // at org.codehaus.groovy.runtime.ScriptBytecodeAdapter.castToType(ScriptBytecodeAdapter.java:599)
-                                        // at rdk.pockets.geom.Atoms.cutoffAtomsAround(Atoms.groovy:219)
+                                        // at rdk.pockets.geom.Atoms.cutoffAroundAtom(Atoms.groovy:219)
 
             if (PerfUtils.sqrDist(a.getCoords(), toCoords) <= sqrDist) {
                 res.add(a);

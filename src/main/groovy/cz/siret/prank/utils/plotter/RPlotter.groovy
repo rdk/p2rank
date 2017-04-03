@@ -1,10 +1,9 @@
 package cz.siret.prank.utils.plotter
 
-import groovyx.gpars.GParsPool
-import cz.siret.prank.program.ThreadPoolFactory
 import cz.siret.prank.program.params.Parametrized
+import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.StrUtils
-import cz.siret.prank.utils.futils
+import groovyx.gpars.GParsPool
 
 /**
  * produces R code for generating plots
@@ -34,9 +33,9 @@ class RPlotter implements Parametrized {
         this.outdir = outdir
     }
 
-    void plot1DAll() {
+    void plot1DAll(int threads) {
 
-        GParsPool.withExistingPool(ThreadPoolFactory.pool) {
+        GParsPool.withPool(threads) {
             int n = header.size()-1
             (1..n).eachParallel {
                 plot1D(it)
@@ -47,14 +46,14 @@ class RPlotter implements Parametrized {
     }
 
     void cleanup() {
-        futils.delete("$outdir/Rplots.pdf")
+        Futils.delete("$outdir/Rplots.pdf")
     }
 
     void plot1D(int colnum) {
 
         String label = header[colnum]
 
-        String tabf = "../"+futils.shortName(csvfile) //FileUtils.relativize(csvfile, outdir)
+        String tabf = "../"+Futils.shortName(csvfile) //FileUtils.relativize(csvfile, outdir)
 
         String rcode = """
             if (!require("ggplot2")) {

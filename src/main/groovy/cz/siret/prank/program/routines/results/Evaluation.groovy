@@ -1,22 +1,21 @@
-package cz.siret.prank.score.results
+package cz.siret.prank.program.routines.results
 
-import groovy.util.logging.Slf4j
-import org.apache.commons.lang3.StringUtils
 import cz.siret.prank.domain.Ligand
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.domain.Protein
-import cz.siret.prank.score.criteria.DCA
-import cz.siret.prank.score.criteria.IdentificationCriterium
-import cz.siret.prank.utils.Formatter
+import cz.siret.prank.score.criteria.*
+import groovy.util.logging.Slf4j
+import org.apache.commons.lang3.StringUtils
 
-import java.text.DecimalFormat
+import static cz.siret.prank.utils.Formatter.*
 
 /**
- * Represents evaluation of pocket prediction on set of structures
+ * Represents evaluation of pocket prediction on a dataset of proteins
  *
- * allows to collects results for list of criteria simultaneously
- * threadsafe
+ * Allows to collect results for a set of different pocket identification success criteria simultaneously.
+ *
+ * Threadsafe.
  */
 @Slf4j
 class Evaluation {
@@ -37,6 +36,17 @@ class Evaluation {
 
     Evaluation(List<IdentificationCriterium> criteria) {
         this.criteria = criteria
+    }
+
+    Evaluation() {
+        this( getDefaultEvalCrtieria() )
+    }
+
+    /**
+     * get list of evaluation criteria used during eval routines
+     */
+    static List<IdentificationCriterium> getDefaultEvalCrtieria() {
+        ((1..15).collect { new DCA(it) }) + ((1..10).collect { new DCC(it) }) + ((1..6).collect { new DPA(it) }) + ((1..6).collect { new DSA(it) })
     }
 
     void sort() {
@@ -87,7 +97,7 @@ class Evaluation {
         protRow.smallLigands = lp.smallLigands.size()
         protRow.smallLigNames = lp.smallLigands.collect { "$it.name($it.size)" }.join(" ")
         protRow.distantLigands = lp.distantLigands.size()
-        protRow.distantLigNames = lp.distantLigands.collect { "$it.name($it.size|${Formatter.format(it.contactDistance,1)}|${Formatter.format(it.centerToProteinDist,1)})" }.join(" ")
+        protRow.distantLigNames = lp.distantLigands.collect { "$it.name($it.size|${format(it.contactDistance,1)}|${format(it.centerToProteinDist,1)})" }.join(" ")
         protRow.connollyPoints = pair.prediction.protein.connollySurface.points.count
 
         for (Ligand lig in pair.liganatedProtein.ligands) {
@@ -106,6 +116,8 @@ class Evaluation {
             Pocket closestPocket = closestPocket(lig, pockets)
             if (closestPocket!=null) {
                 row.closestPocketDist = lig.atoms.dist(closestPocket.centroid)
+            } else {
+                row.closestPocketDist = Double.NaN
             }
 
             tmpLigRows.add(row)
@@ -176,7 +188,7 @@ class Evaluation {
         return res
     }
 
-    double getStandardAssessorSuccRate(int tolerance) {
+    double calcDefaultCriteriumSuccessRate(int tolerance) {
         return calcSuccRate(3, tolerance)
     }
 
@@ -222,13 +234,8 @@ class Evaluation {
         return a
     }
 
-    static String formatPercent(double x) {
-        return new DecimalFormat("##.0").format(x*100)
-    }
 
-    String toSuccRatesCSV(List<Integer> tolerances) {
-        return formatSuccRatesCSV(tolerances, calcSuccessRates(tolerances))
-    }
+//===========================================================================================================//
 
     double getAvgPockets() {
         pocketCount / proteinCount
@@ -278,7 +285,7 @@ class Evaluation {
 
     public <T> double avg(List<T> list, Closure<T> closure) {
         if (list.size()==0) return Double.NaN
-        list.collect { closure(it) }.sum(0) / list.size()
+        list.collect { closure(it) }.findAll { it!=Double.NaN }.sum(0) / list.size()
 
     }
 
@@ -288,27 +295,55 @@ class Evaluation {
 
     Map getStats() {
         def m = new LinkedHashMap() // keep insertion order
-        m.proteins = proteinCount
-        m.ligands = ligandCount
-        m.pockets = pocketCount
 
-        if (pocketCount==0) pocketCount=1 // to avoid undefined division
+        m.PROTEINS = proteinCount
+        m.POCKETS = pocketCount
+        m.LIGANDS = ligandCount
+        m.LIGANDS_IGNORED = ignoredLigandCount
+        m.LIGANDS_SMALL = smallLigandCount
+        m.LIGANDS_DISTANT = distantLigandCount
 
-        m.avg_ligand_atoms =  avgLigandAtoms
-        m.avg_pocket_volume =  avgPocketVolume
-        m.avg_pocket_volume_true_pockets =  avgPocketVolumeTruePockets
-        m.avg_pocket_surf_atoms =  avgPocketSurfAtoms
-        m.avg_pocket_surf_atoms_true_pockets =  avgPocketSurfAtomsTruePockets
-        m.avg_pocket_connoly_points =  avgPocketInnerPoints
-        m.avg_pocket_connoly_points_true_pockets =  avgPocketInnerPointsTruePockets
-        m.avg_protein_atoms =  avgProteinAtoms
-        m.avg_protein_exposed_atoms =  avgExposedAtoms
-        m.avg_protein_connolly_points =  avgProteinConollyPoints
-        m.avg_lig_closest_pocket_dist =  avgClosestPocketDist
-        m.lig_small = smallLigandCount
-        m.lig_ignored = ignoredLigandCount
-        m.lig_distant = distantLigandCount
+        if (pocketCount==0) pocketCount=1 // to avoid undefined division in calculations
+
+        m.AVG_LIGAND_ATOMS = avgLigandAtoms
+        m.AVG_PROT_ATOMS =  avgProteinAtoms
+        m.AVG_PROT_EXPOSED_ATOMS = avgExposedAtoms
+        m.AVG_PROT_SAS_POINTS =  avgProteinConollyPoints
+
+        m.AVG_LIG_CENTER_TO_PROT_DIST = avgLigCenterToProtDist
+        m.AVG_LIG_CLOSTES_POCKET_DIST = avgClosestPocketDist
+
+        m.AVG_POCKETS = avgPockets
+        m.AVG_POCKET_SURF_ATOMS = avgPocketSurfAtoms
+        m.AVG_POCKET_SURF_ATOMS_TRUE_POCKETS = avgPocketSurfAtomsTruePockets
+        m.AVG_POCKET_SAS_POINTS = avgPocketInnerPoints
+        m.AVG_POCKET_SAS_POINTS_TRUE_POCKETS = avgPocketInnerPointsTruePockets
+        m.AVG_POCKET_VOLUME =  avgPocketVolume
+        m.AVG_POCKET_VOLUME_TRUE_POCKETS =  avgPocketVolumeTruePockets
+
+        m.DCA_4_0 = calcDefaultCriteriumSuccessRate(0)
+        m.DCA_4_1 = calcDefaultCriteriumSuccessRate(1)
+        m.DCA_4_2 = calcDefaultCriteriumSuccessRate(2)
+        m.DCA_4_4 = calcDefaultCriteriumSuccessRate(4)
+        m.DCA_4_99 = calcDefaultCriteriumSuccessRate(99)
+
+        // compare to getDefaultEvalCrtieria()
+        m.DCC_4_0 = calcSuccRate(18,0)
+        m.DCC_4_2 = calcSuccRate(18,2)
+        m.DPA_1_0 = calcSuccRate(25,0)
+        m.DPA_1_2 = calcSuccRate(25,2)
+        m.DSA_3_0 = calcSuccRate(33,0)
+        m.DSA_3_2 = calcSuccRate(33,2)
+
+        m.DCA_4_0_NOMINAL = m.DCA_4_0 * m.LIGANDS
+
         return m
+    }
+
+//===========================================================================================================//
+
+    String toSuccRatesCSV(List<Integer> tolerances) {
+        return formatSuccRatesCSV(tolerances, calcSuccessRates(tolerances))
     }
 
     String getMiscStatsCSV() {
@@ -334,11 +369,6 @@ class Evaluation {
         }
 
         return str.toString()
-    }
-
-    static String fmt(double x) {
-        //return ClassifierStats.format(x)
-        sprintf "%8.2f", x
     }
 
     String toLigandsCSV() {
@@ -388,6 +418,8 @@ class Evaluation {
         return csv.toString()
     }
 
+//===========================================================================================================//
+
     static class ProteinRow {
         String name
         int atoms
@@ -417,7 +449,7 @@ class Evaluation {
         String ligCode
         int ligCount
         int atoms = 0
-        double closestPocketDist = Double.POSITIVE_INFINITY
+        double closestPocketDist 
         double centerToProtDist
         int dca4rank = -1
 

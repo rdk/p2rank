@@ -4,11 +4,14 @@ import cz.siret.prank.domain.Prediction
 import cz.siret.prank.utils.CSV
 import cz.siret.prank.utils.PerfUtils
 
-class ReorderingSummary {
+/**
+ * Summary of rescoring pockets on one protein.
+ */
+class RescoringSummary {
 
     private Prediction prediction
 
-    ReorderingSummary(Prediction prediction) {
+    RescoringSummary(Prediction prediction) {
         this.prediction = prediction
     }
 

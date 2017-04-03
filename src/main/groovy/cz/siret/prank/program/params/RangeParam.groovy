@@ -1,10 +1,10 @@
 package cz.siret.prank.program.params
 
-import groovy.transform.CompileStatic
+import cz.siret.prank.utils.CmdLineArgs
 import cz.siret.prank.utils.Formatter
 import cz.siret.prank.utils.PerfUtils
 import cz.siret.prank.utils.StrUtils
-import cz.siret.prank.utils.CmdLineArgs
+import groovy.transform.CompileStatic
 
 /**
  * parameter witch range of values
@@ -59,7 +59,7 @@ class RangeParam {
     }
 
     static boolean isRangedArgValue(String value) {
-        value.startsWith("[") || value.startsWith("(")
+        ( value.startsWith("[") && value.contains(":") ) || ( value.startsWith("(") && value.contains(",") )
     }
 
     static List<RangeParam> parseRangedArgs(CmdLineArgs args) {

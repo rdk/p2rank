@@ -1,5 +1,19 @@
-
 language: groovy
+
+env:
+  global:
+    - GRADLE_OPTS=-Xmx1524m
 
 jdk:
   - oraclejdk8
+
+addons:
+  apt:
+    packages:
+      - oracle-java8-installer
+
+script:
+  - java -version
+  - gradle -version
+  - gradle --stop
+  - gradle --refresh-dependencies clean check -Dscan --info 

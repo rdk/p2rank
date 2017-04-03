@@ -1,11 +1,15 @@
+//plugins {
+//    id 'com.github.ben-manes.versions' version '0.14.0'
+//    // run "gradle dependencyUpdates -Drevision=release" to check dependency updates
+//}
+
 apply plugin: 'groovy'
 apply plugin: 'java'
 apply plugin: 'idea'
 
 
 group = 'cz.siret'
-version = '2.0-rc.5' // 2.0-dev.6_SNAPSHOT
-
+version = '2.0-dev.7'
 
 description = 'Ligand binding site prediction based on machine learning.'
 
@@ -30,6 +34,8 @@ repositories {
 
     flatDir(dirs: 'lib')
 }
+
+
 
 sourceSets {
     main {
@@ -64,12 +70,6 @@ task copyBinaryToDist( type: Copy ) {
     include "*.jar"
 }
 
-// task fatJar(type: Jar) {
-//     baseName = project.name + '-all'
-//     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-//     with jar
-// }
-
 assemble {
     dependsOn processResources
     dependsOn copyBinaryToDist
@@ -83,19 +83,35 @@ jar {
     manifest {
         attributes 'Main-Class': 'cz.siret.prank.program.Main'
     }
-
-    //make fat jar: include all dependencies
-    //    from {
-    //        configurations.compile.filter( {! (it.name =~ /.*\.pom/ )}).collect { it.isDirectory() ? it : zipTree(it) }
-    //    }
 }
 
 clean {
     delete "$buildDir/../distro/bin/lib"
 }
 
+test {
+
+    // show standard out and standard error of the test JVM(s) on the console
+    // testLogging.showStandardStreams = true
+
+    // set heap size for the test JVM(s)
+    maxHeapSize = "1512m"
+
+    // listen to events in the test execution lifecycle
+    beforeTest { descriptor ->
+        logger.lifecycle("Running test: " + descriptor)
+    }
+
+    // listen to standard out and standard error of the test JVM(s)
+    //    onOutput { descriptor, event ->
+    //        logger.lifecycle("Test: " + descriptor + " produced standard out/err: " + event.message )
+    //    }
+    
+}
+
+
 dependencies {
-    compile 'org.codehaus.groovy:groovy-all:2.4.8'
+    compile 'org.codehaus.groovy:groovy-all:2.4.9'
     compile 'org.codehaus.gpars:gpars:1.2.1'
     compile "org.apache.commons:commons-lang3:3.5"
     compile "commons-io:commons-io:2.5"
@@ -103,7 +119,7 @@ dependencies {
     compile 'org.zeroturnaround:zt-zip:1.11'
 
     compile 'org.slf4j:slf4j-api:1.7.24'
-    compile 'org.apache.logging.log4j:log4j-slf4j-impl:2.5'
+    compile 'org.apache.logging.log4j:log4j-slf4j-impl:2.5' // 2.8 was causing problem with biojava
 
 	compile 'org.biojava:biojava-core:4.2.6'
 	compile 'org.biojava:biojava-alignment:4.2.6'

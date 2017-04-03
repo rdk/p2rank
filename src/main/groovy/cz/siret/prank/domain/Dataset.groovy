@@ -1,16 +1,16 @@
 package cz.siret.prank.domain
 
-import cz.siret.prank.domain.loaders.PredictionLoader
-import cz.siret.prank.domain.loaders.SiteHoundLoader
-import groovy.util.logging.Slf4j
-import groovyx.gpars.GParsPool
 import cz.siret.prank.domain.loaders.ConcavityLoader
 import cz.siret.prank.domain.loaders.FPockeLoader
+import cz.siret.prank.domain.loaders.PredictionLoader
+import cz.siret.prank.domain.loaders.SiteHoundLoader
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.ThreadPoolFactory
 import cz.siret.prank.program.params.Parametrized
+import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.StrUtils
-import cz.siret.prank.utils.futils
+import groovy.util.logging.Slf4j
+import groovyx.gpars.GParsPool
 
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -37,7 +37,7 @@ class Dataset implements Parametrized {
             this.pocketPredictionFile = pocketPredictionFile
             this.ligandNames = ligandNames
 
-            this.label = futils.shortName( pocketPredictionFile ?: proteinFile )
+            this.label = Futils.shortName( pocketPredictionFile ?: proteinFile )
         }
 
         Prediction getPrediction() {
@@ -129,7 +129,7 @@ class Dataset implements Parametrized {
     }
 
     String getLabel() {
-        futils.removeExtention(name)
+        Futils.removeExtention(name)
     }
 
     int getSize() {
@@ -159,13 +159,13 @@ class Dataset implements Parametrized {
         boolean ok = true
         items.each {
             if (hasPairs) {
-                if (!futils.exists(it.pocketPredictionFile)) {
+                if (!Futils.exists(it.pocketPredictionFile)) {
                     log.error "prediction file doesn't exist: $it.pocketPredictionFile"
                     ok = false
                 }
             }
 
-            if (!futils.exists(it.proteinFile)) {
+            if (!Futils.exists(it.proteinFile)) {
                 log.error "protein file doesn't exist: $it.proteinFile"
                 ok = false
             }
@@ -324,8 +324,8 @@ class Dataset implements Parametrized {
     public static Dataset createSingleFileDataset(String pdbFile) {
         Dataset res = new Dataset()
         res.hasPairs = false
-        res.dir = futils.dir(pdbFile)
-        res.name = futils.shortName(pdbFile)
+        res.dir = Futils.dir(pdbFile)
+        res.name = Futils.shortName(pdbFile)
         res.items.add(res.newItem(pdbFile, pdbFile, null))
 
         return res

@@ -4,8 +4,8 @@ import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Surface
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.Parametrized
+import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.PDBUtils
-import cz.siret.prank.utils.futils
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Structure
 
@@ -130,9 +130,9 @@ class Protein implements Parametrized {
      */
     private void loadFile(String pdbFileName, LoaderParams loaderParams) {
 
-        log.info "loading protein [${futils.absPath(pdbFileName)}]"
+        log.info "loading protein [${Futils.absPath(pdbFileName)}]"
 
-        name = futils.shortName(pdbFileName)
+        name = Futils.shortName(pdbFileName)
         structure = PDBUtils.loadFromFile(pdbFileName)
         allAtoms = Atoms.allFromStructure(structure).withIndex()
         proteinAtoms = Atoms.onlyProteinAtoms(structure).withoutHydrogens()

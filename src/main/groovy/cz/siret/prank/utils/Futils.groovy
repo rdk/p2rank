@@ -6,6 +6,8 @@ import groovy.util.logging.Slf4j
 import org.apache.commons.io.FileUtils
 import org.zeroturnaround.zip.ZipUtil
 
+import java.util.zip.GZIPOutputStream
+
 
 /**
  * Safe file utility methods
@@ -15,7 +17,11 @@ import org.zeroturnaround.zip.ZipUtil
  */
 @Slf4j
 @CompileStatic
-class futils {
+class Futils {
+
+    public static final int ZIP_BEST_COMPRESSION = 9
+
+    private static final int OUTPUT_BUFFER_SIZE = 10000
 
     static String normalize(String path) {
         if (path==null) return null
@@ -76,7 +82,7 @@ class futils {
      * reads text file from classpath
      */
     static String readResource(String path) {
-        return futils.class.getResourceAsStream(path).newReader().getText()
+        return Futils.class.getResourceAsStream(path).newReader().getText()
     }
 
     /**
@@ -84,21 +90,44 @@ class futils {
      */
     static Properties loadProperties(String path) {
         Properties res = new Properties()
-        res.load(futils.class.getResourceAsStream(path))
+        res.load(Futils.class.getResourceAsStream(path))
         return res
     }
 
-    static PrintWriter overwrite(String fname) {
+    /**
+     * Overwrites the file if exists and returns the writer
+     */
+    static PrintWriter getWriter(String fname) {
         File file = new File(fname)
         if (file.exists()) {
             file.delete()
         }
         file.createNewFile()
 
-        return new PrintWriter(new BufferedWriter(new FileWriter(file), 10000))
+        return new PrintWriter(new BufferedWriter(new FileWriter(file), OUTPUT_BUFFER_SIZE))
     }
 
-    static void overwrite(String fname, Object text) {
+    /**
+     * Overwrites the file if exists and returns the writer to gzipped output stream
+     */
+    static PrintWriter getGzipWriter(String fname) {
+        File file = new File(fname)
+        if (file.exists()) {
+            file.delete()
+        }
+        file.createNewFile()
+
+        GZIPOutputStream gos = new GZIPOutputStream(new FileOutputStream(file), OUTPUT_BUFFER_SIZE)
+
+        return new PrintWriter(new BufferedWriter(new OutputStreamWriter(gos), OUTPUT_BUFFER_SIZE))
+    }
+
+    /**
+     * writeFile text file
+     * @param fname
+     * @param text
+     */
+    static void writeFile(String fname, Object text) {
 
         try {
             String dir = dir(fname)
@@ -138,11 +167,12 @@ class futils {
     /**
      * delete file or directory recursively if exists
      */
-    static boolean delete(String fname) {
+    static void delete(String fname) {
+        if (fname==null) return
+
         log.info "deleting " + fname
 
         File f = new File(fname)
-
         if (f.exists()) {
             if (f.isDirectory()) {
                 FileUtils.deleteDirectory(f)
@@ -150,7 +180,6 @@ class futils {
                 f.delete()
             }
         }
-
     }
 
     static void mkdirs(String s) {
@@ -164,9 +193,35 @@ class futils {
     }
 
 
+    static void zip(String fileOrDirectory) {
+        zip(fileOrDirectory, ZipUtil.DEFAULT_COMPRESSION_LEVEL)
+    }
+
+    /**
+     *
+     * @param fileOrDirectory
+     * @param compressionLevel
+     */
+    static void zip(String fileOrDirectory, int compressionLevel) {
+        File fileOrDir = new File(fileOrDirectory)
+        File zipFile = new File(fileOrDirectory + '.zip')
+
+        if (fileOrDir.isDirectory()) {
+            ZipUtil.pack(fileOrDir, zipFile, compressionLevel)
+        } else {
+            ZipUtil.packEntries([fileOrDir] as File[], zipFile, compressionLevel)
+        }
+    }
+
     static void zipAndDelete(String fileOrDirectory) {
-        ZipUtil.pack(new File(fileOrDirectory), new File(fileOrDirectory + '.zip'))
+        zipAndDelete(fileOrDirectory, ZipUtil.DEFAULT_COMPRESSION_LEVEL)
+    }
+
+    static void zipAndDelete(String fileOrDirectory, int compressionLevel) {
+        zip(fileOrDirectory, compressionLevel)
         delete(fileOrDirectory)
     }
+
+
 
 }

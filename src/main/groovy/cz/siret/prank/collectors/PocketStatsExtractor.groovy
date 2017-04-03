@@ -31,10 +31,10 @@ class PocketStatsExtractor extends VectorCollector {
 //        pair.prediction.pockets.each { Pocket pocket ->
 //
 //            if (pair.isCorrectlyPredictedPocket(pocket, criterion)) {
-//                res.addAll( pocket.stats.getVector() + 1 )
+//                res.addAll( pocket.metrics.getVector() + 1 )
 //                res.correct++
 //            } else {
-//                res.addAll( pocket.stats.getVector() + 0 )
+//                res.addAll( pocket.metrics.getVector() + 0 )
 //                res.negatives++
 //            }
 //

@@ -2,13 +2,13 @@ package cz.siret.prank.geom
 
 import com.google.common.collect.ComparisonChain
 import com.google.common.collect.Ordering
+import cz.siret.prank.geom.clustering.AtomClusterer
 import cz.siret.prank.geom.clustering.AtomGroupClusterer
+import cz.siret.prank.geom.clustering.SLinkClusterer
+import cz.siret.prank.utils.PerfUtils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.*
-import cz.siret.prank.geom.clustering.AtomClusterer
-import cz.siret.prank.geom.clustering.SLinkClusterer
-import cz.siret.prank.utils.PerfUtils
 
 @Slf4j
 @CompileStatic

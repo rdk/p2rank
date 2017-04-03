@@ -1,36 +1,46 @@
 package cz.siret.prank.program.routines
 
-import cz.siret.prank.domain.LoaderParams
-import groovy.util.logging.Slf4j
 import cz.siret.prank.domain.Dataset
+import cz.siret.prank.domain.LoaderParams
 import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.features.FeatureExtractor
-import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.rendering.PyMolRenderer
+import cz.siret.prank.program.routines.results.PredictResults
 import cz.siret.prank.score.PocketRescorer
 import cz.siret.prank.score.WekaSumRescorer
 import cz.siret.prank.score.results.PredictionSummary
-import cz.siret.prank.utils.ATimer
+import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.WekaUtils
-import cz.siret.prank.utils.Writable
-import cz.siret.prank.utils.futils
+import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
 import weka.classifiers.Classifier
 
+import static cz.siret.prank.utils.ATimer.startTimer
+import static cz.siret.prank.utils.Futils.mkdirs
+import static cz.siret.prank.utils.Futils.writeFile
+
+/**
+ * Routine for making (and evaluating) predictions
+ *
+ * Backs prank commands 'predict' and 'eval-predict'
+ *
+ *
+ */
 @Slf4j
-class PredictRoutine implements Parametrized, Writable {
+@CompileStatic
+class PredictRoutine extends Routine {
 
     Dataset dataset
     String modelf
-    String outdir
 
     boolean collectStats = false
     boolean produceVisualizations = params.visualizations
     boolean produceFilesystemOutput = true
 
     PredictRoutine(Dataset dataset, String modelf, String outdir) {
+        super(outdir)
         this.dataset = dataset
         this.modelf = modelf
-        this.outdir = outdir
     }
 
     static PredictRoutine createForInternalUse(Dataset dataset, String modelf) {
@@ -40,30 +50,23 @@ class PredictRoutine implements Parametrized, Writable {
         return routine
     }
 
-
     Dataset.Result execute() {
-        def timer = ATimer.start()
+        def timer = startTimer()
 
         write "predicting pockets for proteins from dataset [$dataset.name]"
 
         if (produceFilesystemOutput) {
-            futils.mkdirs(outdir)
-            futils.overwrite("$outdir/params.txt", params.toString())
+            mkdirs(outdir)
+            writeParams(outdir)
             log.info "outdir: $outdir"
         }
 
         Classifier classifier = WekaUtils.loadClassifier(modelf)
-
-        // try to make sure that classifer uses only one thread for each classification (we then parallelize dataset)
-        String[] threadPropNames = ["numThreads","numExecutionSlots"]   // names used for num.threads property by different classifiers
-        threadPropNames.each { name ->
-            if (classifier.hasProperty(name))
-                classifier."$name" = 1 // params.threads
-        }
+        WekaUtils.disableParallelism(classifier)
 
         String visDir = "$outdir/visualizations"
         if (produceVisualizations) {
-            futils.mkdirs(visDir)
+            mkdirs(visDir)
         }
 
         PredictResults stats = new PredictResults()
@@ -89,13 +92,13 @@ class PredictRoutine implements Parametrized, Writable {
                 if (outputPredictionFiles) {
                     PredictionSummary psum = new PredictionSummary(pair.prediction)
                     String outf = "$outdir/${item.label}_predictions.csv"
-                    futils.overwrite(outf, psum.toCSV().toString())
+                    writeFile(outf, psum.toCSV().toString())
                 }
 
                 if (collectStats) {  // expects dataset with liganated proteins
-                    stats.predictionsEval.addPrediction(pair, pair.prediction.reorderedPockets)
-                    synchronized (stats.classifierStats) {
-                        stats.classifierStats.addAll(rescorer.stats)
+                    stats.evaluation.addPrediction(pair, pair.prediction.reorderedPockets)
+                    synchronized (stats.classStats) {
+                        stats.classStats.addAll(rescorer.stats)
                     }
                 }
 
@@ -114,9 +117,8 @@ class PredictRoutine implements Parametrized, Writable {
         write "predicting pockets finished in $timer.formatted"
 
         if (produceFilesystemOutput) {
-            write "results saved to directory [${futils.absPath(outdir)}]"
+            write "results saved to directory [${Futils.absPath(outdir)}]"
         }
-
 
         return result
     }

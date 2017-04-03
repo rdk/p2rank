@@ -1,52 +1,54 @@
 package cz.siret.prank.program.routines
 
-import groovy.util.logging.Slf4j
-import groovyx.gpars.GParsPool
 import cz.siret.prank.collectors.DataPreProcessor
 import cz.siret.prank.domain.Dataset
-import cz.siret.prank.utils.ATimer
+import cz.siret.prank.program.routines.results.EvalResults
+import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.WekaUtils
-import cz.siret.prank.utils.futils
+import groovy.util.logging.Slf4j
+import groovyx.gpars.GParsPool
 import weka.core.Instances
 
+import static cz.siret.prank.utils.ATimer.startTimer
+
 @Slf4j
-class CrossValidation extends CompositeRoutine {
+class CrossValidation extends EvalRoutine {
 
     int numFolds
     int samplingSeed
     Dataset dataset
     List<Fold> folds
-    Results results
+    EvalResults results
 
     int train_positives
     int train_negatives
 
     CrossValidation(String outdir, Dataset dataset) {
-        this.outdir = outdir
+        super(outdir)
         this.dataset = dataset
     }
 
     void init() {
-        results = new Results(0) // joint results
+        results = new EvalResults(0) // joint results
         numFolds = params.folds
         samplingSeed = params.seed
-        futils.mkdirs(outdir)
+        Futils.mkdirs(outdir)
     }
 
-    Results execute() {
-        def timer = ATimer.start()
+    @Override
+    EvalResults execute() {
+        def timer = startTimer()
 
         init()
         prepareFolds()
 
-        List<Results> resultsList
+        List<EvalResults> resultsList
         GParsPool.withPool(params.crossval_threads) {
 
             resultsList = folds.collectParallel { Fold fold ->
 
-                TrainEvalIteration iter = new TrainEvalIteration()
-                iter.label = "fold.${numFolds}.${fold.num}"
-                iter.outdir = "$outdir/$iter.label"
+                String label = "fold.${numFolds}.${fold.num}"
+                TrainEvalRoutine iter = new TrainEvalRoutine("$outdir/$label")
                 iter.trainDataSet = fold.data.trainset
                 iter.evalDataSet = fold.data.evalset
                 iter.trainVectors = fold.trainVectors // precollected vectors
@@ -65,12 +67,12 @@ class CrossValidation extends CompositeRoutine {
         results.train_positives = train_positives
 
         results.logAndStore(outdir, params.classifier)
-        logMainResults(dataset.label, "crossvalidation", results)
+        logSummaryResults(dataset.label, "crossvalidation", results)
 
         write "processed $results.originalEval.ligandCount ligands in $dataset.size files"
         write "crossvalidation finished in $timer.formatted"
-        write "results saved to directory [${futils.absPath(outdir)}]"
-        futils.overwrite("$outdir/time.log", "finished in $timer.formatted")
+        write "results saved to directory [${Futils.absPath(outdir)}]"
+        logTime "finished in $timer.formatted"
 
         return results
     }

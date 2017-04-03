@@ -1,12 +1,12 @@
 package cz.siret.prank.collectors
 
-import groovy.util.logging.Slf4j
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.features.FeatureVector
 import cz.siret.prank.score.criteria.IdentificationCriterium
 import cz.siret.prank.utils.ListUtils
+import groovy.util.logging.Slf4j
 
 @Slf4j
 class PocketFingerprintCollector extends VectorCollector  {

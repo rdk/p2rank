@@ -1,9 +1,9 @@
 package cz.siret.prank.score.criteria
 
-import groovy.transform.CompileStatic
 import cz.siret.prank.domain.Ligand
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.geom.Struct
+import groovy.transform.CompileStatic
 
 /**
  * distance from the center of the pocket to the center of the ligand

@@ -27,7 +27,7 @@ import cz.siret.prank.program.params.Params
      */
     fail_fast = true
 
-    classifier="FastRandomForest"
+    classifier="FasterForest"
 
     seed = 42
 
@@ -35,13 +35,14 @@ import cz.siret.prank.program.params.Params
 
     predictions = true
 
-    out_prefix_date = false
+    out_prefix_date = true
 
     crossval_threads = 5
 
-    cache_eval_dataset = true
     cache_datasets = true
+
     clear_sec_caches = false
+
     clear_prim_caches = false
 
 
@@ -61,12 +62,7 @@ import cz.siret.prank.program.params.Params
      */
     sample_negatives_from_decoys = false
 
-    //atom_table_feat_pow = 8
-
     atom_table_feat_keep_sgn = true
-
-    //neighbourhood_radius = 8
-
 
     atom_table_features = ["ap5sasaValids","ap5sasaInvalids","apRawValids","apRawInvalids","atomicHydrophobicity"]
 

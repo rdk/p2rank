@@ -32,10 +32,18 @@ class GenericVector {
         data[header.getColIndex(colName)] = value
     }
 
+    void multiply(String colName, double a) {
+        data[header.getColIndex(colName)] *= a
+    }
+
     void setValues(List<String> valuesHeader, double[] values) {
         String firstColName = valuesHeader[0]
         int start = header.getColIndex(firstColName)
-        System.arraycopy(values, 0, data, start, values.length)
+        setValues(start, values)
+    }
+
+    void setValues(int startIndex, double[] values) {
+        System.arraycopy(values, 0, data, startIndex, values.length)
     }
 
     List<Double> toList() {

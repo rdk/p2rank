@@ -146,14 +146,69 @@ Location of output directory for any given run is influenced by several paramate
 * `-o <dir>`: overrides previous params and places output in specified directory
 
 
+## Case study: Implementing and evaluating new feature
+
+If you are reading ths tutorial there is a good chance you want to implement a new feature and evaluate if it contributes to prediction success rates.
+
+### Implementation
+
+New features can be added by implementing `FeatureCalculator` interface and registering the imlementation in `FeatureRegistry`.
+You can implement the feature by extending one of convenience abstrect classes `AtomFeatureCalculator` or `SasFeatureCalculator`.
+
+You need to decide if the new feature will be associated with protein surface (=sovent exposed) atoms or with SAS (Solvent Accessible Surface) points. 
+P2RANK works by classifying SAS point feature vectors. If you associate the feature with atoms its value will be projected to SAS point featre vectors by P2RANK from neighbouring atoms.
+
+Some features are more easily defined for atoms than SAS points and other way around. See `BfactorFeature` and `ProtrusionFeature` for comparison.
 
 
+### Evaluation
 
+1. Prepare the environment
+    * copy `misc/local-env-params.sh` to root directory of the project and edit it according to your machine (the file is then included by `prank.sh`)
+        * you will need a lot of memory: at least to store the whole trainng dataset of feature vectors and a trained model and then some  
+        * memory consumption can be drastically insfuenced by some paramaters...
+    * parameters that influence memory/time tradeoff:
+        - `-cache_datasets` determins whether datasets of proteins are kept in memory between runs. See also 
+            * `-clear_prim_caches` clear primary caches (protein structures) between runs (when iterating params or seed)
+            * `-clear_sec_caches` clear secondary caches (protein surfaces etc.) between runs (when iterating params or seed)
+        - `-crossval_threads` when running crossvalidation it determins how many models are trained at the same time. Set to `1` if you don't have enough memory.
+        - `-rf_trees`, `-fr_depth` influence the size of the model in memory      
 
+ 2. Check `working.groovy` config file. It contains configuration ideal for training new models, but you might need to make changes or override some params on the command line. 
+ 
+ 3. Train with the new feature
+    * train with the new feature by adding its name to the list of `-extra_features`. i.e.:
+        - in the groovy config file: `extra_features = ["protrusion","bfactor","new_feature"]`
+        - on the command line: `-extra_features '(protrusion.bfactor.new_feature)'` (dot is used as separator)
+    * you can even compare different feature sets running `prank ploop ...`. i.e.:
+        - `-extra_features '((protrusion),(new_feature),(protrusion.new_feature))'`   
+    
+#### Real examples
+    
+Quick test run:
+~~~   
+./prank.sh ploop 
+    -c working                      \      # override default config with working.groovy config file
+    -t chen11-fpocket.ds            \      # crossvalidate on chen11 datsest
+    -loop 1 -rf_trees 5 -rf_depth 5 \      # make it quick (1 pass, small model)
+    -extra_features '((protrusion.bfactor),(protrusion.bfactor.new_feature))'` 
+~~~
 
+(Then check `run.log` in n results directory for errors. Check if R plots are generated correectly.)
 
+Real comparison experiments:
+~~~
+./prank.sh ploop -c working             \      
+    -t chen11-fpocket.ds                \      
+    -loop 10 -rf_trees 100 -rf_depth 10 \      
+    -extra_features '((protrusion.bfactor),(protrusion.bfactor.new_feature))'` 
 
-
+./prank.sh ploop -c working             \      
+    -t chen11-fpocket.ds                \  # train on chen11 
+    -e joined.ds                        \  # and evaluate on a different dataset
+    -loop 10 -rf_trees 100 -rf_depth 10 \      
+    -extra_features '((protrusion.bfactor),(protrusion.bfactor.new_feature))'` 
+~~~
 
 
 

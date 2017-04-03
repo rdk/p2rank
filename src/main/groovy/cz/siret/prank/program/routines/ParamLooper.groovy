@@ -1,22 +1,26 @@
 package cz.siret.prank.program.routines
 
+import cz.siret.prank.program.params.Params
+import cz.siret.prank.program.params.RangeParam
+import cz.siret.prank.program.routines.results.EvalResults
+import cz.siret.prank.utils.Futils
+import cz.siret.prank.utils.plotter.RPlotter
+import groovy.transform.CompileDynamic
+import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
 import groovy.util.logging.Slf4j
 import groovyx.gpars.GParsPool
-import cz.siret.prank.program.ThreadPoolFactory
-import cz.siret.prank.program.params.Params
-import cz.siret.prank.program.params.RangeParam
-import cz.siret.prank.utils.ATimer
-import cz.siret.prank.utils.futils
-import cz.siret.prank.utils.plotter.RPlotter
+
+import static cz.siret.prank.utils.ATimer.startTimer
+import static cz.siret.prank.utils.Futils.mkdirs
 
 /**
- * routine for grid optimization. Loops through values of one or more RangeParam and produces resulting statistics and plots.
+ * Routine for grid optimization. Loops through values of one or more RangeParam and produces resulting statistics and plots.
  */
 @Slf4j
+@CompileStatic
 class ParamLooper extends Routine {
 
-    String outdir
     List<RangeParam> rparams
 
     List<Step> steps
@@ -25,52 +29,71 @@ class ParamLooper extends Routine {
     String plotsDir
     String tablesDir
 
-    Map tables2D = new LinkedHashMap()
+    Map<String, String> tables2D = new LinkedHashMap()
 
     ParamLooper(String outdir, List<RangeParam> rparams) {
+        super(outdir)
         this.rparams = rparams
-        this.outdir = outdir
         plotsDir = "$outdir/plots"
     }
 
     /**
+     * Iterate through al steps running closue.
+     * Step is a particular assignment of flexible params, (e.g. "prram1=val1 param2=val2")
+     * @param closure takes outdir as param
      *
-     * @param routine takes label as param (e.g. "prram1.val1.param2.val2")
+     * TODO: merge with code in Experiments, there is no point in separation with closure
      */
-    public void iterateParams(Closure<CompositeRoutine.Results> closure) {
-        def timer = ATimer.start()
+    public void iterateSteps(Closure<EvalResults> closure) {
+        def timer = startTimer()
+
+        mkdirs(outdir)
+        writeParams(outdir)
+
+        String runsDir = "$outdir/runs"
+        mkdirs(runsDir)
 
         steps = generateSteps()
         log.info "STEPS: " + steps.toListString().replace("Step","\nStep")
 
         paramsTableFile = "$outdir/param_stats.csv"
-        PrintWriter table = futils.overwrite paramsTableFile
+        PrintWriter tablef = Futils.getWriter paramsTableFile
 
         boolean doheader = true
         for (Step step in steps) {
+            def stepTimer = startTimer()
+
             step.applyToParams(params)
 
-            def tim = ATimer.start()
-            CompositeRoutine.Results res = closure.call(step.label)
+            String stepDir = "$runsDir/$step.label"
+            EvalResults res = closure.call(stepDir)     // execute an experiment in closure for a step
 
             step.results.putAll( res.stats )
-            step.results.TIME_MINUTES = tim.minutes
+            step.results.TIME_MINUTES = stepTimer.minutes
 
-            if (doheader) {
-                table << step.header + "\n";  doheader = false
+            if (doheader) {                             // use first step with results to produce header
+                tablef << step.header + "\n";  doheader = false
             }
-            table << step.toCSV() + "\n"; table.flush()
+            tablef << step.toCSV() + "\n"; tablef.flush()
 
             if (paramsCount==2) {
                 make2DTables(step)
             }
         }
-        table.close()
+        tablef.close()
 
         logTime "param iteration finished in $timer.formatted"
-        write "results saved to directory [${futils.absPath(outdir)}]"
+        write "results saved to directory [${Futils.absPath(outdir)}]"
 
         makePlots()
+
+        if (params.ploop_delete_runs) {
+            Futils.delete(runsDir)
+        } else if (params.ploop_zip_runs) {
+            Futils.zipAndDelete(runsDir, Futils.ZIP_BEST_COMPRESSION)
+        }
+
+        logTime "ploop routine finished in $timer.formatted"
     }
 
     private void make2DTables(Step step) {
@@ -87,7 +110,7 @@ class ParamLooper extends Routine {
 
     private makePlots() {
         write "generating R plots..."
-        futils.mkdirs(plotsDir)
+        mkdirs(plotsDir)
         if (paramsCount==1) {
             make1DPlots()
         } else if (paramsCount==2) {
@@ -95,47 +118,51 @@ class ParamLooper extends Routine {
         }
     }
 
+    private int getRThreads() {
+        Math.min(params.threads, params.r_threads)
+    }
+
+    @CompileDynamic
     private make2DPlots() {
-        int threads = Math.min(params.threads, 4)
-        GParsPool.withPool(threads) {
-//        GParsPool.withExistingPool(ThreadPoolFactory.pool) {
-            tables2D.entrySet().eachParallel {
-                String fname = futils.absSafePath(it.value)
-                String label = it.key
-                String xlab = rparams[1].name
-                String ylab = rparams[0].name
-                new RPlotter(plotsDir).plotHeatMapTable(fname, label, xlab, ylab)
+        GParsPool.withPool(RThreads) {
+            tables2D.keySet().eachParallel { String key ->
+                String value = tables2D.get(key)
+                String label = key
+                String fname = Futils.absSafePath(value)
+                String labelX = rparams[1].name
+                String labelY = rparams[0].name
+                new RPlotter(plotsDir).plotHeatMapTable(fname, label, labelX, labelY)
             }
         }
     }
 
     private make1DPlots() {
-        new RPlotter( paramsTableFile, plotsDir).plot1DAll()
+        new RPlotter( paramsTableFile, plotsDir).plot1DAll(RThreads)
     }
 
     private make2DTable(String statName) {
-        RangeParam pa = rparams[0]
-        RangeParam pb = rparams[1]
+        RangeParam paramX = rparams[0]
+        RangeParam paramY = rparams[1]
 
-        Map map =[:]
+        Map<List, Double> valueMap = new HashMap()
         for (Step s : steps) {
             def key = [ s.params[0].value, s.params[1].value ]
-            map.put( key, s.results."$statName" )
+            valueMap.put( key, s.results.get(statName) )
         }
 
         StringBuilder sb = new StringBuilder()
         sb << "# resName \n"
-        sb << "${pa.name}/${pb.name}," + pb.values.collect { it }.join(",") + "\n"
+        sb << "${paramX.name}/${paramY.name}," + paramY.values.collect { it }.join(",") + "\n"
 
-        for (def va : pa.values) {
-            def row = pb.values.collect { vb -> map.get([va,vb]) }.collect { fmt it }.join(",")
+        for (def va : paramX.values) {
+            def row = paramY.values.collect { vb -> valueMap.get([va,vb]) }.collect { fmt it }.join(",")
 
-            sb << va + "," + row + "\n"
+            sb << "" + va + "," + row + "\n"
         }
 
-        def fname = "$tablesDir/${statName}.csv"
+        String fname = "$tablesDir/${statName}.csv"
         tables2D.put(statName, fname)
-        futils.overwrite fname, sb.toString()
+        Futils.writeFile fname, sb.toString()
     }
 
     private List<Step> generateSteps() {
@@ -166,7 +193,7 @@ class ParamLooper extends Routine {
     private static class Step {
 
         List<ParamVal> params = new ArrayList<>()
-        Map results = new LinkedHashMap()
+        Map<String, Double> results = new LinkedHashMap()
 
         void applyToParams(Params globalParams) {
             params.each { globalParams.setParam(it.name, it.value) }
@@ -184,6 +211,7 @@ class ParamLooper extends Routine {
             (params*.name).join(',') + ',' + results.keySet().join(',')
         }
 
+        @CompileDynamic
         String toCSV() {
             (params*.value).join(',') + ',' + results.values().collect{ fmt(it) }.join(',')
         }

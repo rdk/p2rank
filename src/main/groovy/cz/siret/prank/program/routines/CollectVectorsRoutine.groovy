@@ -9,15 +9,16 @@ import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.features.FeatureVector
 import cz.siret.prank.score.criteria.DCA
 import cz.siret.prank.score.criteria.IdentificationCriterium
-import cz.siret.prank.utils.ATimer
+import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.PerfUtils
 import cz.siret.prank.utils.WekaUtils
-import cz.siret.prank.utils.futils
 import groovy.transform.TupleConstructor
 import groovy.util.logging.Slf4j
 import weka.core.Instances
 
 import java.util.concurrent.atomic.AtomicInteger
+
+import static cz.siret.prank.utils.ATimer.startTimer
 
 @Slf4j
 class CollectVectorsRoutine extends Routine {
@@ -32,8 +33,8 @@ class CollectVectorsRoutine extends Routine {
     }
 
     CollectVectorsRoutine(Dataset dataSet, String outdir, String vectf) {
+        super(outdir)
         this.dataset = dataSet
-        this.outdir = outdir
         this.vectf = vectf
     }
 
@@ -49,12 +50,12 @@ class CollectVectorsRoutine extends Routine {
      * collects 
      */
     Result collectVectors() {
-        def timer = ATimer.start()
+        def timer = startTimer()
 
         write "collecting vectors from dataset [$dataset.name]"
 
-        futils.mkdirs(outdir)
-        futils.overwrite("$outdir/params.txt", params.toString())
+        Futils.mkdirs(outdir)
+        writeParams(outdir)
 
 //===========================================================================================================//
 
@@ -77,7 +78,7 @@ class CollectVectorsRoutine extends Routine {
 
                 Instances inst = WekaUtils.createDatasetWithBinaryClass(extractor.vectorHeader)
                 for (FeatureVector v : res.vectors) {
-                    inst.add(WekaUtils.toInstance(v.vector))
+                    inst.add(WekaUtils.toInstance(v.array))
                 }
 
                 pos.addAndGet(res.positives)
@@ -91,7 +92,7 @@ class CollectVectorsRoutine extends Routine {
         int negatives = neg.get()
         int count = positives + negatives
         double ratio = PerfUtils.round ( (double)positives / negatives , 3)
-        int ligandCount = dataset.items.collect { it.predictionPair.liganatedProtein.ligands.size() }.sum()
+        int ligandCount = dataset.items.collect { it.predictionPair.liganatedProtein.ligands.size() }.sum(0) as int
 
 
         write "processed $ligandCount ligans in $dataset.size files"
@@ -117,7 +118,7 @@ class CollectVectorsRoutine extends Routine {
         log.info "instances: " + data.size()
         //data = WekaUtils.numericToNominal("last", data)
 
-        // TODO move up to TrainEvalIteration
+        // TODO move up to TrainEvalRoutine
         data = new DataPreProcessor().preProcessTrainData(data)
 
         if (!params.delete_vectors) {

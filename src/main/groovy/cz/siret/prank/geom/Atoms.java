@@ -1,17 +1,17 @@
 package cz.siret.prank.geom;
 
-import com.google.common.collect.Lists       ;
-import org.biojava.nbio.structure.*          ;
-import org.slf4j.Logger                      ;
-import org.slf4j.LoggerFactory               ;
+import com.google.common.collect.Lists;
 import cz.siret.prank.geom.kdtree.AtomKdTree;
-import cz.siret.prank.utils.CutoffAtomsCallLog;
 import cz.siret.prank.utils.ATimer;
+import cz.siret.prank.utils.CutoffAtomsCallLog;
 import cz.siret.prank.utils.PerfUtils;
+import org.biojava.nbio.structure.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.*;
 
-import static org.codehaus.groovy.runtime.DefaultGroovyMethods.collect;
-import static org.openscience.cdk.smiles.smarts.parser.SMARTSParserConstants.n;
+import static cz.siret.prank.utils.ATimer.startTimer;
 
 /**
  * list of atoms with additional properties
@@ -255,17 +255,20 @@ public final class Atoms implements Iterable<Atom> {
     }
 
 
-    public Atoms cutoffAtomsAround_(Atom distanceTo, double dist) {
-        ATimer timer = ATimer.start();
+    /**
+     * intercepting calls for further alalysis
+     */
+    public Atoms cutoffAroundAtom_(Atom distanceTo, double dist) {
+        ATimer timer = startTimer();
 
-        Atoms res = doCutoffAtomsAround(distanceTo, dist);
+        Atoms res = doCutoffAroundAtom(distanceTo, dist);
 
         CutoffAtomsCallLog.INST.addCall(getCount(), res.getCount(), timer.getTime());
 
         return res;
     }
 
-    public Atoms doCutoffAtomsAround(Atom distanceTo, double dist) {
+    private Atoms doCutoffAroundAtom(Atom distanceTo, double dist) {
         List<Atom> res = new ArrayList<>();
         double sqrDist = dist*dist;
 
@@ -289,7 +292,7 @@ public final class Atoms implements Iterable<Atom> {
         return new Atoms(res);
     }
 
-    public Atoms cutoffAtomsAround(Atom distanceTo, double dist) {
+    public Atoms cutoffAroundAtom(Atom distanceTo, double dist) {
         List<Atom> res = new ArrayList<>();
         double sqrDist = dist*dist;
 

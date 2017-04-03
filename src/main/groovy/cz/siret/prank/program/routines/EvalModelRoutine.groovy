@@ -1,46 +1,43 @@
 package cz.siret.prank.program.routines
 
-import cz.siret.prank.score.PLBIndexRescorer
-import cz.siret.prank.score.PocketRescorer
-import cz.siret.prank.score.PocketVolumeRescorer
-import cz.siret.prank.score.RandomRescorer
-import cz.siret.prank.score.WekaSumRescorer
-import groovy.util.logging.Slf4j
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.program.rendering.PyMolRenderer
-import cz.siret.prank.utils.ATimer
+import cz.siret.prank.program.routines.results.EvalResults
+import cz.siret.prank.score.*
+import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.WekaUtils
-import cz.siret.prank.utils.futils
+import groovy.util.logging.Slf4j
 import weka.classifiers.Classifier
 
+import static cz.siret.prank.utils.ATimer.startTimer
+import static cz.siret.prank.utils.Futils.mkdirs
+
 /**
- * Evaluate model on dataset
+ * Evaluate a model on a dataset
+ * (when rescoring evaluate rescorer)
  */
 @Slf4j
-class EvaluateRoutine extends CompositeRoutine {
+class EvalModelRoutine extends EvalRoutine {
 
     Dataset dataset
     Classifier classifier
     String label
-    Results results
+    EvalResults results
 
-    EvaluateRoutine(Dataset dataSet, String modelf, String outdir) {
-        this.dataset = dataSet
-        this.classifier = WekaUtils.loadClassifier(modelf)
-        this.label = new File(modelf).name
-        this.outdir = outdir
-    }
-
-    EvaluateRoutine(Dataset dataSet, Classifier classifier, String classifierLabel, String outdir) {
+    EvalModelRoutine(Dataset dataSet, Classifier classifier, String classifierLabel, String outdir) {
+        super(outdir)
         this.dataset = dataSet
         this.classifier = classifier
         this.label = classifierLabel
-        this.outdir = outdir
     }
 
-    PocketRescorer createRescorer(PredictionPair pair, FeatureExtractor extractor) {
+    EvalModelRoutine(Dataset dataSet, String modelf, String outdir) {
+        this(dataSet, WekaUtils.loadClassifier(modelf), Futils.shortName(modelf), outdir)
+    }
+
+    private PocketRescorer createRescorer(PredictionPair pair, FeatureExtractor extractor) {
         PocketRescorer rescorer
         switch ( params.rescorer ) {
             case "WekaSumRescorer":
@@ -62,18 +59,20 @@ class EvaluateRoutine extends CompositeRoutine {
         return rescorer
     }
 
-    Results execute() {
-        def timer = ATimer.start()
+    @Override
+    EvalResults execute() {
+        def timer = startTimer()
 
         write "evaluating results on dataset [$dataset.name]"
-        futils.mkdirs(outdir)
-        futils.overwrite("$outdir/params.txt", params.toString())
+        mkdirs(outdir)
+        writeParams(outdir)
+
         String visDir = "$outdir/visualizations"
         if (params.visualizations) {
-            futils.mkdirs(visDir)
+            mkdirs(visDir)
         }
 
-        results = new Results(1)
+        results = new EvalResults(1)
         FeatureExtractor extractor = FeatureExtractor.createFactory()
 
         Dataset.Result datasetResult = dataset.processItems(params.parallel, new Dataset.Processor() {
@@ -100,11 +99,11 @@ class EvaluateRoutine extends CompositeRoutine {
         });
 
         results.logAndStore(outdir, classifier.class.simpleName)
-        logMainResults(dataset.label, label, results)
+        logSummaryResults(dataset.label, label, results)
 
         write "processed $results.originalEval.ligandCount ligands in $dataset.size files"
         logTime "model evaluation finished in $timer.formatted"
-        write "results saved to directory [${futils.absPath(outdir)}]"
+        write "results saved to directory [${Futils.absPath(outdir)}]"
 
         results.evalTime = timer.time
         results.datasetResult = datasetResult

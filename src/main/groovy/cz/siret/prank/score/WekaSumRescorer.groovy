@@ -1,40 +1,46 @@
 package cz.siret.prank.score
 
-import groovy.transform.CompileStatic
-import groovy.util.logging.Slf4j
-import org.biojava.nbio.structure.Atom
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Prediction
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.features.FeatureVector
-import cz.siret.prank.features.chemproperties.ChemFeatureExtractor
+import cz.siret.prank.features.PrankFeatureExtractor
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.rendering.LabeledPoint
+import cz.siret.prank.score.metrics.ClassifierStats
 import cz.siret.prank.score.prediction.PocketPredictor
-import cz.siret.prank.score.results.ClassifierStats
+import cz.siret.prank.score.prediction.PointScoreCalculator
 import cz.siret.prank.utils.PerfUtils
 import cz.siret.prank.utils.WekaUtils
+import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
+import org.biojava.nbio.structure.Atom
 import weka.classifiers.Classifier
 import weka.core.DenseInstance
 import weka.core.Instances
 
+import static cz.siret.prank.score.prediction.PointScoreCalculator.predictedScore
+
 /**
  * Rescorer and Predictor
  * not thread safe
+ *
+ * This is the main rrescore used by P2RANK to make predictions based on machine learning
  */
 @Slf4j
 @CompileStatic
 class WekaSumRescorer extends PocketRescorer implements Parametrized  {
 
     private final double POSITIVE_POINT_LIGAND_DISTANCE = params.positive_point_ligand_distance
-    private final double PSP = params.point_score_pow
+
+    private final PointScoreCalculator pointScoreCalculator = new PointScoreCalculator()
 
     private FeatureExtractor extractorFactory
     private Classifier  classifier
-    private ClassifierStats stats = new ClassifierStats(2)
+    private ClassifierStats stats = new ClassifierStats()
 
     boolean collectPoints = params.visualizations || params.predictions
-    boolean visAllSurface = params.vis_all_surface
+    boolean visualizeAllSurface = params.vis_all_surface
 
     // Connolly points with ligandability score for prediction and visualization
     List<LabeledPoint> labeledPoints = new ArrayList<>()
@@ -70,9 +76,9 @@ class WekaSumRescorer extends PocketRescorer implements Parametrized  {
         }
 
         // compute ligandability scores of connolly points for predictions and visualization
-        if (params.predictions || visAllSurface) {
+        if (params.predictions || visualizeAllSurface) {
 
-            FeatureExtractor extractor = (proteinExtractor as ChemFeatureExtractor).createInstanceForWholeProtein()
+            FeatureExtractor extractor = (proteinExtractor as PrankFeatureExtractor).createInstanceForWholeProtein()
 
             labeledPoints = new ArrayList<>(extractor.sampledPoints.count)
             for (Atom point in extractor.sampledPoints) {
@@ -88,9 +94,10 @@ class WekaSumRescorer extends PocketRescorer implements Parametrized  {
 
                 // labels and statistics
 
-                double[] prob = point.hist
+                double[] hist = point.hist
+                double predictedScore = predictedScore(hist)   // not all classifiers give histogram that sums up to 1
 
-                boolean predicted = prob[1] > prob[0]
+                boolean predicted = hist[1] > hist[0]
                 boolean observed = false
 
                 if (ligandAtoms!=null) {
@@ -99,7 +106,7 @@ class WekaSumRescorer extends PocketRescorer implements Parametrized  {
                 }
 
                 if (collectingStatistics) {
-                    stats.addCase(observed, predicted, prob[1])
+                    stats.addPrediction(observed, predicted, predictedScore, hist)
                 }
             }
 
@@ -134,24 +141,24 @@ class WekaSumRescorer extends PocketRescorer implements Parametrized  {
 
                 FeatureVector props = extractor.calcFeatureVector(point)
 
-                double[] prob = getDistributionForPoint(classifier, props)
-                double result = prob[1]
-                boolean predicted = prob[1] > prob[0]
+                double[] hist = getDistributionForPoint(classifier, props)
+                double predictedScore = predictedScore(hist)   // not all classifiers give histogram that sums up to 1
+                boolean predicted = hist[1] > hist[0]
                 boolean observed = false
 
                 if (collectingStatistics) {
                     double closestLigandDistance = ligandAtoms.count > 0 ? ligandAtoms.dist(point) : Double.MAX_VALUE
                     observed = (closestLigandDistance <= POSITIVE_POINT_LIGAND_DISTANCE)
-                    stats.addCase(observed, predicted, prob[1])
+                    stats.addPrediction(observed, predicted, predictedScore, hist)
 
                 }
                 if (collectPoints) {
-                    labeledPoints.add(new LabeledPoint(point, prob, observed, predicted))
+                    labeledPoints.add(new LabeledPoint(point, hist, observed, predicted))
                 }
 
-                sum += Math.pow(result, PSP)
+                sum += pointScoreCalculator.transformedPointScore(hist)
 
-                rawSum += prob[1] / (prob[0]+prob[1]) // =P(ligandable)
+                rawSum += predictedScore // ~ P(ligandable)
             }
 
             double score = sum
@@ -162,8 +169,8 @@ class WekaSumRescorer extends PocketRescorer implements Parametrized  {
 
     }
 
-    private final double[] getDistributionForPoint(Classifier classifier, FeatureVector prop) {
-        PerfUtils.toPrimitiveArray(prop.vector, alloc)
+    private final double[] getDistributionForPoint(Classifier classifier, FeatureVector vect) {
+        PerfUtils.arrayCopy(vect.array, alloc)
         return classifier.distributionForInstance(auxInst)
     }
 

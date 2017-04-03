@@ -1,11 +1,10 @@
 package cz.siret.prank.features
 
-import groovy.transform.CompileStatic
-import org.biojava.nbio.structure.Atom
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Protein
-import cz.siret.prank.features.chemproperties.ChemFeatureExtractor
 import cz.siret.prank.geom.Atoms
+import groovy.transform.CompileStatic
+import org.biojava.nbio.structure.Atom
 
 /**
  * calculates feature vectors for pocket (PRANK) or whole protein (P2RANK)
@@ -64,7 +63,7 @@ abstract class FeatureExtractor<P extends FeatureVector> {
      */
     static FeatureExtractor createFactory() {
 
-        FeatureExtractor res = new ChemFeatureExtractor()
+        FeatureExtractor res = new PrankFeatureExtractor()
         return res
     }
 

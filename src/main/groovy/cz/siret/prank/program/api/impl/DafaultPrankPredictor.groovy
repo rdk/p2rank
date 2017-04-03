@@ -12,7 +12,7 @@ import groovy.transform.CompileStatic
 import java.nio.file.Path
 
 /**
- *
+ * Implementation of prediction API
  */
 @CompileStatic
 class DafaultPrankPredictor implements PrankPredictor {

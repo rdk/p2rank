@@ -1,5 +1,10 @@
 import cz.siret.prank.program.params.Params
 
+/**
+ * This configiration file is setting technical parameterss ideal for training and evaluating new models.
+ *
+ * In other poarameters of the algorithm should stay as close as possible do default config.
+ */
 (params as Params).with {
 
     /**
@@ -27,22 +32,23 @@ import cz.siret.prank.program.params.Params
      */
     fail_fast = true
 
-    classifier="FastRandomForest"
+    classifier="FasterForest"
 
     seed = 42
-
     loop = 10
 
     predictions = true
 
     out_prefix_date = false
 
-    crossval_threads = 5
+    crossval_threads = 1
 
     cache_datasets = true
 
+    clear_prim_caches = false
 
-    log_cases = true
+    clear_sec_caches = false
+
 
     /**
      * calculate feature importance
@@ -51,5 +57,15 @@ import cz.siret.prank.program.params.Params
     feature_importances = false
 
     output_only_stats = true
+
+    log_cases = true
+
+    log_to_console = false
+
+    log_to_file = true
+
+    ploop_delete_runs = true
+
+    zip_log_file = true
 
 }

@@ -8,15 +8,16 @@ import cz.siret.prank.geom.Atoms
 import cz.siret.prank.program.Main
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.utils.CmdLineArgs
-import cz.siret.prank.utils.Writable
-import cz.siret.prank.utils.futils
+import cz.siret.prank.utils.Futils
 import groovy.util.logging.Slf4j
+
+import static cz.siret.prank.utils.Futils.writeFile
 
 /**
  * Various tools for analyzing datasets
  */
 @Slf4j
-class AnalyzeRoutine extends Routine implements Writable {
+class AnalyzeRoutine extends Routine {
 
     String subCommand
     String label
@@ -24,6 +25,7 @@ class AnalyzeRoutine extends Routine implements Writable {
     Dataset dataset
 
     AnalyzeRoutine(CmdLineArgs args, Main main) {
+        super(null)
 
         subCommand = args.unnamedArgs[0]
         if (!commandRegister.containsKey(subCommand)) {
@@ -45,7 +47,7 @@ class AnalyzeRoutine extends Routine implements Writable {
 
         commandRegister.get(subCommand).call()
 
-        write "results saved to directory [${futils.absPath(outdir)}]"
+        write "results saved to directory [${Futils.absPath(outdir)}]"
     }
     
  //===========================================================================================================//
@@ -76,7 +78,7 @@ class AnalyzeRoutine extends Routine implements Writable {
                 summary << msg + "\n"
 
                 String outf = "$outdir/${p.name}_binding-residues.txt"
-                futils.overwrite outf, bindingResidueIds.join("\n")
+                writeFile outf, bindingResidueIds.join("\n")
 
             }
         })

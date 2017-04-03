@@ -1,9 +1,8 @@
 package cz.siret.prank.features.weight
 
-import groovy.transform.CompileStatic
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.MathUtils
-
+import groovy.transform.CompileStatic
 
 /**
  * Distance weight functions.

@@ -1,15 +1,15 @@
 package cz.siret.prank.program.rendering
 
-import groovy.transform.CompileStatic
-import groovy.util.logging.Slf4j
-import org.biojava.nbio.structure.Atom
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.score.WekaSumRescorer
 import cz.siret.prank.utils.ColorUtils
-import cz.siret.prank.utils.futils
+import cz.siret.prank.utils.Futils
+import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
+import org.biojava.nbio.structure.Atom
 
 import java.awt.*
 import java.util.List
@@ -58,21 +58,21 @@ class PyMolRenderer implements Parametrized {
         String pmlf = "$outdir/${label}.pml"
         String pointsDir = "$outdir/data"
 
-        futils.mkdirs(pointsDir)
+        Futils.mkdirs(pointsDir)
 
-        String pointsf = "$pointsDir/${label}_points.pdb"
-        String pointsfRelName = "data/${label}_points.pdb"
+        String pointsf = "$pointsDir/${label}_points.pdb.gz"
+        String pointsfRelName = "data/${label}_points.pdb.gz"
         String pointsf0 = "$pointsDir/${label}_points0.pdb"
         String pointsf0RelName = "data/${label}_points0.pdb"
 
-        String proteinf = futils.absPath(item.proteinFile)
+        String proteinf = Futils.absPath(item.proteinFile)
         if (params.vis_copy_proteins) {
-            String name = futils.shortName(proteinf)
+            String name = Futils.shortName(proteinf)
             String newf = "$pointsDir/$name"
             String newfrel = "data/$name"
 
             log.info "copying [$proteinf] to [$newf]"
-            futils.copy(proteinf, newf)
+            Futils.copy(proteinf, newf)
 
             proteinf = newfrel
         }
@@ -89,17 +89,17 @@ class PyMolRenderer implements Parametrized {
           //#set antialias, 2
 //        set bg_rgb_top, [10,10,10]
 //        set bg_rgb_bottom, [36,36,85]
-        futils.overwrite(pmlf, """
+        Futils.writeFile(pmlf, """
 from pymol import cmd,stored
 
 set depth_cue, 1
 set fog_start, 0.4
-set bg_gradient, 1
 
 set_color b_col, [36,36,85]
 set_color t_col, [10,10,10]
 set bg_rgb_bottom, b_col
-set bg_rgb_top, t_col
+set bg_rgb_top, t_col      
+set bg_gradient
 
 set  spec_power  =  200
 set  spec_refl   =  0
@@ -174,7 +174,7 @@ orient
         // http://cupnet.net/pdb_format/
         // http://www.pymolwiki.org/index.php/Colorama
 
-        Writer pdb = futils.overwrite(pointsf)
+        Writer pdb = Futils.getGzipWriter(pointsf)
         int i = 0
         for (LabeledPoint lp : rescorer.labeledPoints) {
             double beta = lp.hist[1]
@@ -192,7 +192,7 @@ orient
 
 //        double q = -0.03
 //
-//        pdb = FileUtils.overwrite(pointsf0)
+//        pdb = FileUtils.getWriter(pointsf0)
 //        i = 0
 //        for (LabeledPoint lp : rescorer.labeledPoints) {
 //            double beta = lp.hist[0]

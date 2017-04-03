@@ -1,8 +1,10 @@
 package cz.siret.prank.utils
 
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import weka.classifiers.Classifier
+import weka.classifiers.evaluation.Evaluation
 import weka.core.*
 import weka.core.converters.ArffSaver
 import weka.core.converters.ConverterUtils
@@ -38,8 +40,8 @@ class WekaUtils implements Writable {
         return auxWekaDataset
     }
 
-    static Instance toInstance(List<Double> vector) {
-        return new DenseInstance(1, PerfUtils.toPrimitiveArray(vector))
+    static Instance toInstance(double[] vector) {
+        return new DenseInstance(1, vector)
     }
 
     // == classifiers ===
@@ -72,6 +74,19 @@ class WekaUtils implements Writable {
             return (Classifier) SerializationHelper.read(zis)
         } catch (FileNotFoundException e) {
             log.error "model file doesn't exist! ($fileName)"
+        }
+    }
+
+    /**
+     * tries to make sure that classifer uses only one thread for each classification (we then parallelize dataset)
+     * @param classifier
+     */
+    @CompileDynamic
+    static void disableParallelism(Classifier classifier) {
+        String[] threadPropNames = ["numThreads","numExecutionSlots"]   // names used for num.threads property by different classifiers
+        threadPropNames.each { String name ->
+            if (classifier.hasProperty(name))
+                classifier."$name" = 1 // params.threads
         }
     }
 
@@ -227,4 +242,9 @@ class WekaUtils implements Writable {
         return Filter.useFilter(data, filter)
     }
 
+
+    {
+
+        Evaluation
+    }
 }

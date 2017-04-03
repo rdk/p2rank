@@ -1,8 +1,8 @@
 package cz.siret.prank.score.criteria
 
-import groovy.transform.CompileStatic
 import cz.siret.prank.domain.Ligand
 import cz.siret.prank.domain.Pocket
+import groovy.transform.CompileStatic
 
 /**
  * distance from any of the pocket surface atoms to any atom of the ligand

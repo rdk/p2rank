@@ -1,13 +1,13 @@
 package cz.siret.prank.program.routines
 
-import cz.siret.prank.utils.ThreadUtils
-import groovy.util.logging.Slf4j
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.domain.DatasetCachedLoader
 import cz.siret.prank.program.Main
 import cz.siret.prank.program.params.RangeParam
+import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.utils.CmdLineArgs
-import cz.siret.prank.utils.futils
+import cz.siret.prank.utils.Futils
+import groovy.util.logging.Slf4j
 
 import static cz.siret.prank.utils.ThreadUtils.async
 
@@ -31,6 +31,7 @@ class Experiments extends Routine {
     CmdLineArgs cmdLineArgs
 
     public Experiments(CmdLineArgs args, Main main) {
+        super(null)
         this.cmdLineArgs = args
 
         trainSetFile =  cmdLineArgs.get('train', 't')
@@ -53,45 +54,48 @@ class Experiments extends Routine {
         label = "run_" + trainDataSet.label + "_" + (doCrossValidation ? "crossval" : evalDataSet.label)
         outdir = main.findOutdir(label)
 
-
         main.configureLoggers(outdir)
     }
 
     void execute(String routineName) {
         log.info "executing $routineName()"
         this."$routineName"()  // dynamic exec method
-        log.info "results saved to directory [${futils.absPath(outdir)}]"
+        log.info "results saved to directory [${Futils.absPath(outdir)}]"
     }
 
 //===========================================================================================================//
 
     /**
      * train/eval on different datasets for different seeds
+     *
+     *
+     * collecting train vectors only once and training+evaluatng many times
      */
-    CompositeRoutine.Results traineval() {
+    private EvalResults doTrainEval(String outdir) {
 
-        TrainEvalIteration iter = new TrainEvalIteration()
-        iter.outdir = outdir
+        TrainEvalRoutine iter = new TrainEvalRoutine(outdir)
         iter.trainDataSet = trainDataSet
         iter.evalDataSet = evalDataSet
-
         iter.collectTrainVectors()
         //iter.collectEvalVectors() // for further inspetion
 
-        String loop_outdir = outdir
-
-        CompositeRoutine trainRoutine = new CompositeRoutine() {
+        EvalRoutine trainRoutine = new EvalRoutine(outdir) {
             @Override
-            Results execute() {
-                iter.label = "seed.${params.seed}"
-                iter.outdir = "$loop_outdir/$iter.label"
+            EvalResults execute() {
+                iter.outdir = this.outdir // is set to "../seed.xx" by SeedLoop
                 iter.trainAndEvalModel()
-
                 return iter.evalRoutine.results
             }
         }
 
         return new SeedLoop(trainRoutine, outdir).execute()
+    }
+
+    /**
+     * implements command: 'prank traineval...  '
+     */
+    EvalResults traineval() {
+        doTrainEval(outdir)
     }
 
 //===========================================================================================================//
@@ -110,22 +114,18 @@ class Experiments extends Routine {
 
         String topOutdir = outdir
 
-        new ParamLooper(topOutdir, rparams).iterateParams { String label ->
-            outdir = "$topOutdir/$label"
-
-            CompositeRoutine.Results res
+        new ParamLooper(topOutdir, rparams).iterateSteps { String iterDir ->
+            EvalResults res
 
             if (doCrossValidation) {
-                CompositeRoutine routine = new CrossValidation(outdir, trainDataSet)
-                res = new SeedLoop(routine, outdir).execute()
+                EvalRoutine routine = new CrossValidation(iterDir, trainDataSet)
+                res = new SeedLoop(routine, iterDir).execute()
             } else {
-                res = traineval()
+                res = doTrainEval(iterDir)
             }
 
             if (params.ploop_delete_runs) {
-                async { futils.delete(outdir) }
-            } else if (params.ploop_zip_runs) {
-                async { futils.zipAndDelete(outdir) }
+                async { Futils.delete(iterDir) }
             }
 
             if (params.clear_prim_caches) {

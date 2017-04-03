@@ -1,13 +1,13 @@
 package cz.siret.prank.geom.samplers
 
-import groovy.transform.CompileStatic
-import groovy.util.logging.Slf4j
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Box
 import cz.siret.prank.geom.Point
 import cz.siret.prank.program.params.Parametrized
+import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
 
 @Slf4j
 @CompileStatic

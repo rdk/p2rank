@@ -1,12 +1,11 @@
 package cz.siret.prank.program.params
 
 import cz.siret.prank.program.Main
+import cz.siret.prank.utils.CmdLineArgs
+import cz.siret.prank.utils.StrUtils
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-import cz.siret.prank.features.weight.WeightFun
-import cz.siret.prank.utils.StrUtils
-import cz.siret.prank.utils.CmdLineArgs
 
 /**
  * global program parameters
@@ -52,6 +51,11 @@ class Params {
     int threads = Runtime.getRuntime().availableProcessors() + 1
 
     /**
+     *  Number for threads for generating R plots
+     */
+    int r_threads = 2
+
+    /**
      * Number of folds to work on simultaneously
      */
     int crossval_threads = 1 // Math.min(5, Runtime.getRuntime().availableProcessors())
@@ -83,6 +87,13 @@ class Params {
     List<String> residue_table_features = [] // ['aa5fact1','aa5fact2','aa5fact3','aa5fact4','aa5fact5']
 
     double protrusion_radius = 10
+
+    /**
+     * Number of bins for protr_hist feature, must be >=2
+     */
+    int protr_hist_bins = 5
+
+    boolean protr_hist_cumulative = false
 
     //== CLASSIFIERS ===================
 
@@ -119,6 +130,11 @@ class Params {
      * number of threads used in RandomForest training (0=use value of threads param)
      */
     int rf_threads = 0
+
+    /**
+     * size ot the bag: 1..100%
+     */
+    int rf_bagsize = 100
 
     /**
      * cutoff for joining ligand atom groups into one ligand
@@ -206,14 +222,32 @@ class Params {
 
     double smoothing_radius = 4.5
 
+    /**
+     * determines how atom feature vectors are projected on to SAS point feature vector
+     * if true, atom feature vectors are averaged
+     * else they are only summed up
+     */
     boolean average_feat_vectors = false
 
     double avg_pow = 1
 
+    /**
+     * exponent of point ligandabitity score (before adding it to pocket score)
+     */
     double point_score_pow = 2
+
+    /**
+     * Binary classifiers produces historgam of scores for class0 and class1
+     * if true only score for class1 is considered
+     * makes a difference only if histogram produced by classifier doesn't sum up to 1
+     */
+    boolean use_only_positive_score = true
 
     boolean delete_models = false
 
+    /**
+     * delete filec sontaining trainint/evaluation feature vectors
+     */
     boolean delete_vectors = true
 
     /**
@@ -265,7 +299,7 @@ class Params {
     /**
      * make own prank pocket predictions (P2RANK)
      */
-    boolean predictions = false
+    boolean predictions = true
 
     /**
      * minimum ligandability score for Connolly point to be considered ligandable
@@ -337,14 +371,16 @@ class Params {
     int train_pockets = 0
 
     /**
-     * clear secondary caches (protein surfaces etc.) when iterating params
+     * clear primary caches (protein structures) between runs (when iterating params or seed)
+     */
+    boolean clear_prim_caches = false
+
+    /**
+     * clear secondary caches (protein surfaces etc.) between runs (when iterating params or seed)
      */
     boolean clear_sec_caches = true
 
-    /**
-     * clear primary caches (protein structures) when iterating params
-     */
-    boolean clear_prim_caches = false
+
 
     /**
      * acceptable distance between ligand center and closest protein atom for relevant ligands
@@ -432,7 +468,20 @@ class Params {
      */
     double target_class_weight_ratio = 0.1
 
+    /**
+     * produce classifier stats also for train dataset
+     */
+    boolean classifier_train_stats = false
 
+    /**
+     * Collect predictions for all points in the dataset.
+     * Allows calculation of AUC and AUPRC classifier statistics but consumes a lot of memory.
+     * (>1GB for holo4k dataset with tesselation=2)
+     */
+    boolean stats_collect_predictions = false
+
+    /** produce ROC and PR curve graphs (not fully implemented yet) */
+    boolean stats_curves = false
 
 //===========================================================================================================//
 

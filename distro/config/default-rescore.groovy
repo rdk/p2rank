@@ -51,7 +51,7 @@ import cz.siret.prank.program.params.Params
      */
     use_volsite_features = true
 
-    extra_features = ["protrusion","bfactor"]
+    extra_features = ["chem","volsite","protrusion","bfactor"]
 
     atom_table_features = ["ap5sasaValids","ap5sasaInvalids"] // "apRawValids","apRawInvalids","atomicHydrophobicity"
 

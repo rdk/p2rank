@@ -1,7 +1,7 @@
 package cz.siret.prank.geom.samplers;
 
-import cz.siret.prank.geom.Point;
 import cz.siret.prank.geom.Box;
+import cz.siret.prank.geom.Point;
 
 import java.util.Iterator;
 

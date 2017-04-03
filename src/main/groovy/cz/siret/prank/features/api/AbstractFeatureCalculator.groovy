@@ -11,14 +11,12 @@ import groovy.transform.CompileStatic
 @CompileStatic
 abstract class AbstractFeatureCalculator implements FeatureCalculator {
 
-    protected List<String> header = [getName()]
-
     /**
-     * default implementation for single value features
+     * Default implementation for single value features. Override for multi-value features.
      */
     @Override
     List<String> getHeader() {
-        return header
+        return [getName()]
     }
 
     @Override

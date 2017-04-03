@@ -1,24 +1,29 @@
 package cz.siret.prank.program.routines
 
+import cz.siret.prank.program.routines.results.EvalResults
+import cz.siret.prank.utils.Futils
 import groovy.util.logging.Slf4j
-import cz.siret.prank.utils.ATimer
-import cz.siret.prank.utils.futils
 
+import static cz.siret.prank.utils.ATimer.startTimer
+
+/**
+ * Routine that iterates through different values of random seed param
+ */
 @Slf4j
-class SeedLoop extends CompositeRoutine {
+class SeedLoop extends EvalRoutine {
 
-    CompositeRoutine routine  // routine to iterate on
+    EvalRoutine innerRoutine  // routine to iterate on
 
-    SeedLoop(CompositeRoutine routine, String outdir) {
-        this.routine = routine
-        this.outdir = outdir
+    SeedLoop(EvalRoutine routine, String outdir) {
+        super(outdir)
+        this.innerRoutine = routine
     }
 
     @Override
-    Results execute() {
-        def timer = ATimer.start()
+    EvalResults execute() {
+        def timer = startTimer()
 
-        Results results = new Results(0)
+        EvalResults results = new EvalResults(0)
 
         int origSeed = params.seed
         int n = params.loop
@@ -26,24 +31,25 @@ class SeedLoop extends CompositeRoutine {
             write "random seed iteration: $seedi/$n"
 
             String label = "seed.${params.seed}"
-            routine.outdir = "$outdir/$label"
+            innerRoutine.outdir = "$outdir/runs/$label"
+            Futils.mkdirs(innerRoutine.outdir)
 
-            results.addAll(routine.execute())
+            results.addAll(innerRoutine.execute())
 
             params.seed += 1
         }
 
         results.logAndStore(outdir, params.classifier)
-        if (routine instanceof CrossValidation) {
-            CrossValidation cv = (CrossValidation) routine
-            logMainResults(cv.dataset.label, "crossvalidation", results)
+        if (innerRoutine instanceof CrossValidation) {
+            CrossValidation cv = (CrossValidation) innerRoutine
+            logSummaryResults(cv.dataset.label, "crossvalidation", results)
         } else {
-            logMainResults("--", "evaluation", results)
+            logSummaryResults("--", "evaluation", results)
         }
         params.seed = origSeed // set seed back for other experiments
 
         logTime "random seed iteration finished in $timer.formatted"
-        write "results saved to directory [${futils.absPath(outdir)}]"
+        write "results saved to directory [${Futils.absPath(outdir)}]"
 
 
         return results

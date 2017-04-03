@@ -1,9 +1,9 @@
 package cz.siret.prank
 
-import cz.siret.prank.domain.loaders.FPockeLoader;
+import cz.siret.prank.domain.loaders.FPockeLoader
 import org.junit.Test
 
-import static org.junit.Assert.*
+import static org.junit.Assert.assertEquals
 
 class FPocketTest {
 

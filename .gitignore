@@ -11,6 +11,7 @@ bin/
 *.ipr
 *.iws
 *.class
+classes/
 
 distro/bin/
 distro/log/*

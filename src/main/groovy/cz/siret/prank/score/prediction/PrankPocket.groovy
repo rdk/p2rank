@@ -1,9 +1,9 @@
 package cz.siret.prank.score.prediction
 
-import groovy.transform.CompileStatic
-import org.biojava.nbio.structure.Atom
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.geom.Atoms
+import groovy.transform.CompileStatic
+import org.biojava.nbio.structure.Atom
 
 @CompileStatic
 class PrankPocket extends Pocket {

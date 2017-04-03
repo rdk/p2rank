@@ -1,15 +1,15 @@
 package cz.siret.prank.score
 
+import cz.siret.prank.domain.Pocket
+import cz.siret.prank.domain.Prediction
+import cz.siret.prank.features.tables.PropertyTable
+import cz.siret.prank.utils.Futils
+import cz.siret.prank.utils.PDBUtils
+import cz.siret.prank.utils.StrUtils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 import org.biojava.nbio.structure.Group
-import cz.siret.prank.domain.Pocket
-import cz.siret.prank.domain.Prediction
-import cz.siret.prank.features.tables.PropertyTable
-import cz.siret.prank.utils.PDBUtils
-import cz.siret.prank.utils.StrUtils
-import cz.siret.prank.utils.futils
 
 /**
  * implemention of PLB index from
@@ -19,7 +19,7 @@ import cz.siret.prank.utils.futils
 @CompileStatic
 class PLBIndexRescorer extends PocketRescorer {
 
-    static final PropertyTable aaPropensitiesTable   = PropertyTable.parse(futils.readResource("/tables/aa-propensities.csv"))
+    static final PropertyTable aaPropensitiesTable   = PropertyTable.parse(Futils.readResource("/tables/aa-propensities.csv"))
 
     @Override
     void rescorePockets(Prediction prediction) {

@@ -66,8 +66,10 @@ class StrUtils {
      * @return
      */
     static List<String> parseList(String liststr) {
-        assert liststr!=null
-        assert liststr.length()>=2
+        if (liststr==null || liststr=='()' || liststr=='[]' ) {
+            return Collections.emptyList()
+        }
+        assert liststr.length()>=2 : "invalid list string: '$liststr'"
 
         String splitter = ","
         if (!liststr.contains(splitter)) {

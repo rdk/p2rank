@@ -1,36 +1,37 @@
 package cz.siret.prank.score.prediction
 
-import groovy.util.logging.Slf4j
-import org.biojava.nbio.structure.Atom
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Struct
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.rendering.LabeledPoint
+import groovy.util.logging.Slf4j
+import org.biojava.nbio.structure.Atom
 
 /**
- * Calculates pockets from list of Connolly points with ligandability scores
+ * Calculates pockets from list of SAS points with ligandability scores.
+ * (core of P2RANK algorithm)
  */
 @Slf4j
 class PocketPredictor implements Parametrized {
 
-    double PSP = params.point_score_pow
-    double POCKET_PROT_SURFACE_CUTOFF = params.pred_protein_surface_cutoff
-    int MIN_CLUSTER_SIZE = params.pred_min_cluster_size
-    double SURROUNDING_DIST = params.pred_surrounding
-    double CLUSTERING_DIST = params.pred_clustering_dist
-    double POINT_THRESHOLD = params.pred_point_threshold
-    boolean BALANCE_POINT_DENSITY = params.balance_density
-    double BALANCE_RADIUS = params.balance_density_radius
+    private final PointScoreCalculator pointScoreCalculator = new PointScoreCalculator()
+
+    private double POCKET_PROT_SURFACE_CUTOFF = params.pred_protein_surface_cutoff
+    private int MIN_CLUSTER_SIZE = params.pred_min_cluster_size
+    private double SURROUNDING_DIST = params.pred_surrounding
+    private double CLUSTERING_DIST = params.pred_clustering_dist
+    private double POINT_THRESHOLD = params.pred_point_threshold
+    private boolean BALANCE_POINT_DENSITY = params.balance_density
+    private double BALANCE_RADIUS = params.balance_density_radius
 
     private double score(LabeledPoint point, Atoms surfacePoints) {
-        //double p = point.hist[1] / (point.hist[0] + point.hist[1])
-        double p = point.hist[1]
-        double score = Math.pow(p, PSP)
+
+        double score = pointScoreCalculator.transformedPointScore(point.hist)
 
         if (BALANCE_POINT_DENSITY) {
-            int pts = surfacePoints.cutoffAtomsAround(point, BALANCE_RADIUS).count
+            int pts = surfacePoints.cutoffAroundAtom(point, BALANCE_RADIUS).count
             score = score / pts
         }
 
@@ -38,8 +39,7 @@ class PocketPredictor implements Parametrized {
     }
 
     private boolean admitPoint(LabeledPoint point) {
-
-        double p = point.hist[1] / (point.hist[0] + point.hist[1])
+        double p = PointScoreCalculator.predictedScore(point.hist)
         return p > POINT_THRESHOLD
     }
 

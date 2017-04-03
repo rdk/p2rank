@@ -1,11 +1,11 @@
 package cz.siret.prank.geom
 
+import cz.siret.prank.program.params.Parametrized
+import cz.siret.prank.utils.CDKUtils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.openscience.cdk.geometry.surface.NumericalSurface
 import org.openscience.cdk.interfaces.IAtomContainer
-import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.utils.CDKUtils
 
 @Slf4j
 @CompileStatic

@@ -1,20 +1,30 @@
 package cz.siret.prank.collectors
 
-import groovy.transform.CompileStatic
 import cz.siret.prank.features.FeatureVector
+import cz.siret.prank.utils.PerfUtils
+import groovy.transform.CompileStatic
 
 @CompileStatic
 class DoubleVector extends FeatureVector {
 
-    List<Double> vect
+    double[] data
 
     public DoubleVector(List<Double> vect) {
-        this.vect = vect
+        this.data = PerfUtils.toPrimitiveArray(vect)
+    }
+
+    public DoubleVector(double[] data) {
+        this.data = data
+    }
+
+    @Override
+    double[] getArray() {
+        return data
     }
 
     @Override
     public List<Double> getVector() {
-        return vect
+        return data.toList()
     }
 
     @Override

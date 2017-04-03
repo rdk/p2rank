@@ -1,11 +1,9 @@
 package cz.siret.prank.program
 
+import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.Writable
-import cz.siret.prank.utils.futils
 import groovy.transform.CompileStatic
-import groovy.util.logging.Slf4j
 import org.apache.logging.log4j.Level
-import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.core.Appender
 import org.apache.logging.log4j.core.Layout
 import org.apache.logging.log4j.core.LoggerContext
@@ -28,7 +26,10 @@ class LogManager implements Writable {
     boolean loggingToFile = false
     String logFile
 
+
     Appender fileAppender
+    Configuration config
+    LoggerConfig loggerConfig
 
     void configureLoggers(String logLevel, boolean logToConsole, boolean logToFile, String outdir) {
 
@@ -36,8 +37,8 @@ class LogManager implements Writable {
         Level level = Level.getLevel(logLevel)
 
         LoggerContext ctx = (LoggerContext) org.apache.logging.log4j.LogManager.getContext(false);
-        Configuration config = ctx.getConfiguration();
-        LoggerConfig loggerConfig = config.getLoggerConfig(loggerName)
+        config = ctx.getConfiguration();
+        loggerConfig = config.getLoggerConfig(loggerName)
 
         loggerConfig.getAppenders().each { System.out.println "APPENDER: " + it.value.name }
         write "logToConsole: $logToConsole"
@@ -70,7 +71,7 @@ class LogManager implements Writable {
         String pattern = "[%level] %logger{0} - %msg%n"
         int bufferSize = 5000
 
-        futils.delete(logFile)
+        Futils.delete(logFile)
 
         Layout layout = PatternLayout.newBuilder()
                 .withConfiguration(config)
@@ -108,6 +109,8 @@ class LogManager implements Writable {
         if (fileAppender!=null) {
             fileAppender.stop()
         }
+        loggerConfig.removeAppender(FILE_APPENDER_NAME)
+        config.rootLogger.removeAppender(FILE_APPENDER_NAME)
     }
 
 
