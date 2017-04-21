@@ -187,7 +187,9 @@ public final class Atoms implements Iterable<Atom> {
     public List<Group> getDistinctGroups() {
         Set<Group> res = new HashSet<>();
         for (Atom a : list) {
-            res.add(a.getGroup());
+            if (a.getGroup()!=null) {
+                res.add(a.getGroup());
+            }
         }
 
         List<Group> sres = Struct.sortGroups(res);

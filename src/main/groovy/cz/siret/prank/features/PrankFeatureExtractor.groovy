@@ -113,7 +113,7 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
             surfaceLayerAtoms = protein.exposedAtoms
         }
 
-        log.debug "surfaceLayerAtoms:$surfaceLayerAtoms.count (surfaceAtoms: $pocket.surfaceAtoms.count) "
+        log.debug "surfaceLayerAtoms:$surfaceLayerAtoms.count (surfaceAtoms: ${pocket?.surfaceAtoms?.count}) "
 
         preEvaluateProperties(surfaceLayerAtoms)
         if (DO_SMOOTH_REPRESENTATION) {
@@ -195,7 +195,7 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
 
 
 
-        log.info "P2R protein:$protein.proteinAtoms.count  exposedAtoms:$res.surfaceLayerAtoms.count  deepSurrounding:$res.deepSurrounding.count connollyPoints:$res.sampledPoints.count"
+        log.info "P2R protein:$protein.proteinAtoms.count  exposedAtoms:$res.surfaceLayerAtoms.count  deepSurrounding:$res.deepSurrounding.count sasPoints:$res.sampledPoints.count"
 
         return res
     }

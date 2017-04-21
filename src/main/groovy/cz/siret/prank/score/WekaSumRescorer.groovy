@@ -19,6 +19,7 @@ import weka.classifiers.Classifier
 import weka.core.DenseInstance
 import weka.core.Instances
 
+import static cz.siret.prank.score.prediction.PointScoreCalculator.predictedPositive
 import static cz.siret.prank.score.prediction.PointScoreCalculator.predictedScore
 
 /**
@@ -90,20 +91,22 @@ class WekaSumRescorer extends PocketRescorer implements Parametrized  {
                 // classification
 
                 FeatureVector props = extractor.calcFeatureVector(point.point)
-                point.@hist = getDistributionForPoint(classifier, props)
+                double[] hist = getDistributionForPoint(classifier, props)
 
                 // labels and statistics
 
-                double[] hist = point.hist
                 double predictedScore = predictedScore(hist)   // not all classifiers give histogram that sums up to 1
-
-                boolean predicted = hist[1] > hist[0]
+                boolean predicted = predictedPositive(predictedScore)
                 boolean observed = false
 
                 if (ligandAtoms!=null) {
                     double closestLigandDistance = ligandAtoms.count > 0 ? ligandAtoms.dist(point.point) : Double.MAX_VALUE
                     observed = (closestLigandDistance <= POSITIVE_POINT_LIGAND_DISTANCE)
                 }
+
+                point.@hist = hist
+                point.predicted = predicted
+                point.observed = observed
 
                 if (collectingStatistics) {
                     stats.addPrediction(observed, predicted, predictedScore, hist)
@@ -143,7 +146,7 @@ class WekaSumRescorer extends PocketRescorer implements Parametrized  {
 
                 double[] hist = getDistributionForPoint(classifier, props)
                 double predictedScore = predictedScore(hist)   // not all classifiers give histogram that sums up to 1
-                boolean predicted = hist[1] > hist[0]
+                boolean predicted = predictedPositive(predictedScore)
                 boolean observed = false
 
                 if (collectingStatistics) {

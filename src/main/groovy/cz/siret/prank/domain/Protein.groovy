@@ -106,10 +106,14 @@ class Protein implements Parametrized {
         return  trainSurface
     }
 
-    void clearCachedSurfaces() {
+    /**
+     * clears generated surfaces and secondary data
+     */
+    void clearSecondaryData() {
         connollySurface = null
         trainSurface = null
         exposedAtoms = null
+        secondaryData.clear()
     }
 
     Atoms getAllLigandAtoms() {

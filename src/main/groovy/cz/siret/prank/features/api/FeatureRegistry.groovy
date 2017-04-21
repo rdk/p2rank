@@ -1,6 +1,10 @@
 package cz.siret.prank.features.api
 
+import cz.siret.prank.features.implementation.Asa2Feature
+import cz.siret.prank.features.implementation.AsaFeature
+import cz.siret.prank.features.implementation.AsaResiduesFeature
 import cz.siret.prank.features.implementation.BfactorFeature
+import cz.siret.prank.features.implementation.ContactResiduesPositionFeature
 import cz.siret.prank.features.implementation.ProtrusionFeature
 import cz.siret.prank.features.implementation.ProtrusionHistogramFeature
 import cz.siret.prank.features.implementation.SurfaceProtrusionFeature
@@ -42,6 +46,10 @@ class FeatureRegistry {
         registerFeature(new SurfaceProtrusionFeature())
         registerFeature(new BfactorFeature())
         registerFeature(new ProtrusionHistogramFeature())
+        registerFeature(new ContactResiduesPositionFeature())
+        registerFeature(new AsaFeature())
+        registerFeature(new Asa2Feature())
+        registerFeature(new AsaResiduesFeature())
 
         // Register new feature implementations here
 

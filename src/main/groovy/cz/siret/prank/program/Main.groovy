@@ -10,6 +10,7 @@ import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.StringUtils
 
 import static cz.siret.prank.utils.ATimer.startTimer
+import static cz.siret.prank.utils.Futils.writeFile
 
 @Slf4j
 class Main implements Parametrized, Writable {
@@ -172,6 +173,10 @@ class Main implements Parametrized, Writable {
 
         return Futils.normalize(Futils.dir(decodedPath) + "/../")
 
+    }
+
+    void writeCmdLineArgs(String outdir) {
+        writeFile("$outdir/cmdline_args.txt", args)
     }
 
 //===========================================================================================================//
@@ -365,15 +370,20 @@ class Main implements Parametrized, Writable {
 
         boolean error = false
 
+        Main main
         try {
 
-            error = new Main(parsedArgs).run()
+            main = new Main(parsedArgs)
+            error = main.run()
 
         } catch (PrankException e) {
 
             error = true
             writeError e.message
             log.error(e.message, e)
+            if (main.logManager.loggingToFile) {
+                write "For details see log file: '$main.logManager.logFile'"
+            }
 
         } catch (Exception e) {
 

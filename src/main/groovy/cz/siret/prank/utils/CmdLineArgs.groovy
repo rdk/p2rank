@@ -13,6 +13,10 @@ class CmdLineArgs {
     static class NamedArg {
         String name
         String value
+
+        public String toString() {
+            return name + "=" + value
+        }
     }
 
     String[] argList

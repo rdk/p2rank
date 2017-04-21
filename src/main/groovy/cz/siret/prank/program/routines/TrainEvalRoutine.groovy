@@ -18,6 +18,8 @@ import weka.classifiers.Classifier
 import weka.core.Instance
 import weka.core.Instances
 
+import static cz.siret.prank.score.prediction.PointScoreCalculator.predictedPositive
+import static cz.siret.prank.score.prediction.PointScoreCalculator.predictedScore
 import static cz.siret.prank.utils.ATimer.startTimer
 
 @Slf4j
@@ -99,8 +101,8 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
             ClassifierStats trainStats = new ClassifierStats()
             for (Instance inst : trainVectors) {
                 double[] hist = classifier.distributionForInstance(inst)
-                double score = PointScoreCalculator.predictedScore(hist)
-                boolean predicted = hist[1] > hist[0]
+                double score = predictedScore(hist)
+                boolean predicted = predictedPositive(score)
                 boolean observed = inst.classValue() > 0
 
                 trainStats.addPrediction(observed, predicted, score, hist)
