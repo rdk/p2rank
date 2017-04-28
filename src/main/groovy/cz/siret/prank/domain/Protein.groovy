@@ -80,6 +80,13 @@ class Protein implements Parametrized {
         }
     }
 
+    void loadConservationScores() {
+        log.info "loading conservation scores"
+        ConservationScore score = ConservationScore.fromFiles(structure, conservationPathForChain)
+        secondaryData.put(ConservationScore.conservationScoreKey, score)
+        secondaryData.put(ConservationScore.conservationLoadedKey, true)
+    }
+
     Atoms getExposedAtoms() {
         calcuateSurfaceAndExposedAtoms()
         exposedAtoms

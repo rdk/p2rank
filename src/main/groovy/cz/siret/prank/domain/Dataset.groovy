@@ -71,10 +71,13 @@ class Dataset implements Parametrized {
             String pdbBaseName = Futils.removeExtention(Futils.shortName(pdbFileName))
             // TODO: Rewrite when better parsing of dataset file is finished.
 
-            if (params.atom_table_features.any{s->s.contains("conservation")}) {
+            if (params.atom_table_features.any{s->s.contains("conservation")} || params.load_conservation) {
                 pair.liganatedProtein.setConservationPathForChain({ String chainId ->
                     parentDir.resolve(pdbBaseName + chainId + ".scores").toFile()
                 })
+                if (params.load_conservation) {
+                    pair.liganatedProtein.loadConservationScores()
+                }
             }
             return pair
         }

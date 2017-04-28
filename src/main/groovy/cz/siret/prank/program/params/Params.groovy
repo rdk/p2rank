@@ -95,6 +95,14 @@ class Params {
 
     boolean protr_hist_cumulative = false
 
+    /**
+     * conservation parameteres
+     */
+    boolean load_conservation = false // always load conservation (for stats)
+
+    String score_pockets_by = "p2rank" // possible values: "p2rank", "conservation",
+    // "combi"
+
     //== CLASSIFIERS ===================
 
     /**

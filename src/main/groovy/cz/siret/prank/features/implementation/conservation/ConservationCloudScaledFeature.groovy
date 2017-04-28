@@ -10,8 +10,9 @@ import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
 
 /**
- * Simple single value SAS feature that adds "ptortusion" of protein surface to SAS feature vector.
- * Protrusion is simply a number of protein atoms in params.protrusion_radius around SAS point.
+ * Simple single value SAS feature that adds "conservation" of protein surface to SAS feature
+ * vector.
+ * Conservation scores from residue from protrusion radius are scaled using 1/L2 metrics
  */
 @CompileStatic
 class ConservationCloudScaledFeature extends SasFeatureCalculator implements Parametrized {
