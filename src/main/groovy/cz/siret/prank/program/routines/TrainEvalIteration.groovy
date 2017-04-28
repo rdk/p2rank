@@ -118,7 +118,13 @@ class TrainEvalIteration extends CompositeRoutine implements Parametrized  {
 
         // feature importances
         if (params.feature_importances) {
-            if (classifier instanceof FastRandomForest) {
+            if (classifier instanceof  FastRandomForest) {
+                featureImportances = (classifier as FastRandomForest).featureImportances.toList()
+            } else if (classifier instanceof FasterForest) {
+                featureImportances = (classifier as FasterForest).featureImportances.toList()
+            }
+            if (featureImportances != null) {
+                List<String> names = FeatureExtractor.createFactory().vectorHeader
                 featureImportances = (classifier as FastRandomForest).featureImportances.toList()
                 List<String> names = FeatureExtractor.createFactory().vectorHeader
 
