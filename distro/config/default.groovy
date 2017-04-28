@@ -46,11 +46,6 @@ import cz.siret.prank.program.params.Params
 
     //== FAETURES
 
-    /**
-     * include volsite pharmacophore properties
-     */
-    use_volsite_features = true
-
     atom_table_features = ["apRawValids","apRawInvalids","atomicHydrophobicity"]
 
     extra_features = ["chem","volsite","protrusion","bfactor"]
@@ -265,9 +260,9 @@ import cz.siret.prank.program.params.Params
     pred_clustering_dist = 3
 
     /**
-     * distance to extend clusters around hotspots
+     * SAS points around ligandable points (an their score) will be included in the pocket
      */
-    pred_surrounding = 3.5
+    extended_pocket_cutoff = 3.5
 
     /**
      * cuttoff distance of protein surface atoms considered as part of the pocket

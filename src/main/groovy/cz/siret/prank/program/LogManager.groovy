@@ -22,6 +22,7 @@ class LogManager implements Writable {
     static final String LOGGER_NAME = "cz.siret.prank"
     static final String CONSOLE_APPENDER_NAME = "Console"
     static final String FILE_APPENDER_NAME = "File"
+    static final String PATTERN = "[%level] %logger{0} - %msg%n"
 
     boolean loggingToFile = false
     String logFile
@@ -40,9 +41,10 @@ class LogManager implements Writable {
         config = ctx.getConfiguration();
         loggerConfig = config.getLoggerConfig(loggerName)
 
-        loggerConfig.getAppenders().each { System.out.println "APPENDER: " + it.value.name }
+        // loggerConfig.getAppenders().each { System.out.println "APPENDER: " + it.value.name }
         write "logToConsole: $logToConsole"
         write "logToFile: $logToFile"
+        write "logLevel: ${level.name()}"
 
         loggerConfig.setLevel(level)
 
@@ -63,12 +65,12 @@ class LogManager implements Writable {
 
         ctx.updateLoggers();
 
-        loggerConfig.getAppenders().each { System.out.println "APPENDER: " + it.value.name }
+        //loggerConfig.getAppenders().each { System.out.println "APPENDER: " + it.value.name }
     }
 
     private static Appender addFileAppender(Configuration config, String loggerName, String logFile, Level level) {
 
-        String pattern = "[%level] %logger{0} - %msg%n"
+        String pattern = PATTERN
         int bufferSize = 5000
 
         Futils.delete(logFile)

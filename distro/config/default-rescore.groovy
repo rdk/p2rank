@@ -46,11 +46,6 @@ import cz.siret.prank.program.params.Params
 
     //== FAETURES
 
-    /**
-     * include volsite pharmacophore properties
-     */
-    use_volsite_features = true
-
     extra_features = ["chem","volsite","protrusion","bfactor"]
 
     atom_table_features = ["ap5sasaValids","ap5sasaInvalids"] // "apRawValids","apRawInvalids","atomicHydrophobicity"
@@ -263,11 +258,6 @@ import cz.siret.prank.program.params.Params
      * clustering distance for ligandable clusters for second phase clustering
      */
     pred_clustering_dist = 5
-
-    /**
-     * distance to extend clusters around hotspots
-     */
-    pred_surrounding = 3.5
 
     /**
      * cuttoff distance of protein surface atoms considered as part of the pocket

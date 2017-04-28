@@ -53,6 +53,7 @@ class Experiments extends Routine {
         datadirRoot = params.dataset_base_dir
         label = "run_" + trainDataSet.label + "_" + (doCrossValidation ? "crossval" : evalDataSet.label)
         outdir = main.findOutdir(label)
+        main.writeCmdLineArgs(outdir)
 
         main.configureLoggers(outdir)
     }

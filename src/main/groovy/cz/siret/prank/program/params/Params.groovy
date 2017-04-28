@@ -68,11 +68,6 @@ class Params {
 
     //== FAETURES
 
-    /**
-     * include volsite pharmacophore properties
-     */
-    boolean use_volsite_features = true
-
     List<String> extra_features = ["protrusion","bfactor"]
 
     List<String> atom_table_features = ["apRawValids","apRawInvalids","atomicHydrophobicity"] // "ap5sasaValids","ap5sasaInvalids"
@@ -314,6 +309,8 @@ class Params {
      */
     double pred_point_threshold = 0.4
 
+    boolean include_surrounding_score = false
+
     /**
      * minimum cluster size (of ligandable points) for initial clustering
      */
@@ -325,9 +322,9 @@ class Params {
     double pred_clustering_dist = 5
 
     /**
-     * distance to extend clusters around hotspots
+     * SAS points around ligandable points (an their score) will be included in the pocket
      */
-    double pred_surrounding = 3.5
+    double extended_pocket_cutoff = 3.5
 
     /**
      * cuttoff distance of protein surface atoms considered as part of the pocket
@@ -490,6 +487,26 @@ class Params {
 
     /** produce ROC and PR curve graphs (not fully implemented yet) */
     boolean stats_curves = false
+
+    /**
+     * Contact residues distance cutoff
+     */
+    double feat_crang_contact_dist = 3
+
+    /**
+     * probe radius for calculating accessible surface area for asa feature
+     */
+    double feat_asa_probe_radius = 1.4
+
+    /**
+     * probe radius for calculating accessible surface area for asa feature
+     */
+    double feat_asa_probe_radius2 = 1.4
+
+    /**
+     * radius of the neighbourhood considered in asa feature
+     */
+    double feat_asa_neigh_radius = 6
 
 //===========================================================================================================//
 

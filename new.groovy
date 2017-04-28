@@ -35,18 +35,11 @@ import cz.siret.prank.program.params.Params
 
     predictions = true
 
-    out_prefix_date = true
-
     crossval_threads = 5
 
-    cache_datasets = true
-
-    clear_sec_caches = false
-
-    clear_prim_caches = false
 
 
-    log_cases = true
+
 
     /**
      * calculate feature importance
@@ -54,7 +47,8 @@ import cz.siret.prank.program.params.Params
      */
     feature_importances = false
 
-    output_only_stats = true
+    stats_collect_predictions = true
+
 
     /**
      * collect negatives just from decoy pockets found by other method
@@ -66,16 +60,39 @@ import cz.siret.prank.program.params.Params
 
     atom_table_features = ["ap5sasaValids","ap5sasaInvalids","apRawValids","apRawInvalids","atomicHydrophobicity"]
 
-    extra_features = ["protrusion","bfactor"]
+    extra_features = ["chem","volsite","protrusion","bfactor"]
 
     residue_table_features = ["RAx"]
 
+    average_feat_vectors = true
+
+    balance_class_weights = true
+
+    target_class_weight_ratio = 0.055
+    
+
+    // technical
+
+    cache_datasets = true
+
+    clear_sec_caches = false
+
+    clear_prim_caches = false
+
+    log_cases = true
+
+    output_only_stats = true
+
     log_to_console = false
+
+    log_level = "WARN"
 
     log_to_file = true
 
     ploop_delete_runs = true
 
     zip_log_file = true
+
+    out_prefix_date = true
 
 }

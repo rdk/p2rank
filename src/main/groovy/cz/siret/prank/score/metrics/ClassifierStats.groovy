@@ -6,6 +6,8 @@ import groovy.transform.CompileStatic
 import java.text.DecimalFormat
 
 import static cz.siret.prank.utils.Formatter.formatPercent
+import static java.lang.Double.NaN
+import static java.lang.Math.log
 
 /**
  * Binary classifier statistics collector and calculator
@@ -13,7 +15,10 @@ import static cz.siret.prank.utils.Formatter.formatPercent
 @CompileStatic
 class ClassifierStats implements Parametrized {
 
+    static final double EPS = 1e-15d
     static final int HISTOGRAM_BINS = 100
+
+
 
     String name
 
@@ -27,6 +32,7 @@ class ClassifierStats implements Parametrized {
     double sumSE = 0
     double sumSEpos = 0
     double sumSEneg = 0
+    double sumLogLoss = 0
 
     Histograms histograms = new Histograms()
 
@@ -77,7 +83,7 @@ class ClassifierStats implements Parametrized {
     void addPrediction(boolean observed, boolean predicted, double score, double[] hist) {
 
         double obsv = observed ? 1 : 0
-        double e = Math.abs(obsv-score)
+        double e = Math.abs(obsv - score)
         double se = e*e
 
         sumE += e
@@ -90,6 +96,11 @@ class ClassifierStats implements Parametrized {
             sumEneg += e
             sumSEneg += se
         }
+
+        double pCorrect = observed ? score : 1-score
+        if (pCorrect<EPS)
+            pCorrect = EPS
+        sumLogLoss -= log(pCorrect)
 
         histograms.score.put(score)
         if (observed) {
@@ -114,17 +125,17 @@ class ClassifierStats implements Parametrized {
     double calcMCC(double TP, double FP, double TN, double FN) {
         double n = TP*TN - FP*FN
         double d = (TP+FP)*(TP+FN)*(TN+FP)*(TN+FN)
-        d = Math.sqrt(d);
+        d = Math.sqrt(d)
         if (d == 0d) {
-            d = 1d;
+            d = 1d
         }
 
-        return n / d;
+        return n / d
     }
 
     double div(double a, double b) {
         if (b==0d)
-            return Double.NaN
+            return NaN
         return a / b
     }
 
@@ -160,19 +171,47 @@ class ClassifierStats implements Parametrized {
 
         private Advanced advanced = null
 
-        double getTp() { op[1][1] }
-        double getFp() { op[0][1] }
-        double getTn() { op[0][0] }
-        double getFn() { op[1][0] }
+        double getTP() { op[1][1] }
+        double getFP() { op[0][1] }
+        double getTN() { op[0][0] }
+        double getFN() { op[1][0] }
+
+        /** Observed Positive */
+        double getOP() {
+            TP + FN
+        }
+
+        /** Observed Negative */
+        double getON() {
+            FP + TN
+        }
+
+        /** Predicted Positive */
+        double getPP() {
+            TP + FP
+        }
+
+        /** Predicted Negative */
+        double getPN() {
+            TN + FN
+        }
+
+        double getOPON_ratio() {
+            div OP, ON
+        }
+
+        double getPPPN_ratio() {
+            div PP, PN
+        }
 
         /** Precision = Positive Predictive Value */
         double getP() {
-            div tp , (tp + fp)
+            div TP , (TP + FP)
         }
 
         /** Recall = Sensitivity = True Positive Rate  */
         double getR() {
-            div tp , (tp + fn)
+            div TP , (TP + FN)
         }
 
         /** F-measure */
@@ -188,36 +227,51 @@ class ClassifierStats implements Parametrized {
         }
 
         double getMCC() {
-            calcMCC(tp, fp, tn, fn)
+            calcMCC(TP, FP, TN, FN)
         }
 
         /** negative predictive value */
         double getNPV() {
-            div tn , (tn + fn)
+            div TN , (TN + FN)
         }
 
         /** specificity = true negative rate */
         double getSPC() {
-            div tn , (tn + fp)
+            div TN , (TN + FP)
         }
 
         /** accuraccy */
         double getACC() {
-            div( (tp + tn) , count )
+            div( (TP + TN) , count )
         }
 
+        /** balanced accuracy */
+        double getBACC() {
+            (r + SPC) / 2
+        }
+
+        /** TP versus the bad */
         double getTPX() {
-            div tp, tp + fn + fp
+            div TP, TP + FN + FP
+        }
+
+        /** log TP */
+        double getLTP() {
+            try {
+                -log( TP / (PP * OP) )
+            } catch (Exception e) {
+                NaN
+            }
         }
 
         /** false positive rate */
         double getFPR() {
-            div fp , (fp + tn)
+            div FP , (FP + TN)
         }
 
         /** false negative rate */
         double getFNR() {
-            div fn , (tp + fn)
+            div FN , (TP + FN)
         }
 
         /** positive likelihood ratio */
@@ -237,28 +291,34 @@ class ClassifierStats implements Parametrized {
 
         /** false discovery rate */
         double getFDR() {
-            div fp , (tp + fp)
+            div FP , (TP + FP)
         }
 
         /** false ommision rate */
         double getFOR() {
-            div fn , (fn + tn)
+            div FN , (FN + TN)
         }
 
-        /** Youden's J statistic = Youden's index */
+        /** Youden's J statistic = Youden's index = Informedness */
         double getYJS() {
-            r + SPC -1
+            r + SPC - 1
         }
+
+        /** Markedness */
+        double getMRK() {
+            p + NPV - 1
+        }
+
 
         /** Discriminant Power ... <1 = poor, >3 = good, fair otherwise */
         double getDPOW() {
             if (r==1 || SPC==1)
-                return Double.NaN
+                return NaN
             double x = r / (1-r)
             double y = SPC / (1-SPC)
             double c = Math.sqrt(3) / Math.PI
 
-            c * ( Math.log(x) + Math.log(y) )
+            c * ( log(x) + log(y) )
         }
 
         double getME()         { div sumE, count        }
@@ -271,6 +331,26 @@ class ClassifierStats implements Parametrized {
         double getMSEneg()    { div sumSEneg, count      }
         double getMSEbalanced() { (MSEneg + MSEpos) / 2    }
 
+        double getLogLoss() {
+            div sumLogLoss, count
+        }
+
+        /** Uncertainty coefficient, aka Proficiency */
+        double getUC() {
+            try {
+                double L = (OP + ON) * log(OP + ON)
+                double LTP = TP * log( TP / (PP * OP) )
+                double LFP = FP * log( FP / (PP * ON) )
+                double LFN = FN * log( FN / (PN * OP) )
+                double LTN = TN * log( TN / (PN * ON) )
+                double LP = OP * log( OP / count )
+                double LN = ON * log( ON / count )
+                double UC = (L + LTP + LFP + LFN + LTN) / (L + LP + LN)
+                return UC
+            } catch (Exception e) {
+                return NaN
+            }
+        }
 
         double getAUC() {
             if (advanced==null) advanced = calculateAdvanced()
@@ -310,8 +390,8 @@ class ClassifierStats implements Parametrized {
         }
 
         class Advanced {
-            double wekaAUC   = Double.NaN
-            double wekaAUPRC = Double.NaN
+            double wekaAUC   = 0
+            double wekaAUPRC = 0
         }
         
     }
@@ -354,13 +434,13 @@ class ClassifierStats implements Parametrized {
             sb << ",(npv),(p)\n"
             sb << "\n"
             sb << "pred:  , [0], [1]\n"
-            sb << "obs[0] , ${tn}, ${fp}, ${formatPercent(SPC)}\n"
-            sb << "obs[1] , ${fn}, ${tp}, ${formatPercent(R)}\n"
+            sb << "obs[0] , ${TN}, ${FP}, ${formatPercent(SPC)}\n"
+            sb << "obs[1] , ${FN}, ${TP}, ${formatPercent(R)}\n"
             sb << "       , ${formatPercent(NPV)}, ${formatPercent(P)}\n"
             sb << "\n"
             sb << "%:\n"
-            sb << ", ${rel(tn)}, ${rel(fp)}\n"
-            sb << ", ${rel(fn)}, ${rel(tp)}\n"
+            sb << ", ${rel(TN)}, ${rel(FP)}\n"
+            sb << ", ${rel(FN)}, ${rel(TP)}\n"
             sb << "\n"
             sb << "ACC:, ${format(ACC)}, accuracy\n"
             sb << "\n"
@@ -372,17 +452,6 @@ class ClassifierStats implements Parametrized {
             sb << "\n"
             sb << "FM:, ${format(f1)}, F-measure\n"
             sb << "MCC:, ${format(MCC)}, Matthews correlation coefficient\n"
-
-            sb << "\n"
-            sb << "ME:, ${format(ME)}, Mean error\n"
-            sb << "MEpos:, ${format(MEpos)}, ME on positive observations\n"
-            sb << "MEneg:, ${format(MEneg)}, Mean error on negative observations\n"
-            sb << "MEbal:, ${format(MEbalanced)}, Mean error balanced\n"
-            sb << "\n"
-            sb << "MSE:, ${format(MSE)}, Mean squared error\n"
-            sb << "MSEpos:, ${format(MSEpos)}, MSE on positive observations\n"
-            sb << "MSEneg:, ${format(MSEneg)}, MSE on negative observations\n"
-            sb << "MSEbal:, ${format(MSEbalanced)}, Mean error balanced\n"
         }
 
         return sb.toString()

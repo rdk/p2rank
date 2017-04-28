@@ -2,7 +2,7 @@
 <configuration status="INFO">
 	<!--<ThresholdFilter level="all"/>-->
 	<appenders>
-		<Console name="Console" target="SYSTEM_ERR">
+		<Console name="Console" > <!-- target="SYSTEM_ERR" -->
 			<PatternLayout pattern="[%level] %logger{0} - %msg%n"/>
 			<!--<PatternLayout pattern="%d{HH:mm:ss} [%t] %-5level %logger{36} - %msg%n"/>-->
 			<!--<pattern>[%level] %logger{0} - %msg%n</pattern>-->

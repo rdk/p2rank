@@ -6,11 +6,13 @@ import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.features.implementation.conservation.ConservationScore
 import cz.siret.prank.geom.Atoms
+import cz.siret.prank.program.rendering.LabeledPoint
 import cz.siret.prank.score.criteria.*
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.StringUtils
 
 import static cz.siret.prank.utils.Formatter.*
+import static java.util.Collections.emptyList
 
 /**
  * Represents evaluation of pocket prediction on a dataset of proteins
@@ -21,6 +23,9 @@ import static cz.siret.prank.utils.Formatter.*
  */
 @Slf4j
 class Evaluation {
+
+    /** cutoff distance in A around ligand atoms that determins which SAS points cover the ligand */
+    static final double LIG_SAS_CUTOFF = 2
 
     IdentificationCriterium standardCriterium = new DCA(4.0)
     List<IdentificationCriterium> criteria
@@ -35,6 +40,9 @@ class Evaluation {
     int ignoredLigandCount
     int smallLigandCount
     int distantLigandCount
+
+    int ligSASPointsCount
+    int ligSASPointsCoveredCount
 
     Evaluation(List<IdentificationCriterium> criteria) {
         this.criteria = criteria
@@ -92,6 +100,8 @@ class Evaluation {
         List<PocketRow> tmpPockets = new ArrayList<>()
 
         Protein lp = pair.liganatedProtein
+        Atoms sasPoints = pair.prediction.protein.connollySurface.points
+        Atoms labeledPoints = new Atoms(pair.prediction.labeledPoints ?: emptyList())
         
         ProteinRow protRow = new ProteinRow()
         protRow.name = pair.name
@@ -109,7 +119,13 @@ class Evaluation {
         protRow.smallLigNames = lp.smallLigands.collect { "$it.name($it.size)" }.join(" ")
         protRow.distantLigands = lp.distantLigands.size()
         protRow.distantLigNames = lp.distantLigands.collect { "$it.name($it.size|${format(it.contactDistance,1)}|${format(it.centerToProteinDist,1)})" }.join(" ")
-        protRow.connollyPoints = pair.prediction.protein.connollySurface.points.count
+        protRow.sasPoints = sasPoints.count
+
+        // ligand coverage
+        Atoms ligSasPoints = labeledPoints.cutoffAtoms(lp.allLigandAtoms, LIG_SAS_CUTOFF)
+        int n_ligSasPoints = ligSasPoints.count
+        int n_ligSasPointsCovered = ligSasPoints.toList().findAll { ((LabeledPoint)it).predicted }.toList().size()
+        log.debug "XXXX n_ligSasPoints: {} covered: {}", n_ligSasPoints, n_ligSasPointsCovered
 
         // Conservation stats
         ConservationScore score = lp.secondaryData.get(ConservationScore.conservationScoreKey)
@@ -187,6 +203,8 @@ class Evaluation {
             proteinRows.add(protRow)
             ligandRows.addAll(tmpLigRows)
             pocketRows.addAll(tmpPockets)
+            ligSASPointsCount += n_ligSasPoints
+            ligSASPointsCoveredCount += n_ligSasPointsCovered
         }
     }
 
@@ -200,6 +218,8 @@ class Evaluation {
         ignoredLigandCount += eval.ignoredLigandCount
         smallLigandCount += eval.smallLigandCount
         distantLigandCount += eval.distantLigandCount
+        ligSASPointsCount += eval.ligSASPointsCount
+        ligSASPointsCoveredCount += eval.ligSASPointsCoveredCount
     }
 
     double calcSuccRate(int assesorNum, int tolerance) {
@@ -266,26 +286,38 @@ class Evaluation {
         return a
     }
 
+//===========================================================================================================//
+
+    public <T> double avg(List<T> list, Closure<T> closure) {
+        if (list.size()==0) return Double.NaN
+        list.collect { closure(it) }.findAll { it!=Double.NaN }.sum(0) / list.size()
+    }
+
+    double div(double a, double b) {
+        if (b==0d)
+            return Double.NaN
+        return a / b
+    }
 
 //===========================================================================================================//
 
     double getAvgPockets() {
-        pocketCount / proteinCount
+        div pocketCount, proteinCount
     }
 
     double getAvgLigandAtoms() {
-        ligandRows.collect {it.atoms}.sum(0) / ligandCount
+        div ligandRows.collect {it.atoms}.sum(0), ligandCount
     }
 
     double getAvgPocketVolume() {
-        pocketRows.collect { it.pocketVolume }.sum(0) / pocketCount
+        div pocketRows.collect { it.pocketVolume }.sum(0), pocketCount
     }
     double getAvgPocketVolumeTruePockets() {
         avg pocketRows.findAll { it.truePocket }, {PocketRow it -> it.pocketVolume }
     }
 
     double getAvgPocketSurfAtoms() {
-        pocketRows.collect { it.surfaceAtomCount }.sum(0) / pocketCount
+        div pocketRows.collect { it.surfaceAtomCount }.sum(0), pocketCount
     }
 
     double getAvgPocketSurfAtomsTruePockets() {
@@ -293,32 +325,30 @@ class Evaluation {
     }
 
     double getAvgPocketInnerPoints() {
-        pocketRows.collect { it.auxInfo.samplePoints }.sum(0) / pocketCount
+        div pocketRows.collect { it.auxInfo.samplePoints }.sum(0), pocketCount
     }
     double getAvgPocketInnerPointsTruePockets() {
         avg pocketRows.findAll { it.truePocket }, {PocketRow it -> it.auxInfo.samplePoints }
     }
 
     double getAvgProteinAtoms() {
-        proteinRows.collect { it.protAtoms }.sum(0) / proteinCount
+        div proteinRows.collect { it.protAtoms }.sum(0), proteinCount
     }
 
     double getAvgExposedAtoms() {
-        proteinRows.collect { it.exposedAtoms }.sum(0) / proteinCount
+        div proteinRows.collect { it.exposedAtoms }.sum(0), proteinCount
     }
 
     double getAvgProteinConollyPoints() {
-        avg proteinRows, {ProteinRow it -> it.connollyPoints }
+        avg proteinRows, {ProteinRow it -> it.sasPoints }
     }
 
     double getAvgLigCenterToProtDist() {
         avg ligandRows, {LigRow it -> it.centerToProtDist}
     }
 
-    public <T> double avg(List<T> list, Closure<T> closure) {
-        if (list.size()==0) return Double.NaN
-        list.collect { closure(it) }.findAll { it!=Double.NaN }.sum(0) / list.size()
-
+    double getLigandCoverage() {
+        div ligSASPointsCoveredCount, ligSASPointsCount
     }
 
     double getAvgClosestPocketDist() {
@@ -347,6 +377,7 @@ class Evaluation {
 
         m.AVG_LIG_CENTER_TO_PROT_DIST = avgLigCenterToProtDist
         m.AVG_LIG_CLOSTES_POCKET_DIST = avgClosestPocketDist
+        m.LIGAND_COVERAGE = ligandCoverage
 
         m.AVG_POCKETS = avgPockets
         m.AVG_POCKET_SURF_ATOMS = avgPocketSurfAtoms
@@ -491,6 +522,8 @@ class Evaluation {
         double avgConservation
         double avgBindingConservation
         double avgNonBindingConservation
+
+        int sasPoints
     }
 
     static class LigRow {
