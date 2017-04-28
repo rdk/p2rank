@@ -24,7 +24,7 @@ class ConservationCloudFeature extends SasFeatureCalculator implements Parametri
     @Override
     void preProcessProtein(Protein protein) {
         // Check if conservation is already loaded.
-        if (protein.secondaryData.getOrDefault(ConservationScore.conservationLoadedKey, false)) {
+        if (!protein.secondaryData.getOrDefault(ConservationScore.conservationLoadedKey, false)) {
             // Load conservation score.
             ConservationScore score = ConservationScore.fromFiles(protein.structure, protein.conservationPathForChain)
             protein.secondaryData.put(ConservationScore.conservationScoreKey, score)
