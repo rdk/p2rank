@@ -3,6 +3,7 @@ package cz.siret.prank.program.routines
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import hr.irb.fastRandomForest.FastRandomForest
+import cz.siret.prank.fforest.FasterForest
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.program.params.ClassifierOption
