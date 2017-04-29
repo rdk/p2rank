@@ -2,6 +2,7 @@ package cz.siret.prank.program.routines
 
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.features.FeatureExtractor
+import cz.siret.prank.fforest.FasterForest
 import cz.siret.prank.program.ml.ClassifierFactory
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.routines.results.EvalResults
@@ -141,8 +142,12 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
 
         // feature importances
         if (params.feature_importances) {
-            if (classifier instanceof FastRandomForest) {
+            if (classifier instanceof  FastRandomForest) {
                 featureImportances = (classifier as FastRandomForest).featureImportances.toList()
+            } else if (classifier instanceof FasterForest) {
+                featureImportances = (classifier as FasterForest).featureImportances.toList()
+            }
+            if (featureImportances != null) {
                 List<String> names = FeatureExtractor.createFactory().vectorHeader
 
                 Writer file = Futils.getWriter("$outdir/feature_importances.csv")
