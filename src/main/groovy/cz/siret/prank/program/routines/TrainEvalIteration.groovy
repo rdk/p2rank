@@ -3,6 +3,7 @@ package cz.siret.prank.program.routines
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import hr.irb.fastRandomForest.FastRandomForest
+import cz.siret.prank.fforest.FasterForest
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.program.params.ClassifierOption
@@ -118,8 +119,12 @@ class TrainEvalIteration extends CompositeRoutine implements Parametrized  {
 
         // feature importances
         if (params.feature_importances) {
-            if (classifier instanceof FastRandomForest) {
+            if (classifier instanceof  FastRandomForest) {
                 featureImportances = (classifier as FastRandomForest).featureImportances.toList()
+            } else if (classifier instanceof FasterForest) {
+                featureImportances = (classifier as FasterForest).featureImportances.toList()
+            }
+            if (featureImportances != null) {
                 List<String> names = FeatureExtractor.createFactory().vectorHeader
 
                 Writer file = futils.overwrite("$outdir/feature_importances.csv")
