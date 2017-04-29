@@ -186,7 +186,8 @@ class Evaluation {
             tmpPockets.add(prow)
         }
         List<PocketRow> conservationSorted = tmpPockets.toSorted {it.avgConservation}.reverse(true)
-        List<PocketRow> combiSorted = tmpPockets.toSorted {it.avgConservation * it.newScore}.reverse(true)
+        List<PocketRow> combiSorted = tmpPockets.toSorted
+            { Math.pow(it.avgConservation, params.conservation_exponent) * it.newScore}.reverse(true)
         for (PocketRow prow : tmpPockets) {
             prow.conservationRank = conservationSorted.indexOf(prow) + 1
             prow.combinedRank = combiSorted.indexOf(prow) + 1

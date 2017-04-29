@@ -95,8 +95,12 @@ class Params {
      */
     boolean load_conservation = false // always load conservation (for stats)
 
-    String score_pockets_by = "p2rank" // possible values: "p2rank", "conservation",
-    // "combi"
+    String score_pockets_by = "p2rank" // possible values: "p2rank", "conservation", "combi"
+
+    /**
+     * Conservation exponent for rescoring pockets
+     */
+    int conservation_exponent = 1
 
     //== CLASSIFIERS ===================
 
