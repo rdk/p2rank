@@ -3,6 +3,7 @@ package cz.siret.prank.features.implementation.conservation;
 import com.univocity.parsers.tsv.TsvParser;
 import com.univocity.parsers.tsv.TsvParserSettings
 import cz.siret.prank.program.params.Parametrized
+import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic;
 import org.biojava.nbio.structure.Chain;
 import org.biojava.nbio.structure.Group;
@@ -42,6 +43,19 @@ public class ConservationScore implements Parametrized {
 
     private ConservationScore(Map<ResidueNumberWrapper, Double> scores) {
         this.scores = scores;
+    }
+
+    static String scoreFileForPdbFile(String fileName, String chainId, String origin) {
+        String baseName, extension;
+        if (fileName.endsWith(".pdb.gz") || fileName.endsWith("ent.gz")) {
+            baseName = fileName.substring(0, fileName.length() - 7);
+            extension = fileName.substring(fileName.length() - 7);
+        } else {
+            int dotIndex = fileName.lastIndexOf('.');
+            baseName = fileName.substring(0, dotIndex);
+            extension = fileName.substring(dotIndex);
+        }
+        return baseName + chainId + "." + origin + ".hom.gz";
     }
 
     private static class AA {
@@ -86,7 +100,7 @@ public class ConservationScore implements Parametrized {
         TsvParserSettings settings = new TsvParserSettings();
         settings.setLineSeparatorDetectionEnabled(true);
         TsvParser parser = new TsvParser(settings);
-        List<String[]> lines = parser.parseAll(scoreFile);
+        List<String[]> lines = parser.parseAll(Futils.readFile(scoreFile));
         List<AA> result = new ArrayList<>(lines.size());
         for (String[] line : lines) {
             int index = -1;
@@ -140,7 +154,6 @@ public class ConservationScore implements Parametrized {
 
         System.out.println("Matching chains using LCS");
         int[][] lcs = calcLongestCommonSubSequence(chain, chainScores);
-
 
         // Backtrack the actual sequence.
         int i = chain.size(), j = chainScores.size();

@@ -4,6 +4,7 @@ import cz.siret.prank.domain.loaders.ConcavityLoader
 import cz.siret.prank.domain.loaders.FPockeLoader
 import cz.siret.prank.domain.loaders.PredictionLoader
 import cz.siret.prank.domain.loaders.SiteHoundLoader
+import cz.siret.prank.features.implementation.conservation.ConservationScore
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.ThreadPoolFactory
 import cz.siret.prank.program.params.Parametrized
@@ -15,6 +16,7 @@ import groovyx.gpars.GParsPool
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.concurrent.atomic.AtomicInteger
+import java.util.function.Function
 
 /**
  * Represents a dataset of protein files (or file pairs for PRANK rescoring: prediction file and liganated protein)
@@ -28,6 +30,7 @@ class Dataset implements Parametrized {
     class Item {
         String proteinFile  // liganated/unliganated protein for predictions
         String pocketPredictionFile //may be null
+        Function<String, File> conservationPathForChain // may be null (used only with Prank API)
         Set<String> ligandNames
 
         String label
@@ -68,13 +71,18 @@ class Dataset implements Parametrized {
         PredictionPair loadPredictionPair() {
             PredictionPair pair = getLoader(this).loadPredictionPair(proteinFile, pocketPredictionFile)
             Path parentDir = Paths.get(Futils.absPath(proteinFile)).parent
-            String pdbBaseName = Futils.removeExtention(Futils.shortName(proteinFile))
             // TODO: Rewrite when better parsing of dataset file is finished.
 
             if (params.extra_features.any{s->s.contains("conservation")} || params.load_conservation) {
-                pair.liganatedProtein.setConservationPathForChain({ String chainId ->
-                    parentDir.resolve(pdbBaseName + chainId + ".scores").toFile()
-                })
+                if (conservationPathForChain == null) {
+                    pair.liganatedProtein.setConservationPathForChain({ String chainId ->
+                        parentDir.resolve(ConservationScore.scoreFileForPdbFile(
+                                Futils.shortName(proteinFile), chainId, params.conservation_origin))
+                                .toFile()
+                    })
+                } else {
+                    pair.liganatedProtein.setConservationPathForChain(conservationPathForChain)
+                }
                 if (params.load_conservation) {
                     pair.liganatedProtein.loadConservationScores()
                 }
@@ -337,11 +345,18 @@ class Dataset implements Parametrized {
     }
 
     public static Dataset createSingleFileDataset(String pdbFile) {
+        return  createSingleFileDataset(pdbFile, null);
+    }
+
+    public static Dataset createSingleFileDataset(String pdbFile,
+                                                  Function<String, File> conservationPathForChain) {
         Dataset res = new Dataset()
         res.hasPairs = false
         res.dir = Futils.dir(pdbFile)
         res.name = Futils.shortName(pdbFile)
-        res.items.add(res.newItem(pdbFile, pdbFile, null))
+        Dataset.Item item = res.newItem(pdbFile, pdbFile, null)
+        item.conservationPathForChain = conservationPathForChain
+        res.items.add(item)
 
         return res
     }

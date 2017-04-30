@@ -102,6 +102,12 @@ class Params {
      */
     int conservation_exponent = 1
 
+    /**
+     * Conservation file with this pattern is loaded:
+     * baseName + chainId + "." + origin + ".hom.gz"
+     */
+    String conservation_origin = "hssp";
+
     //== CLASSIFIERS ===================
 
     /**

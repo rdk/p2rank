@@ -6,6 +6,7 @@ import groovy.util.logging.Slf4j
 import org.apache.commons.io.FileUtils
 import org.zeroturnaround.zip.ZipUtil
 
+import java.util.zip.GZIPInputStream
 import java.util.zip.GZIPOutputStream
 
 
@@ -83,6 +84,17 @@ class Futils {
      */
     static String readResource(String path) {
         return Futils.class.getResourceAsStream(path).newReader().getText()
+    }
+
+    /**
+     * Opens and decompresses file (if it has gzip extension)
+     */
+    static InputStream readFile(File file) throws IOException {
+        if (file.getName().endsWith(".gz")) {
+            return new GZIPInputStream(new FileInputStream(file));
+        } else {
+            return new FileInputStream(file);
+        }
     }
 
     /**

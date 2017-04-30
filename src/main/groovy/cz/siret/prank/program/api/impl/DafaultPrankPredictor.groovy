@@ -10,6 +10,7 @@ import cz.siret.prank.program.routines.PredictRoutine
 import groovy.transform.CompileStatic
 
 import java.nio.file.Path
+import java.util.function.Function
 
 /**
  * Implementation of prediction API
@@ -38,11 +39,12 @@ class DafaultPrankPredictor implements PrankPredictor {
      * Run prediction on a single file in memory. No filesystem output is produced.
      *
      * @param proteinFile path to PDB file
+     * @param conservationForChain maps chainId to conservation file. May be null.
      * @return prediction object containing structure, predicted pockets and labeled points
      */
     @Override
-    public Prediction predict(Path proteinFile) {
-        Dataset dataset = Dataset.createSingleFileDataset(proteinFile.toString())
+    public Prediction predict(Path proteinFile, Function<String, File> conservationForChain) {
+        Dataset dataset = Dataset.createSingleFileDataset(proteinFile.toString(), conservationForChain)
 
         dataset.cached = true
         params.fail_fast = true
@@ -58,11 +60,12 @@ class DafaultPrankPredictor implements PrankPredictor {
      * (beware of getParams().visualizations setting)
      *
      * @param proteinFile path to PDB file
+     * @param conservationForChain maps chainId to conservation file. May be null.
      * @return prediction object containing structure, predicted pockets and labeled points
      */
     @Override
-    public Prediction runPrediction(Path proteinFile, Path outDir) {
-        Dataset dataset = Dataset.createSingleFileDataset(proteinFile.toString());
+    public Prediction runPrediction(Path proteinFile, Function<String, File> conservationForChain, Path outDir) {
+        Dataset dataset = Dataset.createSingleFileDataset(proteinFile.toString(), conservationForChain);
 
         dataset.cached = true
         params.fail_fast = true
