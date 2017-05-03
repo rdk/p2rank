@@ -214,12 +214,16 @@ public class ConservationScore implements Parametrized {
             String chainId = chain.getChainID();
             chainId = chainId.trim().isEmpty() ? "A" : chainId;
             List<AA> chainScores = null;
-            File scoreFile = scoreFiles.apply(chainId);
-            if (scoreFile.exists()) {
-                chainScores = ConservationScore.loadScoreFile(scoreFile, format);
-            }
-            if (chainScores != null) {
-                matchSequences(chain.getAtomGroups(GroupType.AMINOACID), chainScores, scores);
+            try {
+                File scoreFile = scoreFiles.apply(chainId);
+                if (scoreFile.exists()) {
+                    chainScores = ConservationScore.loadScoreFile(scoreFile, format);
+                }
+                if (chainScores != null) {
+                    matchSequences(chain.getAtomGroups(GroupType.AMINOACID), chainScores, scores);
+                }
+            } catch(Exception e) {
+                System.err.println("WARN: Failed to load conservation file: ${e.toString()}")
             }
         }
         return new ConservationScore(scores);
