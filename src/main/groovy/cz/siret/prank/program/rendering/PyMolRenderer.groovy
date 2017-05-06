@@ -10,6 +10,8 @@ import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
+import org.zeroturnaround.zip.NameMapper
+import org.zeroturnaround.zip.ZipUtil
 
 import java.awt.*
 import java.util.List
@@ -66,6 +68,7 @@ class PyMolRenderer implements Parametrized {
         String pointsf0RelName = "data/${label}_points0.pdb"
 
         String proteinf = Futils.absPath(item.proteinFile)
+        String proteinfabs = proteinf;
         if (params.vis_copy_proteins) {
             String name = Futils.shortName(proteinf)
             String newf = "$pointsDir/$name"
@@ -75,6 +78,7 @@ class PyMolRenderer implements Parametrized {
             Futils.copy(proteinf, newf)
 
             proteinf = newfrel
+            proteinfabs = newf;
         }
 
         String colorPocketSurfaces = colorPocketSurfaces(pair)
@@ -206,6 +210,18 @@ orient
 //        }
 //        pdb.close()
 
+
+        if (params.zip_visualizations) {
+            List<File> fileList = [new File(pmlf), new File(pointsf)]
+            if (params.vis_copy_proteins) {
+                fileList.add(new File(proteinfabs));
+            }
+            File zipFile = new File("$outdir/${label}_visualization.zip");
+            NameMapper mapper = { String fileName ->
+                return fileName.endsWith(".pml") ? fileName : "data/".concat(fileName);
+            }
+            ZipUtil.packEntries(fileList.toArray(new File[0]), zipFile, mapper);
+        }
     }
 
 }

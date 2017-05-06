@@ -295,6 +295,11 @@ class Params {
     boolean vis_copy_proteins = true
 
     /**
+     * zip PyMol visualizations to save space
+     */
+    boolean zip_visualizations = false
+
+    /**
      * use sctrictly inner pocket points or more wider pocket neighbourhood
      */
     boolean strict_inner_points = false
