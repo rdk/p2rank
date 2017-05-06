@@ -1,37 +1,15 @@
-package cz.siret.prank.features.implementation.conservation;
+package cz.siret.prank.features.implementation.conservation
 
-import com.univocity.parsers.tsv.TsvParser;
+import com.univocity.parsers.tsv.TsvParser
 import com.univocity.parsers.tsv.TsvParserSettings
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Futils
-import groovy.transform.CompileStatic;
-import org.biojava.nbio.structure.Chain;
-import org.biojava.nbio.structure.Group;
-import org.biojava.nbio.structure.GroupType;
-import org.biojava.nbio.structure.ResidueNumber;
-import org.biojava.nbio.structure.Structure;
-import org.biojava.nbio.structure.StructureException;
-import org.biojava.nbio.structure.io.PDBFileReader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.biojava.nbio.structure.*
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serializable;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
+import java.util.function.Function
+import java.util.stream.Collectors
 
 public class ConservationScore implements Parametrized {
     /** conservation keys for secondaryData map in Protein class. */
