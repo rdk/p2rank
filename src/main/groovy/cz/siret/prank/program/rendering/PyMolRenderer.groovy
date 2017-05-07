@@ -221,6 +221,7 @@ orient
                 return fileName.endsWith(".pml") ? fileName : "data/".concat(fileName);
             }
             ZipUtil.packEntries(fileList.toArray(new File[0]), zipFile, mapper);
+            fileList.forEach({File f->f.delete()})
         }
     }
 
