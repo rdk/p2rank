@@ -6,6 +6,7 @@ import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.features.implementation.conservation.ConservationScore
 import cz.siret.prank.geom.Atoms
+import cz.siret.prank.program.params.Params
 import cz.siret.prank.program.rendering.LabeledPoint
 import cz.siret.prank.score.criteria.*
 import groovy.util.logging.Slf4j
@@ -32,6 +33,9 @@ class Evaluation {
     List<ProteinRow> proteinRows = Collections.synchronizedList(new ArrayList<>())
     List<LigRow> ligandRows = Collections.synchronizedList(new ArrayList<>())
     List<PocketRow> pocketRows = Collections.synchronizedList(new ArrayList<>())
+
+    List<Double> bindingScores = Collections.synchronizedList(new ArrayList<Double>());
+    List<Double> nonBindingScores = Collections.synchronizedList(new ArrayList<Double>());
 
     int proteinCount
     int pocketCount
@@ -129,12 +133,24 @@ class Evaluation {
 
         // Conservation stats
         ConservationScore score = lp.secondaryData.get(ConservationScore.conservationScoreKey)
+        List<Double> bindingScrs = new ArrayList<>();
+        List<Double> nonBindingScrs = new ArrayList<>();
         if (score != null) {
             protRow.avgConservation = getAvgConservationForAtoms(lp.proteinAtoms, score)
             Atoms bindingAtoms = lp.proteinAtoms.cutoffAtoms(lp.allLigandAtoms, lp.params.ligand_protein_contact_distance)
             protRow.avgBindingConservation = getAvgConservationForAtoms(bindingAtoms, score)
             Atoms nonBindingAtoms = lp.proteinAtoms - bindingAtoms
             protRow.avgNonBindingConservation = getAvgConservationForAtoms(nonBindingAtoms, score)
+
+            if (!lp.params.log_scores_to_file.isEmpty()) {
+                bindingScrs = bindingAtoms.distinctGroups.collect { it ->
+                    score.getScoreForResidue(it
+                            .getResidueNumber())
+                }.toList();
+                nonBindingScrs = nonBindingAtoms.distinctGroups.collect { it ->
+                    score.getScoreForResidue(it.getResidueNumber())
+                }
+            }
         }
 
         for (Ligand lig in pair.liganatedProtein.ligands) {
@@ -205,6 +221,11 @@ class Evaluation {
             pocketRows.addAll(tmpPockets)
             ligSASPointsCount += n_ligSasPoints
             ligSASPointsCoveredCount += n_ligSasPointsCovered
+
+            if (!lp.params.log_scores_to_file.isEmpty()) {
+                bindingScores.addAll(bindingScrs);
+                nonBindingScores.addAll(nonBindingScrs);
+            }
         }
     }
 
@@ -220,6 +241,9 @@ class Evaluation {
         distantLigandCount += eval.distantLigandCount
         ligSASPointsCount += eval.ligSASPointsCount
         ligSASPointsCoveredCount += eval.ligSASPointsCoveredCount
+
+        bindingScores.addAll(eval.bindingScores);
+        nonBindingScores.addAll(eval.nonBindingScores);
     }
 
     double calcSuccRate(int assesorNum, int tolerance) {
@@ -413,6 +437,17 @@ class Evaluation {
         m.DSA_3_2 = calcSuccRate(33,2)
 
         m.DCA_4_0_NOMINAL = m.DCA_4_0 * m.LIGANDS
+
+        if (!Params.inst.log_scores_to_file.isEmpty()) {
+            PrintWriter w = new PrintWriter(new BufferedWriter(
+                    new FileWriter(Params.inst.log_scores_to_file, true)));
+            w.println("First line of the file");
+            nonBindingScores.forEach({ it -> w.print(it); w.print(' ') });
+            w.println()
+            bindingScores.forEach({ it -> w.print(it); w.print(' ') });
+            w.println()
+            w.close();
+        }
 
         return m
     }

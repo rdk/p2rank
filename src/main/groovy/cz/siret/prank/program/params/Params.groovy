@@ -108,6 +108,11 @@ class Params {
      */
     String conservation_origin = "hssp";
 
+    /**
+     * Log scores for binding and nonbinding scores to file
+     */
+    String log_scores_to_file = "";
+
     //== CLASSIFIERS ===================
 
     /**
