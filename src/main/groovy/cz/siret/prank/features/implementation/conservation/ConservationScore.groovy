@@ -4,6 +4,7 @@ import com.univocity.parsers.tsv.TsvParser
 import com.univocity.parsers.tsv.TsvParserSettings
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Futils
+import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory
 import java.util.function.Function
 import java.util.stream.Collectors
 
+@Slf4j
 public class ConservationScore implements Parametrized {
     /** conservation keys for secondaryData map in Protein class. */
     public static String conservationLoadedKey = "isConservationLoaded"
@@ -130,7 +132,7 @@ public class ConservationScore implements Parametrized {
             return;
         }
 
-        System.out.println("Matching chains using LCS");
+        log.info("Matching chains using LCS")
         int[][] lcs = calcLongestCommonSubSequence(chain, chainScores);
 
         // Backtrack the actual sequence.
@@ -201,7 +203,7 @@ public class ConservationScore implements Parametrized {
                     matchSequences(chain.getAtomGroups(GroupType.AMINOACID), chainScores, scores);
                 }
             } catch(Exception e) {
-                System.err.println("WARN: Failed to load conservation file: ${e.toString()}")
+                log.warn("Failed to load conservation file. ${e.toString()}")
             }
         }
         return new ConservationScore(scores);

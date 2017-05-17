@@ -75,12 +75,16 @@ class Dataset implements Parametrized {
 
             if (params.extra_features.any{s->s.contains("conservation")} || params.load_conservation) {
                 if (conservationPathForChain == null) {
-                    pair.liganatedProtein.setConservationPathForChain({ String chainId ->
+                    log.info("Setting conservation path. Origin: {}", params.conservation_origin)
+                    Function<String, File> conserPathForChain = { String chainId ->
                         parentDir.resolve(ConservationScore.scoreFileForPdbFile(
                                 Futils.shortName(proteinFile), chainId, params.conservation_origin))
                                 .toFile()
-                    })
+                    }
+                    pair.liganatedProtein.setConservationPathForChain(conserPathForChain)
+                    pair.prediction.protein.setConservationPathForChain(conserPathForChain)
                 } else {
+                    pair.prediction.protein.setConservationPathForChain(conservationPathForChain)
                     pair.liganatedProtein.setConservationPathForChain(conservationPathForChain)
                 }
                 if (params.load_conservation) {
