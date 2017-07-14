@@ -78,7 +78,7 @@ class Experiments extends Routine {
         iter.trainDataSet = trainDataSet
         iter.evalDataSet = evalDataSet
         iter.collectTrainVectors()
-        //iter.collectEvalVectors() // for further inspetion
+        //iter.collectEvalVectors() // for further inspection
 
         EvalRoutine trainRoutine = new EvalRoutine(outdir) {
             @Override

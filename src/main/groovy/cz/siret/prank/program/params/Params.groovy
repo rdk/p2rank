@@ -241,7 +241,7 @@ class Params {
     boolean delete_models = false
 
     /**
-     * delete filec sontaining trainint/evaluation feature vectors
+     * delete files containing training/evaluation feature vectors
      */
     boolean delete_vectors = true
 

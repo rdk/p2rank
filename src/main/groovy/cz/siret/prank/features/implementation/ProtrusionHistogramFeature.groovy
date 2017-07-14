@@ -8,7 +8,7 @@ import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
 
 /**
- *
+ * Calculates histogram of protrusion values at different radii
  */
 @CompileStatic
 class ProtrusionHistogramFeature extends SasFeatureCalculator implements Parametrized {

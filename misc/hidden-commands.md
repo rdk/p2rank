@@ -20,5 +20,11 @@ Related parameters:
 
 
 
+## export feature vectors for further analysis
+
+./prank traineval -t test_data/single.ds -e test_data/single.ds \
+    -loop 1 -delete_vectors 0 -sample_negatives_from_decoys 0 \
+    -extra_features '(chem.volsite.protrusion.bfactor.xyz)'
+
 
 
