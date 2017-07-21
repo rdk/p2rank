@@ -21,7 +21,7 @@ class AnalyzeRoutine extends Routine {
 
     String subCommand
     String label
-    String dtasetFile
+    String datasetFile
     Dataset dataset
 
     AnalyzeRoutine(CmdLineArgs args, Main main) {
@@ -35,8 +35,8 @@ class AnalyzeRoutine extends Routine {
 
         String datasetParam = args.unnamedArgs[1]
 
-        dtasetFile = Main.findDataset(datasetParam)
-        dataset = DatasetCachedLoader.loadDataset(dtasetFile)
+        datasetFile = Main.findDataset(datasetParam)
+        dataset = DatasetCachedLoader.loadDataset(datasetFile)
 
         label = "analyze_" + subCommand + "_" + dataset.label
         outdir = main.findOutdir(label)

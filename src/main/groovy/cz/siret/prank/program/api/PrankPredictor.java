@@ -20,7 +20,7 @@ public abstract class PrankPredictor {
 
     /**
      * Override default configuration.
-     * @param configFile
+     * @param configFile path to groovy config file
      */
     public abstract void loadConfig(Path configFile);
 

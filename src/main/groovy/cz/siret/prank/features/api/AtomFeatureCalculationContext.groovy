@@ -12,7 +12,7 @@ class AtomFeatureCalculationContext {
     Protein protein
 
     /**
-     * 3-letter code of amino adid residue of the atom
+     * 3-letter code of amino acid residue of the atom
      */
     String residueCode
 

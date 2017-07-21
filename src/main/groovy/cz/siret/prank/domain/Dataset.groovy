@@ -100,13 +100,11 @@ class Dataset implements Parametrized {
             } else {
                 Splitter.on(",").split(columnValues[COLUMN_LIGAND_CODES]).toList()
             }
-
         }
 
         ProcessedItemContext getContext() {
             new ProcessedItemContext(columnValues)
         }
-
     }
 
     Item createNewItem(String proteinFile, String predictionFile, Map<String, String> columnValues) {
@@ -154,7 +152,6 @@ class Dataset implements Parametrized {
         }
     }
 
-
 //===========================================================================================================//
 
     String name
@@ -163,9 +160,6 @@ class Dataset implements Parametrized {
     List<String> header = DEFAULT_HEADER
     List<Item> items = new ArrayList<>()
     boolean cached = false
-
-    /** if dataset contains pairs of liganated protein files and pocket prediction files */
-    //boolean hasPairs = false
 
 //===========================================================================================================//
 
@@ -454,7 +448,6 @@ class Dataset implements Parametrized {
             throw new PrankException("dataset contains invalid files")
         }
 
-
         return dataset
     }
 
@@ -470,7 +463,5 @@ class Dataset implements Parametrized {
     static List<String> parseHeader(String line) {
         SPLITTER.splitToList(line).tail()
     }
-
-
 
 }
