@@ -53,18 +53,13 @@ class Dataset implements Parametrized {
         String proteinFile  // liganated/unliganated protein for predictions
         String pocketPredictionFile // nullable
 
-
         String label
         PredictionPair cachedPair
 
-        Item(Map<String, String> columnValues) {
+        private Item(String proteinFile, String predictionFile, Map<String, String> columnValues) {
             this.columnValues = columnValues
-
-            this.proteinFile = dir + "/" + columnValues.get(COLUMN_PROTEIN)
-            if (header.contains(COLUMN_PREDICTION)) {
-                this.pocketPredictionFile = dir + "/" + columnValues.get(COLUMN_PREDICTION)
-            }
-
+            this.proteinFile = proteinFile
+            this.pocketPredictionFile = predictionFile
             this.label = Futils.shortName( pocketPredictionFile ?: proteinFile )
         }
 
@@ -114,6 +109,19 @@ class Dataset implements Parametrized {
 
     }
 
+    Item createNewItem(String proteinFile, String predictionFile, Map<String, String> columnValues) {
+        return new Item(proteinFile, predictionFile, columnValues)
+    }
+
+    Item createNewItem(Map<String, String> columnValues) {
+        String proteinFile = dir + "/" + columnValues.get(COLUMN_PROTEIN)
+        String predictionFile = null
+        if (header.contains(COLUMN_PREDICTION)) {
+            predictionFile = dir + "/" + columnValues.get(COLUMN_PREDICTION)
+        }
+
+        return createNewItem(predictionFile, predictionFile, columnValues)
+    }
 
     static final class Fold {
         int num
@@ -369,12 +377,14 @@ class Dataset implements Parametrized {
         Dataset ds = new Dataset(Futils.shortName(pdbFile), Futils.dir(pdbFile))
 
         Map<String, String> columnValues = new HashMap<>()
-        columnValues.put(COLUMN_PROTEIN, pdbFile)
-        columnValues.put(COLUMN_PREDICTION, pdbFile)
+        //columnValues.put(COLUMN_PROTEIN, pdbFile)
+        //columnValues.put(COLUMN_PREDICTION, pdbFile)
 
         if (itemContext!=null) {
             columnValues.putAll(itemContext.datsetColumnValues)
         }
+        
+        ds.items.add(ds.createNewItem(pdbFile, null, columnValues))
 
         return ds
     }
@@ -454,15 +464,13 @@ class Dataset implements Parametrized {
         header.eachWithIndex { String col, int i ->
             colValues.put(col, cols[i])
         }
-        return newItem(colValues)
+        return createNewItem(colValues)
     }
 
     static List<String> parseHeader(String line) {
         SPLITTER.splitToList(line).tail()
     }
 
-    Item newItem(Map<String, String> columnValues) {
-        return new Item(columnValues)
-    }
+
 
 }
