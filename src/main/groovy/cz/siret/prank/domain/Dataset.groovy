@@ -355,11 +355,28 @@ class Dataset implements Parametrized {
         return res
     }
 
-    public static Dataset createSingleFileDataset(String pdbFile) {
-        Dataset res = new Dataset(Futils.shortName(pdbFile), Futils.dir(pdbFile))
-        res.items.add(res.newItem([ COLUMN_PROTEIN: pdbFile, COLUMN_PREDICTION: pdbFile ]))
+    /**
+     *
+     * @param pdbFile
+     * @param itemContext allows to specify additional columns May be null.
+     * @return
+     */
+    public static Dataset createSingleFileDataset(String pdbFile, ProcessedItemContext itemContext) {
+        Dataset ds = new Dataset(Futils.shortName(pdbFile), Futils.dir(pdbFile))
 
-        return res
+        Map<String, String> columnValues = new HashMap<>()
+        columnValues.put(COLUMN_PROTEIN, pdbFile)
+        columnValues.put(COLUMN_PREDICTION, pdbFile)
+
+        if (itemContext!=null) {
+            columnValues.putAll(itemContext.datsetColumnValues)
+        }
+
+        return ds
+    }
+
+    public static Dataset createSingleFileDataset(String pdbFile) {
+        createSingleFileDataset(pdbFile, null)
     }
 
     public boolean hasLigandCodes() {

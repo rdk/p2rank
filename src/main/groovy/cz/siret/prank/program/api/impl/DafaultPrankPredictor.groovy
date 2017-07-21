@@ -2,6 +2,7 @@ package cz.siret.prank.program.api.impl
 
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.domain.Prediction
+import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.program.Main
 import cz.siret.prank.program.api.PrankPredictor
 import cz.siret.prank.program.params.ConfigLoader
@@ -15,7 +16,7 @@ import java.nio.file.Path
  * Implementation of prediction API
  */
 @CompileStatic
-class DafaultPrankPredictor implements PrankPredictor {
+class DafaultPrankPredictor extends PrankPredictor {
 
     private Params params = Params.INSTANCE
     private Path installDir
@@ -38,11 +39,12 @@ class DafaultPrankPredictor implements PrankPredictor {
      * Run prediction on a single file in memory. No filesystem output is produced.
      *
      * @param proteinFile path to PDB file
+     * @param context allows to specify supplementary data (as in multi-column datasets)
      * @return prediction object containing structure, predicted pockets and labeled points
      */
     @Override
-    public Prediction predict(Path proteinFile) {
-        Dataset dataset = Dataset.createSingleFileDataset(proteinFile.toString())
+    Prediction predict(Path proteinFile, ProcessedItemContext context) {
+        Dataset dataset = Dataset.createSingleFileDataset(proteinFile.toString(), context)
 
         dataset.cached = true
         params.fail_fast = true
@@ -61,8 +63,8 @@ class DafaultPrankPredictor implements PrankPredictor {
      * @return prediction object containing structure, predicted pockets and labeled points
      */
     @Override
-    public Prediction runPrediction(Path proteinFile, Path outDir) {
-        Dataset dataset = Dataset.createSingleFileDataset(proteinFile.toString());
+    public Prediction runPrediction(Path proteinFile, Path outDir, ProcessedItemContext context) {
+        Dataset dataset = Dataset.createSingleFileDataset(proteinFile.toString(), context);
 
         dataset.cached = true
         params.fail_fast = true
