@@ -2,6 +2,7 @@ package cz.siret.prank.features
 
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Protein
+import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.geom.Atoms
 import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
@@ -46,7 +47,7 @@ abstract class FeatureExtractor<P extends FeatureVector> {
      * FeatureExtractor extractor = prototype.createInstanceForPocket(pocket)
      * extractor.calcFeatureVector(...)
      */
-    abstract FeatureExtractor createPrototypeForProtein(Protein protein)
+    abstract FeatureExtractor createPrototypeForProtein(Protein protein, ProcessedItemContext context)
 
     /**
      * @see this.createPrototypeForProtein(Protein protein)

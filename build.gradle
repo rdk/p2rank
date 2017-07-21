@@ -9,7 +9,7 @@ apply plugin: 'idea'
 
 
 group = 'cz.siret'
-version = '2.0-dev.9'
+version = '2.0-dev.10_SNAPSHOT'
 
 description = 'Ligand binding site prediction based on machine learning.'
 

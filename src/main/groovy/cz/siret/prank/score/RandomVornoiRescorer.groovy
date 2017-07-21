@@ -2,6 +2,7 @@ package cz.siret.prank.score
 
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Prediction
+import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.program.params.Parametrized
 import org.biojava.nbio.structure.Atom
 
@@ -14,7 +15,7 @@ class RandomVornoiRescorer extends PocketRescorer implements Parametrized  {
     }
 
     @Override
-    void rescorePockets(Prediction prediction) {
+    void rescorePockets(Prediction prediction, ProcessedItemContext context) {
 
         prediction.pockets.each { Pocket pocket ->
 

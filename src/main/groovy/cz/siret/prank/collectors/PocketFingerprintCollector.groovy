@@ -4,6 +4,7 @@ import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.features.FeatureVector
+import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.score.criteria.IdentificationCriterium
 import cz.siret.prank.utils.ListUtils
 import groovy.util.logging.Slf4j
@@ -20,7 +21,7 @@ class PocketFingerprintCollector extends VectorCollector  {
     }
 
     @Override
-    Result collectVectors(PredictionPair pair) {
+    Result collectVectors(PredictionPair pair, ProcessedItemContext context) {
         Result res = new Result()
 
         pair.getCorrectlyPredictedPockets(assessor).each { Pocket pocket ->

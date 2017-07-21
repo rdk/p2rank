@@ -1,9 +1,12 @@
 package cz.siret.prank.domain
 
+import com.google.common.base.CharMatcher
+import com.google.common.base.Splitter
 import cz.siret.prank.domain.loaders.ConcavityLoader
 import cz.siret.prank.domain.loaders.FPockeLoader
 import cz.siret.prank.domain.loaders.PredictionLoader
 import cz.siret.prank.domain.loaders.SiteHoundLoader
+import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.ThreadPoolFactory
 import cz.siret.prank.program.params.Parametrized
@@ -15,27 +18,50 @@ import groovyx.gpars.GParsPool
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
- * Represents a dataset of protein files (or file pairs for PRANK rescoring: prediction file and liganated protein)
+ * Dataset represents a list of items (usually proteins) to be processed by the program.
+ * Multi-column format with declared variable header allows to specify complementary data.
+ *
+ * see distro/test_data/readme.txt for dataset format specification
  */
 @Slf4j
 class Dataset implements Parametrized {
+
+    static final Splitter SPLITTER = Splitter.on(CharMatcher.whitespace()).trimResults().omitEmptyStrings()
+
+    /*
+     * dataset parameter names
+     * Dataset parameters an be defined in dataset file as PARAM.<PARAM_NAME>=<value>
+     */
+    static final String PARAM_PREDICTION_METHOD = "PREDICTION_METHOD"
+    static final String PARAM_LIGANDS_SEPARATED_BY_TER = "LIGANDS_SEPARATED_BY_TER"
+
+    /*
+     * dataset column names
+     */
+    static final String COLUMN_PROTEIN = "protein"
+    static final String COLUMN_PREDICTION = "prediction"
+    static final String COLUMN_LIGAND_CODES = "ligand_codes"
+
+    static final List<String> DEFAULT_HEADER = [ COLUMN_PROTEIN ]
+
 
     /**
      * Contains file names, (optionally) ligand codes and cached structures.
      */
     class Item {
+        Map<String, String> columnValues
         String proteinFile  // liganated/unliganated protein for predictions
-        String pocketPredictionFile //may be null
-        Set<String> ligandNames
+        String pocketPredictionFile // nullable
+
 
         String label
-
         PredictionPair cachedPair
 
-        Item(String proteinFile, String pocketPredictionFile, Set<String> ligandNames) {
-            this.proteinFile = proteinFile
-            this.pocketPredictionFile = pocketPredictionFile
-            this.ligandNames = ligandNames
+        Item(Map<String, String> columnValues) {
+            this.columnValues = columnValues
+            this.proteinFile = columnValues[COLUMN_PROTEIN]
+            this.pocketPredictionFile = columnValues[COLUMN_PREDICTION]
+            //this.ligandNames = ligandNames
 
             this.label = Futils.shortName( pocketPredictionFile ?: proteinFile )
         }
@@ -67,6 +93,23 @@ class Dataset implements Parametrized {
             getLoader(this).loadPredictionPair(proteinFile, pocketPredictionFile)
         }
 
+        /**
+         * explicitely specified ligand codes
+         * @return null if column is not defined
+         */
+        Set<String> getLigandCodes() {
+            if (columnValues.containsKey(COLUMN_LIGAND_CODES)) {
+                null
+            } else {
+                Splitter.on(",").split(columnValues[COLUMN_LIGAND_CODES]).toList()
+            }
+
+        }
+
+        ProcessedItemContext getContext() {
+            new ProcessedItemContext(columnValues)
+        }
+
     }
 
 
@@ -83,14 +126,14 @@ class Dataset implements Parametrized {
 
     interface Processor {
 
-        abstract void processItem(Dataset.Item item)
+        abstract void processItem(Item item)
     }
 
     /**
      * summary of a dataset processing run
      */
     static class Result {
-        List<Dataset.Item> errorItems = Collections.synchronizedList(new ArrayList<Item>())
+        List<Item> errorItems = Collections.synchronizedList(new ArrayList<Item>())
 
         boolean hasErrors() {
             errorItems.size() > 0
@@ -107,20 +150,13 @@ class Dataset implements Parametrized {
     String name
     String dir
     Map<String, String> attributes = new HashMap<>()
+    List<String> header = DEFAULT_HEADER
     List<Item> items = new ArrayList<>()
     boolean cached = false
 
     /** if dataset contains pairs of liganated protein files and pocket prediction files */
-    boolean hasPairs = false
+    //boolean hasPairs = false
 
-    /** dataset contains only list of pocket prediction files to rescore */
-    boolean isForRescoring() {
-        return !hasPairs
-    }
-
-    void setHasPairs(boolean hasPairs) {
-        this.hasPairs = hasPairs
-    }
 //===========================================================================================================//
 
     Dataset withCache(boolean c = true) {
@@ -158,7 +194,7 @@ class Dataset implements Parametrized {
     boolean checkFilesExist() {
         boolean ok = true
         items.each {
-            if (hasPairs) {
+            if (it.pocketPredictionFile != null) {
                 if (!Futils.exists(it.pocketPredictionFile)) {
                     log.error "prediction file doesn't exist: $it.pocketPredictionFile"
                     ok = false
@@ -241,7 +277,7 @@ class Dataset implements Parametrized {
     }
 
     private PredictionLoader getLoader(Item item) {
-        return getLoader(attributes.get("METHOD"), item)
+        return getLoader(attributes.get(PARAM_PREDICTION_METHOD), item)
     }
 
     private PredictionLoader getLoader(String method, Item item) {
@@ -262,9 +298,9 @@ class Dataset implements Parametrized {
         }
 
         if (res!=null) {
-            res.loaderParams.ligandsSeparatedByTER = (attributes.get("LIGANDS_SEPARATED_BY_TER") == "true")  // for bench11 dataset
-            res.loaderParams.relevantLigandsDefined = (attributes.get("LIGAND_CODES") == "true")
-            res.loaderParams.relevantLigandNames = item.ligandNames
+            res.loaderParams.ligandsSeparatedByTER = (attributes.get(PARAM_LIGANDS_SEPARATED_BY_TER) == "true")  // for bench11 dataset
+            res.loaderParams.relevantLigandsDefined = hasLigandCodes()
+            res.loaderParams.relevantLigandNames = item.getLigandCodes()
         }
 
         return res
@@ -310,32 +346,32 @@ class Dataset implements Parametrized {
      * create dataset view from subset of items
      */
     private Dataset createSubset(List<Item> items, String name) {
-        Dataset res = new Dataset()
+        Dataset res = new Dataset(name, this.dir)
         res.items = items
-        res.name = name
-        res.dir = this.dir
         res.attributes = this.attributes
         res.cached = this.cached
-        res.hasPairs = this.hasPairs
+        res.header = this.header
 
         return res
     }
 
     public static Dataset createSingleFileDataset(String pdbFile) {
-        Dataset res = new Dataset()
-        res.hasPairs = false
-        res.dir = Futils.dir(pdbFile)
-        res.name = Futils.shortName(pdbFile)
-        res.items.add(res.newItem(pdbFile, pdbFile, null))
+        Dataset res = new Dataset(Futils.shortName(pdbFile), Futils.dir(pdbFile))
+        res.items.add(res.newItem([ COLUMN_PROTEIN: pdbFile, COLUMN_PREDICTION: pdbFile ]))
 
         return res
     }
 
     public boolean hasLigandCodes() {
-        return ("true" == attributes.get("LIGAND_CODES"))
+        return header.contains(COLUMN_LIGAND_CODES)
     }
 
-    /**
+    Dataset(String name, String dir) {
+        this.name = name
+        this.dir = dir
+    }
+
+     /**
      * file format:
      * <pre>
      * {@code
@@ -355,7 +391,7 @@ class Dataset implements Parametrized {
      * @param fname
      * @return
      */
-    static Dataset loadFromFile(String fname, boolean pairDataset = false) {
+    static Dataset loadFromFile(String fname) {
         File file = new File(fname)
 
         if (!file.exists()) {
@@ -364,12 +400,7 @@ class Dataset implements Parametrized {
 
         log.info "loading dataset [$file.absolutePath]"
 
-        Dataset dataSet = new Dataset()
-
-        String dir = file.parent
-        dataSet.dir = dir
-        dataSet.name = file.name
-        dataSet.hasPairs = pairDataset
+        Dataset dataset = new Dataset(file.name, file.parent)
 
         for (String line in file.readLines()) {
             line = line.trim()
@@ -378,46 +409,36 @@ class Dataset implements Parametrized {
             } else if (line.startsWith("PARAM.")) {
                 String paramName = line.substring(line.indexOf('.') + 1, line.indexOf('=')).trim()
                 String paramValue = line.substring(line.indexOf('=') + 1).trim()
-                dataSet.attributes.put(paramName, paramValue)
+                dataset.attributes.put(paramName, paramValue)
+            } else if (line.startsWith("HEADER:")) {
+                dataset.header = parseHeader(line)
             } else {
-                String protf = null
-                String predf = null
-                Set<String> ligandCodes = null
-
-                def cols = line.split() // split on whitespace
-
-                //TODO: refactor messy dataset loading
-
-                int file_cols = cols.length
-                if (dataSet.hasLigandCodes()) {    // column with ligand codes is always last
-                    file_cols -= 1
-                    def lcodes = cols[cols.length - 1]
-                    ligandCodes = StrUtils.split(lcodes, ",").toSet()
-                }
-
-                if (file_cols >= 2) {
-                    predf = dir + "/" + cols[0]
-                    protf = dir + "/" + cols[1]
-
-                    dataSet.hasPairs = true
-                } else {
-                    predf = null
-                    protf = dir + "/" + cols[0]
-                }
-
-                dataSet.items.add(dataSet.newItem(protf, predf, ligandCodes))
+                dataset.items.add(dataset.parseItem(line))
             }
         }
 
-        if (!dataSet.checkFilesExist()) {
+        if (!dataset.checkFilesExist()) {
             throw new PrankException("dataset contains invalid files")
         }
 
-        return dataSet
+        return dataset
     }
 
-    Item newItem(String ligf, String predf, Set<String> ligandCodes) {
-        return new Item(ligf, predf, ligandCodes)
+    private Item parseItem(String line) {
+        List<String> cols = SPLITTER.splitToList(line)
+        Map<String, String> colValues = new HashMap<>()
+        header.eachWithIndex { String col, int i ->
+            colValues.put(col, cols[i])
+        }
+        return newItem(colValues)
+    }
+
+    static List<String> parseHeader(String line) {
+        SPLITTER.splitToList(line).tail()
+    }
+
+    Item newItem(Map<String, String> columnValues) {
+        return new Item(columnValues)
     }
 
 }

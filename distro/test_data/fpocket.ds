@@ -1,12 +1,11 @@
 # dataset for rescoring
 
-PARAM.METHOD=fpocket
+PARAM.PREDICTION_METHOD=fpocket
 
 # uncomment if ligands are separated with TER record:
 PARAM.LIGANDS_SEPARATED_BY_TER=true
 
-
-# pocket-prediction-output-pdb
+HEADER: prediction 
 
 fpocket/1a82a_out/1a82a_out.pdb
 fpocket/1aaxa_out/1aaxa_out.pdb

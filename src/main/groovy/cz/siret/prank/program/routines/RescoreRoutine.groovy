@@ -51,7 +51,7 @@ class RescoreRoutine extends Routine {
                 Prediction prediction = item.prediction
 
                 PocketRescorer rescorer = new  WekaSumRescorer(classifier, extractor)
-                rescorer.reorderPockets(prediction)
+                rescorer.reorderPockets(prediction, item.getContext())
 
                 RescoringSummary rsum = new RescoringSummary(prediction)
                 writeFile "$outdir/${item.label}_rescored.csv", rsum.toCSV()

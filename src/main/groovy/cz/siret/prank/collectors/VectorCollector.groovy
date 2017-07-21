@@ -2,13 +2,14 @@ package cz.siret.prank.collectors
 
 import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.features.FeatureVector
+import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.utils.PerfUtils
 import groovy.transform.CompileStatic
 
 @CompileStatic
 abstract class VectorCollector {
 
-    abstract Result collectVectors(PredictionPair pair);
+    abstract Result collectVectors(PredictionPair pair, ProcessedItemContext context);
 
     abstract List<String> getHeader();
 

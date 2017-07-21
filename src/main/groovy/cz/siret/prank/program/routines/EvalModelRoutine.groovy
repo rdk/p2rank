@@ -80,7 +80,7 @@ class EvalModelRoutine extends EvalRoutine {
                 PredictionPair pair = item.predictionPair
 
                 PocketRescorer rescorer = createRescorer(pair, extractor)
-                rescorer.reorderPockets(pair.prediction)
+                rescorer.reorderPockets(pair.prediction, item.getContext())
 
                 if (params.visualizations) {
                     new PyMolRenderer(visDir).visualizeHistograms(item, (WekaSumRescorer)rescorer, pair)

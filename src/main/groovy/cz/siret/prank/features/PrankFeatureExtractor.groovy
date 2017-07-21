@@ -2,6 +2,7 @@ package cz.siret.prank.features
 
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Protein
+import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.features.api.SasFeatureCalculationContext
 import cz.siret.prank.features.generic.GenericHeader
 import cz.siret.prank.features.implementation.chem.ChemFeature
@@ -85,7 +86,7 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
     }
 
     @Override
-    FeatureExtractor createPrototypeForProtein(Protein protein) {
+    FeatureExtractor createPrototypeForProtein(Protein protein, ProcessedItemContext context) {
         PrankFeatureExtractor res = new PrankFeatureExtractor(protein)
         res.trainingExtractor = this.trainingExtractor
 
@@ -94,7 +95,7 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
 
         // init features
         for (FeatureSetup.Feature feature : featureSetup.enabledFeatures) {
-            feature.calculator.preProcessProtein(protein)
+            feature.calculator.preProcessProtein(protein, context)
         }
 
         return res

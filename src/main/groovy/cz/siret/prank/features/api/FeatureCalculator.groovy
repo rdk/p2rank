@@ -39,7 +39,7 @@ interface FeatureCalculator {
      *
      * @param protein
      */
-    void preProcessProtein(Protein protein)
+    void preProcessProtein(Protein protein, ProcessedItemContext context)
 
     /**
      *

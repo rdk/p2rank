@@ -3,6 +3,7 @@ package cz.siret.prank.score
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Prediction
 import cz.siret.prank.domain.Protein
+import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.ListUtils
@@ -30,11 +31,11 @@ abstract class PocketRescorer implements Parametrized {
      * should set pocket.newScore on all pockets
      * and optionally store information to pocket.auxInfo
      */
-    abstract void rescorePockets(Prediction prediction);
+    abstract void rescorePockets(Prediction prediction, ProcessedItemContext context);
 
-    void reorderPockets(Prediction prediction) {
+    void reorderPockets(Prediction prediction, ProcessedItemContext context) {
 
-        rescorePockets(prediction)
+        rescorePockets(prediction, context)
 
         if (!params.predictions) {
             prediction.reorderedPockets = new ArrayList<>(prediction.pockets)
@@ -58,9 +59,9 @@ abstract class PocketRescorer implements Parametrized {
      *
      * @param n reorder only first #true pockets + n
      */
-    void reorderFirstNPockets(Prediction prediction, int n) {
+    void reorderFirstNPockets(Prediction prediction, ProcessedItemContext context, int n) {
 
-        rescorePockets(prediction)
+        rescorePockets(prediction, context)
 
         log.info "reordering first $n of $prediction.pocketCount pockets"
 

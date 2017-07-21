@@ -2,6 +2,7 @@ package cz.siret.prank.score
 
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Prediction
+import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.features.tables.PropertyTable
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.PDBUtils
@@ -22,7 +23,7 @@ class PLBIndexRescorer extends PocketRescorer {
     static final PropertyTable aaPropensitiesTable   = PropertyTable.parse(Futils.readResource("/tables/aa-propensities.csv"))
 
     @Override
-    void rescorePockets(Prediction prediction) {
+    void rescorePockets(Prediction prediction, ProcessedItemContext context) {
 
         List<ExtPocket> extPockets = new ArrayList<>()
 
