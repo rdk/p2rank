@@ -100,7 +100,7 @@ class Dataset implements Parametrized {
          * @return null if column is not defined
          */
         Set<String> getLigandCodes() {
-            if (columnValues.containsKey(COLUMN_LIGAND_CODES)) {
+            if (!columnValues.containsKey(COLUMN_LIGAND_CODES)) {
                 null
             } else {
                 Splitter.on(",").split(columnValues[COLUMN_LIGAND_CODES]).toList()
