@@ -60,9 +60,9 @@ class Dataset implements Parametrized {
         Item(Map<String, String> columnValues) {
             this.columnValues = columnValues
 
-            this.proteinFile = dir + "/" + columnValues[COLUMN_PROTEIN]
-            if (columnValues.containsKey(COLUMN_PREDICTION)) {
-                this.pocketPredictionFile = dir + "/" + columnValues[COLUMN_PREDICTION]
+            this.proteinFile = dir + "/" + columnValues.get(COLUMN_PROTEIN)
+            if (header.contains(COLUMN_PREDICTION)) {
+                this.pocketPredictionFile = dir + "/" + columnValues.get(COLUMN_PREDICTION)
             }
 
             this.label = Futils.shortName( pocketPredictionFile ?: proteinFile )
@@ -196,17 +196,19 @@ class Dataset implements Parametrized {
     boolean checkFilesExist() {
         boolean ok = true
         items.each {
-            if (it.pocketPredictionFile != null) {
+            if (header.contains(COLUMN_PREDICTION)) {
                 if (!Futils.exists(it.pocketPredictionFile)) {
                     log.error "prediction file doesn't exist: $it.pocketPredictionFile"
                     ok = false
                 }
             }
-
-            if (!Futils.exists(it.proteinFile)) {
-                log.error "protein file doesn't exist: $it.proteinFile"
-                ok = false
+            if (header.contains(COLUMN_PROTEIN)) {
+                if (!Futils.exists(it.proteinFile)) {
+                    log.error "protein file doesn't exist: $it.proteinFile"
+                    ok = false
+                }
             }
+
         }
         return ok
     }
@@ -435,10 +437,13 @@ class Dataset implements Parametrized {
                 dataset.items.add(dataset.parseItem(line))
             }
         }
+        
+        log.debug("dataset header: {}", dataset.header)
 
         if (!dataset.checkFilesExist()) {
             throw new PrankException("dataset contains invalid files")
         }
+
 
         return dataset
     }
