@@ -61,8 +61,9 @@ class Dataset implements Parametrized {
             this.columnValues = columnValues
 
             this.proteinFile = dir + "/" + columnValues[COLUMN_PROTEIN]
-            this.pocketPredictionFile = dir + "/" + columnValues[COLUMN_PREDICTION]
-            //this.ligandNames = ligandNames
+            if (columnValues.containsKey(COLUMN_PREDICTION)) {
+                this.pocketPredictionFile = dir + "/" + columnValues[COLUMN_PREDICTION]
+            }
 
             this.label = Futils.shortName( pocketPredictionFile ?: proteinFile )
         }
