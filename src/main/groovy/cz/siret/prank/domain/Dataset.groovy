@@ -301,7 +301,8 @@ class Dataset implements Parametrized {
                 res = new SiteHoundLoader()
                 break
             default:
-                throw new Exception("Unknown prediction method defined in dataset: $method")
+                res = new FPockeLoader() // TODO: throw exception here, should not be run on prank predict
+                //throw new Exception("Unknown prediction method defined in dataset: $method")
         }
 
         if (res!=null) {
