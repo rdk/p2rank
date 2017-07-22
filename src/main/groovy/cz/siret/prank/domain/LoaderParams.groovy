@@ -4,7 +4,7 @@ import cz.siret.prank.program.params.Params
 import groovy.transform.TupleConstructor
 
 /**
- *
+ * Protein file loader parameters
  */
 @TupleConstructor
 class LoaderParams {

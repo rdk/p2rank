@@ -64,8 +64,8 @@ class RangeParam {
 
     static List<RangeParam> parseRangedArgs(CmdLineArgs args) {
         args.namedArgs
-                .findAll { RangeParam.isRangedArgValue(it.value) }
-                .collect { RangeParam.parse(it.name, it.value) }
+                .findAll { isRangedArgValue(it.value) }
+                .collect { parse(it.name, it.value) }
                 .toList()
     }
 

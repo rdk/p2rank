@@ -18,11 +18,12 @@ import org.biojava.nbio.structure.Structure
 @Slf4j
 class ConcavityLoader extends PredictionLoader {
 
-    // distance from pocket grid points to protrin surface atoms
+    /**
+     * distance from pocket grid points to protein surface atoms
+     */
     static double POCKET_GRID_TO_SURFACE_DIST = 4
 
     /**
-     *
      * @param ppOutputFile concavity grid points output file, something like a.001.001.001_1s69a_xxxxx_pocket.pdb
      * @return
      */

@@ -9,7 +9,7 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
 /**
- *
+ * Loader for SiteHound pocket predictions (*_summary.dat file)
  */
 @Slf4j
 @CompileStatic

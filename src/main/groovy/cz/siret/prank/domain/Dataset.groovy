@@ -301,8 +301,7 @@ class Dataset implements Parametrized {
                 res = new SiteHoundLoader()
                 break
             default:
-                res = new FPockeLoader()
-                //throw new Exception("invalid method: $method")
+                throw new Exception("Unknown prediction method defined in dataset: $method")
         }
 
         if (res!=null) {
@@ -364,8 +363,7 @@ class Dataset implements Parametrized {
     }
 
     /**
-     *
-     * @param pdbFile
+     * @param pdbFile corresponds to protein column in the dataset (but with absolute path)
      * @param itemContext allows to specify additional columns May be null.
      * @return
      */
@@ -385,10 +383,17 @@ class Dataset implements Parametrized {
         return ds
     }
 
+    /**
+     * @param pdbFile corresponds to protein column in the dataset (but with absolute path)
+     * @return
+     */
     public static Dataset createSingleFileDataset(String pdbFile) {
         createSingleFileDataset(pdbFile, null)
     }
 
+    /**
+     * @return true if valid ligands are defined explicitely in the dataset (ligand_codes column)
+     */
     public boolean hasLigandCodes() {
         return header.contains(COLUMN_LIGAND_CODES)
     }
