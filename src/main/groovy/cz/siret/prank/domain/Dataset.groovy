@@ -118,8 +118,10 @@ class Dataset implements Parametrized {
             predictionFile = dir + "/" + columnValues.get(COLUMN_PREDICTION)
         }
 
-        return createNewItem(predictionFile, predictionFile, columnValues)
+        return createNewItem(proteinFile, predictionFile, columnValues)
     }
+
+//===========================================================================================================//
 
     static final class Fold {
         int num
