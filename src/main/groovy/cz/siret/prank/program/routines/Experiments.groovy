@@ -68,8 +68,6 @@ class Experiments extends Routine {
 
     /**
      * train/eval on different datasets for different seeds
-     *
-     *
      * collecting train vectors only once and training+evaluatng many times
      */
     private EvalResults doTrainEval(String outdir) {
@@ -139,6 +137,16 @@ class Experiments extends Routine {
 
             return res
         }
+    }
+
+//===========================================================================================================//
+
+    /**
+     *  hyperparameter optimization
+     */
+    public hopt() {
+
+        loopParams(RangeParam.parseRangedArgs(cmdLineArgs))
     }
 
 }
