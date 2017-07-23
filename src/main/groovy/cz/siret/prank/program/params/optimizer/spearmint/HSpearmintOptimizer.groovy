@@ -6,6 +6,7 @@ import cz.siret.prank.program.params.optimizer.HObjectiveFunction
 import cz.siret.prank.program.params.optimizer.HOptimizer
 import cz.siret.prank.program.params.optimizer.HStep
 import cz.siret.prank.program.params.optimizer.HVariable
+import cz.siret.prank.utils.Formatter
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.ProcessRunner
 import groovy.transform.CompileStatic
@@ -46,10 +47,13 @@ class HSpearmintOptimizer extends HOptimizer {
     HStep optimize(HObjectiveFunction objective) {
 
         String dir = absSafePath( experimentDir.toString() )
+        String varsDir = "$dir/vars"
+        String evalDir = "$dir/eval"
+
         delete(dir)
         mkdirs(dir)
-        mkdirs("$dir/vars")
-        mkdirs("$dir/eval")
+        mkdirs(varsDir)
+        mkdirs(evalDir)
         writeFile "$dir/config.json", genConfig()
         writeFile "$dir/eval.py", genEval()
 
@@ -78,9 +82,9 @@ class HSpearmintOptimizer extends HOptimizer {
         int jobId          // spearmint job id, may start at any number
 
         // find starting speramint job id
-        String varsDir = "$dir/vars"
+
         log.debug "waiting for first vars file in '$varsDir'"
-        while (isDirEmpty("$dir/vars")) {
+        while (isDirEmpty(varsDir)) {
             log.debug "waiting..."
             sleep(1000)
         }
@@ -102,6 +106,7 @@ class HSpearmintOptimizer extends HOptimizer {
             // eval objective function
             double val = objective.eval(vars, stepNumber)
             log.info "value: {}", val
+            writeFile "$evalDir/$jobId", formatValue(val)
 
             HStep step = new HStep(stepNumber, vars, val)
             steps.add(step)
@@ -115,6 +120,10 @@ class HSpearmintOptimizer extends HOptimizer {
         mongoProc.kill()
 
         return getMaxStep()
+    }
+
+    String formatValue(double v) {
+        Formatter.format(v, 5)
     }
 
     HStep getMaxStep() {
