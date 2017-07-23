@@ -206,7 +206,7 @@ def main(job_id, variables):
         os.makedirs("vars")
     varf = "vars/" + str(job_id) 
     with open(varf, "w") as file:
-        file.write(json.dumps(vars) + "\\n")
+        file.write(str(json.dumps(vars)) + "\\n")
 
     return eval(job_id, variables)
     
