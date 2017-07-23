@@ -5,6 +5,8 @@ import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.plotter.RPlotter
 import groovy.transform.CompileDynamic
+import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
 import groovyx.gpars.GParsPool
 
 import static cz.siret.prank.utils.ATimer.startTimer
@@ -13,6 +15,8 @@ import static cz.siret.prank.utils.Futils.mkdirs
 /**
  *
  */
+@Slf4j
+@CompileStatic
 class GridOprimizer extends ParamLooper {
 
     List<ListParam> listParams

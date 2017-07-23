@@ -12,6 +12,7 @@ import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import cz.siret.prank.program.routines.ParamLooper.ParamVal
 import cz.siret.prank.program.routines.ParamLooper.Step
+import groovy.util.logging.Slf4j
 
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -19,6 +20,7 @@ import java.nio.file.Paths
 /**
  * Hyperparameter optimizer routine
  */
+@Slf4j
 @CompileStatic
 class HyperOptimizer extends ParamLooper {
 
@@ -63,6 +65,7 @@ class HyperOptimizer extends ParamLooper {
 
                 List<ParamVal> paramVals = variables.collect { new ParamVal(name: it.name, value: variableValues.get(it.name)) }.toList()
                 Step step = new Step(params: paramVals)
+                steps.add(step)
 
                 EvalResults res = processStep(step, "step.$stepNumber", evalClosure)
 

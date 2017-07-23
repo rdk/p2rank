@@ -23,8 +23,7 @@ import static cz.siret.prank.utils.Futils.mkdirs
 @CompileStatic
 class ParamLooper extends Routine {
 
-
-    List<Step> steps
+    List<Step> steps = new ArrayList<>()
 
     String paramsTableFile
     String plotsDir
