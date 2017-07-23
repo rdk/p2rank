@@ -1,45 +1,129 @@
 package cz.siret.prank.program.params.optimizer.spearmint
 
+import com.google.gson.Gson
 import cz.siret.prank.program.params.optimizer.HObjectiveFunction
 import cz.siret.prank.program.params.optimizer.HOptimizer
 import cz.siret.prank.program.params.optimizer.HStep
 import cz.siret.prank.program.params.optimizer.HVariable
+import cz.siret.prank.utils.ProcessRunner
+import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
 
 import java.nio.file.Path
+
+import static cz.siret.prank.utils.Futils.*
 
 /**
  * optimizer based on https://github.com/HIPS/Spearmint
  */
+@Slf4j
+@CompileStatic
 class HSpearmintOptimizer extends HOptimizer {
 
     enum Likelihood { NOISELESS, GAUSSIAN }
 
-    String spearmintCommand = "spearmint"
-    String mongodbCommand = "mongodb"
+    String spearmintCommand = "python main.py"
+    String mongodbCommand = "mongod"
 
     Likelihood likelihood = Likelihood.GAUSSIAN
 
+    Path spearmintDir
     Path experimentDir
-    
 
+    /**
+     * use absolute paths
+     * @param spearmintDir
+     * @param experimentDir
+     */
+    HSpearmintOptimizer(Path spearmintDir, Path experimentDir) {
+        this.spearmintDir = spearmintDir
+        this.experimentDir = experimentDir
+    }
 
     @Override
     HStep optimize(HObjectiveFunction objective) {
+
+        String dir = experimentDir.toString()
+        delete(dir)
+        mkdirs(dir)
+        mkdirs("$dir/vars")
+        mkdirs("$dir/eval")
+        writeFile "$dir/config.json", genConfig()
+        writeFile "$dir/eval.py", genEval()
+
+        String mongoLogFile = "$dir/mongo/mongo.log"
+        String mongoDataDir = "$dir/mongo/data"
+        mkdirs(mongoDataDir)
+
         // run mongo
+        log.info("Starting mongodb")
+        String mcmd = "$mongodbCommand --fork --logpath mongo/mongo.log --dbpath mongo/data"
+        ProcessRunner mongoProc = new ProcessRunner(mcmd, dir).redirectErrorStream().redirectOutput(new File("$dir/mongo/mongo.out"))
+        mongoProc.execute().waitFor()
+
+
         // run spearmint
+        log.info("Starting spearmint")
+        String scmd = spearmintCommand + " " + dir
+        ProcessRunner spearmintProc = new ProcessRunner(scmd, spearmintDir.toString()).redirectErrorStream().redirectOutput(new File("$dir/spearmint.out"))
+        spearmintProc.execute()
 
         int stepNumber = 0
+        int jobId          // spearmint job id, may start at any number
 
-        while (true) {
+        // find starting speramint job id
+        String varsDir = "$dir/vars"
+        log.debug "waiting for first vars file in '$varsDir'"
+        while (isDirEmpty("$dir/vars")) {
+            log.debug "waiting..."
+            sleep(1000)
+        }
+        jobId = listFiles(varsDir).first().name.toInteger()
 
+        String stepsf = "$dir/steps.csv"
+        List<String> varNames = (variables*.name).toList()
+        writeFile stepsf, "[num], [job_id], " + varNames.join(", ") + ", [value]"
 
-            if (stepNumber>maxIterations) {
-                break
-            }
+        while (stepNumber < maxIterations) {
+            log.info "job id: {}", jobId
+            String varf = "$varsDir/$jobId"
+            waitForFile(varf)
+
+            // parse variable assignment
+            Map<String, Object> vars = new Gson().fromJson(new File(varf).text, Map.class);
+            log.info "vars: {}", vars
+
+            // eval objective function
+            double val = objective.eval(vars, stepNumber)
+            log.info "value: {}", val
+
+            HStep step = new HStep(stepNumber, vars, val)
+            steps.add(step)
+            append stepsf, "$stepNumber, $jobId, " + varNames.collect { vars.get(it) }.join(", ") + ", $val"
+
+            stepNumber++
+            jobId++
         }
 
-        // stop spearmint
-        // stop mongo
+        spearmintProc.kill()
+        mongoProc.kill()
+
+        return getMaxStep()
+    }
+
+    HStep getMaxStep() {
+        assert !steps.isEmpty()
+
+        steps.max { it.functionValue }
+    }
+
+
+    void waitForFile(String fname) {
+        log.debug "waiting for file '$fname'"
+        while (!exists(fname)) {
+            log.debug "waiting..."
+            sleep(1000)
+        } 
     }
 
     private String genConfig() {
@@ -70,7 +154,7 @@ class HSpearmintOptimizer extends HOptimizer {
     }
 
     private String genVariables() {
-        params.collect { genVariable(it) }.join(",\n")
+        variables.collect { genVariable(it) }.join(",\n")
     }
 
     private String genEval() {
@@ -82,7 +166,7 @@ import time
 import json
 import os
 
-def eval(job_id, params):
+def eval(job_id, variables):
 
     valf = "eval/" + str(job_id)
 
@@ -95,12 +179,12 @@ def eval(job_id, params):
         
     return float(value)
 
-def main(job_id, params):
-    print "params: " + str(params)
+def main(job_id, variables):
+    print "variables: " + str(variables)
 
     # prepare vars for java
     vars = {}
-    for key, value in params.iteritems():
+    for key, value in variables.iteritems():
         vars[key] = value[0]
     print "vars: " + json.dumps(vars)
     if not os.path.exists("vars"):
@@ -109,7 +193,7 @@ def main(job_id, params):
     with open(varf, "w") as file:
         file.write(json.dumps(vars))
 
-    return eval(job_id, params)
+    return eval(job_id, variables)
     
         """
     }

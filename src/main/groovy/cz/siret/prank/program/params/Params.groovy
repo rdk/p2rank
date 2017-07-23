@@ -368,12 +368,12 @@ class Params {
     int train_pockets = 0
 
     /**
-     * clear primary caches (protein structures) between runs (when iterating params or seed)
+     * clear primary caches (protein structures) between runs (when iterating variables or seed)
      */
     boolean clear_prim_caches = false
 
     /**
-     * clear secondary caches (protein surfaces etc.) between runs (when iterating params or seed)
+     * clear secondary caches (protein surfaces etc.) between runs (when iterating variables or seed)
      */
     boolean clear_sec_caches = true
 
@@ -500,6 +500,26 @@ class Params {
      */
     double feat_asa_neigh_radius = 6
 
+    /**
+     * Hyperparameter optimizer implementation (so far only "spearmint")
+     */
+    String hopt_optimizer = "spearmint"
+
+    /**
+     * Spearmint home directory (containing main.py)
+     */
+    String hopt_spearmint_dir = ""
+
+    /**
+     * Statistic to maximize
+     */
+    String hopt_objective = "DCA_4_0"
+
+    /**
+     * number of inetarions
+     */
+    int hopt_max_iterations = 100
+
 //===========================================================================================================//
 
     String getVersion() {
@@ -512,7 +532,7 @@ class Params {
 
         applyCmdLineArgs(args)
 
-        // processing of special params
+        // processing of special variables
 
         if (!parallel) {
             threads = 1
@@ -526,7 +546,7 @@ class Params {
     @CompileDynamic
     void applyCmdLineArgs(CmdLineArgs args) {
 
-        boolean filterRanged = args.hasRangedParams
+        boolean filterRanged = args.hasListParams
 
         Params me = this
         me.properties.keySet().each { String propName ->
@@ -534,7 +554,7 @@ class Params {
                 String val = args.get(propName)
 
                 boolean skip = false
-                if (filterRanged && RangeParam.isRangedArgValue(val)) {
+                if (filterRanged && ListParam.isListArgValue(val)) {
                     skip = true
                 }
 
@@ -559,8 +579,6 @@ class Params {
         } else {
             Object pv = me."$pname"
             Class propClass = pv.class
-
-            me.properties
 
             if (pv instanceof List) {
                 if (value instanceof List) {

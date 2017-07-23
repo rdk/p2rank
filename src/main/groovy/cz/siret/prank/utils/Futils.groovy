@@ -159,6 +159,15 @@ class Futils {
         return new File(dir).listFiles().findAll { it.name ==~ /.*\.$ext/ }.toList()
     }
 
+    static List<File> listFiles(String dir) {
+        return new File(dir).listFiles().toList()
+    }
+
+    static boolean isDirEmpty(String dir) {
+        listFiles(dir).isEmpty()    
+    }
+
+
     static boolean exists(String name) {
         if (name==null) return false
         return new File((String)name).exists()

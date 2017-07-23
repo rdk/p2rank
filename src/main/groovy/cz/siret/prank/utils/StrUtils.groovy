@@ -73,7 +73,7 @@ class StrUtils {
 
         String splitter = ","
         if (!liststr.contains(splitter)) {
-            splitter = "."                    // lis in ranged param lists (when running prank ploop) have to use oyher splitter
+            splitter = "."                    // list in ranged param lists (when running prank ploop) have to use oyher splitter
         }
 
         liststr = liststr.substring(1, liststr.length()-1) // list is in parentheses "(...)"

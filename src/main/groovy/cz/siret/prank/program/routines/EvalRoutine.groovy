@@ -73,6 +73,8 @@ abstract class EvalRoutine extends Routine {
         collectedf << mainRes.readLines()[1] + "\n"
     }
 
-
+    String getEvalRoutineOutir() {
+        outdir
+    }
 
 }

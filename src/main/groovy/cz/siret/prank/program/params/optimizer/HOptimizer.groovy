@@ -1,17 +1,21 @@
 package cz.siret.prank.program.params.optimizer
+
+import groovy.transform.CompileStatic
+
 /**
  *
  */
+@CompileStatic
 abstract class HOptimizer {
 
-    List<HVariable> params
+    List<HVariable> variables
     int maxIterations = 100
 
     protected List<HStep> steps = new ArrayList<>()
 
 
-    HOptimizer withParams(List<HVariable> params) {
-        this.params = params
+    HOptimizer withVariables(List<HVariable> variables) {
+        this.variables = variables
         this
     }
 
@@ -25,9 +29,10 @@ abstract class HOptimizer {
     }
 
     /**
+     * Maximize the objective function value
      * @return best step
      */
-    abstract HStep optimize(HObjectiveFunction objective);
+    public abstract HStep optimize(HObjectiveFunction function);
 
 
 }

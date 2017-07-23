@@ -42,7 +42,7 @@ class Main implements Parametrized, Writable {
         ConfigLoader.overrideConfig(params, defaultParams)
         String configParam = configFileParam
 
-        // TODO allow multiple -c params override default+dev+working
+        // TODO allow multiple -c variables override default+dev+working
         if (configParam!=null) {
 
             if (!configParam.endsWith(".groovy") && Futils.exists(configParam+".groovy"))  {
@@ -293,7 +293,7 @@ class Main implements Parametrized, Writable {
         installDir = findInstallDir()
 
         if (command=="ploop") {
-            args.hasRangedParams = true
+            args.hasListParams = true
         }
 
         if (command=='help' || args.hasSwitch('h','help')) {

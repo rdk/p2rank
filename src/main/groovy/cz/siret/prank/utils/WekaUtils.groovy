@@ -86,7 +86,7 @@ class WekaUtils implements Writable {
         String[] threadPropNames = ["numThreads","numExecutionSlots"]   // names used for num.threads property by different classifiers
         threadPropNames.each { String name ->
             if (classifier.hasProperty(name))
-                classifier."$name" = 1 // params.threads
+                classifier."$name" = 1 // variables.threads
         }
     }
 
