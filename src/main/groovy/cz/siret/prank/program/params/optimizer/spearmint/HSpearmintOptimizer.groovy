@@ -90,9 +90,9 @@ class HSpearmintOptimizer extends HOptimizer {
         }
         jobId = listFiles(varsDir).first().name.toInteger()
 
-        String stepsf = "$dir/steps.csv"
         List<String> varNames = (variables*.name).toList()
-        writeFile stepsf, "[num], [job_id], " + varNames.join(", ") + ", [value]"
+        String stepsf = "$dir/steps.csv"
+        writeFile stepsf, "[num], [job_id], " + varNames.join(", ") + ", [value] \n"
 
         while (stepNumber < maxIterations) {
             log.info "job id: {}", jobId
@@ -110,7 +110,7 @@ class HSpearmintOptimizer extends HOptimizer {
 
             HStep step = new HStep(stepNumber, vars, val)
             steps.add(step)
-            append stepsf, "$stepNumber, $jobId, " + varNames.collect { vars.get(it) }.join(", ") + ", $val"
+            append stepsf, "$stepNumber, $jobId, " + varNames.collect { vars.get(it) }.join(", ") + ", $val \n"
 
             stepNumber++
             jobId++
@@ -206,7 +206,7 @@ def main(job_id, variables):
         os.makedirs("vars")
     varf = "vars/" + str(job_id) 
     with open(varf, "w") as file:
-        file.write(json.dumps(vars))
+        file.write(json.dumps(vars) + "\\n")
 
     return eval(job_id, variables)
     
