@@ -190,7 +190,7 @@ def main(job_id, variables):
     print "vars: " + json.dumps(vars)
     if not os.path.exists("vars"):
         os.makedirs("vars")
-    varf = "vars/" + str(job_id) + ".json"
+    varf = "vars/" + str(job_id) 
     with open(varf, "w") as file:
         file.write(json.dumps(vars))
 
