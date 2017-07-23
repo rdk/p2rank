@@ -1,6 +1,7 @@
 package cz.siret.prank.program.params.optimizer.spearmint
 
 import com.google.gson.Gson
+import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.optimizer.HObjectiveFunction
 import cz.siret.prank.program.params.optimizer.HOptimizer
 import cz.siret.prank.program.params.optimizer.HStep
@@ -58,9 +59,13 @@ class HSpearmintOptimizer extends HOptimizer {
 
         // run mongo
         log.info("Starting mongodb")
-        String mcmd = "$mongodbCommand --fork --logpath $mongoLogFile --dbpath $mongoDataDir"
+        String mcmd = "$mongodbCommand --fork --smallfiles --logpath $mongoLogFile --dbpath $mongoDataDir"
         ProcessRunner mongoProc = new ProcessRunner(mcmd, dir).redirectErrorStream().redirectOutput(new File("$dir/mongo/mongo.out"))
-        mongoProc.execute().waitFor()
+        int exitCode = mongoProc.execute().waitFor()
+        if (exitCode != 0) {
+            log.error("Mongodb log: \n " + readFile(mongoLogFile))
+            throw new PrankException("Failed to execute mongodb (required by spearmint)")
+        }
 
 
         // run spearmint

@@ -147,6 +147,10 @@ class Futils {
         }
     }
 
+    static String readFile(String fname) {
+        new File(fname).text
+    }
+
     static void append(String fname, Object text) {
         try {
             new File(fname) << text
