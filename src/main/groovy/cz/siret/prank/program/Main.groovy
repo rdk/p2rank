@@ -292,7 +292,7 @@ class Main implements Parametrized, Writable {
 
         installDir = findInstallDir()
 
-        if (command=="ploop") {
+        if (command in ["ploop","hopt"]) {
             args.hasListParams = true
         }
 
