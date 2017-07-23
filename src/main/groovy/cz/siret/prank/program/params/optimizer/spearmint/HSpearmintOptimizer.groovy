@@ -5,6 +5,7 @@ import cz.siret.prank.program.params.optimizer.HObjectiveFunction
 import cz.siret.prank.program.params.optimizer.HOptimizer
 import cz.siret.prank.program.params.optimizer.HStep
 import cz.siret.prank.program.params.optimizer.HVariable
+import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.ProcessRunner
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
@@ -51,13 +52,13 @@ class HSpearmintOptimizer extends HOptimizer {
         writeFile "$dir/config.json", genConfig()
         writeFile "$dir/eval.py", genEval()
 
-        String mongoLogFile = "$dir/mongo/mongo.log"
-        String mongoDataDir = "$dir/mongo/data"
+        String mongoLogFile = Futils.absSafePath("$dir/mongo/mongo.log" )
+        String mongoDataDir = Futils.absSafePath( "$dir/mongo/data" )
         mkdirs(mongoDataDir)
 
         // run mongo
         log.info("Starting mongodb")
-        String mcmd = "$mongodbCommand --fork --logpath mongo/mongo.log --dbpath mongo/data"
+        String mcmd = "$mongodbCommand --fork --logpath $mongoLogFile --dbpath $mongoDataDir"
         ProcessRunner mongoProc = new ProcessRunner(mcmd, dir).redirectErrorStream().redirectOutput(new File("$dir/mongo/mongo.out"))
         mongoProc.execute().waitFor()
 
