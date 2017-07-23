@@ -44,7 +44,7 @@ class HSpearmintOptimizer extends HOptimizer {
     @Override
     HStep optimize(HObjectiveFunction objective) {
 
-        String dir = experimentDir.toString()
+        String dir = Futils.absSafePath( experimentDir.toString() )
         delete(dir)
         mkdirs(dir)
         mkdirs("$dir/vars")
