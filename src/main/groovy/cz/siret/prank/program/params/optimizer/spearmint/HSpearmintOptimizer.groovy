@@ -44,7 +44,7 @@ class HSpearmintOptimizer extends HOptimizer {
     @Override
     HStep optimize(HObjectiveFunction objective) {
 
-        String dir = Futils.absSafePath( experimentDir.toString() )
+        String dir = absSafePath( experimentDir.toString() )
         delete(dir)
         mkdirs(dir)
         mkdirs("$dir/vars")
@@ -52,8 +52,8 @@ class HSpearmintOptimizer extends HOptimizer {
         writeFile "$dir/config.json", genConfig()
         writeFile "$dir/eval.py", genEval()
 
-        String mongoLogFile = Futils.absSafePath("$dir/mongo/mongo.log" )
-        String mongoDataDir = Futils.absSafePath( "$dir/mongo/data" )
+        String mongoLogFile = absSafePath("$dir/mongo/mongo.log" )
+        String mongoDataDir = absSafePath( "$dir/mongo/data" )
         mkdirs(mongoDataDir)
 
         // run mongo

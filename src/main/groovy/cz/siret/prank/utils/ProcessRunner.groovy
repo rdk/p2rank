@@ -1,5 +1,7 @@
 package cz.siret.prank.utils
 
+import com.google.common.base.CharMatcher
+import com.google.common.base.Splitter
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
@@ -22,7 +24,9 @@ class ProcessRunner {
         this.command = command
         this.dir = dir
 
-        processBuilder = new ProcessBuilder(command)
+        List<String> cmdList = Splitter.on(CharMatcher.whitespace()).splitToList(command)
+
+        processBuilder = new ProcessBuilder(cmdList)
         processBuilder.directory(new File(dir))
     }
 
