@@ -36,7 +36,7 @@ class Routine implements Parametrized, Writable  {
 
     void writeParams(String outdir) {
         String v = "version: " + Main.version + "\n"
-        writeFile("$outdir/variables.txt", v + params.toString())
+        writeFile("$outdir/params.txt", v + params.toString())
     }
 
 }

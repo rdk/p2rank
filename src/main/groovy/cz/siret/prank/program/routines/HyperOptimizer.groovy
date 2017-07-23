@@ -36,16 +36,19 @@ class HyperOptimizer extends ParamLooper {
         assert p.values.size() == 2
 
         String name = p.name
-        Number min = (Number) p.values[0]
-        Number max = (Number) p.values[1]
 
         HVariable.Type type = HVariable.Type.FLOAT
         if (Params.inst."$name" instanceof Integer) {
             type = HVariable.Type.INT
         }
 
+        Number min = Double.parseDouble p.values[0].toString()
+        Number max = Double.parseDouble p.values[1].toString()
+
+
         new HVariable(name, type, min, max)
     }
+
 
     private List<HVariable> convertListParams(List<ListParam> listParams) {
         listParams.collect { convertListParam(it) }.toList()
