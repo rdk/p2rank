@@ -21,4 +21,15 @@ class HVariable {
         this.min = min
         this.max = max
     }
+
+    @Override
+    public String toString() {
+        return "HVariable{" +
+                "name='" + name + '\'' +
+                ", type=" + type +
+                ", min=" + min +
+                ", max=" + max +
+                '}';
+    }
+
 }

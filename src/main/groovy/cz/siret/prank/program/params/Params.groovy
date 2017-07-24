@@ -511,9 +511,10 @@ class Params {
     String hopt_spearmint_dir = ""
 
     /**
-     * Statistic to maximize
+     * Statistic to minimize
+     * (minus sign allowed)
      */
-    String hopt_objective = "DCA_4_0"
+    String hopt_objective = "-DCA_4_0"
 
     /**
      * number of inetarions

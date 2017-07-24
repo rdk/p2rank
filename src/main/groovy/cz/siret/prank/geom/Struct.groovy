@@ -24,7 +24,7 @@ class Struct {
 
     static double dist(Atom a, List<Atom> list) {
         if (list==null || list.isEmpty()) {
-            log.debug "! dist to empty list of atoms"  // TODO: analyze this reccuring situation
+            //log.debug "! dist to empty list of atoms"  // TODO: analyze this reccuring situation
             return Double.MAX_VALUE
         }
 
@@ -35,7 +35,7 @@ class Struct {
 
     static double sqrDist(Atom a, List<Atom> list) {
         if (list==null || list.isEmpty()) {
-            log.debug "!! dist to empty list of atoms"
+            //log.debug "!! dist to empty list of atoms"
             return Double.MAX_VALUE
         }
 
@@ -53,7 +53,7 @@ class Struct {
     static double dist(List<Atom> list1, List<Atom> list2) {
 
         if (list1==null || list1.isEmpty()) {
-            log.debug "!!! dist to empty list of atoms"
+            //log.debug "!!! dist to empty list of atoms"
             return Double.MAX_VALUE
         }
 

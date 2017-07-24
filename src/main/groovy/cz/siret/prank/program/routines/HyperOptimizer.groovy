@@ -72,11 +72,21 @@ class HyperOptimizer extends ParamLooper {
 
                 EvalResults res = processStep(step, "step.$stepNumber", evalClosure)
 
-                double val = (double) res.stats.get(params.hopt_objective)
+                double val = getObjectiveValue(res)
                 return val
             }
         })
 
+    }
+
+    double getObjectiveValue(EvalResults res) {
+        String name = params.hopt_objective
+        double sign = 1
+        if (name.startsWith("-")) {
+            name = name.substring(1)
+            sign = -1
+        }
+        return sign * (double)res.stats.get(name)
     }
 
     private HOptimizer createOptimizer(List<HVariable> variables) {
