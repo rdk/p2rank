@@ -83,7 +83,7 @@ import cz.siret.prank.program.params.Params
 
     output_only_stats = true
 
-    log_to_console = false
+    log_to_console = true
 
     log_level = "WARN"
 
