@@ -17,11 +17,12 @@ import static cz.siret.prank.utils.Futils.exists
 import static cz.siret.prank.utils.Futils.mkdirs
 
 /**
- * Routine for grid optimization. Loops through values of one or more ListParam and produces resulting statistics and plots.
+ * Base class for hyperparameter optimization routines
+ *
  */
 @Slf4j
 @CompileStatic
-class ParamLooper extends Routine {
+abstract class ParamLooper extends Routine {
 
     List<Step> steps = new ArrayList<>()
 
@@ -46,6 +47,10 @@ class ParamLooper extends Routine {
         this
     }
 
+    /**
+     * Execute and proecss resuts of one experiment step
+     * init() must be called before first calling this method
+     */
     public EvalResults processStep(Step step, String dirLabel, Closure<EvalResults> closure) {
         def stepTimer = startTimer()
 
