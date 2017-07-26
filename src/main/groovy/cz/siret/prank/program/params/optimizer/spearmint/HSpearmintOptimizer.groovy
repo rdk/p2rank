@@ -64,6 +64,7 @@ class HSpearmintOptimizer extends HOptimizer implements Writable {
         // run mongo
         log.info("Starting mongodb")
         String mcmd = "$mongodbCommand --fork --smallfiles --logpath $mongoLogFile --dbpath $mongoDataDir"
+        write "running '$mcmd'"
         ProcessRunner mongoProc = new ProcessRunner(mcmd, dir).redirectErrorStream().redirectOutput(new File("$dir/mongo/mongo.out"))
         int exitCode = mongoProc.execute().waitFor()
         if (exitCode != 0) {
@@ -76,6 +77,7 @@ class HSpearmintOptimizer extends HOptimizer implements Writable {
         log.info("Starting spearmint")
         String scmd = spearmintCommand + " " + dir
 //        ProcessRunner spearmintProc = new ProcessRunner(scmd, spearmintDir.toString()).redirectErrorStream().redirectOutput(new File("$dir/spearmint.out"))
+        write "running '$scmd'"
         ProcessRunner spearmintProc = new ProcessRunner(scmd, spearmintDir.toString()).redirectErrorStream()
         spearmintProc.processBuilder.inheritIO()
         spearmintProc.execute()

@@ -20,6 +20,7 @@ sudo pip install -e Spearmint
 
 Example:
 ```sh
+pkill python; sudo pkill mongo  # prepare clean slate (careful, your other programs might die too)
 ./prank.sh hopt -c working -l TREES_w -out_subdir HOPT \
     -t chen11-fpocket.ds -e joined.ds \
     -loop 1 -log_level DEBUG -log_to_console 1 \
