@@ -306,7 +306,7 @@ class Params {
     /**
      * minimum cluster size (of ligandable points) for initial clustering
      */
-    double pred_min_cluster_size = 3
+    int pred_min_cluster_size = 3
 
     /**
      * clustering distance for ligandable clusters for second phase clustering
