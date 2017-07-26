@@ -257,7 +257,7 @@ class Main implements Parametrized, Writable {
 
     private runExperiment(String routineName) {
 
-        new Experiments(args, this).execute(routineName)
+        new Experiments(args, this, routineName).execute()
     }
 
     private runCrossvalidation() {

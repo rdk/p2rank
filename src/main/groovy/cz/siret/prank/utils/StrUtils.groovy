@@ -13,7 +13,8 @@ import java.text.SimpleDateFormat
 @CompileStatic
 class StrUtils {
 
-    static DateFormat DATE_LABEL_FORMAT = new SimpleDateFormat("yyyy.MM.dd_HHmm")
+//    static DateFormat DATE_LABEL_FORMAT = new SimpleDateFormat("yyyy.MM.dd_HHmm")
+    static DateFormat DATE_LABEL_FORMAT = new SimpleDateFormat("yyMMdd_HHmm")
 
     private static class MSN extends ToStringStyle {
         MSN() {

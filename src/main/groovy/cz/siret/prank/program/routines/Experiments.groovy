@@ -20,6 +20,8 @@ import static cz.siret.prank.utils.ThreadUtils.async
 @Slf4j
 class Experiments extends Routine {
 
+    String command
+
     Dataset trainDataset
     Dataset evalDataset
     boolean doCrossValidation = false
@@ -33,9 +35,10 @@ class Experiments extends Routine {
 
     CmdLineArgs cmdLineArgs
 
-    public Experiments(CmdLineArgs args, Main main) {
+    public Experiments(CmdLineArgs args, Main main, String command) {
         super(null)
         this.cmdLineArgs = args
+        this.command = command
 
         trainSetFile =  cmdLineArgs.get('train', 't')
         trainSetFile = Main.findDataset(trainSetFile)
@@ -54,7 +57,7 @@ class Experiments extends Routine {
 
         outdirRoot = params.output_base_dir
         datadirRoot = params.dataset_base_dir
-        label = "run_" + trainDataset.label + "_" + (doCrossValidation ? "crossval" : evalDataset.label)
+        label = command + "_" + trainDataset.label + "_" + (doCrossValidation ? "crossval" : evalDataset.label)
         outdir = main.findOutdir(label)
         main.writeCmdLineArgs(outdir)
         writeParams(outdir)
@@ -62,9 +65,9 @@ class Experiments extends Routine {
         main.configureLoggers(outdir)
     }
 
-    void execute(String routineName) {
-        log.info "executing $routineName()"
-        this."$routineName"()  // dynamic exec method
+    void execute() {
+        log.info "executing $command()"
+        this."$command"()  // dynamic exec method
         log.info "results saved to directory [${Futils.absPath(outdir)}]"
     }
 

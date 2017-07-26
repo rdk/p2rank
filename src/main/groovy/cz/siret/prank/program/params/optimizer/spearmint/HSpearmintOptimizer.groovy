@@ -8,6 +8,7 @@ import cz.siret.prank.program.params.optimizer.HStep
 import cz.siret.prank.program.params.optimizer.HVariable
 import cz.siret.prank.utils.Formatter
 import cz.siret.prank.utils.ProcessRunner
+import cz.siret.prank.utils.Writable
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
@@ -20,7 +21,7 @@ import static cz.siret.prank.utils.Futils.*
  */
 @Slf4j
 @CompileStatic
-class HSpearmintOptimizer extends HOptimizer {
+class HSpearmintOptimizer extends HOptimizer implements Writable {
 
     enum Likelihood { NOISELESS, GAUSSIAN }
 
@@ -112,8 +113,8 @@ class HSpearmintOptimizer extends HOptimizer {
             HStep step = new HStep(stepNumber, vars, val)
             steps.add(step)
             append stepsf, "$stepNumber, $jobId, " + varNames.collect { fmt vars.get(it) }.join(", ") + ", ${fmt val} \n"
-
             writeFile "$dir/best.csv", printBestStep(bestStep, varNames)
+            write "For results see " + stepsf
 
             stepNumber++
             jobId++
@@ -126,7 +127,7 @@ class HSpearmintOptimizer extends HOptimizer {
     }
 
     String printBestStep(HStep step, List<String> varNames) {
-        varNames.collect { it + ",\t\t" + fmt(step.variableValues.get(it)) }.join("\n") + "\nvalue,\t\t" + fmt(step.functionValue)
+        varNames.collect { it + ",\t\t" + fmt(step.variableValues.get(it)) }.join("\n") + "\nvalue,\t\t" + fmt(step.functionValue) + "\n"
     }
 
     String formatValue(double v) {

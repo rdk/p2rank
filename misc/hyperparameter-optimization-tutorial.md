@@ -13,8 +13,7 @@ sudo pip install --upgrade pip
 sudo pip install numpy scipy pymongo weave
 #git clone https://github.com/HIPS/Spearmint.git
 git clone https://github.com/rdk/Spearmint.git  # fixed scipy.weave problem
-
-q
+sudo pip install -e Spearmint
 ```
 
 
