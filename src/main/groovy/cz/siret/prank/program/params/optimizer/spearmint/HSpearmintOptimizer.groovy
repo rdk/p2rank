@@ -7,7 +7,6 @@ import cz.siret.prank.program.params.optimizer.HOptimizer
 import cz.siret.prank.program.params.optimizer.HStep
 import cz.siret.prank.program.params.optimizer.HVariable
 import cz.siret.prank.utils.Formatter
-import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.ProcessRunner
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
@@ -75,7 +74,9 @@ class HSpearmintOptimizer extends HOptimizer {
         // run spearmint
         log.info("Starting spearmint")
         String scmd = spearmintCommand + " " + dir
-        ProcessRunner spearmintProc = new ProcessRunner(scmd, spearmintDir.toString()).redirectErrorStream().redirectOutput(new File("$dir/spearmint.out"))
+//        ProcessRunner spearmintProc = new ProcessRunner(scmd, spearmintDir.toString()).redirectErrorStream().redirectOutput(new File("$dir/spearmint.out"))
+        ProcessRunner spearmintProc = new ProcessRunner(scmd, spearmintDir.toString()).redirectErrorStream()
+        spearmintProc.processBuilder.inheritIO()
         spearmintProc.execute()
 
         int stepNumber = 0
@@ -110,7 +111,9 @@ class HSpearmintOptimizer extends HOptimizer {
 
             HStep step = new HStep(stepNumber, vars, val)
             steps.add(step)
-            append stepsf, "$stepNumber, $jobId, " + varNames.collect { vars.get(it) }.join(", ") + ", $val \n"
+            append stepsf, "$stepNumber, $jobId, " + varNames.collect { fmt vars.get(it) }.join(", ") + ", ${fmt val} \n"
+
+            writeFile "$dir/best.csv", printBestStep(bestStep, varNames)
 
             stepNumber++
             jobId++
@@ -119,14 +122,23 @@ class HSpearmintOptimizer extends HOptimizer {
         spearmintProc.kill()
         mongoProc.kill()
 
-        return getMaxStep()
+        return getBestStep()
+    }
+
+    String printBestStep(HStep step, List<String> varNames) {
+        varNames.collect { it + ",\t\t" + fmt(step.variableValues.get(it)) }.join("\n") + "value,\t\t" + fmt(step.functionValue)
     }
 
     String formatValue(double v) {
         Formatter.format(v, 5)
     }
 
-    HStep getMaxStep() {
+    static String fmt(Object x) {
+        if (x==null) return ""
+        sprintf "%8.4f", x
+    }
+
+    HStep getBestStep() {
         assert !steps.isEmpty()
 
         steps.max { it.functionValue }
@@ -134,7 +146,7 @@ class HSpearmintOptimizer extends HOptimizer {
 
 
     void waitForFile(String fname) {
-        log.debug "waiting for file '$fname'"
+        log.info "waiting for file '$fname'"
         while (!exists(fname)) {
             log.debug "waiting..."
             sleep(1000)

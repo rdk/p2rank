@@ -11,8 +11,10 @@ https://github.com/HIPS/Spearmint/tree/ffbab6653ae785c9acdcf2abb01c63127be40c2f
 sudo apt install -y mongodb python 
 sudo pip install --upgrade pip
 sudo pip install numpy scipy pymongo weave
-git clone https://github.com/HIPS/Spearmint.git
-sudo pip install -e Spearmint
+#git clone https://github.com/HIPS/Spearmint.git
+git clone https://github.com/rdk/Spearmint.git  # fixed scipy.weave problem
+
+q
 ```
 
 
