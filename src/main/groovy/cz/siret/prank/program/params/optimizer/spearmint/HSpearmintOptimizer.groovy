@@ -126,7 +126,7 @@ class HSpearmintOptimizer extends HOptimizer {
     }
 
     String printBestStep(HStep step, List<String> varNames) {
-        varNames.collect { it + ",\t\t" + fmt(step.variableValues.get(it)) }.join("\n") + "value,\t\t" + fmt(step.functionValue)
+        varNames.collect { it + ",\t\t" + fmt(step.variableValues.get(it)) }.join("\n") + "\nvalue,\t\t" + fmt(step.functionValue)
     }
 
     String formatValue(double v) {
@@ -141,7 +141,7 @@ class HSpearmintOptimizer extends HOptimizer {
     HStep getBestStep() {
         assert !steps.isEmpty()
 
-        steps.max { it.functionValue }
+        steps.min { it.functionValue }
     }
 
 
