@@ -40,6 +40,15 @@ class Experiments extends Routine {
         this.cmdLineArgs = args
         this.command = command
 
+        if (command in ['traineval', 'ploop', 'hopt']) {
+            prepareDatasets(main)
+        }
+
+        main.configureLoggers(outdir)
+    }
+
+    void prepareDatasets(Main main) {
+
         trainSetFile =  cmdLineArgs.get('train', 't')
         trainSetFile = Main.findDataset(trainSetFile)
         trainDataset = DatasetCachedLoader.loadDataset(trainSetFile)
@@ -61,8 +70,6 @@ class Experiments extends Routine {
         outdir = main.findOutdir(label)
         main.writeCmdLineArgs(outdir)
         writeParams(outdir)
-
-        main.configureLoggers(outdir)
     }
 
     void execute() {
