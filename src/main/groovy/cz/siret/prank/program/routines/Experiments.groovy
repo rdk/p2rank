@@ -168,6 +168,14 @@ class Experiments extends Routine {
         }
     }
 
+//===========================================================================================================//
+
+    /**
+     *  print parameters and exit
+     */
+    public params() {
+        write params.toString()
+    }
 
 }
 
