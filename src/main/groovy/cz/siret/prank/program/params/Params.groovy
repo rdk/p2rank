@@ -521,6 +521,11 @@ class Params {
      */
     int hopt_max_iterations = 100
 
+    /**
+     * randomize seed before every training in experiments
+     */
+    boolean randomize_seed = false
+
 //===========================================================================================================//
 
     String getVersion() {

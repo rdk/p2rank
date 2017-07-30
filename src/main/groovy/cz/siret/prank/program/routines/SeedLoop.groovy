@@ -2,9 +2,12 @@ package cz.siret.prank.program.routines
 
 import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.utils.Futils
+import cz.siret.prank.utils.MathUtils
 import groovy.util.logging.Slf4j
 
 import static cz.siret.prank.utils.ATimer.startTimer
+import static cz.siret.prank.utils.Futils.mkdirs
+import static cz.siret.prank.utils.MathUtils.ranndomInt
 
 /**
  * Routine that iterates through different values of random seed param
@@ -30,9 +33,15 @@ class SeedLoop extends EvalRoutine {
         for (int seedi in 1..n) {
             write "random seed iteration: $seedi/$n"
 
+            if (params.randomize_seed) {
+                params.seed = ranndomInt()
+            } else {
+                params.seed = origSeed + (seedi - 1)
+            }
+
             String label = "seed.${params.seed}"
             innerRoutine.outdir = "$outdir/runs/$label"
-            Futils.mkdirs(innerRoutine.outdir)
+            mkdirs(innerRoutine.outdir)
 
             results.addAll(innerRoutine.execute())
 
