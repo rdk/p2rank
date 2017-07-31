@@ -15,7 +15,6 @@ import static cz.siret.prank.utils.Futils.mkdirs
 
 /**
  * Base class for hyperparameter optimization routines
- *
  */
 @Slf4j
 @CompileStatic
@@ -72,14 +71,11 @@ abstract class ParamLooper extends Routine {
         return res
     }
 
-
-
 //===========================================================================================================//
 
-
-    static String fmt(Double x) {
+    static String fmt(Object x) {
         if (x==null) return ""
-        sprintf "%8.4f", x
+        sprintf "%8.4f", (double)x
     }
 
 //===========================================================================================================//
@@ -112,12 +108,12 @@ abstract class ParamLooper extends Routine {
 
         @CompileDynamic
         String toCSV() {
-            (params*.value).join(',') + ',' + results.values().collect{ fmt(it) }.join(',')
+            params.collect{ fmt(it.value) }.join(',') + ',' + results.values().collect{ fmt(it) }.join(',')
         }
 
         @CompileDynamic
         String toCSV(List<String> selectedStats) {
-            (params*.value).join(',') + ',' + selectedStats.collect{ fmt(results.get(it)) }.join(',')
+            params.collect{ fmt(it.value) }.join(',') + ',' + selectedStats.collect{ fmt(results.get(it)) }.join(',')
         }
 
         public String toString() {

@@ -45,7 +45,6 @@ class HyperOptimizer extends ParamLooper {
         Number min = Double.parseDouble p.values[0].toString()
         Number max = Double.parseDouble p.values[1].toString()
 
-
         new HVariable(name, type, min, max)
     }
 
@@ -70,7 +69,7 @@ class HyperOptimizer extends ParamLooper {
                 Step step = new Step(params: paramVals)
                 steps.add(step)
 
-                double  val
+                double val
 
                 try {
                     EvalResults res = processStep(step, "step.$stepNumber", evalClosure)
@@ -83,7 +82,6 @@ class HyperOptimizer extends ParamLooper {
                 return val
             }
         })
-
     }
 
     double getObjectiveValue(EvalResults res) {
