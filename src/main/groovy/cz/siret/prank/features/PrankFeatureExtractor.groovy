@@ -253,6 +253,10 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
         //    return null
         //}
 
+        if (neighbourhoodAtoms.isEmpty()) {
+            log.error("!!! no neighbourhood atoms! cannot calculate feature vector")
+        }
+
         int n = neighbourhoodAtoms.count
 
         //if (n==1) {

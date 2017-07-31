@@ -388,7 +388,7 @@ class Main implements Parametrized, Writable {
             }
 
             if (main!=null && main.logManager.loggingToFile) {
-                write "For details see log file: '$main.logManager.logFile'"
+                write "For details see log file: $main.logManager.logFile"
             }
 
         }

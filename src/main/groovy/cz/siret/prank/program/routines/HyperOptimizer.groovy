@@ -70,9 +70,16 @@ class HyperOptimizer extends ParamLooper {
                 Step step = new Step(params: paramVals)
                 steps.add(step)
 
-                EvalResults res = processStep(step, "step.$stepNumber", evalClosure)
+                double  val
 
-                double val = getObjectiveValue(res)
+                try {
+                    EvalResults res = processStep(step, "step.$stepNumber", evalClosure)
+                    val = getObjectiveValue(res)
+                } catch (Exception e) {
+                    log.error("Couldn't process grid optimization step $stepNumber", e)
+                    val = Double.NaN
+                }
+
                 return val
             }
         })
