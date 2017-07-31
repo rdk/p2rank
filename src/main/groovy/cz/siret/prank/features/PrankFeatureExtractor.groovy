@@ -10,6 +10,7 @@ import cz.siret.prank.features.weight.WeightFun
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Struct
 import cz.siret.prank.geom.samplers.PointSampler
+import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.Parametrized
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
@@ -254,7 +255,7 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
         //}
 
         if (neighbourhoodAtoms.isEmpty()) {
-            log.error("!!! no neighbourhood atoms! cannot calculate feature vector")
+            throw new PrankException("No neighbourhood atoms. Cannot calculate feature vector. (Isn't neighbourhood_radius too small?)")
         }
 
         int n = neighbourhoodAtoms.count
