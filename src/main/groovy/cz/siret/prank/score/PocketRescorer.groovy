@@ -33,6 +33,9 @@ abstract class PocketRescorer implements Parametrized {
      */
     abstract void rescorePockets(Prediction prediction, ProcessedItemContext context);
 
+    /**
+     * reprder pockets or make new pocket predictions
+     */
     void reorderPockets(Prediction prediction, ProcessedItemContext context) {
 
         rescorePockets(prediction, context)

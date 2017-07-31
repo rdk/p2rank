@@ -376,19 +376,20 @@ class Main implements Parametrized, Writable {
             main = new Main(parsedArgs)
             error = main.run()
 
-        } catch (PrankException e) {
-
-            error = true
-            writeError e.message
-            log.error(e.message, e)
-            if (main.logManager.loggingToFile) {
-                write "For details see log file: '$main.logManager.logFile'"
-            }
-
         } catch (Exception e) {
 
             error = true
-            writeError e.getMessage(), e // on unknown exception also print stack trace
+
+            if (e instanceof PrankException) {
+                writeError e.message
+                log.error(e.message, e)
+            } else {
+                writeError e.getMessage(), e // on unknown exception also print stack trace
+            }
+
+            if (main!=null && main.logManager.loggingToFile) {
+                write "For details see log file: '$main.logManager.logFile'"
+            }
 
         }
 
