@@ -120,11 +120,10 @@ class PointVectorCollector extends VectorCollector implements Parametrized {
                 }
 
             } catch (Exception e) {
-                String msg = "skipping extraction for point, reason: " + e.getMessage()
                 if (params.fail_fast) {
-                    throw new PrankException(msg, e)
+                    throw new PrankException("failed extraction for point", e)
                 } else {
-                    log.error(msg, e)
+                    log.error("skipping extraction for point", e)
                 }
             }
         }
