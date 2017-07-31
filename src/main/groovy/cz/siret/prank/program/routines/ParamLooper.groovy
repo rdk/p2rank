@@ -1,18 +1,15 @@
 package cz.siret.prank.program.routines
 
 import cz.siret.prank.program.params.Params
-import cz.siret.prank.program.params.ListParam
 import cz.siret.prank.program.routines.results.EvalResults
-import cz.siret.prank.utils.Futils
-import cz.siret.prank.utils.plotter.RPlotter
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
 import groovy.util.logging.Slf4j
-import groovyx.gpars.GParsPool
 
 import static cz.siret.prank.utils.ATimer.startTimer
 import static cz.siret.prank.utils.Futils.append
+import static cz.siret.prank.utils.Futils.appendl
 import static cz.siret.prank.utils.Futils.exists
 import static cz.siret.prank.utils.Futils.mkdirs
 
@@ -26,7 +23,8 @@ abstract class ParamLooper extends Routine {
 
     List<Step> steps = new ArrayList<>()
 
-    String paramsTableFile
+    String statsTableFile
+    String selectedStatsFile
     String plotsDir
     String tablesDir
     String runsDir
@@ -36,7 +34,8 @@ abstract class ParamLooper extends Routine {
     ParamLooper(String outdir) {
         super(outdir)
         plotsDir = "$outdir/plots"
-        paramsTableFile = "$outdir/param_stats.csv"
+        statsTableFile = "$outdir/param_stats.csv"
+        selectedStatsFile = "$outdir/selected_stats.csv"
         runsDir = "$outdir/runs"
     }
 
@@ -62,13 +61,17 @@ abstract class ParamLooper extends Routine {
         step.results.putAll( res.stats )
         step.results.TIME_MINUTES = stepTimer.minutes
 
-        if (!exists(paramsTableFile)) {                             // use first step with results to produce header
-            append paramsTableFile, step.header + "\n"
+        // save stats
+        if (!exists(statsTableFile)) {
+            appendl statsTableFile, step.header
+            appendl selectedStatsFile, step.getHeader(params.selected_stats)
         }
-        append paramsTableFile, step.toCSV() + "\n";
+        appendl statsTableFile, step.toCSV()
+        appendl selectedStatsFile, step.toCSV(params.selected_stats)
 
         return res
     }
+
 
 
 //===========================================================================================================//
@@ -103,9 +106,18 @@ abstract class ParamLooper extends Routine {
             (params*.name).join(',') + ',' + results.keySet().join(',')
         }
 
+        String getHeader(List<String> selectedStats) {
+            (params*.name).join(',') + ',' + selectedStats.join(',')
+        }
+
         @CompileDynamic
         String toCSV() {
             (params*.value).join(',') + ',' + results.values().collect{ fmt(it) }.join(',')
+        }
+
+        @CompileDynamic
+        String toCSV(List<String> selectedStats) {
+            (params*.value).join(',') + ',' + selectedStats.collect{ fmt(results.get(it)) }.join(',')
         }
 
         public String toString() {

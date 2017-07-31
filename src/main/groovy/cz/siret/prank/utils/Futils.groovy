@@ -159,6 +159,10 @@ class Futils {
         }
     }
 
+    static void appendl(String fname, Object text) {
+        append(fname, text?.toString() + "\n")
+    }
+
     static List<File> listFiles(String dir, String ext) {
         return new File(dir).listFiles().findAll { it.name ==~ /.*\.$ext/ }.toList()
     }

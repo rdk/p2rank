@@ -526,6 +526,8 @@ class Params {
      */
     boolean randomize_seed = false
 
+    List<String> selected_stats = ['DCA_4_0', 'DCA_4_2', 'AVG_POCKETS', 'AVG_POCKET_SAS_POINTS', 'LIGAND_COVERAGE']
+
 //===========================================================================================================//
 
     String getVersion() {

@@ -103,7 +103,7 @@ class GridOprimizer extends ParamLooper {
     }
 
     private make1DPlots() {
-        new RPlotter( paramsTableFile, plotsDir).plot1DAll(RThreads)
+        new RPlotter( statsTableFile, plotsDir).plot1DAll(RThreads)
     }
 
     private make2DTable(String statName) {
