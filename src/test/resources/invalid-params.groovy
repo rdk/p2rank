@@ -1,7 +1,7 @@
 
 //import rdk.pockets.program.params.Params
 //
-//Params variables
+//Params params
 
 params.with {
 

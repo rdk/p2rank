@@ -368,12 +368,12 @@ class Params {
     int train_pockets = 0
 
     /**
-     * clear primary caches (protein structures) between runs (when iterating variables or seed)
+     * clear primary caches (protein structures) between runs (when iterating params or seed)
      */
     boolean clear_prim_caches = false
 
     /**
-     * clear secondary caches (protein surfaces etc.) between runs (when iterating variables or seed)
+     * clear secondary caches (protein surfaces etc.) between runs (when iterating params or seed)
      */
     boolean clear_sec_caches = true
 
@@ -540,7 +540,7 @@ class Params {
 
         applyCmdLineArgs(args)
 
-        // processing of special variables
+        // processing of special params
 
         if (!parallel) {
             threads = 1
