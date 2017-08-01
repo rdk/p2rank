@@ -54,7 +54,7 @@ class Ligand implements Parametrized {
     }
 
 //    Atoms calcContactAtoms(Atoms proteinAtoms) {
-//        return proteinAtoms.cutoffAtoms(atoms, variables.ligand_protein_contact_distance)
+//        return proteinAtoms.cutoffAtoms(atoms, params.ligand_protein_contact_distance)
 //    }
 
     Atom getCentroid() {

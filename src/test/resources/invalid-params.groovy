@@ -1,5 +1,5 @@
 
-//import rdk.pockets.program.variables.Params
+//import rdk.pockets.program.params.Params
 //
 //Params variables
 

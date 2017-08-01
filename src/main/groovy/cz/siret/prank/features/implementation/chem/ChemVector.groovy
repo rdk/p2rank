@@ -116,7 +116,7 @@ class ChemVector implements Cloneable {
         } else {
             if (!ChemDefaults.AACODES.contains(residueCode) ) {
                 log.debug "!! masking unknown residue code:  $residueCode"
-                //if (variables.mask_unknown_residues) {
+                //if (params.mask_unknown_residues) {
                 //    log.debug "!!! masking unknown residue code:  $residueCode"
                 //} else {
                 //    throw new PrankException("unknown residue code: $residueCode")
