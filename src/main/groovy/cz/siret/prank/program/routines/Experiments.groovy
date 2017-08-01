@@ -3,10 +3,13 @@ package cz.siret.prank.program.routines
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.domain.DatasetCachedLoader
 import cz.siret.prank.program.Main
-import cz.siret.prank.program.params.RangeParam
+import cz.siret.prank.program.params.ListParam
+import cz.siret.prank.program.params.Params
+import cz.siret.prank.program.params.optimizer.HVariable
 import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.utils.CmdLineArgs
 import cz.siret.prank.utils.Futils
+import groovy.transform.CompileDynamic
 import groovy.util.logging.Slf4j
 
 import static cz.siret.prank.utils.ThreadUtils.async
@@ -17,8 +20,10 @@ import static cz.siret.prank.utils.ThreadUtils.async
 @Slf4j
 class Experiments extends Routine {
 
-    Dataset trainDataSet
-    Dataset evalDataSet
+    String command
+
+    Dataset trainDataset
+    Dataset evalDataset
     boolean doCrossValidation = false
 
     String trainSetFile
@@ -30,13 +35,23 @@ class Experiments extends Routine {
 
     CmdLineArgs cmdLineArgs
 
-    public Experiments(CmdLineArgs args, Main main) {
+    public Experiments(CmdLineArgs args, Main main, String command) {
         super(null)
         this.cmdLineArgs = args
+        this.command = command
+
+        if (command in ['traineval', 'ploop', 'hopt']) {
+            prepareDatasets(main)
+        }
+
+        main.configureLoggers(outdir)
+    }
+
+    void prepareDatasets(Main main) {
 
         trainSetFile =  cmdLineArgs.get('train', 't')
         trainSetFile = Main.findDataset(trainSetFile)
-        trainDataSet = DatasetCachedLoader.loadDataset(trainSetFile)
+        trainDataset = DatasetCachedLoader.loadDataset(trainSetFile)
 
         // TODO: enable executing 'prank ploop crossval'
         // (now ploop with crossvalidation is possible only implicitly by not specifying eval dataset)
@@ -44,23 +59,22 @@ class Experiments extends Routine {
         evalSetFile  =  cmdLineArgs.get('eval', 'e')
         if (evalSetFile!=null) { // no eval dataset -> do crossvalidation
             evalSetFile = Main.findDataset(evalSetFile)
-            evalDataSet = DatasetCachedLoader.loadDataset(evalSetFile)
+            evalDataset = DatasetCachedLoader.loadDataset(evalSetFile)
         } else {
             doCrossValidation = true
         }
 
         outdirRoot = params.output_base_dir
         datadirRoot = params.dataset_base_dir
-        label = "run_" + trainDataSet.label + "_" + (doCrossValidation ? "crossval" : evalDataSet.label)
+        label = command + "_" + trainDataset.label + "_" + (doCrossValidation ? "crossval" : evalDataset.label)
         outdir = main.findOutdir(label)
         main.writeCmdLineArgs(outdir)
-
-        main.configureLoggers(outdir)
+        writeParams(outdir)
     }
 
-    void execute(String routineName) {
-        log.info "executing $routineName()"
-        this."$routineName"()  // dynamic exec method
+    void execute() {
+        log.info "executing $command()"
+        this."$command"()  // dynamic exec method
         log.info "results saved to directory [${Futils.absPath(outdir)}]"
     }
 
@@ -68,22 +82,20 @@ class Experiments extends Routine {
 
     /**
      * train/eval on different datasets for different seeds
-     *
-     *
      * collecting train vectors only once and training+evaluatng many times
      */
-    private EvalResults doTrainEval(String outdir) {
+    private static EvalResults doTrainEval(String outdir, Dataset trainData, Dataset evalData) {
 
         TrainEvalRoutine iter = new TrainEvalRoutine(outdir)
-        iter.trainDataSet = trainDataSet
-        iter.evalDataSet = evalDataSet
+        iter.trainDataSet = trainData
+        iter.evalDataSet = evalData
         iter.collectTrainVectors()
         //iter.collectEvalVectors() // for further inspection
 
         EvalRoutine trainRoutine = new EvalRoutine(outdir) {
             @Override
             EvalResults execute() {
-                iter.outdir = this.outdir // is set to "../seed.xx" by SeedLoop
+                iter.outdir = getEvalRoutineOutir() // is set to "../seed.xx" by SeedLoop
                 iter.trainAndEvalModel()
                 return iter.evalRoutine.results
             }
@@ -95,8 +107,8 @@ class Experiments extends Routine {
     /**
      * implements command: 'prank traineval...  '
      */
-    EvalResults traineval() {
-        doTrainEval(outdir)
+    public EvalResults traineval() {
+        doTrainEval(outdir, trainDataset, evalDataset)
     }
 
 //===========================================================================================================//
@@ -106,39 +118,70 @@ class Experiments extends Routine {
      */
     public ploop() {
 
-        loopParams(RangeParam.parseRangedArgs(cmdLineArgs))
+        gridOptimize(ListParam.parseListArgs(cmdLineArgs))
     }
 
-    private void loopParams(List<RangeParam> rparams) {
+    private void gridOptimize(List<ListParam> rparams) {
 
-        log.info "Ranged params: " + rparams.toListString()
+        log.info "List variables: " + rparams.toListString()
 
         String topOutdir = outdir
 
-        new ParamLooper(topOutdir, rparams).iterateSteps { String iterDir ->
-            EvalResults res
-
-            if (doCrossValidation) {
-                EvalRoutine routine = new CrossValidation(iterDir, trainDataSet)
-                res = new SeedLoop(routine, iterDir).execute()
-            } else {
-                res = doTrainEval(iterDir)
-            }
-
-            if (params.ploop_delete_runs) {
-                async { Futils.delete(iterDir) }
-            }
-
-            if (params.clear_prim_caches) {
-                trainDataSet.clearPrimaryCaches()
-                evalDataSet?.clearPrimaryCaches()
-            } else if (params.clear_sec_caches) {
-                trainDataSet.clearSecondaryCaches()
-                evalDataSet?.clearSecondaryCaches()
-            }
-
-            return res
+        GridOprimizer go = new GridOprimizer(topOutdir, rparams)
+        go.init()
+        go.runGridOptimization { String iterDir ->
+            return runExperimentStep(iterDir, trainDataset, evalDataset, doCrossValidation)
         }
+    }
+
+    /**
+     * run trineval or crosvalidation with current paramenter assignment
+     */
+    private static EvalResults runExperimentStep(String dir, Dataset trainData, Dataset evalData, boolean doCrossValidation) {
+        EvalResults res
+
+        if (doCrossValidation) {
+            EvalRoutine routine = new CrossValidation(dir, trainData)
+            res = new SeedLoop(routine, dir).execute()
+        } else {
+            res = doTrainEval(dir, trainData, evalData)
+        }
+
+        if (Params.inst.ploop_delete_runs) {
+            async { Futils.delete(dir) }
+        }
+
+        if (Params.inst.clear_prim_caches) {
+            trainData.clearPrimaryCaches()
+            evalData?.clearPrimaryCaches()
+        } else if (Params.inst.clear_sec_caches) {
+            trainData.clearSecondaryCaches()
+            evalData?.clearSecondaryCaches()
+        }
+
+        return res
+    }
+
+//===========================================================================================================//
+
+    /**
+     *  hyperparameter optimization
+     */
+    public hopt() {
+        HyperOptimizer ho = new HyperOptimizer(outdir, ListParam.parseListArgs(cmdLineArgs)).init()
+
+        ho.optimizeParameters {  String stepDir ->
+            return runExperimentStep(stepDir, trainDataset, evalDataset, doCrossValidation)
+        }
+    }
+
+//===========================================================================================================//
+
+    /**
+     *  print parameters and exit
+     */
+    public params() {
+        write params.toString()
     }
 
 }

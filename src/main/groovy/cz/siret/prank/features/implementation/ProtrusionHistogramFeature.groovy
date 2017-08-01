@@ -28,7 +28,7 @@ class ProtrusionHistogramFeature extends SasFeatureCalculator implements Paramet
     }
 
     /**
-     * bins of equal cutoff steps between <MIN_DIST, params.protrusion_radius>
+     * bins of equal cutoff steps between <MIN_DIST, variables.protrusion_radius>
      *
      * @param sasPoint
      * @param context

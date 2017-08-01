@@ -42,7 +42,7 @@ class Main implements Parametrized, Writable {
         ConfigLoader.overrideConfig(params, defaultParams)
         String configParam = configFileParam
 
-        // TODO allow multiple -c params override default+dev+working
+        // TODO allow multiple -c variables override default+dev+working
         if (configParam!=null) {
 
             if (!configParam.endsWith(".groovy") && Futils.exists(configParam+".groovy"))  {
@@ -257,7 +257,7 @@ class Main implements Parametrized, Writable {
 
     private runExperiment(String routineName) {
 
-        new Experiments(args, this).execute(routineName)
+        new Experiments(args, this, routineName).execute()
     }
 
     private runCrossvalidation() {
@@ -292,8 +292,8 @@ class Main implements Parametrized, Writable {
 
         installDir = findInstallDir()
 
-        if (command=="ploop") {
-            args.hasRangedParams = true
+        if (command in ["ploop","hopt"]) {
+            args.hasListParams = true
         }
 
         if (command=='help' || args.hasSwitch('h','help')) {
@@ -376,19 +376,20 @@ class Main implements Parametrized, Writable {
             main = new Main(parsedArgs)
             error = main.run()
 
-        } catch (PrankException e) {
-
-            error = true
-            writeError e.message
-            log.error(e.message, e)
-            if (main.logManager.loggingToFile) {
-                write "For details see log file: '$main.logManager.logFile'"
-            }
-
         } catch (Exception e) {
 
             error = true
-            writeError e.getMessage(), e // on unknown exception also print stack trace
+
+            if (e instanceof PrankException) {
+                writeError e.message
+                log.error(e.message, e)
+            } else {
+                writeError e.getMessage(), e // on unknown exception also print stack trace
+            }
+
+            if (main!=null && main.logManager.loggingToFile) {
+                write "For details see log file: $main.logManager.logFile"
+            }
 
         }
 

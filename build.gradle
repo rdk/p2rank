@@ -9,7 +9,7 @@ apply plugin: 'idea'
 
 
 group = 'cz.siret'
-version = '2.0-dev.12_SNAPSHOT'
+version = '2.0-dev.12'
 
 description = 'Ligand binding site prediction based on machine learning.'
 
@@ -116,7 +116,9 @@ dependencies {
     compile "org.apache.commons:commons-lang3:3.5"
     compile "commons-io:commons-io:2.5"
     compile "com.google.guava:guava:21.0"
+    compile 'com.google.code.gson:gson:2.8.1'
     compile 'org.zeroturnaround:zt-zip:1.11'
+
 
     compile 'org.slf4j:slf4j-api:1.7.24'
     compile 'org.apache.logging.log4j:log4j-slf4j-impl:2.5' // 2.8 was causing problem with biojava

@@ -180,6 +180,7 @@ class Dataset implements Parametrized {
 
     /**
      * clear cached properties of cached proteins
+     * (clears generated surfaces and secondary data calculated by feature implementations)
      */
     void clearSecondaryCaches() {
         items.each {

@@ -306,7 +306,7 @@ class Params {
     /**
      * minimum cluster size (of ligandable points) for initial clustering
      */
-    double pred_min_cluster_size = 3
+    int pred_min_cluster_size = 3
 
     /**
      * clustering distance for ligandable clusters for second phase clustering
@@ -368,12 +368,12 @@ class Params {
     int train_pockets = 0
 
     /**
-     * clear primary caches (protein structures) between runs (when iterating params or seed)
+     * clear primary caches (protein structures) between runs (when iterating variables or seed)
      */
     boolean clear_prim_caches = false
 
     /**
-     * clear secondary caches (protein surfaces etc.) between runs (when iterating params or seed)
+     * clear secondary caches (protein surfaces etc.) between runs (when iterating variables or seed)
      */
     boolean clear_sec_caches = true
 
@@ -500,6 +500,34 @@ class Params {
      */
     double feat_asa_neigh_radius = 6
 
+    /**
+     * Hyperparameter optimizer implementation (so far only "spearmint")
+     */
+    String hopt_optimizer = "spearmint"
+
+    /**
+     * Spearmint home directory (containing main.py)
+     */
+    String hopt_spearmint_dir = ""
+
+    /**
+     * Statistic to minimize
+     * (minus sign allowed)
+     */
+    String hopt_objective = "-DCA_4_0"
+
+    /**
+     * number of inetarions
+     */
+    int hopt_max_iterations = 100
+
+    /**
+     * randomize seed before every training in experiments
+     */
+    boolean randomize_seed = false
+
+    List<String> selected_stats = ['DCA_4_0', 'DCA_4_2', 'AVG_POCKETS', 'AVG_POCKET_SAS_POINTS', 'LIGAND_COVERAGE']
+
 //===========================================================================================================//
 
     String getVersion() {
@@ -512,7 +540,7 @@ class Params {
 
         applyCmdLineArgs(args)
 
-        // processing of special params
+        // processing of special variables
 
         if (!parallel) {
             threads = 1
@@ -526,7 +554,7 @@ class Params {
     @CompileDynamic
     void applyCmdLineArgs(CmdLineArgs args) {
 
-        boolean filterRanged = args.hasRangedParams
+        boolean filterRanged = args.hasListParams
 
         Params me = this
         me.properties.keySet().each { String propName ->
@@ -534,7 +562,7 @@ class Params {
                 String val = args.get(propName)
 
                 boolean skip = false
-                if (filterRanged && RangeParam.isRangedArgValue(val)) {
+                if (filterRanged && ListParam.isListArgValue(val)) {
                     skip = true
                 }
 
@@ -559,8 +587,6 @@ class Params {
         } else {
             Object pv = me."$pname"
             Class propClass = pv.class
-
-            me.properties
 
             if (pv instanceof List) {
                 if (value instanceof List) {

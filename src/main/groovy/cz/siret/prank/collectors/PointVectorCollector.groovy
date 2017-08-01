@@ -7,6 +7,7 @@ import cz.siret.prank.features.FeatureVector
 import cz.siret.prank.features.PrankFeatureExtractor
 import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.geom.Atoms
+import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.score.criteria.IdentificationCriterium
 import cz.siret.prank.utils.ListUtils
@@ -119,7 +120,11 @@ class PointVectorCollector extends VectorCollector implements Parametrized {
                 }
 
             } catch (Exception e) {
-                log.error("skipping extraction for point, reason: " + e.getMessage(), e)
+                if (params.fail_fast) {
+                    throw new PrankException("failed extraction for point", e)
+                } else {
+                    log.error("skipping extraction for point", e)
+                }
             }
         }
 

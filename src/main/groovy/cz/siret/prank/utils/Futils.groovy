@@ -147,6 +147,10 @@ class Futils {
         }
     }
 
+    static String readFile(String fname) {
+        new File(fname).text
+    }
+
     static void append(String fname, Object text) {
         try {
             new File(fname) << text
@@ -155,9 +159,22 @@ class Futils {
         }
     }
 
+    static void appendl(String fname, Object text) {
+        append(fname, text?.toString() + "\n")
+    }
+
     static List<File> listFiles(String dir, String ext) {
         return new File(dir).listFiles().findAll { it.name ==~ /.*\.$ext/ }.toList()
     }
+
+    static List<File> listFiles(String dir) {
+        return new File(dir).listFiles().toList()
+    }
+
+    static boolean isDirEmpty(String dir) {
+        listFiles(dir).isEmpty()    
+    }
+
 
     static boolean exists(String name) {
         if (name==null) return false
