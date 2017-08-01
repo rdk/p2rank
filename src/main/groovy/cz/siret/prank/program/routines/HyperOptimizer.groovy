@@ -1,5 +1,6 @@
 package cz.siret.prank.program.routines
 
+import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.ListParam
 import cz.siret.prank.program.params.Params
 import cz.siret.prank.program.params.optimizer.HObjectiveFunction
@@ -91,6 +92,12 @@ class HyperOptimizer extends ParamLooper {
             name = name.substring(1)
             sign = -1
         }
+        
+        Double val = (Double) res.stats.get(name)
+        if (val==null) {
+            throw new PrankException("Invalid hopt_objective. Metric with name '$params.hopt_objective' not found.")
+        }
+        
         return sign * (double)res.stats.get(name)
     }
 
