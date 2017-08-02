@@ -600,6 +600,12 @@ class Params {
                 me."$pname" = Boolean.valueOf( value )
             } else if (pv instanceof Integer) {
                 me."$pname" = new Double(""+value).intValue()
+            } else if (pv instanceof String) {
+                String v = (String) value
+                if (v.startsWith("\"") && v.endsWith("\"")) {
+                    v = v.substring(1,v.length()-1)
+                }
+                me."$pname" = v
             } else {
                 me."$pname" = propClass.valueOf( value )
             }
