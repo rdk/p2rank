@@ -75,7 +75,12 @@ abstract class ParamLooper extends Routine {
 
     static String fmt(Object x) {
         if (x==null) return ""
-        sprintf "%8.4f", x
+
+        if (x instanceof Double) {
+            return sprintf("%8.4f", x)
+        } else {
+            return x.toString()
+        }
     }
 
 //===========================================================================================================//
