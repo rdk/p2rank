@@ -75,7 +75,7 @@ abstract class ParamLooper extends Routine {
 
     static String fmt(Object x) {
         if (x==null) return ""
-        sprintf "%8.4f", (double)x
+        sprintf "%8.4f", x
     }
 
 //===========================================================================================================//

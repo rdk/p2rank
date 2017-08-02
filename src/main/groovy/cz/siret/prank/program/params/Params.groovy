@@ -602,6 +602,7 @@ class Params {
                 me."$pname" = new Double(""+value).intValue()
             } else if (pv instanceof String) {
                 String v = (String) value
+                log.info "str: '$v'"
                 if (v.startsWith("\"") && v.endsWith("\"")) {
                     v = v.substring(1,v.length()-1)
                 }
