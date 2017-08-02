@@ -582,11 +582,20 @@ class Params {
 
         String pname = propertyName
         Object me = this
-        if (me."$pname" instanceof String || me."$pname" == null) {
+        Object pv = me."$pname"
+        
+        if (pv == null) {
             me."$pname" = value
+        } else if (pv instanceof String) {
+            String v = (String) value
+            if (v.startsWith("\"") && v.endsWith("\"")) {
+                v = v.substring(1, v.length()-1)
+            }
+            me."$pname" = v
         } else {
-            Object pv = me."$pname"
             Class propClass = pv.class
+
+            log.debug "pv class: {}", propClass
 
             if (pv instanceof List) {
                 if (value instanceof List) {
@@ -600,13 +609,6 @@ class Params {
                 me."$pname" = Boolean.valueOf( value )
             } else if (pv instanceof Integer) {
                 me."$pname" = new Double(""+value).intValue()
-            } else if (pv instanceof String) {
-                String v = (String) value
-                log.info "str: '$v'"
-                if (v.startsWith("\"") && v.endsWith("\"")) {
-                    v = v.substring(1,v.length()-1)
-                }
-                me."$pname" = v
             } else {
                 me."$pname" = propClass.valueOf( value )
             }
