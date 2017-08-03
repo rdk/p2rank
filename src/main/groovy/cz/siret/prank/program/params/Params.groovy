@@ -605,7 +605,11 @@ class Params {
                 }
             } else if (pv instanceof Boolean) {
                 if ("0"==value) value=false
+                if ("0.0"==value) value=false
+                if (0d==value) value=false
                 if ("1"==value) value=true
+                if ("1.0"==value) value=true
+                if (1d==value) value=true
                 me."$pname" = Boolean.valueOf( value )
             } else if (pv instanceof Integer) {
                 me."$pname" = new Double(""+value).intValue()
