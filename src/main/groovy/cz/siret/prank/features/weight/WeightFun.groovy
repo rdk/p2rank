@@ -10,7 +10,7 @@ import groovy.transform.CompileStatic
 @CompileStatic
 abstract class WeightFun implements Parametrized {
 
-    static enum Option { ONE, OLD, NEW, GAUSS, INV, INV2 }
+    static enum Option { ONE, OLD, NEW, GAUSS, INV, INV2, INVPOW }
 
     abstract double weight(double dist);
 
@@ -27,6 +27,7 @@ abstract class WeightFun implements Parametrized {
             case Option.GAUSS : return new Gauss()
             case Option.INV   : return new Inv()
             case Option.INV2  : return new Inv2()
+            case Option.INVPOW  : return new InvPow()
         }
     }
 
@@ -77,6 +78,16 @@ abstract class WeightFun implements Parametrized {
         double rmax = params.neighbourhood_radius
         double weight(double dist) {
             return 1 - dist/rmax
+        }
+    }
+
+    static class InvPow extends WeightFun {
+        double rmax = params.neighbourhood_radius
+        double exp = params.weight_power
+        double weight(double dist) {
+            double weight = 1 - dist/rmax
+            weight = Math.pow(weight, exp)
+            weight
         }
     }
 

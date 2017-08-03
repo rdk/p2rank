@@ -39,7 +39,8 @@ class HyperOptimizer extends ParamLooper {
         String name = p.name
 
         HVariable.Type type = HVariable.Type.FLOAT
-        if (Params.inst."$name" instanceof Integer) {
+        Object paramVal = Params.inst."$name"
+        if (paramVal instanceof Integer || paramVal instanceof Boolean) {
             type = HVariable.Type.INT
         }
 
