@@ -250,6 +250,12 @@ class Params {
     double avg_pow = 1
 
     /**
+     * regarding feature projection to SAS points: calculate weighted average
+     * (shoud be true by default, kept false for backward compatibility reasons)
+     */
+    boolean avg_weighted = false
+
+    /**
      * exponent of point ligandabitity score (before adding it to pocket score)
      */
     double point_score_pow = 2
@@ -554,7 +560,7 @@ class Params {
      */
     boolean randomize_seed = false
 
-    List<String> selected_stats = ['DCA_4_0', 'DCA_4_2', 'AVG_POCKETS', 'AVG_POCKET_SAS_POINTS', 'LIGAND_COVERAGE']
+    List<String> selected_stats = ['DCA_4_0', 'DCA_4_2', 'DCA_4_4', 'AVG_POCKETS', 'AVG_POCKET_SAS_POINTS', 'AVG_POCKET_SAS_POINTS_TRUE_POCKETS', 'TIME_MINUTES']
 
 //===========================================================================================================//
 

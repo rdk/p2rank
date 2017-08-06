@@ -47,7 +47,7 @@ import cz.siret.prank.program.params.Params
      */
     feature_importances = false
 
-    stats_collect_predictions = true
+    stats_collect_predictions = false
 
 
     /**

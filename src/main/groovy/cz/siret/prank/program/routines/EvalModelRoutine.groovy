@@ -95,6 +95,9 @@ class EvalModelRoutine extends EvalRoutine {
                     }
                 }
 
+                if (!dataset.cached) {
+                    item.cachedPair = null
+                }
             }
         });
 

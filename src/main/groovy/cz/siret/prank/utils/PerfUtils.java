@@ -3,7 +3,7 @@ package cz.siret.prank.utils;
 import cz.siret.prank.geom.Atoms;
 import org.biojava.nbio.structure.Atom;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -62,7 +62,7 @@ public class PerfUtils {
 //===============================================================================================//
 
     public static Atoms cutoffAtomsAround(Atoms atoms, Atom distanceTo, double dist) {
-        List<Atom> res = new LinkedList<>();
+        List<Atom> res = new ArrayList<>();
         double sqrDist = dist*dist;
 
         double[] toCoords = distanceTo.getCoords();

@@ -48,6 +48,7 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
     private boolean DO_SMOOTH_REPRESENTATION = params.smooth_representation
     private double SMOOTHING_CUTOFF_DIST = params.smoothing_radius
     private final boolean AVERAGE_FEAT_VECTORS = params.average_feat_vectors
+    private final boolean AVG_WEIGHTED = params.avg_weighted
 
     private final WeightFun weightFun = WeightFun.create(params.weight_function)
 
@@ -265,6 +266,8 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
         //    log.warn "calc from only 1 atom: $a.name $a"
         //}
 
+        double weightSum = 0
+
         for (Atom a : neighbourhoodAtoms) {
             PrankFeatureVector props = (PrankFeatureVector) fromVectors.get(a.PDBserial)
 
@@ -272,14 +275,20 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
 
             double dist = Struct.dist(point, a)
             double weight = calcWeight(dist)
+            weightSum += weight
 
             res.add( props.copy().multiply(weight) )
         }
 
         if (AVERAGE_FEAT_VECTORS) {
-            double multip = Math.pow(n, AVG_POW)
+            double base = n
+            if (AVG_WEIGHTED) {
+                base = weightSum
+            }
 
-            res.multiply(1d/multip)
+            double multip = Math.pow(base, AVG_POW)  // for AVG_POW from <0,1> goes from 'no average, just sum' -> 'full average'
+
+            res.multiply(1d/multip)               // avg
 
             // special cases (TODO: move to ChemFeature)
             if (featureSetup.enabledFeatureNames.contains(ChemFeature.NAME)) {
@@ -296,7 +305,6 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
 
 
         // calculate extra SAS features
-
         SasFeatureCalculationContext context = new SasFeatureCalculationContext(protein, neighbourhoodAtoms, this)
         for (FeatureSetup.Feature feature : featureSetup.enabledSasFeatures) {
             double[] values = feature.calculator.calculateForSasPoint(point, context)

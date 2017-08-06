@@ -15,6 +15,9 @@ import cz.siret.prank.utils.StrUtils
 import groovy.util.logging.Slf4j
 import groovyx.gpars.GParsPool
 
+import java.util.concurrent.Callable
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
@@ -239,14 +242,27 @@ class Dataset implements Parametrized {
             int nt = ThreadPoolFactory.pool.poolSize
             log.info "processing dataset [$name] using $nt threads"
 
-            AtomicInteger counter = new AtomicInteger(1);
+//            AtomicInteger counter = new AtomicInteger(1);
+//            GParsPool.withExistingPool(ThreadPoolFactory.pool) {
+//                items.eachParallel { Item item ->
+//                    int num = counter.getAndAdd(1)
+//                    processItem(item, num, processor, result)
+//                }
+//            }
 
-            GParsPool.withExistingPool(ThreadPoolFactory.pool) {
-                items.eachParallel { Item item ->
-                    int num = counter.getAndAdd(1)
-                    processItem(item, num, processor, result)
-                }
+            ExecutorService executor = Executors.newFixedThreadPool(params.threads)
+            List<Callable> tasks = new ArrayList<>()
+            items.eachWithIndex { Item item, int idx ->
+                int num = idx + 1
+                tasks.add(new Callable() {
+                    @Override
+                    Object call() throws Exception {
+                        processItem(item, num, processor, result)
+                    }
+                })
             }
+            executor.invokeAll(tasks)
+
 
         } else {
             log.info "processing dataset [$name] using 1 thread"

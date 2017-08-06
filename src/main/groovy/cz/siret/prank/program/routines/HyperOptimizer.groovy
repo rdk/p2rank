@@ -76,6 +76,9 @@ class HyperOptimizer extends ParamLooper {
                 try {
                     EvalResults res = processStep(step, "step.$stepNumber", evalClosure)
                     val = getObjectiveValue(res)
+
+                    // TOTO: write selected stats file sorted by hopt_objective
+
                 } catch (Exception e) {
                     log.error("Couldn't process grid optimization step $stepNumber", e)
                     val = Double.NaN
@@ -106,7 +109,7 @@ class HyperOptimizer extends ParamLooper {
         // TODO: other optimizers
 
         Path spearmintDir = Paths.get( Futils.absSafePath(params.hopt_spearmint_dir) )
-        Path expeimentDir = Paths.get( Futils.absSafePath("$outdir/spearmint") )
+        Path expeimentDir = Paths.get( Futils.absSafePath("$outdir/hopt") )
 
         HOptimizer optimizer = new HSpearmintOptimizer(spearmintDir, expeimentDir)
         optimizer.withMaxIterations(params.hopt_max_iterations)
