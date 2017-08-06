@@ -13,7 +13,6 @@ import org.biojava.nbio.structure.Group
 class LabeledPoint implements Atom {
 
     Atom point //@Delegate
-//    int PDBserial
 
     /**
      * ligandability score histogram - direct output of classifier (hist[0]=unligandable,hist[1]=ligandable)
@@ -46,18 +45,6 @@ class LabeledPoint implements Atom {
     }
 
 //===========================================================================================================//
-
-//    double[] getCoords() {
-//        return point.coords
-//    }
-//
-//    int getPDBserial() {
-//        return PDBserial
-//    }
-//
-//    void setPDBserial(int PDBserial) {
-//        this.PDBserial = PDBserial
-//    }
 
     /**
      * @return predicted lgandability score from interval <0,1> (aggregated from histogram)
@@ -222,6 +209,5 @@ class LabeledPoint implements Atom {
     public void toPDB(StringBuffer stringBuffer) {
         point.toPDB(stringBuffer);
     }
-
 
 }

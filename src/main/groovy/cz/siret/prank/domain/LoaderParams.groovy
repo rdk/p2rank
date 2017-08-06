@@ -4,7 +4,7 @@ import cz.siret.prank.program.params.Params
 import groovy.transform.TupleConstructor
 
 /**
- *
+ * Protein file loader parameters
  */
 @TupleConstructor
 class LoaderParams {
@@ -16,6 +16,10 @@ class LoaderParams {
 
     boolean relevantLigandsDefined
     Set<String> relevantLigandNames = new HashSet<>()
+
+    boolean load_conservation_paths
+    boolean load_conservation
+    String conservation_origin
 
     int minLigandAtoms = Params.inst.min_ligand_atoms
 

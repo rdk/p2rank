@@ -7,6 +7,7 @@ import cz.siret.prank.domain.Dataset
 import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.features.FeatureVector
+import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.score.criteria.DCA
 import cz.siret.prank.score.criteria.IdentificationCriterium
 import cz.siret.prank.utils.Futils
@@ -73,8 +74,9 @@ class CollectVectorsRoutine extends Routine {
             void processItem(Dataset.Item item) {
                 PredictionPair pair = item.predictionPair
 
+                
                 final VectorCollector collector = new PointVectorCollector(extractor, identifiedPocketAssessor)
-                final VectorCollector.Result res = collector.collectVectors(pair)
+                final VectorCollector.Result res = collector.collectVectors(pair, item.getContext())
 
                 Instances inst = WekaUtils.createDatasetWithBinaryClass(extractor.vectorHeader)
                 for (FeatureVector v : res.vectors) {

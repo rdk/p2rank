@@ -1,6 +1,7 @@
 package cz.siret.prank.features.implementation
 
 import cz.siret.prank.domain.Protein
+import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.features.api.SasFeatureCalculationContext
 import cz.siret.prank.features.api.SasFeatureCalculator
 import cz.siret.prank.geom.Atoms
@@ -48,7 +49,7 @@ class Asa2Feature extends SasFeatureCalculator implements Parametrized, Writable
     }
 
     @Override
-    void preProcessProtein(Protein protein) {
+    void preProcessProtein(Protein protein, ProcessedItemContext context) {
         if (!protein.secondaryData.containsKey("prot_atom_asa")) {
             protein.secondaryData.put "prot_atom_asa", calcProtAsa(protein, params.feat_asa_probe_radius)
         }

@@ -8,7 +8,7 @@ import org.biojava.nbio.structure.Atom
 
 /**
  * Simple single value SAS feature that adds "ptortusion" of protein surface to SAS feature vector.
- * Protrusion is simply a number of protein atoms in params.protrusion_radius around SAS point.
+ * Protrusion is simply a number of protein atoms in variables.protrusion_radius around SAS point.
  */
 @CompileStatic
 class ProtrusionFeature extends SasFeatureCalculator implements Parametrized {

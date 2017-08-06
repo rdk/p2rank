@@ -5,6 +5,7 @@ import cz.siret.prank.domain.Prediction
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.features.FeatureVector
 import cz.siret.prank.features.PrankFeatureExtractor
+import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.rendering.LabeledPoint
 import cz.siret.prank.score.metrics.ClassifierStats
@@ -63,9 +64,9 @@ class WekaSumRescorer extends PocketRescorer implements Parametrized  {
      * @param ligandedProtein can be null - in not used for evaluating statistics
      */
     @Override
-    void rescorePockets(Prediction prediction) {
+    void rescorePockets(Prediction prediction, ProcessedItemContext context) {
 
-        FeatureExtractor proteinExtractor = extractorFactory.createPrototypeForProtein(prediction.protein)
+        FeatureExtractor proteinExtractor = extractorFactory.createPrototypeForProtein(prediction.protein, context)
 
         alloc = new double[proteinExtractor.vectorHeader.size() + 1] // one additional for stupid weka class
         auxInst = new DenseInstance( 1, alloc )

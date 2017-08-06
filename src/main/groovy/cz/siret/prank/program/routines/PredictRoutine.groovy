@@ -24,7 +24,6 @@ import static cz.siret.prank.utils.Futils.writeFile
  *
  * Backs prank commands 'predict' and 'eval-predict'
  *
- *
  */
 @Slf4j
 @CompileStatic
@@ -83,7 +82,7 @@ class PredictRoutine extends Routine {
 
                 PredictionPair pair = item.predictionPair
                 PocketRescorer rescorer = new WekaSumRescorer(classifier, extractor)
-                rescorer.reorderPockets(pair.prediction) // in this context reorderPockets() makes predictions
+                rescorer.reorderPockets(pair.prediction, item.getContext()) // in this context reorderPockets() makes predictions
 
                 if (produceVisualizations) {
                     new PyMolRenderer(visDir).visualizeHistograms(item, rescorer, pair)

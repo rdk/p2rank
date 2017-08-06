@@ -1,12 +1,11 @@
 # training/evaluating dataset
 
-PARAM.METHOD=fpocket
+PARAM.PREDICTION_METHOD=fpocket
 
 # uncomment if ligands are separated with TER record:
 PARAM.LIGANDS_SEPARATED_BY_TER=true
 
-
-# pocket-prediction-output-pdb   liganated-protein-pdb
+HEADER: prediction protein
 
 fpocket/1a82a_out/1a82a_out.pdb  liganated/1a82a.pdb
 fpocket/1aaxa_out/1aaxa_out.pdb  liganated/1aaxa.pdb

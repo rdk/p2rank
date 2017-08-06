@@ -9,7 +9,7 @@ apply plugin: 'idea'
 
 
 group = 'cz.siret'
-version = '2.0-dev.8'
+version = '2.0-dev.12'
 
 description = 'Ligand binding site prediction based on machine learning.'
 
@@ -116,6 +116,7 @@ dependencies {
     compile "org.apache.commons:commons-lang3:3.5"
     compile "commons-io:commons-io:2.5"
     compile "com.google.guava:guava:21.0"
+    compile 'com.google.code.gson:gson:2.8.1'
     compile 'org.zeroturnaround:zt-zip:1.11'
 
     compile group: 'com.univocity', name: 'univocity-parsers', version: '2.4.0' // For parsing csv

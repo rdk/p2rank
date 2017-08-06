@@ -1,6 +1,7 @@
 package cz.siret.prank.features.implementation
 
 import cz.siret.prank.domain.Protein
+import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.features.api.SasFeatureCalculationContext
 import cz.siret.prank.features.api.SasFeatureCalculator
 import cz.siret.prank.geom.Atoms
@@ -26,7 +27,7 @@ class AsaResiduesFeature extends SasFeatureCalculator implements Parametrized {
     String getName() { NAME }
 
     @Override
-    void preProcessProtein(Protein protein) {
+    void preProcessProtein(Protein protein, ProcessedItemContext context) {
         double probeRadius = params.feat_asa_probe_radius
         int nSpherePoints = AsaCalculator.DEFAULT_N_SPHERE_POINTS
         int threads = 1

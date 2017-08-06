@@ -136,8 +136,6 @@ class FPockeLoader extends PredictionLoader {
         return struc
     }
 
-
-
     /**
      HEADER 0  - Pocket Score                      : -1.5909
      HEADER 1  - Number of V. Vertices             :    54

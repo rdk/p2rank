@@ -19,6 +19,7 @@ distro/test_output/
 
 logs/*
 *.log
+out/*
 
 /local*
 

@@ -1,6 +1,7 @@
 package cz.siret.prank.features.implementation.conservation
 
 import cz.siret.prank.domain.Protein
+import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.features.api.SasFeatureCalculationContext
 import cz.siret.prank.features.api.SasFeatureCalculator
 import cz.siret.prank.geom.Atoms
@@ -23,13 +24,11 @@ class ConservationCloudScaledFeature extends SasFeatureCalculator implements Par
     String getName() { NAME }
 
     @Override
-    void preProcessProtein(Protein protein) {
+    void preProcessProtein(Protein protein, ProcessedItemContext itemContext) {
         // Check if conservation is already loaded.
         if (!protein.secondaryData.getOrDefault(ConservationScore.conservationLoadedKey, false)) {
             // Load conservation score.
-            ConservationScore score = ConservationScore.fromFiles(protein.structure, protein.conservationPathForChain)
-            protein.secondaryData.put(ConservationScore.conservationScoreKey, score)
-            protein.secondaryData.put(ConservationScore.conservationLoadedKey, true)
+            protein.loadConservationScores(itemContext)
         }
     }
 

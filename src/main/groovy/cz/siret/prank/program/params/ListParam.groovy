@@ -7,21 +7,22 @@ import cz.siret.prank.utils.StrUtils
 import groovy.transform.CompileStatic
 
 /**
- * parameter witch range of values
+ * Parameter which represents s list of values (defined explicitely or as range and step)
+ * Used in grid optimization with 'prank ploop'
  */
 @CompileStatic
-class RangeParam {
+class ListParam {
 
     String name
     List values
 
-    RangeParam(String name, List values) {
+    ListParam(String name, List values) {
         this.name = name
         this.values = values
     }
 
-    static RangeParam parse(String name, String svals) {
-        RangeParam res = new RangeParam(name, null)
+    static ListParam parse(String name, String svals) {
+        ListParam res = new ListParam(name, null)
 
         def inner = svals.substring(1, svals.length()-1)
 
@@ -58,20 +59,20 @@ class RangeParam {
         return res
     }
 
-    static boolean isRangedArgValue(String value) {
+    static boolean isListArgValue(String value) {
         ( value.startsWith("[") && value.contains(":") ) || ( value.startsWith("(") && value.contains(",") )
     }
 
-    static List<RangeParam> parseRangedArgs(CmdLineArgs args) {
+    static List<ListParam> parseListArgs(CmdLineArgs args) {
         args.namedArgs
-                .findAll { RangeParam.isRangedArgValue(it.value) }
-                .collect { RangeParam.parse(it.name, it.value) }
+                .findAll { isListArgValue(it.value) }
+                .collect { parse(it.name, it.value) }
                 .toList()
     }
 
     @Override
     public String toString() {
-        return "RangeParam{" +
+        return "ListParam{" +
                 "name='" + name + '\'' +
                 ", values=" + values.toListString() +
                 '}';

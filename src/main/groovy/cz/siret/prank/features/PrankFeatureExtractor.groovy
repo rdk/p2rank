@@ -2,6 +2,7 @@ package cz.siret.prank.features
 
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Protein
+import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.features.api.SasFeatureCalculationContext
 import cz.siret.prank.features.generic.GenericHeader
 import cz.siret.prank.features.implementation.chem.ChemFeature
@@ -9,6 +10,7 @@ import cz.siret.prank.features.weight.WeightFun
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Struct
 import cz.siret.prank.geom.samplers.PointSampler
+import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.Parametrized
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
@@ -85,7 +87,7 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
     }
 
     @Override
-    FeatureExtractor createPrototypeForProtein(Protein protein) {
+    FeatureExtractor createPrototypeForProtein(Protein protein, ProcessedItemContext context) {
         PrankFeatureExtractor res = new PrankFeatureExtractor(protein)
         res.trainingExtractor = this.trainingExtractor
 
@@ -94,7 +96,7 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
 
         // init features
         for (FeatureSetup.Feature feature : featureSetup.enabledFeatures) {
-            feature.calculator.preProcessProtein(protein)
+            feature.calculator.preProcessProtein(protein, context)
         }
 
         return res
@@ -251,6 +253,10 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
         //    log.error "!!! can't calc representation from empty list "
         //    return null
         //}
+
+        if (neighbourhoodAtoms.isEmpty()) {
+            throw new PrankException("No neighbourhood atoms. Cannot calculate feature vector. (Isn't neighbourhood_radius too small?)")
+        }
 
         int n = neighbourhoodAtoms.count
 

@@ -19,4 +19,8 @@ class MathUtils {
         return gauss(x,sigma)/gauss(0,sigma)
     }
 
+    static int ranndomInt() {
+        new Random().nextInt()
+    }
+
 }

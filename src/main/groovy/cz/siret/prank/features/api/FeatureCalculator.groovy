@@ -29,7 +29,7 @@ interface FeatureCalculator {
 
     /**
      * Return the header according to current parametrization.
-     * Feature lenght can be parametrized change between runs.
+     * Feature length can be parametrized change between runs.
      */
     List<String> getHeader()
 
@@ -39,13 +39,13 @@ interface FeatureCalculator {
      *
      * @param protein
      */
-    void preProcessProtein(Protein protein)
+    void preProcessProtein(Protein protein, ProcessedItemContext context)
 
     /**
      *
      * @param sasPoint one of the points on the Protein's SAS (Solvent Accessible Surface)
-     * @param context local context for feature calcuation that corresponds to the given SAS point
-     * @return array of values, lenght must be the same as length of the header
+     * @param context local context for feature calculation that corresponds to the given SAS point
+     * @return array of values, length must be the same as length of the header
      */
     double[] calculateForSasPoint(Atom sasPoint, SasFeatureCalculationContext context)
 

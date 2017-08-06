@@ -5,7 +5,9 @@ import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.features.FeatureVector
 import cz.siret.prank.features.PrankFeatureExtractor
+import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.geom.Atoms
+import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.score.criteria.IdentificationCriterium
 import cz.siret.prank.utils.ListUtils
@@ -44,10 +46,10 @@ class PointVectorCollector extends VectorCollector implements Parametrized {
     }
 
     @Override
-    Result collectVectors(PredictionPair pair) {
+    Result collectVectors(PredictionPair pair, ProcessedItemContext context) {
         Result finalRes = new Result()
 
-        FeatureExtractor proteinExtractorPrototype = extractorFactory.createPrototypeForProtein(pair.prediction.protein)
+        FeatureExtractor proteinExtractorPrototype = extractorFactory.createPrototypeForProtein(pair.prediction.protein, context)
 
         Atoms ligandAtoms = getTrainingRelevantLigandAtoms(pair) //pair.liganatedProtein.allLigandAtoms.withKdTreeConditional()
 
@@ -118,7 +120,11 @@ class PointVectorCollector extends VectorCollector implements Parametrized {
                 }
 
             } catch (Exception e) {
-                log.error("skipping extraction for point, reason: " + e.getMessage(), e)
+                if (params.fail_fast) {
+                    throw new PrankException("failed extraction for point", e)
+                } else {
+                    log.error("skipping extraction for point", e)
+                }
             }
         }
 

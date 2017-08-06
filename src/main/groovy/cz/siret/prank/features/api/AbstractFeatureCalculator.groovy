@@ -20,7 +20,7 @@ abstract class AbstractFeatureCalculator implements FeatureCalculator {
     }
 
     @Override
-    void preProcessProtein(Protein protein) {
+    void preProcessProtein(Protein protein, ProcessedItemContext context) {
         // implementation optional
     }
 

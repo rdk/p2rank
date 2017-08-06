@@ -1,38 +1,38 @@
 package cz.siret.prank.program.api;
 
 import cz.siret.prank.domain.Prediction;
+import cz.siret.prank.features.api.ProcessedItemContext;
 import cz.siret.prank.program.params.Params;
 
-import java.io.File;
 import java.nio.file.Path;
-import java.util.function.Function;
 
 /**
  * Facade for making predictions with P2RANK algorithm.
  */
-public interface PrankPredictor {
+public abstract class PrankPredictor {
 
     /**
      * Get config object used by this predictor.
      * (For now still uses global static config object :/)
      * @return
      */
-    Params getParams();
+    public abstract Params getParams();
 
     /**
      * Override default configuration.
-     * @param configFile
+     * @param configFile path to groovy config file
      */
-    void loadConfig(Path configFile);
+    public abstract void loadConfig(Path configFile);
+
 
     /**
      * Run prediction on a single file in memory. No filesystem output is produced.
      *
      * @param proteinFile path to PDB file
-     * @param conservationForChain maps chainId to conservation file. May be null.
+     * @param context allows to specify supplementary data (as in multi-column datasets). May be null
      * @return prediction object containing structure, predicted pockets and labeled points
      */
-    Prediction predict(Path proteinFile, Function<String, File> conservationForChain);
+    public abstract Prediction predict(Path proteinFile, ProcessedItemContext context);
 
     /**
      * Run prediction on a single file and write results to the filesystem to outDir.
@@ -40,9 +40,34 @@ public interface PrankPredictor {
      * (beware of getParams().visualizations setting)
      *
      * @param proteinFile path to PDB file
-     * @param conservationForChain maps chainId to conservation file. May be null.
+     * @param context allows to specify supplementary data (as in multi-column datasets). May be null
      * @return prediction object containing structure, predicted pockets and labeled points
      */
-    Prediction runPrediction(Path proteinFile, Function<String, File> conservationForChain, Path outDir);
+    public abstract Prediction runPrediction(Path proteinFile, Path outDir, ProcessedItemContext context);
+
+
+    // convenience methods
+
+    /**
+     * Run prediction on a single file in memory. No filesystem output is produced.
+     *
+     * @param proteinFile path to PDB file
+     * @return prediction object containing structure, predicted pockets and labeled points
+     */
+    public Prediction predict(Path proteinFile) {
+        return predict(proteinFile, null);
+    }
+
+    /**
+     * Run prediction on a single file and write results to the filesystem to outDir.
+     *
+     * (beware of getParams().visualizations setting)
+     *
+     * @param proteinFile path to PDB file
+     * @return prediction object containing structure, predicted pockets and labeled points
+     */
+    public Prediction runPrediction(Path proteinFile, Path outDir) {
+        return runPrediction(proteinFile, outDir, null);
+    }
 
 }

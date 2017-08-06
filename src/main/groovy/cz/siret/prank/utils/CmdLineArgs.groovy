@@ -8,7 +8,7 @@ package cz.siret.prank.utils
  */
 class CmdLineArgs {
 
-    boolean hasRangedParams = false
+    boolean hasListParams = false
 
     static class NamedArg {
         String name

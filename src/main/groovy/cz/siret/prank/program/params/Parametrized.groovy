@@ -1,7 +1,7 @@
 package cz.siret.prank.program.params
 
 /**
- * provides params attribute for easy access to global parameters
+ * provides params property for easy access to global parameters
  */
 trait Parametrized {
 

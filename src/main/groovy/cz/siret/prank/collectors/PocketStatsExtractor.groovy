@@ -2,6 +2,7 @@ package cz.siret.prank.collectors
 
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.PredictionPair
+import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.score.criteria.IdentificationCriterium
 import cz.siret.prank.utils.ListUtils
 
@@ -14,7 +15,7 @@ class PocketStatsExtractor extends VectorCollector {
     }
 
     @Override
-    Result collectVectors(PredictionPair pair) {
+    Result collectVectors(PredictionPair pair, ProcessedItemContext context) {
 
         Result res = new Result()
 

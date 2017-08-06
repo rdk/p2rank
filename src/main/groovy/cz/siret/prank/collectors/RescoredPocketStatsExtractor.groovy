@@ -2,6 +2,7 @@ package cz.siret.prank.collectors
 
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.PredictionPair
+import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.score.PocketRescorer
 import cz.siret.prank.score.criteria.IdentificationCriterium
 import cz.siret.prank.utils.ListUtils
@@ -17,13 +18,11 @@ class RescoredPocketStatsExtractor extends VectorCollector {
     }
 
     @Override
-    Result collectVectors(PredictionPair pair) {
+    Result collectVectors(PredictionPair pair, ProcessedItemContext context) {
 
         Result res = new Result()
 
-
-        rescorer.rescorePockets(pair.prediction)
-
+        rescorer.rescorePockets(pair.prediction, context)
 
         pair.getCorrectlyPredictedPockets(assessor).each { Pocket pocket ->
             res.add( pocket.stats.getVector() + pocket.newScore + 1 )
@@ -37,7 +36,6 @@ class RescoredPocketStatsExtractor extends VectorCollector {
         }
 
         return res
-
     }
 
     @Override

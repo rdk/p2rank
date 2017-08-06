@@ -3,10 +3,13 @@ package cz.siret.prank.features.implementation.conservation
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.features.api.AtomFeatureCalculationContext
 import cz.siret.prank.features.api.AtomFeatureCalculator
+import cz.siret.prank.features.api.ProcessedItemContext
 import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
 import org.biojava.nbio.structure.Group
 import org.biojava.nbio.structure.GroupType
+
+import java.util.function.Function
 
 /**
  * Simple single value Conservation feature that adds conservation from evolution from HSSP database or conservation pipeline to Atom feature vector.
@@ -20,13 +23,13 @@ class ConservationFeature extends AtomFeatureCalculator {
     }
 
     @Override
-    void preProcessProtein(Protein protein) {
+    void preProcessProtein(Protein protein, ProcessedItemContext itemContext) {
         // Check if conservation is already loaded.
-        if (!protein.secondaryData.getOrDefault(ConservationScore.conservationLoadedKey, false)) {
+        if (!protein.secondaryData.getOrDefault(ConservationScore.conservationLoadedKey, false)
+                && itemContext.auxData.getOrDefault(ConservationScore.conservationScoreKey,
+                null) != null) {
             // Load conservation score.
-            ConservationScore score = ConservationScore.fromFiles(protein.structure, protein.conservationPathForChain)
-            protein.secondaryData.put(ConservationScore.conservationScoreKey, score)
-            protein.secondaryData.put(ConservationScore.conservationLoadedKey, true)
+            protein.loadConservationScores(itemContext)
         }
     }
 
@@ -37,7 +40,7 @@ class ConservationFeature extends AtomFeatureCalculator {
             return [0.0] as double[]
         }
 
-        ConservationScore score = (ConservationScore)protein.protein.secondaryData.get(ConservationScore.conservationScoreKey)
+        ConservationScore score = (ConservationScore) protein.protein.secondaryData.get(ConservationScore.conservationScoreKey)
         if (score == null) {
             return [0.0] as double[]
         } else {
