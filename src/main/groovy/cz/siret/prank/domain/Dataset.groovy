@@ -41,6 +41,7 @@ class Dataset implements Parametrized {
     static final String COLUMN_PROTEIN = "protein"
     static final String COLUMN_PREDICTION = "prediction"
     static final String COLUMN_LIGAND_CODES = "ligand_codes"
+    static final String COLUMN_CONSERVATION_FILES_PATTERN = "conservation_files_pattern"
 
     static final List<String> DEFAULT_HEADER = [ COLUMN_PROTEIN ]
 
@@ -87,7 +88,7 @@ class Dataset implements Parametrized {
         }
 
         PredictionPair loadPredictionPair() {
-            getLoader(this).loadPredictionPair(proteinFile, pocketPredictionFile)
+            getLoader(this).loadPredictionPair(proteinFile, pocketPredictionFile, getContext())
         }
 
         /**
@@ -310,6 +311,9 @@ class Dataset implements Parametrized {
             res.loaderParams.ligandsSeparatedByTER = (attributes.get(PARAM_LIGANDS_SEPARATED_BY_TER) == "true")  // for bench11 dataset
             res.loaderParams.relevantLigandsDefined = hasLigandCodes()
             res.loaderParams.relevantLigandNames = item.getLigandCodes()
+            res.loaderParams.load_conservation_paths = (params.extra_features.any{s->s.contains("conservation")} || params.load_conservation)
+            res.loaderParams.load_conservation = params.load_conservation
+            res.loaderParams.conservation_origin = params.conservation_origin
         }
 
         return res
@@ -464,6 +468,10 @@ class Dataset implements Parametrized {
         List<String> cols = SPLITTER.splitToList(line)
         Map<String, String> colValues = new HashMap<>()
         header.eachWithIndex { String col, int i ->
+            if (col == COLUMN_CONSERVATION_FILES_PATTERN && !cols[i].contains("%chainID%")) {
+                throw new PrankException("invalid conservation files pattern." + cols[i] + "does " +
+                        "not contain %chainID% substring.")
+            }
             colValues.put(col, cols[i])
         }
         return createNewItem(colValues)

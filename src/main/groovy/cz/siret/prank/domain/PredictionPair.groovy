@@ -2,6 +2,8 @@ package cz.siret.prank.domain
 
 import cz.siret.prank.score.criteria.IdentificationCriterium
 
+import java.util.function.Function
+
 /**
  * Pair of pocket prediction result and liganated structure (with correct ligand/pocket positions)
  */
@@ -10,6 +12,7 @@ class PredictionPair {
     String name
     Prediction prediction
     Protein liganatedProtein
+    Function<String, File> conservationPathForChain;
 
     /**
      * first is 1
