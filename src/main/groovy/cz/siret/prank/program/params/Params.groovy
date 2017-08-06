@@ -90,6 +90,29 @@ class Params {
 
     boolean protr_hist_cumulative = false
 
+    /**
+     * conservation parameteres
+     */
+    boolean load_conservation = false // always load conservation (for stats)
+
+    String score_pockets_by = "p2rank" // possible values: "p2rank", "conservation", "combi"
+
+    /**
+     * Conservation exponent for rescoring pockets
+     */
+    int conservation_exponent = 1
+
+    /**
+     * Conservation file with this pattern is loaded:
+     * baseName + chainId + "." + origin + ".hom.gz"
+     */
+    String conservation_origin = "hssp";
+
+    /**
+     * Log scores for binding and nonbinding scores to file
+     */
+    String log_scores_to_file = "";
+
     //== CLASSIFIERS ===================
 
     /**
@@ -275,6 +298,11 @@ class Params {
      * copy all protein pdb files to visualization folder (making visualizations portable)
      */
     boolean vis_copy_proteins = true
+
+    /**
+     * zip PyMol visualizations to save space
+     */
+    boolean zip_visualizations = false
 
     /**
      * use sctrictly inner pocket points or more wider pocket neighbourhood

@@ -10,6 +10,9 @@ import cz.siret.prank.features.implementation.ProtrusionHistogramFeature
 import cz.siret.prank.features.implementation.SurfaceProtrusionFeature
 import cz.siret.prank.features.implementation.XyzDummyFeature
 import cz.siret.prank.features.implementation.chem.ChemFeature
+import cz.siret.prank.features.implementation.conservation.ConservationFeature
+import cz.siret.prank.features.implementation.conservation.ConservationCloudFeature
+import cz.siret.prank.features.implementation.conservation.ConservationCloudScaledFeature
 import cz.siret.prank.features.implementation.volsite.VolsiteFeature
 import cz.siret.prank.program.PrankException
 import groovy.transform.CompileStatic
@@ -47,6 +50,9 @@ class FeatureRegistry {
         registerFeature(new SurfaceProtrusionFeature())
         registerFeature(new BfactorFeature())
         registerFeature(new ProtrusionHistogramFeature())
+        registerFeature(new ConservationFeature())
+        registerFeature(new ConservationCloudFeature())
+        registerFeature(new ConservationCloudScaledFeature())
         registerFeature(new ContactResiduesPositionFeature())
         registerFeature(new AsaFeature())
         registerFeature(new Asa2Feature())

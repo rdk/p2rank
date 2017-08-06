@@ -2,6 +2,7 @@ package cz.siret.prank.score.prediction
 
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Protein
+import cz.siret.prank.features.implementation.conservation.ConservationScore
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Struct
 import cz.siret.prank.program.params.Parametrized
@@ -75,6 +76,26 @@ class PocketPredictor implements Parametrized {
             
             double score = (double) pocketPoints.collect { score((LabeledPoint)it, connollyPoints) }.sum(0)
             Atoms pocketSurfaceAtoms = protein.exposedAtoms.cutoffAtoms(pocketPoints, POCKET_PROT_SURFACE_CUTOFF)
+
+            try {
+                if (params.score_pockets_by == "conservation" || params.score_pockets_by == "combi") {
+                    if (protein.secondaryData.getOrDefault(ConservationScore.conservationLoadedKey,
+                            false)) {
+                        ConservationScore conservationScore = protein.secondaryData.get(ConservationScore.conservationScoreKey)
+                        double avgConservation = pocketSurfaceAtoms.distinctGroups.stream()
+                                .mapToDouble({
+                            group -> conservationScore.getScoreForResidue(group.getResidueNumber())
+                        }).average().getAsDouble()
+                        if (params.score_pockets_by == "conservation") {
+                            score = avgConservation;
+                        } else {
+                            score *= avgConservation;
+                        }
+                    }
+                }
+            } catch (ignored){
+                log.warn "Could not score pockets using [${params.score_pockets_by}]"
+            }
 
             PrankPocket p = new PrankPocket(clusterPoints.centerOfMass, score, clusterPoints) // or pocketPoints ?
             p.surfaceAtoms = pocketSurfaceAtoms

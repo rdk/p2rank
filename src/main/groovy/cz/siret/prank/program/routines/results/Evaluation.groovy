@@ -4,7 +4,9 @@ import cz.siret.prank.domain.Ligand
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.domain.Protein
+import cz.siret.prank.features.implementation.conservation.ConservationScore
 import cz.siret.prank.geom.Atoms
+import cz.siret.prank.program.params.Params
 import cz.siret.prank.program.rendering.LabeledPoint
 import cz.siret.prank.score.criteria.*
 import groovy.util.logging.Slf4j
@@ -31,6 +33,9 @@ class Evaluation {
     List<ProteinRow> proteinRows = Collections.synchronizedList(new ArrayList<>())
     List<LigRow> ligandRows = Collections.synchronizedList(new ArrayList<>())
     List<PocketRow> pocketRows = Collections.synchronizedList(new ArrayList<>())
+
+    List<Double> bindingScores = Collections.synchronizedList(new ArrayList<Double>());
+    List<Double> nonBindingScores = Collections.synchronizedList(new ArrayList<Double>());
 
     int proteinCount
     int pocketCount
@@ -84,6 +89,15 @@ class Evaluation {
         return res
     }
 
+    private double getAvgConservationForAtoms(Atoms atoms, ConservationScore score) {
+        if (atoms.distinctGroups.size() == 0) {
+            return 0.0
+        }
+        return atoms.distinctGroups.stream().mapToDouble( {
+            group->score.getScoreForResidue(group.getResidueNumber())})
+                .average().getAsDouble()
+    }
+
     void addPrediction(PredictionPair pair, List<Pocket> pockets) {
 
         List<LigRow> tmpLigRows = new ArrayList<>()
@@ -116,6 +130,28 @@ class Evaluation {
         int n_ligSasPoints = ligSasPoints.count
         int n_ligSasPointsCovered = ligSasPoints.toList().findAll { ((LabeledPoint)it).predicted }.toList().size()
         log.debug "XXXX n_ligSasPoints: {} covered: {}", n_ligSasPoints, n_ligSasPointsCovered
+
+        // Conservation stats
+        ConservationScore score = lp.secondaryData.get(ConservationScore.conservationScoreKey)
+        List<Double> bindingScrs = new ArrayList<>();
+        List<Double> nonBindingScrs = new ArrayList<>();
+        if (score != null) {
+            protRow.avgConservation = getAvgConservationForAtoms(lp.proteinAtoms, score)
+            Atoms bindingAtoms = lp.proteinAtoms.cutoffAtoms(lp.allLigandAtoms, lp.params.ligand_protein_contact_distance)
+            protRow.avgBindingConservation = getAvgConservationForAtoms(bindingAtoms, score)
+            Atoms nonBindingAtoms = lp.proteinAtoms - bindingAtoms
+            protRow.avgNonBindingConservation = getAvgConservationForAtoms(nonBindingAtoms, score)
+
+            if (!lp.params.log_scores_to_file.isEmpty()) {
+                bindingScrs = bindingAtoms.distinctGroups.collect { it ->
+                    score.getScoreForResidue(it
+                            .getResidueNumber())
+                }.toList();
+                nonBindingScrs = nonBindingAtoms.distinctGroups.collect { it ->
+                    score.getScoreForResidue(it.getResidueNumber())
+                }
+            }
+        }
 
         for (Ligand lig in pair.liganatedProtein.ligands) {
             LigRow row = new LigRow()
@@ -159,8 +195,19 @@ class Evaluation {
 
             prow.auxInfo = pocket.auxInfo
 
+            if (score != null) {
+                prow.avgConservation = getAvgConservationForAtoms(pocket.surfaceAtoms, score)
+            }
+
             tmpPockets.add(prow)
         }
+        List<PocketRow> conservationSorted = tmpPockets.toSorted {it.avgConservation}.reverse(true)
+        List<PocketRow> combiSorted = tmpPockets.toSorted { (Math.pow(it.avgConservation, lp.params.conservation_exponent) * it.newScore)}.reverse(true)
+        for (PocketRow prow : tmpPockets) {
+            prow.conservationRank = conservationSorted.indexOf(prow) + 1
+            prow.combinedRank = combiSorted.indexOf(prow) + 1
+        }
+
 
         synchronized (this) {
             ligandCount += pair.ligandCount
@@ -174,6 +221,11 @@ class Evaluation {
             pocketRows.addAll(tmpPockets)
             ligSASPointsCount += n_ligSasPoints
             ligSASPointsCoveredCount += n_ligSasPointsCovered
+
+            if (!lp.params.log_scores_to_file.isEmpty()) {
+                bindingScores.addAll(bindingScrs);
+                nonBindingScores.addAll(nonBindingScrs);
+            }
         }
     }
 
@@ -189,6 +241,9 @@ class Evaluation {
         distantLigandCount += eval.distantLigandCount
         ligSASPointsCount += eval.ligSASPointsCount
         ligSASPointsCoveredCount += eval.ligSASPointsCoveredCount
+
+        bindingScores.addAll(eval.bindingScores);
+        nonBindingScores.addAll(eval.nonBindingScores);
     }
 
     double calcSuccRate(int assesorNum, int tolerance) {
@@ -340,6 +395,9 @@ class Evaluation {
         m.AVG_PROT_ATOMS =  avgProteinAtoms
         m.AVG_PROT_EXPOSED_ATOMS = avgExposedAtoms
         m.AVG_PROT_SAS_POINTS =  avgProteinConollyPoints
+        m.AVG_PROT_CONSERVATION = avg(proteinRows, {it -> it.avgConservation})
+        m.AVG_PROT_BINDING_CONSERVATION = avg(proteinRows, {it -> it.avgBindingConservation})
+        m.AVG_PROT_NON_BINDING_CONSERVATION = avg(proteinRows, {it -> it.avgNonBindingConservation})
 
         m.AVG_LIG_CENTER_TO_PROT_DIST = avgLigCenterToProtDist
         m.AVG_LIG_CLOSTES_POCKET_DIST = avgClosestPocketDist
@@ -352,6 +410,17 @@ class Evaluation {
         m.AVG_POCKET_SAS_POINTS_TRUE_POCKETS = avgPocketInnerPointsTruePockets
         m.AVG_POCKET_VOLUME =  avgPocketVolume
         m.AVG_POCKET_VOLUME_TRUE_POCKETS =  avgPocketVolumeTruePockets
+
+        m.AVG_POCKET_CONSERVATION = avg pocketRows, { it.avgConservation }
+        m.AVG_TRUE_POCKET_CONSERVATION = avg pocketRows.findAll { it.truePocket }, { it.avgConservation }
+        m.AVG_FALSE_POCKET_CONSERVATION = avg pocketRows.findAll { !it.truePocket }, { it.avgConservation }
+
+        m.AVG_TRUE_POCKET_PRANK_RANK = avg pocketRows.findAll { it.truePocket }, { it.newRank }
+        m.AVG_FALSE_POCKET_PRANK_RANK = avg pocketRows.findAll { !it.truePocket }, { it.newRank }
+        m.AVG_TRUE_POCKET_CONSERVATION_RANK = avg pocketRows.findAll { it.truePocket }, { it.conservationRank }
+        m.AVG_FALSE_POCKET_CONSERVATION_RANK = avg pocketRows.findAll { !it.truePocket }, { it.conservationRank }
+        m.AVG_TRUE_POCKET_COMBINED_RANK = avg pocketRows.findAll { it.truePocket }, { it.combinedRank }
+        m.AVG_FALSE_POCKET_COMBINED_RANK = avg pocketRows.findAll { !it.truePocket }, { it.combinedRank }
 
         m.DCA_4_0 = calcDefaultCriteriumSuccessRate(0)
         m.DCA_4_1 = calcDefaultCriteriumSuccessRate(1)
@@ -368,6 +437,17 @@ class Evaluation {
         m.DSA_3_2 = calcSuccRate(33,2)
 
         m.DCA_4_0_NOMINAL = m.DCA_4_0 * m.LIGANDS
+
+        if (!Params.inst.log_scores_to_file.isEmpty()) {
+            PrintWriter w = new PrintWriter(new BufferedWriter(
+                    new FileWriter(Params.inst.log_scores_to_file, true)));
+            w.println("First line of the file");
+            nonBindingScores.forEach({ it -> w.print(it); w.print(' ') });
+            w.println()
+            bindingScores.forEach({ it -> w.print(it); w.print(' ') });
+            w.println()
+            w.close();
+        }
 
         return m
     }
@@ -472,6 +552,12 @@ class Evaluation {
         int distantLigands
         String distantLigNames
 
+        int connollyPoints
+
+        double avgConservation
+        double avgBindingConservation
+        double avgNonBindingConservation
+
         int sasPoints
     }
 
@@ -502,7 +588,12 @@ class Evaluation {
         double newRank
         double newScore
 
+        int conservationRank
+        int combinedRank
+
         Pocket.AuxInfo auxInfo
+
+        double avgConservation
 
         boolean isTruePocket() {
             StringUtils.isNotEmpty(ligName)

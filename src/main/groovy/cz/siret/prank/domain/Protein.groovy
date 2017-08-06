@@ -1,5 +1,7 @@
 package cz.siret.prank.domain
 
+import cz.siret.prank.features.api.ProcessedItemContext
+import cz.siret.prank.features.implementation.conservation.ConservationScore
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Surface
 import cz.siret.prank.program.PrankException
@@ -8,6 +10,8 @@ import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.PDBUtils
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Structure
+
+import java.util.function.Function
 
 /**
  * encapsulates protein structure with ligands
@@ -60,7 +64,7 @@ class Protein implements Parametrized {
     }
 
     void calcuateSurfaceAndExposedAtoms() {
-        if (exposedAtoms==null) {
+        if (exposedAtoms == null) {
             if (proteinAtoms.empty) {
                 throw new PrankException("Protein with no chain atoms [$name]!")
             }
@@ -70,6 +74,14 @@ class Protein implements Parametrized {
             log.info "connolly surface points: $connollySurface.points.count"
             log.info "exposed protein atoms: $exposedAtoms.count of $proteinAtoms.count"
         }
+    }
+
+    void loadConservationScores(ProcessedItemContext itemContext) {
+        log.info "loading conservation scores"
+        ConservationScore score = ConservationScore.fromFiles(structure, (Function<String, File>)
+                itemContext.auxData.get(ConservationScore.conservationScoreKey))
+        secondaryData.put(ConservationScore.conservationScoreKey, score)
+        secondaryData.put(ConservationScore.conservationLoadedKey, true)
     }
 
     Atoms getExposedAtoms() {
@@ -86,14 +98,14 @@ class Protein implements Parametrized {
     }
 
     Surface getConnollySurface() {
-        if (connollySurface==null) {
+        if (connollySurface == null) {
             connollySurface = Surface.computeConnollySurface(proteinAtoms, params.solvent_radius, params.tessellation)
         }
         return connollySurface
     }
 
     Surface getTrainSurface() {
-        if (trainSurface==null) {
+        if (trainSurface == null) {
             boolean TRAIN_SURFACE_DIFFERENT = params.tessellation != params.train_tessellation
             if (TRAIN_SURFACE_DIFFERENT) {
                 trainSurface = Surface.computeConnollySurface(proteinAtoms, params.solvent_radius, params.train_tessellation)
@@ -103,7 +115,7 @@ class Protein implements Parametrized {
             }
 
         }
-        return  trainSurface
+        return trainSurface
     }
 
     /**
