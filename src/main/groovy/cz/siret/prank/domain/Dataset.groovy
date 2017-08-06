@@ -262,7 +262,7 @@ class Dataset implements Parametrized {
                 })
             }
             executor.invokeAll(tasks)
-
+            executor.shutdownNow();
 
         } else {
             log.info "processing dataset [$name] using 1 thread"
