@@ -311,8 +311,7 @@ class Dataset implements Parametrized {
             res.loaderParams.ligandsSeparatedByTER = (attributes.get(PARAM_LIGANDS_SEPARATED_BY_TER) == "true")  // for bench11 dataset
             res.loaderParams.relevantLigandsDefined = hasLigandCodes()
             res.loaderParams.relevantLigandNames = item.getLigandCodes()
-            res.loaderParams.load_conservation_paths = (params.extra_features.any{s->s.contains
-                ("conservation")} || params.load_conservation)
+            res.loaderParams.load_conservation_paths = (params.extra_features.any{s->s.contains("conservation")} || params.load_conservation)
             res.loaderParams.load_conservation = params.load_conservation
             res.loaderParams.conservation_origin = params.conservation_origin
         }
