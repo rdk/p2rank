@@ -5,18 +5,16 @@ import cz.siret.prank.domain.DatasetCachedLoader
 import cz.siret.prank.program.Main
 import cz.siret.prank.program.params.ListParam
 import cz.siret.prank.program.params.Params
-import cz.siret.prank.program.params.optimizer.HVariable
 import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.utils.CmdLineArgs
 import cz.siret.prank.utils.Futils
-import groovy.transform.CompileDynamic
 import groovy.util.logging.Slf4j
 
 import static cz.siret.prank.utils.Futils.writeFile
 import static cz.siret.prank.utils.ThreadUtils.async
 
 /**
- * ploop and traineval routines for oprimization experiments
+ * ploop, hopt and traineval routines for optimization experiments
  */
 @Slf4j
 class Experiments extends Routine {
@@ -100,7 +98,7 @@ class Experiments extends Routine {
         EvalRoutine trainRoutine = new EvalRoutine(outdir) {
             @Override
             EvalResults execute() {
-                iter.outdir = getEvalRoutineOutir() // is set to "../seed.xx" by SeedLoop
+                iter.outdir = getEvalRoutineOutdir() // is set to "../seed.xx" by SeedLoop
                 iter.trainAndEvalModel()
                 return iter.evalRoutine.results
             }
