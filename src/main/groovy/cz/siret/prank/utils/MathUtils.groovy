@@ -2,6 +2,8 @@ package cz.siret.prank.utils
 
 import groovy.transform.CompileStatic
 
+import static cz.siret.prank.utils.StatSample.newStatSample
+
 @CompileStatic
 class MathUtils {
 
@@ -22,5 +24,12 @@ class MathUtils {
     static int ranndomInt() {
         new Random().nextInt()
     }
+
+//===========================================================================================================//
+
+    static double stddev(List<Double> sample) {
+        newStatSample(sample).stddev
+    }
+
 
 }

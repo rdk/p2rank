@@ -15,6 +15,7 @@ import groovy.util.logging.Slf4j
 
 import static cz.siret.prank.utils.Futils.mkdirs
 import static cz.siret.prank.utils.Futils.writeFile
+import static cz.siret.prank.utils.MathUtils.stddev
 
 /**
  * results for eval-rescore, traineval and ploop routines
@@ -42,6 +43,7 @@ class EvalResults implements Parametrized, Writable  {
     int train_negatives = 0
 
     List<Double> featureImportances
+    List<EvalResults> subResults = new ArrayList<>()
 
     boolean rescoring = !params.predictions  // new predictions vs. rescoring
 
@@ -76,24 +78,26 @@ class EvalResults implements Parametrized, Writable  {
         return res
     }
 
-    void addAll(EvalResults other) {
-        originalEval.addAll(other.originalEval)
-        rescoredEval.addAll(other.rescoredEval)
-        classifierStats.addAll(other.classifierStats)
-        if (classifierTrainStats!=null && other.classifierTrainStats!=null) {
-            classifierTrainStats.addAll(other.classifierTrainStats)
+    void addSubResults(EvalResults results) {
+        subResults.add(results)
+
+        originalEval.addAll(results.originalEval)
+        rescoredEval.addAll(results.rescoredEval)
+        classifierStats.addAll(results.classifierStats)
+        if (classifierTrainStats!=null && results.classifierTrainStats!=null) {
+            classifierTrainStats.addAll(results.classifierTrainStats)
         }
 
         // set only once to because of varoius caching
-        if (trainTime==null) trainTime = other.trainTime
-        if (evalTime==null) evalTime = other.evalTime
+        if (trainTime==null) trainTime = results.trainTime
+        if (evalTime==null) evalTime = results.evalTime
 
-        train_negatives += other.train_negatives
-        train_positives += other.train_positives
+        train_negatives += results.train_negatives
+        train_positives += results.train_positives
 
-        featureImportances = addVectors(featureImportances, other.featureImportances)
+        featureImportances = addVectors(featureImportances, results.featureImportances)
 
-        runs += other.runs
+        runs += results.runs
     }
 
     int getAvgTrainVectors() {
@@ -121,20 +125,21 @@ class EvalResults implements Parametrized, Writable  {
     }
 
 
-    Map getStats() {
-        Map m = rescoredEval.stats
+    Map<String, Double> getStats() {
+        Map<String, Double> m = rescoredEval.stats
 
-        m.PROTEINS         = (Double)m.PROTEINS         / runs
-        m.POCKETS          = (Double)m.POCKETS          / runs
-        m.LIGANDS          = (Double)m.LIGANDS          / runs
-        m.LIGANDS_IGNORED  = (Double)m.LIGANDS_IGNORED  / runs
-        m.LIGANDS_SMALL    = (Double)m.LIGANDS_SMALL    / runs
-        m.LIGANDS_DISTANT  = (Double)m.LIGANDS_DISTANT  / runs
+        m.PROTEINS         = (double)m.PROTEINS         / runs
+        m.POCKETS          = (double)m.POCKETS          / runs
+        m.LIGANDS          = (double)m.LIGANDS          / runs
+        m.LIGANDS_IGNORED  = (double)m.LIGANDS_IGNORED  / runs
+        m.LIGANDS_SMALL    = (double)m.LIGANDS_SMALL    / runs
+        m.LIGANDS_DISTANT  = (double)m.LIGANDS_DISTANT  / runs
 
         //===========================================================================================================//
 
         m.TIME_TRAIN_M = (double)(trainTime ?: 0) / 60000
         m.TIME_EVAL_M = (double)(evalTime ?: 0) / 60000
+        m.TIME_M = m.TIME_TRAIN_M + m.TIME_EVAL_M
 
         m.TRAIN_VECTORS = avgTrainVectors
         m.TRAIN_POSITIVES = avgTrainPositives
@@ -144,7 +149,7 @@ class EvalResults implements Parametrized, Writable  {
 
         m.putAll classifierStats.metricsMap
         if (params.classifier_train_stats && classifierTrainStats!=null) {
-            m.putAll classifierTrainStats.metricsMap.collectEntries { key, value -> ["train_" + key, value] }
+            m.putAll classifierTrainStats.metricsMap.collectEntries { key, value -> ["train_" + key, value] } as Map<String, Double>
         }
 
         if (params.feature_importances && featureImportances!=null) {
@@ -157,10 +162,26 @@ class EvalResults implements Parametrized, Writable  {
         return m
     }
 
-    String getMiscStatsCSV() {
-        stats.collect { "$it.key, ${Formatter.fmt(it.value)}" }.join("\n")
+    /**
+     * Calculates sample standard deviation for all stats.
+     * Only works for composite results (those that have subResults).
+     */
+    Map<String, Double> getStatsStddev() {
+        assert !subResults.isEmpty()
+
+        List<Map<String, Double>> subStats = subResults.collect { it.stats }.toList()
+
+        Map res = new HashMap()
+        for (String stat : subStats.head().keySet()) {
+            double val = stddev subStats.collect { it.get(stat) }
+            res.put(stat, val)
+        }
+        res
     }
 
+    String statsCSV(Map stats) {
+        stats.collect { "$it.key, ${Formatter.fmt(it.value)}" }.join("\n")
+    }
 
 
     void logClassifierStats(ClassifierStats cs, String outdir) {
@@ -198,7 +219,6 @@ class EvalResults implements Parametrized, Writable  {
         String succ_rates_rescored = rescoredEval.toSuccRatesCSV(tolerances)  // P2RANK predictions are in rescoredEval
         String succ_rates_diff     = rescoredEval.diffSuccRatesCSV(tolerances, originalEval)
         String classifier_stats    = classifierStats.toCSV(" $classifierName ")
-        String stats               = getMiscStatsCSV()
 
         writeFile "$outdir/success_rates.csv", succ_rates_rescored
         if (rescoring) {
@@ -206,7 +226,10 @@ class EvalResults implements Parametrized, Writable  {
             writeFile "$outdir/success_rates_diff.csv", succ_rates_diff
         }
         writeFile "$outdir/classifier.csv", classifier_stats
-        writeFile "$outdir/stats.csv", stats
+        writeFile "$outdir/stats.csv", statsCSV(getStats())
+        if (subResults.size() > 1) {
+            writeFile "$outdir/stats_stddev.csv", statsCSV(getStatsStddev())
+        }
 
         logClassifierStats(classifierStats, outdir)
 

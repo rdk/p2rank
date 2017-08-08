@@ -4,7 +4,7 @@ import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.score.criteria.IdentificationCriterium
-import cz.siret.prank.utils.ListUtils
+import cz.siret.prank.utils.CollectionUtils
 
 class PocketStatsExtractor extends VectorCollector {
 
@@ -24,7 +24,7 @@ class PocketStatsExtractor extends VectorCollector {
             res.positives++
         }
 
-        ListUtils.head(3, pair.getFalsePositivePockets(assessor)).each { Pocket pocket ->
+        CollectionUtils.head(3, pair.getFalsePositivePockets(assessor)).each { Pocket pocket ->
             res.add( pocket.stats.getVector() + 0 )
             res.negatives++
         }

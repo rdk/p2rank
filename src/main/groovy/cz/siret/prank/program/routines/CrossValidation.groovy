@@ -61,7 +61,7 @@ class CrossValidation extends EvalRoutine {
 
         }
 
-        resultsList.each { results.addAll(it) }
+        resultsList.each { results.addSubResults(it) }
 
         results.train_negatives = train_negatives
         results.train_positives = train_positives

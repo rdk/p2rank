@@ -6,7 +6,7 @@ import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.features.FeatureVector
 import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.score.criteria.IdentificationCriterium
-import cz.siret.prank.utils.ListUtils
+import cz.siret.prank.utils.CollectionUtils
 import groovy.util.logging.Slf4j
 
 @Slf4j
@@ -28,7 +28,7 @@ class PocketFingerprintCollector extends VectorCollector  {
             processPocket(pair, pocket, true, res)
         }
 
-        ListUtils.head(3,
+        CollectionUtils.head(3,
         pair.getFalsePositivePockets(assessor)).each { Pocket pocket ->
             processPocket(pair, pocket, false, res)
         }

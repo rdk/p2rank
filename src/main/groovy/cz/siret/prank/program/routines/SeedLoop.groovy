@@ -2,7 +2,6 @@ package cz.siret.prank.program.routines
 
 import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.utils.Futils
-import cz.siret.prank.utils.MathUtils
 import groovy.util.logging.Slf4j
 
 import static cz.siret.prank.utils.ATimer.startTimer
@@ -43,7 +42,7 @@ class SeedLoop extends EvalRoutine {
             innerRoutine.outdir = "$outdir/runs/$label"
             mkdirs(innerRoutine.outdir)
 
-            results.addAll(innerRoutine.execute())
+            results.addSubResults(innerRoutine.execute())
 
             params.seed += 1
         }

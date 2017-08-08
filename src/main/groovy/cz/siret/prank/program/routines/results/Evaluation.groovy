@@ -438,6 +438,7 @@ class Evaluation {
 
         m.DCA_4_0_NOMINAL = m.DCA_4_0 * m.LIGANDS
 
+        // TODO: move this somewhere else (getStats() shouldn't write to disk)
         if (!Params.inst.log_scores_to_file.isEmpty()) {
             PrintWriter w = new PrintWriter(new BufferedWriter(
                     new FileWriter(Params.inst.log_scores_to_file, true)));
