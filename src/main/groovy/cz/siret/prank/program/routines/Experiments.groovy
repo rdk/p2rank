@@ -12,6 +12,7 @@ import cz.siret.prank.utils.Futils
 import groovy.transform.CompileDynamic
 import groovy.util.logging.Slf4j
 
+import static cz.siret.prank.utils.Futils.writeFile
 import static cz.siret.prank.utils.ThreadUtils.async
 
 /**
@@ -44,7 +45,6 @@ class Experiments extends Routine {
             prepareDatasets(main)
         }
 
-        main.configureLoggers(outdir)
     }
 
     void prepareDatasets(Main main) {
@@ -67,14 +67,19 @@ class Experiments extends Routine {
         outdirRoot = params.output_base_dir
         datadirRoot = params.dataset_base_dir
         label = command + "_" + trainDataset.label + "_" + (doCrossValidation ? "crossval" : evalDataset.label)
+
         outdir = main.findOutdir(label)
+        main.configureLoggers(outdir)
         main.writeCmdLineArgs(outdir)
         writeParams(outdir)
     }
 
     void execute() {
         log.info "executing $command()"
+
         this."$command"()  // dynamic exec method
+
+        writeFile "$outdir/status.done", "done"
         log.info "results saved to directory [${Futils.absPath(outdir)}]"
     }
 
