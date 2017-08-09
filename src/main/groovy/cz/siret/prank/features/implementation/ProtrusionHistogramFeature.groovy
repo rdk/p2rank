@@ -57,8 +57,19 @@ class ProtrusionHistogramFeature extends SasFeatureCalculator implements Paramet
             }
 
             if (!params.protr_hist_cumulative) {
-                for (int i = n-1; i >= 0; i--) {
+                for (int i = n-1; i > 0; i--) {
                     bins[i] -= bins[i-1]
+                }
+            }
+
+            if (params.protr_hist_relative) {
+                double max = bins[n-1]
+                max = (max==0d) ? 1 : max
+
+                for (int i=0; i<n-1; ++i) {
+                    if (bins[i] != 0) {
+                        bins[i] /= max
+                    }
                 }
             }
         }

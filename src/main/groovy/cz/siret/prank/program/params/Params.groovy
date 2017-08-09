@@ -90,6 +90,8 @@ class Params {
 
     boolean protr_hist_cumulative = false
 
+    boolean protr_hist_relative = false
+
     /**
      * conservation parameteres
      */
