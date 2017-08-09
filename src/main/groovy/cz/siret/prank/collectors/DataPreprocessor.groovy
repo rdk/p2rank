@@ -15,7 +15,7 @@ import static cz.siret.prank.utils.WekaUtils.isPositiveInstance
 
 @Slf4j
 @CompileStatic
-class DataPreProcessor implements Parametrized, Writable {
+class DataPreprocessor implements Parametrized, Writable {
 
     Instances preProcessTrainData(Instances data) {
         double removePercentage = 0

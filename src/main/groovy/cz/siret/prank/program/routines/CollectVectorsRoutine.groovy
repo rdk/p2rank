@@ -1,13 +1,12 @@
 package cz.siret.prank.program.routines
 
-import cz.siret.prank.collectors.DataPreProcessor
+import cz.siret.prank.collectors.DataPreprocessor
 import cz.siret.prank.collectors.PointVectorCollector
 import cz.siret.prank.collectors.VectorCollector
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.features.FeatureVector
-import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.score.criteria.DCA
 import cz.siret.prank.score.criteria.IdentificationCriterium
 import cz.siret.prank.utils.Futils
@@ -121,7 +120,7 @@ class CollectVectorsRoutine extends Routine {
         //data = WekaUtils.numericToNominal("last", data)
 
         // TODO move up to TrainEvalRoutine
-        data = new DataPreProcessor().preProcessTrainData(data)
+        data = new DataPreprocessor().preProcessTrainData(data)
 
         if (!params.delete_vectors) {
             WekaUtils.saveDataArff(arffFile, false, data)

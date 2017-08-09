@@ -1,6 +1,6 @@
 package cz.siret.prank.program.routines
 
-import cz.siret.prank.collectors.DataPreProcessor
+import cz.siret.prank.collectors.DataPreprocessor
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.utils.Futils
@@ -98,7 +98,7 @@ class CrossValidation extends EvalRoutine {
         folds.forEach { Fold fold ->
             List<Fold> otherFolds = folds.minus(fold)
             fold.trainVectors = WekaUtils.joinInstances(otherFolds*.evalVectors)
-            fold.trainVectors = new DataPreProcessor().preProcessTrainData(fold.trainVectors)
+            fold.trainVectors = new DataPreprocessor().preProcessTrainData(fold.trainVectors)
         }
     }
 

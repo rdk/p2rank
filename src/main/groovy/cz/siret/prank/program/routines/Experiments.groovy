@@ -130,7 +130,7 @@ class Experiments extends Routine {
 
         String topOutdir = outdir
 
-        GridOprimizer go = new GridOprimizer(topOutdir, rparams)
+        GridOptimizer go = new GridOptimizer(topOutdir, rparams)
         go.init()
         go.runGridOptimization { String iterDir ->
             return runExperimentStep(iterDir, trainDataset, evalDataset, doCrossValidation)

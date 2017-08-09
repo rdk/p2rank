@@ -17,12 +17,12 @@ import static cz.siret.prank.utils.Futils.mkdirs
  */
 @Slf4j
 @CompileStatic
-class GridOprimizer extends ParamLooper {
+class GridOptimizer extends ParamLooper {
 
     List<ListParam> listParams
 
 
-    GridOprimizer(String outdir, List<ListParam> listParams) {
+    GridOptimizer(String outdir, List<ListParam> listParams) {
         super(outdir)
         this.listParams = listParams
     }
