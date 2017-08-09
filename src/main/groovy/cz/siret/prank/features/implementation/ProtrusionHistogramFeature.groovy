@@ -39,23 +39,27 @@ class ProtrusionHistogramFeature extends SasFeatureCalculator implements Paramet
         int n = params.protr_hist_bins
         double maxDist = params.protrusion_radius
 
-        assert n>=2 : "Value of protr_hist_bins must be at least 2!"
+        assert n >= 1 : "Value of protr_hist_bins must be at least 1!"
 
         Atoms atoms = context.extractor.deepSurrounding
 
         double[] bins = new double[n]
 
-        double step = (params.protrusion_radius - MIN_DIST) / (n - 1)
-        double cutoff = maxDist
-        for (int i = n - 1; i >= 0; i--) {
-            atoms = atoms.cutoffAroundAtom(sasPoint, cutoff)
-            bins[i] = atoms.count
-            cutoff -= step
-        }
+        if (n == 1) {
+            bins[0] = atoms.cutoffAroundAtom(sasPoint, maxDist).count
+        } else {
+            double step = (params.protrusion_radius - MIN_DIST) / (n - 1)
+            double cutoff = maxDist
+            for (int i = n - 1; i >= 0; i--) {
+                atoms = atoms.cutoffAroundAtom(sasPoint, cutoff)
+                bins[i] = atoms.count
+                cutoff -= step
+            }
 
-        if (!params.protr_hist_cumulative) {
-            for (int i = n-1; i >= 0; i--) {
-                bins[i] -= bins[i-1]
+            if (!params.protr_hist_cumulative) {
+                for (int i = n-1; i >= 0; i--) {
+                    bins[i] -= bins[i-1]
+                }
             }
         }
 

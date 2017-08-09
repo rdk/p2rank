@@ -70,6 +70,7 @@ class DataPreProcessor implements Parametrized, Writable {
             write "instances: " + descState(positives, negatives)
 
             if (params.supersample) {
+
                 if (ratio < targetRatio) {
                     double multiplier = targetRatio / ratio
                     write "supersampling positives (multiplier: $multiplier)"
@@ -80,13 +81,14 @@ class DataPreProcessor implements Parametrized, Writable {
                     negatives = WekaUtils.randomSample(multiplier, seed, negatives)
                 }
 
-            } else {
+            } else { // subsample
+
                 if (ratio < targetRatio) {
                     double multiplier = ratio / targetRatio
                     write "subsampling negatives (multiplier: $multiplier)"
 
                     if (params.subsampl_high_protrusion_negatives) {
-                        // sory by protrusion desc before subsampling
+                        // sort by protrusion desc before subsampling
                         Attribute attr = negatives.attribute(ProtrusionFeature.NAME)
                         if (attr != null) {
                             negatives.sort(attr)
