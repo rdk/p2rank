@@ -42,7 +42,7 @@ class PairHistogramFeature extends SasFeatureCalculator implements Parametrized 
 
         Atom[] aa = getAtoms(sasPoint, context).list.toArray() as Atom[]
 
-        DistancePairHist hist = new DistancePairHist(params.pair_hist_bins, 0, params.pair_hist_radius, params.pair_hist_smooth)
+        DistancePairHist hist = new DistancePairHist(params.pair_hist_bins, 0, params.pair_hist_radius * 2, params.pair_hist_smooth)
         int n = aa.length
         for (int i=0; i!=n; ++i) {
             for (int j=i; j!=n; ++j) {

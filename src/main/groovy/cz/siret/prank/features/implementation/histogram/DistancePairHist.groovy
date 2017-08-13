@@ -1,11 +1,13 @@
 package cz.siret.prank.features.implementation.histogram
 
 import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
 
 /**
  *
  */
 @CompileStatic
+@Slf4j
 class DistancePairHist {
 
     int size
@@ -31,7 +33,7 @@ class DistancePairHist {
     }
 
     void add(double dist) {
-        assert dist > 0
+        log.info("add: {}", dist)
 
         count++
         if (dist<=min) {
@@ -43,7 +45,7 @@ class DistancePairHist {
         }
 
         double mod = dist - min
-        int idx = (int) (mod / step).intValue()
+        int idx = (int) (mod / step)
 
         if (smooth) {
             // split between 2 bins according to relative closeness
