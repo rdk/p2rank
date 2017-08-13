@@ -45,7 +45,7 @@ class DistancePairHist {
         }
 
         double mod = dist - min
-        int idx = (int) (mod / step)
+        int idx = (int) Math.floor(mod / step)
 
         if (smooth) {
             // split between 2 bins according to relative closeness
