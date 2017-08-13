@@ -28,7 +28,6 @@ class PairHistogramFeature extends SasFeatureCalculator implements Parametrized 
         return (1..n).collect { name + "." + it }.toList()
     }
 
-
     private Atoms getAtoms(Atom sasPoint, SasFeatureCalculationContext context) {
         if (params.pair_hist_deep) {
             return context.extractor.deepLayer.cutoffAroundAtom(sasPoint, params.pair_hist_radius)
@@ -37,32 +36,29 @@ class PairHistogramFeature extends SasFeatureCalculator implements Parametrized 
         }
     }
 
-
-
     @Override
     double[] calculateForSasPoint(Atom sasPoint, SasFeatureCalculationContext context) {
 
-        Atom[] aa = getAtoms(sasPoint, context).list.toArray() as Atom[]
-
+        List<Atom> atoms = getAtoms(sasPoint, context).list
         DistancePairHist hist = new DistancePairHist(params.pair_hist_bins, 0, params.pair_hist_radius * 2, params.pair_hist_smooth)
 
-        int n = aa.length
-        if (params.pair_hist_subsample_size == 0 || params.pair_hist_subsample_size >= (n*(n-1)/2)) {
+        int n = atoms.size()
+        if (params.pair_hist_subsample_limit == 0                          // all
+                || params.pair_hist_subsample_limit >= (n*(n-1)/2)) {
             for (int i=0; i!=n; ++i) {
                 for (int j=i; j!=n; ++j) {
-                    hist.add( dist(aa[i], aa[j]) )
+                    hist.add( dist(atoms[i], atoms[j]) )
                 }
             }
-        } else {
-            // subsample of random pairs
+        } else {                                                          // subsample of random pairs
             Random rand = new Random(params.seed)
-            int limit = params.pair_hist_subsample_size
+            int limit = params.pair_hist_subsample_limit
             int c = 0
             while (c < limit) {
                 int i = rand.nextInt(n)
                 int j = rand.nextInt(n)
                 
-                hist.add( dist(aa[i], aa[j]) )
+                hist.add( dist(atoms[i], atoms[j]) )
                 c++
             }
         }

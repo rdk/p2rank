@@ -83,6 +83,9 @@ class Params {
 
     double protrusion_radius = 10
 
+//===========================================================================================================//
+
+
     /**
      * Number of bins for protr_hist feature, must be >=2
      */
@@ -92,20 +95,36 @@ class Params {
 
     boolean protr_hist_relative = false
 
+//===========================================================================================================//
+
     /**
-     * Number of bins for pair_hist feature, must be >=2
+     * Number of bins for Atom Pair distance histogram (pair_hist) feature, must be >=2
      */
     int pair_hist_bins = 5
 
+    /**
+     * Radius capturing atoms considered in pair_hist feature
+     */
     double pair_hist_radius = 6
 
+    /**
+     * smooth vs. sharp binning
+     */
     boolean pair_hist_smooth = false
 
     boolean pair_hist_normalize = false
 
+    /**
+     * if false only protein exposed atmos are considered
+     */
     boolean pair_hist_deep = true
 
-    int pair_hist_subsample_size = 0
+    /**
+     * size of random subsample of atom pairs, 0 = all
+     */
+    int pair_hist_subsample_limit = 0
+
+//===========================================================================================================//
 
     /**
      * conservation parameteres
@@ -129,6 +148,9 @@ class Params {
      * Log scores for binding and nonbinding scores to file
      */
     String log_scores_to_file = "";
+
+//===========================================================================================================//
+
 
     //== CLASSIFIERS ===================
 

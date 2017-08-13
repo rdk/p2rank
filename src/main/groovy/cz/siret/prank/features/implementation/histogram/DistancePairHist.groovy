@@ -4,10 +4,10 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
 /**
- *
+ * Distance pair histogram
  */
-@CompileStatic
 @Slf4j
+@CompileStatic
 class DistancePairHist {
 
     int size
@@ -37,7 +37,7 @@ class DistancePairHist {
     }
 
     DistancePairHist add(double dist) {
-        log.info("add: {} step: {}", dist, step)
+        // log.trace("add: {} step: {}", dist, step)
 
         count++
         if (dist<=min) {
@@ -52,7 +52,7 @@ class DistancePairHist {
         double mod = dist - min
         int idx = (int) (mod / step) // Math.floor
 
-        log.info("mod: {}, idx: {}", mod, idx)
+        // log.trace("mod: {}, idx: {}", mod, idx)
 
         if (smooth) {
             // split between 2 bins according to relative closeness
