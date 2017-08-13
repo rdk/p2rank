@@ -23,7 +23,6 @@ class ProtrusionHistogramFeature extends SasFeatureCalculator implements Paramet
     @Override
     List<String> getHeader() {
         int n = params.protr_hist_bins
-
         return (1..n).collect { name + "." + it }.toList()
     }
 
@@ -41,7 +40,7 @@ class ProtrusionHistogramFeature extends SasFeatureCalculator implements Paramet
 
         assert n >= 1 : "Value of protr_hist_bins must be at least 1!"
 
-        Atoms atoms = context.extractor.deepSurrounding
+        Atoms atoms = context.extractor.deepLayer
 
         double[] bins = new double[n]
 

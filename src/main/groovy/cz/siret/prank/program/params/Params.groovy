@@ -93,6 +93,20 @@ class Params {
     boolean protr_hist_relative = false
 
     /**
+     * Number of bins for pair_hist feature, must be >=2
+     */
+    int pair_hist_bins = 5
+
+    double pair_hist_radius = 6
+
+    boolean pair_hist_smooth = false
+
+    boolean pair_hist_normalize = false
+
+    boolean pair_hist_deep = true
+    
+
+    /**
      * conservation parameteres
      */
     boolean load_conservation = false // always load conservation (for stats)

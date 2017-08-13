@@ -36,7 +36,7 @@ class ConservationCloudScaledFeature extends SasFeatureCalculator implements Par
     double[] calculateForSasPoint(Atom sasPoint, SasFeatureCalculationContext context) {
 
         // brute force ... O(N*M) where N is number of atoms and M number of Connolly points
-        // deepSurrounding conmtains often nearly all of the protein atoms
+        // deepLayer conmtains often nearly all of the protein atoms
         // and this is one of the most expensive part od the algorithm when making predictions
         // (apart from classification and Connolly surface generation)
         // better solution would be to build triangulation over protein atoms or to use KD-tree with range search
@@ -44,13 +44,13 @@ class ConservationCloudScaledFeature extends SasFeatureCalculator implements Par
 
         // optimization? - we need ~250 for protrusion=10 and in this case it is sower
         //int MAX_PROTRUSION_ATOMS = 250
-        //Atoms deepSurrounding = this.deepSurrounding.withKdTree().kdTree.findNearestNAtoms(point, MAX_PROTRUSION_ATOMS, false)
+        //Atoms deepLayer = this.deepLayer.withKdTree().kdTree.findNearestNAtoms(point, MAX_PROTRUSION_ATOMS, false)
         ConservationScore score = (ConservationScore) context.protein.secondaryData.get(ConservationScore.conservationScoreKey)
         if (score == null) {
             return [0.0] as double[]
         }
 
-        Atoms surroundingAtoms = context.extractor.deepSurrounding.cutoffAroundAtom(sasPoint, params.protrusion_radius)
+        Atoms surroundingAtoms = context.extractor.deepLayer.cutoffAroundAtom(sasPoint, params.protrusion_radius)
         double value = 0.0;
         for (Atom atom : surroundingAtoms) {
             double scale = 1.0 / PerfUtils.sqrDist(sasPoint.coords, atom.coords);

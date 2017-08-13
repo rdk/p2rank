@@ -16,6 +16,8 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 
+import static java.lang.Math.max
+
 /**
  * Handles the process of calculating prank feature vectors.
  * At first it calculates features for solvent exposed atoms of the protein.
@@ -55,7 +57,12 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
     // pocket related
     Pocket pocket
     Atoms surfaceLayerAtoms
-    Atoms deepSurrounding    // for protrusion
+
+    /**
+     * deep layer of atums unter the protein surface
+     * serves as cache for speeding up calculation of protrusion and other features
+     */
+    Atoms deepLayer
     Atoms sampledPoints
 
     FeatureSetup featureSetup
@@ -93,7 +100,8 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
         res.trainingExtractor = this.trainingExtractor
 
         protein.calcuateSurfaceAndExposedAtoms()
-        res.deepSurrounding = protein.proteinAtoms.cutoffAtoms(protein.exposedAtoms, params.protrusion_radius).buildKdTree()
+        double thickness = max(params.protrusion_radius, params.pair_hist_radius)
+        res.deepLayer = protein.proteinAtoms.cutoffAtoms(protein.exposedAtoms, thickness).buildKdTree()
 
         // init features
         for (FeatureSetup.Feature feature : featureSetup.enabledFeatures) {
@@ -109,7 +117,7 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
         pocketPointSampler = PointSampler.create(protein, trainingExtractor)
 
         if (params.deep_surrounding) {
-            surfaceLayerAtoms = deepSurrounding
+            surfaceLayerAtoms = deepLayer
         } else {
             // surfaceLayerAtoms = protein.proteinAtoms.cutoffAroundAtom(pocket.surfaceAtoms, 1)  // shallow
             //surfaceLayerAtoms = protein.exposedAtoms.cutoffAtoms(pocket.surfaceAtoms, 6) //XXX
@@ -143,7 +151,7 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
         this.trainingExtractor     = proteinPrototype.trainingExtractor
         this.featureSetup     = proteinPrototype.featureSetup
 
-        this.deepSurrounding = proteinPrototype.deepSurrounding
+        this.deepLayer = proteinPrototype.deepLayer
         this.surfaceLayerAtoms = proteinPrototype.surfaceLayerAtoms
         this.properties = proteinPrototype.properties
         this.smoothRepresentations = proteinPrototype.smoothRepresentations
@@ -198,7 +206,7 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
 
 
 
-        log.info "P2R protein:$protein.proteinAtoms.count  exposedAtoms:$res.surfaceLayerAtoms.count  deepSurrounding:$res.deepSurrounding.count sasPoints:$res.sampledPoints.count"
+        log.info "P2R protein:$protein.proteinAtoms.count  exposedAtoms:$res.surfaceLayerAtoms.count  deepLayer:$res.deepLayer.count sasPoints:$res.sampledPoints.count"
 
         return res
     }

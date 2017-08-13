@@ -22,7 +22,7 @@ class ProtrusionFeature extends SasFeatureCalculator implements Parametrized {
     double[] calculateForSasPoint(Atom sasPoint, SasFeatureCalculationContext context) {
 
         // brute force ... O(N*M) where N is number of atoms and M number of Connolly points
-        // deepSurrounding conmtains often nearly all of the protein atoms
+        // deepLayer conmtains often nearly all of the protein atoms
         // and this is one of the most expensive part od the algorithm when making predictions
         // (apart from classification and Connolly surface generation)
         // better solution would be to build triangulation over protein atoms or to use KD-tree with range search
@@ -30,9 +30,9 @@ class ProtrusionFeature extends SasFeatureCalculator implements Parametrized {
 
         // optimization? - we need ~250 for protrusion=10 and in this case it is sower
         //int MAX_PROTRUSION_ATOMS = 250
-        //Atoms deepSurrounding = this.deepSurrounding.withKdTree().kdTree.findNearestNAtoms(point, MAX_PROTRUSION_ATOMS, false)
+        //Atoms deepLayer = this.deepLayer.withKdTree().kdTree.findNearestNAtoms(point, MAX_PROTRUSION_ATOMS, false)
 
-        double protAtoms = context.extractor.deepSurrounding.cutoffAroundAtom(sasPoint, params.protrusion_radius).count  // deepSurrounding is previously generated in PrankFeatureExtractor, depth is params.protrusion_radius
+        double protAtoms = context.extractor.deepLayer.cutoffAroundAtom(sasPoint, params.protrusion_radius).count  // deepLayer is previously generated in PrankFeatureExtractor, depth is params.protrusion_radius
         return [protAtoms] as double[]
     }
 
