@@ -31,6 +31,8 @@ class DistancePairHist {
     }
 
     void add(double dist) {
+        assert dist > 0
+
         count++
         if (dist<=min) {
             bins[0] += 1
@@ -41,14 +43,14 @@ class DistancePairHist {
         }
 
         double mod = dist - min
-        int idx = (int) (mod / step)
-        mod = mod - (idx * step)
+        int idx = (int) (mod / step).intValue()
 
         if (smooth) {
             // split between 2 bins according to relative closeness
+            mod = mod - (idx * step)
             double ratio = mod / step
             bins[idx] += 1 - ratio
-            bins[idx] += ratio
+            bins[idx+1] += ratio
         } else {
             bins[idx] += 1
         }
