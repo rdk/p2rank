@@ -47,14 +47,14 @@ class PairHistogramFeature extends SasFeatureCalculator implements Parametrized 
         DistancePairHist hist = new DistancePairHist(params.pair_hist_bins, 0, params.pair_hist_radius * 2, params.pair_hist_smooth)
 
         int n = aa.length
-        if (params.pair_hist_subsample_size == 0) {
+        if (params.pair_hist_subsample_size == 0 || params.pair_hist_subsample_size >= (n*(n-1)/2)) {
             for (int i=0; i!=n; ++i) {
                 for (int j=i; j!=n; ++j) {
                     hist.add( dist(aa[i], aa[j]) )
                 }
             }
         } else {
-            // random pairs
+            // subsample of random pairs
             Random rand = new Random(params.seed)
             int limit = params.pair_hist_subsample_size
             int c = 0
