@@ -30,26 +30,29 @@ class DistancePairHist {
 
         bins = new double[size]
         if (smooth) {
-            step = (max - min) / size
+            step = (max - min) / (size - 1)
         } else {
-            step = (max - min) / (size - 1)     
+            step = (max - min) / size
         }
     }
 
-    void add(double dist) {
-        log.info("add: {}", dist)
+    DistancePairHist add(double dist) {
+        log.info("add: {} step: {}", dist, step)
 
         count++
         if (dist<=min) {
             bins[0] += 1
-            return
+            return this
         }
         if (dist>=max) {
             bins[size-1] += 1
+            return this
         }
 
         double mod = dist - min
-        int idx = (int) Math.floor(mod / step)
+        int idx = (int) (mod / step) // Math.floor
+
+        log.info("mod: {}, idx: {}", mod, idx)
 
         if (smooth) {
             // split between 2 bins according to relative closeness
@@ -60,6 +63,8 @@ class DistancePairHist {
         } else {
             bins[idx] += 1
         }
+
+        return this
     }
 
     double[] getNormalizedBins() {
