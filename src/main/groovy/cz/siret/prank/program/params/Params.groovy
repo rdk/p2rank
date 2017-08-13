@@ -314,6 +314,11 @@ class Params {
     boolean delete_vectors = true
 
     /**
+     * collect vectors also from eval dataset (only makes sense if delete_vectors=false)
+     */
+    boolean collect_eval_vectors = false
+
+    /**
      * number of random seed iterations
      */
     int loop = 1
