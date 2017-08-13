@@ -61,10 +61,9 @@ class PairHistogramFeature extends SasFeatureCalculator implements Parametrized 
             while (c < limit) {
                 int i = rand.nextInt(n)
                 int j = rand.nextInt(n)
-                if (i != j) {
-                    hist.add( dist(aa[i], aa[j]) )
-                    c++
-                }
+                
+                hist.add( dist(aa[i], aa[j]) )
+                c++
             }
         }
 
