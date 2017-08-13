@@ -104,7 +104,8 @@ class Params {
     boolean pair_hist_normalize = false
 
     boolean pair_hist_deep = true
-    
+
+    int pair_hist_subsample_size = 0
 
     /**
      * conservation parameteres
