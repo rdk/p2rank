@@ -29,7 +29,11 @@ class DistancePairHist {
         this.smooth = smooth
 
         bins = new double[size]
-        step = (max - min) / size
+        if (smooth) {
+            step = (max - min) / size
+        } else {
+            step = (max - min) / (size - 1)     
+        }
     }
 
     void add(double dist) {
