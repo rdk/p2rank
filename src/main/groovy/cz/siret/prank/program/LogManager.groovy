@@ -27,7 +27,6 @@ class LogManager implements Writable {
     boolean loggingToFile = false
     String logFile
 
-
     Appender fileAppender
     Configuration config
     LoggerConfig loggerConfig

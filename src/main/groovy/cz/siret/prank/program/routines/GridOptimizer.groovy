@@ -64,7 +64,6 @@ class GridOptimizer extends ParamLooper {
 
 //===========================================================================================================//
 
-
     private void make2DTables(Step step) {
         tablesDir = "$outdir/tables"
         tables2D = [:]
@@ -72,7 +71,6 @@ class GridOptimizer extends ParamLooper {
             make2DTable(it.key)
         }
     }
-
 
     private makePlots() {
         write "generating R plots..."
@@ -134,6 +132,7 @@ class GridOptimizer extends ParamLooper {
     private List<Step> generateSteps(List<ListParam> lparams) {
         genStepsRecur(new ArrayList<Step>(), new Step(), lparams)
     }
+    
     private List<Step> genStepsRecur(List<Step> steps, Step base, List<ListParam> rparams) {
         if (rparams.empty) {
             steps.add(base); return

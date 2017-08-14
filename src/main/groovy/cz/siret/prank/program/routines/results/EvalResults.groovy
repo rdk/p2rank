@@ -29,8 +29,8 @@ class EvalResults implements Parametrized, Writable  {
      */
     int runs = 0
 
-    Evaluation originalEval
-    Evaluation rescoredEval
+    Evaluation eval
+    Evaluation origEval                  // stores original results by other prediction method when rescoring
     ClassifierStats classifierStats
     ClassifierStats classifierTrainStats // classifier stats on train data
 
@@ -49,8 +49,8 @@ class EvalResults implements Parametrized, Writable  {
 
     EvalResults(int runs) {
         this.runs = runs
-        originalEval = new Evaluation()
-        rescoredEval = new Evaluation()
+        eval = new Evaluation()
+        origEval = new Evaluation()
         classifierStats = new ClassifierStats()
         if (params.classifier_train_stats) {
             classifierTrainStats = new ClassifierStats()
@@ -81,8 +81,8 @@ class EvalResults implements Parametrized, Writable  {
     void addSubResults(EvalResults results) {
         subResults.add(results)
 
-        originalEval.addAll(results.originalEval)
-        rescoredEval.addAll(results.rescoredEval)
+        eval.addAll(results.eval)
+        origEval.addAll(results.origEval)
         classifierStats.addAll(results.classifierStats)
         if (classifierTrainStats!=null && results.classifierTrainStats!=null) {
             classifierTrainStats.addAll(results.classifierTrainStats)
@@ -126,7 +126,7 @@ class EvalResults implements Parametrized, Writable  {
 
 
     Map<String, Double> getStats() {
-        Map<String, Double> m = rescoredEval.stats
+        Map<String, Double> m = eval.stats
 
         m.PROTEINS         = (double)m.PROTEINS         / runs
         m.POCKETS          = (double)m.POCKETS          / runs
@@ -215,9 +215,9 @@ class EvalResults implements Parametrized, Writable  {
 
         List<Integer> tolerances = params.eval_tolerances
 
-        String succ_rates          = originalEval.toSuccRatesCSV(tolerances)
-        String succ_rates_rescored = rescoredEval.toSuccRatesCSV(tolerances)  // P2RANK predictions are in rescoredEval
-        String succ_rates_diff     = rescoredEval.diffSuccRatesCSV(tolerances, originalEval)
+        String succ_rates          = origEval.toSuccRatesCSV(tolerances)
+        String succ_rates_rescored = eval.toSuccRatesCSV(tolerances)  // P2RANK predictions are in eval
+        String succ_rates_diff     = eval.diffSuccRatesCSV(tolerances, origEval)
         String classifier_stats    = classifierStats.toCSV(" $classifierName ")
 
         writeFile "$outdir/success_rates.csv", succ_rates_rescored
@@ -234,17 +234,17 @@ class EvalResults implements Parametrized, Writable  {
         logClassifierStats(classifierStats, outdir)
 
         if (logIndividualCases) {
-            originalEval.sort()
-            rescoredEval.sort()
+            origEval.sort()
+            eval.sort()
 
             String casedir = "$outdir/cases"
             mkdirs(casedir)
-            writeFile "$casedir/proteins.csv", originalEval.toProteinsCSV()
-            writeFile "$casedir/ligands.csv", rescoredEval.toLigandsCSV()
-            writeFile "$casedir/pockets.csv", rescoredEval.toPocketsCSV()
-            writeFile "$casedir/ranks.csv", originalEval.toRanksCSV()
+            writeFile "$casedir/proteins.csv", eval.toProteinsCSV()
+            writeFile "$casedir/ligands.csv", eval.toLigandsCSV()
+            writeFile "$casedir/pockets.csv", eval.toPocketsCSV()
+            writeFile "$casedir/ranks.csv", eval.toRanksCSV()
             if (rescoring) {
-                writeFile "$casedir/ranks_rescored.csv", rescoredEval.toRanksCSV()
+                writeFile "$casedir/ranks_original.csv", origEval.toRanksCSV()
             }
         }
 
@@ -259,7 +259,7 @@ class EvalResults implements Parametrized, Writable  {
         if (rescoring) {
             log.info "\nSucess Rates - Original:\n" + CSV.tabulate(succ_rates) + "\n"
         }
-        write    "\nSucess Rates:\n" + CSV.tabulate(succ_rates_rescored) + "\n"
+        write "\nSucess Rates:\n" + CSV.tabulate(succ_rates_rescored) + "\n"
         if (rescoring) {
             log.info "\nSucess Rates - Diff:\n" + CSV.tabulate(succ_rates_diff) + "\n\n"
         }

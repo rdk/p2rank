@@ -39,8 +39,8 @@ class PairHistogramFeature extends SasFeatureCalculator implements Parametrized 
     @Override
     double[] calculateForSasPoint(Atom sasPoint, SasFeatureCalculationContext context) {
 
-        List<Atom> atoms = getAtoms(sasPoint, context).list
-        DistancePairHist hist = new DistancePairHist(params.pair_hist_bins, 0, params.pair_hist_radius * 2, params.pair_hist_smooth)
+        final List<Atom> atoms = getAtoms(sasPoint, context).list
+        final DistancePairHist hist = new DistancePairHist(params.pair_hist_bins, 0, params.pair_hist_radius * 2, params.pair_hist_smooth)
 
         int n = atoms.size()
         if (params.pair_hist_subsample_limit == 0                          // all
@@ -51,8 +51,8 @@ class PairHistogramFeature extends SasFeatureCalculator implements Parametrized 
                 }
             }
         } else {                                                          // subsample of random pairs
-            Random rand = new Random(params.seed)
-            int limit = params.pair_hist_subsample_limit
+            final Random rand = new Random(params.seed)
+            final int limit = params.pair_hist_subsample_limit
             int c = 0
             while (c < limit) {
                 int i = rand.nextInt(n)

@@ -28,7 +28,6 @@ class Routine implements Parametrized, Writable  {
 
     private Routine() {}
 
-
     void logTime(String timeMsg) {
         write timeMsg
         Futils.append "$outdir/time.log", timeMsg + "\n"

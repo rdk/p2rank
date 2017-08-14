@@ -77,7 +77,7 @@ class HyperOptimizer extends ParamLooper {
                     EvalResults res = processStep(step, "step.$stepNumber", evalClosure)
                     val = getObjectiveValue(res)
 
-                    // TOTO: write selected stats file sorted by hopt_objective
+                    //TODO: write selected stats file sorted by hopt_objective
 
                 } catch (Exception e) {
                     log.error("Couldn't process grid optimization step $stepNumber", e)

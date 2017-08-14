@@ -1,6 +1,7 @@
 package cz.siret.prank.program.routines
 
 import cz.siret.prank.program.routines.results.EvalResults
+import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
@@ -24,18 +25,18 @@ abstract class EvalRoutine extends Routine {
 
     String toMainResultsCsv(String label, String model, EvalResults results) {
 
-        int proteins = results.originalEval.proteinCount
-        int ligands = results.originalEval.ligandCount
-        int pockets = results.rescoredEval.pocketCount
+        int proteins = results.eval.proteinCount
+        int ligands = results.eval.ligandCount
+        int pockets = results.eval.pocketCount
 
-        double top1 = results.originalEval.calcDefaultCriteriumSuccessRate(0)
-        double all = results.rescoredEval.calcDefaultCriteriumSuccessRate(999)
-        double rescored = results.rescoredEval.calcDefaultCriteriumSuccessRate(0)
+        double top1 = results.origEval.calcDefaultCriteriumSuccessRate(0)
+        double all = results.origEval.calcDefaultCriteriumSuccessRate(999)
+        double rescored = results.eval.calcDefaultCriteriumSuccessRate(0)
 
-        double orig_DCA4_0 = results.originalEval.calcDefaultCriteriumSuccessRate(0)
-        double orig_DCA4_2 = results.originalEval.calcDefaultCriteriumSuccessRate(2)
-        double DCA4_0 = results.rescoredEval.calcDefaultCriteriumSuccessRate(0)
-        double DCA4_2 = results.rescoredEval.calcDefaultCriteriumSuccessRate(2)
+        double orig_DCA4_0 = results.origEval.calcDefaultCriteriumSuccessRate(0)
+        double orig_DCA4_2 = results.origEval.calcDefaultCriteriumSuccessRate(2)
+        double DCA4_0 = results.eval.calcDefaultCriteriumSuccessRate(0)
+        double DCA4_2 = results.eval.calcDefaultCriteriumSuccessRate(2)
 
         double diff = rescored - top1
         double possible = all - top1
@@ -46,11 +47,11 @@ abstract class EvalRoutine extends Routine {
         double FM = results.classifierStats.metrics.f1
         double MCC = results.classifierStats.metrics.MCC
 
-        double ligSize = results.rescoredEval.avgLigandAtoms
-        double pocketVol = results.rescoredEval.avgPocketVolume
-        double pocketSurf = results.rescoredEval.avgPocketSurfAtoms
+        double ligSize = results.eval.avgLigandAtoms
+        double pocketVol = results.eval.avgPocketVolume
+        double pocketSurf = results.eval.avgPocketSurfAtoms
 
-        String dir = new File(outdir).name
+        String dir = Futils.shortName(outdir)
 
         String s = "dir,dataset,model,#proteins,#ligands,#pockets,orig_DCA4_0,orig_DCA4_2,DCA4_0,DCA4_2,top1,all,rescored,diff,%possible,possible,P,R,FM,MCC,avgLigSize,avgPocketVol,avgPocketSurfAtoms\n"
         s += "$dir,$label,$model,$proteins,$ligands,$pockets," +

@@ -44,7 +44,6 @@ class Experiments extends Routine {
         if (command in ['traineval', 'ploop', 'hopt']) {
             prepareDatasets(main)
         }
-
     }
 
     void prepareDatasets(Main main) {
@@ -91,9 +90,8 @@ class Experiments extends Routine {
      */
     private static EvalResults doTrainEval(String outdir, Dataset trainData, Dataset evalData) {
 
-        TrainEvalRoutine iter = new TrainEvalRoutine(outdir)
-        iter.trainDataSet = trainData
-        iter.evalDataSet = evalData
+        TrainEvalRoutine iter = new TrainEvalRoutine(outdir, trainData, evalData)
+
         iter.collectTrainVectors()
         if (Params.inst.collect_eval_vectors) {
             iter.collectEvalVectors() // collect and save to disk for further inspection

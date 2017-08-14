@@ -95,7 +95,7 @@ class PredictRoutine extends Routine {
                 }
 
                 if (collectStats) {  // expects dataset with liganated proteins
-                    stats.evaluation.addPrediction(pair, pair.prediction.reorderedPockets)
+                    stats.evaluation.addPrediction(pair, pair.prediction.pockets)
                     synchronized (stats.classStats) {
                         stats.classStats.addAll(rescorer.stats)
                     }

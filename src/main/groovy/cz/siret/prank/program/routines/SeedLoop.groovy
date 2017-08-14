@@ -59,7 +59,6 @@ class SeedLoop extends EvalRoutine {
         logTime "random seed iteration finished in $timer.formatted"
         write "results saved to directory [${Futils.absPath(outdir)}]"
 
-
         return results
     }
 

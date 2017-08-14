@@ -80,14 +80,18 @@ class EvalModelRoutine extends EvalRoutine {
                 PredictionPair pair = item.predictionPair
 
                 PocketRescorer rescorer = createRescorer(pair, extractor)
-                rescorer.reorderPockets(pair.prediction, item.getContext())
+                rescorer.reorderPockets(pair.prediction, item.context)
 
                 if (params.visualizations) {
                     new PyMolRenderer(visDir).visualizeHistograms(item, (WekaSumRescorer)rescorer, pair)
                 }
 
-                results.originalEval.addPrediction(pair, pair.prediction.pockets         )
-                results.rescoredEval.addPrediction(pair, pair.prediction.reorderedPockets)
+                if (params.predictions) {
+                    results.eval.addPrediction(pair, pair.prediction.pockets)
+                } else {
+                    results.eval.addPrediction(pair, pair.prediction.reorderedPockets)
+                    results.origEval.addPrediction(pair, pair.prediction.pockets)
+                }
 
                 if (rescorer instanceof WekaSumRescorer) {
                     synchronized (results.classifierStats) {
@@ -104,7 +108,7 @@ class EvalModelRoutine extends EvalRoutine {
         results.logAndStore(outdir, classifier.class.simpleName)
         logSummaryResults(dataset.label, label, results)
 
-        write "processed $results.originalEval.ligandCount ligands in $dataset.size files"
+        write "processed $results.origEval.ligandCount ligands in $dataset.size files"
         logTime "model evaluation finished in $timer.formatted"
         write "results saved to directory [${Futils.absPath(outdir)}]"
 

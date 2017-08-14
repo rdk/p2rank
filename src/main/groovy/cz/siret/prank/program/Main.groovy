@@ -339,7 +339,6 @@ class Main implements Parametrized, Writable {
         }
     }
 
-
 //===========================================================================================================//
 
     Main(CmdLineArgs args) {
@@ -353,7 +352,6 @@ class Main implements Parametrized, Writable {
     static String getVersionName() {
         return "P2RANK $version"
     }
-
 
     static void main(String[] args) {
         ATimer timer = startTimer()

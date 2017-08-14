@@ -44,21 +44,16 @@ class CrossValidation extends EvalRoutine {
 
         List<EvalResults> resultsList
         GParsPool.withPool(params.crossval_threads) {
-
             resultsList = folds.collectParallel { Fold fold ->
 
                 String label = "fold.${numFolds}.${fold.num}"
-                TrainEvalRoutine iter = new TrainEvalRoutine("$outdir/$label")
-                iter.trainDataSet = fold.data.trainset
-                iter.evalDataSet = fold.data.evalset
-                iter.trainVectors = fold.trainVectors // precollected vectors
-
+                TrainEvalRoutine iter = new TrainEvalRoutine("$outdir/$label", fold.data.trainset, fold.data.evalset)
+                iter.trainVectors = fold.trainVectors // pre-collected vectors
+                
                 iter.trainAndEvalModel()
-
                 return iter.evalRoutine.results
 
             }.toList()
-
         }
 
         resultsList.each { results.addSubResults(it) }
@@ -69,7 +64,7 @@ class CrossValidation extends EvalRoutine {
         results.logAndStore(outdir, params.classifier)
         logSummaryResults(dataset.label, "crossvalidation", results)
 
-        write "processed $results.originalEval.ligandCount ligands in $dataset.size files"
+        write "processed $results.origEval.ligandCount ligands in $dataset.size files"
         write "crossvalidation finished in $timer.formatted"
         write "results saved to directory [${Futils.absPath(outdir)}]"
         logTime "finished in $timer.formatted"

@@ -65,7 +65,6 @@ abstract class ParamLooper extends Routine {
             step.results.putAll prefixKeys(res.statsStddev, '_stddev_') as Map<String, Double>
         }
 
-
         // save stats
         if (!exists(statsTableFile)) {
             appendl statsTableFile, step.header
