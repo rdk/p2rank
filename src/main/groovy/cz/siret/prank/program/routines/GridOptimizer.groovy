@@ -13,7 +13,8 @@ import static cz.siret.prank.utils.ATimer.startTimer
 import static cz.siret.prank.utils.Futils.mkdirs
 
 /**
- * Routine for grid optimization. Loops through values of one or more ListParam and produces resulting statistics and plots.
+ * Routine for grid optimization (prank ploop).
+ * Loops through values of one or more ListParam and produces resulting statistics and plots.
  */
 @Slf4j
 @CompileStatic
