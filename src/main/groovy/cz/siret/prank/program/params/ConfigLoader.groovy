@@ -11,7 +11,7 @@ class ConfigLoader {
 
         log.debug("Overriding default config with [$paramsGroovyFile.path]")
 
-        assert paramsGroovyFile.exists(), "params file not fund! ($paramsGroovyFile.path)"
+        assert paramsGroovyFile.exists(), "config file not fund! ($paramsGroovyFile.path)"
 
         def imports = new ImportCustomizer()
         imports.addImport(Params.class.simpleName, Params.class.name )
@@ -28,7 +28,7 @@ class ConfigLoader {
         try {
             shell.evaluate(paramsGroovyFile)
         } catch (Exception e) {
-            log.error("Error in params file [$paramsGroovyFile.path]", e)
+            log.error("Error in config file [$paramsGroovyFile.path]", e)
             return false
         }
 

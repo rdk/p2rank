@@ -218,11 +218,11 @@ quick_train_new() {
 traineval_config() {
     CONFIG=$1
     LABEL=$2
-    test ./prank.sh traineval -t chen11.ds -e mlig-joined.ds   -c config/${CONFIG} -loop 10                    -out_subdir EVAL/CONFIG_${LABEL}
-    test ./prank.sh traineval -t chen11.ds -e      joined.ds   -c config/${CONFIG} -loop 10                    -out_subdir EVAL/CONFIG_${LABEL}
-    test ./prank.sh traineval -t chen11.ds -e mlig-holo4k.ds   -c config/${CONFIG} -loop 3   -cache_datasets 0 -out_subdir EVAL/CONFIG_${LABEL}
-    test ./prank.sh traineval -t chen11.ds -e      holo4k.ds   -c config/${CONFIG} -loop 3   -cache_datasets 0 -out_subdir EVAL/CONFIG_${LABEL}
-    test ./prank.sh crossval chen11.ds                         -c config/${CONFIG} -loop 10                    -out_subdir EVAL/CONFIG_${LABEL}
+    test ./prank.sh traineval -t chen11.ds -e mlig-joined.ds   -c ${CONFIG} -loop 10                    -out_subdir EVAL/CONFIG_${LABEL}
+    test ./prank.sh traineval -t chen11.ds -e      joined.ds   -c ${CONFIG} -loop 10                    -out_subdir EVAL/CONFIG_${LABEL}
+    test ./prank.sh traineval -t chen11.ds -e mlig-holo4k.ds   -c ${CONFIG} -loop 3   -cache_datasets 0 -out_subdir EVAL/CONFIG_${LABEL}
+    test ./prank.sh traineval -t chen11.ds -e      holo4k.ds   -c ${CONFIG} -loop 3   -cache_datasets 0 -out_subdir EVAL/CONFIG_${LABEL}
+    test ./prank.sh crossval chen11.ds                         -c ${CONFIG} -loop 10                    -out_subdir EVAL/CONFIG_${LABEL}
 }
 
 # evaluate particular config on all datasets
@@ -232,12 +232,12 @@ traineval_config_all() {
 
     CONFIG=$1
     LABEL=$2
-    test ./prank.sh traineval -t chen11.ds -e b48.ds      -c config/${CONFIG} -loop 10      -out_subdir EVAL/CONFIG_${LABEL}
-    test ./prank.sh traineval -t chen11.ds -e u48.ds      -c config/${CONFIG} -loop 10      -out_subdir EVAL/CONFIG_${LABEL}
-    test ./prank.sh traineval -t chen11.ds -e astex.ds    -c config/${CONFIG} -loop 10      -out_subdir EVAL/CONFIG_${LABEL}
-    test ./prank.sh traineval -t chen11.ds -e dt198.ds    -c config/${CONFIG} -loop 10      -out_subdir EVAL/CONFIG_${LABEL}
-    test ./prank.sh traineval -t chen11.ds -e b210.ds     -c config/${CONFIG} -loop 10      -out_subdir EVAL/CONFIG_${LABEL}
-    test ./prank.sh traineval -t chen11.ds -e fptrain.ds  -c config/${CONFIG} -loop 10      -out_subdir EVAL/CONFIG_${LABEL}
+    test ./prank.sh traineval -t chen11.ds -e b48.ds      -c ${CONFIG} -loop 10      -out_subdir EVAL/CONFIG_${LABEL}
+    test ./prank.sh traineval -t chen11.ds -e u48.ds      -c ${CONFIG} -loop 10      -out_subdir EVAL/CONFIG_${LABEL}
+    test ./prank.sh traineval -t chen11.ds -e astex.ds    -c ${CONFIG} -loop 10      -out_subdir EVAL/CONFIG_${LABEL}
+    test ./prank.sh traineval -t chen11.ds -e dt198.ds    -c ${CONFIG} -loop 10      -out_subdir EVAL/CONFIG_${LABEL}
+    test ./prank.sh traineval -t chen11.ds -e b210.ds     -c ${CONFIG} -loop 10      -out_subdir EVAL/CONFIG_${LABEL}
+    test ./prank.sh traineval -t chen11.ds -e fptrain.ds  -c ${CONFIG} -loop 10      -out_subdir EVAL/CONFIG_${LABEL}
 
 }
 
@@ -369,7 +369,7 @@ xstart=`date +%s`
 
 # colors are stripped from stream that goes to the file
 #run > >( tee >( sed -u 's/\x1B\[[0-9;]*[JKmsu]//g' >> $SUMMARY_LOG ) )
-run > >( tee >( sed -u 's/\x1B\[[0-9;]*[JKmsu]//g' >> $SUMMARY_LOG ) )
+run $@ > >( tee >( sed -u 's/\x1B\[[0-9;]*[JKmsu]//g' >> $SUMMARY_LOG ) )
 
 xend=`date +%s`
 runtime=$((xend-xstart))
