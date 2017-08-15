@@ -3,10 +3,10 @@
 #
 # script for running development builds in-place from this directory
 #
-# copy misc/local-env-params.sh to this directory
+# copy misc/local-env.sh to this directory
 #
 
-. local-env-params.sh
+. local-env.sh
 
 
 echo JAVA_LOCALENV_PARAMS = $JAVA_LOCALENV_PARAMS
