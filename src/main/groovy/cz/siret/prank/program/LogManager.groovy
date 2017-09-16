@@ -12,6 +12,7 @@ import org.apache.logging.log4j.core.config.AppenderRef
 import org.apache.logging.log4j.core.config.Configuration
 import org.apache.logging.log4j.core.config.LoggerConfig
 import org.apache.logging.log4j.core.layout.PatternLayout
+import org.slf4j.bridge.SLF4JBridgeHandler
 
 /**
  *
@@ -63,6 +64,12 @@ class LogManager implements Writable {
         }
 
         ctx.updateLoggers();
+
+        // netlib uses java.util.logging - bridge to slf4
+        // compare https://github.com/fommil/netlib-java/blob/master/perf/logging.properties
+        // note: this seems to disable all netlib logging
+        SLF4JBridgeHandler.removeHandlersForRootLogger()
+        SLF4JBridgeHandler.install()
 
         //loggerConfig.getAppenders().each { System.out.println "APPENDER: " + it.value.name }
     }

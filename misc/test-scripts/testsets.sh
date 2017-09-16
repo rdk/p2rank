@@ -88,6 +88,10 @@ quick() {
     test ./prank.sh crossval -loop 1 fpocket-pairs.ds                              -fail_fast 1 -out_subdir TEST/TESTS
 }
 
+quick_train() {
+    test ./prank.sh traineval -loop 1 -t fpocket-pairs.ds -e test.ds               -fail_fast 1 -out_subdir TEST/TESTS
+}
+
 basic() {
 
     title RUNNING BASIC TESTS
