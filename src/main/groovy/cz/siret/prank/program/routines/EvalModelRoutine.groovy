@@ -1,12 +1,14 @@
 package cz.siret.prank.program.routines
 
 import cz.siret.prank.domain.Dataset
+import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.program.rendering.PyMolRenderer
 import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.score.*
 import cz.siret.prank.utils.Futils
+import cz.siret.prank.utils.StrUtils
 import cz.siret.prank.utils.WekaUtils
 import groovy.util.logging.Slf4j
 import weka.classifiers.Classifier
@@ -88,9 +90,15 @@ class EvalModelRoutine extends EvalRoutine {
 
                 if (params.predictions) {
                     results.eval.addPrediction(pair, pair.prediction.pockets)
-                } else {
+                } else { // rescore
                     results.eval.addPrediction(pair, pair.prediction.reorderedPockets)
                     results.origEval.addPrediction(pair, pair.prediction.pockets)
+
+                    String originalPocketsStr = pair.prediction.pockets.collect { Pocket p ->
+                        "$p.rank $p.name $p.centroid.x $p.centroid.y $p.centroid.z"
+                    }.join("\n")
+
+                    Futils.writeFile("$outdir/${pair.name}_original_pockets.txt", originalPocketsStr)
                 }
 
                 if (rescorer instanceof WekaSumRescorer) {

@@ -2,6 +2,8 @@ package cz.siret.prank.utils
 
 import com.google.common.base.CharMatcher
 import com.google.common.base.Splitter
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import groovy.transform.CompileStatic
 import org.apache.commons.lang3.SystemUtils
 import org.apache.commons.lang3.builder.ToStringBuilder
@@ -15,6 +17,8 @@ class StrUtils {
 
 //    static DateFormat DATE_LABEL_FORMAT = new SimpleDateFormat("yyyy.MM.dd_HHmm")
     static DateFormat DATE_LABEL_FORMAT = new SimpleDateFormat("yyMMdd_HHmm")
+
+    static Gson GSON = new GsonBuilder().setPrettyPrinting().create()
 
     private static class MSN extends ToStringStyle {
         MSN() {
@@ -36,6 +40,10 @@ class StrUtils {
     static String toStr(Object obj) {
 
         return ToStringBuilder.reflectionToString(obj, MULTILINE_SIMPLE_NAMES)
+    }
+
+    static String toJson(Object obj) {
+        GSON.toJson(obj)
     }
 
     static prefixLines(String prefix, String text) {
