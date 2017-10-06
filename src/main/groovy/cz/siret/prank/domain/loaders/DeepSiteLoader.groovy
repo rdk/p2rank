@@ -57,7 +57,7 @@ class DeepSiteLoader extends PredictionLoader {
 
             DeepSitePocket poc = new DeepSitePocket()
 
-            poc.rank = cols[4].toInteger() + 1
+            poc.rank = cols[5].toInteger() 
             poc.name =  cols[3]
             poc.score = cols[9].toDouble()
 
