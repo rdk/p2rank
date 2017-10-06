@@ -58,12 +58,12 @@ class DeepSiteLoader extends PredictionLoader {
             DeepSitePocket poc = new DeepSitePocket()
 
             poc.rank = cols[5].toInteger() 
-            poc.name =  cols[3]
-            poc.score = cols[9].toDouble()
+            poc.name =  "pocket" + poc.rank
+            poc.score = cols[10].toDouble()
 
-            double x = cols[5].toDouble()
-            double y = cols[6].toDouble()
-            double z = cols[7].toDouble()
+            double x = cols[6].toDouble()
+            double y = cols[7].toDouble()
+            double z = cols[8].toDouble()
 
             poc.centroid = new Point(x, y, z)
             if (liganatedProtein!=null) {
