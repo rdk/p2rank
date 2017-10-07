@@ -42,12 +42,15 @@ class DeepSiteLoader extends PredictionLoader {
      HETATM 2772  O   HOH X   3      53.560  31.272  25.616  0.00  0.95      XXX
      HETATM 2773  O   HOH X   4      47.560  25.272   5.616  0.00  0.98      XXX
      HETATM 2774  O   HOH X   5      51.560  21.272   9.616  0.00  0.74      XXX
+     --
+     TER
+     HETATM 2865  O   HOH X   1      55.323  17.696  29.383  0.00  1.00      XXX  
      */
     List<DeepSitePocket> loadSitehoundPockets(String predictionOutputFile, Protein liganatedProtein) {
 
         List<DeepSitePocket> res = new ArrayList<>()
 
-        Structure struct = PDBUtils.loadFromFile(predictionOutputFile)
+//        Structure struct = PDBUtils.loadFromFile(predictionOutputFile)
 
         List<String> lines = new File(predictionOutputFile).text.trim().readLines().findAll { it.startsWith('HETATM') }.toList()
 

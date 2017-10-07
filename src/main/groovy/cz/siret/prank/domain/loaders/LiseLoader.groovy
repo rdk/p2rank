@@ -46,7 +46,7 @@ class LiseLoader extends PredictionLoader {
 
         List<LisePocket> res = new ArrayList<>()
 
-        Structure struct = PDBUtils.loadFromFile(predictionOutputFile)
+//        Structure struct = PDBUtils.loadFromFile(predictionOutputFile)
 
         for (String line : new File(predictionOutputFile).text.trim().readLines()) {
 

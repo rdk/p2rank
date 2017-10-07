@@ -76,7 +76,7 @@ class MetaPocket2Loader extends PredictionLoader {
 
         List<MetaPocket2Pocket> res = new ArrayList<>()
 
-        Structure struct = PDBUtils.loadFromFile(predictionOutputFile)
+//        Structure struct = PDBUtils.loadFromFile(predictionOutputFile)
 
         List<String> lines = new File(predictionOutputFile).text.trim().readLines().findAll { it.contains('MPT') }.toList()
 
