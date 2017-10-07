@@ -30,9 +30,7 @@ class MetaPocket2Loader extends PredictionLoader {
     @Override
     Prediction loadPrediction(String predictionOutputFile, Protein liganatedProtein) {
 
-        List<MetaPocket2Pocket> pockets = loadPockets(predictionOutputFile, liganatedProtein)
-
-        return new Prediction(liganatedProtein, pockets)
+        return new Prediction(liganatedProtein, loadPockets(predictionOutputFile, liganatedProtein))
     }
 
     /**
@@ -55,7 +53,6 @@ class MetaPocket2Loader extends PredictionLoader {
      61 - 66        Real(6.2)     tempFactor   Temperature  factor.
      77 - 78        LString(2)    element      Element symbol, right-justified.
      79 - 80        LString(2)    charge       Charge  on the atom.
-
 
                                      x         y       z           score
      0         1         2         3         4         5         6
