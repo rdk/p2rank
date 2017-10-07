@@ -46,12 +46,12 @@ class SiteHoundLoader extends PredictionLoader {
     @Override
     Prediction loadPrediction(String predictionOutputFile, Protein liganatedProtein) {
 
-        List<SiteHoundPocket> pockets = loadSitehoundPockets(predictionOutputFile, liganatedProtein)
+        List<SiteHoundPocket> pockets = loadPockets(predictionOutputFile, liganatedProtein)
 
         return new Prediction(liganatedProtein, pockets)
     }
 
-    List<SiteHoundPocket> loadSitehoundPockets(String predictionOutputFile, Protein liganatedProtein) {
+    List<SiteHoundPocket> loadPockets(String predictionOutputFile, Protein liganatedProtein) {
 
         List<SiteHoundPocket> res = new ArrayList<>()
 

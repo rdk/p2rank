@@ -30,7 +30,7 @@ class MetaPocket2Loader extends PredictionLoader {
     @Override
     Prediction loadPrediction(String predictionOutputFile, Protein liganatedProtein) {
 
-        List<MetaPocket2Pocket> pockets = loadSitehoundPockets(predictionOutputFile, liganatedProtein)
+        List<MetaPocket2Pocket> pockets = loadPockets(predictionOutputFile, liganatedProtein)
 
         return new Prediction(liganatedProtein, pockets)
     }
@@ -72,7 +72,7 @@ class MetaPocket2Loader extends PredictionLoader {
      ATOM      7  C3  MPT     7     -24.911  52.100 -91.121    1   0.83
 
      */
-    List<MetaPocket2Pocket> loadSitehoundPockets(String predictionOutputFile, Protein liganatedProtein) {
+    List<MetaPocket2Pocket> loadPockets(String predictionOutputFile, Protein liganatedProtein) {
 
         List<MetaPocket2Pocket> res = new ArrayList<>()
 
