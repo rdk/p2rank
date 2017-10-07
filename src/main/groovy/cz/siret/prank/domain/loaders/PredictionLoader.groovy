@@ -12,7 +12,7 @@ import java.nio.file.Paths
 import java.util.function.Function
 
 /**
- * Loader for predictions produced by some pocket prediction tool
+ * Base class for prediction loaders (parsers for predictions produced by pocket prediction tools)
  */
 @Slf4j
 abstract class PredictionLoader {

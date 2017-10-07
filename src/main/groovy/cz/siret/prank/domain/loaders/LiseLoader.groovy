@@ -32,9 +32,7 @@ class LiseLoader extends PredictionLoader {
     @Override
     Prediction loadPrediction(String predictionOutputFile, Protein liganatedProtein) {
 
-        List<LisePocket> pockets = loadSitehoundPockets(predictionOutputFile, liganatedProtein)
-
-        return new Prediction(liganatedProtein, pockets)
+        return new Prediction(liganatedProtein, loadPockets(predictionOutputFile, liganatedProtein))
     }
 
     /**
@@ -42,14 +40,11 @@ class LiseLoader extends PredictionLoader {
      HETATM    0  R   ClA     0      88.000  70.000   4.000 100.00 15.29
      HETATM    0  R   ClB     1      93.000  76.000  19.000 100.00 14.92
      */
-    List<LisePocket> loadSitehoundPockets(String predictionOutputFile, Protein liganatedProtein) {
+    List<LisePocket> loadPockets(String predictionOutputFile, Protein liganatedProtein) {
 
         List<LisePocket> res = new ArrayList<>()
 
-//        Structure struct = PDBUtils.loadFromFile(predictionOutputFile)
-
         for (String line : new File(predictionOutputFile).text.trim().readLines()) {
-
             List<String> cols = StrUtils.splitOnWhitespace(line)
 
             LisePocket poc = new LisePocket()
@@ -57,12 +52,11 @@ class LiseLoader extends PredictionLoader {
             poc.rank = cols[4].toInteger() + 1
             poc.name =  cols[3]
             poc.score = cols[9].toDouble()
-
             double x = cols[5].toDouble()
             double y = cols[6].toDouble()
             double z = cols[7].toDouble()
-
             poc.centroid = new Point(x, y, z)
+            
             if (liganatedProtein!=null) {
                 poc.surfaceAtoms = liganatedProtein.exposedAtoms.cutoffAroundAtom(poc.centroid, SURFACE_ATOMS_CUTOFF)
             }
@@ -70,11 +64,12 @@ class LiseLoader extends PredictionLoader {
             res.add(poc)
         }
 
+        // sorting?
+
         return res
     }
 
     static class LisePocket extends Pocket {
-
 
     }
 

@@ -46,9 +46,7 @@ class SiteHoundLoader extends PredictionLoader {
     @Override
     Prediction loadPrediction(String predictionOutputFile, Protein liganatedProtein) {
 
-        List<SiteHoundPocket> pockets = loadPockets(predictionOutputFile, liganatedProtein)
-
-        return new Prediction(liganatedProtein, pockets)
+        return new Prediction(liganatedProtein, loadPockets(predictionOutputFile, liganatedProtein))
     }
 
     List<SiteHoundPocket> loadPockets(String predictionOutputFile, Protein liganatedProtein) {
@@ -63,8 +61,8 @@ class SiteHoundLoader extends PredictionLoader {
 
             poc.rank = cols[0].toInteger()
             poc.name =  "pocket." + poc.rank
-            poc.totalInteractionEnergy = cols[1].toDouble()
-            //poc.score = - poc.totalInteractionEnergy
+            poc.energy = cols[1].toDouble()
+            poc.score = -poc.energy
             poc.volume = cols[2].toDouble()
 
             double x = cols[3].toDouble()
@@ -83,13 +81,15 @@ class SiteHoundLoader extends PredictionLoader {
             }
         }
 
+        // no sorting needed, SiteHound correctly sorts them by energy already
+
         return res
     }
 
     static class SiteHoundPocket extends Pocket {
 
         double volume
-        double totalInteractionEnergy
+        double energy
     }
 
 }
