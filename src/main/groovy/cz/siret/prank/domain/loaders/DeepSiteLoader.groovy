@@ -58,7 +58,9 @@ class DeepSiteLoader extends PredictionLoader {
 
 //        Structure struct = PDBUtils.loadFromFile(predictionOutputFile)
 
-        List<String> lines = new File(predictionOutputFile).text.trim().readLines().findAll { it.startsWith('HETATM') }.toList()
+        List<String> lines = new File(predictionOutputFile).text.trim().readLines().findAll {
+            it.startsWith('HETATM') && it.trim().endsWith('XXX')
+        }.toList()
 
         for (String line : lines) {
 
