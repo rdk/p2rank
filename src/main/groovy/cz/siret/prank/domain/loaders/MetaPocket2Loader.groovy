@@ -77,12 +77,12 @@ class MetaPocket2Loader extends PredictionLoader {
 
         List<String> lines = new File(predictionOutputFile).text.trim().readLines().findAll { it.contains('MPT') }.toList()
 
+        int i = 1
         for (String line : lines) {
-            List<String> cols = StrUtils.splitOnWhitespace(line)
 
             MetaPocket2Pocket poc = new MetaPocket2Pocket()
 
-            poc.rank = cols[1].toInteger()
+            poc.rank = i++
             poc.name =  "pocket" + poc.rank
             poc.score = line.substring(60, 66).toDouble()
             double x = line.substring(30, 37).toDouble()

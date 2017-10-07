@@ -4,6 +4,7 @@ import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Prediction
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.geom.Point
+import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.PDBUtils
 import cz.siret.prank.utils.StrUtils
 import groovy.transform.CompileStatic
@@ -34,6 +35,26 @@ class DeepSiteLoader extends PredictionLoader {
     }
 
     /**
+     Record Format
+
+     COLUMNS       DATA  TYPE     FIELD         DEFINITION
+     -----------------------------------------------------------------------
+     1 - 6        Record name    "HETATM"
+     7 - 11       Integer        serial        Atom serial number.
+     13 - 16       Atom           name          Atom name.
+     17            Character      altLoc        Alternate location indicator.
+     18 - 20       Residue name   resName       Residue name.
+     22            Character      chainID       Chain identifier.
+     23 - 26       Integer        resSeq        Residue sequence number.
+     27            AChar          iCode         Code for insertion of residues.
+     31 - 38       Real(8.3)      x             Orthogonal coordinates for X.
+     39 - 46       Real(8.3)      y             Orthogonal coordinates for Y.
+     47 - 54       Real(8.3)      z             Orthogonal coordinates for Z.
+     55 - 60       Real(6.2)      occupancy     Occupancy.
+     61 - 66       Real(6.2)      tempFactor    Temperature factor.
+     77 - 78       LString(2)     element       Element symbol; right-justified.
+     79 - 80       LString(2)     charge        Charge on the atom.
+
                                      x         y       z           score
      0         1         2         3         4         5         6
      HETATM 2770  O   HOH X   1      37.560  27.272  15.616  0.00  1.00      XXX
@@ -49,6 +70,10 @@ class DeepSiteLoader extends PredictionLoader {
      HETATM 2845  O   HOH X   1     -59.044-104.242 -23.764  0.00  0.95      XXX
      HETATM 2846  O   HOH X   2     -49.044-116.242 -39.764  0.00  0.97      XXX
      HETATM 2847  O   HOH X   3     -65.044-106.242 -11.764  0.00  0.89      XXX
+     ---
+     TER
+     HETATM10413  O   HOH X   1      54.324 -22.574  55.640  0.00  1.00      XXX
+     HETATM10414  O   HOH X   2      50.324 -50.574  87.640  0.00  1.00      XXX
      */
     List<DeepSitePocket> loadPockets(String predictionOutputFile, Protein liganatedProtein) {
 
@@ -58,12 +83,11 @@ class DeepSiteLoader extends PredictionLoader {
             it.startsWith('HETATM') && it.contains('HOH X') && it.contains('XXX')
         }.toList()
 
+        int i = 1
         for (String line : lines) {
-            List<String> cols = StrUtils.splitOnWhitespace(line)
-
             DeepSitePocket poc = new DeepSitePocket()
 
-            poc.rank = cols[5].toInteger() 
+            poc.rank = i++
             poc.name =  "pocket" + poc.rank
             poc.score = line.substring(60, 66).toDouble()
             double x = line.substring(30, 37).toDouble()
