@@ -6,6 +6,7 @@ import cz.siret.prank.domain.loaders.ConcavityLoader
 import cz.siret.prank.domain.loaders.DeepSiteLoader
 import cz.siret.prank.domain.loaders.FPockeLoader
 import cz.siret.prank.domain.loaders.LiseLoader
+import cz.siret.prank.domain.loaders.MetaPocket2Loader
 import cz.siret.prank.domain.loaders.PredictionLoader
 import cz.siret.prank.domain.loaders.SiteHoundLoader
 import cz.siret.prank.features.api.ProcessedItemContext
@@ -325,6 +326,9 @@ class Dataset implements Parametrized {
                 break
             case "deepsite":
                 res = new DeepSiteLoader()
+                break
+            case "metapocket2":
+                res = new MetaPocket2Loader()
                 break
             default:
                 res = new FPockeLoader() // TODO: throw exception here, should not be run on prank predict
