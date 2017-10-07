@@ -66,15 +66,15 @@ class FPockeLoader extends PredictionLoader {
 
             //println "loading het group $pocketIndex $pocketGroup.PDBName"
 
-            FPocketPocket fpocket = new FPocketPocket()
-            fpocket.rank = pocketIndex+1
-            fpocket.vornoiCenters = new Atoms( pocketGroup.getAtoms() )
+            FPocketPocket pocket = new FPocketPocket()
+            pocket.rank = pocketIndex + 1
+            pocket.vornoiCenters = new Atoms( pocketGroup.getAtoms() )
 
             //important to set element for center of mass calculation
-            fpocket.vornoiCenters.list.each { Atom a -> a.setElement(Element.C)}
+            pocket.vornoiCenters.list.each { Atom a -> a.setElement(Element.C)}
 
             String pocketAtmFile = resultFile.getParent() + File.separator + "pockets" + File.separator + "pocket${pocketIndex}_atm.pdb"
-            Structure pocketAtmStructure = loadPocketStructureAndDetails(pocketAtmFile, fpocket)
+            Structure pocketAtmStructure = loadPocketStructureAndDetails(pocketAtmFile, pocket)
             Atoms pocketAtmAtoms = Atoms.allFromStructure(pocketAtmStructure)
 
             // we want Atom objects from/linked to original structure
@@ -88,13 +88,14 @@ class FPockeLoader extends PredictionLoader {
                 }
             }
 
-            fpocket.surfaceAtoms = surfaceAtoms
-            fpocket.name = "pocket.$fpocket.rank"
-            fpocket.centroid = fpocket.vornoiCenters.centerOfMass
+            pocket.surfaceAtoms = surfaceAtoms
+            pocket.name = "pocket.$pocket.rank"
+            pocket.centroid = pocket.vornoiCenters.centerOfMass
+            pocket.score = pocket.stats.pocketScore
 
-            pockets.add(fpocket)
+            pockets.add(pocket)
 
-            log.debug "$fpocket"
+            log.debug "$pocket"
 
             pocketIndex++
         }
@@ -205,6 +206,7 @@ class FPockeLoader extends PredictionLoader {
             vornoiVertices = headers[1]
             polarityScore = headers[6]
             realVolumeApprox = headers[8]
+            
         }
 
         public List<Double> getVector() {
