@@ -75,7 +75,6 @@ class LiseLoader extends PredictionLoader {
 
     static class LisePocket extends Pocket {
 
-        double score
 
     }
 

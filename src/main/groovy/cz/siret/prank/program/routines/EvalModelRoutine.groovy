@@ -74,6 +74,11 @@ class EvalModelRoutine extends EvalRoutine {
             mkdirs(visDir)
         }
 
+        String orig_pockets_dir = "$outdir/original_pockets"
+        if (!params.predictions) {
+            mkdirs(orig_pockets_dir)
+        }
+
         results = new EvalResults(1)
         FeatureExtractor extractor = FeatureExtractor.createFactory()
 
@@ -95,10 +100,10 @@ class EvalModelRoutine extends EvalRoutine {
                     results.origEval.addPrediction(pair, pair.prediction.pockets)
 
                     String originalPocketsStr = pair.prediction.pockets.collect { Pocket p ->
-                        "$p.rank $p.name $p.centroid.x $p.centroid.y $p.centroid.z"
+                        "$p.rank  $p.score  $p.name  $p.centroid.x  $p.centroid.y  $p.centroid.z".replace("  ", "\t")
                     }.join("\n")
 
-                    Futils.writeFile("$outdir/${pair.name}_original_pockets.txt", originalPocketsStr)
+                    Futils.writeFile("$orig_pockets_dir/${pair.name}_pockets.txt", originalPocketsStr)
                 }
 
                 if (rescorer instanceof WekaSumRescorer) {

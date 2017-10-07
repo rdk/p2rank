@@ -16,6 +16,8 @@ abstract class Pocket {
      */
     int rank
 
+    double score = Double.NaN
+
     /**
      * rank of pocket after rescoring
      */

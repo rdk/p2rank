@@ -84,12 +84,12 @@ class DeepSiteLoader extends PredictionLoader {
             res.add(poc)
         }
 
+        res = res.toSorted { -it.score }
+
         return res
     }
 
     static class DeepSitePocket extends Pocket {
-
-        double score
 
     }
 
