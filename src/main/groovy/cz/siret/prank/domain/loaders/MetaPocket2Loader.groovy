@@ -88,7 +88,7 @@ class MetaPocket2Loader extends PredictionLoader {
 
             poc.rank = cols[1].toInteger()
             poc.name =  "pocket" + poc.rank
-            poc.score = line.substring(60, 65).toDouble()
+            poc.score = line.substring(60, 66).toDouble()
 
             double x = line.substring(30, 37).toDouble()
             double y = line.substring(38, 45).toDouble()
@@ -101,6 +101,8 @@ class MetaPocket2Loader extends PredictionLoader {
 
             res.add(poc)
         }
+
+        res = res.toSorted { -it.score }
 
         return res
     }

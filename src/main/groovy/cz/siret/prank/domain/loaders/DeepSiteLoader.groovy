@@ -70,7 +70,7 @@ class DeepSiteLoader extends PredictionLoader {
 
             poc.rank = cols[5].toInteger() 
             poc.name =  "pocket" + poc.rank
-            poc.score = line.substring(60, 65).toDouble()
+            poc.score = line.substring(60, 66).toDouble()
 
             double x = line.substring(30, 37).toDouble()
             double y = line.substring(38, 45).toDouble()
