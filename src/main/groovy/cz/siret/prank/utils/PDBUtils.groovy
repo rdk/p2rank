@@ -98,7 +98,7 @@ class PDBUtils {
             return aa;
         }
         if (aa.length()!=3) {
-            log.warn " Suspicuous AA code: " + aa
+            log.warn " Suspicious AA code: " + aa
         }
 
         String a = aa.substring(0,1).toUpperCase()
