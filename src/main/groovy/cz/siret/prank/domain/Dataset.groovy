@@ -4,9 +4,10 @@ import com.google.common.base.CharMatcher
 import com.google.common.base.Splitter
 import cz.siret.prank.domain.loaders.ConcavityLoader
 import cz.siret.prank.domain.loaders.DeepSiteLoader
-import cz.siret.prank.domain.loaders.FPockeLoader
+import cz.siret.prank.domain.loaders.FPocketLoader
 import cz.siret.prank.domain.loaders.LiseLoader
 import cz.siret.prank.domain.loaders.MetaPocket2Loader
+import cz.siret.prank.domain.loaders.P2RankLoader
 import cz.siret.prank.domain.loaders.PredictionLoader
 import cz.siret.prank.domain.loaders.SiteHoundLoader
 import cz.siret.prank.features.api.ProcessedItemContext
@@ -16,12 +17,10 @@ import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.StrUtils
 import groovy.util.logging.Slf4j
-import groovyx.gpars.GParsPool
 
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * Dataset represents a list of items (usually proteins) to be processed by the program.
@@ -313,7 +312,7 @@ class Dataset implements Parametrized {
         PredictionLoader res
         switch (method) {
             case "fpocket":
-                res = new FPockeLoader()
+                res = new FPocketLoader()
                 break
             case "concavity":
                 res = new ConcavityLoader()
@@ -330,8 +329,11 @@ class Dataset implements Parametrized {
             case "metapocket2":
                 res = new MetaPocket2Loader()
                 break
+            case "p2rank":
+                res = new P2RankLoader()
+                break
             default:
-                res = new FPockeLoader() // TODO: throw exception here, should not be run on prank predict
+                res = new FPocketLoader() // TODO: throw exception here, should not be run on prank predict
                 //throw new Exception("Unknown prediction method defined in dataset: $method")
         }
 

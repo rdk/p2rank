@@ -1,6 +1,6 @@
 package cz.siret.prank
 
-import cz.siret.prank.domain.loaders.FPockeLoader
+import cz.siret.prank.domain.loaders.FPocketLoader
 import org.junit.Test
 
 import static org.junit.Assert.assertEquals
@@ -11,7 +11,7 @@ class FPocketTest {
 
     @Test void testStatsParser() {
 
-        FPockeLoader.FPocketStats stats = new FPockeLoader.FPocketStats()
+        FPocketLoader.FPocketStats stats = new FPocketLoader.FPocketStats()
 
         stats.parseLine("HEADER 0  - Pocket Score                      : -1.5909 ");
         stats.parseLine("HEADER 1  - Number of V. Vertices             :    54");

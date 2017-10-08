@@ -17,7 +17,7 @@ import java.util.regex.Pattern
  * Loader for predictions produced by Fpocket (v1.0 and v2.0).
  */
 @Slf4j
-class FPockeLoader extends PredictionLoader {
+class FPocketLoader extends PredictionLoader {
 
     public static class FPocketPocket extends Pocket {
 
