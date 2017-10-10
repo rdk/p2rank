@@ -37,6 +37,7 @@ class LiseLoader extends PredictionLoader {
 
     /**
                                      x         y       z           score
+     0         1         2         3         4         5         6
      HETATM    0  R   ClA     0      88.000  70.000   4.000 100.00 15.29
      HETATM    0  R   ClB     1      93.000  76.000  19.000 100.00 14.92
      */
@@ -44,17 +45,22 @@ class LiseLoader extends PredictionLoader {
 
         List<LisePocket> res = new ArrayList<>()
 
-        for (String line : new File(predictionOutputFile).text.trim().readLines()) {
+        List<String> lines = new File(predictionOutputFile).text.trim().readLines().findAll {
+            it.startsWith('HETATM')
+        }.toList()
+
+        int i = 1
+        for (String line : lines) {
             List<String> cols = StrUtils.splitOnWhitespace(line)
 
             LisePocket poc = new LisePocket()
 
-            poc.rank = cols[4].toInteger() + 1
-            poc.name =  cols[3]
-            poc.score = cols[9].toDouble()
-            double x = cols[5].toDouble()
-            double y = cols[6].toDouble()
-            double z = cols[7].toDouble()
+            poc.rank = i++
+            poc.name =  "pocket" + poc.rank
+            poc.score = cols.last().toDouble()
+            double x = line.substring(30, 37).toDouble()
+            double y = line.substring(38, 45).toDouble()
+            double z = line.substring(46, 53).toDouble()
             poc.centroid = new Point(x, y, z)
             
             if (liganatedProtein!=null) {
@@ -63,8 +69,6 @@ class LiseLoader extends PredictionLoader {
 
             res.add(poc)
         }
-
-        // sorting?
 
         return res
     }
