@@ -64,8 +64,14 @@ class PredictRoutine extends Routine {
         WekaUtils.disableParallelism(classifier)
 
         String visDir = "$outdir/visualizations"
+        String predDir = "$outdir"
         if (produceVisualizations) {
             mkdirs(visDir)
+        }
+        if (collectStats) {
+            // keep predicsions in subfolder when running eval-predict command
+            predDir = "$outdir/predictions"
+            mkdirs(predDir)
         }
 
         PredictResults stats = new PredictResults()
@@ -90,7 +96,7 @@ class PredictRoutine extends Routine {
 
                 if (outputPredictionFiles) {
                     PredictionSummary psum = new PredictionSummary(pair.prediction)
-                    String outf = "$outdir/${item.label}_predictions.csv"
+                    String outf = "$predDir/${item.label}_predictions.csv"
                     writeFile(outf, psum.toCSV().toString())
                 }
 
