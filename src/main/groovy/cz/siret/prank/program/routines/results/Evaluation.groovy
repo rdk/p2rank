@@ -112,6 +112,8 @@ class Evaluation {
         protRow.atoms = lp.allAtoms.count
         protRow.protAtoms = lp.proteinAtoms.count
         protRow.exposedAtoms = pair.prediction.protein.exposedAtoms.count
+        // TODO count only model 1
+        // TODO count only protein chains
         protRow.chains = lp.structure.chains.size()
         protRow.chainNames = lp.structure.chains.collect {it.chainID}.join(" ")
         protRow.ligands = pair.ligandCount
