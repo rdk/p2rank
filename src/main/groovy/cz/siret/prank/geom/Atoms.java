@@ -41,6 +41,17 @@ public final class Atoms implements Iterable<Atom> {
         this.list = (List<Atom>) list;
     }
 
+    /**
+     * copy atoms and fill with points
+     */
+    public static Atoms copyPoints(Atom... atoms) {
+        Atoms res = new Atoms(atoms.length);
+        for (Atom a: atoms) {
+            res.add(new Point(a.getCoords()));
+        }
+        return res;
+    }
+
     public Atoms(Atom atom) {
         this(Lists.newArrayList(atom));
     }

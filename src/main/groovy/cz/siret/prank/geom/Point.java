@@ -1,5 +1,6 @@
 package cz.siret.prank.geom;
 
+import cz.siret.prank.utils.PerfUtils;
 import org.biojava.nbio.structure.Atom;
 import org.biojava.nbio.structure.Bond;
 import org.biojava.nbio.structure.Element;
@@ -36,6 +37,10 @@ public final class Point implements Atom {
     @Override
     public Element getElement() {
         return Element.C; // return something so it can be used in center-of-mass calculation
+    }
+
+    public double dist(Atom a) {
+        return PerfUtils.dist(coords, a.getCoords());
     }
 
 //===============================================================================================//
