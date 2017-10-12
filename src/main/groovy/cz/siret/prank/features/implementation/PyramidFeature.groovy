@@ -23,7 +23,7 @@ class PyramidFeature extends SasFeatureCalculator implements Parametrized {
     final List<String> HEADER = new ArrayList<>()
 
     PyramidFeature() {
-        for (int pi : [1, 2, 3]) {
+        for (int pi : [1, 2, 3, 4]) {
             for (String ft : ["dc", "surf"]) {
                 HEADER.add "${name}_${pi}_${ft}".toString()
             }
@@ -46,18 +46,19 @@ class PyramidFeature extends SasFeatureCalculator implements Parametrized {
     @Override
     double[] calculateForSasPoint(Atom sasPoint, SasFeatureCalculationContext context) {
 
-        Atoms nearest = context.protein.exposedAtoms.kdTree.findNearestNAtoms(sasPoint, 6, true)
-
+        Atoms nearest = context.protein.exposedAtoms.kdTree.findNearestNAtoms(sasPoint, 9, true)
 
         Pyramid p1 = new Pyramid(sasPoint, nearest[0], nearest[1], nearest[2])
         Pyramid p2 = new Pyramid(sasPoint, nearest[3], nearest[4], nearest[5])
         Pyramid p3 = new Pyramid(sasPoint, nearest[0], nearest[2], nearest[4])
+        Pyramid p4 = new Pyramid(sasPoint, nearest[6], nearest[7], nearest[8])
 
         double p1_dc = dist(sasPoint, p1.centroid)
         double p2_dc = dist(sasPoint, p2.centroid)
         double p3_dc = dist(sasPoint, p3.centroid)
+        double p4_dc = dist(sasPoint, p4.centroid)
 
-        return [p1_dc, p1.surface, p2_dc, p2.surface, p3_dc, p3.surface] as double[]
+        return [p1_dc, p1.surface, p2_dc, p2.surface, p3_dc, p3.surface, p4_dc, p4.surface] as double[]
     }
 
     Point point(Atom a) {
