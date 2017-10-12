@@ -5,7 +5,7 @@ import cz.siret.prank.features.implementation.AsaFeature
 import cz.siret.prank.features.implementation.AsaResiduesFeature
 import cz.siret.prank.features.implementation.BfactorFeature
 import cz.siret.prank.features.implementation.ContactResiduesPositionFeature
-import cz.siret.prank.features.implementation.ProteinMass
+import cz.siret.prank.features.implementation.ProteinMassFeature
 import cz.siret.prank.features.implementation.ProtrusionFeature
 import cz.siret.prank.features.implementation.ProtrusionHistogramFeature
 import cz.siret.prank.features.implementation.PyramidFeature
@@ -63,7 +63,7 @@ class FeatureRegistry {
         registerFeature(new XyzDummyFeature())
         registerFeature(new PairHistogramFeature())
         registerFeature(new PyramidFeature())
-        registerFeature(new ProteinMass())
+        registerFeature(new ProteinMassFeature())
 
         // Register new feature implementations here
 

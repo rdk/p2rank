@@ -13,7 +13,7 @@ import static cz.siret.prank.geom.Struct.dist
 /**
  * simple geometric feature based on distances of the point to the centrs of the mass of prot. atoms, sas points ...
  */
-class ProteinMass extends SasFeatureCalculator implements Parametrized {
+class ProteinMassFeature extends SasFeatureCalculator implements Parametrized {
 
     static final String NAME = 'pmass'
 
