@@ -57,7 +57,6 @@ class PyramidFeature extends SasFeatureCalculator implements Parametrized {
         double p2_dc = dist(sasPoint, p2.centroid)
         double p3_dc = dist(sasPoint, p3.centroid)
 
-
         return [p1_dc, p1.surface, p2_dc, p2.surface, p3_dc, p3.surface] as double[]
     }
 
