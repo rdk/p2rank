@@ -377,10 +377,12 @@ public final class Atoms implements Iterable<Atom> {
                 res.add(a);
             }
         }
+
         return new Atoms(res);
     }
 
     public static Atoms onlyProteinAtoms(Structure struc) {
+        // TODO UNK residues, double models
         return onlyProteinAtoms(allFromStructure(struc));
     }
 
