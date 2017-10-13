@@ -2,7 +2,9 @@ package cz.siret.prank.program.routines
 
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.domain.Prediction
+import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.features.FeatureExtractor
+import cz.siret.prank.program.PrankException
 import cz.siret.prank.score.PocketRescorer
 import cz.siret.prank.score.WekaSumRescorer
 import cz.siret.prank.score.results.RescoringSummary
@@ -39,6 +41,11 @@ class RescoreRoutine extends Routine {
         writeParams(outdir)
 
         write "rescoring pockets on proteins from dataset [$dataset.name]"
+
+        if (!(dataset.header.contains("prediction") && dataset.header.contains("protein"))) {
+            throw new PrankException("Dataset must contain 'protein' and 'prediction' columns!")
+        }
+
         log.info "outdir: $outdir"
 
         Classifier classifier = WekaUtils.loadClassifier(modelf)
@@ -48,7 +55,8 @@ class RescoreRoutine extends Routine {
 
         Dataset.Result result = dataset.processItems(params.parallel, new Dataset.Processor() {
             void processItem(Dataset.Item item) {
-                Prediction prediction = item.prediction
+                PredictionPair pair = item.predictionPair
+                Prediction prediction = pair.prediction
 
                 PocketRescorer rescorer = new  WekaSumRescorer(classifier, extractor)
                 rescorer.reorderPockets(prediction, item.context)

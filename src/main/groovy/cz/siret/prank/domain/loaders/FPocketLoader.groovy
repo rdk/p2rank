@@ -42,7 +42,7 @@ class FPocketLoader extends PredictionLoader {
     @Override
     Prediction loadPrediction(String pocketPredictionOutputFile, Protein liganatedProtein) {
         
-        return loadResultFromFile(pocketPredictionOutputFile)
+        return loadResultFromFile(pocketPredictionOutputFile, liganatedProtein)
     }
 
     /**
@@ -50,9 +50,9 @@ class FPocketLoader extends PredictionLoader {
      *
      * @param resultPdbFileName
      */
-    private Prediction loadResultFromFile(String resultPdbFileName) {
+    private Prediction loadResultFromFile(String resultPdbFileName, Protein queryProtein) {
 
-        Protein protein = Protein.load(resultPdbFileName, new LoaderParams(ignoreLigands: true)) // hetatm atoms here are pocket vornoi centers
+        Protein protein = queryProtein // hetatm atoms here are pocket vornoi centers
         protein.allAtoms.withIndex()
 
         List<Pocket> pockets = new ArrayList<>()
@@ -80,7 +80,7 @@ class FPocketLoader extends PredictionLoader {
             // we want Atom objects from/linked to original structure
             Atoms surfaceAtoms = new Atoms()
             for (Atom atm in pocketAtmAtoms.list) {
-                Atom linkedAtom = protein.allAtoms.getByID(atm.PDBserial)
+                Atom linkedAtom = protein.proteinAtoms.getByID(atm.PDBserial)
                 if (linkedAtom!=null) {
                     surfaceAtoms.add(linkedAtom)
                 } else {

@@ -21,7 +21,7 @@ abstract class PredictionLoader {
 
     /**
      *
-     * @param ligandedPdbFile path to control pdb file with ligands
+     * @param ligandedPdbFile path to control pdb file with ligands   (could be just query pdb file with no ligands when rescoring)
      * @param predictionOutputFile main pocket prediction output file (from the second column in the dataset file)
      * @return
      */
@@ -38,6 +38,8 @@ abstract class PredictionLoader {
         } else {
             res.prediction = new Prediction(res.liganatedProtein, [])
         }
+
+        // TODO: move conservation related stuff to feature implementation
 
         Path parentDir = Paths.get(liganatedPdbFile).parent
         if (loaderParams.load_conservation_paths) {
