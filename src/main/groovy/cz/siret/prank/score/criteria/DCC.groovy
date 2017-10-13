@@ -20,7 +20,8 @@ class DCC implements IdentificationCriterium {
     @Override
     boolean isIdentified(Ligand ligand, Pocket pocket) {
 
-        return cutoff >= Struct.dist(ligand.centroid, pocket.centroid)
+//        return cutoff >= Struct.dist(ligand.centroid, pocket.centroid)
+        return cutoff >= Struct.dist(ligand.atoms.toPoints().centerOfMass, pocket.centroid)
     }
 
     @Override
