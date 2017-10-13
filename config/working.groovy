@@ -37,7 +37,7 @@ import cz.siret.prank.program.params.Params
     seed = 42
     loop = 10
 
-    predictions = true
+
 
     out_prefix_date = false
 

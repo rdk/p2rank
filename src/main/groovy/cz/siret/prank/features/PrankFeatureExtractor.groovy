@@ -300,15 +300,15 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
 
             // special cases (TODO: move to ChemFeature)
             if (featureSetup.enabledFeatureNames.contains(ChemFeature.NAME)) {
-                res.valueVector.multiply('atomDensity', multip)
-                res.valueVector.multiply('hDonorAtoms', multip)
-                res.valueVector.multiply('hAcceptorAtoms', multip)
+                res.valueVector.multiply('chem.atomDensity', multip)
+                res.valueVector.multiply('chem.hDonorAtoms', multip)
+                res.valueVector.multiply('chem.hAcceptorAtoms', multip)
             }
 
         }
         // special cases (TODO: move to ChemFeature)
         if (featureSetup.enabledFeatureNames.contains(ChemFeature.NAME)) {
-            res.valueVector.set('atoms', n)
+            res.valueVector.set('chem.atoms', n)
         }
 
 
