@@ -117,13 +117,17 @@ class FPocketLoader extends PredictionLoader {
      */
     private List<Atoms> loadPocketGroups(String resultPdbFileName) {
 
-        List<String> lines = new File(resultPdbFileName).text.trim().readLines().findAll {
-            it.startsWith('HETATM') && it.contains('STP C') && it.contains('Ve')
-        }.toList()
+        List<String> lines = new File(resultPdbFileName).text.trim().readLines()
+//                .findAll {
+//            it.startsWith('HETATM') && it.contains('STP C') && it.contains('Ve')
+//        }.toList()
 
         Map<Integer, Atoms> groups = new HashMap<>();
 
         for (String line : lines) {
+            if (!(line.startsWith('HETATM') && line.contains('STP C') && line.contains('Ve'))) {
+                continue
+            }
 
             int seqNum = line.substring(22, 26).toInteger()
             double x = line.substring(30, 37).toDouble()
