@@ -52,8 +52,8 @@ class FPocketLoader extends PredictionLoader {
      */
     private Prediction loadResultFromFile(String resultPdbFileName, Protein queryProtein) {
 
-        Protein protein = queryProtein // hetatm atoms here are pocket vornoi centers
-        protein.allAtoms.withIndex()
+        Protein protein = queryProtein   // original query protein (input to fpocket)
+        protein.proteinAtoms.withIndex() // create inden on protein atoms
 
         List<Pocket> pockets = new ArrayList<>()
         File resultFile = new File(resultPdbFileName)
