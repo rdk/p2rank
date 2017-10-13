@@ -1,6 +1,5 @@
 package cz.siret.prank.domain.loaders
 
-import cz.siret.prank.domain.LoaderParams
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Prediction
 import cz.siret.prank.domain.Protein
@@ -57,7 +56,6 @@ class FPocketLoader extends PredictionLoader {
 
         List<Pocket> pockets = new ArrayList<>()
         File resultFile = new File(resultPdbFileName)
-//        List<Group> fpocketGroups = protein.structure.hetGroups.findAll { Group g -> "STP" == g.PDBName}
         List<Atoms> fpocketGroups = loadPocketGroups(resultPdbFileName)
 
 
@@ -104,7 +102,7 @@ class FPocketLoader extends PredictionLoader {
     }
 
     /**
-     * ! fpocket sometimes produces files unparsable by biojava with letters in id column (...975f)
+     * ! fpocket sometimes produces files unparsable by biojava with letters in id column (here:...975f)
      *
      HETATM91317 APOL STP C   1      43.189 -15.571 -19.933  0.00  0.00          Ve
      HETATM91317  POL STP C   1      43.122 -15.632 -19.896  0.00  0.00          Ve
@@ -118,11 +116,8 @@ class FPocketLoader extends PredictionLoader {
     private List<Atoms> loadPocketGroups(String resultPdbFileName) {
 
         List<String> lines = new File(resultPdbFileName).text.trim().readLines()
-//                .findAll {
-//            it.startsWith('HETATM') && it.contains('STP C') && it.contains('Ve')
-//        }.toList()
 
-        Map<Integer, Atoms> groups = new HashMap<>();
+        Map<Integer, Atoms> groups = new HashMap<>()
 
         for (String line : lines) {
             if (!(line.startsWith('HETATM') && line.contains('STP C') && line.contains('Ve'))) {

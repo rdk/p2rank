@@ -4,7 +4,6 @@ import cz.siret.prank.collectors.DataPreprocessor
 import cz.siret.prank.collectors.PointVectorCollector
 import cz.siret.prank.collectors.VectorCollector
 import cz.siret.prank.domain.Dataset
-import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.features.FeatureVector
 import cz.siret.prank.score.criteria.DCA
@@ -89,7 +88,7 @@ class CollectVectorsRoutine extends Routine {
         int negatives = neg.get()
         int count = positives + negatives
         double ratio = PerfUtils.round ( (double)positives / negatives , 3)
-        int ligandCount = dataset.items.collect { it.predictionPair.liganatedProtein.ligands.size() }.sum(0) as int
+        int ligandCount = dataset.items.collect { it.predictionPair.queryProtein.ligands.size() }.sum(0) as int
 
         write "processed $ligandCount ligans in $dataset.size files"
         write "extracted $count vectors...  positives:$positives negatives:$negatives ratio:$ratio"

@@ -103,7 +103,7 @@ class Evaluation {
         List<LigRow> tmpLigRows = new ArrayList<>()
         List<PocketRow> tmpPockets = new ArrayList<>()
 
-        Protein lp = pair.liganatedProtein
+        Protein lp = pair.queryProtein
         Atoms sasPoints = pair.prediction.protein.connollySurface.points
         Atoms labeledPoints = new Atoms(pair.prediction.labeledPoints ?: emptyList())
         
@@ -155,7 +155,7 @@ class Evaluation {
             }
         }
 
-        for (Ligand lig in pair.liganatedProtein.ligands) {
+        for (Ligand lig in pair.queryProtein.ligands) {
             LigRow row = new LigRow()
 
             row.protName = pair.name

@@ -21,33 +21,33 @@ abstract class PredictionLoader {
 
     /**
      *
-     * @param ligandedPdbFile path to control pdb file with ligands   (could be just query pdb file with no ligands when rescoring)
+     * @param queryProteinFile path to protein (could be just query pdb file with no ligands when rescoring, or control protein with ligands on evaluation)
      * @param predictionOutputFile main pocket prediction output file (from the second column in the dataset file)
      * @return
      */
-    PredictionPair loadPredictionPair(String liganatedPdbFile, String predictionOutputFile,
+    PredictionPair loadPredictionPair(String queryProteinFile, String predictionOutputFile,
                                       ProcessedItemContext itemContext) {
-        File ligf = new File(liganatedPdbFile)
+        File ligf = new File(queryProteinFile)
 
         PredictionPair res = new PredictionPair()
         res.name = ligf.name
-        res.liganatedProtein = Protein.load(liganatedPdbFile, loaderParams)
+        res.queryProtein = Protein.load(queryProteinFile, loaderParams)
 
         if (predictionOutputFile != null) {
-            res.prediction = loadPrediction(predictionOutputFile, res.liganatedProtein)
+            res.prediction = loadPrediction(predictionOutputFile, res.queryProtein)
         } else {
-            res.prediction = new Prediction(res.liganatedProtein, [])
+            res.prediction = new Prediction(res.queryProtein, [])
         }
 
         // TODO: move conservation related stuff to feature implementation
 
-        Path parentDir = Paths.get(liganatedPdbFile).parent
+        Path parentDir = Paths.get(queryProteinFile).parent
         if (loaderParams.load_conservation_paths) {
             if (itemContext.datsetColumnValues.get(Dataset.COLUMN_CONSERVATION_FILES_PATTERN) == null) {
                 log.info("Setting conservation path. Origin: {}", loaderParams.conservation_origin)
                 Function<String, File> conserPathForChain = { String chainId ->
                     parentDir.resolve(ConservationScore.scoreFileForPdbFile(
-                            Futils.shortName(liganatedPdbFile), chainId,
+                            Futils.shortName(queryProteinFile), chainId,
                             loaderParams.conservation_origin)).toFile()
                 }
                 itemContext.auxData.put(ConservationScore.conservationScoreKey, conserPathForChain)
@@ -59,7 +59,7 @@ abstract class PredictionLoader {
                 itemContext.auxData.put(ConservationScore.conservationScoreKey, conserPathForChain)
             }
             if (loaderParams.load_conservation) {
-                res.liganatedProtein.loadConservationScores()
+                res.queryProtein.loadConservationScores()
             }
         }
         return res

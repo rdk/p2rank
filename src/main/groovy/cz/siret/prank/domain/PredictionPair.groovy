@@ -11,8 +11,13 @@ class PredictionPair {
 
     String name
     Prediction prediction
-    Protein liganatedProtein
-    Function<String, File> conservationPathForChain;
+    /**
+     * This is either query protein when rescoring (original input protein of the method we are rescoring with 'prank rescore')
+     * or liganated 'cntrol' protein when doing evaluation with 'prank eval-*'.
+     * Either way it should correspond to 'protein' column in the dataset file.
+     */
+    Protein queryProtein
+    Function<String, File> conservationPathForChain
 
     /**
      * first is 1
@@ -35,7 +40,7 @@ class PredictionPair {
      * @return null if pocket has no ligand
      */
     Ligand findLigandForPocket(Pocket pocket, IdentificationCriterium assesor) {
-        for (Ligand lig in liganatedProtein.ligands) {
+        for (Ligand lig in queryProtein.ligands) {
             if (assesor.isIdentified(lig, pocket)) {
                 return lig
             }
@@ -44,19 +49,19 @@ class PredictionPair {
     }
 
     int getLigandCount() {
-        liganatedProtein.ligands.size()
+        queryProtein.ligands.size()
     }
 
     int getIgnoredLigandCount() {
-        liganatedProtein.ignoredLigands.size()
+        queryProtein.ignoredLigands.size()
     }
 
     int getSmallLigandCount() {
-        liganatedProtein.smallLigands.size()
+        queryProtein.smallLigands.size()
     }
 
     int getDistantLigandCount() {
-        liganatedProtein.distantLigands.size()
+        queryProtein.distantLigands.size()
     }
 
     List<Pocket> getFalsePositivePockets(IdentificationCriterium assesor) {
@@ -68,7 +73,7 @@ class PredictionPair {
     }
 
     boolean isCorrectlyPredictedPocket(Pocket pocket, IdentificationCriterium assesor) {
-        for (Ligand lig : liganatedProtein.ligands) {
+        for (Ligand lig : queryProtein.ligands) {
             if (assesor.isIdentified(lig, pocket)) {
                 return true
             }

@@ -89,7 +89,7 @@ class Dataset implements Parametrized {
 
         // for one column datasets
         Protein getProtein() {
-            getPredictionPair().liganatedProtein
+            getPredictionPair().queryProtein
         }
 
         PredictionPair loadPredictionPair() {
@@ -192,7 +192,7 @@ class Dataset implements Parametrized {
         items.each {
             if (it.cachedPair!=null) {
                 it.cachedPair.prediction.protein.clearSecondaryData()
-                it.cachedPair.liganatedProtein.clearSecondaryData()
+                it.cachedPair.queryProtein.clearSecondaryData()
             }
         }
     }
