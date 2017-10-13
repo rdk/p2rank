@@ -82,7 +82,7 @@ class ConcavityLoader extends PredictionLoader {
             rank++
         }
 
-        ///XXXXX correct sorting by cocnavity score encoded in temp. value od atoms in pdb file
+        ///X correct sorting by cocnavity score encoded in temp. value od atoms in pdb file
         res = res.sort { Pocket a, Pocket b -> b.newScore <=> a.newScore } //descending
         int i = 1
         res.each {

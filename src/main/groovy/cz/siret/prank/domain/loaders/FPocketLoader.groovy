@@ -5,10 +5,12 @@ import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Prediction
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.geom.Atoms
+import cz.siret.prank.geom.Point
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.PDBUtils
 import groovy.util.logging.Slf4j
-import org.biojava.nbio.structure.*
+import org.biojava.nbio.structure.Atom
+import org.biojava.nbio.structure.Structure
 
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -55,25 +57,23 @@ class FPocketLoader extends PredictionLoader {
 
         List<Pocket> pockets = new ArrayList<>()
         File resultFile = new File(resultPdbFileName)
-        List<Group> fpocketGroups = protein.structure.hetGroups.findAll { Group g -> "STP" == g.PDBName}
+//        List<Group> fpocketGroups = protein.structure.hetGroups.findAll { Group g -> "STP" == g.PDBName}
+        List<Atoms> fpocketGroups = loadPocketGroups(resultPdbFileName)
+
+
 
         log.info "loading ${fpocketGroups.size()} pockets"
 
         int pocketIndex = 0;
-        for (Group g in fpocketGroups) {
-            assert g instanceof HetatomImpl
-            HetatomImpl pocketGroup = g
+        for (Atoms g in fpocketGroups) {
 
             //println "loading het group $pocketIndex $pocketGroup.PDBName"
 
             FPocketPocket pocket = new FPocketPocket()
             pocket.rank = pocketIndex + 1
-            pocket.vornoiCenters = new Atoms( pocketGroup.getAtoms() )
+            pocket.vornoiCenters = g
 
-            //important to set element for center of mass calculation
-            pocket.vornoiCenters.list.each { Atom a -> a.setElement(Element.C)}
-
-            String pocketAtmFile = resultFile.getParent() + File.separator + "pockets" + File.separator + "pocket${pocketIndex}_atm.pdb"
+            String pocketAtmFile = resultFile.parent + File.separator + "pockets" + File.separator + "pocket${pocketIndex}_atm.pdb"
             Structure pocketAtmStructure = loadPocketStructureAndDetails(pocketAtmFile, pocket)
             Atoms pocketAtmAtoms = Atoms.allFromStructure(pocketAtmStructure)
 
@@ -103,6 +103,49 @@ class FPocketLoader extends PredictionLoader {
         return new Prediction(protein, pockets)
     }
 
+    /**
+     * ! fpocket sometimes produces files unparsable by biojava with letters in id column (...975f)
+     *
+     HETATM91317 APOL STP C   1      43.189 -15.571 -19.933  0.00  0.00          Ve
+     HETATM91317  POL STP C   1      43.122 -15.632 -19.896  0.00  0.00          Ve
+     HETATM99532  POL STP C   1      44.632 -16.282 -19.585  0.00  0.00          Ve
+     HETATM1975f APOL STP C   1      52.281 -25.921  -7.631  0.00  0.00          Ve
+     HETATM24676 APOL STP C   2      -2.155 -21.045  -4.717  0.00  0.00          Ve
+     HETATM40261 APOL STP C   2      -1.977 -22.364  -5.748  0.00  0.00          Ve
+     HETATM40261 APOL STP C   2      -2.370 -22.325  -5.943  0.00  0.00          Ve
+     HETATM55930 APOL STP C   2      -2.407 -22.341  -6.002  0.00  0.00          Ve
+     */
+    private List<Atoms> loadPocketGroups(String resultPdbFileName) {
+
+        List<String> lines = new File(resultPdbFileName).text.trim().readLines().findAll {
+            it.startsWith('HETATM') && it.contains('STP C') && it.contains('Ve')
+        }.toList()
+
+        Map<Integer, Atoms> groups = new HashMap<>();
+
+        for (String line : lines) {
+
+            int seqNum = line.substring(22, 26).toInteger()
+            double x = line.substring(30, 37).toDouble()
+            double y = line.substring(38, 45).toDouble()
+            double z = line.substring(46, 53).toDouble()
+
+            Point p = new Point(x, y, z)
+
+            if (!groups.containsKey(seqNum)) {
+                groups.put(seqNum, new Atoms())
+            }
+            groups.get(seqNum).add(p)
+        }
+
+        List<Atoms> res = new ArrayList<>()
+
+        for (int i=1; i<=groups.keySet().size(); i++) {
+            res.add(groups.get(i))
+        }
+
+        return res
+    }
 
     /**
      * read details from special fpocket output pdb file for one pocket (atom file)
