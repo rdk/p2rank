@@ -52,7 +52,7 @@ class DSWO implements IdentificationCriterium {
 
     @Override
     String toString() {
-        "DSWO($ligandCoverageThreshold,$pocketCoverageThreshold)"
+        "DSWO($ligandCoverageThreshold;$pocketCoverageThreshold)"
     }
 
 }

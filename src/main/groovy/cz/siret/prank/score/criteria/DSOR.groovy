@@ -4,6 +4,7 @@ import cz.siret.prank.domain.Ligand
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.geom.Atoms
 import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
 
 /**
  * discretized surface overlap ratio (similar to DeepSite DVO criterion)
@@ -11,6 +12,7 @@ import groovy.transform.CompileStatic
  *
  * TODO unfifished
  */
+@Slf4j
 @CompileStatic
 class DSOR implements IdentificationCriterium {
 
@@ -26,12 +28,18 @@ class DSOR implements IdentificationCriterium {
             return false
         }
 
+
+        log.warn("L:$ligand.sasPoints.count P:$pocket.sasPoints.count")
+
         int inter = Atoms.intersection(ligand.sasPoints, pocket.sasPoints).count
+        log.warn("I:$inter")
         if (inter==0)
             return false
         int union = Atoms.union(ligand.sasPoints, pocket.sasPoints).count
+        log.warn("U:$inter")
         if (union==0)
             return false
+
 
         double ratio = inter / union
 

@@ -2,6 +2,7 @@ package cz.siret.prank.score.prediction
 
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.geom.Atoms
+import cz.siret.prank.program.rendering.LabeledPoint
 import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
 
@@ -9,12 +10,14 @@ import org.biojava.nbio.structure.Atom
 class PrankPocket extends Pocket {
 
     Atoms sasPoints
+    List<LabeledPoint> labeledPoints
 
-    PrankPocket(Atom centroid, double score, Atoms sasPoints) {
+    PrankPocket(Atom centroid, double score, Atoms sasPoints, List<LabeledPoint> labeledPoints) {
         this.centroid = centroid
         this.score = score
         this.newScore = score
         this.sasPoints = sasPoints
+        this.labeledPoints = labeledPoints
     }
 
     @Override

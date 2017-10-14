@@ -20,7 +20,7 @@ class PredictionSummary {
     CSV toCSV() {
         StringBuilder sb = new StringBuilder()
 
-        sb << "name,rank,score,connolly_points,surf_atoms,center_x,center_y,center_z,residue_ids,surf_atom_ids   " << '\n'
+        sb << "name, rank, score, sas_points, surf_atoms, center_x, center_y, center_z, residue_ids, surf_atom_ids   " << '\n'
 
         for (pp in prediction.reorderedPockets) {
 
@@ -37,7 +37,7 @@ class PredictionSummary {
             Set resIds = new TreeSet(p.surfaceAtoms.distinctGroups.collect { it.residueNumber.toString() })
             String strResIds = resIds.join(" ")
 
-            sb << "$p.name,$p.newRank,$fmtScore,$p.innerPoints.count,$p.surfaceAtoms.count,$x,$y,$z,$strResIds,$surfAtomIds\n"
+            sb << "$p.name,$p.newRank,$fmtScore,${p.sasPoints.count},$p.surfaceAtoms.count,$x,$y,$z,$strResIds,$surfAtomIds\n"
         }
 
         return new CSV(sb.toString())

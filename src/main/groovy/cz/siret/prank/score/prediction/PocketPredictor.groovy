@@ -9,7 +9,6 @@ import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.rendering.LabeledPoint
 import cz.siret.prank.utils.CollectionUtils
 import groovy.util.logging.Slf4j
-import org.biojava.nbio.structure.Atom
 
 /**
  * Calculates pockets from list of SAS points with ligandability scores.
@@ -89,21 +88,21 @@ class PocketPredictor implements Parametrized {
 
     /**
      *
-     * @param connollyPointList list of points with predicted ligandability in hist[]
+     * @param allLabeledPoints list of points with predicted ligandability in hist[]
      * @param protein
      * @return
      */
-    public List<Pocket> predictPockets(List<LabeledPoint> connollyPointList, Protein protein) {
+    public List<Pocket> predictPockets(List<LabeledPoint> allLabeledPoints, Protein protein) {
 
-        Atoms allSasPoints = new Atoms(connollyPointList).withKdTree()
+        Atoms labeledPoints = new Atoms(allLabeledPoints).withKdTree()
 
         // filter
-        List<LabeledPoint> ligandablePoints = allSasPoints.list.findAll { admitPoint(it) }.toList()
+        List<LabeledPoint> ligandablePoints = allLabeledPoints.findAll { admitPoint(it) }.toList()
         List<Atoms> clusters = Struct.clusterAtoms(new Atoms(ligandablePoints), CLUSTERING_DIST)
         List<Atoms> filteredClusters = clusters.findAll { it.count >= MIN_CLUSTER_SIZE  }.toList()
 
         log.info "PREDICTING POCKETS.... ===================================="
-        log.info "SAS POINTS: {}", allSasPoints.count
+        log.info "SAS POINTS: {}", labeledPoints.count
         log.info "LIGANDABLE POINTS: {}", ligandablePoints.size()
         log.info "CLUSTERS: {}", clusters.size()
         log.info "FILTERED CLUSTERS: {}", filteredClusters.size()
@@ -112,15 +111,17 @@ class PocketPredictor implements Parametrized {
 
             Atoms pocketPoints = clusterPoints
             if (EXTENDED_POCKET_CUTOFF > 0d) {
-                Atoms extendedPocketPoints = allSasPoints.cutoffAtoms(clusterPoints, EXTENDED_POCKET_CUTOFF)
+                Atoms extendedPocketPoints = labeledPoints.cutoffAtoms(clusterPoints, EXTENDED_POCKET_CUTOFF)
                 pocketPoints = extendedPocketPoints
             }
             
 //            double score = (double) pocketPoints.collect { scorePoint((LabeledPoint)it, allSasPoints) }.sum(0)
             Atoms pocketSurfaceAtoms = protein.exposedAtoms.cutoffAtoms(pocketPoints, POCKET_PROT_SURFACE_CUTOFF)
-            double score = pocketScore(pocketPoints, allSasPoints, protein, pocketSurfaceAtoms)
+            double score = pocketScore(pocketPoints, labeledPoints, protein, pocketSurfaceAtoms)
 
-            PrankPocket p = new PrankPocket(clusterPoints.centerOfMass, score, clusterPoints) // or pocketPoints ?
+            Atoms pocketSasPoints = new Atoms( pocketPoints.collect { ((LabeledPoint)it).point }.toList() )  // we want exact objects from protein.connollySurface
+
+            PrankPocket p = new PrankPocket(clusterPoints.centerOfMass, score, pocketSasPoints, (List<LabeledPoint>) pocketPoints.toList())
             p.surfaceAtoms = pocketSurfaceAtoms
             p.auxInfo.samplePoints = clusterPoints.count
             p.cache.count = clusterPoints.count
@@ -135,8 +136,8 @@ class PocketPredictor implements Parametrized {
         pockets.each {
             i++
 
-            for (Atom a : it.sasPoints) {
-                ((LabeledPoint) a).@pocket = i
+            for (LabeledPoint lp : it.labeledPoints) {
+                lp.@pocket = i
             }
 
             it.name = "pocket" + i

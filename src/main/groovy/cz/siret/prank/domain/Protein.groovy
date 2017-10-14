@@ -71,7 +71,7 @@ class Protein implements Parametrized {
 
             exposedAtoms = getConnollySurface().computeExposedAtoms(proteinAtoms)
 
-            log.info "connolly surface points: $connollySurface.points.count"
+            log.info "SAS points: $connollySurface.points.count"
             log.info "exposed protein atoms: $exposedAtoms.count of $proteinAtoms.count"
         }
     }
