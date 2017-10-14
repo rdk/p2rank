@@ -45,7 +45,7 @@ class Futils {
     static String safe(String path) {
         if (path==null) return null
 
-        path.replace("\\","/").replace('+','-')
+        path.replace("\\","/")
     }
 
     static String dir(String path) {
