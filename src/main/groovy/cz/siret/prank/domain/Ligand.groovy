@@ -23,20 +23,23 @@ class Ligand implements Parametrized {
      */
     String code
     Atoms atoms
+    Protein protein
     double contactDistance
     double centerToProteinDist
 
+    /**
+     * SAS points induced by the ligand
+     */
+    Atoms sasPoints
 
-    Ligand(Atoms ligAtoms) {
+
+    Ligand(Atoms ligAtoms, Protein protein) {
+        assert !ligAtoms.empty , "Trying to create ligand with no atoms!"
 
         atoms = new Atoms(ligAtoms)
-
-        assert !atoms.empty , "Trying to create ligand with no atoms!"
-
+        this.protein = protein
         List<Group> groups = atoms.getDistinctGroups()
-
         Set<String> uniqueNames = (groups*.PDBName).toSet()
-
         this.name = uniqueNames.join("&")
         this.code = (groups*.residueNumber).join("&")
 
@@ -56,6 +59,13 @@ class Ligand implements Parametrized {
 //    Atoms calcContactAtoms(Atoms proteinAtoms) {
 //        return proteinAtoms.cutoffAtoms(atoms, params.ligand_protein_contact_distance)
 //    }
+
+    Atoms getSasPoints() {
+        if (sasPoints==null) {
+            sasPoints = protein.connollySurface.points.cutoffAtoms(this.atoms, params.ligand_induced_volume_cutoff)
+        }
+        return sasPoints
+    }
 
     Atom getCentroid() {
         atoms.centerOfMass

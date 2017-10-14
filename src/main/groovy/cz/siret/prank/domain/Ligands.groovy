@@ -29,13 +29,12 @@ class Ligands implements Parametrized {
 
 //===========================================================================================================//
 
-
     public Ligands loadForProtein(Protein protein, LoaderParams loaderParams, String pdbFileName) {
 
         List<Group> ligandGroups = Struct.getLigandGroups(protein.structure)
 
         if (loaderParams.ligandsSeparatedByTER) {
-            // ligands are separated by TER lines
+            // ligands are separated by TER lines in specific datasets (CHEN11)
             // we are assuming all ligands are relevant
             List<Atoms> ligAtomGroups = getLigandAtomGroupsByTER(protein.allAtoms, pdbFileName)
             List<Ligand> ligands = makeLigands(ligAtomGroups, protein)
@@ -55,7 +54,6 @@ class Ligands implements Parametrized {
             } else {
                 categorizeLigands(ligands, loaderParams)
             }
-
 
             ignoredLigands = makeLigands(ignoredAtomGroups, protein)
         }
@@ -83,15 +81,13 @@ class Ligands implements Parametrized {
         List<Ligand> res = new ArrayList<>()
 
         for (Atoms ligAtoms in ligAtomGroups) {
-
-            if (ligAtoms.count>0) {
-                Ligand lig = new Ligand(ligAtoms)
+            if (ligAtoms.count > 0) {
+                Ligand lig = new Ligand(ligAtoms, protein)
                 lig.centerToProteinDist = protein.proteinAtoms.dist(lig.atoms.centerOfMass)
                 lig.contactDistance = protein.proteinAtoms.dist(lig.atoms)
 
                 res.add(lig)
             }
-
         }
 
         return res
@@ -186,6 +182,5 @@ class Ligands implements Parametrized {
         }
         return s
     }
-
 
 }

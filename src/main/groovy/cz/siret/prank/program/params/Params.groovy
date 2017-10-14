@@ -209,6 +209,12 @@ class Params {
     double positive_point_ligand_distance = 2.5
 
     /**
+     * distance around ligand atoms that define ligand induced volume
+     * (for evaluation by some criteria, DSOR, ligand coverage...)
+     */
+    double ligand_induced_volume_cutoff = 2.5
+
+    /**
      * points between [positive_point_ligand_distance,neutral_point_margin] will be left out form training
      */
     double neutral_points_margin = 5.5

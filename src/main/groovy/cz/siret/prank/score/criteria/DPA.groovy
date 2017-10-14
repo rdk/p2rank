@@ -6,7 +6,7 @@ import cz.siret.prank.score.prediction.PrankPocket
 import groovy.transform.CompileStatic
 
 /**
- * distance from any of the pocket connolly points to any atom of the ligand
+ * distance from any of the pocket SAS points to any atom of the ligand
  */
 @CompileStatic
 class DPA implements IdentificationCriterium {
@@ -23,7 +23,7 @@ class DPA implements IdentificationCriterium {
         if (!(pocket instanceof PrankPocket)) return false
         PrankPocket pp = (PrankPocket) pocket
 
-        return ligand.atoms.areWithinDistance(pp.innerPoints, cutoff)
+        return ligand.atoms.areWithinDistance(pp.sasPoints, cutoff)
     }
 
     @Override
@@ -32,7 +32,7 @@ class DPA implements IdentificationCriterium {
         if (!(pocket instanceof PrankPocket)) return 0
         PrankPocket pp = (PrankPocket) pocket
 
-        return cutoff - ligand.atoms.dist(pp.innerPoints)
+        return cutoff - ligand.atoms.dist(pp.sasPoints)
     }
 
     @Override

@@ -5,6 +5,7 @@ import cz.siret.prank.domain.Prediction
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Point
+import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.PDBUtils
 import groovy.util.logging.Slf4j
@@ -18,11 +19,12 @@ import java.util.regex.Pattern
  * Loader for predictions produced by Fpocket (v1.0 and v2.0).
  */
 @Slf4j
-class FPocketLoader extends PredictionLoader {
+class FPocketLoader extends PredictionLoader implements Parametrized {
 
     public static class FPocketPocket extends Pocket {
 
         Atoms vornoiCenters
+        Atoms sasPoints
 
         FPocketPocket() {
             stats = new FPocketStats()
@@ -35,6 +37,11 @@ class FPocketLoader extends PredictionLoader {
 
         FPocketStats getFpstats() {
             return (FPocketStats) stats
+        }
+
+        @Override
+        Atoms getSasPoints() {
+            return sasPoints
         }
     }
 
@@ -90,6 +97,13 @@ class FPocketLoader extends PredictionLoader {
             pocket.name = "pocket.$pocket.rank"
             pocket.centroid = pocket.vornoiCenters.centerOfMass
             pocket.score = pocket.stats.pocketScore
+
+            // sas points
+            double surfaceSasCutoff = params.solvent_radius + params.surface_additional_cutoff
+            Atoms sas2 = queryProtein.connollySurface.points.cutoffAtoms(surfaceAtoms, surfaceSasCutoff)
+            Atoms sas1 = queryProtein.connollySurface.points.cutoffAtoms(pocket.vornoiCenters, params.extended_pocket_cutoff) // probably not needed
+            Atoms sas = Atoms.union(sas1, sas2)
+            pocket.sasPoints = sas
 
             pockets.add(pocket)
 

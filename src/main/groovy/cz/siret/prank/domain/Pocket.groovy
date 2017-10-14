@@ -1,5 +1,6 @@
 package cz.siret.prank.domain
 
+import com.sun.xml.internal.bind.v2.TODO
 import cz.siret.prank.geom.Atoms
 import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
@@ -28,14 +29,25 @@ abstract class Pocket {
     AuxInfo auxInfo = new AuxInfo()
     Map<String, Object> cache = new HashMap<>() // cache for various data
 
-    static class AuxInfo {
-        int samplePoints
-        double rawNewScore
+    /**
+     * SAS points defined by the pocket.
+     * By default returns null. Defined only for some pocket types (PrankPocket, FpocketPocket).
+     */
+    Atoms getSasPoints() {
+        return null
     }
 
     @Override
     String toString() {
         return "pocket rank:$rank surfaceAtoms:${surfaceAtoms.count}"
+    }
+
+
+    // TODO move those classes to FpocketPocket or get rid of them
+
+    static class AuxInfo {
+        int samplePoints
+        double rawNewScore
     }
 
     static class PocketStats {

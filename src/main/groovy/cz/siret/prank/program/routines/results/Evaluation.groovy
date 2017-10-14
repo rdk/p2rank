@@ -6,9 +6,12 @@ import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.features.implementation.conservation.ConservationScore
 import cz.siret.prank.geom.Atoms
+import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.params.Params
 import cz.siret.prank.program.rendering.LabeledPoint
 import cz.siret.prank.score.criteria.*
+import cz.siret.prank.utils.CollectionUtils
+import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.StringUtils
 
@@ -23,10 +26,10 @@ import static java.util.Collections.emptyList
  * Threadsafe.
  */
 @Slf4j
-class Evaluation {
+class Evaluation implements Parametrized {
 
     /** cutoff distance in A around ligand atoms that determins which SAS points cover the ligand */
-    static final double LIG_SAS_CUTOFF = 2
+    final double LIG_SAS_CUTOFF = params.ligand_induced_volume_cutoff   // TODO consider separate value (e.g. 2)
 
     IdentificationCriterium standardCriterium = new DCA(4.0)
     List<IdentificationCriterium> criteria
@@ -48,6 +51,7 @@ class Evaluation {
     int ligSASPointsCount
     int ligSASPointsCoveredCount
 
+
     Evaluation(List<IdentificationCriterium> criteria) {
         this.criteria = criteria
     }
@@ -60,7 +64,13 @@ class Evaluation {
      * get list of evaluation criteria used during eval routines
      */
     static List<IdentificationCriterium> getDefaultEvalCrtieria() {
-        ((1..15).collect { new DCA(it) }) + ((1..10).collect { new DCC(it) }) + ((1..6).collect { new DPA(it) }) + ((1..6).collect { new DSA(it) })
+        double REQUIRED_POCKET_COVERAGE = 0.2  //  like in fpocket MOc criterion
+        ((1..15).collect { new DCA(it) }) +  
+                ((1..10).collect { new DCC(it) }) +
+//                ((1..6).collect { new DPA(it) }) +
+//                ((1..6).collect { new DSA(it) }) +
+                ([0.7,0.6,0.5,0.4,0.3,0.2,0.1].collect { new DSOR(it) }) +
+                ([1,0.9,0.8,0.7,0.6,0.5,0.4,0.3,0.2,0.1].collect { new DSWO((double)it, REQUIRED_POCKET_COVERAGE) }) 
     }
 
     void sort() {
@@ -127,11 +137,25 @@ class Evaluation {
         protRow.distantLigNames = lp.distantLigands.collect { "$it.name($it.size|${format(it.contactDistance,1)}|${format(it.centerToProteinDist,1)})" }.join(" ")
         protRow.sasPoints = sasPoints.count
 
-        // ligand coverage
+        // ligand coverage by positively predicted points (note: not by pockets!)
         Atoms ligSasPoints = labeledPoints.cutoffAtoms(lp.allLigandAtoms, LIG_SAS_CUTOFF)
         int n_ligSasPoints = ligSasPoints.count
         int n_ligSasPointsCovered = ligSasPoints.toList().findAll { ((LabeledPoint)it).predicted }.toList().size()
         log.debug "XXXX n_ligSasPoints: {} covered: {}", n_ligSasPoints, n_ligSasPointsCovered
+
+        // ligand coverage by pockets
+        List<Pocket> topn0Pockets = CollectionUtils.head(pair.ligandCount, pockets)
+        List<Pocket> topn2Pockets = CollectionUtils.head(pair.ligandCount + 2, pockets)
+        Atoms topn0Sasp = Atoms.union(topn0Pockets*.sasPoints)
+        Atoms topn2Sasp = Atoms.union(topn2Pockets*.sasPoints)
+        int topn0Intersect = Atoms.intersection(ligSasPoints, topn0Sasp).count
+        int topn2Intersect = Atoms.intersection(ligSasPoints, topn2Sasp).count
+        int topn0Union = Atoms.union(ligSasPoints, topn0Sasp).count
+        int topn2Union = Atoms.union(ligSasPoints, topn2Sasp).count
+        protRow.ligandCoverageN0 = div topn0Intersect, n_ligSasPoints
+        protRow.ligandCoverageN2 = div topn2Intersect, n_ligSasPoints
+        protRow.dSurfOverlapN0 = div topn0Intersect, topn0Union
+        protRow.dSurfOverlapN2 = div topn2Intersect, topn2Union
 
         // Conservation stats
         ConservationScore score = lp.secondaryData.get(ConservationScore.conservationScoreKey)
@@ -405,6 +429,11 @@ class Evaluation {
         m.AVG_LIG_CLOSTES_POCKET_DIST = avgClosestPocketDist
         m.LIGAND_COVERAGE = ligandCoverage
 
+        m.AVG_DSO_TOPN0    = avg proteinRows, { it.dSurfOverlapN0   }  // avg by proteins (unlike DCA and others)
+        m.AVG_DSO_TOPN2    = avg proteinRows, { it.dSurfOverlapN2   }  // avg by proteins (unlike DCA and others)
+        m.AVG_LIGCOV_TOPN0 = avg proteinRows, { it.ligandCoverageN0 }  // avg by proteins (unlike DCA and others)
+        m.AVG_LIGCOV_TOPN2 = avg proteinRows, { it.ligandCoverageN2 }  // avg by proteins (unlike DCA and others)
+
         m.AVG_POCKETS = avgPockets
         m.AVG_POCKET_SURF_ATOMS = avgPocketSurfAtoms
         m.AVG_POCKET_SURF_ATOMS_TRUE_POCKETS = avgPocketSurfAtomsTruePockets
@@ -433,10 +462,10 @@ class Evaluation {
         // compare to getDefaultEvalCrtieria()
         m.DCC_4_0 = calcSuccRate(18,0)
         m.DCC_4_2 = calcSuccRate(18,2)
-        m.DPA_1_0 = calcSuccRate(25,0)
-        m.DPA_1_2 = calcSuccRate(25,2)
-        m.DSA_3_0 = calcSuccRate(33,0)
-        m.DSA_3_2 = calcSuccRate(33,2)
+//        m.DPA_1_0 = calcSuccRate(25,0)
+//        m.DPA_1_2 = calcSuccRate(25,2)
+//        m.DSA_3_0 = calcSuccRate(33,0)
+//        m.DSA_3_2 = calcSuccRate(33,2)
 
         m.DCA_4_0_NOMINAL = m.DCA_4_0 * m.LIGANDS
 
@@ -560,6 +589,11 @@ class Evaluation {
         double avgConservation
         double avgBindingConservation
         double avgNonBindingConservation
+
+        double ligandCoverageN0    // conered by top-n pockets
+        double ligandCoverageN2    // covered by top-(n+2) pockets
+        double dSurfOverlapN0      // discretized surface overlap considering top-n pockets
+        double dSurfOverlapN2      // discretized surface overlap considering top-(n+2) pockets
 
         int sasPoints
     }

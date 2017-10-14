@@ -41,6 +41,12 @@ public final class Atoms implements Iterable<Atom> {
         this.list = (List<Atom>) list;
     }
 
+    public Atoms(Collection<? extends Atom> collection) {
+        assert collection != null;
+        this.list = new ArrayList<>(collection.size());
+        this.list.addAll(collection);
+    }
+
     /**
      * copy atoms and fill with points
      */
@@ -245,7 +251,7 @@ public final class Atoms implements Iterable<Atom> {
      * @return new instance
      */
     public Atoms join(Atoms atoms) {
-        List newlist = new ArrayList(list.size() + atoms.getCount());
+        List<Atom> newlist = new ArrayList<>(list.size() + atoms.getCount());
         newlist.addAll(list);
         newlist.addAll(atoms.list);
         return new Atoms(newlist);
@@ -256,6 +262,29 @@ public final class Atoms implements Iterable<Atom> {
      */
     public Atoms plus(Atoms atoms) {
         return join(atoms);
+    }
+
+    public static Atoms union(Atoms... aa) {
+        return union(Arrays.asList(aa));
+    }
+
+    public static Atoms union(Collection<Atoms> aa) {
+        Set<Atom> res = new HashSet<>();
+        for (Atoms a : aa) {
+            res.addAll(a.list);
+        }
+        return new Atoms(res);
+    }
+
+    public static Atoms intersection(Atoms aa, Atoms bb) {
+        Set<Atom> bset = new HashSet<>(bb.list);
+        List<Atom> res = new ArrayList<>(aa.getCount());
+        for (Atom a : aa) {
+            if (bset.contains(a)) {
+                res.add(a);
+            }
+        }
+        return new Atoms(res);
     }
 
 //===========================================================================================================//

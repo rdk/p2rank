@@ -8,12 +8,18 @@ import org.biojava.nbio.structure.Atom
 @CompileStatic
 class PrankPocket extends Pocket {
 
-    Atoms innerPoints
+    Atoms sasPoints
 
-    PrankPocket(Atom centroid, double score, Atoms innerPoints) {
+    PrankPocket(Atom centroid, double score, Atoms sasPoints) {
         this.centroid = centroid
+        this.score = score
         this.newScore = score
-        this.innerPoints = innerPoints
+        this.sasPoints = sasPoints
     }
 
+    @Override
+    Atoms getSasPoints() {
+        return sasPoints
+    }
+    
 }

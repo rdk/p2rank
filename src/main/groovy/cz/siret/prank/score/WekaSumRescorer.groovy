@@ -24,8 +24,9 @@ import static cz.siret.prank.score.prediction.PointScoreCalculator.predictedPosi
 import static cz.siret.prank.score.prediction.PointScoreCalculator.predictedScore
 
 /**
- * Rescorer and Predictor
- * not thread safe
+ * rescorer and predictor
+ * 
+ * Not thread safe!
  *
  * This is the main rrescore used by P2RANK to make predictions based on machine learning
  */
@@ -44,7 +45,7 @@ class WekaSumRescorer extends PocketRescorer implements Parametrized  {
     boolean collectPoints = params.visualizations || params.predictions
     boolean visualizeAllSurface = params.vis_all_surface
 
-    // Connolly points with ligandability score for prediction and visualization
+    // SAS points with ligandability score for prediction and visualization
     List<LabeledPoint> labeledPoints = new ArrayList<>()
 
     // auxiliary for weka

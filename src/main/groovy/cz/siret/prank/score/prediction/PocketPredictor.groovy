@@ -1,6 +1,5 @@
 package cz.siret.prank.score.prediction
 
-import com.google.common.collect.Lists
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.features.implementation.conservation.ConservationScore
