@@ -19,6 +19,7 @@ class LabeledPoint implements Atom {
      * always length=2
      */
     double[] hist  // length=2
+    double score
 
     boolean predicted
     boolean observed

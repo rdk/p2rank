@@ -149,6 +149,11 @@ class Params {
      */
     String log_scores_to_file = "";
 
+    /**
+     * limits how many pocket SAS points are used for scoring (after sorting), 0=unlimited
+     */
+    int score_point_limit = 0
+
 //===========================================================================================================//
 
 
