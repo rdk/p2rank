@@ -28,15 +28,14 @@ class DSOR implements IdentificationCriterium {
             return false
         }
 
-
-        log.warn("L:$ligand.sasPoints.count P:$pocket.sasPoints.count")
+//        log.warn("L:$ligand.sasPoints.count P:$pocket.sasPoints.count")
 
         int inter = Atoms.intersection(ligand.sasPoints, pocket.sasPoints).count
-        log.warn("I:$inter")
+//        log.warn("I:$inter")
         if (inter==0)
             return false
         int union = Atoms.union(ligand.sasPoints, pocket.sasPoints).count
-        log.warn("U:$inter")
+//        log.warn("U:$inter")
         if (union==0)
             return false
 
