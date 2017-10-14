@@ -154,7 +154,7 @@ class Main implements Parametrized, Writable {
     }
 
     Dataset loadDataset() {
-        Dataset.loadFromFile(findDataset(args.unnamedArgs[0])) // by default dataset is the first unnamed argument adter command
+        Dataset.loadFromFile(findDataset(args.unnamedArgs[0])) // by default dataset is the first unnamed argument after command
     }
 
     Dataset loadDatasetOrFile() {

@@ -14,6 +14,8 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import weka.classifiers.Classifier
 
+import static cz.siret.prank.domain.Dataset.COLUMN_PREDICTION
+import static cz.siret.prank.domain.Dataset.COLUMN_PROTEIN
 import static cz.siret.prank.utils.ATimer.startTimer
 import static cz.siret.prank.utils.Futils.mkdirs
 import static cz.siret.prank.utils.Futils.writeFile
@@ -42,8 +44,8 @@ class RescoreRoutine extends Routine {
 
         write "rescoring pockets on proteins from dataset [$dataset.name]"
 
-        if (!(dataset.header.contains("prediction") && dataset.header.contains("protein"))) {
-            throw new PrankException("Dataset must contain 'protein' and 'prediction' columns!")
+        if (!(dataset.header.contains(COLUMN_PROTEIN) && dataset.header.contains(COLUMN_PREDICTION))) {
+            throw new PrankException("Dataset must contain '${COLUMN_PROTEIN}' and '${COLUMN_PREDICTION}' columns!")
         }
 
         log.info "outdir: $outdir"

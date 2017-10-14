@@ -511,4 +511,23 @@ class Dataset implements Parametrized {
         SPLITTER.splitToList(line).tail()
     }
 
+
+    static Dataset createJoined(List<Dataset> datasets) {
+        assert datasets!=null && !datasets.empty
+        
+        if (datasets.size()==1) {
+            return datasets[0]
+        }
+
+        String name = (datasets*.name).join('+')
+        Dataset res = new Dataset(name, '--joined--')
+        res.header = datasets[0].header
+
+        for (Dataset d : datasets) {
+            res.items.addAll(d.items)
+        }
+
+        return res
+    }
+
 }
