@@ -135,7 +135,7 @@ class PocketPredictor implements Parametrized {
         pockets.each {
             i++
 
-            for (Atom a : it.innerPoints) {
+            for (Atom a : it.sasPoints) {
                 ((LabeledPoint) a).@pocket = i
             }
 
