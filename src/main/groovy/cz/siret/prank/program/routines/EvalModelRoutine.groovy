@@ -54,6 +54,9 @@ class EvalModelRoutine extends EvalRoutine {
             case "RandomRescorer":
                 rescorer = new RandomRescorer()
                 break
+            case "IdentityRescorer":
+                rescorer = new IdentityRescorer()
+                break
             default:
                 throw new RuntimeException("Invalid rescorer [$params.rescorer]!")
         }
