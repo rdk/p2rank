@@ -13,6 +13,7 @@ import cz.siret.prank.utils.StrUtils
 import cz.siret.prank.utils.WekaUtils
 import groovy.util.logging.Slf4j
 
+import static cz.siret.prank.utils.Futils.safe
 import static cz.siret.prank.utils.Futils.writeFile
 import static cz.siret.prank.utils.ThreadUtils.async
 
@@ -62,7 +63,7 @@ class Experiments extends Routine {
 
         outdirRoot = params.output_base_dir
         datadirRoot = params.dataset_base_dir
-        label = command + "_" + trainDataset.label + "_" + (doCrossValidation ? "crossval" : evalDataset.label)
+        label = command + "_" + safe(trainDataset.label) + "_" + (doCrossValidation ? "crossval" : safe(evalDataset.label))
 
         outdir = main.findOutdir(label)
         main.configureLoggers(outdir)
