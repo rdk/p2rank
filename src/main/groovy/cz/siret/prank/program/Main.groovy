@@ -10,6 +10,7 @@ import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.StringUtils
 
 import static cz.siret.prank.utils.ATimer.startTimer
+import static cz.siret.prank.utils.Futils.mkdirs
 import static cz.siret.prank.utils.Futils.writeFile
 
 @Slf4j
@@ -149,7 +150,7 @@ class Main implements Parametrized, Writable {
             }
         }
 
-        Futils.mkdirs(outdir)
+        mkdirs(outdir)
         return outdir
     }
 
