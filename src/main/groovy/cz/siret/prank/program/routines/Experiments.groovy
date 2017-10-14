@@ -9,6 +9,7 @@ import cz.siret.prank.program.params.Params
 import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.utils.CmdLineArgs
 import cz.siret.prank.utils.Futils
+import cz.siret.prank.utils.StrUtils
 import cz.siret.prank.utils.WekaUtils
 import groovy.util.logging.Slf4j
 
@@ -27,8 +28,6 @@ class Experiments extends Routine {
     Dataset evalDataset
     boolean doCrossValidation = false
 
-    String trainSetFile
-    String evalSetFile
     String outdirRoot
     String datadirRoot
 
@@ -48,17 +47,15 @@ class Experiments extends Routine {
 
     void prepareDatasets(Main main) {
 
-        trainSetFile =  cmdLineArgs.get('train', 't')
-        trainSetFile = Main.findDataset(trainSetFile)
-        trainDataset = DatasetCachedLoader.loadDataset(trainSetFile)
+        String trainSetArg =  cmdLineArgs.get('train', 't')
+        trainDataset = prepareDataset(trainSetArg)
 
         // TODO: enable executing 'prank ploop crossval'
         // (now ploop with crossvalidation is possible only implicitly by not specifying eval dataset)
 
-        evalSetFile  =  cmdLineArgs.get('eval', 'e')
-        if (evalSetFile!=null) { // no eval dataset -> do crossvalidation
-            evalSetFile = Main.findDataset(evalSetFile)
-            evalDataset = DatasetCachedLoader.loadDataset(evalSetFile)
+        String evalSetArg  =  cmdLineArgs.get('eval', 'e')
+        if (evalSetArg!=null) { // no eval dataset -> do crossvalidation
+            evalDataset = prepareDataset(evalSetArg)
         } else {
             doCrossValidation = true
         }
@@ -71,6 +68,21 @@ class Experiments extends Routine {
         main.configureLoggers(outdir)
         main.writeCmdLineArgs(outdir)
         writeParams(outdir)
+    }
+
+    Dataset prepareDataset(String datasetArg) {
+        assert datasetArg!=null
+        if (datasetArg.contains('+')) {
+            // joined dataset
+            List<Dataset> datasets = StrUtils.split(datasetArg, '+').collect { prepareSingleDataset(it) }.toList()
+            return Dataset.createJoined(datasets)
+        } else {
+            return prepareSingleDataset(datasetArg)
+        }
+    }
+    Dataset prepareSingleDataset(String datasetArg) {
+        String file = Main.findDataset(datasetArg)
+        return DatasetCachedLoader.loadDataset(file)
     }
 
     void execute() {
