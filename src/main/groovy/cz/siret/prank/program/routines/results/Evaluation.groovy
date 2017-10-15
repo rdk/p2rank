@@ -11,6 +11,8 @@ import cz.siret.prank.program.params.Params
 import cz.siret.prank.program.rendering.LabeledPoint
 import cz.siret.prank.score.criteria.*
 import cz.siret.prank.utils.CollectionUtils
+import cz.siret.prank.utils.ConsoleWriter
+import cz.siret.prank.utils.Writable
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.StringUtils
 
@@ -28,7 +30,7 @@ import static java.util.Collections.emptyList
  * Threadsafe.
  */
 @Slf4j
-class Evaluation implements Parametrized {
+class Evaluation implements Parametrized, Writable {
 
     /** cutoff distance in A around ligand atoms that determins which SAS points cover the ligand */
     final double LIG_SAS_CUTOFF = params.ligand_induced_volume_cutoff   // TODO consider separate value (e.g. 2)
@@ -156,9 +158,12 @@ class Evaluation implements Parametrized {
         protRow.distantLigNames = protein.distantLigands.collect { "$it.name($it.size|${format(it.contactDistance,1)}|${format(it.centerToProteinDist,1)})" }.join(" ")
         protRow.sasPoints = sasPoints.count
 
-        int n_ligSasPoints
-        int n_ligSasPointsCovered
-        (n_ligSasPoints, n_ligSasPointsCovered) = calcCoveragesProt(protRow, pair, labeledPoints, pockets)
+        // overlaps and coverages
+        int n_ligSasPoints = calcCoveragesProt(protRow, pair, sasPoints, pockets)
+        // ligand coverage by positively predicted points (note: not by pockets!)
+        Atoms ligLabeledPoints = labeledPoints.cutoffAtoms(protein.allLigandAtoms, LIG_SAS_CUTOFF)
+        int n_ligSasPointsCovered = ligLabeledPoints.toList().findAll { ((LabeledPoint) it).predicted }.toList().size()  // only for P2Rank
+        write "XXXX n_ligSasPoints: $n_ligSasPoints covered: $n_ligSasPointsCovered"
 
         // Conservation stats
         ConservationScore score = protein.secondaryData.get(ConservationScore.conservationScoreKey)
@@ -267,25 +272,14 @@ class Evaluation implements Parametrized {
         [ligCov, surfOverlap]
     }
 
-    private calcCoveragesProt(ProteinRow protRow, PredictionPair pair, Atoms labeledPoints, List<Pocket> pockets) {
+    private int calcCoveragesProt(ProteinRow protRow, PredictionPair pair, Atoms sasPoints, List<Pocket> pockets) {
         Protein prot = pair.queryProtein
-        Atoms ligLabeledPoints = labeledPoints.cutoffAtoms(prot.allLigandAtoms, LIG_SAS_CUTOFF)
-        Atoms ligSasp = new Atoms( ligLabeledPoints.collect { ((LabeledPoint)it).point }.toList() )  // we want exact objects from protein.connollySurface
-        int n_ligSasPoints = ligLabeledPoints.count
-
-        // ligand coverage by positively predicted points (note: not by pockets!)
-        int n_ligSasPointsCovered = ligLabeledPoints.toList().findAll { ((LabeledPoint) it).predicted }.toList().size()
-        log.debug "XXXX n_ligSasPoints: {} covered: {}", n_ligSasPoints, n_ligSasPointsCovered
+        Atoms ligSasp = sasPoints.cutoffAtoms(prot.allLigandAtoms, LIG_SAS_CUTOFF)
+        int n_ligSasPoints = ligSasp.count
 
         // ligand coverage by pockets
         List<Pocket> topn0Pockets = head(pair.ligandCount, pockets)
         List<Pocket> topn2Pockets = head(pair.ligandCount + 2, pockets)
-//        Atoms topn0Sasp = union((topn0Pockets*.sasPoints).toList())
-//        Atoms topn2Sasp = union((topn2Pockets*.sasPoints).toList())
-//        int topn0Intersect = intersection(ligSasp, topn0Sasp).count
-//        int topn2Intersect = intersection(ligSasp, topn2Sasp).count
-//        int topn0Union = union(ligSasp, topn0Sasp).count
-//        int topn2Union = union(ligSasp, topn2Sasp).count
         def (ligCovN0, surfOverlapN0) = calcOverlapStatsForPockets(topn0Pockets, ligSasp)
         def (ligCovN2, surfOverlapN2) = calcOverlapStatsForPockets(topn2Pockets, ligSasp)
         protRow.ligandCoverageN0 = ligCovN0
@@ -304,7 +298,7 @@ class Evaluation implements Parametrized {
         protRow.ligandCoverageSucc = div succIntersect, succLigSasp.count
         protRow.surfOverlapSucc    = div succIntersect, succUnion
 
-        [n_ligSasPoints, n_ligSasPointsCovered]
+        n_ligSasPoints
     }
 
     void addAll(Evaluation eval) {

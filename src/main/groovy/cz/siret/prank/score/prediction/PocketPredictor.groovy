@@ -137,7 +137,9 @@ class PocketPredictor implements Parametrized {
             i++
 
             for (LabeledPoint lp : it.labeledPoints) {
-                lp.@pocket = i
+                if (lp.hist[1] > 0.2) { // TODO XXX this is temporary to fix pymol visualization esthetics
+                    lp.@pocket = i
+                }
             }
 
             it.name = "pocket" + i
