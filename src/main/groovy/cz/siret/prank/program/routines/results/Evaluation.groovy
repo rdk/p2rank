@@ -163,7 +163,7 @@ class Evaluation implements Parametrized, Writable {
         // ligand coverage by positively predicted points (note: not by pockets!)
         Atoms ligLabeledPoints = labeledPoints.cutoffAtoms(protein.allLigandAtoms, LIG_SAS_CUTOFF)
         int n_ligSasPointsCovered = ligLabeledPoints.toList().findAll { ((LabeledPoint) it).predicted }.toList().size()  // only for P2Rank
-        write "XXXX n_ligSasPoints: $n_ligSasPoints covered: $n_ligSasPointsCovered"
+        //log.debug "XXXX n_ligSasPoints: $n_ligSasPoints covered: $n_ligSasPointsCovered"
 
         // Conservation stats
         ConservationScore score = protein.secondaryData.get(ConservationScore.conservationScoreKey)
