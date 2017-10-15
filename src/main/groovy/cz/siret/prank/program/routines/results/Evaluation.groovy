@@ -177,7 +177,7 @@ class Evaluation implements Parametrized {
             }
         }
 
-        for (Ligand lig in pair.queryProtein.ligands) {
+        for (Ligand lig : protein.ligands) {
             LigRow row = new LigRow()
 
             row.protName = pair.name
@@ -325,6 +325,25 @@ class Evaluation implements Parametrized {
 
         return res
     }
+
+    double calcSuccRateProteinCentric(int assesorNum, int tolerance) {
+        double identified = 0
+
+        for (LigRow ligRow in ligandRows) {
+            int rankForAssessor = ligRow.ranks[assesorNum]
+            if ((rankForAssessor > 0) && (rankForAssessor <= ligRow.ligCount + tolerance)) {
+                identified += 1.0 / ligRow.ligCount
+            }
+        }
+
+        double res = 0
+        if (ligandCount != 0) {
+            res = ((double) identified) / proteinCount
+        }
+
+        return res
+    }
+
 
     double calcDefaultCriteriumSuccessRate(int tolerance) {
         return calcSuccRate(3, tolerance)
@@ -497,6 +516,9 @@ class Evaluation implements Parametrized {
         m.DCA_4_4 = calcDefaultCriteriumSuccessRate(4)
         m.DCA_4_99 = calcDefaultCriteriumSuccessRate(99)
 
+        m.DCA_4_0_PC = calcSuccRateProteinCentric(3,0)
+        m.DCA_4_2_PC = calcSuccRateProteinCentric(3,2)
+
         // compare to getDefaultEvalCrtieria()
         m.DCC_4_0 = calcSuccRate(18,0)
         m.DCC_4_2 = calcSuccRate(18,2)
@@ -634,6 +656,8 @@ class Evaluation implements Parametrized {
         double surfOverlapN2       // discretized surface overlap considering top-(n+2) pockets
         double ligandCoverageSucc  // coverage only considering those ligands that were successfully predicted according to DCA(4)
         double surfOverlapSucc     // overlap only considering those ligands that were successfully predicted according to DCA(4)
+
+//        double protDCA_4_0
 
         int sasPoints
     }
