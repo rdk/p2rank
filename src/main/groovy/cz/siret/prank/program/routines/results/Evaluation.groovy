@@ -64,18 +64,7 @@ class Evaluation implements Parametrized, Writable {
         this( getDefaultEvalCrtieria() )
     }
 
-    /**
-     * get list of evaluation criteria used during eval routines
-     */
-    static List<IdentificationCriterium> getDefaultEvalCrtieria() {
-        double REQUIRED_POCKET_COVERAGE = 0.2  //  like in fpocket MOc criterion
-        ((1..15).collect { new DCA(it) }) +  
-                ((1..10).collect { new DCC(it) }) +
-//                ((1..6).collect { new DPA(it) }) +
-//                ((1..6).collect { new DSA(it) }) +
-                ([0.7,0.6,0.5,0.4,0.3,0.2,0.1].collect { new DSOR(it) }) +
-                ([1,0.9,0.8,0.7,0.6,0.5,0.4,0.3,0.2,0.1].collect { new DSWO((double)it, REQUIRED_POCKET_COVERAGE) }) 
-    }
+
 
     void sort() {
         proteinRows = proteinRows.sort { it.name }
@@ -543,10 +532,22 @@ class Evaluation implements Parametrized, Writable {
         // compare to getDefaultEvalCrtieria()
         m.DCC_4_0 = calcSuccRate(18,0)
         m.DCC_4_2 = calcSuccRate(18,2)
+        m.DCC_5_0 = calcSuccRate(19,0)
+        m.DCC_5_2 = calcSuccRate(19,2)
+
+        m.DSOR_03_0 = calcSuccRate(29,0)
+        m.DSOR_03_2 = calcSuccRate(29,2)
+        m.DSOR_02_0 = calcSuccRate(29,0)
+        m.DSOR_02_2 = calcSuccRate(29,2)
+        m.DSWO_05_0 = calcSuccRate(37,0)
+        m.DSWO_05_2 = calcSuccRate(37,2)
+
 //        m.DPA_1_0 = calcSuccRate(25,0)
 //        m.DPA_1_2 = calcSuccRate(25,2)
 //        m.DSA_3_0 = calcSuccRate(33,0)
 //        m.DSA_3_2 = calcSuccRate(33,2)
+        
+        m.OPT1 = m.DCA_4_0 + m.DCA_4_2 + 0.5*m.DCA_4_4 + 10*m.AVG_LIGCOV_SUCC + 5*m.AVG_DSO_SUCC
 
         m.DCA_4_0_NOMINAL = m.DCA_4_0 * m.LIGANDS
 
@@ -563,6 +564,19 @@ class Evaluation implements Parametrized, Writable {
         }
 
         return m
+    }
+
+    /**
+     * get list of evaluation criteria used during eval routines
+     */
+    static List<IdentificationCriterium> getDefaultEvalCrtieria() {
+        double REQUIRED_POCKET_COVERAGE = 0.2  //  like in fpocket MOc criterion
+        ((1..15).collect { new DCA(it) }) +         // 0-14
+        ((1..10).collect { new DCC(it) }) +         // 15-24
+//        ((1..6).collect { new DPA(it) }) +
+//        ((1..6).collect { new DSA(it) }) +
+        ([0.7,0.6,0.5,0.4,0.3,0.2,0.1].collect { new DSOR(it) }) + // 25-31
+        ([1,0.9,0.8,0.7,0.6,0.5,0.4,0.3,0.2,0.1].collect { new DSWO((double)it, REQUIRED_POCKET_COVERAGE) }) // 32-41
     }
 
 //===========================================================================================================//

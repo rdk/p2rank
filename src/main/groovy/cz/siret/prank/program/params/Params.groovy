@@ -615,7 +615,21 @@ class Params {
      */
     boolean randomize_seed = false
 
-    List<String> selected_stats = ['DCA_4_0', 'DCA_4_2', 'DCA_4_4', 'AVG_POCKETS', 'AVG_POCKET_SAS_POINTS', 'AVG_POCKET_SAS_POINTS_TRUE_POCKETS', 'TIME_MINUTES']
+    List<String> selected_stats = ['DCA_4_0',
+                                   'DCA_4_2',
+                                   'DCA_4_4',
+                                   'DCC_5_0',
+                                   'DCC_5_2',
+                                   'DSOR_02_0',
+                                   'DSOR_02_2',
+                                   'DSWO_05_0',
+                                   'DSWO_05_2',
+                                   'AVG_DSO_SUCC',
+                                   'AVG_LIGCOV_SUCC',
+                                   'AVG_POCKETS',
+                                   'AVG_POCKET_SAS_POINTS',
+                                   'AVG_POCKET_SAS_POINTS_TRUE_POCKETS',
+                                   'TIME_MINUTES']
 
 //===========================================================================================================//
 
