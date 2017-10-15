@@ -11,7 +11,6 @@ import cz.siret.prank.program.params.Params
 import cz.siret.prank.program.rendering.LabeledPoint
 import cz.siret.prank.score.criteria.*
 import cz.siret.prank.utils.CollectionUtils
-import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.StringUtils
 
@@ -108,67 +107,66 @@ class Evaluation implements Parametrized {
                 .average().getAsDouble()
     }
 
+    private Pocket findPocketForLigand(Ligand ligand, List<Pocket> pockets, IdentificationCriterium criterium) {
+        for (Pocket pocket in pockets) {
+            if (criterium.isIdentified(ligand, pocket)) {
+                return pocket
+            }
+        }
+        return null
+    }
+
+    private void assignPocketsToLigands(List<Ligand> ligands, List<Pocket> pockets) {
+        for (Ligand ligand : ligands) {
+            ligand.predictedPocket = findPocketForLigand(ligand, pockets, standardCriterium)
+        }
+    }
+
     void addPrediction(PredictionPair pair, List<Pocket> pockets) {
+
+        assignPocketsToLigands(pair.queryProtein.ligands, pockets)
 
         List<LigRow> tmpLigRows = new ArrayList<>()
         List<PocketRow> tmpPockets = new ArrayList<>()
 
-        Protein lp = pair.queryProtein
+        Protein protein = pair.queryProtein
         Atoms sasPoints = pair.prediction.protein.connollySurface.points
         Atoms labeledPoints = new Atoms(pair.prediction.labeledPoints ?: emptyList())
         
         ProteinRow protRow = new ProteinRow()
         protRow.name = pair.name
-        protRow.atoms = lp.allAtoms.count
-        protRow.protAtoms = lp.proteinAtoms.count
+        protRow.atoms = protein.allAtoms.count
+        protRow.protAtoms = protein.proteinAtoms.count
         protRow.exposedAtoms = pair.prediction.protein.exposedAtoms.count
         // TODO count only model 1
         // TODO count only protein chains
-        protRow.chains = lp.structure.chains.size()
-        protRow.chainNames = lp.structure.chains.collect {it.chainID}.join(" ")
+        protRow.chains = protein.structure.chains.size()
+        protRow.chainNames = protein.structure.chains.collect {it.chainID}.join(" ")
         protRow.ligands = pair.ligandCount
         protRow.pockets = pair.prediction.pocketCount
-        protRow.ligNames = lp.ligands.collect { "$it.name($it.size)" }.join(" ")
-        protRow.ignoredLigands = lp.ignoredLigands.size()
-        protRow.ignoredLigNames = lp.ignoredLigands.collect { "$it.name($it.size)" }.join(" ")
-        protRow.smallLigands = lp.smallLigands.size()
-        protRow.smallLigNames = lp.smallLigands.collect { "$it.name($it.size)" }.join(" ")
-        protRow.distantLigands = lp.distantLigands.size()
-        protRow.distantLigNames = lp.distantLigands.collect { "$it.name($it.size|${format(it.contactDistance,1)}|${format(it.centerToProteinDist,1)})" }.join(" ")
+        protRow.ligNames = protein.ligands.collect { "$it.name($it.size)" }.join(" ")
+        protRow.ignoredLigands = protein.ignoredLigands.size()
+        protRow.ignoredLigNames = protein.ignoredLigands.collect { "$it.name($it.size)" }.join(" ")
+        protRow.smallLigands = protein.smallLigands.size()
+        protRow.smallLigNames = protein.smallLigands.collect { "$it.name($it.size)" }.join(" ")
+        protRow.distantLigands = protein.distantLigands.size()
+        protRow.distantLigNames = protein.distantLigands.collect { "$it.name($it.size|${format(it.contactDistance,1)}|${format(it.centerToProteinDist,1)})" }.join(" ")
         protRow.sasPoints = sasPoints.count
 
-        // ligand coverage by positively predicted points (note: not by pockets!)
-        Atoms ligSasPoints = labeledPoints.cutoffAtoms(lp.allLigandAtoms, LIG_SAS_CUTOFF)
-        int n_ligSasPoints = ligSasPoints.count
-        int n_ligSasPointsCovered = ligSasPoints.toList().findAll { ((LabeledPoint)it).predicted }.toList().size()
-        log.debug "XXXX n_ligSasPoints: {} covered: {}", n_ligSasPoints, n_ligSasPointsCovered
-
-        // ligand coverage by pockets
-        List<Pocket> topn0Pockets = CollectionUtils.head(pair.ligandCount, pockets)
-        List<Pocket> topn2Pockets = CollectionUtils.head(pair.ligandCount + 2, pockets)
-        Atoms topn0Sasp = Atoms.union(topn0Pockets*.sasPoints)
-        Atoms topn2Sasp = Atoms.union(topn2Pockets*.sasPoints)
-        int topn0Intersect = Atoms.intersection(ligSasPoints, topn0Sasp).count
-        int topn2Intersect = Atoms.intersection(ligSasPoints, topn2Sasp).count
-        int topn0Union = Atoms.union(ligSasPoints, topn0Sasp).count
-        int topn2Union = Atoms.union(ligSasPoints, topn2Sasp).count
-        protRow.ligandCoverageN0 = div topn0Intersect, n_ligSasPoints
-        protRow.ligandCoverageN2 = div topn2Intersect, n_ligSasPoints
-        protRow.dSurfOverlapN0 = div topn0Intersect, topn0Union
-        protRow.dSurfOverlapN2 = div topn2Intersect, topn2Union
+        def (int n_ligSasPoints, int n_ligSasPointsCovered) = calcCoveragesProt(protRow, pair, labeledPoints, pockets)
 
         // Conservation stats
-        ConservationScore score = lp.secondaryData.get(ConservationScore.conservationScoreKey)
+        ConservationScore score = protein.secondaryData.get(ConservationScore.conservationScoreKey)
         List<Double> bindingScrs = new ArrayList<>();
         List<Double> nonBindingScrs = new ArrayList<>();
         if (score != null) {
-            protRow.avgConservation = getAvgConservationForAtoms(lp.proteinAtoms, score)
-            Atoms bindingAtoms = lp.proteinAtoms.cutoffAtoms(lp.allLigandAtoms, lp.params.ligand_protein_contact_distance)
+            protRow.avgConservation = getAvgConservationForAtoms(protein.proteinAtoms, score)
+            Atoms bindingAtoms = protein.proteinAtoms.cutoffAtoms(protein.allLigandAtoms, protein.params.ligand_protein_contact_distance)
             protRow.avgBindingConservation = getAvgConservationForAtoms(bindingAtoms, score)
-            Atoms nonBindingAtoms = lp.proteinAtoms - bindingAtoms
+            Atoms nonBindingAtoms = protein.proteinAtoms - bindingAtoms
             protRow.avgNonBindingConservation = getAvgConservationForAtoms(nonBindingAtoms, score)
 
-            if (!lp.params.log_scores_to_file.isEmpty()) {
+            if (!protein.params.log_scores_to_file.isEmpty()) {
                 bindingScrs = bindingAtoms.distinctGroups.collect { it ->
                     score.getScoreForResidue(it
                             .getResidueNumber())
@@ -228,7 +226,7 @@ class Evaluation implements Parametrized {
             tmpPockets.add(prow)
         }
         List<PocketRow> conservationSorted = tmpPockets.toSorted {it.avgConservation}.reverse(true)
-        List<PocketRow> combiSorted = tmpPockets.toSorted { (Math.pow(it.avgConservation, lp.params.conservation_exponent) * it.newScore)}.reverse(true)
+        List<PocketRow> combiSorted = tmpPockets.toSorted { (Math.pow(it.avgConservation, protein.params.conservation_exponent) * it.newScore)}.reverse(true)
         for (PocketRow prow : tmpPockets) {
             prow.conservationRank = conservationSorted.indexOf(prow) + 1
             prow.combinedRank = combiSorted.indexOf(prow) + 1
@@ -248,11 +246,49 @@ class Evaluation implements Parametrized {
             ligSASPointsCount += n_ligSasPoints
             ligSASPointsCoveredCount += n_ligSasPointsCovered
 
-            if (!lp.params.log_scores_to_file.isEmpty()) {
+            if (!protein.params.log_scores_to_file.isEmpty()) {
                 bindingScores.addAll(bindingScrs);
                 nonBindingScores.addAll(nonBindingScrs);
             }
         }
+    }
+
+    private calcCoveragesProt(ProteinRow protRow, PredictionPair pair, Atoms labeledPoints, List<Pocket> pockets) {
+        Protein prot = pair.queryProtein
+        Atoms ligLabeledPoints = labeledPoints.cutoffAtoms(prot.allLigandAtoms, LIG_SAS_CUTOFF)
+        Atoms ligSasPoints = new Atoms( ligLabeledPoints.collect { ((LabeledPoint)it).point }.toList() )  // we want exact objects from protein.connollySurface
+        int n_ligSasPoints = ligLabeledPoints.count
+
+        // ligand coverage by positively predicted points (note: not by pockets!)
+        int n_ligSasPointsCovered = ligLabeledPoints.toList().findAll { ((LabeledPoint) it).predicted }.toList().size()
+        log.debug "XXXX n_ligSasPoints: {} covered: {}", n_ligSasPoints, n_ligSasPointsCovered
+
+        // ligand coverage by pockets
+        List<Pocket> topn0Pockets = CollectionUtils.head(pair.ligandCount, pockets)
+        List<Pocket> topn2Pockets = CollectionUtils.head(pair.ligandCount + 2, pockets)
+        Atoms topn0Sasp = Atoms.union(topn0Pockets*.sasPoints)
+        Atoms topn2Sasp = Atoms.union(topn2Pockets*.sasPoints)
+        int topn0Intersect = Atoms.intersection(ligSasPoints, topn0Sasp).count
+        int topn2Intersect = Atoms.intersection(ligSasPoints, topn2Sasp).count
+        int topn0Union = Atoms.union(ligSasPoints, topn0Sasp).count
+        int topn2Union = Atoms.union(ligSasPoints, topn2Sasp).count
+        protRow.ligandCoverageN0 = div topn0Intersect, n_ligSasPoints
+        protRow.ligandCoverageN2 = div topn2Intersect, n_ligSasPoints
+        protRow.surfOverlapN0 = div topn0Intersect, topn0Union
+        protRow.surfOverlapN2 = div topn2Intersect, topn2Union
+
+        // TODO revisit: consider prot averaging vs ligand averaging etc...
+        List<Ligand> succLigands = prot.ligands.findAll { it.predictedPocket!=null } //.toList()
+        List<Pocket> succPockets = succLigands.collect { it.predictedPocket }
+        Atoms succLigSasp = Atoms.union( succLigands*.sasPoints )
+        Atoms succPocSasp = Atoms.union( succPockets*.sasPoints )
+        int succUnion = Atoms.union(succLigSasp, succPocSasp).count
+        int succIntersect = Atoms.intersection(succLigSasp, succPocSasp).count
+
+        protRow.ligandCoverageSucc = div succIntersect, succLigSasp.count
+        protRow.surfOverlapSucc    = div succIntersect, succUnion
+
+        [n_ligSasPoints, n_ligSasPointsCovered]
     }
 
     void addAll(Evaluation eval) {
@@ -429,10 +465,12 @@ class Evaluation implements Parametrized {
         m.AVG_LIG_CLOSTES_POCKET_DIST = avgClosestPocketDist
         m.LIGAND_COVERAGE = ligandCoverage
 
-        m.AVG_DSO_TOPN0    = avg proteinRows, { it.dSurfOverlapN0   }  // avg by proteins (unlike DCA and others)
-        m.AVG_DSO_TOPN2    = avg proteinRows, { it.dSurfOverlapN2   }  // avg by proteins (unlike DCA and others)
-        m.AVG_LIGCOV_TOPN0 = avg proteinRows, { it.ligandCoverageN0 }  // avg by proteins (unlike DCA and others)
-        m.AVG_LIGCOV_TOPN2 = avg proteinRows, { it.ligandCoverageN2 }  // avg by proteins (unlike DCA and others)
+        m.AVG_DSO_TOPN0    = avg proteinRows, { it.surfOverlapN0      }  // avg by proteins (unlike DCA and others)
+        m.AVG_DSO_TOPN2    = avg proteinRows, { it.surfOverlapN2      }  // avg by proteins (unlike DCA and others)
+        m.AVG_DSO_SUCC     = avg proteinRows, { it.surfOverlapSucc    }  // avg by proteins (unlike DCA and others)
+        m.AVG_LIGCOV_TOPN0 = avg proteinRows, { it.ligandCoverageN0   }  // avg by proteins (unlike DCA and others)
+        m.AVG_LIGCOV_TOPN2 = avg proteinRows, { it.ligandCoverageN2   }  // avg by proteins (unlike DCA and others)
+        m.AVG_LIGCOV_SUCC  = avg proteinRows, { it.ligandCoverageSucc }  // avg by proteins (unlike DCA and others)
 
         m.AVG_POCKETS = avgPockets
         m.AVG_POCKET_SURF_ATOMS = avgPocketSurfAtoms
@@ -592,8 +630,10 @@ class Evaluation implements Parametrized {
 
         double ligandCoverageN0    // conered by top-n pockets
         double ligandCoverageN2    // covered by top-(n+2) pockets
-        double dSurfOverlapN0      // discretized surface overlap considering top-n pockets
-        double dSurfOverlapN2      // discretized surface overlap considering top-(n+2) pockets
+        double surfOverlapN0       // discretized surface overlap considering top-n pockets
+        double surfOverlapN2       // discretized surface overlap considering top-(n+2) pockets
+        double ligandCoverageSucc  // coverage only considering those ligands that were successfully predicted according to DCA(4)
+        double surfOverlapSucc     // overlap only considering those ligands that were successfully predicted according to DCA(4)
 
         int sasPoints
     }

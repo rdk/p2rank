@@ -32,6 +32,8 @@ class Ligand implements Parametrized {
      */
     Atoms sasPoints
 
+    Pocket predictedPocket
+
 
     Ligand(Atoms ligAtoms, Protein protein) {
         assert !ligAtoms.empty , "Trying to create ligand with no atoms!"
