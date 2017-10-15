@@ -142,12 +142,12 @@ class Params {
      * Conservation file with this pattern is loaded:
      * baseName + chainId + "." + origin + ".hom.gz"
      */
-    String conservation_origin = "hssp";
+    String conservation_origin = "hssp"
 
     /**
      * Log scores for binding and nonbinding scores to file
      */
-    String log_scores_to_file = "";
+    String log_scores_to_file = ""
 
     /**
      * limits how many pocket SAS points are used for scoring (after sorting), 0=unlimited

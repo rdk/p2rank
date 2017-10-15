@@ -128,6 +128,9 @@ class Protein implements Parametrized {
         secondaryData.clear()
     }
 
+    /**
+     * @return all atoms from relevant ligands
+     */
     Atoms getAllLigandAtoms() {
         Atoms res = new Atoms()
         for (lig in ligands) {

@@ -258,6 +258,15 @@ class Evaluation implements Parametrized {
         }
     }
 
+    def calcOverlapStatsForPockets(List<Pocket> topPockets, Atoms ligSasPoints) {
+        Atoms pocSasp = union((topPockets*.sasPoints).toList())
+        int intersect = intersection(ligSasPoints, pocSasp).count
+        int union     = union(ligSasPoints, pocSasp).count
+        double ligCov = div intersect, ligSasPoints.count
+        double surfOverlap = div intersect, union
+        [ligCov, surfOverlap]
+    }
+
     private calcCoveragesProt(ProteinRow protRow, PredictionPair pair, Atoms labeledPoints, List<Pocket> pockets) {
         Protein prot = pair.queryProtein
         Atoms ligLabeledPoints = labeledPoints.cutoffAtoms(prot.allLigandAtoms, LIG_SAS_CUTOFF)
@@ -271,16 +280,18 @@ class Evaluation implements Parametrized {
         // ligand coverage by pockets
         List<Pocket> topn0Pockets = head(pair.ligandCount, pockets)
         List<Pocket> topn2Pockets = head(pair.ligandCount + 2, pockets)
-        Atoms topn0Sasp = union((topn0Pockets*.sasPoints).toList())
-        Atoms topn2Sasp = union((topn2Pockets*.sasPoints).toList())
-        int topn0Intersect = intersection(ligSasp, topn0Sasp).count
-        int topn2Intersect = intersection(ligSasp, topn2Sasp).count
-        int topn0Union = union(ligSasp, topn0Sasp).count
-        int topn2Union = union(ligSasp, topn2Sasp).count
-        protRow.ligandCoverageN0 = div topn0Intersect, n_ligSasPoints
-        protRow.ligandCoverageN2 = div topn2Intersect, n_ligSasPoints
-        protRow.surfOverlapN0 = div topn0Intersect, topn0Union
-        protRow.surfOverlapN2 = div topn2Intersect, topn2Union
+//        Atoms topn0Sasp = union((topn0Pockets*.sasPoints).toList())
+//        Atoms topn2Sasp = union((topn2Pockets*.sasPoints).toList())
+//        int topn0Intersect = intersection(ligSasp, topn0Sasp).count
+//        int topn2Intersect = intersection(ligSasp, topn2Sasp).count
+//        int topn0Union = union(ligSasp, topn0Sasp).count
+//        int topn2Union = union(ligSasp, topn2Sasp).count
+        def (ligCovN0, surfOverlapN0) = calcOverlapStatsForPockets(topn0Pockets, ligSasp)
+        def (ligCovN2, surfOverlapN2) = calcOverlapStatsForPockets(topn2Pockets, ligSasp)
+        protRow.ligandCoverageN0 = ligCovN0
+        protRow.ligandCoverageN2 = ligCovN2
+        protRow.surfOverlapN0 = surfOverlapN0
+        protRow.surfOverlapN2 = surfOverlapN2
 
         // TODO revisit: consider prot averaging vs ligand averaging etc...
         List<Ligand> succLigands = prot.ligands.findAll { it.predictedPocket!=null }.toList() //.toList()
@@ -403,6 +414,17 @@ class Evaluation implements Parametrized {
         list.collect { closure(it) }.findAll { it!=Double.NaN }.sum(0) / list.size()
     }
 
+    /**
+     * average only on proteins that have relevant ligands
+     */
+    public double avgLigProt(List<ProteinRow> list, Closure<ProteinRow> closure) {
+        List<ProteinRow> ligProts = list.findAll { it.ligands > 0 }.toList()
+        return avg(ligProts, closure)
+    }
+
+
+
+
     double div(double a, double b) {
         if (b==0d)
             return Double.NaN
@@ -489,12 +511,12 @@ class Evaluation implements Parametrized {
         m.AVG_LIG_CLOSTES_POCKET_DIST = avgClosestPocketDist
         m.LIGAND_COVERAGE = ligandCoverage
 
-        m.AVG_DSO_TOPN0    = avg proteinRows, { it.surfOverlapN0      }  // avg by proteins (unlike DCA and others)
-        m.AVG_DSO_TOPN2    = avg proteinRows, { it.surfOverlapN2      }  // avg by proteins (unlike DCA and others)
-        m.AVG_DSO_SUCC     = avg proteinRows, { it.surfOverlapSucc    }  // avg by proteins (unlike DCA and others)
-        m.AVG_LIGCOV_TOPN0 = avg proteinRows, { it.ligandCoverageN0   }  // avg by proteins (unlike DCA and others)
-        m.AVG_LIGCOV_TOPN2 = avg proteinRows, { it.ligandCoverageN2   }  // avg by proteins (unlike DCA and others)
-        m.AVG_LIGCOV_SUCC  = avg proteinRows, { it.ligandCoverageSucc }  // avg by proteins (unlike DCA and others)
+        m.AVG_DSO_TOPN0    = avgLigProt proteinRows, { it.surfOverlapN0      }  // avg by proteins (unlike DCA and others)
+        m.AVG_DSO_TOPN2    = avgLigProt proteinRows, { it.surfOverlapN2      }  // avg by proteins (unlike DCA and others)
+        m.AVG_DSO_SUCC     = avgLigProt proteinRows, { it.surfOverlapSucc    }  // avg by proteins (unlike DCA and others)
+        m.AVG_LIGCOV_TOPN0 = avgLigProt proteinRows, { it.ligandCoverageN0   }  // avg by proteins (unlike DCA and others)
+        m.AVG_LIGCOV_TOPN2 = avgLigProt proteinRows, { it.ligandCoverageN2   }  // avg by proteins (unlike DCA and others)
+        m.AVG_LIGCOV_SUCC  = avgLigProt proteinRows, { it.ligandCoverageSucc }  // avg by proteins (unlike DCA and others)
 
         m.AVG_POCKETS = avgPockets
         m.AVG_POCKET_SURF_ATOMS = avgPocketSurfAtoms
@@ -535,9 +557,9 @@ class Evaluation implements Parametrized {
         m.DCA_4_0_NOMINAL = m.DCA_4_0 * m.LIGANDS
 
         // TODO: move this somewhere else (getStats() shouldn't write to disk)
-        if (!Params.inst.log_scores_to_file.isEmpty()) {
+        if (!params.log_scores_to_file.empty) {
             PrintWriter w = new PrintWriter(new BufferedWriter(
-                    new FileWriter(Params.inst.log_scores_to_file, true)));
+                    new FileWriter(params.log_scores_to_file, true)));
             w.println("First line of the file");
             nonBindingScores.forEach({ it -> w.print(it); w.print(' ') });
             w.println()
