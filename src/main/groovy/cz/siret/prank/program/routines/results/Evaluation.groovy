@@ -14,6 +14,9 @@ import cz.siret.prank.utils.CollectionUtils
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.StringUtils
 
+import static cz.siret.prank.geom.Atoms.intersection
+import static cz.siret.prank.geom.Atoms.union
+import static cz.siret.prank.utils.CollectionUtils.head
 import static cz.siret.prank.utils.Formatter.*
 import static java.util.Collections.emptyList
 
@@ -153,7 +156,9 @@ class Evaluation implements Parametrized {
         protRow.distantLigNames = protein.distantLigands.collect { "$it.name($it.size|${format(it.contactDistance,1)}|${format(it.centerToProteinDist,1)})" }.join(" ")
         protRow.sasPoints = sasPoints.count
 
-        def (int n_ligSasPoints, int n_ligSasPointsCovered) = calcCoveragesProt(protRow, pair, labeledPoints, pockets)
+        int n_ligSasPoints
+        int n_ligSasPointsCovered
+        (n_ligSasPoints, n_ligSasPointsCovered) = calcCoveragesProt(protRow, pair, labeledPoints, pockets)
 
         // Conservation stats
         ConservationScore score = protein.secondaryData.get(ConservationScore.conservationScoreKey)
@@ -256,7 +261,7 @@ class Evaluation implements Parametrized {
     private calcCoveragesProt(ProteinRow protRow, PredictionPair pair, Atoms labeledPoints, List<Pocket> pockets) {
         Protein prot = pair.queryProtein
         Atoms ligLabeledPoints = labeledPoints.cutoffAtoms(prot.allLigandAtoms, LIG_SAS_CUTOFF)
-        Atoms ligSasPoints = new Atoms( ligLabeledPoints.collect { ((LabeledPoint)it).point }.toList() )  // we want exact objects from protein.connollySurface
+        Atoms ligSasp = new Atoms( ligLabeledPoints.collect { ((LabeledPoint)it).point }.toList() )  // we want exact objects from protein.connollySurface
         int n_ligSasPoints = ligLabeledPoints.count
 
         // ligand coverage by positively predicted points (note: not by pockets!)
@@ -264,26 +269,26 @@ class Evaluation implements Parametrized {
         log.debug "XXXX n_ligSasPoints: {} covered: {}", n_ligSasPoints, n_ligSasPointsCovered
 
         // ligand coverage by pockets
-        List<Pocket> topn0Pockets = CollectionUtils.head(pair.ligandCount, pockets)
-        List<Pocket> topn2Pockets = CollectionUtils.head(pair.ligandCount + 2, pockets)
-        Atoms topn0Sasp = Atoms.union(topn0Pockets*.sasPoints)
-        Atoms topn2Sasp = Atoms.union(topn2Pockets*.sasPoints)
-        int topn0Intersect = Atoms.intersection(ligSasPoints, topn0Sasp).count
-        int topn2Intersect = Atoms.intersection(ligSasPoints, topn2Sasp).count
-        int topn0Union = Atoms.union(ligSasPoints, topn0Sasp).count
-        int topn2Union = Atoms.union(ligSasPoints, topn2Sasp).count
+        List<Pocket> topn0Pockets = head(pair.ligandCount, pockets)
+        List<Pocket> topn2Pockets = head(pair.ligandCount + 2, pockets)
+        Atoms topn0Sasp = union((topn0Pockets*.sasPoints).toList())
+        Atoms topn2Sasp = union((topn2Pockets*.sasPoints).toList())
+        int topn0Intersect = intersection(ligSasp, topn0Sasp).count
+        int topn2Intersect = intersection(ligSasp, topn2Sasp).count
+        int topn0Union = union(ligSasp, topn0Sasp).count
+        int topn2Union = union(ligSasp, topn2Sasp).count
         protRow.ligandCoverageN0 = div topn0Intersect, n_ligSasPoints
         protRow.ligandCoverageN2 = div topn2Intersect, n_ligSasPoints
         protRow.surfOverlapN0 = div topn0Intersect, topn0Union
         protRow.surfOverlapN2 = div topn2Intersect, topn2Union
 
         // TODO revisit: consider prot averaging vs ligand averaging etc...
-        List<Ligand> succLigands = prot.ligands.findAll { it.predictedPocket!=null } //.toList()
-        List<Pocket> succPockets = succLigands.collect { it.predictedPocket }
-        Atoms succLigSasp = Atoms.union( succLigands*.sasPoints )
-        Atoms succPocSasp = Atoms.union( succPockets*.sasPoints )
-        int succUnion = Atoms.union(succLigSasp, succPocSasp).count
-        int succIntersect = Atoms.intersection(succLigSasp, succPocSasp).count
+        List<Ligand> succLigands = prot.ligands.findAll { it.predictedPocket!=null }.toList() //.toList()
+        List<Pocket> succPockets = succLigands.collect { it.predictedPocket }.toList()
+        Atoms succLigSasp = union( (succLigands*.sasPoints).toList() )
+        Atoms succPocSasp = union( (succPockets*.sasPoints).toList() )
+        int succUnion = union(succLigSasp, succPocSasp).count
+        int succIntersect = intersection(succLigSasp, succPocSasp).count
 
         protRow.ligandCoverageSucc = div succIntersect, succLigSasp.count
         protRow.surfOverlapSucc    = div succIntersect, succUnion
