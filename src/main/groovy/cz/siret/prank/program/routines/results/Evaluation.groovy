@@ -547,7 +547,7 @@ class Evaluation implements Parametrized, Writable {
 //        m.DSA_3_0 = calcSuccRate(33,0)
 //        m.DSA_3_2 = calcSuccRate(33,2)
         
-        m.OPT1 = m.DCA_4_0 + m.DCA_4_2 + 0.5*m.DCA_4_4 + 10*m.AVG_LIGCOV_SUCC + 5*m.AVG_DSO_SUCC
+        m.OPT1 = 100*m.DCA_4_0 + 100*m.DCA_4_2 + 50*m.DCA_4_4 + 10*m.AVG_LIGCOV_SUCC + 5*m.AVG_DSO_SUCC
 
         m.DCA_4_0_NOMINAL = m.DCA_4_0 * m.LIGANDS
 
