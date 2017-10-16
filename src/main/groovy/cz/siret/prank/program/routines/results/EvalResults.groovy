@@ -45,6 +45,8 @@ class EvalResults implements Parametrized, Writable  {
     List<Double> featureImportances
     List<EvalResults> subResults = new ArrayList<>()
 
+    Map<String, Double> additionalStats = new HashMap<>()
+
     boolean rescoring = !params.predictions  // new predictions vs. rescoring
 
     EvalResults(int runs) {
@@ -124,7 +126,6 @@ class EvalResults implements Parametrized, Writable  {
         (double)train_positives / train_negatives
     }
 
-
     Map<String, Double> getStats() {
         Map<String, Double> m = eval.stats
 
@@ -158,6 +159,8 @@ class EvalResults implements Parametrized, Writable  {
                 m.put "_FI_"+it.name, it.importance
             }
         }
+
+        m.putAll(additionalStats)
 
         return m
     }

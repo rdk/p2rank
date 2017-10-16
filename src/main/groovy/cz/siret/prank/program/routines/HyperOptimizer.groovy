@@ -25,6 +25,8 @@ import java.nio.file.Paths
 @CompileStatic
 class HyperOptimizer extends ParamLooper {
 
+    static final String HOPT_OBJECTIVE = 'HOPT_OBJECTIVE'
+
     List<ListParam> listParams
 
     HyperOptimizer(String outdir, List<ListParam> listParams) {
@@ -74,9 +76,20 @@ class HyperOptimizer extends ParamLooper {
                 double val
 
                 try {
-                    EvalResults res = processStep(step, "step.$stepNumber", evalClosure)
-                    val = getObjectiveValue(res)
+                    Closure<EvalResults> calcObjectiveWrapper = { String stepDir ->
+                        EvalResults res = evalClosure.call(stepDir)
+                        double objective = HyperOptimizer.getObjectiveValue(res, params)
+                        // we want to calc objective before calling processStep
+                        // that will save it to selected_stats table
+                        res.additionalStats.put(HOPT_OBJECTIVE, objective)
+                        return res
+                    }
+                    if (params.selected_stats.contains(HOPT_OBJECTIVE)) {
+                        params.selected_stats.add(HOPT_OBJECTIVE)
+                    }
+                    EvalResults res = processStep(step, "step.$stepNumber", calcObjectiveWrapper)
 
+                    val = res.additionalStats.get(HOPT_OBJECTIVE)
                     //TODO: write selected stats file sorted by hopt_objective
 
                 } catch (Exception e) {
@@ -89,7 +102,7 @@ class HyperOptimizer extends ParamLooper {
         })
     }
 
-    double getObjectiveValue(EvalResults res) {
+    static double getObjectiveValue(EvalResults res, Params params) {
         String name = params.hopt_objective
         double sign = 1
         if (name.startsWith("-")) {
