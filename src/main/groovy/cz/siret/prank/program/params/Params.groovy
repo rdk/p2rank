@@ -254,12 +254,12 @@ class Params {
     double solvent_radius = 1.6
 
     /**
-     * Connolly point tessellation (~density) used in pradiction step
+     * SAS tessellation (~density) used in pradiction step
      */
     int tessellation = 2
 
     /**
-     * Connolly point tessellation (~density) used in training step
+     * SAS tessellation (~density) used in training step
      */
     int train_tessellation = 2
 
