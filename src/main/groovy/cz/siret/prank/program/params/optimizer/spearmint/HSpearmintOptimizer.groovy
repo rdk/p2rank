@@ -7,7 +7,9 @@ import cz.siret.prank.program.params.optimizer.HOptimizer
 import cz.siret.prank.program.params.optimizer.HStep
 import cz.siret.prank.program.params.optimizer.HVariable
 import cz.siret.prank.utils.Formatter
+import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.ProcessRunner
+import cz.siret.prank.utils.StrUtils
 import cz.siret.prank.utils.Writable
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
@@ -15,6 +17,7 @@ import groovy.util.logging.Slf4j
 import java.nio.file.Path
 
 import static cz.siret.prank.utils.Futils.*
+import static cz.siret.prank.utils.Futils.delete
 
 /**
  * optimizer based on https://github.com/HIPS/Spearmint
@@ -24,6 +27,8 @@ import static cz.siret.prank.utils.Futils.*
 class HSpearmintOptimizer extends HOptimizer implements Writable {
 
     enum Likelihood { NOISELESS, GAUSSIAN }
+
+    static int SLEEP_INTERVAL = 100
 
     String spearmintCommand = "python main.py"
     String mongodbCommand = "mongod"
@@ -57,15 +62,27 @@ class HSpearmintOptimizer extends HOptimizer implements Writable {
         writeFile "$dir/config.json", genConfig()
         writeFile "$dir/eval.py", genEval()
 
-        String mongoLogFile = absSafePath("$dir/mongo/mongo.log" )
-        String mongoDataDir = absSafePath( "$dir/mongo/data" )
+        String sysTmpDir = System.getProperty('java.io.tmpdir')
+        String mongoDir = absSafePath("$sysTmpDir/prank/hopt/mongo")
+        String mongoLogFile = absSafePath("$mongoDir/mongo.log" )
+        String mongoOutFile = absSafePath("$mongoDir/mongo.out" )
+        String mongoDataDir = absSafePath( "$mongoDir/data" )
+
+        delete(mongoDir)
         mkdirs(mongoDataDir)
 
+        try {
+            write "Killing mongodb"
+            new ProcessRunner("sudo pkill mongo", sysTmpDir).redirectErrorStream().execute().waitFor()
+        } catch (e) {
+            log.error(e.message, e)
+        }
+
         // run mongo
-        log.info("Starting mongodb")
+        write "Starting mongodb"
         String mcmd = "$mongodbCommand --fork --smallfiles --logpath $mongoLogFile --dbpath $mongoDataDir"
-        write "executing '$mcmd'"
-        ProcessRunner mongoProc = new ProcessRunner(mcmd, dir).redirectErrorStream().redirectOutput(new File("$dir/mongo/mongo.out"))
+        write "  executing '$mcmd'"
+        ProcessRunner mongoProc = new ProcessRunner(mcmd, dir).redirectErrorStream().redirectOutput(new File(mongoOutFile))
         int exitCode = mongoProc.execute().waitFor()
         if (exitCode != 0) {
             log.error("Mongodb log: \n " + readFile(mongoLogFile))
@@ -74,11 +91,11 @@ class HSpearmintOptimizer extends HOptimizer implements Writable {
 
 
         // run spearmint
-        log.info("Starting spearmint")
+        write "Starting spearmint"
        // String scmd = spearmintCommand + " " + dir
         String scmd = spearmintCommand + " " + dir
 //        ProcessRunner spearmintProc = new ProcessRunner(scmd, spearmintDir.toString()).redirectErrorStream().redirectOutput(new File("$dir/spearmint.out"))
-        write "executing '$scmd'"
+        write "  executing '$scmd'"
         ProcessRunner spearmintProc = new ProcessRunner(scmd, spearmintDir.toString()).redirectErrorStream()
         spearmintProc.processBuilder.inheritIO()
         spearmintProc.execute()
@@ -91,7 +108,7 @@ class HSpearmintOptimizer extends HOptimizer implements Writable {
         log.debug "waiting for first vars file in '$varsDir'"
         while (isDirEmpty(varsDir)) {
             log.debug "waiting..."
-            sleep(1000)
+            sleep(SLEEP_INTERVAL)
         }
         jobId = listFiles(varsDir).first().name.toInteger()
 
@@ -153,7 +170,7 @@ class HSpearmintOptimizer extends HOptimizer implements Writable {
         log.info "waiting for file '$fname'"
         while (!exists(fname)) {
             log.debug "waiting..."
-            sleep(1000)
+            sleep(SLEEP_INTERVAL)
         } 
     }
 
