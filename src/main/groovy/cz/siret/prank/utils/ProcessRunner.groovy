@@ -23,11 +23,22 @@ class ProcessRunner {
     ProcessRunner(String command, String dir) {
         this.command = command
         this.dir = dir
+        if (this.dir == null) {
+            this.dir = System.getProperty('java.io.tmpdir')
+        }
 
         List<String> cmdList = Splitter.on(CharMatcher.whitespace()).splitToList(command)
 
         processBuilder = new ProcessBuilder(cmdList)
         processBuilder.directory(new File(dir))
+    }
+
+    static ProcessRunner process(String cmd) {
+        process(cmd, null)
+    }
+
+    static ProcessRunner process(String cmd, String dir) {
+        new ProcessRunner(cmd, dir)
     }
 
     ProcessRunner execute() {
@@ -48,6 +59,11 @@ class ProcessRunner {
         return this
     }
 
+    ProcessRunner inheritIO() {
+        processBuilder.inheritIO()
+        return this
+    }
+
 
     int waitFor() {
         process.waitFor()
@@ -55,6 +71,11 @@ class ProcessRunner {
         exitcode = process.exitValue()
 
         return exitcode
+    }
+
+    int executeAndWait() {
+        execute()
+        return waitFor()
     }
 
     void kill() {

@@ -5,6 +5,8 @@ import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.StrUtils
 import groovyx.gpars.GParsPool
 
+import static cz.siret.prank.utils.Futils.delete
+
 /**
  * produces R code for generating plots
  */
@@ -46,7 +48,7 @@ class RPlotter implements Parametrized {
     }
 
     void cleanup() {
-        Futils.delete("$outdir/Rplots.pdf")
+        delete("$outdir/Rplots.pdf")
     }
 
     void plot1D(int colnum) {

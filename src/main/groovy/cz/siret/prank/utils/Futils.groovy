@@ -222,6 +222,14 @@ class Futils {
     }
 
 
+//===========================================================================================================//
+
+    static String getSystemTempDir() {
+        System.getProperty('java.io.tmpdir')
+    }
+
+//===========================================================================================================//
+
     static void zip(String fileOrDirectory) {
         zip(fileOrDirectory, ZipUtil.DEFAULT_COMPRESSION_LEVEL)
     }

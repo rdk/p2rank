@@ -9,7 +9,6 @@ import cz.siret.prank.program.params.optimizer.HVariable
 import cz.siret.prank.utils.Formatter
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.ProcessRunner
-import cz.siret.prank.utils.StrUtils
 import cz.siret.prank.utils.Writable
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
@@ -18,6 +17,8 @@ import java.nio.file.Path
 
 import static cz.siret.prank.utils.Futils.*
 import static cz.siret.prank.utils.Futils.delete
+
+import static cz.siret.prank.utils.ProcessRunner.process
 
 /**
  * optimizer based on https://github.com/HIPS/Spearmint
@@ -62,7 +63,7 @@ class HSpearmintOptimizer extends HOptimizer implements Writable {
         writeFile "$dir/config.json", genConfig()
         writeFile "$dir/eval.py", genEval()
 
-        String sysTmpDir = System.getProperty('java.io.tmpdir')
+        String sysTmpDir = Futils.getSystemTempDir()
         String mongoDir = absSafePath("$sysTmpDir/prank/hopt/mongo")
         String mongoLogFile = absSafePath("$mongoDir/mongo.log" )
         String mongoOutFile = absSafePath("$mongoDir/mongo.out" )
@@ -73,7 +74,7 @@ class HSpearmintOptimizer extends HOptimizer implements Writable {
 
         try {
             write "Killing mongodb"
-            new ProcessRunner("sudo pkill mongo", sysTmpDir).redirectErrorStream().execute().waitFor()
+            process("sudo pkill mongo").inheritIO().executeAndWait()
         } catch (e) {
             log.error(e.message, e)
         }
@@ -82,8 +83,8 @@ class HSpearmintOptimizer extends HOptimizer implements Writable {
         write "Starting mongodb"
         String mcmd = "$mongodbCommand --fork --smallfiles --logpath $mongoLogFile --dbpath $mongoDataDir"
         write "  executing '$mcmd'"
-        ProcessRunner mongoProc = new ProcessRunner(mcmd, dir).redirectErrorStream().redirectOutput(new File(mongoOutFile))
-        int exitCode = mongoProc.execute().waitFor()
+        ProcessRunner mongoProc = process(mcmd, mongoDir).redirectErrorStream().redirectOutput(new File(mongoOutFile))
+        int exitCode = mongoProc.executeAndWait()
         if (exitCode != 0) {
             log.error("Mongodb log: \n " + readFile(mongoLogFile))
             throw new PrankException("Failed to execute mongodb (required by spearmint)")
@@ -96,8 +97,7 @@ class HSpearmintOptimizer extends HOptimizer implements Writable {
         String scmd = spearmintCommand + " " + dir
 //        ProcessRunner spearmintProc = new ProcessRunner(scmd, spearmintDir.toString()).redirectErrorStream().redirectOutput(new File("$dir/spearmint.out"))
         write "  executing '$scmd'"
-        ProcessRunner spearmintProc = new ProcessRunner(scmd, spearmintDir.toString()).redirectErrorStream()
-        spearmintProc.processBuilder.inheritIO()
+        ProcessRunner spearmintProc = process(scmd, spearmintDir.toString()).inheritIO()
         spearmintProc.execute()
 
         int stepNumber = 0
@@ -121,8 +121,9 @@ class HSpearmintOptimizer extends HOptimizer implements Writable {
             String varf = "$varsDir/$jobId"
             waitForFile(varf)
 
+            
             // parse variable assignment
-            Map<String, Object> vars = new Gson().fromJson(new File(varf).text, Map.class);
+            Map<String, Object> vars = new Gson().fromJson(readFile(varf), Map.class);
             log.info "vars: {}", vars
 
             // eval objective function
