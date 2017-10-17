@@ -78,7 +78,7 @@ class HyperOptimizer extends ParamLooper {
                 try {
                     Closure<EvalResults> calcObjectiveWrapper = { String stepDir ->
                         EvalResults res = evalClosure.call(stepDir)
-                        double objective = HyperOptimizer.getObjectiveValue(res, params)
+                        double objective = HyperOptimizer.getObjectiveValue(res, Params.inst)
                         // we want to calc objective before calling processStep
                         // that will save it to selected_stats table
                         res.additionalStats.put(HOPT_OBJECTIVE, objective)
