@@ -3,6 +3,7 @@ package cz.siret.prank.score.criteria
 import cz.siret.prank.domain.Ligand
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.geom.Struct
+import cz.siret.prank.program.routines.results.EvalContext
 import groovy.transform.CompileStatic
 
 /**
@@ -18,7 +19,7 @@ class DCC implements IdentificationCriterium {
     }
 
     @Override
-    boolean isIdentified(Ligand ligand, Pocket pocket) {
+    boolean isIdentified(Ligand ligand, Pocket pocket, EvalContext context) {
 
 //        return cutoff >= Struct.dist(ligand.centroid, pocket.centroid)
         return cutoff >= Struct.dist(ligand.atoms.toPoints().centerOfMass, pocket.centroid)

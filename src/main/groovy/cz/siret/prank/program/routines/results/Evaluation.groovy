@@ -7,11 +7,8 @@ import cz.siret.prank.domain.Protein
 import cz.siret.prank.features.implementation.conservation.ConservationScore
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.program.params.Params
 import cz.siret.prank.program.rendering.LabeledPoint
 import cz.siret.prank.score.criteria.*
-import cz.siret.prank.utils.CollectionUtils
-import cz.siret.prank.utils.ConsoleWriter
 import cz.siret.prank.utils.Writable
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.StringUtils
@@ -101,24 +98,26 @@ class Evaluation implements Parametrized, Writable {
                 .average().getAsDouble()
     }
 
-    private Pocket findPocketForLigand(Ligand ligand, List<Pocket> pockets, IdentificationCriterium criterium) {
+    private Pocket findPocketForLigand(Ligand ligand, List<Pocket> pockets,
+                                       IdentificationCriterium criterium, EvalContext context) {
         for (Pocket pocket in pockets) {
-            if (criterium.isIdentified(ligand, pocket)) {
+            if (criterium.isIdentified(ligand, pocket, context)) {
                 return pocket
             }
         }
         return null
     }
 
-    private void assignPocketsToLigands(List<Ligand> ligands, List<Pocket> pockets) {
+    private void assignPocketsToLigands(List<Ligand> ligands, List<Pocket> pockets, EvalContext context) {
         for (Ligand ligand : ligands) {
-            ligand.predictedPocket = findPocketForLigand(ligand, pockets, standardCriterium)
+            ligand.predictedPocket = findPocketForLigand(ligand, pockets, standardCriterium, context)
         }
     }
 
     void addPrediction(PredictionPair pair, List<Pocket> pockets) {
+        EvalContext context = new EvalContext()
 
-        assignPocketsToLigands(pair.queryProtein.ligands, pockets)
+        assignPocketsToLigands(pair.queryProtein.ligands, pockets, context)
 
         List<LigRow> tmpLigRows = new ArrayList<>()
         List<PocketRow> tmpPockets = new ArrayList<>()
@@ -184,8 +183,8 @@ class Evaluation implements Parametrized, Writable {
             row.ligCode = lig.code
 
             row.ligCount = pair.ligandCount
-            row.ranks = criteria.collect { criterium -> pair.rankOfIdentifiedPocket(lig, criterium, pockets) }
-            row.dca4rank = pair.rankOfIdentifiedPocket(lig, standardCriterium, pockets)
+            row.ranks = criteria.collect { criterium -> pair.rankOfIdentifiedPocket(lig, pockets, criterium, context) }
+            row.dca4rank = pair.rankOfIdentifiedPocket(lig, pockets, standardCriterium, context)
             row.atoms = lig.atoms.count
             row.centerToProtDist = lig.centerToProteinDist
 
@@ -208,7 +207,7 @@ class Evaluation implements Parametrized, Writable {
             prow.ligCount = pair.ligandCount
             prow.pocketCount = pair.prediction.pocketCount
 
-            Ligand ligand = pair.findLigandForPocket(pocket, standardCriterium)
+            Ligand ligand = pair.findLigandForPocket(pocket, standardCriterium, context)
             prow.ligName = (ligand==null) ? "" : ligand.name + "_" + ligand.code
 
             prow.score = pocket.stats.pocketScore
@@ -576,7 +575,7 @@ class Evaluation implements Parametrized, Writable {
         ((1..10).collect { new DCC(it) }) +         // 15-24
 //        ((1..6).collect { new DPA(it) }) +
 //        ((1..6).collect { new DSA(it) }) +
-        ([0.7,0.6,0.5,0.4,0.3,0.2,0.1].collect { new DSOR(it) }) + // 25-31
+        ([0.7,0.6,0.5,0.4,0.3,0.2,0.1].collect { new DSO(it) }) + // 25-31
         ([1,0.9,0.8,0.7,0.6,0.5,0.4,0.3,0.2,0.1].collect { new DSWO((double)it, REQUIRED_POCKET_COVERAGE) }) // 32-41
     }
 

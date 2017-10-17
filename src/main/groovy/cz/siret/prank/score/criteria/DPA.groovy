@@ -2,6 +2,7 @@ package cz.siret.prank.score.criteria
 
 import cz.siret.prank.domain.Ligand
 import cz.siret.prank.domain.Pocket
+import cz.siret.prank.program.routines.results.EvalContext
 import cz.siret.prank.score.prediction.PrankPocket
 import groovy.transform.CompileStatic
 
@@ -18,7 +19,7 @@ class DPA implements IdentificationCriterium {
     }
 
     @Override
-    boolean isIdentified(Ligand ligand, Pocket pocket) {
+    boolean isIdentified(Ligand ligand, Pocket pocket, EvalContext context) {
 
         if (!(pocket instanceof PrankPocket)) return false
         PrankPocket pp = (PrankPocket) pocket

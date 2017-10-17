@@ -9,6 +9,7 @@ import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.Parametrized
+import cz.siret.prank.program.routines.results.EvalContext
 import cz.siret.prank.score.criteria.IdentificationCriterium
 import cz.siret.prank.utils.CollectionUtils
 import groovy.transform.CompileStatic

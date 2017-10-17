@@ -2,7 +2,7 @@ package cz.siret.prank.score.criteria
 
 import cz.siret.prank.domain.Ligand
 import cz.siret.prank.domain.Pocket
-import cz.siret.prank.geom.Atoms
+import cz.siret.prank.program.routines.results.EvalContext
 import groovy.transform.CompileStatic
 
 /**
@@ -27,12 +27,14 @@ class DSWO implements IdentificationCriterium {
     }
 
     @Override
-    boolean isIdentified(Ligand ligand, Pocket pocket) {
+    boolean isIdentified(Ligand ligand, Pocket pocket, EvalContext context) {
         if (pocket.sasPoints == null) { // pocket does not define sas points
             return false
         }
 
-        int inter = Atoms.intersection(ligand.sasPoints, pocket.sasPoints).count
+        def sets = DSO.getUnionAndIntersection(ligand, pocket, context)
+        int inter = sets.second.count
+
         if (inter==0)
             return false
 

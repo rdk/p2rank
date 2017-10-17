@@ -210,7 +210,7 @@ class Params {
 
     /**
      * distance around ligand atoms that define ligand induced volume
-     * (for evaluation by some criteria, DSOR, ligand coverage...)
+     * (for evaluation by some criteria, DSO, ligand coverage...)
      */
     double ligand_induced_volume_cutoff = 2.5
 
