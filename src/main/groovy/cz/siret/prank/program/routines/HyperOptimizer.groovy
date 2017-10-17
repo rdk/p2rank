@@ -84,7 +84,7 @@ class HyperOptimizer extends ParamLooper {
                         res.additionalStats.put(HOPT_OBJECTIVE, objective)
                         return res
                     }
-                    if (params.selected_stats.contains(HOPT_OBJECTIVE)) {
+                    if (!params.selected_stats.contains(HOPT_OBJECTIVE)) {
                         params.selected_stats.add(HOPT_OBJECTIVE)
                     }
                     EvalResults res = processStep(step, "step.$stepNumber", calcObjectiveWrapper)
