@@ -78,9 +78,9 @@ quick() {
     test ./prank.sh eval-predict -f distro/test_data/liganated/1aaxa.pdb          -out_subdir TEST/TESTS
     test ./prank.sh eval-predict test.ds                                          -out_subdir TEST/TESTS
 
-    test ./prank.sh rescore -f distro/test_data/fpocket/1aaxa_out/1aaxa_out.pdb   -out_subdir TEST/TESTS
-    test ./prank.sh rescore fpocket.ds                                            -out_subdir TEST/TESTS
-    test ./prank.sh rescore concavity.ds                                          -out_subdir TEST/TESTS
+#    test ./prank.sh rescore -f distro/test_data/fpocket/1aaxa_out/1aaxa_out.pdb   -out_subdir TEST/TESTS
+    test ./prank.sh rescore fpocket-pairs.ds                                            -out_subdir TEST/TESTS
+    test ./prank.sh rescore concavity-pairs.ds                                         -out_subdir TEST/TESTS
     test ./prank.sh eval-rescore fpocket-pairs.ds                                 -out_subdir TEST/TESTS
     test ./prank.sh eval-rescore concavity-pairs.ds                               -out_subdir TEST/TESTS
 
@@ -97,9 +97,9 @@ basic() {
     title RUNNING BASIC TESTS
 
     test ./prank.sh eval-predict chen11.ds                              -c config/working                        -out_subdir TEST/TESTS
-    test ./prank.sh eval-predict mlig-joined.ds                         -c config/working                        -out_subdir TEST/TESTS
+    test ./prank.sh eval-predict 'joined(mlig).ds'                      -c config/working                        -out_subdir TEST/TESTS
     test ./prank.sh traineval -t chen11-fpocket.ds -e chen11-fpocket.ds -c config/working  -loop 1  -fail_fast 1 -out_subdir TEST/TESTS
-    test ./prank.sh traineval -t chen11-fpocket.ds -e mlig-joined.ds    -c config/working  -loop 1  -fail_fast 1 -out_subdir TEST/TESTS
+    test ./prank.sh traineval -t chen11-fpocket.ds -e 'joined(mlig).ds' -c config/working  -loop 1  -fail_fast 1 -out_subdir TEST/TESTS
     test ./prank.sh crossval chen11-fpocket.ds                          -c config/working  -loop 1  -fail_fast 1 -out_subdir TEST/TESTS
 
     #test ./prank.sh eval-predict mlig-joined.ds   -c config/working -visualizations 1 -tessellation 3 -l VISUALIZATIONS_TES3 -c config/working -out_subdir TEST/TESTS
@@ -113,16 +113,13 @@ predict() {
 
    test ./prank.sh predict joined.ds       -c config/workdef -log_cases 1   -out_subdir TEST/PREDICT
    test ./prank.sh predict holo4k.ds       -c config/workdef -log_cases 1   -out_subdir TEST/PREDICT
+   test ./prank.sh predict coach420.ds     -c config/workdef -log_cases 1   -out_subdir TEST/PREDICT
+   test ./prank.sh predict ah4h.holoraw.ds     -c config/workdef -log_cases 1   -out_subdir TEST/PREDICT
 
    test ./prank.sh predict chen11.ds       -c config/workdef -log_cases 1   -out_subdir TEST/PREDICT
-   test ./prank.sh predict b48.ds          -c config/workdef -log_cases 1   -out_subdir TEST/PREDICT
-   test ./prank.sh predict u48.ds          -c config/workdef -log_cases 1   -out_subdir TEST/PREDICT
-   test ./prank.sh predict astex.ds        -c config/workdef -log_cases 1   -out_subdir TEST/PREDICT
-   test ./prank.sh predict dt198.ds        -c config/workdef -log_cases 1   -out_subdir TEST/PREDICT
-   test ./prank.sh predict b210.ds         -c config/workdef -log_cases 1   -out_subdir TEST/PREDICT
    test ./prank.sh predict fptrain.ds      -c config/workdef -log_cases 1   -out_subdir TEST/PREDICT
-   test ./prank.sh predict mlig-joined.ds  -c config/workdef -log_cases 1   -out_subdir TEST/PREDICT
-   test ./prank.sh predict mlig-holo4k.ds  -c config/workdef -log_cases 1   -out_subdir TEST/PREDICT
+   test ./prank.sh predict 'joined(mlig).ds'  -c config/workdef -log_cases 1   -out_subdir TEST/PREDICT
+   test ./prank.sh predict 'holo4k(mlig).ds'  -c config/workdef -log_cases 1   -out_subdir TEST/PREDICT
 
 }
 
@@ -134,6 +131,9 @@ eval_predict() {
 
     test ./prank.sh eval-predict joined.ds       -c config/workdef -log_cases 1   -out_subdir TEST/EVAL
     test ./prank.sh eval-predict holo4k.ds       -c config/workdef -log_cases 1   -out_subdir TEST/EVAL
+    test ./prank.sh eval-predict coach420.ds     -c config/workdef -log_cases 1   -out_subdir TEST/EVAL
+    test ./prank.sh predict ah4h.holoraw.ds      -c config/workdef -log_cases 1   -out_subdir TEST/PREDICT
+
 }
 
 # evaluate default model/settings on main datasets
@@ -143,16 +143,10 @@ eval_predict_rest() {
 
     # train=test for the reference
     test ./prank.sh eval-predict chen11.ds       -c config/workdef -log_cases 1   -out_subdir TEST/EVAL
-
-    test ./prank.sh eval-predict b48.ds          -c config/workdef -log_cases 1   -out_subdir TEST/EVAL
-    test ./prank.sh eval-predict u48.ds          -c config/workdef -log_cases 1   -out_subdir TEST/EVAL
-    test ./prank.sh eval-predict astex.ds        -c config/workdef -log_cases 1   -out_subdir TEST/EVAL
-    test ./prank.sh eval-predict dt198.ds        -c config/workdef -log_cases 1   -out_subdir TEST/EVAL
-    test ./prank.sh eval-predict b210.ds         -c config/workdef -log_cases 1   -out_subdir TEST/EVAL
     test ./prank.sh eval-predict fptrain.ds      -c config/workdef -log_cases 1   -out_subdir TEST/EVAL
 
-    test ./prank.sh eval-predict mlig-joined.ds  -c config/workdef -log_cases 1   -out_subdir TEST/EVAL
-    test ./prank.sh eval-predict mlig-holo4k.ds  -c config/workdef -log_cases 1   -out_subdir TEST/EVAL
+    test ./prank.sh eval-predict 'joined(mlig).ds'  -c config/workdef -log_cases 1   -out_subdir TEST/EVAL
+    test ./prank.sh eval-predict 'holo4k(mlig).ds'  -c config/workdef -log_cases 1   -out_subdir TEST/EVAL
 
     #test ./prank.sh eval-predict mlig-moad-nr.ds -c config/workdef -log_cases 1  -fail_fast 1  -out_subdir TEST/EVAL
     #test ./prank.sh eval-predict moad-nr.ds      -c config/workdef -log_cases 1  -fail_fast 1  -out_subdir TEST/EVAL
@@ -164,17 +158,13 @@ eval_rescore() {
 
     test ./prank.sh eval-rescore joined-fpocket.ds       -c config/workdef -log_cases 1  -out_subdir TEST/EVAL
     test ./prank.sh eval-rescore holo4k-fpocket.ds       -c config/workdef -log_cases 1  -out_subdir TEST/EVAL
+    test ./prank.sh eval-rescore coach420-fpocket.ds     -c config/workdef -log_cases 1  -out_subdir TEST/EVAL
 
     test ./prank.sh eval-rescore chen11-fpocket.ds       -c config/workdef -log_cases 1  -out_subdir TEST/EVAL
-    test ./prank.sh eval-rescore b48-fpocket.ds          -c config/workdef -log_cases 1  -out_subdir TEST/EVAL
-    test ./prank.sh eval-rescore u48-fpocket.ds          -c config/workdef -log_cases 1  -out_subdir TEST/EVAL
-    test ./prank.sh eval-rescore astex-fpocket.ds        -c config/workdef -log_cases 1  -out_subdir TEST/EVAL
-    test ./prank.sh eval-rescore dt198-fpocket.ds        -c config/workdef -log_cases 1  -out_subdir TEST/EVAL
-    test ./prank.sh eval-rescore b210-fpocket.ds         -c config/workdef -log_cases 1  -out_subdir TEST/EVAL
     test ./prank.sh eval-rescore fptrain-fpocket.ds      -c config/workdef -log_cases 1  -out_subdir TEST/EVAL
 
-    test ./prank.sh eval-rescore mlig-joined-fpocket.ds  -c config/workdef -log_cases 1  -out_subdir TEST/EVAL
-    test ./prank.sh eval-rescore mlig-holo4k-fpocket.ds  -c config/workdef -log_cases 1  -out_subdir TEST/EVAL
+    test ./prank.sh eval-rescore 'joined(mlig)-fpocket.ds'  -c config/workdef -log_cases 1  -out_subdir TEST/EVAL
+    test ./prank.sh eval-rescore 'holo4k(mlig)-fpocket.ds'  -c config/workdef -log_cases 1  -out_subdir TEST/EVAL
 }
 
 # train and evaluate new model/settings on main datasets
@@ -192,26 +182,19 @@ eval_train_rest() {
     title TRAIN/EVAL ON OTHER DATASETS
 
     # train=test for the reference
-    test ./prank.sh traineval -t chen11-fpocket.ds -e chen11-fpocket.ds -c config/working -loop 10                    -out_subdir TEST/EVAL_TRAIN
-
-    test ./prank.sh traineval -t chen11-fpocket.ds -e b48.ds           -c config/working -loop 10                     -out_subdir TEST/EVAL_TRAIN
-    test ./prank.sh traineval -t chen11-fpocket.ds -e u48.ds           -c config/working -loop 10                     -out_subdir TEST/EVAL_TRAIN
-    test ./prank.sh traineval -t chen11-fpocket.ds -e astex.ds         -c config/working -loop 10                     -out_subdir TEST/EVAL_TRAIN
-    test ./prank.sh traineval -t chen11-fpocket.ds -e dt198.ds         -c config/working -loop 10                     -out_subdir TEST/EVAL_TRAIN
-    test ./prank.sh traineval -t chen11-fpocket.ds -e b210.ds          -c config/working -loop 10                     -out_subdir TEST/EVAL_TRAIN
-    test ./prank.sh traineval -t chen11-fpocket.ds -e fptrain.ds       -c config/working -loop 10                     -out_subdir TEST/EVAL_TRAIN
-    
-    test ./prank.sh traineval -t chen11-fpocket.ds -e mlig-joined.ds   -c config/working -loop 10                     -out_subdir TEST/EVAL_TRAIN
-    test ./prank.sh traineval -t chen11-fpocket.ds -e mlig-holo4k.ds   -c config/working -loop 3   -cache_datasets 0  -out_subdir TEST/EVAL_TRAIN
+    test ./prank.sh traineval -t chen11-fpocket.ds -e chen11-fpocket.ds   -c config/working -loop 10                    -out_subdir TEST/EVAL_TRAIN
+    test ./prank.sh traineval -t chen11-fpocket.ds -e fptrain.ds          -c config/working -loop 10                     -out_subdir TEST/EVAL_TRAIN
+    test ./prank.sh traineval -t chen11-fpocket.ds -e 'joined(mlig).ds'   -c config/working -loop 10                     -out_subdir TEST/EVAL_TRAIN
+    test ./prank.sh traineval -t chen11-fpocket.ds -e 'holo4k(mlig).ds'   -c config/working -loop 3   -cache_datasets 0  -out_subdir TEST/EVAL_TRAIN
 }
 
 ###################################################################################################################
 
 
 quick_train_new() {
-    test ./prank.sh traineval -t chen11-fpocket.ds -e mlig-joined.ds   -c config/new -loop 3                     -out_subdir TEST/EVAL_TRAIN
+    test ./prank.sh traineval -t chen11-fpocket.ds -e 'joined(mlig).ds'   -c config/new -loop 3                     -out_subdir TEST/EVAL_TRAIN
+    test ./prank.sh traineval -t chen11-fpocket.ds -e 'holo4k(mlig).ds'   -c config/new -loop 1   -cache_datasets 0 -out_subdir TEST/EVAL_TRAIN
     test ./prank.sh traineval -t chen11-fpocket.ds -e      joined.ds   -c config/new -loop 3                     -out_subdir TEST/EVAL_TRAIN
-    test ./prank.sh traineval -t chen11-fpocket.ds -e mlig-holo4k.ds   -c config/new -loop 1   -cache_datasets 0 -out_subdir TEST/EVAL_TRAIN
     test ./prank.sh traineval -t chen11-fpocket.ds -e      holo4k.ds   -c config/new -loop 1   -cache_datasets 0 -out_subdir TEST/EVAL_TRAIN
     test ./prank.sh crossval chen11-fpocket.ds                         -c config/new -loop 3                     -out_subdir TEST/EVAL_TRAIN
 }
@@ -222,9 +205,9 @@ quick_train_new() {
 traineval_config() {
     CONFIG=$1
     LABEL=$2
-    test ./prank.sh traineval -t chen11.ds -e mlig-joined.ds   -c ${CONFIG} -loop 10                    -out_subdir EVAL/CONFIG_${LABEL}
+    test ./prank.sh traineval -t chen11.ds -e 'joined(mlig).ds'   -c ${CONFIG} -loop 10                    -out_subdir EVAL/CONFIG_${LABEL}
+    test ./prank.sh traineval -t chen11.ds -e 'holo4k(mlig).ds'   -c ${CONFIG} -loop 3   -cache_datasets 0 -out_subdir EVAL/CONFIG_${LABEL}
     test ./prank.sh traineval -t chen11.ds -e      joined.ds   -c ${CONFIG} -loop 10                    -out_subdir EVAL/CONFIG_${LABEL}
-    test ./prank.sh traineval -t chen11.ds -e mlig-holo4k.ds   -c ${CONFIG} -loop 3   -cache_datasets 0 -out_subdir EVAL/CONFIG_${LABEL}
     test ./prank.sh traineval -t chen11.ds -e      holo4k.ds   -c ${CONFIG} -loop 3   -cache_datasets 0 -out_subdir EVAL/CONFIG_${LABEL}
     test ./prank.sh crossval chen11.ds                         -c ${CONFIG} -loop 10                    -out_subdir EVAL/CONFIG_${LABEL}
 }
@@ -236,11 +219,6 @@ traineval_config_all() {
 
     CONFIG=$1
     LABEL=$2
-    test ./prank.sh traineval -t chen11.ds -e b48.ds      -c ${CONFIG} -loop 10      -out_subdir EVAL/CONFIG_${LABEL}
-    test ./prank.sh traineval -t chen11.ds -e u48.ds      -c ${CONFIG} -loop 10      -out_subdir EVAL/CONFIG_${LABEL}
-    test ./prank.sh traineval -t chen11.ds -e astex.ds    -c ${CONFIG} -loop 10      -out_subdir EVAL/CONFIG_${LABEL}
-    test ./prank.sh traineval -t chen11.ds -e dt198.ds    -c ${CONFIG} -loop 10      -out_subdir EVAL/CONFIG_${LABEL}
-    test ./prank.sh traineval -t chen11.ds -e b210.ds     -c ${CONFIG} -loop 10      -out_subdir EVAL/CONFIG_${LABEL}
     test ./prank.sh traineval -t chen11.ds -e fptrain.ds  -c ${CONFIG} -loop 10      -out_subdir EVAL/CONFIG_${LABEL}
 
 }
