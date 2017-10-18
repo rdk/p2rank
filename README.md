@@ -8,6 +8,7 @@ Ligand-binding site prediction tool based on machine learning.
 </p>
 
 [![Build Status](https://travis-ci.org/rdk/p2rank.svg?branch=master)](https://travis-ci.org/rdk/p2rank)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ### Description
 
@@ -90,7 +91,7 @@ prank eval-predict test.ds
    `<pdb_file_name>_predictions.csv`, which contains an ordered list of predicted pockets, their scores, coordinates 
    of their centroids and list of PDBSerials of adjacent amino acids and solvent exposed atoms.
 
-   If coordinates of Connolly points that belong to predicted pockets are needed they can be found
+   If coordinates of SAS points that belong to predicted pockets are needed they can be found
    in `visualizations/data/<pdb_file_name>_points.pdb`. There "Residue sequence number" (23-26) of HETATM record 
    corresponds to the rank of corresponding pocket (points with value 0 do not belong to any pocket).
 
@@ -131,7 +132,7 @@ prank eval-rescore fpocket-pairs.ds
 
 [Fpocket](http://fpocket.sourceforge.net/) is widely used open source ligand binding site prediction program.
 It is fast, easy to use and well documented. As such, it was a great inspiration for this project.
-Fpocket is written in C and it is based on a very different algorithm.
+Fpocket is written in C and it is based on a different geometric algorithm.
 
 Some practical differences:
 
@@ -148,7 +149,7 @@ Some practical differences:
         + slower when running on a single protein (due to JVM startup cost)
         + approximately as fast on average running on a big dataset on a single core
         + due to parallel implementation potentially much faster on multi core machines
-    - higher memory footprint (~750m but doesn't grow much with more parallel threads)
+    - higher memory footprint (~1G but doesn't grow much with more parallel threads)
 
 Both Fpocket and P2RANK have many configurable parameters that influence behaviour of the algorithm and can be tweaked to achieve better results for particular requirements.
 
