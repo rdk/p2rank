@@ -16,8 +16,8 @@ P2RANK is a standalone command line program that predicts ligand-binding pockets
 
 ### Requirements
 
-* Java 1.8 or newer for execution
-* PyMOL 1.7.x for viewing visualizations
+* JRE 8 (Java 1.8) 
+* PyMOL 1.7.x for viewing visualizations (optional)
 
 ### Setup
 
