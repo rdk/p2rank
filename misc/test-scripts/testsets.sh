@@ -161,7 +161,6 @@ eval_rescore() {
     test ./prank.sh eval-rescore coach420-fpocket.ds     -c config/workdef -log_cases 1  -out_subdir TEST/EVAL
 
     test ./prank.sh eval-rescore chen11-fpocket.ds       -c config/workdef -log_cases 1  -out_subdir TEST/EVAL
-    test ./prank.sh eval-rescore fptrain-fpocket.ds      -c config/workdef -log_cases 1  -out_subdir TEST/EVAL
 
     test ./prank.sh eval-rescore 'joined(mlig)-fpocket.ds'  -c config/workdef -log_cases 1  -out_subdir TEST/EVAL
     test ./prank.sh eval-rescore 'holo4k(mlig)-fpocket.ds'  -c config/workdef -log_cases 1  -out_subdir TEST/EVAL

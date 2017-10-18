@@ -1,7 +1,7 @@
 
 P2Rank 
 ======
-Ligand-binding site prediction tool based on machine learning.
+Ligand-binding site prediction based on machine learning.
 
 <p align="center">
     <img src="http://siret.ms.mff.cuni.cz/krivak/p2rank/figures/points2_small.png" width="600">
