@@ -230,7 +230,7 @@ speed() {
 
     title SPEED TESTS
 
-    misc/test-scripts/benchmark.sh 5  "U48"   "1 2 4 8 12 16 20 24"  "./prank.sh predict u48.ds -c config/workdef -out_subdir TEST/SPEED"
+    misc/test-scripts/benchmark.sh 5  "FPTRAIN"   "1 4 12 16 24"     "./prank.sh predict fptrain.ds -c config/workdef -out_subdir TEST/SPEED"
     misc/test-scripts/benchmark.sh 25 "1FILE" "1"                    "./prank.sh predict -f distro/test_data/liganated/1aaxa.pdb -c config/workdef -out_subdir TEST/SPEED"
 }
 
@@ -238,7 +238,7 @@ speed_basic() {
 
     title SPEED TESTS
 
-    misc/test-scripts/benchmark.sh 3  "PREDICT"   "1 8"        "./prank.sh predict u48.ds -c config/workdef -out_subdir TEST/SPEED"
+    misc/test-scripts/benchmark.sh 3  "PREDICT"   "1 8"        "./prank.sh predict fptrain.ds -c config/workdef -out_subdir TEST/SPEED"
     misc/test-scripts/benchmark.sh 3  "TRAINEVAL" "1 8"        "./prank.sh traineval -t chen11-fpocket.ds -e joined.ds -c config/working -loop 1 -out_subdir TEST/SPEED"
     misc/test-scripts/benchmark.sh 3  "TRAINEVAL" "1 8"        "./prank.sh traineval -t chen11-fpocket.ds -e joined.ds -c config/working -loop 3 -out_subdir TEST/SPEED"
 }
@@ -262,30 +262,30 @@ speed_quick() {
 
     title "SPEED TESTS (QUICK)"
 
-    misc/test-scripts/benchmark.sh 3  "U48"   "1 2 4 5 8 9 12 13 24"  "./prank.sh predict u48.ds -c config/workdef -out_subdir TEST/SPEED"
-    misc/test-scripts/benchmark.sh 10 "1FILE" "1"                     "./prank.sh predict -f distro/test_data/liganated/1aaxa.pdb -c config/workdef -out_subdir TEST/SPEED"
+    misc/test-scripts/benchmark.sh 3  "FPTRAIN"   "1 2 4 5 8 9 12 13 24"  "./prank.sh predict fptrain.ds -c config/workdef -out_subdir TEST/SPEED"
+    misc/test-scripts/benchmark.sh 10 "1FILE" "1"                         "./prank.sh predict -f distro/test_data/liganated/1aaxa.pdb -c config/workdef -out_subdir TEST/SPEED"
 }
 
 speed_joined() {
 
     title SPEED TESTS
 
-    misc/test-scripts/benchmark.sh 3  "U48"   "1 2 3 4 5 6 7 8 9 10 11 12 13"  "./prank.sh predict joined.ds -c config/workdef -out_subdir TEST/SPEED"
-    misc/test-scripts/benchmark.sh 10 "1FILE" "1"                              "./prank.sh predict -f distro/test_data/liganated/1aaxa.pdb -c config/workdef -out_subdir TEST/SPEED"
+    misc/test-scripts/benchmark.sh 3  "JOINED"   "1 2 3 4 5 6 7 8 9 10 11 12 13"   "./prank.sh predict joined.ds -c config/workdef -out_subdir TEST/SPEED"
+    misc/test-scripts/benchmark.sh 10 "1FILE" "1"                                  "./prank.sh predict -f distro/test_data/liganated/1aaxa.pdb -c config/workdef -out_subdir TEST/SPEED"
 }
 
 speed_joined16() {
 
     title SPEED TESTS
 
-    misc/test-scripts/benchmark.sh 3  "U48"   "1 2 3 4 5 6 7 8 9 10 12 15 16 17"  "./prank.sh predict joined.ds -c config/workdef -out_subdir TEST/SPEED"
-    misc/test-scripts/benchmark.sh 10 "1FILE" "1"                                 "./prank.sh predict -f distro/test_data/liganated/1aaxa.pdb -c config/workdef -out_subdir TEST/SPEED"
+    misc/test-scripts/benchmark.sh 3  "JOINED"   "1 2 3 4 5 6 7 8 9 10 12 15 16 17"  "./prank.sh predict joined.ds -c config/workdef -out_subdir TEST/SPEED"
+    misc/test-scripts/benchmark.sh 10 "1FILE" "1"                                    "./prank.sh predict -f distro/test_data/liganated/1aaxa.pdb -c config/workdef -out_subdir TEST/SPEED"
 }
 
 
 dummy_speed() {
-    misc/test-scripts/benchmark.sh 10 "U48"   "1 2 4 8 12 16 20 24"  "echo dummy"
-    misc/test-scripts/benchmark.sh 50 "1FILE" "1"                    "echo dummy"
+    misc/test-scripts/benchmark.sh 10 "JOINED"   "1 2 4 8 12 16 20 24"  "echo dummy"
+    misc/test-scripts/benchmark.sh 50 "1FILE" "1"                       "echo dummy"
 }
 
 ###################################################################################################################
