@@ -1,8 +1,8 @@
 package cz.siret.prank.geom.kdtree.thirdgen;
 
-import ags.utils.dataStructures.BinaryHeap;
-import ags.utils.dataStructures.IntervalHeap;
-import ags.utils.dataStructures.MinHeap;
+import cz.siret.prank.geom.kdtree.thirdgen.heaps.BinaryHeap;
+import cz.siret.prank.geom.kdtree.thirdgen.heaps.IntervalHeap;
+import cz.siret.prank.geom.kdtree.thirdgen.heaps.MinHeap;
 
 import java.util.Arrays;
 import java.util.Iterator;

@@ -1,8 +1,8 @@
 package cz.siret.prank.geom.kdtree.thirdgen;
 
-import ags.utils.dataStructures.BinaryHeap;
-import ags.utils.dataStructures.MaxHeap;
-import ags.utils.dataStructures.MinHeap;
+import cz.siret.prank.geom.kdtree.thirdgen.heaps.BinaryHeap;
+import cz.siret.prank.geom.kdtree.thirdgen.heaps.MaxHeap;
+import cz.siret.prank.geom.kdtree.thirdgen.heaps.MinHeap;
 
 /**
  *
@@ -35,8 +35,8 @@ public class KdTree<T> extends KdNode<T> {
 
     @SuppressWarnings("unchecked")
     protected static <T> void nearestNeighborSearchStep (
-            MinHeap<KdNode<T>> pendingPaths, MaxHeap<T> evaluatedPoints, int desiredPoints,
-            DistanceFunction distanceFunction, double[] searchPoint) {
+        MinHeap<KdNode<T>> pendingPaths, MaxHeap<T> evaluatedPoints, int desiredPoints,
+        DistanceFunction distanceFunction, double[] searchPoint) {
         // If there are pending paths possibly closer than the nearest evaluated point, check it out
         KdNode<T> cursor = pendingPaths.getMin();
         pendingPaths.removeMin();
