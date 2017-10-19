@@ -266,6 +266,14 @@ speed_quick() {
     misc/test-scripts/benchmark.sh 10 "1FILE" "1"                           "./prank.sh predict -f distro/test_data/liganated/1aaxa.pdb -c config/workdef -out_subdir TEST/SPEED"
 }
 
+speed_quick_tes3() {
+
+    title "SPEED TESTS (QUICK)"
+
+    misc/test-scripts/benchmark.sh 3  "FPTRAIN"   "1 2 4 5 6 8 9 12 13 24"  "./prank.sh predict fptrain.ds -c config/workdef -tessellation 3 -out_subdir TEST/SPEED"
+    misc/test-scripts/benchmark.sh 10 "1FILE" "1"                           "./prank.sh predict -f distro/test_data/liganated/1aaxa.pdb -c config/workdef -tessellation 3 -out_subdir TEST/SPEED"
+}
+
 speed_joined() {
 
     title SPEED TESTS
