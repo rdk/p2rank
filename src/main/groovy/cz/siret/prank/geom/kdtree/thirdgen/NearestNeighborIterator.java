@@ -41,7 +41,7 @@ public class NearestNeighborIterator<T> implements Iterator<T>, Iterable<T> {
         }
 
         while (pendingPaths.size() > 0 && (evaluatedPoints.size() == 0 || (pendingPaths.getMinKey() < evaluatedPoints.getMinKey()))) {
-            KdTree.nearestNeighborSearchStep(pendingPaths, evaluatedPoints, pointsRemaining, distanceFunction, searchPoint);
+            KdTree3.nearestNeighborSearchStep(pendingPaths, evaluatedPoints, pointsRemaining, distanceFunction, searchPoint);
         }
 
         // Return the smallest distance point

@@ -7,12 +7,12 @@ import cz.siret.prank.geom.kdtree.thirdgen.heaps.MinHeap;
 /**
  *
  */
-public class KdTree<T> extends KdNode<T> {
-    public KdTree(int dimensions) {
+public class KdTree3<T> extends KdNode<T> {
+    public KdTree3(int dimensions) {
         this(dimensions, 24);
     }
 
-    public KdTree(int dimensions, int bucketCapacity) {
+    public KdTree3(int dimensions, int bucketCapacity) {
         super(dimensions, bucketCapacity);
     }
 
