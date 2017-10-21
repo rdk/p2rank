@@ -6,6 +6,7 @@ import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.features.FeatureVector
 import cz.siret.prank.features.PrankFeatureExtractor
 import cz.siret.prank.features.api.ProcessedItemContext
+import cz.siret.prank.fforest.FasterForest
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.rendering.LabeledPoint
 import cz.siret.prank.score.metrics.ClassifierStats
@@ -173,8 +174,13 @@ class WekaSumRescorer extends PocketRescorer implements Parametrized  {
     }
 
     private final double[] getDistributionForPoint(Classifier classifier, FeatureVector vect) {
-        PerfUtils.arrayCopy(vect.array, alloc)
-        return classifier.distributionForInstance(auxInst)
+        if (classifier instanceof FasterForest) {
+            return ((FasterForest)classifier).distributionForAttributes(vect.array, 2)
+        } else {
+            PerfUtils.arrayCopy(vect.array, alloc)
+            return classifier.distributionForInstance(auxInst)
+        }
+
     }
 
     ClassifierStats getStats() {

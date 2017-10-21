@@ -1,5 +1,6 @@
 package cz.siret.prank.geom;
 
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import cz.siret.prank.geom.kdtree.AtomKdTree;
 import cz.siret.prank.utils.ATimer;
@@ -37,12 +38,12 @@ public final class Atoms implements Iterable<Atom> {
     }
 
     public Atoms(List<? extends Atom> list) {
-        assert list != null;
+        if (list == null) throw new AssertionError();
         this.list = (List<Atom>) list;
     }
 
     public Atoms(Collection<? extends Atom> collection) {
-        assert collection != null;
+        if (collection == null) throw new AssertionError();
         this.list = new ArrayList<>(collection.size());
         this.list.addAll(collection);
     }
@@ -273,18 +274,20 @@ public final class Atoms implements Iterable<Atom> {
         for (Atoms a : aa) {
             res.addAll(a.list);
         }
+
         return new Atoms(res);
     }
 
     public static Atoms intersection(Atoms aa, Atoms bb) {
         Set<Atom> bset = new HashSet<>(bb.list);
-        List<Atom> res = new ArrayList<>(aa.getCount());
-        for (Atom a : aa) {
-            if (bset.contains(a)) {
-                res.add(a);
-            }
-        }
-        return new Atoms(res);
+//        List<Atom> res = new ArrayList<>(aa.getCount());
+//        for (Atom a : aa) {
+//            if (bset.contains(a)) {
+//                res.add(a);
+//            }
+//        }
+        bset.retainAll(bb.list);
+        return new Atoms(bset);
     }
 
 //===========================================================================================================//
