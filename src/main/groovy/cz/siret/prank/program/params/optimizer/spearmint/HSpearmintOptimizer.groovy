@@ -134,7 +134,10 @@ class HSpearmintOptimizer extends HOptimizer implements Writable {
             HStep step = new HStep(stepNumber, vars, val)
             steps.add(step)
             append stepsf, "$stepNumber, $jobId, " + varNames.collect { fmt vars.get(it) }.join(", ") + ", ${fmt val} \n"
-            writeFile "$dir/best.csv", printBestStep(bestStep, varNames)
+
+            String bests = printBestStep(bestStep, varNames)
+            writeFile "$dir/best.csv", bests
+            write "BEST STEP:\n" + bests
             write "For results see " + stepsf
 
             stepNumber++
