@@ -345,7 +345,7 @@ public final class Atoms implements Iterable<Atom> {
     }
 
     public Atoms cutoffAroundAtom(Atom distanceTo, double dist) {
-        List<Atom> res = new ArrayList<>(100);
+        List<Atom> res = new ArrayList<>();
         double sqrDist = dist*dist;
 
         double[] toCoords = distanceTo.getCoords();
