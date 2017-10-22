@@ -589,6 +589,12 @@ class Params {
      */
     double feat_asa_neigh_radius = 6
 
+    double feat_pmass_radius = 10
+
+    int feat_pmass_natoms = 70
+    
+    int feat_pmass_nsasp = 40
+
     /**
      * Hyperparameter optimizer implementation (so far only "spearmint")
      */
