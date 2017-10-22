@@ -28,6 +28,12 @@ abstract class HOptimizer {
         return steps
     }
 
+    HStep getBestStep() {
+        assert !steps.isEmpty()
+
+        steps.min { it.functionValue }
+    }
+
     /**
      * Maximize the objective function value
      * @return best step

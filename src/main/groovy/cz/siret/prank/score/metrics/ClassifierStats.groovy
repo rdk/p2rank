@@ -15,7 +15,7 @@ import static java.lang.Math.log
 @CompileStatic
 class ClassifierStats implements Parametrized {
 
-    static final double EPS = 1e-15d
+    static final double EPS = 0.01
     static final int HISTOGRAM_BINS = 100
 
 
@@ -82,7 +82,7 @@ class ClassifierStats implements Parametrized {
      */
     void addPrediction(boolean observed, boolean predicted, double score, double[] hist) {
 
-        double obsv = observed ? 1 : 0
+        double obsv = observed ? 1d : 0d
         double e = Math.abs(obsv - score)
         double se = e*e
 

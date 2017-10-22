@@ -608,7 +608,7 @@ class Params {
     /**
      * number of inetarions
      */
-    int hopt_max_iterations = 100
+    int hopt_max_iterations = 1000
 
     /**
      * randomize seed before every training in experiments
@@ -624,6 +624,9 @@ class Params {
                                    'DSOR_02_2',
                                    'DSWO_05_0',
                                    'DSWO_05_2',
+                                   'MCC',
+                                   'TPX',
+                                   'LOGLOSS',
                                    'AVG_DSO_SUCC',
                                    'AVG_LIGCOV_SUCC',
                                    'AVG_POCKETS',

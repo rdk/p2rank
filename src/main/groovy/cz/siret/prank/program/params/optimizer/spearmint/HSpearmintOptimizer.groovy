@@ -6,6 +6,7 @@ import cz.siret.prank.program.params.optimizer.HObjectiveFunction
 import cz.siret.prank.program.params.optimizer.HOptimizer
 import cz.siret.prank.program.params.optimizer.HStep
 import cz.siret.prank.program.params.optimizer.HVariable
+import cz.siret.prank.utils.ATimer
 import cz.siret.prank.utils.Formatter
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.ProcessRunner
@@ -15,6 +16,7 @@ import groovy.util.logging.Slf4j
 
 import java.nio.file.Path
 
+import static cz.siret.prank.utils.ATimer.startTimer
 import static cz.siret.prank.utils.Futils.*
 import static cz.siret.prank.utils.Futils.delete
 
@@ -116,7 +118,10 @@ class HSpearmintOptimizer extends HOptimizer implements Writable {
         String stepsf = "$dir/steps.csv"
         writeFile stepsf, "[num], [job_id], " + varNames.join(", ") + ", [value] \n"
 
+        double sumTime = 0
+
         while (stepNumber < maxIterations) {
+            def timer = startTimer()
             log.info "job id: {}", jobId
             String varf = "$varsDir/$jobId"
             waitForFile(varf)
@@ -134,11 +139,14 @@ class HSpearmintOptimizer extends HOptimizer implements Writable {
             HStep step = new HStep(stepNumber, vars, val)
             steps.add(step)
             append stepsf, "$stepNumber, $jobId, " + varNames.collect { fmt vars.get(it) }.join(", ") + ", ${fmt val} \n"
-
             String bests = printBestStep(bestStep, varNames)
             writeFile "$dir/best.csv", bests
             write "BEST STEP:\n" + bests
             write "For results see " + stepsf
+
+            long time = timer.timeSec
+            long avgTime = (long)(sumTime / (stepNumber+1))
+            write "Step $stepNumber finished in ${time}s (avg: ${avgTime}s)"
 
             stepNumber++
             jobId++
@@ -162,13 +170,6 @@ class HSpearmintOptimizer extends HOptimizer implements Writable {
         if (x==null) return ""
         sprintf "%8.4f", x
     }
-
-    HStep getBestStep() {
-        assert !steps.isEmpty()
-
-        steps.min { it.functionValue }
-    }
-
 
     void waitForFile(String fname) {
         log.info "waiting for file '$fname'"
