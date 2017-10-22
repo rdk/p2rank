@@ -30,7 +30,7 @@ class ProcessRunner {
         List<String> cmdList = Splitter.on(CharMatcher.whitespace()).splitToList(command)
 
         processBuilder = new ProcessBuilder(cmdList)
-        processBuilder.directory(new File(dir))
+        processBuilder.directory(new File(this.dir))
     }
 
     static ProcessRunner process(String cmd) {
