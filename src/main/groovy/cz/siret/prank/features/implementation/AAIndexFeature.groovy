@@ -36,7 +36,7 @@ class AAIndexFeature extends AtomFeatureCalculator {
         double[] res = new double[propertyNames.size()]
         int i = 0
         for (String property : propertyNames) {
-            res[0] = getTableValue(atom, property)
+            res[i] = getTableValue(atom, property)
             i++
         }
         return res
