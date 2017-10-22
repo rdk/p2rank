@@ -46,16 +46,14 @@ class DSO implements IdentificationCriterium {
             return false
         }
 
-//        log.warn("L:$ligand.sasPoints.count P:$pocket.sasPoints.count")
-
         def sets = getUnionAndIntersection(ligand, pocket, context)
         int union = sets.first.count
         int inter = sets.second.count
 
-//        log.warn("I:$inter")
+        log.warn("I:$inter")
         if (inter==0)
             return false
-//        log.warn("U:$inter")
+        log.warn("U:$inter")
         if (union==0)
             return false
 

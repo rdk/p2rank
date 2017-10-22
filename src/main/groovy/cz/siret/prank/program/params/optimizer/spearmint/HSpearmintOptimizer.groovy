@@ -145,6 +145,7 @@ class HSpearmintOptimizer extends HOptimizer implements Writable {
             write "For results see " + stepsf
 
             long time = timer.timeSec
+            sumTime += time
             long avgTime = (long)(sumTime / (stepNumber+1))
             write "Step $stepNumber finished in ${time}s (avg: ${avgTime}s)"
 

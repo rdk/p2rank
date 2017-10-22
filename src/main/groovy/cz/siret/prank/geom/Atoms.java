@@ -280,14 +280,13 @@ public final class Atoms implements Iterable<Atom> {
 
     public static Atoms intersection(Atoms aa, Atoms bb) {
         Set<Atom> bset = new HashSet<>(bb.list);
-//        List<Atom> res = new ArrayList<>(aa.getCount());
-//        for (Atom a : aa) {
-//            if (bset.contains(a)) {
-//                res.add(a);
-//            }
-//        }
-        bset.retainAll(bb.list);
-        return new Atoms(bset);
+        List<Atom> res = new ArrayList<>(aa.getCount());
+        for (Atom a : aa) {
+            if (bset.contains(a)) {
+                res.add(a);
+            }
+        }
+        return new Atoms(res);
     }
 
 //===========================================================================================================//

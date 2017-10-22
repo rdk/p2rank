@@ -54,13 +54,14 @@ class LogManager implements Writable {
             loggingToFile = true
         }
         if (!logToConsole) {
-            config.getAppender(CONSOLE_APPENDER_NAME).stop()
-            loggerConfig.removeAppender(CONSOLE_APPENDER_NAME)
-            config.rootLogger.removeAppender(CONSOLE_APPENDER_NAME)
-
-            if (!logToFile) {
-                config.removeLogger(loggerName)
-            }
+//            config.getAppender(CONSOLE_APPENDER_NAME).stop()
+//            loggerConfig.removeAppender(CONSOLE_APPENDER_NAME)
+//            config.rootLogger.removeAppender(CONSOLE_APPENDER_NAME)
+//
+//            if (!logToFile) {
+//                config.removeLogger(loggerName)
+//            }
+            loggerConfig.setLevel(Level.ERROR)  // always log at least errors to console
         }
 
         ctx.updateLoggers();
