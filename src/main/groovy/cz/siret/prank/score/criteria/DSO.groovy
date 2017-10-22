@@ -29,9 +29,10 @@ class DSO implements IdentificationCriterium {
         def cahe = (Map<Tuple2<Ligand, Pocket>, Tuple2<Atoms, Atoms>>) context.cache.get('sas_set_cache', new HashMap())
 
         def key = new Tuple2(ligand, pocket)
+
         def sets = cahe.computeIfAbsent(key, new Function<Tuple2<Ligand, Pocket>, Tuple2<Atoms, Atoms>>() {
             @Override
-            Tuple2<Atoms, Atoms> apply(Tuple2<Ligand, Pocket> tuple2) {
+            Tuple2<Atoms, Atoms> apply(Tuple2<Ligand, Pocket> t) {
                 Atoms union =  Atoms.union(ligand.sasPoints, pocket.sasPoints)
                 Atoms inter = (union.empty) ? new Atoms() : Atoms.intersection(ligand.sasPoints, pocket.sasPoints)
                 new Tuple2(union, inter)
@@ -50,10 +51,10 @@ class DSO implements IdentificationCriterium {
         int union = sets.first.count
         int inter = sets.second.count
 
-        log.warn("I:$inter")
+//        log.warn("I:$inter")
         if (inter==0)
             return false
-        log.warn("U:$inter")
+//        log.warn("U:$union")
         if (union==0)
             return false
 
