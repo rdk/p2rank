@@ -117,6 +117,8 @@ class Evaluation implements Parametrized, Writable {
     void addPrediction(PredictionPair pair, List<Pocket> pockets) {
         EvalContext context = new EvalContext()
 
+        pair.queryProtein.ligands.each { it.sasPoints = null } // clear sas points cache
+
         assignPocketsToLigands(pair.queryProtein.ligands, pockets, context)
 
         List<LigRow> tmpLigRows = new ArrayList<>()
