@@ -297,16 +297,6 @@ import cz.siret.prank.program.params.Params
     train_pockets = 0
 
     /**
-     * clear secondary caches (protein surfaces etc.) when iterating params
-     */
-    clear_sec_caches = true
-
-    /**
-     * clear primary caches (protein structures) when iterating params
-     */
-    clear_prim_caches = false
-
-    /**
      * acceptable distance between ligand center and closest protein atom for relevant ligands
      */
     ligc_prot_dist = 5.5

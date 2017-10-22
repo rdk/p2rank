@@ -464,7 +464,7 @@ class Params {
     /**
      * clear secondary caches (protein surfaces etc.) between runs (when iterating params or seed)
      */
-    boolean clear_sec_caches = true
+    boolean clear_sec_caches = false
 
 
 

@@ -316,7 +316,7 @@ import cz.siret.prank.program.params.Params
     /**
      * clear secondary caches (protein surfaces etc.) when iterating params
      */
-    clear_sec_caches = true
+    clear_sec_caches = false
 
     /**
      * clear primary caches (protein structures) when iterating params
