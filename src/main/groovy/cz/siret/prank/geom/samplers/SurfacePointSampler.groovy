@@ -37,7 +37,7 @@ class SurfacePointSampler extends PointSampler implements Parametrized {
             res = protSurf.cutoffAtoms(fpocket.vornoiCenters, 6) // 6 is max radius of fpocket alpha sphere
         } else {
 
-            res = protSurf.cutoffAtoms(pocket.surfaceAtoms, protein.connollySurface.solventRadius + VAN_DER_WAALS_COMPENSATION)
+            res = protSurf.cutoffAtoms(pocket.surfaceAtoms, protein.accessibleSurface.solventRadius + VAN_DER_WAALS_COMPENSATION)
         }
 
         pocket.cache.put(cacheKey, res)

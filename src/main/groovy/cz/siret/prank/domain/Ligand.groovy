@@ -64,7 +64,7 @@ class Ligand implements Parametrized {
 
     Atoms getSasPoints() {
         if (sasPoints==null) {
-            sasPoints = protein.connollySurface.points.cutoffAtoms(this.atoms, params.ligand_induced_volume_cutoff)
+            sasPoints = protein.accessibleSurface.points.cutoffAtoms(this.atoms, params.ligand_induced_volume_cutoff)
         }
         return sasPoints
     }

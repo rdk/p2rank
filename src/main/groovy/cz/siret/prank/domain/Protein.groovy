@@ -32,7 +32,7 @@ class Protein implements Parametrized {
     Atoms exposedAtoms
 
     /** solvent accessible surface */
-    Surface connollySurface
+    Surface accessibleSurface
 
     Surface trainSurface
 
@@ -69,9 +69,9 @@ class Protein implements Parametrized {
                 throw new PrankException("Protein with no chain atoms [$name]!")
             }
 
-            exposedAtoms = getConnollySurface().computeExposedAtoms(proteinAtoms)
+            exposedAtoms = getAccessibleSurface().computeExposedAtoms(proteinAtoms)
 
-            log.info "SAS points: $connollySurface.points.count"
+            log.info "SAS points: $accessibleSurface.points.count"
             log.info "exposed protein atoms: $exposedAtoms.count of $proteinAtoms.count"
         }
     }
@@ -93,25 +93,25 @@ class Protein implements Parametrized {
         if (train) {
             return getTrainSurface()
         } else {
-            return getConnollySurface()
+            return getAccessibleSurface()
         }
     }
 
-    Surface getConnollySurface() {
-        if (connollySurface == null) {
-            connollySurface = Surface.computeConnollySurface(proteinAtoms, params.solvent_radius, params.tessellation)
+    Surface getAccessibleSurface() {
+        if (accessibleSurface == null) {
+            accessibleSurface = Surface.computeAccessibleSurface(proteinAtoms, params.solvent_radius, params.tessellation)
         }
-        return connollySurface
+        return accessibleSurface
     }
 
     Surface getTrainSurface() {
         if (trainSurface == null) {
             boolean TRAIN_SURFACE_DIFFERENT = params.tessellation != params.train_tessellation
             if (TRAIN_SURFACE_DIFFERENT) {
-                trainSurface = Surface.computeConnollySurface(proteinAtoms, params.solvent_radius, params.train_tessellation)
+                trainSurface = Surface.computeAccessibleSurface(proteinAtoms, params.solvent_radius, params.train_tessellation)
                 log.info "train SAS points: $trainSurface.points.count"
             } else {
-                trainSurface = connollySurface
+                trainSurface = accessibleSurface
             }
 
         }
@@ -122,7 +122,7 @@ class Protein implements Parametrized {
      * clears generated surfaces and secondary data
      */
     void clearSecondaryData() {
-        connollySurface = null
+        accessibleSurface = null
         trainSurface = null
         exposedAtoms = null
         secondaryData.clear()

@@ -4,9 +4,13 @@ import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.CDKUtils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+import org.openscience.cdk.CDK
 import org.openscience.cdk.geometry.surface.NumericalSurface
 import org.openscience.cdk.interfaces.IAtomContainer
 
+/**
+ * Point surface 
+ */
 @Slf4j
 @CompileStatic
 class Surface implements Parametrized {
@@ -34,7 +38,7 @@ class Surface implements Parametrized {
     /**
      * computes solvent accessible surface
      */
-    static Surface computeConnollySurface(Atoms proteinAtoms, double solventRadius, int tesslevel) {
+    static Surface computeAccessibleSurface(Atoms proteinAtoms, double solventRadius, int tesslevel) {
 
         log.debug "proteinAtoms.count:" + proteinAtoms.count
 

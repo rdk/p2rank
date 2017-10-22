@@ -21,10 +21,10 @@ class ProtrusionFeature extends SasFeatureCalculator implements Parametrized {
     @Override
     double[] calculateForSasPoint(Atom sasPoint, SasFeatureCalculationContext context) {
 
-        // brute force ... O(N*M) where N is number of atoms and M number of Connolly points
+        // brute force ... O(N*M) where N is number of atoms and M number of SAS points
         // deepLayer conmtains often nearly all of the protein atoms
         // and this is one of the most expensive part od the algorithm when making predictions
-        // (apart from classification and Connolly surface generation)
+        // (apart from classification and SAS surface generation)
         // better solution would be to build triangulation over protein atoms or to use KD-tree with range search
         // or at least some space compartmentalization
 

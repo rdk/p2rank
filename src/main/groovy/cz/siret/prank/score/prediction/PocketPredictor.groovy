@@ -119,7 +119,7 @@ class PocketPredictor implements Parametrized {
             Atoms pocketSurfaceAtoms = protein.exposedAtoms.cutoffAtoms(pocketPoints, POCKET_PROT_SURFACE_CUTOFF)
             double score = pocketScore(pocketPoints, labeledPoints, protein, pocketSurfaceAtoms)
 
-            Atoms pocketSasPoints = new Atoms( pocketPoints.collect { ((LabeledPoint)it).point }.toList() )  // we want exact objects from protein.connollySurface
+            Atoms pocketSasPoints = new Atoms( pocketPoints.collect { ((LabeledPoint)it).point }.toList() )  // we want exact objects from protein.accessibleSurface
 
             PrankPocket p = new PrankPocket(clusterPoints.centerOfMass, score, pocketSasPoints, (List<LabeledPoint>) pocketPoints.toList())
             p.surfaceAtoms = pocketSurfaceAtoms

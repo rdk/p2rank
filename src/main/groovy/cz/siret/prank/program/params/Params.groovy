@@ -249,7 +249,7 @@ class Params {
     int sampling_multiplier = 3
 
     /**
-     * solvent radius for Connolly surface
+     * solvent radius for SAS surface
      */
     double solvent_radius = 1.6
 
@@ -335,7 +335,7 @@ class Params {
     int loop = 1
 
     /**
-     * keep datasets (structures and Connolly points) in memory between crossval/seedloop iterations
+     * keep datasets (structures and SAS points) in memory between crossval/seedloop iterations
      */
     boolean cache_datasets = false
 
@@ -386,7 +386,7 @@ class Params {
     boolean predictions = true
 
     /**
-     * minimum ligandability score for Connolly point to be considered ligandable
+     * minimum ligandability score for SAS point to be considered ligandable
      */
     double pred_point_threshold = 0.4
 
@@ -423,7 +423,7 @@ class Params {
     String out_subdir = null
 
     /**
-     * balance Connolly point score weight by density
+     * balance SAS point score weight by density
      */
     boolean balance_density = false
 
@@ -435,7 +435,7 @@ class Params {
     boolean log_cases = false
 
     /**
-     * cutoff for protein exposed atoms calculation (distance from connolly surface is solv.radius. + surf_cutoff)
+     * cutoff for protein exposed atoms calculation (distance from SAS surface is solv.radius. + surf_cutoff)
      */
     double surface_additional_cutoff = 1.8
 

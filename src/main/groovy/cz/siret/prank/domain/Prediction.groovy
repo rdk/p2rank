@@ -22,7 +22,7 @@ class Prediction {
     List<Pocket> reorderedPockets
 
     /**
-     *  Connolly points with ligandability score for prediction and visualization.
+     *  SAS points with ligandability score for prediction and visualization.
      */
     List<LabeledPoint> labeledPoints = null
 

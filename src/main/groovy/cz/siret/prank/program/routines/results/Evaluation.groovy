@@ -125,7 +125,7 @@ class Evaluation implements Parametrized, Writable {
         List<PocketRow> tmpPockets = new ArrayList<>()
 
         Protein protein = pair.queryProtein
-        Atoms sasPoints = pair.prediction.protein.connollySurface.points
+        Atoms sasPoints = pair.prediction.protein.accessibleSurface.points
         Atoms labeledPoints = new Atoms(pair.prediction.labeledPoints ?: emptyList())
         
         ProteinRow protRow = new ProteinRow()

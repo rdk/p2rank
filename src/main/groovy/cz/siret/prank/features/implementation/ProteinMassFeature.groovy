@@ -28,7 +28,7 @@ class ProteinMassFeature extends SasFeatureCalculator implements Parametrized {
     @Override
     void preProcessProtein(Protein protein, ProcessedItemContext context) {
         protein.proteinAtoms.buildKdTree()
-        protein.connollySurface.points.buildKdTree()
+        protein.accessibleSurface.points.buildKdTree()
     }
 
     @Override
@@ -39,7 +39,7 @@ class ProteinMassFeature extends SasFeatureCalculator implements Parametrized {
         double protp = dist(point, ctx.extractor.deepLayer.cutoffAroundAtom(point, params.protrusion_radius).centerOfMass)
         double protn = dist(point, ctx.neighbourhoodAtoms.centerOfMass)
         double protc = dist(point, ctx.protein.proteinAtoms.kdTree.findNearestNAtoms(point, 70, false).centerOfMass)
-        double sasp  = dist(point, ctx.protein.connollySurface.points.kdTree.findNearestNDifferentAtoms(point, 40, false).centerOfMass)
+        double sasp  = dist(point, ctx.protein.accessibleSurface.points.kdTree.findNearestNDifferentAtoms(point, 40, false).centerOfMass)
 
         return [protp, protn, protc, sasp] as double[]
     }

@@ -79,7 +79,7 @@ class WekaSumRescorer extends PocketRescorer implements Parametrized  {
             doRescore(prediction, proteinExtractor)
         }
 
-        // compute ligandability scores of connolly points for predictions and visualization
+        // compute ligandability scores of SAS points for predictions and visualization
         if (params.predictions || visualizeAllSurface) {
 
             FeatureExtractor extractor = (proteinExtractor as PrankFeatureExtractor).createInstanceForWholeProtein()
