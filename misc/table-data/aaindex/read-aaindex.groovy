@@ -1,11 +1,13 @@
 #!/bin/bash
-//usr/bin/env groovy  -cp "../../../distro/bin/pocket-rank.jar:../../../distro/bin/lib/*"  "$0" $@; exit $?
+//usr/bin/env groovy  -cp "../../../distro/bin/p2rank.jar:../../../distro/bin/lib/*"  "$0" $@; exit $?
+
+// groovy  -cp "../../../distro/bin/p2rank.jar;../../../distro/bin/lib/guava-23.0.jar" read-aaindex.groovy  aaindex1.txt
 
 
 package aaindex
 
-import rdk.pockets.domain.AA
-import rdk.pockets.tools.aaindex.AAIndex1
+import cz.siret.prank.domain.AA
+import cz.siret.prank.features.tables.AAIndex1
 
 
 

@@ -18,7 +18,7 @@ class AAIndex1 {
         }
     }
 
-    Map<String, Entry> entries = new HashMap<>()
+    Map<String, Entry> entryMap = new HashMap<>()
 
     /**
      * @param text index txt file content
@@ -71,11 +71,16 @@ class AAIndex1 {
                 nextEntry.values.put(AA.TYR, num2[8])
                 nextEntry.values.put(AA.VAL, num2[9])
 
-                result.entries.put(nextEntry.id, nextEntry)
+                result.entryMap.put(nextEntry.id, nextEntry)
             }
 
         }
 
+        return result
+    }
+
+    public getEntries() {
+        return entryMap.values()
     }
 
     //                A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
@@ -107,7 +112,7 @@ class AAIndex1 {
         return new ArrayList<Double>( sp.split(line).toList().collect{ toDouble(it) } )
     }
 
-    private toDouble(String s) {
+    private static double toDouble(String s) {
         if (s=="NA") {
             return Double.NaN
         } else {

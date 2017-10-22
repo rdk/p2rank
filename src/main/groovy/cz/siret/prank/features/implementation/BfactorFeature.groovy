@@ -15,7 +15,7 @@ class BfactorFeature extends AtomFeatureCalculator {
     }
 
     @Override
-    double[] calculateForAtom(Atom proteinSurfaceAtom, AtomFeatureCalculationContext protein) {
+    double[] calculateForAtom(Atom proteinSurfaceAtom, AtomFeatureCalculationContext ctx) {
         double value = proteinSurfaceAtom.tempFactor
         return [value] as double[]
     }

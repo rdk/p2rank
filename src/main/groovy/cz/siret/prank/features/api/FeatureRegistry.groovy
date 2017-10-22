@@ -1,5 +1,6 @@
 package cz.siret.prank.features.api
 
+import cz.siret.prank.features.implementation.AAIndexFeature
 import cz.siret.prank.features.implementation.Asa2Feature
 import cz.siret.prank.features.implementation.AsaFeature
 import cz.siret.prank.features.implementation.AsaResiduesFeature
@@ -64,6 +65,7 @@ class FeatureRegistry {
         registerFeature(new PairHistogramFeature())
         registerFeature(new PyramidFeature())
         registerFeature(new ProteinMassFeature())
+        registerFeature(new AAIndexFeature())
 
         // Register new feature implementations here
 

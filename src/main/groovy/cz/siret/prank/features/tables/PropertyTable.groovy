@@ -19,8 +19,24 @@ class PropertyTable {
 //===========================================================================================================//
 
     /**
+     * @return new table with items and properties reversed
+     */
+    PropertyTable reverse() {
+        PropertyTable res = new PropertyTable()
+        res.itemNames = propertyNames
+        res.propertyNames = itemNames
+
+        values.each { res.values.put(new Key(it.key.propertyName, it.key.itemName), it.value) }
+        
+        return res
+    }
+
+    /**
      * lines starting with # are comments
      * first non-comment line is header
+     *
+     * Expacts csv file with items in lines and properties in columns.
+     *
      * @param csvText
      */
     static PropertyTable parse(String csvText) {
