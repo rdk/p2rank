@@ -201,6 +201,9 @@ public final class Atoms implements Iterable<Atom> {
     }
 
     public Atom getCenterOfMass() {
+        if (list.isEmpty()) {
+            return null;
+        }
         if (centerOfMass==null) {
             Atom[] aa = new Atom[list.size()];
             aa = list.toArray(aa);
