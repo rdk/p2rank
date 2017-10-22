@@ -27,8 +27,10 @@ benchmark() {
     COM="$1"
     MODIFIER="$2"
 
-    echo heat-up run 0
-    ${COM} ${MODIFIER}
+    if [ "$REPETITIONS" -ne "1" ]; then
+        echo heat-up run 0
+        ${COM} ${MODIFIER}
+    fi
 
     start=`date +%s`
     repeat "$COM $MODIFIER"
