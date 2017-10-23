@@ -101,7 +101,7 @@ class ClassifierStats implements Parametrized, Writable {
             pCorrect = EPS
         }
         sumLogLoss -= log(pCorrect)
-        write("sumLogLoss: " + sumLogLoss)
+//        write("sumLogLoss: " + sumLogLoss)
 
         histograms.score.put(score)
         if (observed) {
