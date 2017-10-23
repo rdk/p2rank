@@ -90,6 +90,29 @@ import cz.siret.prank.program.params.Params
 
     average_feat_vectors = true
 
+    feat_aa_properties = ['SUYM030101',
+                          'CASG920101',
+                          'BAEK050101',
+                          'RACS820107',
+                          'GUYH850102',
+                          'DESM900101',
+                          'KOEP990101',
+                          'DESM900102',
+                          'ROBB760111',
+                          'TANS770105',
+                          'WOLS870103',
+                          'ROBB790101',
+                          'GUYH850103',
+                          'QIAN880124',
+                          'JANJ790102',
+                          'JANJ780102',
+                          'WERD780101',
+                          'BIOV880102',
+                          'QIAN880125',
+                          'WOLS870102',
+                          'HOPT810101',
+                          'RICJ880111']
+
 //===========================================================================================================//
 
     rf_trees = 200
@@ -115,4 +138,7 @@ import cz.siret.prank.program.params.Params
 
     weight_function = "INVPOW"
     weight_power = 0.1
+
+
+
 }
