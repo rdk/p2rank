@@ -254,7 +254,7 @@ class EvalResults implements Parametrized, Writable  {
         if (params.feature_importances && featureImportances!=null) {
             List<FeatureImportance> namedImportances = getNamedImportances()
             namedImportances.sort { -it.importance } // descending
-            String sortedCsv = namedImportances.collect { it.name + ", " + PerfUtils.formatDouble(it.importance) }.join("\n") + "\n"
+            String sortedCsv = namedImportances.collect { it.name + ", " + fmt_fi(it.importance) }.join("\n") + "\n"
             writeFile("$outdir/feature_importances_sorted.csv", sortedCsv)
         }
 
@@ -266,6 +266,11 @@ class EvalResults implements Parametrized, Writable  {
         if (rescoring) {
             log.info "\nSucess Rates - Diff:\n" + CSV.tabulate(succ_rates_diff) + "\n\n"
         }
+    }
+
+    static String fmt_fi(Object x) {
+        if (x==null) return ""
+        sprintf "%8.6f", x
     }
 
     List<FeatureImportance> getNamedImportances() {

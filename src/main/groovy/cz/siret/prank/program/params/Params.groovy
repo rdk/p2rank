@@ -595,6 +595,8 @@ class Params {
     
     int feat_pmass_nsasp = 40
 
+    List<String> feat_aa_properties = null
+
     /**
      * Hyperparameter optimizer implementation (so far only "spearmint")
      */

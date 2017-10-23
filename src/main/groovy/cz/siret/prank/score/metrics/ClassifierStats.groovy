@@ -1,6 +1,7 @@
 package cz.siret.prank.score.metrics
 
 import cz.siret.prank.program.params.Parametrized
+import cz.siret.prank.utils.Writable
 import groovy.transform.CompileStatic
 
 import java.text.DecimalFormat
@@ -13,12 +14,10 @@ import static java.lang.Math.log
  * Binary classifier statistics collector and calculator
  */
 @CompileStatic
-class ClassifierStats implements Parametrized {
+class ClassifierStats implements Parametrized, Writable {
 
     static final double EPS = 0.01
     static final int HISTOGRAM_BINS = 100
-
-
 
     String name
 
@@ -98,9 +97,11 @@ class ClassifierStats implements Parametrized {
         }
 
         double pCorrect = observed ? score : 1-score
-        if (pCorrect<EPS)
+        if (pCorrect<EPS) {
             pCorrect = EPS
+        }
         sumLogLoss -= log(pCorrect)
+        write("sumLogLoss: " + sumLogLoss)
 
         histograms.score.put(score)
         if (observed) {

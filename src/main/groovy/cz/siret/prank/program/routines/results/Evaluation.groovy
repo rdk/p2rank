@@ -156,7 +156,7 @@ class Evaluation implements Parametrized, Writable {
         int n_ligSasPointsCovered = ligLabeledPoints.toList().findAll { ((LabeledPoint) it).predicted }.toList().size()  // only for P2Rank
         //log.debug "XXXX n_ligSasPoints: $n_ligSasPoints covered: $n_ligSasPointsCovered"
 
-
+        // Conservation stats
         def (ConservationScore score, List<Double> bindingScrs, List<Double> nonBindingScrs) = calcConservationStats(protein, protRow)
 
         for (Ligand lig : protein.ligands) {
@@ -236,7 +236,6 @@ class Evaluation implements Parametrized, Writable {
     }
 
     private List calcConservationStats(Protein protein, ProteinRow protRow) {
-// Conservation stats
         ConservationScore score = protein.secondaryData.get(ConservationScore.conservationScoreKey) as ConservationScore
         List<Double> bindingScrs = new ArrayList<>();
         List<Double> nonBindingScrs = new ArrayList<>();
