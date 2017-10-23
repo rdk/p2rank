@@ -114,6 +114,7 @@ class Evaluation implements Parametrized, Writable {
         }
     }
 
+    @SuppressWarnings("GroovyAssignabilityCheck")
     void addPrediction(PredictionPair pair, List<Pocket> pockets) {
         EvalContext context = new EvalContext()
 
@@ -155,27 +156,8 @@ class Evaluation implements Parametrized, Writable {
         int n_ligSasPointsCovered = ligLabeledPoints.toList().findAll { ((LabeledPoint) it).predicted }.toList().size()  // only for P2Rank
         //log.debug "XXXX n_ligSasPoints: $n_ligSasPoints covered: $n_ligSasPointsCovered"
 
-        // Conservation stats
-        ConservationScore score = protein.secondaryData.get(ConservationScore.conservationScoreKey)
-        List<Double> bindingScrs = new ArrayList<>();
-        List<Double> nonBindingScrs = new ArrayList<>();
-        if (score != null) {
-            protRow.avgConservation = getAvgConservationForAtoms(protein.proteinAtoms, score)
-            Atoms bindingAtoms = protein.proteinAtoms.cutoffAtoms(protein.allLigandAtoms, protein.params.ligand_protein_contact_distance)
-            protRow.avgBindingConservation = getAvgConservationForAtoms(bindingAtoms, score)
-            Atoms nonBindingAtoms = protein.proteinAtoms - bindingAtoms
-            protRow.avgNonBindingConservation = getAvgConservationForAtoms(nonBindingAtoms, score)
 
-            if (!protein.params.log_scores_to_file.isEmpty()) {
-                bindingScrs = bindingAtoms.distinctGroups.collect { it ->
-                    score.getScoreForResidue(it
-                            .getResidueNumber())
-                }.toList();
-                nonBindingScrs = nonBindingAtoms.distinctGroups.collect { it ->
-                    score.getScoreForResidue(it.getResidueNumber())
-                }
-            }
-        }
+        def (ConservationScore score, List<Double> bindingScrs, List<Double> nonBindingScrs) = calcConservationStats(protein, protRow)
 
         for (Ligand lig : protein.ligands) {
             LigRow row = new LigRow()
@@ -251,6 +233,31 @@ class Evaluation implements Parametrized, Writable {
                 nonBindingScores.addAll(nonBindingScrs);
             }
         }
+    }
+
+    private List calcConservationStats(Protein protein, ProteinRow protRow) {
+// Conservation stats
+        ConservationScore score = protein.secondaryData.get(ConservationScore.conservationScoreKey) as ConservationScore
+        List<Double> bindingScrs = new ArrayList<>();
+        List<Double> nonBindingScrs = new ArrayList<>();
+        if (score != null) {
+            protRow.avgConservation = getAvgConservationForAtoms(protein.proteinAtoms, score)
+            Atoms bindingAtoms = protein.proteinAtoms.cutoffAtoms(protein.allLigandAtoms, protein.params.ligand_protein_contact_distance)
+            protRow.avgBindingConservation = getAvgConservationForAtoms(bindingAtoms, score)
+            Atoms nonBindingAtoms = new Atoms(protein.proteinAtoms - bindingAtoms)
+            protRow.avgNonBindingConservation = getAvgConservationForAtoms(nonBindingAtoms, score)
+
+            if (!protein.params.log_scores_to_file.isEmpty()) {
+                bindingScrs = bindingAtoms.distinctGroups.collect { it ->
+                    score.getScoreForResidue(it
+                            .getResidueNumber())
+                }.toList();
+                nonBindingScrs = nonBindingAtoms.distinctGroups.collect { it ->
+                    score.getScoreForResidue(it.getResidueNumber())
+                }
+            }
+        }
+        [score, bindingScrs, nonBindingScrs]
     }
 
     def calcOverlapStatsForPockets(List<Pocket> topPockets, Atoms ligSasPoints) {
