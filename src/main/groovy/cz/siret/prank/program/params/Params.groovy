@@ -589,7 +589,7 @@ class Params {
      */
     double feat_asa_neigh_radius = 6
 
-    double feat_pmass_radius = 10
+    double feat_pmass_radius = 11
 
     int feat_pmass_natoms = 70
     
