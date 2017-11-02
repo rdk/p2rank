@@ -13,6 +13,7 @@ public enum ClassifierOption {
     CostSensitive_RF,
     FastRandomForest,
     FasterForest,
+    FasterForest2,
     Bagging,
     SimpleLogistic,
     Logistic,

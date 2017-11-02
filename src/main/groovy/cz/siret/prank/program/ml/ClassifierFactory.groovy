@@ -1,6 +1,7 @@
 package cz.siret.prank.program.ml
 
 import cz.siret.prank.fforest.FasterForest
+import cz.siret.prank.fforest2.FasterForest2
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.params.Params
 import cz.siret.prank.utils.Writable
@@ -79,10 +80,24 @@ class ClassifierFactory implements Parametrized, Writable {
         return cs
     }
 
+    FasterForest2 createFasterForest2() {
+        FasterForest2 cs = new FasterForest2()
+        cs.with {
+            maxDepth = params.rf_depth
+            numTrees = params.rf_trees
+            bagSizePercent = params.rf_bagsize
+            numFeatures = params.rf_features
+            seed = params.seed
+            numThreads = getRfThreads()
+            computeImportances = params.feature_importances
+            // TODO try importancesNew
+        }
+        return cs
+    }
 
-    Classifier createClassifier() {
+    Classifier createClassifier(String name) {
 
-        ClassifierOption option = ClassifierOption.valueOf(params.classifier)
+        ClassifierOption option = ClassifierOption.valueOf(name)
 
         switch (option) {
 
@@ -94,6 +109,9 @@ class ClassifierFactory implements Parametrized, Writable {
 
             case ClassifierOption.FasterForest:
                 return createFasterForest()
+
+            case ClassifierOption.FasterForest2:
+                return createFasterForest2()
 
             case ClassifierOption.AdaBoostM1_RF:
                 AdaBoostM1 cs = new AdaBoostM1()
@@ -109,21 +127,21 @@ class ClassifierFactory implements Parametrized, Writable {
                 cs.setCostMatrix(matrix)
                 cs.setMinimizeExpectedCost(false)
                 cs.setSeed(params.seed)
-                cs.setClassifier(createRandomForest())
+                cs.setClassifier(createClassifier(params.inner_classifier))   // TODO use inner_classifier param
                 return cs
 
             case ClassifierOption.Bagging:
                 Bagging cs = new Bagging();
-                double bagsize = 100/params.threads
+                double bagsize = 100/params.threads       // TODO add baging_bag_size param
                 cs.setBagSizePercent((int)bagsize)
                 cs.setNumExecutionSlots(params.threads)
                 cs.setNumIterations(10)
                 cs.setSeed(params.seed)
                 //cs.setCalcOutOfBag(true)
 
-                FastRandomForest rf = createFastRandomForest()
-                rf.numThreads = 1
-                cs.setClassifier(rf)
+                Classifier cls = createClassifier(params.inner_classifier) // TODO use inner_classifier param
+                // try to set threads to 1
+                cs.setClassifier(cls)
 
                 return cs
 
@@ -143,7 +161,7 @@ class ClassifierFactory implements Parametrized, Writable {
                 st.setSeed(params.seed)
                 st.setMetaClassifier(new Logistic())
 
-                Classifier[] cls = [new Logistic(), createFastRandomForest(), new MultilayerPerceptron()] as Classifier[]
+                Classifier[] cls = [new Logistic(), createFasterForest(), new MultilayerPerceptron()] as Classifier[]
                 st.setClassifiers(cls)
 
                 return st
@@ -152,7 +170,7 @@ class ClassifierFactory implements Parametrized, Writable {
     }
 
     static Classifier createClassifier(Params params) {
-        new ClassifierFactory(params).createClassifier()
+        new ClassifierFactory(params).createClassifier(params.classifier)
     }
 
 }

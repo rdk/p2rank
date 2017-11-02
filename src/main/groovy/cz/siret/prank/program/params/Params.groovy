@@ -164,6 +164,11 @@ class Params {
      */
     String classifier = "FastRandomForest"
 
+    /**
+     * see ClassifierOption
+     */
+    String inner_classifier = "FastRandomForest"
+
     int meta_classifier_iterations = 5
 
     /**
