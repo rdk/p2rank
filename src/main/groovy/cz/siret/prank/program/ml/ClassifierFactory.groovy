@@ -19,7 +19,7 @@ import weka.classifiers.meta.Stacking
 import weka.classifiers.trees.RandomForest
 
 /**
- *
+ * Initializes classifiers
  */
 @CompileStatic
 class ClassifierFactory implements Parametrized, Writable {
