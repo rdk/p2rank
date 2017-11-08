@@ -275,7 +275,9 @@ public final class Atoms implements Iterable<Atom> {
     public static Atoms union(Collection<Atoms> aa) {
         Set<Atom> res = new HashSet<>(100);
         for (Atoms a : aa) {
-            res.addAll(a.list);
+            if (a != null) {
+                res.addAll(a.list);
+            }
         }
 
         return new Atoms(res);
