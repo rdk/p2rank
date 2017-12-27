@@ -48,6 +48,7 @@ abstract class Pocket {
     static class AuxInfo {
         int samplePoints
         double rawNewScore
+        double zScoreTP
     }
 
     static class PocketStats {

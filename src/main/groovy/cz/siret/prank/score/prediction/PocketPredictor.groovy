@@ -8,7 +8,9 @@ import cz.siret.prank.geom.Struct
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.rendering.LabeledPoint
 import cz.siret.prank.utils.CollectionUtils
+import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+import org.apache.xalan.xsltc.cmdline.Compile
 
 /**
  * Calculates pockets from list of SAS points with ligandability scores.
@@ -124,6 +126,7 @@ class PocketPredictor implements Parametrized {
             PrankPocket p = new PrankPocket(clusterPoints.centerOfMass, score, pocketSasPoints, (List<LabeledPoint>) pocketPoints.toList())
             p.surfaceAtoms = pocketSurfaceAtoms
             p.auxInfo.samplePoints = clusterPoints.count
+            p.auxInfo.zScoreTP = calcZScoreTP(score)
             p.cache.count = clusterPoints.count
             return p
         }
@@ -151,6 +154,16 @@ class PocketPredictor implements Parametrized {
         }
 
         return pockets;
+    }
+
+    @CompileStatic
+    double calcZScoreTP(double score) {
+        calcZScore(score, params.zscoretp_mean, params.zscoretp_stdev)
+    }
+
+    @CompileStatic
+    double calcZScore(double score, double mean, double stdev) {
+        (score - mean) / stdev
     }
 
 }

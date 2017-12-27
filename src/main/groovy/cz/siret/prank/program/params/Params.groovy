@@ -647,6 +647,10 @@ class Params {
                                    'AVG_POCKET_SAS_POINTS_TRUE_POCKETS',
                                    'TIME_MINUTES']
 
+    double zscoretp_mean = 30.76719289
+    
+    double zscoretp_stdev = 28.00281398
+
 //===========================================================================================================//
 
     String getVersion() {
