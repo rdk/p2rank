@@ -342,4 +342,16 @@ import cz.siret.prank.program.params.Params
      */
     output_only_stats = false
 
+    /**
+     * Path to json file that contains parameters of transformation of raw score to "z-score calculated from distribution of true pockets" (pocket.auxInfo.zScoreTP).
+     * Use path relative to distro/models/score.
+     */
+    zscoretp_transformer = "default_zscoretp.json"
+
+    /**
+     * Path to json file that contains parameters of transformation of raw score to "probability that pocket with gven score is true pocket" (pocket.auxInfo.probaTP).
+     * Use path relative to distro/models/score.
+     */
+    probatp_transformer = "default_probatp.json"
+
 }

@@ -648,11 +648,6 @@ class Params {
                                    'TIME_MINUTES']
 
 
-
-//    double zscoretp_mean = 30.76719289
-    
-//    double zscoretp_stdev = 28.00281398
-
     /**
      * Path to json file that contains parameters of transformation of raw score to "z-score calculated from distribution of true pockets" (pocket.auxInfo.zScoreTP).
      * Use path relative to distro/models/score.

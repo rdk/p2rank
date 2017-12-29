@@ -57,7 +57,6 @@ class ProbabilityScoreTransformer extends ScoreTransformer implements Writable {
         int[] tp_hist = calcHist(nbins, min, max, tpScores)
         int[] fp_hist = calcHist(nbins, min, max, fpScores)
 
-
         for (int i=1; i<nbins; i++) {
             tp_hist[i] += tp_hist[i-1]
         }
