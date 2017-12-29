@@ -119,6 +119,7 @@ class PredictRoutine extends Routine {
             stats.logAndStore(outdir, modelLabel)
             stats.logMainResults(outdir, modelLabel)
 
+            // train score transformers
             if (params.train_score_transformers != null) {
                 String scoreDir = "$outdir/score"
                 mkdirs(scoreDir)

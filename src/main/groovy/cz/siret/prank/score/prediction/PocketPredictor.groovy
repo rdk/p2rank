@@ -10,6 +10,7 @@ import cz.siret.prank.program.rendering.LabeledPoint
 import cz.siret.prank.score.transformation.ScoreTransformer
 import cz.siret.prank.utils.CollectionUtils
 import cz.siret.prank.utils.Futils
+import cz.siret.prank.utils.Writable
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.StringUtils
@@ -102,7 +103,7 @@ class PocketPredictor implements Parametrized {
             return ScoreTransformer.loadFromJson(Futils.readFile(path))
 
         } catch (Exception e) {
-            log.error("Failed to load score transformer '$paramVal'.")
+            log.error("Failed to load score transformer '$paramVal'", e)
         }
         return null
     }
@@ -155,6 +156,7 @@ class PocketPredictor implements Parametrized {
                 p.auxInfo.zScoreTP = zscoreTpTransformer.transformScore(score)
             }
             if (probaTpTransformer!=null) {
+                // System.out.println(probaTpTransformer.toString())
                 p.auxInfo.probaTP = probaTpTransformer.transformScore(score)
             }
 

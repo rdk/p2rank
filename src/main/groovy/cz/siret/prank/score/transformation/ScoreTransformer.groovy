@@ -4,6 +4,8 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
+import com.google.gson.JsonParser
+import com.google.gson.JsonPrimitive
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.routines.results.Evaluation
 import groovy.transform.CompileStatic
@@ -37,7 +39,7 @@ abstract class ScoreTransformer {
     }
 
     static ScoreTransformer loadFromJson(String json) {
-        JsonObject obj = (JsonObject) GSON.toJsonTree(json)
+        JsonObject obj = new JsonParser().parse(json).getAsJsonObject()
         String name = obj.get("name").getAsString()
 
         ScoreTransformer transformer = create(name)

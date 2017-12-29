@@ -654,11 +654,11 @@ class Evaluation implements Parametrized, Writable {
     String toPocketsCSV() {
         StringBuilder csv = new StringBuilder()
 
-        csv <<  "file, #ligands, #pockets, pocket, ligand, rank, score, newRank, oldScore, samplePoints, rawNewScore, pocketVolume, surfaceAtoms  \n"
+        csv <<  "file, #ligands, #pockets, pocket, ligand, rank, score, newRank, oldScore, zScoreTP, probaTP, samplePoints, rawNewScore, pocketVolume, surfaceAtoms  \n"
 
         for (PocketRow p in pocketRows) {
             csv << "$p.protName,$p.ligCount,$p.pocketCount,$p.pocketName,$p.ligName,"
-            csv << "$p.rank,$p.score,$p.newRank,${fmt(p.oldScore)},$p.auxInfo.samplePoints,${fmt(p.auxInfo.rawNewScore)},$p.pocketVolume,$p.surfaceAtomCount"
+            csv << "$p.rank,$p.score,$p.newRank,${fmt(p.oldScore)},${fmt(p.auxInfo.zScoreTP)},${fmt(p.auxInfo.probaTP)},$p.auxInfo.samplePoints,${fmt(p.auxInfo.rawNewScore)},$p.pocketVolume,$p.surfaceAtomCount"
             csv << "\n"
         }
 
