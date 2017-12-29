@@ -647,15 +647,35 @@ class Params {
                                    'AVG_POCKET_SAS_POINTS_TRUE_POCKETS',
                                    'TIME_MINUTES']
 
-    double zscoretp_mean = 30.76719289
+
+
+//    double zscoretp_mean = 30.76719289
     
-    double zscoretp_stdev = 28.00281398
+//    double zscoretp_stdev = 28.00281398
+
+    /**
+     * Path to json file that contains parameters of transformation of raw score to "z-score calculated from distribution of true pockets" (pocket.auxInfo.zScoreTP).
+     * Use path relative to distro/models/score.
+     */
+    String zscoretp_transformer = "default_zscoretp.json"
+
+    /**
+     * Path to json file that contains parameters of transformation of raw score to "probability that pocket with gven score is true pocket" (pocket.auxInfo.probaTP).
+     * Use path relative to distro/models/score.
+     */
+    String probatp_transformer = "default_probatp.json"
+
+
+    List<String> train_score_transformers = [] // ["ZscoreTpTransformer","ProbabilityScoreTransformer"]
+
 
 //===========================================================================================================//
 
     String getVersion() {
         Main.getVersion()
     }
+
+    String installDir // TODO refactor
 
 //===========================================================================================================//
 

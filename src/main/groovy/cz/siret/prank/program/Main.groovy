@@ -293,6 +293,7 @@ class Main implements Parametrized, Writable {
         args.shiftUnnamedArgs()
 
         installDir = findInstallDir()
+        params.installDir = installDir // TODO refactor
 
         if (command in ["ploop","hopt"]) {
             args.hasListParams = true

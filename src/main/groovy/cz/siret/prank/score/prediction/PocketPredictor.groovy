@@ -7,10 +7,14 @@ import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Struct
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.rendering.LabeledPoint
+import cz.siret.prank.score.transformation.ScoreTransformer
 import cz.siret.prank.utils.CollectionUtils
+import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+import org.apache.commons.lang3.StringUtils
 import org.apache.xalan.xsltc.cmdline.Compile
+import org.codehaus.groovy.util.StringUtil
 
 /**
  * Calculates pockets from list of SAS points with ligandability scores.
@@ -88,6 +92,21 @@ class PocketPredictor implements Parametrized {
         return score
     }
 
+
+    private ScoreTransformer loadTransformer(String paramVal) {
+        try {
+            if (StringUtils.isEmpty(paramVal)) {
+                return null
+            }
+            String path = params.installDir + "/models/score/" + paramVal
+            return ScoreTransformer.loadFromJson(Futils.readFile(path))
+
+        } catch (Exception e) {
+            log.error("Failed to load score transformer '$paramVal'.")
+        }
+        return null
+    }
+
     /**
      *
      * @param allLabeledPoints list of points with predicted ligandability in hist[]
@@ -109,6 +128,10 @@ class PocketPredictor implements Parametrized {
         log.info "CLUSTERS: {}", clusters.size()
         log.info "FILTERED CLUSTERS: {}", filteredClusters.size()
 
+        // score transformers
+        ScoreTransformer zscoreTpTransformer = loadTransformer(params.zscoretp_transformer)
+        ScoreTransformer probaTpTransformer = loadTransformer(params.probatp_transformer)
+
         List<PrankPocket> pockets = filteredClusters.collect { Atoms clusterPoints ->
 
             Atoms pocketPoints = clusterPoints
@@ -117,7 +140,7 @@ class PocketPredictor implements Parametrized {
                 pocketPoints = extendedPocketPoints
             }
             
-//            double score = (double) pocketPoints.collect { scorePoint((LabeledPoint)it, allSasPoints) }.sum(0)
+//          double score = (double) pocketPoints.collect { scorePoint((LabeledPoint)it, allSasPoints) }.sum(0)
             Atoms pocketSurfaceAtoms = protein.exposedAtoms.cutoffAtoms(pocketPoints, POCKET_PROT_SURFACE_CUTOFF)
             double score = pocketScore(pocketPoints, labeledPoints, protein, pocketSurfaceAtoms)
 
@@ -126,8 +149,15 @@ class PocketPredictor implements Parametrized {
             PrankPocket p = new PrankPocket(clusterPoints.centerOfMass, score, pocketSasPoints, (List<LabeledPoint>) pocketPoints.toList())
             p.surfaceAtoms = pocketSurfaceAtoms
             p.auxInfo.samplePoints = clusterPoints.count
-            p.auxInfo.zScoreTP = calcZScoreTP(score)
             p.cache.count = clusterPoints.count
+
+            if (zscoreTpTransformer!=null) {
+                p.auxInfo.zScoreTP = zscoreTpTransformer.transformScore(score)
+            }
+            if (probaTpTransformer!=null) {
+                p.auxInfo.probaTP = probaTpTransformer.transformScore(score)
+            }
+
             return p
         }
 
@@ -154,16 +184,6 @@ class PocketPredictor implements Parametrized {
         }
 
         return pockets;
-    }
-
-    @CompileStatic
-    double calcZScoreTP(double score) {
-        calcZScore(score, params.zscoretp_mean, params.zscoretp_stdev)
-    }
-
-    @CompileStatic
-    double calcZScore(double score, double mean, double stdev) {
-        (score - mean) / stdev
     }
 
 }

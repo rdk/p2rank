@@ -51,4 +51,12 @@ class StatSample {
         sqrt(variance)
     }
 
+    double getMin() {
+        Collections.min(sample)
+    }
+
+    double getMax() {
+        Collections.max(sample)
+    }
+
 }

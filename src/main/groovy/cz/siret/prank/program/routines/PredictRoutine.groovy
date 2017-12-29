@@ -9,6 +9,7 @@ import cz.siret.prank.program.routines.results.PredictResults
 import cz.siret.prank.score.PocketRescorer
 import cz.siret.prank.score.WekaSumRescorer
 import cz.siret.prank.score.results.PredictionSummary
+import cz.siret.prank.score.transformation.ScoreTransformer
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.WekaUtils
 import groovy.transform.CompileStatic
@@ -117,6 +118,22 @@ class PredictRoutine extends Routine {
             String modelLabel = classifier.class.simpleName + " ($modelf)"
             stats.logAndStore(outdir, modelLabel)
             stats.logMainResults(outdir, modelLabel)
+
+            if (params.train_score_transformers != null) {
+                String scoreDir = "$outdir/score"
+                mkdirs(scoreDir)
+                for (String name : params.train_score_transformers) {
+                    try {
+                        ScoreTransformer transformer = ScoreTransformer.create(name)
+                        transformer.train(stats.evaluation)
+                        String fname = "$scoreDir/${name}.json"
+                        Futils.writeFile("$scoreDir/${name}.json", ScoreTransformer.saveToJson(transformer))
+                        write "Trained score transformer '$name' written to: $fname"
+                    } catch (Exception e) {
+                        log.error("Failed to train score transformer '$name'", e)
+                    }
+                }
+            }
         }
 
         write "predicting pockets finished in $timer.formatted"

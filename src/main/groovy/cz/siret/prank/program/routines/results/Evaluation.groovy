@@ -194,8 +194,8 @@ class Evaluation implements Parametrized, Writable {
             Ligand ligand = pair.findLigandForPocket(pocket, standardCriterium, context)
             prow.ligName = (ligand==null) ? "" : ligand.name + "_" + ligand.code
 
-            prow.score = pocket.stats.pocketScore
-            prow.newScore = pocket.newScore
+            prow.oldScore = pocket.stats.pocketScore
+            prow.score = pocket.newScore
             prow.rank = pocket.rank
             prow.newRank = pocket.newRank
 
@@ -208,7 +208,7 @@ class Evaluation implements Parametrized, Writable {
             tmpPockets.add(prow)
         }
         List<PocketRow> conservationSorted = tmpPockets.toSorted {it.avgConservation}.reverse(true)
-        List<PocketRow> combiSorted = tmpPockets.toSorted { (Math.pow(it.avgConservation, protein.params.conservation_exponent) * it.newScore)}.reverse(true)
+        List<PocketRow> combiSorted = tmpPockets.toSorted { (Math.pow(it.avgConservation, protein.params.conservation_exponent) * it.score)}.reverse(true)
         for (PocketRow prow : tmpPockets) {
             prow.conservationRank = conservationSorted.indexOf(prow) + 1
             prow.combinedRank = combiSorted.indexOf(prow) + 1
@@ -654,11 +654,11 @@ class Evaluation implements Parametrized, Writable {
     String toPocketsCSV() {
         StringBuilder csv = new StringBuilder()
 
-        csv <<  "file, #ligands, #pockets, pocket, ligand, rank, score, newRank, newScore, samplePoints, rawNewScore, pocketVolume, surfaceAtoms  \n"
+        csv <<  "file, #ligands, #pockets, pocket, ligand, rank, score, newRank, oldScore, samplePoints, rawNewScore, pocketVolume, surfaceAtoms  \n"
 
         for (PocketRow p in pocketRows) {
             csv << "$p.protName,$p.ligCount,$p.pocketCount,$p.pocketName,$p.ligName,"
-            csv << "$p.rank,$p.score,$p.newRank,${fmt(p.newScore)},$p.auxInfo.samplePoints,${fmt(p.auxInfo.rawNewScore)},$p.pocketVolume,$p.surfaceAtomCount"
+            csv << "$p.rank,$p.score,$p.newRank,${fmt(p.oldScore)},$p.auxInfo.samplePoints,${fmt(p.auxInfo.rawNewScore)},$p.pocketVolume,$p.surfaceAtomCount"
             csv << "\n"
         }
 
@@ -730,7 +730,7 @@ class Evaluation implements Parametrized, Writable {
         int rank
         double score
         double newRank
-        double newScore
+        double oldScore
 
         int conservationRank
         int combinedRank

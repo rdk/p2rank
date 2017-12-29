@@ -23,6 +23,7 @@ class DafaultPrankPredictor extends PrankPredictor {
 
     public DafaultPrankPredictor(Path installDir) {
         this.installDir = installDir
+        Params.inst.installDir = installDir // TODO refactor
     }
 
     @Override
