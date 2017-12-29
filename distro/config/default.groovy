@@ -349,7 +349,7 @@ import cz.siret.prank.program.params.Params
     zscoretp_transformer = "default_zscoretp.json"
 
     /**
-     * Path to json file that contains parameters of transformation of raw score to "probability that pocket with gven score is true pocket" (pocket.auxInfo.probaTP).
+     * Path to json file that contains parameters of transformation of raw score to "probability that pocket with given score is true pocket" (pocket.auxInfo.probaTP).
      * Use path relative to distro/models/score.
      */
     probatp_transformer = "default_probatp.json"

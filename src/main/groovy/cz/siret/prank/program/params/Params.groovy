@@ -655,7 +655,7 @@ class Params {
     String zscoretp_transformer = "default_zscoretp.json"
 
     /**
-     * Path to json file that contains parameters of transformation of raw score to "probability that pocket with gven score is true pocket" (pocket.auxInfo.probaTP).
+     * Path to json file that contains parameters of transformation of raw score to "probability that pocket with given score is true pocket" (pocket.auxInfo.probaTP).
      * Use path relative to distro/models/score.
      */
     String probatp_transformer = "default_probatp.json"
