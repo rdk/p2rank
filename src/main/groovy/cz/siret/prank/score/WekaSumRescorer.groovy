@@ -174,12 +174,12 @@ class WekaSumRescorer extends PocketRescorer implements Parametrized  {
     }
 
     private final double[] getDistributionForPoint(Classifier classifier, FeatureVector vect) {
-        if (classifier instanceof FasterForest) {
-            return ((FasterForest)classifier).distributionForAttributes(vect.array, 2)
-        } else {
+//        if (classifier instanceof FasterForest) {
+//            return ((FasterForest)classifier).distributionForAttributes(vect.array, 2)
+//        } else {
             PerfUtils.arrayCopy(vect.array, alloc)
             return classifier.distributionForInstance(auxInst)
-        }
+//        }
 
     }
 
