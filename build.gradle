@@ -9,7 +9,7 @@ apply plugin: 'idea'
 
 
 group = 'cz.siret'
-version = '2.0-pre.2'
+version = '2.0-pre.2-ppi'
 
 description = 'Ligand binding site prediction based on machine learning.'
 
@@ -112,7 +112,7 @@ test {
 
 
 dependencies {
-    compile 'org.codehaus.groovy:groovy-all:2.4.12'
+    compile 'org.codehaus.groovy:groovy-all:2.4.13'
     compile 'org.codehaus.gpars:gpars:1.2.1'
     compile "org.apache.commons:commons-lang3:3.6"
     compile "commons-io:commons-io:2.5"
