@@ -33,26 +33,35 @@ class SprintLabelingLoader extends ResidueLabeler<Boolean> implements Writable {
         return true
     }
 
+    String toElementCode(Protein protein, ResidueChain chain) {
+        String protCode = Futils.removeExtension(protein.name)
+        String chainId = chain.id
+
+        return protCode + chainId
+    }
+
     @Override
     ResidueLabeling<Boolean> labelResidues(List<Residue> residues, Protein protein) {
 
         Map<Residue.Key, Boolean> labelMap = new HashMap<>()
 
-        String protCode = Futils.removeExtension(protein.name)
 
+
+        boolean foundOneChain = false
         for (ResidueChain chain : protein.residueChains) {
-            String chainId = chain.id
-            String chainCode = protCode + chainId
+            String chainCode = toElementCode(protein, chain)
 
             Element element = elementsByCode.get(chainCode)
 
             if (element == null) {
                 log.info "Labels for chain [{}] not found in labeling file", chainCode
                 continue
+            } else {
+                foundOneChain = true
             }
 
             if (chain.size != element.length) {
-                throw new PrankException("Chain lengths do not match for [$chainCode] (structure: $chain.size, labling file: $element.length)")
+                throw new PrankException("Chain lengths do not match for [$chainCode] (structure: $chain.size, labeling file: $element.length)")
             }
 
             int i = 0
@@ -60,13 +69,17 @@ class SprintLabelingLoader extends ResidueLabeler<Boolean> implements Writable {
                 char eleChar = element.chain.charAt(i)
 
                 if (residue.codeChar != eleChar) {
-                    throw new PrankException("Residue code mismatch in [$chainCode] at position [$i] (structure: $residue.codeChar, labling file: $eleChar)")
+                    throw new PrankException("Residue code mismatch in [$chainCode] at position [$i] (structure: $residue.codeChar, labeling file: $eleChar)")
                 }
 
                 boolean value = element.labels.charAt(i) != ('0' as char)
                 labelMap.put(residue.key, value)
                 i++
             }
+        }
+
+        if (!foundOneChain) {
+            throw new PrankException("Labeling not defined from any chain of protein[$protein.name]")
         }
 
         BinaryResidueLabeling result = new BinaryResidueLabeling()

@@ -1,10 +1,5 @@
 package cz.siret.prank.utils;
 
-import groovy.time.TimeCategory;
-import groovy.time.TimeDuration;
-
-import java.util.Date;
-
 public class ATimer {
 
     private long start;
@@ -21,8 +16,15 @@ public class ATimer {
         this.start = System.nanoTime();
     }
 
+    /**
+     * @return elapsed time in milliseconds
+     */
     public long getTime() {
         return (System.nanoTime() - start) / 1000000;
+    }
+
+    public Duration getDuration() {
+        return new Duration(getTime());
     }
 
     public long getTimeSec() {
@@ -34,12 +36,50 @@ public class ATimer {
     }
 
     public String getFormatted() {
-        TimeDuration duration = TimeCategory.minus(new Date(), new Date(start/1000000));
-        return duration.toString();
+        return getDuration().toString();
     }
 
     public String toString() {
         return getFormatted();
+    }
+
+    public static class Duration {
+        private long millis;
+        private long seconds;
+        private long minutes;
+        private long hours;
+
+        public Duration(long ms) {
+            millis = ms;
+            seconds = millis / 1000;
+            minutes = seconds / 60;
+            hours = minutes / 60;
+
+            minutes = minutes % 60;
+            seconds = seconds % 60;
+            millis = millis % 60;
+        }
+
+        public long getMillis() {
+            return millis;
+        }
+
+        public long getSeconds() {
+            return seconds;
+        }
+
+        public long getMinutes() {
+            return minutes;
+        }
+
+        public long getHours() {
+            return hours;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("%d hours %d minutes %d.%d seconds", hours, minutes, seconds, millis);
+        }
     }
 
 }

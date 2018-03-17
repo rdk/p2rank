@@ -32,7 +32,7 @@ class OldPymolRenderer implements Parametrized {
     }
 
     private String colorPocketSurfaces(PredictionPair pair) {
-        String res = ""
+        StringBuilder res = new StringBuilder()
 
         int N = pair.prediction.reorderedPockets.size()
 
@@ -40,17 +40,17 @@ class OldPymolRenderer implements Parametrized {
 
         int i = 1;
         pair.prediction.reorderedPockets.each { Pocket pocket ->
-            String ids = pocket.surfaceAtoms.list.collect {it.PDBserial}.join(",")
+            String ids = pocket.surfaceAtoms.indexes.join(",")
             String name = "surf_pocket$i"
             String ncol = "pcol$i"
 
-            res += "set_color $ncol = " + pyColor(colors[i-1]) + "\n"
-            res += "select $name, protein and id [$ids] \n"
-            res += "set surface_color,  $ncol, $name \n"
+            res << "set_color $ncol = " + pyColor(colors[i-1]) + "\n"
+            res << "select $name, protein and id [$ids] \n"
+            res << "set surface_color,  $ncol, $name \n"
             i++
         }
 
-        return res
+        return res.toString()
     }
 
     void visualizeHistograms(Dataset.Item item, WekaSumRescorer rescorer, PredictionPair pair) {

@@ -101,10 +101,10 @@ orient
     }
 
     private String renderBinaryResidueColoring(BinaryResidueLabeling labeling) {
-        String res = ""
+        StringBuilder res = new StringBuilder()
 
-        res += "set_color pos_res_col = " + pyColor(model.style.positiveResiduesColor) + "\n"
-        res += "set_color neg_res_col = " + pyColor(model.style.negativeResiduesColor) + "\n"
+        res << "set_color pos_res_col = " + pyColor(model.style.positiveResiduesColor) + "\n"
+        res << "set_color neg_res_col = " + pyColor(model.style.negativeResiduesColor) + "\n"
 
         int i = 1
         for (LabeledResidue<Boolean> lr : labeling.labeledResidues) {
@@ -112,12 +112,13 @@ orient
             String key = "residue_$i"
             String ncol = lr.label ? "pos_res_col" : "neg_res_col"
 
-            res += "select $key, protein and id [$ids] \n"
-            res += "set surface_color, $ncol, $key \n"
+            res << "select $key, protein and id [$ids] \n"
+            res << "color $ncol, $key \n"
+            res << "set surface_color, $ncol, $key \n"
             i++
         }
 
-        return res
+        return res.toString()
     }
 
     private String renderLabaledPoints() {

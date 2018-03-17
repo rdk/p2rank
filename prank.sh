@@ -42,6 +42,6 @@ PARAMS="$PRANK_LOCALENV_PARAMS"
 
 CMD="$JAVACMD $JAVA_OPTS -cp ${CLASSPATH} cz.siret.prank.program.Main ${PARAMS} $@"
 echo "+" $CMD
-"$JAVACMD" $JAVA_OPTS -cp "${CLASSPATH}" cz.siret.prank.program.Main ${PARAMS} "$@"
+"$JAVACMD" $JAVA_OPTS -cp "${CLASSPATH}" cz.siret.prank.program.Main ${PARAMS} "$@" 
 
 

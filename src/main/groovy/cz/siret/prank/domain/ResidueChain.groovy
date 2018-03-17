@@ -17,5 +17,9 @@ class ResidueChain {
     int getSize() {
         residues.size()
     }
+
+    String getCodeCharString() {
+        residues.collect { r -> r.codeChar }.join("")
+    }
     
 }

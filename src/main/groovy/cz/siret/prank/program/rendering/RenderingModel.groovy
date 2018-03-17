@@ -31,7 +31,7 @@ class RenderingModel {
         //Color defaultProteinColor
 
         Color positiveResiduesColor = Color.RED
-        Color negativeResiduesColor = Color.DARK_GRAY
+        Color negativeResiduesColor = Color.CYAN
     }
 
 }
