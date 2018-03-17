@@ -7,9 +7,9 @@ import java.text.DecimalFormat
 @CompileStatic
 class Formatter {
 
-    static DecimalFormat[] DECIMAL_FORMATS = (DecimalFormat[]) (0..6).collect { new DecimalFormat("#."+("#"*it)) }.toArray()
+    static List<DecimalFormat> DECIMAL_FORMATS = (0..6).collect { new DecimalFormat("#."+("#"*it)) }.asList()
 
-    public static String format(double d, int places) {
+    static String format(double d, int places) {
         DECIMAL_FORMATS[places].format(d)
     }
 

@@ -6,16 +6,12 @@ import cz.siret.prank.features.implementation.conservation.ConservationScore
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Struct
 import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.program.rendering.LabeledPoint
+import cz.siret.prank.domain.labeling.LabeledPoint
 import cz.siret.prank.score.transformation.ScoreTransformer
 import cz.siret.prank.utils.CollectionUtils
 import cz.siret.prank.utils.Futils
-import cz.siret.prank.utils.Writable
-import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.StringUtils
-import org.apache.xalan.xsltc.cmdline.Compile
-import org.codehaus.groovy.util.StringUtil
 
 /**
  * Calculates pockets from list of SAS points with ligandability scores.

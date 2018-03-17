@@ -52,7 +52,7 @@ public class PrankFeatureVector extends FeatureVector implements Cloneable {
 
 
     public static PrankFeatureVector forAtom(Atom atom, PrankFeatureExtractor extractor) {
-        String residueCode = PDBUtils.normAAcode(PDBUtils.getAtomResidueCode(atom))
+        String residueCode = PDBUtils.normAAcode(PDBUtils.getCorrectedAtomResidueCode(atom))
 
         PrankFeatureVector p = new PrankFeatureVector()
         p.valueVector = new GenericVector(extractor.headerAdditionalFeatures)
@@ -104,7 +104,7 @@ public class PrankFeatureVector extends FeatureVector implements Cloneable {
     }
 
     private static Double getAtomTableValue(Atom atom, String property) {
-        String atomName = PDBUtils.getAtomResidueCode(atom) + "." + atom.name
+        String atomName = PDBUtils.getCorrectedAtomResidueCode(atom) + "." + atom.name
         Double val = atomPropertyTable.getValue(atomName, property)
 
         //log.info "atom table value ${atomName}.$property = $val"
@@ -113,7 +113,7 @@ public class PrankFeatureVector extends FeatureVector implements Cloneable {
     }
 
     private static Double getResidueTableValue(Atom atom, String property) {
-        Double val = aaPropertyTable.getValue(PDBUtils.getAtomResidueCode(atom), property)
+        Double val = aaPropertyTable.getValue(PDBUtils.getCorrectedAtomResidueCode(atom), property)
         return val==null ? 0d : val
     }
 

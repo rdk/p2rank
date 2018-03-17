@@ -12,7 +12,6 @@ import cz.siret.prank.utils.PDBUtils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.AminoAcid
-import org.biojava.nbio.structure.AminoAcidImpl
 import org.biojava.nbio.structure.Atom
 
 /**
@@ -68,7 +67,7 @@ class ContactResiduesPositionFeature extends SasFeatureCalculator implements Par
 
         Multimap<AA, AminoAcid> contactResIndex = ArrayListMultimap.create(20, 3);
         for (AminoAcid res : contactResidues) {
-            AA aa = AA.forName(PDBUtils.getResidueCode(res))
+            AA aa = AA.forName(PDBUtils.getCorrectedResidueCode(res))
             if (aa!=null) {
                 contactResIndex.put(aa, res)
             }

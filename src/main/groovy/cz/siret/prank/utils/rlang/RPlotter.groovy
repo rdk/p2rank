@@ -1,4 +1,4 @@
-package cz.siret.prank.utils.plotter
+package cz.siret.prank.utils.rlang
 
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Futils
@@ -23,8 +23,6 @@ class RPlotter implements Parametrized {
     int dpi = 150
 
     RPlotter(String csvfile, String outdir) {
-
-
         this.csvfile = csvfile
         this.outdir = outdir
 
@@ -160,9 +158,7 @@ class RPlotter implements Parametrized {
                 dev.off()               # close the PNG device
         """
 
-
         rexec.runCode(rcode, label, outdir)
-
     }
 
 }

@@ -1,6 +1,7 @@
 package cz.siret.prank.program.rendering
 
 import cz.siret.prank.domain.Dataset
+import cz.siret.prank.domain.labeling.LabeledPoint
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.program.params.Parametrized
@@ -18,11 +19,11 @@ import java.util.List
 
 @Slf4j
 @CompileStatic
-class PyMolRenderer implements Parametrized {
+class OldPymolRenderer implements Parametrized {
 
     String outdir
 
-    PyMolRenderer(String outputDir) {
+    OldPymolRenderer(String outputDir) {
         this.outdir = outputDir
     }
 

@@ -2,12 +2,14 @@ package cz.siret.prank.domain
 
 import cz.siret.prank.program.routines.results.EvalContext
 import cz.siret.prank.score.criteria.IdentificationCriterium
+import groovy.transform.CompileStatic
 
 import java.util.function.Function
 
 /**
  * Pair of pocket prediction result and liganated structure (with correct ligand/pocket positions)
  */
+@CompileStatic
 class PredictionPair {
 
     String name
@@ -18,7 +20,7 @@ class PredictionPair {
      * Either way it should correspond to 'protein' column in the dataset file.
      */
     Protein queryProtein
-    Function<String, File> conservationPathForChain
+    // Function<String, File> conservationPathForChain  // unused or used by webapp?
 
     /**
      * first is 1

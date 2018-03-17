@@ -4,11 +4,9 @@ import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Prediction
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.geom.Point
-import cz.siret.prank.utils.PDBUtils
 import cz.siret.prank.utils.StrUtils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-import org.biojava.nbio.structure.Structure
 
 /**
  * Loader for LISE pocket predictions (*_top10.pdb file)

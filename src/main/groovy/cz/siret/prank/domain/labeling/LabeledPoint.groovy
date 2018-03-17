@@ -1,4 +1,4 @@
-package cz.siret.prank.program.rendering
+package cz.siret.prank.domain.labeling
 
 import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom

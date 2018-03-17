@@ -1,11 +1,13 @@
 package cz.siret.prank.domain
 
 import cz.siret.prank.program.params.Params
+import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
 
 /**
  * Protein file loader parameters
  */
+@CompileStatic
 @TupleConstructor
 class LoaderParams {
 

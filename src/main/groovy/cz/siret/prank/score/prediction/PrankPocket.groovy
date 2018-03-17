@@ -2,7 +2,7 @@ package cz.siret.prank.score.prediction
 
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.geom.Atoms
-import cz.siret.prank.program.rendering.LabeledPoint
+import cz.siret.prank.domain.labeling.LabeledPoint
 import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
 

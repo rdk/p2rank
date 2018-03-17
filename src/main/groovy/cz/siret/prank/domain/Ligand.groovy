@@ -3,6 +3,7 @@ package cz.siret.prank.domain
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.PDBUtils
+import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 import org.biojava.nbio.structure.Group
@@ -11,6 +12,7 @@ import org.biojava.nbio.structure.Group
  * Ligand mado of one or several pdb groups
  */
 @Slf4j
+@CompileStatic
 class Ligand implements Parametrized {
 
     /**

@@ -75,7 +75,7 @@ class Futils {
         new File(path).name
     }
 
-    static String removeExtention(String path) {
+    static String removeExtension(String path) {
         path?.replaceFirst(~/\.[^\.]+$/, '')
     }
 
@@ -218,6 +218,7 @@ class Futils {
     }
 
     static void copy(String from, String to) {
+        log.debug "copying [{}] to [{}]", from, to
         Files.copy(new File(from), new File(to))
     }
 
@@ -259,6 +260,8 @@ class Futils {
         delete(fileOrDirectory)
     }
 
-
-
+    static List<String> readLines(String fname) {
+        File file = new File(fname)
+        return file.readLines()
+    }
 }

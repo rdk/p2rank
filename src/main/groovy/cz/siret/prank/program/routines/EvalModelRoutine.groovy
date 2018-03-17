@@ -4,7 +4,7 @@ import cz.siret.prank.domain.Dataset
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.features.FeatureExtractor
-import cz.siret.prank.program.rendering.PyMolRenderer
+import cz.siret.prank.program.rendering.OldPymolRenderer
 import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.score.*
 import cz.siret.prank.utils.Futils
@@ -92,7 +92,7 @@ class EvalModelRoutine extends EvalRoutine {
                 rescorer.reorderPockets(pair.prediction, item.context)
 
                 if (params.visualizations) {
-                    new PyMolRenderer(visDir).visualizeHistograms(item, (WekaSumRescorer)rescorer, pair)
+                    new OldPymolRenderer(visDir).visualizeHistograms(item, (WekaSumRescorer)rescorer, pair)
                 }
 
                 if (params.predictions) {

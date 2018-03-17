@@ -4,7 +4,7 @@ import cz.siret.prank.domain.Dataset
 import cz.siret.prank.domain.LoaderParams
 import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.features.FeatureExtractor
-import cz.siret.prank.program.rendering.PyMolRenderer
+import cz.siret.prank.program.rendering.OldPymolRenderer
 import cz.siret.prank.program.routines.results.PredictResults
 import cz.siret.prank.score.PocketRescorer
 import cz.siret.prank.score.WekaSumRescorer
@@ -24,7 +24,6 @@ import static cz.siret.prank.utils.Futils.writeFile
  * Routine for making (and evaluating) predictions
  *
  * Backs prank commands 'predict' and 'eval-predict'
- *
  */
 @Slf4j
 @CompileStatic
@@ -92,7 +91,7 @@ class PredictRoutine extends Routine {
                 rescorer.reorderPockets(pair.prediction, item.getContext()) // in this context reorderPockets() makes predictions
 
                 if (produceVisualizations) {
-                    new PyMolRenderer(visDir).visualizeHistograms(item, rescorer, pair)
+                    new OldPymolRenderer(visDir).visualizeHistograms(item, rescorer, pair)
                 }
 
                 if (outputPredictionFiles) {
@@ -128,7 +127,7 @@ class PredictRoutine extends Routine {
                         ScoreTransformer transformer = ScoreTransformer.create(name)
                         transformer.train(stats.evaluation)
                         String fname = "$scoreDir/${name}.json"
-                        Futils.writeFile("$scoreDir/${name}.json", ScoreTransformer.saveToJson(transformer))
+                        writeFile("$scoreDir/${name}.json", ScoreTransformer.saveToJson(transformer))
                         write "Trained score transformer '$name' written to: $fname"
                     } catch (Exception e) {
                         log.error("Failed to train score transformer '$name'", e)

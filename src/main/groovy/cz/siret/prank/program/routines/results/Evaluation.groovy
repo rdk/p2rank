@@ -7,7 +7,7 @@ import cz.siret.prank.domain.Protein
 import cz.siret.prank.features.implementation.conservation.ConservationScore
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.program.rendering.LabeledPoint
+import cz.siret.prank.domain.labeling.LabeledPoint
 import cz.siret.prank.score.criteria.*
 import cz.siret.prank.utils.Writable
 import groovy.util.logging.Slf4j

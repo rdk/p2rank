@@ -34,7 +34,7 @@ class PLBIndexRescorer extends PocketRescorer {
 
             if (params.plb_rescorer_atomic) {
                 for (Atom a : pocket.surfaceAtoms) {
-                    String aaCode = PDBUtils.getAtomResidueCode(a)
+                    String aaCode = PDBUtils.getCorrectedAtomResidueCode(a)
                     Double prop = aaPropensitiesTable.getValue(aaCode, "RAx")
                     if (prop!=null) {
                         plbi += prop
@@ -43,7 +43,7 @@ class PLBIndexRescorer extends PocketRescorer {
             } else {
                 // according to article
                 for (Group g : pocket.surfaceAtoms.distinctGroups) {
-                    String aaCode = PDBUtils.getResidueCode(g)
+                    String aaCode = PDBUtils.getCorrectedResidueCode(g)
                     Double prop = aaPropensitiesTable.getValue(aaCode, "RAx")
                     if (prop!=null) {
                         plbi += prop

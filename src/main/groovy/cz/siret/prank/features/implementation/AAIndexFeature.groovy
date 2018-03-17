@@ -9,7 +9,7 @@ import cz.siret.prank.utils.PDBUtils
 import org.biojava.nbio.structure.Atom
 
 /**
- * Simple single value Atom feature that adds B-factor (temperature factor) from PDB to Atom feature vector.
+ * Features from AA index table
  */
 class AAIndexFeature extends AtomFeatureCalculator implements Parametrized {
     
@@ -28,7 +28,7 @@ class AAIndexFeature extends AtomFeatureCalculator implements Parametrized {
     }
 
     private Double getTableValue(Atom atom, String property) {
-        Double val = aaIndex.getValue(PDBUtils.getAtomResidueCode(atom), property)
+        Double val = aaIndex.getValue(PDBUtils.getCorrectedAtomResidueCode(atom), property)
         return val==null ? 0d : val
     }
 

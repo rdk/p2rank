@@ -2,6 +2,8 @@ package cz.siret.prank.geom
 
 import com.google.common.collect.ComparisonChain
 import com.google.common.collect.Ordering
+import cz.siret.prank.domain.Residue
+import cz.siret.prank.domain.ResidueChain
 import cz.siret.prank.geom.clustering.AtomClusterer
 import cz.siret.prank.geom.clustering.AtomGroupClusterer
 import cz.siret.prank.geom.clustering.SLinkClusterer
@@ -131,6 +133,8 @@ class Struct {
     static boolean isHetGroup(Group group) {
         if (group==null) return false
 
+
+
         GroupType.HETATM == group.type
     }
 
@@ -144,14 +148,21 @@ class Struct {
         return res
     }
 
-    public static boolean isProteinChainGroup(Group g) {
-        return !isHetGroup(g) && !"STP".equals(g.PDBName) && !"HOH".equals(g.PDBName)
+    static boolean isAminoAcidGroup(Group g) {
+        g.type == GroupType.AMINOACID
+    }
+
+    static boolean isProteinChainGroup(Group g) {
+        // older clumsier version
+        // return !isHetGroup(g) && !"STP".equals(g.PDBName) && !"HOH".equals(g.PDBName)
+
+        isAminoAcidGroup(g) && g.chainId != null
     }
 
     /**
      * @return true if ligand group (except HOH)
      */
-    public static boolean isLigandGroup(Group g) {
+    static boolean isLigandGroup(Group g) {
 
         return isHetGroup(g) && !"HOH".equals(g.PDBName)
     }
@@ -160,16 +171,20 @@ class Struct {
      * @return ligand groups without HOH
      */
     static List<Group> getLigandGroups(Structure struc) {
-        return getGroups(struc).findAll{ isLigandGroup((Group)it) }.asList()
+        return getGroups(struc).findAll{ isLigandGroup(it) }.asList()
     }
 
     /**
      * @return all HETATM groups
      */
     static List<Group> getHetGroups(Structure struc) {
-        return getGroups(struc).findAll{ isHetGroup((Group)it) }.asList()
+        return getGroups(struc).findAll{ isHetGroup(it) }.asList()
     }
 
+    static List<Group> getProteinChainGroups(Structure struc) {
+        return getGroups(struc).findAll{ isProteinChainGroup(it) }.asList()
+    }
+    
     /**
      * single lincage clustering
      * @param clusters
@@ -197,6 +212,36 @@ class Struct {
             }
         }.sortedCopy(groups)
 
+    }
+
+    /**
+     * @return true if amino acid residue chain
+     */
+    static boolean isAminoAcidChain(Chain chain) {
+
+        // this is not ideal
+        // TODO logic to distinguish between protein chains, peptides and small aa ligands
+        List<Group> aaGroups = chain.getAtomGroups(GroupType.AMINOACID)
+        return !aaGroups.isEmpty()
+    }
+
+    static List<Residue> getResiduesFromChain(Chain chain) {
+        // use all groups or only AA groups??
+
+        chain.getAtomGroups(GroupType.AMINOACID).collect { Residue.fromGroup(it) }.asList()
+    }
+
+    /**
+     * does not perform checks
+     */
+    static ResidueChain toResidueChain(Chain chain) {
+        new ResidueChain(chain.getChainID(), getResiduesFromChain(chain))
+    }
+
+    static List<ResidueChain> residueChainsFromStructure(Structure struc) {
+        struc.chains.findAll { isAminoAcidChain(it) }
+                    .collect { toResidueChain(it) }
+                    .asList()      
     }
 
 }

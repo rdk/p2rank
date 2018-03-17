@@ -1,6 +1,5 @@
 package cz.siret.prank.geom;
 
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import cz.siret.prank.geom.kdtree.AtomKdTree;
 import cz.siret.prank.utils.ATimer;
@@ -11,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static cz.siret.prank.utils.ATimer.startTimer;
 
@@ -64,6 +64,11 @@ public final class Atoms implements Iterable<Atom> {
      */
     public Atoms toPoints() {
         return copyPoints(this.list.toArray(new Atom[0]));
+    }
+
+
+    public List<Integer> getIndexes() {
+        return list.stream().map(Atom::getPDBserial).collect(Collectors.toList());
     }
 
     public Atoms(Atom atom) {

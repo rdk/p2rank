@@ -1,4 +1,4 @@
-package cz.siret.prank.utils.plotter
+package cz.siret.prank.utils.rlang
 
 import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic

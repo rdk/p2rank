@@ -1,5 +1,6 @@
 package cz.siret.prank.domain
 
+import com.google.common.collect.Maps
 import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.features.implementation.conservation.ConservationScore
 import cz.siret.prank.geom.Atoms
@@ -8,15 +9,21 @@ import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.PDBUtils
+import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+import org.biojava.nbio.structure.Atom
 import org.biojava.nbio.structure.Structure
 
+import javax.annotation.Nullable
 import java.util.function.Function
 
+import static cz.siret.prank.geom.Struct.residueChainsFromStructure
+
 /**
- * encapsulates protein structure with ligands
+ * Encapsulates protein structure with ligands.
  */
 @Slf4j
+@CompileStatic
 class Protein implements Parametrized {
 
     String name
@@ -52,8 +59,16 @@ class Protein implements Parametrized {
 
 //===========================================================================================================//
 
+    private List<Residue> proteinResidues
+    private List<Residue> exposedResidues
+    private Map<Residue.Key, Residue> proteinResidueMap
+    private Map<String, ResidueChain> residueChainsMap
+
+//===========================================================================================================//
+
     /**
      * secondary data calculated by feature calculators (see FeatureCalculator)
+     * serves a s a temporary cache, may be cleared between experiment runs
      */
     Map<String, Object> secondaryData = new HashMap<>()
 
@@ -106,8 +121,8 @@ class Protein implements Parametrized {
 
     Surface getTrainSurface() {
         if (trainSurface == null) {
-            boolean TRAIN_SURFACE_DIFFERENT = params.tessellation != params.train_tessellation
-            if (TRAIN_SURFACE_DIFFERENT) {
+            boolean shouldBeDistinct = params.tessellation != params.train_tessellation
+            if (shouldBeDistinct) {
                 trainSurface = Surface.computeAccessibleSurface(proteinAtoms, params.solvent_radius, params.train_tessellation)
                 log.info "train SAS points: $trainSurface.points.count"
             } else {
@@ -127,6 +142,7 @@ class Protein implements Parametrized {
         exposedAtoms = null
         secondaryData.clear()
         ligands.each { it.sasPoints = null; it.predictedPocket = null }
+        clearResidues()
     }
 
     /**
@@ -139,6 +155,82 @@ class Protein implements Parametrized {
         }
         return res
     }
+
+//===========================================================================================================//
+
+    void calculateResidues() {
+        residueChainsMap = Maps.uniqueIndex(residueChainsFromStructure(structure), { it.id })
+
+        //Struct.getProteinChainGroups(structure).collect { Residue.fromGroup(it) }.asList()
+        proteinResidues = (List<Residue>) residueChains.collect { it.residues }.asList().flatten()
+        proteinResidueMap = Maps.uniqueIndex(proteinResidues, { it.key })
+    }
+
+    void checkResiduesCalculated() {
+        if (residueChainsMap == null) {
+            calculateResidues()
+        }
+    }
+
+    void clearResidues() {
+        proteinResidues   = null
+        exposedResidues   = null
+        proteinResidueMap = null
+        residueChainsMap  = null
+    }
+
+    /**
+     * @return list of residues from main protein chanis
+     */
+    List<Residue> getProteinResidues() {
+        checkResiduesCalculated()
+        
+        proteinResidues
+    }
+
+    List<Residue> getExposedResidues() {
+        checkResiduesCalculated()
+
+        // even lazier initialization, requires calculation of the surface
+        if (exposedResidues == null) {
+            calculateExposedResidues()
+        }
+
+        exposedResidues
+    }
+
+    List<ResidueChain> getResidueChains() {
+        checkResiduesCalculated()
+
+        residueChainsMap.values().asList()
+    }
+
+    ResidueChain getResidueChain(String id) {
+        checkResiduesCalculated()
+
+        residueChainsMap.get(id)
+    }
+
+    @Nullable
+    Residue getResidueForAtom(Atom a) {
+        checkResiduesCalculated()
+
+        proteinResidueMap.get(Residue.Key.forAtom(a))
+    }
+
+    private void calculateExposedResidues() {
+        checkResiduesCalculated()
+
+        getExposedAtoms().each {
+            Residue res = getResidueForAtom(it)
+            if (res != null) {
+                res.exposed = true
+            }
+        }
+        exposedResidues = proteinResidues.findAll { it.exposed }.asList()
+    }
+
+//===========================================================================================================//
 
     public static Protein load(String pdbFileName, LoaderParams loaderParams = new LoaderParams()) {
         Protein res = new Protein()

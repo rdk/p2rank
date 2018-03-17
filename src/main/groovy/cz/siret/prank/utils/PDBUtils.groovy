@@ -36,7 +36,7 @@ class PDBUtils {
         //PARSING_PARAMS.setLoadChemCompInfo(Params.inst.biojava_load_chem_info); // info about modified amino acid residues, not available in BioJava4
     }
 
-    public static Structure loadFromFile(String file) {
+    static Structure loadFromFile(String file) {
 
         log.info "loading file [$file]"
 
@@ -59,7 +59,7 @@ class PDBUtils {
         return struct
     }
 
-    public static Structure loadFromString(String pdbText)  {
+    static Structure loadFromString(String pdbText)  {
         PDBFileParser pdbpars = new PDBFileParser();
         pdbpars.setFileParsingParameters(PARSING_PARAMS);
 
@@ -69,10 +69,8 @@ class PDBUtils {
         return struc
     }
 
-    public static String getAtomResidueCode(Atom a) {
-        //assert a.group instanceof AminoAcid
-        String residueCode = a.group.PDBName
 
+    static String correctResidueCode(String residueCode) {
         //MSE is only found as a molecular replacement for MET
         //'non-standard', genetically encoded
         if (residueCode=="MSE")
@@ -83,10 +81,36 @@ class PDBUtils {
         return residueCode
     }
 
-    public static String getResidueCode(Group group) {
+    /**
+     * @return three letter residue code (e.g. "ASP")
+     */
+    static String getAtomResidueCode(Atom a) {
+        a.group.PDBName
+    }
+    
+    /**
+     * @return three letter residue code (e.g. "ASP"), some corrections are applied
+     */
+    static String getCorrectedAtomResidueCode(Atom a) {
+        //assert a.group instanceof AminoAcid
+
+        correctResidueCode(getAtomResidueCode(a))
+    }
+
+    /**
+     * @return three letter residue code (e.g. "ASP")
+     */
+    static String getResidueCode(Group group) {
         if (group==null || group.size()==0) return null;
 
         return getAtomResidueCode(group.getAtom(0))
+    }
+
+    /**
+     * @return three letter residue code (e.g. "ASP"), some corrections are applied
+     */
+    static String getCorrectedResidueCode(Group group) {
+        return correctResidueCode(getResidueCode(group))
     }
 
     /**
@@ -101,8 +125,8 @@ class PDBUtils {
             log.warn " Suspicious AA code: " + aa
         }
 
-        String a = aa.substring(0,1).toUpperCase()
-        String b = aa.substring(1,aa.length()).toLowerCase()
+        String a = aa.substring(0, 1).toUpperCase()
+        String b = aa.substring(1, aa.length()).toLowerCase()
         return a + b
     }
 

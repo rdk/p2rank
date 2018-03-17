@@ -6,9 +6,8 @@ import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.features.FeatureVector
 import cz.siret.prank.features.PrankFeatureExtractor
 import cz.siret.prank.features.api.ProcessedItemContext
-import cz.siret.prank.fforest.FasterForest
 import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.program.rendering.LabeledPoint
+import cz.siret.prank.domain.labeling.LabeledPoint
 import cz.siret.prank.score.metrics.ClassifierStats
 import cz.siret.prank.score.prediction.PocketPredictor
 import cz.siret.prank.score.prediction.PointScoreCalculator
