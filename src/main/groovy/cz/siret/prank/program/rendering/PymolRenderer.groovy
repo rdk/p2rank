@@ -4,8 +4,10 @@ import cz.siret.prank.domain.labeling.BinaryResidueLabeling
 import cz.siret.prank.domain.labeling.LabeledResidue
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Futils
+import cz.siret.prank.utils.PDBUtils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+import org.biojava.nbio.structure.Structure
 
 import java.awt.*
 
@@ -15,7 +17,6 @@ import java.awt.*
 @Slf4j
 @CompileStatic
 class PymolRenderer implements Parametrized {
-
 
     String outdir
     RenderingModel model
@@ -40,14 +41,18 @@ class PymolRenderer implements Parametrized {
         String proteinFileAbs = Futils.absPath(model.proteinFile)
         String proteinFile = proteinFileAbs
 
-        if (params.vis_copy_proteins) {
+        if (params.vis_generate_proteins || params.vis_copy_proteins) {
             String name = Futils.shortName(proteinFile)
             String newfAbs = "$dataDir/$name"
-            String newf = "data/$name"
 
-            Futils.copy(proteinFileAbs, newfAbs)
+            if (params.vis_generate_proteins) {
+                newfAbs = model.protein.saveToPdbFile(newfAbs, true)
+            } else if (params.vis_copy_proteins) {
+                Futils.copy(proteinFileAbs, newfAbs)
+            }
+            String newfRelative = "data/" + Futils.shortName(newfAbs)
 
-            proteinFile = newf
+            proteinFile = newfRelative
             proteinFileAbs = newfAbs
         }
 

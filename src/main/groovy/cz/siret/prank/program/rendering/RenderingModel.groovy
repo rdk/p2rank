@@ -15,10 +15,13 @@ import java.awt.Color
 @CompileStatic
 class RenderingModel {
 
-    // boolean generateProteinFile
+    /**
+     * generate new structure (pdb) file from protein instead of reusing proteinFile
+     */
+    boolean generateProteinFile = false
+    String proteinFile
 
     String label
-    String proteinFile
 
     Protein protein
     BinaryResidueLabeling binaryLabeling

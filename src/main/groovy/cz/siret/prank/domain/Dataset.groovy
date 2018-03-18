@@ -51,7 +51,7 @@ class Dataset implements Parametrized {
     static final String COLUMN_PREDICTION = "prediction"
     static final String COLUMN_LIGAND_CODES = "ligand_codes"
     static final String COLUMN_CONSERVATION_FILES_PATTERN = "conservation_files_pattern"
-    static final String COLUMN_CHAIN = "chain"
+    static final String COLUMN_CHAINS = "chains"
 
     static final List<String> DEFAULT_HEADER = [ COLUMN_PROTEIN ]
 
@@ -468,7 +468,7 @@ class Dataset implements Parametrized {
     class Item {
         Map<String, String> columnValues
         String proteinFile  // liganated/unliganated protein for predictions
-        String pocketPredictionFile // nullable
+        @Nullable String pocketPredictionFile // nullable
 
         String label
         PredictionPair cachedPair
@@ -515,12 +515,24 @@ class Dataset implements Parametrized {
             if (!columnValues.containsKey(COLUMN_LIGAND_CODES)) {
                 null
             } else {
-                Splitter.on(",").split(columnValues[COLUMN_LIGAND_CODES]).toList()
+                Splitter.on(",").split(columnValues[COLUMN_LIGAND_CODES]).toSet()
+            }
+        }
+
+        /**
+         * explicitely specified chain codes
+         * @return null if column is not defined
+         */
+        List<String> getChains() {
+            if (!columnValues.containsKey(COLUMN_CHAINS)) {
+                null
+            } else {
+                Splitter.on(",").split(columnValues[COLUMN_CHAINS]).asList()
             }
         }
 
         ProcessedItemContext getContext() {
-            new ProcessedItemContext(columnValues)
+            new ProcessedItemContext(this, columnValues)
         }
     }
 

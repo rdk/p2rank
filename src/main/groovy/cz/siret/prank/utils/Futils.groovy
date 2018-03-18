@@ -68,7 +68,9 @@ class Futils {
         return Formatter.format(size, 1)
     }
 
-
+    /**
+     * file name stripped of path 
+     */
     static String shortName(String path) {
         if (path==null) return null
 
@@ -132,6 +134,12 @@ class Futils {
         GZIPOutputStream gos = new GZIPOutputStream(new FileOutputStream(file), OUTPUT_BUFFER_SIZE)
 
         return new PrintWriter(new BufferedWriter(new OutputStreamWriter(gos), OUTPUT_BUFFER_SIZE))
+    }
+
+    static void writeGzip(String fname, Object text) {
+        PrintWriter writer = getGzipWriter(fname)
+        writer.print(text)
+        writer.close()
     }
 
     /**

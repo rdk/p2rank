@@ -1,7 +1,7 @@
 import cz.siret.prank.program.params.Params
 
 /**
- *  config that should be close to defaults (for prediction tests and speed benchmarking)
+ *  config for peptide binding residue prediction
  */
 (params as Params).with {
 
@@ -22,5 +22,8 @@ import cz.siret.prank.program.params.Params
 
     fail_fast = true
 
+    load_only_specified_chains = true
+
+    vis_generate_proteins = true
 
 }

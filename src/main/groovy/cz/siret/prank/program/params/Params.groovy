@@ -366,6 +366,12 @@ class Params {
     boolean vis_copy_proteins = true
 
     /**
+     * generate new protein pdb files from structures in memory instead of reusing input files
+     * (useful when structures were manipulated in memory, e.g. when reducing to specified chains)
+     */
+    boolean vis_generate_proteins = true
+
+    /**
      * zip PyMol visualizations to save space
      */
     boolean zip_visualizations = false
@@ -478,6 +484,9 @@ class Params {
      */
     double ligc_prot_dist = 5.5
 
+    /**
+     * pocket rescoring algorithm PRANK="WekaSumRescorer"
+     */
     String rescorer = "WekaSumRescorer"
 
     boolean plb_rescorer_atomic = false
@@ -493,13 +502,15 @@ class Params {
      */
     double target_class_ratio = 0.1
 
+    /**
+     * in training use subsampling to deal with class imbalance
+     */
     boolean subsample = false
 
     /**
-     *
+     * in training use supersampling to deal with class imbalance
      */
     boolean supersample = false
-
 
     /**
      * sort negatives desc by protrusion before subsampling
@@ -600,6 +611,9 @@ class Params {
     
     int feat_pmass_nsasp = 40
 
+    /**
+     * selected sub-features in aa index feature
+     */
     List<String> feat_aa_properties = null
 
     /**
@@ -613,13 +627,13 @@ class Params {
     String hopt_spearmint_dir = ""
 
     /**
-     * Statistic to minimize
+     * Metric to minimize in hyperparameter optimization
      * (minus sign allowed)
      */
     String hopt_objective = "-DCA_4_0"
 
     /**
-     * number of inetarions
+     * max number of itetarions in hyperparameter optimization
      */
     int hopt_max_iterations = 1000
 
@@ -663,6 +677,10 @@ class Params {
 
     List<String> train_score_transformers = [] // ["ZscoreTpTransformer","ProbabilityScoreTransformer"]
 
+    /**
+     * Reduce loaded protein structures to chains declared in dataset file (in optional chains column)
+     */
+    boolean load_only_specified_chains = false
 
 //===========================================================================================================//
 

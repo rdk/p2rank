@@ -13,6 +13,7 @@ import java.util.function.Function
 
 /**
  * Base class for prediction loaders (parsers for predictions produced by pocket prediction tools)
+ * Also serves as a protein/dataset-item loader even if there is no prediction (TODO: refactor).
  */
 @Slf4j
 abstract class PredictionLoader {
@@ -27,11 +28,16 @@ abstract class PredictionLoader {
      */
     PredictionPair loadPredictionPair(String queryProteinFile, String predictionOutputFile,
                                       ProcessedItemContext itemContext) {
-        File ligf = new File(queryProteinFile)
+        File protf = new File(queryProteinFile)
 
         PredictionPair res = new PredictionPair()
-        res.name = ligf.name
-        res.queryProtein = Protein.load(queryProteinFile, loaderParams)
+        res.name = protf.name
+
+        if (loaderParams.load_only_specified_chains) {
+            res.queryProtein = Protein.loadReduced(queryProteinFile, loaderParams, itemContext.item.getChains())
+        } else {
+            res.queryProtein = Protein.load(queryProteinFile, loaderParams)
+        }
 
         if (predictionOutputFile != null) {
             res.prediction = loadPrediction(predictionOutputFile, res.queryProtein)
@@ -40,7 +46,13 @@ abstract class PredictionLoader {
         }
 
         // TODO: move conservation related stuff to feature implementation
+        loadConservationScores(queryProteinFile, itemContext, res)
 
+        
+        return res
+    }
+
+    private loadConservationScores(String queryProteinFile, ProcessedItemContext itemContext, PredictionPair res) {
         Path parentDir = Paths.get(queryProteinFile).parent
         if (loaderParams.load_conservation_paths) {
             if (itemContext.datsetColumnValues.get(Dataset.COLUMN_CONSERVATION_FILES_PATTERN) == null) {
@@ -62,7 +74,6 @@ abstract class PredictionLoader {
                 res.queryProtein.loadConservationScores()
             }
         }
-        return res
     }
 
     /**

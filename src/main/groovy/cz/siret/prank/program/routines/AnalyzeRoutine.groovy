@@ -136,7 +136,6 @@ class AnalyzeRoutine extends Routine {
 
         dataset.processItems { Dataset.Item item ->
             Protein p = item.protein
-            // TODO item.labeledProtein item.reducedProtein
 
             BinaryResidueLabeling labeling = labeler.getBinaryLabeling(p.proteinResidues, p)
             def s = BinaryLabelings.getStats(labeling)
@@ -149,8 +148,9 @@ class AnalyzeRoutine extends Routine {
 
             if (params.visualizations) {
                 new PymolRenderer("$outdir/visualizations", new RenderingModel(
-                        label: item.label,
+                        generateProteinFile: params.vis_generate_proteins,
                         proteinFile: item.proteinFile,
+                        label: item.label,
                         protein: item.protein,
                         binaryLabeling: labeling
                 )).render()

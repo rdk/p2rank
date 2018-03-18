@@ -69,7 +69,6 @@ class PDBUtils {
         return struc
     }
 
-
     static String correctResidueCode(String residueCode) {
         //MSE is only found as a molecular replacement for MET
         //'non-standard', genetically encoded

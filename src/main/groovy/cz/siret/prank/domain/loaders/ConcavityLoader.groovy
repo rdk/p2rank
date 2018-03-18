@@ -1,5 +1,6 @@
 package cz.siret.prank.domain.loaders
 
+import cz.siret.prank.domain.LoaderParams
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Prediction
 import cz.siret.prank.domain.Protein
@@ -33,7 +34,7 @@ class ConcavityLoader extends PredictionLoader {
         // a.001.001.001_1s69a_xxxxx_residue.pdb in the same dir
         String proteinFile = ppOutputFile.replaceFirst("_pocket.pdb\$", "_residue.pdb")
 
-        Protein protein = Protein.load(proteinFile)
+        Protein protein = Protein.load(proteinFile, new LoaderParams())
         protein.calcuateSurfaceAndExposedAtoms()
         Structure pocketStruct = PDBUtils.loadFromFile(ppOutputFile)
         List<ConcavityPocket> pockets = loadConcavityPockets(protein, pocketStruct)

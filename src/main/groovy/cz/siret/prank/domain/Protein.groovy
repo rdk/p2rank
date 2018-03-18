@@ -13,8 +13,10 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 import org.biojava.nbio.structure.Structure
+import org.biojava.nbio.structure.StructureTools
 
 import javax.annotation.Nullable
+import javax.print.PrintException
 import java.util.function.Function
 
 import static cz.siret.prank.geom.Struct.residueChainsFromStructure
@@ -232,20 +234,58 @@ class Protein implements Parametrized {
 
 //===========================================================================================================//
 
+    /**
+     * @param fileName
+     * @param compressed - add ".gz" to filename and compress
+     * @return file name used
+     */
+    String saveToPdbFile(String fileName, boolean compressed = false) {
+        if (compressed) {
+            fileName += ".gz"
+            Futils.writeGzip fileName, structure.toPDB()
+        } else {
+            Futils.writeFile fileName, structure.toPDB()
+        }
+        return fileName
+    }
+
     public static Protein load(String pdbFileName, LoaderParams loaderParams = new LoaderParams()) {
         Protein res = new Protein()
-        res.loadFile(pdbFileName, loaderParams)
+        res.loadFile(pdbFileName, loaderParams, null)
+        return res
+    }
+
+    public static Protein loadReduced(String pdbFileName, LoaderParams loaderParams, List<String> onlyChains) {
+        Protein res = new Protein()
+        res.loadFile(pdbFileName, loaderParams, onlyChains)
         return res
     }
 
     /**
+     *
+     * @param pdbFileName
+     * @param loaderParams
+     * @param chainIds if null load all
      */
-    private void loadFile(String pdbFileName, LoaderParams loaderParams) {
+    private void loadFile(String pdbFileName, LoaderParams loaderParams, @Nullable List<String> onlyChains) {
 
         log.info "loading protein [${Futils.absPath(pdbFileName)}]"
 
         name = Futils.shortName(pdbFileName)
         structure = PDBUtils.loadFromFile(pdbFileName)
+
+        if (onlyChains != null) {
+            log.info "reducing protein [{}] to chains [{}]", name, onlyChains.join(",")
+
+            if (onlyChains.size() > 1) {
+                throw new PrintException("Reducing structure to multiple chains is not supported yet!")
+            }
+            String chainId = onlyChains.first()
+            name = name + chainId
+            // TODO replace with own method that can reduce to multiple chains
+            structure = StructureTools.getReducedStructure(structure, onlyChains.first())
+        }
+
         allAtoms = Atoms.allFromStructure(structure).withIndex()
         proteinAtoms = Atoms.onlyProteinAtoms(structure).withoutHydrogens()
 
@@ -259,16 +299,16 @@ class Protein implements Parametrized {
             throw new PrankException("Protein with no chain atoms [$name]!")
         }
 
-        if (loaderParams.ignoreLigands) return
+        if (!loaderParams.ignoreLigands) {
+            // load ligands
 
-        // load ligands
+            Ligands categorizedLigands = new Ligands().loadForProtein(this, loaderParams, pdbFileName)
 
-        Ligands categorizedLigands = new Ligands().loadForProtein(this, loaderParams, pdbFileName)
-
-        ligands = categorizedLigands.relevantLigands
-        smallLigands = categorizedLigands.smallLigands
-        distantLigands = categorizedLigands.distantLigands
-        ignoredLigands = categorizedLigands.ignoredLigands
+            ligands = categorizedLigands.relevantLigands
+            smallLigands = categorizedLigands.smallLigands
+            distantLigands = categorizedLigands.distantLigands
+            ignoredLigands = categorizedLigands.ignoredLigands
+        }
 
     }
 
