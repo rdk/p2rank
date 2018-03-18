@@ -4,17 +4,16 @@ import cz.siret.prank.domain.Dataset
 import cz.siret.prank.domain.LoaderParams
 import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.features.FeatureExtractor
+import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.rendering.OldPymolRenderer
 import cz.siret.prank.program.routines.results.PredictResults
 import cz.siret.prank.score.PocketRescorer
-import cz.siret.prank.score.WekaSumRescorer
+import cz.siret.prank.score.ModelBasedRescorer
 import cz.siret.prank.score.results.PredictionSummary
 import cz.siret.prank.score.transformation.ScoreTransformer
 import cz.siret.prank.utils.Futils
-import cz.siret.prank.utils.WekaUtils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-import weka.classifiers.Classifier
 
 import static cz.siret.prank.utils.ATimer.startTimer
 import static cz.siret.prank.utils.Futils.mkdirs
@@ -60,8 +59,8 @@ class PredictRoutine extends Routine {
             log.info "outdir: $outdir"
         }
 
-        Classifier classifier = WekaUtils.loadClassifier(modelf)
-        WekaUtils.disableParallelism(classifier)
+        Model model = Model.loadFromFile(modelf)
+        model.disableParalelism()
 
         String visDir = "$outdir/visualizations"
         String predDir = "$outdir"
@@ -83,38 +82,36 @@ class PredictRoutine extends Routine {
 
         boolean outputPredictionFiles = produceFilesystemOutput && !params.output_only_stats
 
-        Dataset.Result result = dataset.processItems(params.parallel, new Dataset.Processor() {
-            void processItem(Dataset.Item item) {
+        Dataset.Result result = dataset.processItems { Dataset.Item item ->
 
-                PredictionPair pair = item.predictionPair
-                PocketRescorer rescorer = new WekaSumRescorer(classifier, extractor)
-                rescorer.reorderPockets(pair.prediction, item.getContext()) // in this context reorderPockets() makes predictions
+            PredictionPair pair = item.predictionPair
+            PocketRescorer rescorer = new ModelBasedRescorer(model, extractor)
+            rescorer.reorderPockets(pair.prediction, item.getContext()) // in this context reorderPockets() makes predictions
 
-                if (produceVisualizations) {
-                    new OldPymolRenderer(visDir).visualizeHistograms(item, rescorer, pair)
-                }
+            if (produceVisualizations) {
+                new OldPymolRenderer(visDir).visualizeHistograms(item, rescorer, pair)
+            }
 
-                if (outputPredictionFiles) {
-                    PredictionSummary psum = new PredictionSummary(pair.prediction)
-                    String outf = "$predDir/${item.label}_predictions.csv"
-                    writeFile(outf, psum.toCSV().toString())
-                }
+            if (outputPredictionFiles) {
+                PredictionSummary psum = new PredictionSummary(pair.prediction)
+                String outf = "$predDir/${item.label}_predictions.csv"
+                writeFile(outf, psum.toCSV().toString())
+            }
 
-                if (collectStats) {  // expects dataset with liganated proteins
-                    stats.evaluation.addPrediction(pair, pair.prediction.pockets)
-                    synchronized (stats.classStats) {
-                        stats.classStats.addAll(rescorer.stats)
-                    }
-                }
-
-                if (!dataset.cached) {
-                    item.cachedPair = null
+            if (collectStats) {  // expects dataset with liganated proteins
+                stats.evaluation.addPrediction(pair, pair.prediction.pockets)
+                synchronized (stats.classStats) {
+                    stats.classStats.addAll(rescorer.stats)
                 }
             }
-        })
+
+            if (!dataset.cached) {
+                item.cachedPair = null
+            }
+        }
 
         if (collectStats && produceFilesystemOutput) {
-            String modelLabel = classifier.class.simpleName + " ($modelf)"
+            String modelLabel = model.classifier.class.simpleName + " ($modelf)"
             stats.logAndStore(outdir, modelLabel)
             stats.logMainResults(outdir, modelLabel)
 

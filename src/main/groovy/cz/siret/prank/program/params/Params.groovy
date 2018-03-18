@@ -396,6 +396,8 @@ class Params {
      */
     boolean predictions = true
 
+    boolean predict_residues = false
+
     /**
      * minimum ligandability score for SAS point to be considered ligandable
      */
@@ -485,9 +487,9 @@ class Params {
     double ligc_prot_dist = 5.5
 
     /**
-     * pocket rescoring algorithm PRANK="WekaSumRescorer"
+     * pocket rescoring algorithm PRANK="ModelBasedRescorer"
      */
-    String rescorer = "WekaSumRescorer"
+    String rescorer = "ModelBasedRescorer"
 
     boolean plb_rescorer_atomic = false
 

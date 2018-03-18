@@ -7,7 +7,7 @@ import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Point
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Futils
-import cz.siret.prank.utils.PDBUtils
+import cz.siret.prank.utils.PdbUtils
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 import org.biojava.nbio.structure.Structure
@@ -188,7 +188,7 @@ class FPocketLoader extends PredictionLoader implements Parametrized {
 
         fpocket.fpstats.consolidate()
 
-        Structure struc = PDBUtils.loadFromString(tmpPdb.toString())
+        Structure struc = PdbUtils.loadFromString(tmpPdb.toString())
 
         return struc
     }

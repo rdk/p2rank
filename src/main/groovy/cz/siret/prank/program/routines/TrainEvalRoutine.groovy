@@ -2,19 +2,16 @@ package cz.siret.prank.program.routines
 
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.features.FeatureExtractor
-import cz.siret.prank.fforest.FasterForest
-import cz.siret.prank.program.ml.ClassifierFactory
+import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.score.metrics.ClassifierStats
-import cz.siret.prank.score.prediction.PointScoreCalculator
 import cz.siret.prank.utils.ATimer
 import cz.siret.prank.utils.CSV
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.WekaUtils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-import hr.irb.fastRandomForest.FastRandomForest
 import weka.classifiers.Classifier
 import weka.core.Instance
 import weka.core.Instances
@@ -22,6 +19,7 @@ import weka.core.Instances
 import static cz.siret.prank.score.prediction.PointScoreCalculator.predictedPositive
 import static cz.siret.prank.score.prediction.PointScoreCalculator.predictedScore
 import static cz.siret.prank.utils.ATimer.startTimer
+import static cz.siret.prank.utils.Futils.mkdirs
 
 @Slf4j
 @CompileStatic
@@ -43,7 +41,7 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
     private String trainVectorFile
     private String evalVectorFile
 
-    EvalModelRoutine evalRoutine
+    EvalPocketsRoutine evalRoutine
 
     TrainEvalRoutine(String outdir, Dataset trainData, Dataset evalData) {
         super(outdir)
@@ -78,9 +76,9 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
     }
 
     private Instances doCollectVectors(Dataset dataSet, String vectFileName) {
-        ATimer timer = startTimer();
+        ATimer timer = startTimer()
 
-        Futils.mkdirs(outdir)
+        mkdirs(outdir)
 
         CollectVectorsRoutine collector = new CollectVectorsRoutine(dataSet, outdir, vectFileName)
 
@@ -119,36 +117,29 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
     EvalResults trainAndEvalModel() {
         def timer = startTimer()
 
-        new File(outdir).mkdirs()
+        mkdirs(outdir)
 
-        Classifier classifier = ClassifierFactory.createClassifier(params)
-        String classifierLabel = "${classifier.class.simpleName}"
-        String modelf = "$outdir/${classifierLabel}.model"
+        Model model = Model.createNewFromParams(params)
+        String modelf = "$outdir/${model.label}.model"
 
         if (trainVectors==null) {
             trainVectors = WekaUtils.loadData(trainVectorFile)
         }
 
-        write "training classifier ${classifier.getClass().name} on dataset with ${trainVectors.size()} instances"
+        write "training classifier ${model.classifier.getClass().name} on dataset with ${trainVectors.size()} instances"
 
-        WekaUtils.trainClassifier(classifier, trainVectors)
+        WekaUtils.trainClassifier(model.classifier, trainVectors)
         long trainTime = timer.time
         if (!params.delete_models) {
-            WekaUtils.saveClassifier(classifier, modelf)
-            write "model saved to file $modelf (${Futils.sizeMBFormatted(modelf)} MB)"
+            model.saveToFile(modelf)
         }
 
-        ClassifierStats trainStats = calculateTrainStats(classifier, trainVectors)
-
-        List<Double> featureImportances = null
+        ClassifierStats trainStats = calculateTrainStats(model.classifier, trainVectors)
 
         // feature importances
-        if (params.feature_importances) {
-            if (classifier instanceof  FastRandomForest) {
-                featureImportances = (classifier as FastRandomForest).featureImportances.toList()
-            } else if (classifier instanceof FasterForest) {
-                featureImportances = (classifier as FasterForest).featureImportances.toList()
-            }
+        List<Double> featureImportances = null
+        if (params.feature_importances && model.hasFeatureImportances()) {
+            featureImportances = model.featureImportances
             if (featureImportances != null) {
                 List<String> names = FeatureExtractor.createFactory().vectorHeader
 
@@ -164,7 +155,7 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
 
         timer.restart()
 
-        evalRoutine = new EvalModelRoutine(evalDataSet, classifier, classifierLabel, outdir)
+        evalRoutine = new EvalPocketsRoutine(evalDataSet, model, outdir)
         EvalResults res = evalRoutine.execute()
         res.trainTime = trainTime
         res.train_positives = train_positives

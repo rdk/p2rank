@@ -8,7 +8,7 @@ import cz.siret.prank.features.implementation.conservation.ConservationScore
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.domain.labeling.LabeledPoint
-import cz.siret.prank.score.criteria.*
+import cz.siret.prank.score.pocketcriteria.*
 import cz.siret.prank.utils.Writable
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.StringUtils
@@ -32,8 +32,8 @@ class Evaluation implements Parametrized, Writable {
     /** cutoff distance in A around ligand atoms that determins which SAS points cover the ligand */
     final double LIG_SAS_CUTOFF = params.ligand_induced_volume_cutoff   // TODO consider separate value (e.g. 2)
 
-    IdentificationCriterium standardCriterium = new DCA(4.0)
-    List<IdentificationCriterium> criteria
+    PocketCriterium standardCriterium = new DCA(4.0)
+    List<PocketCriterium> criteria
     List<ProteinRow> proteinRows = Collections.synchronizedList(new ArrayList<>())
     List<LigRow> ligandRows = Collections.synchronizedList(new ArrayList<>())
     List<PocketRow> pocketRows = Collections.synchronizedList(new ArrayList<>())
@@ -53,7 +53,7 @@ class Evaluation implements Parametrized, Writable {
     int ligSASPointsCoveredCount
 
 
-    Evaluation(List<IdentificationCriterium> criteria) {
+    Evaluation(List<PocketCriterium> criteria) {
         this.criteria = criteria
     }
 
@@ -99,7 +99,7 @@ class Evaluation implements Parametrized, Writable {
     }
 
     private Pocket findPocketForLigand(Ligand ligand, List<Pocket> pockets,
-                                       IdentificationCriterium criterium, EvalContext context) {
+                                       PocketCriterium criterium, EvalContext context) {
         for (Pocket pocket in pockets) {
             if (criterium.isIdentified(ligand, pocket, context)) {
                 return pocket
@@ -577,7 +577,7 @@ class Evaluation implements Parametrized, Writable {
     /**
      * get list of evaluation criteria used during eval routines
      */
-    static List<IdentificationCriterium> getDefaultEvalCrtieria() {
+    static List<PocketCriterium> getDefaultEvalCrtieria() {
         double REQUIRED_POCKET_COVERAGE = 0.2  //  like in fpocket MOc criterion
         ((1..15).collect { new DCA(it) }) +         // 0-14
         ((1..10).collect { new DCC(it) }) +         // 15-24

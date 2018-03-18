@@ -6,6 +6,7 @@ import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.features.FeatureVector
 import cz.siret.prank.features.PrankFeatureExtractor
 import cz.siret.prank.features.api.ProcessedItemContext
+import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.domain.labeling.LabeledPoint
 import cz.siret.prank.score.metrics.ClassifierStats
@@ -29,17 +30,18 @@ import static cz.siret.prank.score.prediction.PointScoreCalculator.predictedScor
  * Not thread safe!
  *
  * This is the main rrescore used by P2RANK to make predictions based on machine learning
+ *
  */
 @Slf4j
 @CompileStatic
-class WekaSumRescorer extends PocketRescorer implements Parametrized  {
+class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
 
     private final double POSITIVE_POINT_LIGAND_DISTANCE = params.positive_point_ligand_distance
 
     private final PointScoreCalculator pointScoreCalculator = new PointScoreCalculator()
 
     private FeatureExtractor extractorFactory
-    private Classifier  classifier
+    private Model model
     private ClassifierStats stats = new ClassifierStats()
 
     boolean collectPoints = params.visualizations || params.predictions
@@ -53,9 +55,9 @@ class WekaSumRescorer extends PocketRescorer implements Parametrized  {
     private double[] alloc
     private DenseInstance auxInst
 
-    WekaSumRescorer(Classifier classifier, FeatureExtractor extractorFactory) {
+    ModelBasedRescorer(Model model, FeatureExtractor extractorFactory) {
         this.extractorFactory = extractorFactory
-        this.classifier = classifier
+        this.model = model
 
         auxWekaDataset = WekaUtils.createDatasetWithBinaryClass(extractorFactory.vectorHeader)
     }
@@ -93,7 +95,7 @@ class WekaSumRescorer extends PocketRescorer implements Parametrized  {
                 // classification
 
                 FeatureVector props = extractor.calcFeatureVector(point.point)
-                double[] hist = getDistributionForPoint(classifier, props)
+                double[] hist = getDistributionForPoint(model, props)
 
                 // labels and statistics
 
@@ -144,7 +146,7 @@ class WekaSumRescorer extends PocketRescorer implements Parametrized  {
 
                 FeatureVector props = extractor.calcFeatureVector(point)
 
-                double[] hist = getDistributionForPoint(classifier, props)
+                double[] hist = getDistributionForPoint(model, props)
                 double predictedScore = predictedScore(hist)   // not all classifiers give histogram that sums up to 1
                 boolean predicted = predictedPositive(predictedScore)
                 boolean observed = false
@@ -172,12 +174,12 @@ class WekaSumRescorer extends PocketRescorer implements Parametrized  {
 
     }
 
-    private final double[] getDistributionForPoint(Classifier classifier, FeatureVector vect) {
+    private final double[] getDistributionForPoint(Model model, FeatureVector vect) {
 //        if (classifier instanceof FasterForest) {
 //            return ((FasterForest)classifier).distributionForAttributes(vect.array, 2)
 //        } else {
             PerfUtils.arrayCopy(vect.array, alloc)
-            return classifier.distributionForInstance(auxInst)
+            return model.classifier.distributionForInstance(auxInst)
 //        }
 
     }

@@ -1,4 +1,4 @@
-package cz.siret.prank.score.criteria
+package cz.siret.prank.score.pocketcriteria
 
 import cz.siret.prank.domain.Ligand
 import cz.siret.prank.domain.Pocket
@@ -6,32 +6,31 @@ import cz.siret.prank.program.routines.results.EvalContext
 import groovy.transform.CompileStatic
 
 /**
- * distance from any of the pocket surface atoms to any atom of the ligand
+ * distance from the center of the predicted pocket to any atom of the ligand
  */
 @CompileStatic
-class DSA implements IdentificationCriterium {
+class DCA implements PocketCriterium {
 
     final double cutoff
 
-    DSA(double cutoff) {
+    DCA(double cutoff) {
         this.cutoff = cutoff
     }
 
     @Override
     boolean isIdentified(Ligand ligand, Pocket pocket, EvalContext context) {
 
-        return ligand.atoms.areWithinDistance(pocket.surfaceAtoms, cutoff)
+        return ligand.atoms.areWithinDistance(pocket.centroid, cutoff)
     }
 
     @Override
     double score(Ligand ligand, Pocket pocket) {
-
-        return cutoff - ligand.atoms.dist(pocket.surfaceAtoms)
+        return cutoff - ligand.atoms.dist(pocket.centroid)
     }
 
     @Override
     String toString() {
-        "DSA($cutoff)"
+        "DCA($cutoff)"
     }
 
 }

@@ -1,4 +1,4 @@
-package cz.siret.prank.score.criteria
+package cz.siret.prank.score.pocketcriteria
 
 import cz.siret.prank.domain.Ligand
 import cz.siret.prank.domain.Pocket
@@ -10,7 +10,7 @@ import groovy.transform.CompileStatic
  * distance from the center of the pocket to the center of the ligand
  */
 @CompileStatic
-class DCC implements IdentificationCriterium {
+class DCC implements PocketCriterium {
 
     final double cutoff
 

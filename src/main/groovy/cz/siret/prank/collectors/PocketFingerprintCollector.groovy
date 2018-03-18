@@ -5,7 +5,7 @@ import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.features.FeatureVector
 import cz.siret.prank.features.api.ProcessedItemContext
-import cz.siret.prank.score.criteria.IdentificationCriterium
+import cz.siret.prank.score.pocketcriteria.PocketCriterium
 import cz.siret.prank.utils.CollectionUtils
 import groovy.util.logging.Slf4j
 
@@ -13,9 +13,9 @@ import groovy.util.logging.Slf4j
 class PocketFingerprintCollector extends VectorCollector  {
 
     FeatureExtractor evalFactory
-    IdentificationCriterium assessor
+    PocketCriterium assessor
 
-    PocketFingerprintCollector(FeatureExtractor evalFactory, IdentificationCriterium assessor) {
+    PocketFingerprintCollector(FeatureExtractor evalFactory, PocketCriterium assessor) {
         this.assessor = assessor
         this.evalFactory = evalFactory
     }

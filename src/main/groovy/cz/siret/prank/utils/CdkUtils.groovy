@@ -17,7 +17,7 @@ import javax.vecmath.Point3d
  */
 @Slf4j
 @CompileStatic
-class CDKUtils {
+class CdkUtils {
 
     static IAtom bioJavaToCDKAtom(Atom atom) {
         Point3d point = new Point3d(atom.coords)

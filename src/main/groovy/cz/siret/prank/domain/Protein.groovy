@@ -8,7 +8,7 @@ import cz.siret.prank.geom.Surface
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Futils
-import cz.siret.prank.utils.PDBUtils
+import cz.siret.prank.utils.PdbUtils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
@@ -63,6 +63,7 @@ class Protein implements Parametrized {
 
     private List<Residue> proteinResidues
     private List<Residue> exposedResidues
+    private Atoms residueAtoms
     private Map<Residue.Key, Residue> proteinResidueMap
     private Map<String, ResidueChain> residueChainsMap
 
@@ -179,6 +180,7 @@ class Protein implements Parametrized {
         exposedResidues   = null
         proteinResidueMap = null
         residueChainsMap  = null
+        residueAtoms = null
     }
 
     /**
@@ -188,6 +190,18 @@ class Protein implements Parametrized {
         checkResiduesCalculated()
         
         proteinResidues
+    }
+
+    /**
+     * All atoms from proteinResidues.
+     * Ideally, it should be the same as proteinAtoms,
+     * however there can be minor differences due to imperfect structure model in biojava.
+     */
+    Atoms getResidueAtoms() {
+        if (residueAtoms == null) {
+            residueAtoms = Atoms.join(getProteinResidues().collect { it.atoms })
+        }
+        residueAtoms
     }
 
     List<Residue> getExposedResidues() {
@@ -272,7 +286,7 @@ class Protein implements Parametrized {
         log.info "loading protein [${Futils.absPath(pdbFileName)}]"
 
         name = Futils.shortName(pdbFileName)
-        structure = PDBUtils.loadFromFile(pdbFileName)
+        structure = PdbUtils.loadFromFile(pdbFileName)
 
         if (onlyChains != null) {
             log.info "reducing protein [{}] to chains [{}]", name, onlyChains.join(",")

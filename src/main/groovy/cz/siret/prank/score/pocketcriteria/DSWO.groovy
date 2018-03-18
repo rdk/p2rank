@@ -1,4 +1,4 @@
-package cz.siret.prank.score.criteria
+package cz.siret.prank.score.pocketcriteria
 
 import cz.siret.prank.domain.Ligand
 import cz.siret.prank.domain.Pocket
@@ -16,7 +16,7 @@ import groovy.transform.CompileStatic
  *
  */
 @CompileStatic
-class DSWO implements IdentificationCriterium {
+class DSWO implements PocketCriterium {
 
     final double ligandCoverageThreshold
     final double pocketCoverageThreshold

@@ -4,6 +4,8 @@ import com.google.common.collect.Maps
 import cz.siret.prank.domain.Residue
 import groovy.transform.CompileStatic
 
+import javax.annotation.Nullable
+
 /**
  * Holds partiticular assignment of labels to a set of residues.
  */
@@ -29,10 +31,12 @@ class ResidueLabeling<L>  {
         labeledMap.put(residue.key, lres)
     }
 
+    @Nullable
     L getLabel(Residue residue) {
         return get(residue)?.label
     }
 
+    @Nullable
     LabeledResidue<L> get(Residue residue) {
         return labeledMap.get(residue.key)
     }

@@ -1,6 +1,7 @@
 package cz.siret.prank.program
 
 import cz.siret.prank.domain.Dataset
+import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.params.ConfigLoader
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.params.Params
@@ -249,9 +250,9 @@ class Main implements Parametrized, Writable {
 
         configureLoggers(outdir)
 
-        new EvalModelRoutine(
+        new EvalPocketsRoutine(
                 dataset,
-                findModel(),
+                Model.loadFromFile(findModel()),
                 outdir).execute()
 
     }

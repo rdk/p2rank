@@ -1,13 +1,11 @@
 package cz.siret.prank.program.routines
 
 import cz.siret.prank.collectors.DataPreprocessor
-import cz.siret.prank.collectors.PointVectorCollector
 import cz.siret.prank.collectors.VectorCollector
+import cz.siret.prank.collectors.CollectorFactory
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.features.FeatureVector
-import cz.siret.prank.score.criteria.DCA
-import cz.siret.prank.score.criteria.IdentificationCriterium
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.PerfUtils
 import cz.siret.prank.utils.WekaUtils
@@ -24,8 +22,6 @@ class CollectVectorsRoutine extends Routine {
 
     Dataset dataset
     String vectf           // arff vector file path
-
-    double IDENTIFIED_POCKET_CUTOFF = 5
 
     CollectVectorsRoutine(Dataset dataSet, String outdir) {
         this(dataSet, outdir, "$outdir/vectors.arff")
@@ -56,33 +52,30 @@ class CollectVectorsRoutine extends Routine {
         Futils.mkdirs(outdir)
         writeParams(outdir)
 
-//===========================================================================================================//
-
-        final IdentificationCriterium identifiedPocketAssessor = new DCA(IDENTIFIED_POCKET_CUTOFF)
         final FeatureExtractor extractor = FeatureExtractor.createFactory()
+        final VectorCollector collector = CollectorFactory.createCollector(extractor, dataset)
+
         extractor.trainingExtractor = true
 
         final AtomicInteger pos = new AtomicInteger(0)
         final AtomicInteger neg = new AtomicInteger(0)
-        final List<Instances> instList = Collections.synchronizedList( new ArrayList<>(dataset.size))
+        final List<Instances> instList = Collections.synchronizedList(new ArrayList<>(dataset.size))
 
         dataset = prepareDataset(dataset)
 
-        dataset.processItems(params.parallel, new Dataset.Processor() {
-            void processItem(Dataset.Item item) {
-                final VectorCollector collector = new PointVectorCollector(extractor, identifiedPocketAssessor)
-                final VectorCollector.Result res = collector.collectVectors(item.predictionPair, item.context)
+        dataset.processItems { Dataset.Item item ->
 
-                Instances inst = WekaUtils.createDatasetWithBinaryClass(extractor.vectorHeader)
-                for (FeatureVector v : res.vectors) {
-                    inst.add(WekaUtils.toInstance(v.array))
-                }
+            def collected = collector.collectVectors(item.predictionPair, item.context)
 
-                pos.addAndGet(res.positives)
-                neg.addAndGet(res.negatives)
-                instList.add(inst)
+            Instances inst = WekaUtils.createDatasetWithBinaryClass(extractor.vectorHeader)
+            for (FeatureVector v : collected.vectors) {
+                inst.add(WekaUtils.toInstance(v.array))
             }
-        });
+
+            pos.addAndGet(collected.positives)
+            neg.addAndGet(collected.negatives)
+            instList.add(inst)
+        }
 
         int positives = pos.get()
         int negatives = neg.get()

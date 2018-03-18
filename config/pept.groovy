@@ -18,6 +18,8 @@ import cz.siret.prank.program.params.Params
     output_base_dir = "../../p2rank-results/${version}"
 
 
+    predict_residues = true
+
     visualizations = false
 
     fail_fast = true
@@ -27,5 +29,7 @@ import cz.siret.prank.program.params.Params
     vis_generate_proteins = true
 
     log_to_file = false
+
+
 
 }

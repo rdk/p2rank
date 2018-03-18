@@ -4,10 +4,8 @@ import cz.siret.prank.domain.labeling.BinaryResidueLabeling
 import cz.siret.prank.domain.labeling.LabeledResidue
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Futils
-import cz.siret.prank.utils.PDBUtils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-import org.biojava.nbio.structure.Structure
 
 import java.awt.*
 

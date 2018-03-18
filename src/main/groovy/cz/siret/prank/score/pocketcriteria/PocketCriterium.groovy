@@ -1,4 +1,4 @@
-package cz.siret.prank.score.criteria
+package cz.siret.prank.score.pocketcriteria
 
 import cz.siret.prank.domain.Ligand
 import cz.siret.prank.domain.Pocket
@@ -7,7 +7,7 @@ import cz.siret.prank.program.routines.results.EvalContext
 /**
  * Successful pocket identification criterium
  */
-public interface IdentificationCriterium {
+public interface PocketCriterium {
 
     boolean isIdentified(Ligand ligand, Pocket pocket, EvalContext context)
 

@@ -6,7 +6,7 @@ import cz.siret.prank.domain.Prediction
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Struct
-import cz.siret.prank.utils.PDBUtils
+import cz.siret.prank.utils.PdbUtils
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 import org.biojava.nbio.structure.Element
@@ -36,7 +36,7 @@ class ConcavityLoader extends PredictionLoader {
 
         Protein protein = Protein.load(proteinFile, new LoaderParams())
         protein.calcuateSurfaceAndExposedAtoms()
-        Structure pocketStruct = PDBUtils.loadFromFile(ppOutputFile)
+        Structure pocketStruct = PdbUtils.loadFromFile(ppOutputFile)
         List<ConcavityPocket> pockets = loadConcavityPockets(protein, pocketStruct)
 
         return new Prediction(protein, pockets)

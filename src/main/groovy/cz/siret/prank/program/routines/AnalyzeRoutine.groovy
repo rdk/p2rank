@@ -98,7 +98,7 @@ class AnalyzeRoutine extends Routine {
     }
 
     /**
-     * Chain statistics`
+     * Chain statistics
      */
     void cmdChains() {
         LoaderParams.ignoreLigandsSwitch = true

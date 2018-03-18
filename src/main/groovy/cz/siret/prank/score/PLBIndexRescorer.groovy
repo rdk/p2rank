@@ -5,7 +5,7 @@ import cz.siret.prank.domain.Prediction
 import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.features.tables.PropertyTable
 import cz.siret.prank.utils.Futils
-import cz.siret.prank.utils.PDBUtils
+import cz.siret.prank.utils.PdbUtils
 import cz.siret.prank.utils.StrUtils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
@@ -34,7 +34,7 @@ class PLBIndexRescorer extends PocketRescorer {
 
             if (params.plb_rescorer_atomic) {
                 for (Atom a : pocket.surfaceAtoms) {
-                    String aaCode = PDBUtils.getCorrectedAtomResidueCode(a)
+                    String aaCode = PdbUtils.getCorrectedAtomResidueCode(a)
                     Double prop = aaPropensitiesTable.getValue(aaCode, "RAx")
                     if (prop!=null) {
                         plbi += prop
@@ -43,7 +43,7 @@ class PLBIndexRescorer extends PocketRescorer {
             } else {
                 // according to article
                 for (Group g : pocket.surfaceAtoms.distinctGroups) {
-                    String aaCode = PDBUtils.getCorrectedResidueCode(g)
+                    String aaCode = PdbUtils.getCorrectedResidueCode(g)
                     Double prop = aaPropensitiesTable.getValue(aaCode, "RAx")
                     if (prop!=null) {
                         plbi += prop

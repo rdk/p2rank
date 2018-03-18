@@ -5,7 +5,7 @@ import cz.siret.prank.domain.labeling.LabeledPoint
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.score.WekaSumRescorer
+import cz.siret.prank.score.ModelBasedRescorer
 import cz.siret.prank.utils.ColorUtils
 import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
@@ -53,7 +53,7 @@ class OldPymolRenderer implements Parametrized {
         return res.toString()
     }
 
-    void visualizeHistograms(Dataset.Item item, WekaSumRescorer rescorer, PredictionPair pair) {
+    void visualizeHistograms(Dataset.Item item, ModelBasedRescorer rescorer, PredictionPair pair) {
 
         String label = item.label
 

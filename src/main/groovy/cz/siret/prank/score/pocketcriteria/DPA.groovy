@@ -1,4 +1,4 @@
-package cz.siret.prank.score.criteria
+package cz.siret.prank.score.pocketcriteria
 
 import cz.siret.prank.domain.Ligand
 import cz.siret.prank.domain.Pocket
@@ -10,7 +10,7 @@ import groovy.transform.CompileStatic
  * distance from any of the pocket SAS points to any atom of the ligand
  */
 @CompileStatic
-class DPA implements IdentificationCriterium {
+class DPA implements PocketCriterium {
 
     final double cutoff
 

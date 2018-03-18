@@ -252,14 +252,14 @@ public final class Atoms implements Iterable<Atom> {
         return this;
     }
 
-    public static Atoms joinAll(Collection<Atoms> col) {
+    public static Atoms join(Collection<Atoms> col) {
         return new Atoms().addAll(col);
     }
 
     /**
      * @return new instance
      */
-    public Atoms join(Atoms atoms) {
+    public Atoms joinWith(Atoms atoms) {
         List<Atom> newlist = new ArrayList<>(list.size() + atoms.getCount());
         newlist.addAll(list);
         newlist.addAll(atoms.list);
@@ -270,7 +270,7 @@ public final class Atoms implements Iterable<Atom> {
      * @return new instance
      */
     public Atoms plus(Atoms atoms) {
-        return join(atoms);
+        return joinWith(atoms);
     }
 
     public static Atoms union(Atoms... aa) {

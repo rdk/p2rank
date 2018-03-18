@@ -8,7 +8,7 @@ import cz.siret.prank.features.api.SasFeatureCalculator
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Struct
 import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.utils.PDBUtils
+import cz.siret.prank.utils.PdbUtils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.AminoAcid
@@ -67,7 +67,7 @@ class ContactResiduesPositionFeature extends SasFeatureCalculator implements Par
 
         Multimap<AA, AminoAcid> contactResIndex = ArrayListMultimap.create(20, 3);
         for (AminoAcid res : contactResidues) {
-            AA aa = AA.forName(PDBUtils.getCorrectedResidueCode(res))
+            AA aa = AA.forName(PdbUtils.getCorrectedResidueCode(res))
             if (aa!=null) {
                 contactResIndex.put(aa, res)
             }

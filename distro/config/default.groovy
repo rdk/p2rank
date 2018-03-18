@@ -328,7 +328,7 @@ import cz.siret.prank.program.params.Params
      */
     ligc_prot_dist = 5.5
 
-    rescorer = "WekaSumRescorer"
+    rescorer = "ModelBasedRescorer"
 
     plb_rescorer_atomic = false
 

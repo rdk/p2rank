@@ -5,7 +5,7 @@ import cz.siret.prank.features.api.AtomFeatureCalculator
 import cz.siret.prank.features.tables.PropertyTable
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Futils
-import cz.siret.prank.utils.PDBUtils
+import cz.siret.prank.utils.PdbUtils
 import org.biojava.nbio.structure.Atom
 
 /**
@@ -28,7 +28,7 @@ class AAIndexFeature extends AtomFeatureCalculator implements Parametrized {
     }
 
     private Double getTableValue(Atom atom, String property) {
-        Double val = aaIndex.getValue(PDBUtils.getCorrectedAtomResidueCode(atom), property)
+        Double val = aaIndex.getValue(PdbUtils.getCorrectedAtomResidueCode(atom), property)
         return val==null ? 0d : val
     }
 

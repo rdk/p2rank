@@ -18,7 +18,7 @@ import org.biojava.nbio.structure.io.mmcif.ReducedChemCompProvider
  */
 @Slf4j
 @CompileStatic
-class PDBUtils {
+class PdbUtils {
 
     private static final int BUFFER_SIZE = 5*1024*1024;
 

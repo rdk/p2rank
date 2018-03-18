@@ -45,6 +45,13 @@ class LabeledPoint implements Atom {
         this.observed = false
     }
 
+    LabeledPoint(Atom point, boolean observed) {
+        this.point = point
+        this.hist = new double[2]
+        this.predicted = false
+        this.observed = observed
+    }
+
 //===========================================================================================================//
 
     /**

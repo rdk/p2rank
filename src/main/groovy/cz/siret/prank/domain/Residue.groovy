@@ -3,7 +3,7 @@ package cz.siret.prank.domain
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Struct
 import cz.siret.prank.program.PrankException
-import cz.siret.prank.utils.PDBUtils
+import cz.siret.prank.utils.PdbUtils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.AminoAcid
@@ -75,12 +75,12 @@ class Residue {
 
     @Nullable
     String getCode() {
-        PDBUtils.getResidueCode(group)
+        PdbUtils.getResidueCode(group)
     }
 
     @Nullable
     String getCorrectedCode() {
-        PDBUtils.getCorrectedResidueCode(group)
+        PdbUtils.getCorrectedResidueCode(group)
     }
 
     @Nullable
@@ -128,6 +128,12 @@ class Residue {
             } else {
                 null
             }
+        }
+
+
+        @Override
+        String toString() {
+            return residueNumber.toString()
         }
     }
 

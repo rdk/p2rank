@@ -3,14 +3,14 @@ package cz.siret.prank.collectors
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.features.api.ProcessedItemContext
-import cz.siret.prank.score.criteria.IdentificationCriterium
+import cz.siret.prank.score.pocketcriteria.PocketCriterium
 import cz.siret.prank.utils.CollectionUtils
 
 class PocketStatsExtractor extends VectorCollector {
 
-    IdentificationCriterium assessor
+    PocketCriterium assessor
 
-    PocketStatsExtractor(IdentificationCriterium assessor) {
+    PocketStatsExtractor(PocketCriterium assessor) {
         this.assessor = assessor
     }
 

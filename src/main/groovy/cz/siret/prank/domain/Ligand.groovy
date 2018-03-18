@@ -2,7 +2,7 @@ package cz.siret.prank.domain
 
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.utils.PDBUtils
+import cz.siret.prank.utils.PdbUtils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
@@ -48,7 +48,7 @@ class Ligand implements Parametrized {
         this.code = (groups*.residueNumber).join("&")
 
         for (Atom a : atoms) {
-            PDBUtils.correctBioJavaElement(a)
+            PdbUtils.correctBioJavaElement(a)
         }
 
         if (log.debugEnabled) {

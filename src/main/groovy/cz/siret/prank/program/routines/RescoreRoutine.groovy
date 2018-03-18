@@ -5,14 +5,13 @@ import cz.siret.prank.domain.Prediction
 import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.program.PrankException
+import cz.siret.prank.program.ml.Model
 import cz.siret.prank.score.PocketRescorer
-import cz.siret.prank.score.WekaSumRescorer
+import cz.siret.prank.score.ModelBasedRescorer
 import cz.siret.prank.score.results.RescoringSummary
 import cz.siret.prank.utils.Futils
-import cz.siret.prank.utils.WekaUtils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-import weka.classifiers.Classifier
 
 import static cz.siret.prank.domain.Dataset.COLUMN_PREDICTION
 import static cz.siret.prank.domain.Dataset.COLUMN_PROTEIN
@@ -50,25 +49,24 @@ class RescoreRoutine extends Routine {
 
         log.info "outdir: $outdir"
 
-        Classifier classifier = WekaUtils.loadClassifier(modelf)
-        WekaUtils.disableParallelism(classifier)
+        Model model = Model.loadFromFile(modelf)
+        model.disableParalelism()
 
         FeatureExtractor extractor = FeatureExtractor.createFactory()
 
-        Dataset.Result result = dataset.processItems(params.parallel, new Dataset.Processor() {
-            void processItem(Dataset.Item item) {
-                PredictionPair pair = item.predictionPair
-                Prediction prediction = pair.prediction
+        Dataset.Result result = dataset.processItems { Dataset.Item item ->
 
-                PocketRescorer rescorer = new  WekaSumRescorer(classifier, extractor)
-                rescorer.reorderPockets(prediction, item.context)
+            PredictionPair pair = item.predictionPair
+            Prediction prediction = pair.prediction
 
-                RescoringSummary rsum = new RescoringSummary(prediction)
-                writeFile "$outdir/${item.label}_rescored.csv", rsum.toCSV()
-                log.info "\n\nRescored pockets for [$item.label]: \n\n" + rsum.toTable() + "\n"
+            PocketRescorer rescorer = new  ModelBasedRescorer(model, extractor)
+            rescorer.reorderPockets(prediction, item.context)
 
-            }
-        })
+            RescoringSummary rsum = new RescoringSummary(prediction)
+            writeFile "$outdir/${item.label}_rescored.csv", rsum.toCSV()
+            log.info "\n\nRescored pockets for [$item.label]: \n\n" + rsum.toTable() + "\n"
+
+        }
 
         write "rescoring finished in $timer.formatted"
         write "results saved to directory [${Futils.absPath(outdir)}]"

@@ -1,10 +1,8 @@
 package cz.siret.prank.domain
 
 import cz.siret.prank.program.routines.results.EvalContext
-import cz.siret.prank.score.criteria.IdentificationCriterium
+import cz.siret.prank.score.pocketcriteria.PocketCriterium
 import groovy.transform.CompileStatic
-
-import java.util.function.Function
 
 /**
  * Pair of pocket prediction result and liganated structure (with correct ligand/pocket positions)
@@ -26,7 +24,7 @@ class PredictionPair {
      * first is 1
      * @return ... -1 = not identified
      */
-    static int rankOfIdentifiedPocket(Ligand ligand, List<Pocket> pockets, IdentificationCriterium criterium, EvalContext context) {
+    static int rankOfIdentifiedPocket(Ligand ligand, List<Pocket> pockets, PocketCriterium criterium, EvalContext context) {
 
         int rank = 1
         for (Pocket pocket in pockets) {
@@ -42,7 +40,7 @@ class PredictionPair {
     /**
      * @return null if pocket has no ligand
      */
-    Ligand findLigandForPocket(Pocket pocket, IdentificationCriterium criterium, EvalContext context) {
+    Ligand findLigandForPocket(Pocket pocket, PocketCriterium criterium, EvalContext context) {
         for (Ligand lig in queryProtein.ligands) {
             if (criterium.isIdentified(lig, pocket, context)) {
                 return lig
@@ -67,15 +65,15 @@ class PredictionPair {
         queryProtein.distantLigands.size()
     }
 
-    List<Pocket> getFalsePositivePockets(IdentificationCriterium assesor) {
+    List<Pocket> getFalsePositivePockets(PocketCriterium assesor) {
         prediction.pockets.findAll { Pocket p -> !isCorrectlyPredictedPocket(p, assesor) }
     }
 
-    List<Pocket> getCorrectlyPredictedPockets(IdentificationCriterium assesor) {
+    List<Pocket> getCorrectlyPredictedPockets(PocketCriterium assesor) {
         prediction.pockets.findAll { Pocket p -> isCorrectlyPredictedPocket(p, assesor) }
     }
 
-    boolean isCorrectlyPredictedPocket(Pocket pocket, IdentificationCriterium criterium) {
+    boolean isCorrectlyPredictedPocket(Pocket pocket, PocketCriterium criterium) {
         for (Ligand lig : queryProtein.ligands) {
             if (criterium.isIdentified(lig, pocket, new EvalContext())) {
                 return true
