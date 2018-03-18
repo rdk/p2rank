@@ -91,12 +91,16 @@ class Futils {
     /**
      * Opens and decompresses file (if it has gzip extension)
      */
-    static InputStream readFile(File file) throws IOException {
+    static InputStream inputStream(File file) throws IOException {
         if (file.getName().endsWith(".gz")) {
             return new GZIPInputStream(new FileInputStream(file));
         } else {
             return new FileInputStream(file);
         }
+    }
+
+    static String readFile(String fname) {
+        new File(fname).text
     }
 
     /**
@@ -148,7 +152,6 @@ class Futils {
      * @param text
      */
     static void writeFile(String fname, Object text) {
-
         try {
             String dir = dir(fname)
             if (dir!=null && !exists(dir)) {
@@ -165,10 +168,6 @@ class Futils {
         } catch (Exception e) {
             log.error "Error writing to file [$fname]:"+e.message, e
         }
-    }
-
-    static String readFile(String fname) {
-        new File(fname).text
     }
 
     static void append(String fname, Object text) {

@@ -4,9 +4,12 @@ import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Prediction
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.geom.Point
+import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.StrUtils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+
+import static cz.siret.prank.utils.Futils.readFile
 
 /**
  * Loader for P2Rank's own pocket predictions from *_predictions.csv file
@@ -45,7 +48,7 @@ class P2RankLoader extends PredictionLoader {
 
         List<P2RankPocket> res = new ArrayList<>()
 
-        List<String> lines = new File(predictionOutputFile).text.trim().readLines().tail()
+        List<String> lines = readFile(predictionOutputFile).trim().readLines().tail()
 
 
         int i = 1

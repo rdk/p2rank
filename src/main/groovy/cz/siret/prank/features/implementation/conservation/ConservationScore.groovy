@@ -80,7 +80,7 @@ public class ConservationScore implements Parametrized {
         TsvParserSettings settings = new TsvParserSettings();
         settings.setLineSeparatorDetectionEnabled(true);
         TsvParser parser = new TsvParser(settings);
-        List<String[]> lines = parser.parseAll(Futils.readFile(scoreFile));
+        List<String[]> lines = parser.parseAll(Futils.inputStream(scoreFile));
         List<AA> result = new ArrayList<>(lines.size());
         for (String[] line : lines) {
             int index = -1;
