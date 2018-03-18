@@ -1,6 +1,6 @@
 package cz.siret.prank
 
-import cz.siret.prank.domain.loaders.pocketprediction.FPocketLoader
+import cz.siret.prank.domain.loaders.pockets.FPocketLoader
 import org.junit.Test
 
 import static org.junit.Assert.assertEquals

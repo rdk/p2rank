@@ -1,4 +1,4 @@
-package cz.siret.prank.domain.loaders.pocketprediction
+package cz.siret.prank.domain.loaders.pockets
 
 import com.sun.istack.internal.Nullable
 import cz.siret.prank.domain.*

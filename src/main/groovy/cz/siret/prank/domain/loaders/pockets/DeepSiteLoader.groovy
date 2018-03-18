@@ -1,4 +1,4 @@
-package cz.siret.prank.domain.loaders.pocketprediction
+package cz.siret.prank.domain.loaders.pockets
 
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Prediction
