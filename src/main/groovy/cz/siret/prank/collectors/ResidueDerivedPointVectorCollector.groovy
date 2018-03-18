@@ -29,7 +29,7 @@ class ResidueDerivedPointVectorCollector extends PointVectorCollector {
 
     @Override
     List<LabeledPoint> labelPoints(Atoms points, PredictionPair pair, ProcessedItemContext context) {
-        Protein prot = pair.queryProtein
+        Protein prot = pair.protein
         BinaryResidueLabeling labeling = labeler.getBinaryLabeling(prot.proteinResidues, prot)
         Atoms protAtoms = prot.residueAtoms
 

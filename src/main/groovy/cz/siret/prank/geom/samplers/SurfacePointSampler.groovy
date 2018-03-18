@@ -2,7 +2,7 @@ package cz.siret.prank.geom.samplers
 
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Protein
-import cz.siret.prank.domain.loaders.FPocketLoader
+import cz.siret.prank.domain.loaders.pocketprediction.FPocketLoader
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.params.Params

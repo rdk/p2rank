@@ -1,6 +1,7 @@
 package cz.siret.prank.domain
 
 import com.google.common.collect.Maps
+import cz.siret.prank.domain.loaders.LoaderParams
 import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.features.implementation.conservation.ConservationScore
 import cz.siret.prank.geom.Atoms

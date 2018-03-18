@@ -123,14 +123,14 @@ class Evaluation implements Parametrized, Writable {
     void addPrediction(PredictionPair pair, List<Pocket> pockets) {
         EvalContext context = new EvalContext()
 
-        pair.queryProtein.ligands.each { it.sasPoints = null } // clear sas points cache
+        pair.protein.ligands.each { it.sasPoints = null } // clear sas points cache
 
-        assignPocketsToLigands(pair.queryProtein.ligands, pockets, context)
+        assignPocketsToLigands(pair.protein.ligands, pockets, context)
 
         List<LigRow> tmpLigRows = new ArrayList<>()
         List<PocketRow> tmpPockets = new ArrayList<>()
 
-        Protein protein = pair.queryProtein
+        Protein protein = pair.protein
         Atoms sasPoints = pair.prediction.protein.accessibleSurface.points
         Atoms labeledPoints = new Atoms(pair.prediction.labeledPoints ?: emptyList())
         
@@ -274,7 +274,7 @@ class Evaluation implements Parametrized, Writable {
     }
 
     private int calcCoveragesProt(ProteinRow protRow, PredictionPair pair, Atoms sasPoints, List<Pocket> pockets) {
-        Protein prot = pair.queryProtein
+        Protein prot = pair.protein
         Atoms ligSasp = sasPoints.cutoffAtoms(prot.allLigandAtoms, LIG_SAS_CUTOFF)
         int n_ligSasPoints = ligSasp.count
 

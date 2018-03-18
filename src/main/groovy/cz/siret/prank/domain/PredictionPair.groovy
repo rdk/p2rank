@@ -11,13 +11,14 @@ import groovy.transform.CompileStatic
 class PredictionPair {
 
     String name
-    Prediction prediction
     /**
      * This is either query protein when rescoring (original input protein of the method we are rescoring with 'prank rescore')
-     * or liganated 'cntrol' protein when doing evaluation with 'prank eval-*'.
+     * or liganated 'control' protein when doing evaluation with 'prank eval-*'.
      * Either way it should correspond to 'protein' column in the dataset file.
      */
-    Protein queryProtein
+    Protein protein
+    Prediction prediction
+    
     // Function<String, File> conservationPathForChain  // unused or used by webapp?
 
     /**
@@ -41,7 +42,7 @@ class PredictionPair {
      * @return null if pocket has no ligand
      */
     Ligand findLigandForPocket(Pocket pocket, PocketCriterium criterium, EvalContext context) {
-        for (Ligand lig in queryProtein.ligands) {
+        for (Ligand lig in protein.ligands) {
             if (criterium.isIdentified(lig, pocket, context)) {
                 return lig
             }
@@ -50,19 +51,19 @@ class PredictionPair {
     }
 
     int getLigandCount() {
-        queryProtein.ligands.size()
+        protein.ligands.size()
     }
 
     int getIgnoredLigandCount() {
-        queryProtein.ignoredLigands.size()
+        protein.ignoredLigands.size()
     }
 
     int getSmallLigandCount() {
-        queryProtein.smallLigands.size()
+        protein.smallLigands.size()
     }
 
     int getDistantLigandCount() {
-        queryProtein.distantLigands.size()
+        protein.distantLigands.size()
     }
 
     List<Pocket> getFalsePositivePockets(PocketCriterium assesor) {
@@ -74,7 +75,7 @@ class PredictionPair {
     }
 
     boolean isCorrectlyPredictedPocket(Pocket pocket, PocketCriterium criterium) {
-        for (Ligand lig : queryProtein.ligands) {
+        for (Ligand lig : protein.ligands) {
             if (criterium.isIdentified(lig, pocket, new EvalContext())) {
                 return true
             }

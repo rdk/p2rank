@@ -1,5 +1,6 @@
-package cz.siret.prank.domain
+package cz.siret.prank.domain.loaders
 
+import cz.siret.prank.domain.Dataset
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.params.Params
 import groovy.transform.CompileStatic

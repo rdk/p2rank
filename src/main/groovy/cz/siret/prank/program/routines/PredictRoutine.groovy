@@ -1,7 +1,7 @@
 package cz.siret.prank.program.routines
 
 import cz.siret.prank.domain.Dataset
-import cz.siret.prank.domain.LoaderParams
+import cz.siret.prank.domain.loaders.LoaderParams
 import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.program.ml.Model

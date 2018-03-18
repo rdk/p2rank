@@ -38,7 +38,7 @@ class PocketFingerprintCollector extends VectorCollector  {
 
     private processPocket(PredictionPair pair, Pocket pocket, boolean isPositive, Result res ) {
         try {
-            FeatureExtractor eval = evalFactory.createInstanceForPocket(pair.queryProtein.structure, pocket)
+            FeatureExtractor eval = evalFactory.createInstanceForPocket(pair.protein.structure, pocket)
             FeatureVector prop = eval.calcFingerprint(pocket.vornoiCenters)
 
             if (isPositive) {

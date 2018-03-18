@@ -3,14 +3,14 @@ package cz.siret.prank.domain
 import com.google.common.base.CharMatcher
 import com.google.common.base.Splitter
 import cz.siret.prank.domain.labeling.ResidueLabeler
-import cz.siret.prank.domain.loaders.ConcavityLoader
-import cz.siret.prank.domain.loaders.DeepSiteLoader
-import cz.siret.prank.domain.loaders.FPocketLoader
-import cz.siret.prank.domain.loaders.LiseLoader
-import cz.siret.prank.domain.loaders.MetaPocket2Loader
-import cz.siret.prank.domain.loaders.P2RankLoader
-import cz.siret.prank.domain.loaders.PredictionLoader
-import cz.siret.prank.domain.loaders.SiteHoundLoader
+import cz.siret.prank.domain.loaders.pocketprediction.ConcavityLoader
+import cz.siret.prank.domain.loaders.pocketprediction.DeepSiteLoader
+import cz.siret.prank.domain.loaders.pocketprediction.FPocketLoader
+import cz.siret.prank.domain.loaders.pocketprediction.LiseLoader
+import cz.siret.prank.domain.loaders.pocketprediction.MetaPocket2Loader
+import cz.siret.prank.domain.loaders.pocketprediction.P2RankLoader
+import cz.siret.prank.domain.loaders.pocketprediction.PredictionLoader
+import cz.siret.prank.domain.loaders.pocketprediction.SiteHoundLoader
 import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.ThreadPoolFactory
@@ -88,7 +88,7 @@ class Dataset implements Parametrized {
         items.each {
             if (it.cachedPair!=null) {
                 it.cachedPair.prediction.protein.clearSecondaryData()
-                it.cachedPair.queryProtein.clearSecondaryData()
+                it.cachedPair.protein.clearSecondaryData()
             }
         }
     }
@@ -500,7 +500,7 @@ class Dataset implements Parametrized {
 
         // for one column datasets
         Protein getProtein() {
-            getPredictionPair().queryProtein
+            getPredictionPair().protein
         }
 
         PredictionPair loadPredictionPair() {

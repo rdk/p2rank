@@ -2,14 +2,12 @@ package cz.siret.prank.program.routines
 
 import com.google.common.collect.ImmutableMap
 import cz.siret.prank.domain.Dataset
-import cz.siret.prank.domain.DatasetCachedLoader
-import cz.siret.prank.domain.LoaderParams
+import cz.siret.prank.domain.loaders.DatasetCachedLoader
+import cz.siret.prank.domain.loaders.LoaderParams
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.domain.ResidueChain
 import cz.siret.prank.domain.labeling.BinaryLabelings
 import cz.siret.prank.domain.labeling.BinaryResidueLabeling
-import cz.siret.prank.domain.labeling.ResidueLabeler
-import cz.siret.prank.domain.labeling.ResidueLabeling
 import cz.siret.prank.domain.labeling.SprintLabelingLoader
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.program.Main

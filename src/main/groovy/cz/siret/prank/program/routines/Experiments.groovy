@@ -1,16 +1,14 @@
 package cz.siret.prank.program.routines
 
 import cz.siret.prank.domain.Dataset
-import cz.siret.prank.domain.DatasetCachedLoader
+import cz.siret.prank.domain.loaders.DatasetCachedLoader
 import cz.siret.prank.program.Main
 import cz.siret.prank.program.params.ListParam
-import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.params.Params
 import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.utils.CmdLineArgs
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.StrUtils
-import cz.siret.prank.utils.WekaUtils
 import groovy.util.logging.Slf4j
 
 import static cz.siret.prank.utils.Futils.safe

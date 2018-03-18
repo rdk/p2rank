@@ -81,7 +81,7 @@ class CollectVectorsRoutine extends Routine {
         int negatives = neg.get()
         int count = positives + negatives
         double ratio = PerfUtils.round ( (double)positives / negatives , 3)
-        int ligandCount = dataset.items.collect { it.predictionPair.queryProtein.ligands.size() }.sum(0) as int
+        int ligandCount = dataset.items.collect { it.predictionPair.protein.ligands.size() }.sum(0) as int
 
         write "processed $ligandCount ligans in $dataset.size files"
         write "extracted $count vectors...  positives:$positives negatives:$negatives ratio:$ratio"

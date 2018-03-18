@@ -1,4 +1,4 @@
-package cz.siret.prank.domain
+package cz.siret.prank.domain.loaders
 
 import cz.siret.prank.program.params.Params
 import groovy.transform.CompileStatic

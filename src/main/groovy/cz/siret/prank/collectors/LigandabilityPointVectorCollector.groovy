@@ -39,10 +39,10 @@ class LigandabilityPointVectorCollector extends VectorCollector implements Param
     Atoms getTrainingRelevantLigandAtoms(PredictionPair pair) {
         Atoms res = new Atoms()
 
-        if (params.positive_def_ligtypes.contains("relevant")) res.addAll( pair.queryProtein.ligands*.atoms )
-        if (params.positive_def_ligtypes.contains("ignored")) res.addAll( pair.queryProtein.ignoredLigands*.atoms )
-        if (params.positive_def_ligtypes.contains("small")) res.addAll( pair.queryProtein.smallLigands*.atoms )
-        if (params.positive_def_ligtypes.contains("distant")) res.addAll( pair.queryProtein.distantLigands*.atoms )
+        if (params.positive_def_ligtypes.contains("relevant")) res.addAll( pair.protein.ligands*.atoms )
+        if (params.positive_def_ligtypes.contains("ignored")) res.addAll( pair.protein.ignoredLigands*.atoms )
+        if (params.positive_def_ligtypes.contains("small")) res.addAll( pair.protein.smallLigands*.atoms )
+        if (params.positive_def_ligtypes.contains("distant")) res.addAll( pair.protein.distantLigands*.atoms )
 
         return res
     }
@@ -53,11 +53,11 @@ class LigandabilityPointVectorCollector extends VectorCollector implements Param
 
         FeatureExtractor proteinExtractorPrototype = extractorFactory.createPrototypeForProtein(pair.prediction.protein, context)
 
-        Atoms ligandAtoms = getTrainingRelevantLigandAtoms(pair) //pair.queryProtein.allLigandAtoms.withKdTreeConditional()
+        Atoms ligandAtoms = getTrainingRelevantLigandAtoms(pair) //pair.protein.allLigandAtoms.withKdTreeConditional()
 
 
         if (ligandAtoms.empty) {
-            log.error "no ligands! [{}]", pair.queryProtein.name
+            log.error "no ligands! [{}]", pair.protein.name
         }
 
         if (!params.sample_negatives_from_decoys) {

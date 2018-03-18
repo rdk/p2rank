@@ -1,7 +1,8 @@
-package cz.siret.prank.domain.loaders
+package cz.siret.prank.domain.loaders.pocketprediction
 
 import com.sun.istack.internal.Nullable
 import cz.siret.prank.domain.*
+import cz.siret.prank.domain.loaders.LoaderParams
 import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.features.implementation.conservation.ConservationScore
 import cz.siret.prank.utils.Futils
@@ -34,15 +35,15 @@ abstract class PredictionLoader {
         res.name = protf.name
 
         if (loaderParams.load_only_specified_chains) {
-            res.queryProtein = Protein.loadReduced(queryProteinFile, loaderParams, itemContext.item.getChains())
+            res.protein = Protein.loadReduced(queryProteinFile, loaderParams, itemContext.item.getChains())
         } else {
-            res.queryProtein = Protein.load(queryProteinFile, loaderParams)
+            res.protein = Protein.load(queryProteinFile, loaderParams)
         }
 
         if (predictionOutputFile != null) {
-            res.prediction = loadPrediction(predictionOutputFile, res.queryProtein)
+            res.prediction = loadPrediction(predictionOutputFile, res.protein)
         } else {
-            res.prediction = new Prediction(res.queryProtein, [])
+            res.prediction = new Prediction(res.protein, [])
         }
 
         // TODO: move conservation related stuff to feature implementation
@@ -71,7 +72,7 @@ abstract class PredictionLoader {
                 itemContext.auxData.put(ConservationScore.conservationScoreKey, conserPathForChain)
             }
             if (loaderParams.load_conservation) {
-                res.queryProtein.loadConservationScores()
+                res.protein.loadConservationScores()
             }
         }
     }

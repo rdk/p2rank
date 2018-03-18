@@ -1,9 +1,9 @@
-package cz.siret.prank.domain.loaders
+package cz.siret.prank.domain.loaders.pocketprediction
 
-import cz.siret.prank.domain.LoaderParams
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Prediction
 import cz.siret.prank.domain.Protein
+import cz.siret.prank.domain.loaders.LoaderParams
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Struct
 import cz.siret.prank.utils.PdbUtils
