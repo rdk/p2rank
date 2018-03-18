@@ -33,8 +33,8 @@ class RenderingModel {
     static class Style {
         //Color defaultProteinColor
 
-        Color positiveResiduesColor = Color.RED
-        Color negativeResiduesColor = Color.CYAN
+        Color positiveResiduesColor = new Color(202,133,156)
+        Color negativeResiduesColor = new Color(149,167,224)
     }
 
 }
