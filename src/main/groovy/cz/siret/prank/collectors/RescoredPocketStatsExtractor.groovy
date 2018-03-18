@@ -3,8 +3,8 @@ package cz.siret.prank.collectors
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.features.api.ProcessedItemContext
-import cz.siret.prank.score.PocketRescorer
-import cz.siret.prank.score.pocketcriteria.PocketCriterium
+import cz.siret.prank.prediction.pockets.rescorers.PocketRescorer
+import cz.siret.prank.prediction.pockets.criteria.PocketCriterium
 import cz.siret.prank.utils.CollectionUtils
 
 class RescoredPocketStatsExtractor extends VectorCollector {

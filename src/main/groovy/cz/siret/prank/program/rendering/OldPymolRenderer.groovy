@@ -5,7 +5,7 @@ import cz.siret.prank.domain.labeling.LabeledPoint
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.score.ModelBasedRescorer
+import cz.siret.prank.prediction.pockets.rescorers.ModelBasedRescorer
 import cz.siret.prank.utils.ColorUtils
 import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic

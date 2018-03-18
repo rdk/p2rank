@@ -9,8 +9,8 @@ import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.score.pocketcriteria.DCA
-import cz.siret.prank.score.pocketcriteria.PocketCriterium
+import cz.siret.prank.prediction.pockets.criteria.DCA
+import cz.siret.prank.prediction.pockets.criteria.PocketCriterium
 import cz.siret.prank.utils.CollectionUtils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j

@@ -7,10 +7,10 @@ import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.rendering.OldPymolRenderer
 import cz.siret.prank.program.routines.results.PredictResults
-import cz.siret.prank.score.PocketRescorer
-import cz.siret.prank.score.ModelBasedRescorer
-import cz.siret.prank.score.results.PredictionSummary
-import cz.siret.prank.score.transformation.ScoreTransformer
+import cz.siret.prank.prediction.pockets.rescorers.PocketRescorer
+import cz.siret.prank.prediction.pockets.rescorers.ModelBasedRescorer
+import cz.siret.prank.prediction.pockets.results.PredictionSummary
+import cz.siret.prank.prediction.transformation.ScoreTransformer
 import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j

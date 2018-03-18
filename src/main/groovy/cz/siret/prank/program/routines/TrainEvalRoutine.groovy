@@ -5,7 +5,7 @@ import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.routines.results.EvalResults
-import cz.siret.prank.score.metrics.ClassifierStats
+import cz.siret.prank.prediction.metrics.ClassifierStats
 import cz.siret.prank.utils.ATimer
 import cz.siret.prank.utils.CSV
 import cz.siret.prank.utils.Futils
@@ -16,8 +16,8 @@ import weka.classifiers.Classifier
 import weka.core.Instance
 import weka.core.Instances
 
-import static cz.siret.prank.score.prediction.PointScoreCalculator.predictedPositive
-import static cz.siret.prank.score.prediction.PointScoreCalculator.predictedScore
+import static cz.siret.prank.prediction.pockets.PointScoreCalculator.predictedPositive
+import static cz.siret.prank.prediction.pockets.PointScoreCalculator.predictedScore
 import static cz.siret.prank.utils.ATimer.startTimer
 import static cz.siret.prank.utils.Futils.mkdirs
 

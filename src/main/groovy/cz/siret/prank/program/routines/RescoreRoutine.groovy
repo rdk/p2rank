@@ -6,9 +6,9 @@ import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.ml.Model
-import cz.siret.prank.score.PocketRescorer
-import cz.siret.prank.score.ModelBasedRescorer
-import cz.siret.prank.score.results.RescoringSummary
+import cz.siret.prank.prediction.pockets.rescorers.PocketRescorer
+import cz.siret.prank.prediction.pockets.rescorers.ModelBasedRescorer
+import cz.siret.prank.prediction.pockets.results.RescoringSummary
 import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j

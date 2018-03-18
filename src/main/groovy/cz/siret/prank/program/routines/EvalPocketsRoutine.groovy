@@ -4,10 +4,15 @@ import cz.siret.prank.domain.Dataset
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.features.FeatureExtractor
+import cz.siret.prank.prediction.pockets.rescorers.IdentityRescorer
+import cz.siret.prank.prediction.pockets.rescorers.ModelBasedRescorer
+import cz.siret.prank.prediction.pockets.rescorers.PLBIndexRescorer
+import cz.siret.prank.prediction.pockets.rescorers.PocketRescorer
+import cz.siret.prank.prediction.pockets.rescorers.PocketVolumeRescorer
+import cz.siret.prank.prediction.pockets.rescorers.RandomRescorer
 import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.rendering.OldPymolRenderer
 import cz.siret.prank.program.routines.results.EvalResults
-import cz.siret.prank.score.*
 import cz.siret.prank.utils.Futils
 import groovy.util.logging.Slf4j
 
@@ -94,7 +99,6 @@ class EvalPocketsRoutine extends EvalRoutine {
             } else { // rescore
                 results.eval.addPrediction(pair, pair.prediction.reorderedPockets)
                 results.origEval.addPrediction(pair, pair.prediction.pockets)
-
                 writeOriginalPocketStats(pair, orig_pockets_dir)
             }
 

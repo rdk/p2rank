@@ -8,7 +8,12 @@ import cz.siret.prank.features.implementation.conservation.ConservationScore
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.domain.labeling.LabeledPoint
-import cz.siret.prank.score.pocketcriteria.*
+import cz.siret.prank.prediction.pocketcriteria.*
+import cz.siret.prank.prediction.pockets.criteria.DCA
+import cz.siret.prank.prediction.pockets.criteria.DCC
+import cz.siret.prank.prediction.pockets.criteria.DSO
+import cz.siret.prank.prediction.pockets.criteria.DSWO
+import cz.siret.prank.prediction.pockets.criteria.PocketCriterium
 import cz.siret.prank.utils.Writable
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.StringUtils

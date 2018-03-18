@@ -3,12 +3,11 @@ package cz.siret.prank.program.routines.results
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.score.metrics.ClassifierStats
-import cz.siret.prank.score.metrics.Curves
-import cz.siret.prank.score.metrics.Histogram
+import cz.siret.prank.prediction.metrics.ClassifierStats
+import cz.siret.prank.prediction.metrics.Curves
+import cz.siret.prank.prediction.metrics.Histogram
 import cz.siret.prank.utils.CSV
 import cz.siret.prank.utils.Formatter
-import cz.siret.prank.utils.PerfUtils
 import cz.siret.prank.utils.Writable
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
