@@ -30,6 +30,35 @@ import cz.siret.prank.program.params.Params
 
     log_to_file = false
 
+    //
+
+    residue_score_threshold = 1d
+
+    //
+
+    atom_table_feat_keep_sgn = true
+
+    atom_table_features = ["ap5sasaValids","ap5sasaInvalids","apRawValids","apRawInvalids","atomicHydrophobicity"]
+
+    extra_features = ["chem","volsite","protrusion","bfactor"]
+
+    residue_table_features = ["RAx"]
+
+    average_feat_vectors = true
+
+    balance_class_weights = true
+
+    target_class_weight_ratio = 0.055
+
+
+    // technical
+
+    cache_datasets = true
+
+    clear_sec_caches = false
+
+    clear_prim_caches = false
+
 
 
 }
