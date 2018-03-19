@@ -35,8 +35,8 @@ class GridPointSampler extends PointSampler implements Parametrized {
 
         protein.proteinAtoms.withKdTreeConditional()
 
-        Atoms surroundingProteinAtoms = protein.proteinAtoms.cutoffAtomsInBox(box.enlarge(MIN_DISTFROM_PROTEIN))
-        Atoms realSurfaceAtoms = surroundingProteinAtoms.cutoffAtoms(pocket.surfaceAtoms, 1)
+        Atoms surroundingProteinAtoms = protein.proteinAtoms.cutoutBox(box.enlarge(MIN_DISTFROM_PROTEIN))
+        Atoms realSurfaceAtoms = surroundingProteinAtoms.cutoutShell(pocket.surfaceAtoms, 1)
 
         if (pocket.surfaceAtoms.count != realSurfaceAtoms.count) {
             log.warn "received pocket surface atoms != real surface atoms ($pocket.surfaceAtoms.count != $realSurfaceAtoms.count)"

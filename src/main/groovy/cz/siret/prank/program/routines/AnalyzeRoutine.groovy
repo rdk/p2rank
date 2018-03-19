@@ -7,7 +7,7 @@ import cz.siret.prank.domain.loaders.LoaderParams
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.domain.ResidueChain
 import cz.siret.prank.domain.labeling.BinaryLabelings
-import cz.siret.prank.domain.labeling.BinaryResidueLabeling
+import cz.siret.prank.domain.labeling.BinaryLabeling
 import cz.siret.prank.domain.labeling.SprintLabelingLoader
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.program.Main
@@ -80,7 +80,7 @@ class AnalyzeRoutine extends Routine {
         dataset.processItems { Dataset.Item item ->
             Protein p = item.protein
 
-            Atoms bindingAtoms = p.proteinAtoms.cutoffAtoms(p.allLigandAtoms, residueCutoff)
+            Atoms bindingAtoms = p.proteinAtoms.cutoutShell(p.allLigandAtoms, residueCutoff)
             List<Integer> bindingResidueIds = bindingAtoms.distinctGroups.collect { it.residueNumber.seqNum }.toSet().toSorted()
 
             String msg = "Protein [$p.name]  ligands: $p.ligandCount  bindingAtoms: $bindingAtoms.count  bindingResidues: ${bindingResidueIds.size()}"
@@ -135,12 +135,12 @@ class AnalyzeRoutine extends Routine {
         dataset.processItems { Dataset.Item item ->
             Protein p = item.protein
 
-            BinaryResidueLabeling labeling = labeler.getBinaryLabeling(p.proteinResidues, p)
+            BinaryLabeling labeling = labeler.getBinaryLabeling(p.residues, p)
             def s = BinaryLabelings.getStats(labeling)
 
             int nchains = p.residueChains.size()
             String chainIds = p.residueChains.collect { it.id }.join(" ")
-            int nres = p.proteinResidues.size()
+            int nres = p.residues.size()
             int nlabres = s.total
             csv << "${item.label}, $nchains, $chainIds, $nres, $nlabres, ${s.positives}, ${s.negatives}, ${s.unlabeled}\n"
 
@@ -150,7 +150,7 @@ class AnalyzeRoutine extends Routine {
                         proteinFile: item.proteinFile,
                         label: item.label,
                         protein: item.protein,
-                        binaryLabeling: labeling
+                        observedLabeling: labeling
                 )).render()
             }
         }

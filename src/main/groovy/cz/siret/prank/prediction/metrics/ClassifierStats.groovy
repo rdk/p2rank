@@ -73,6 +73,15 @@ class ClassifierStats implements Parametrized, Writable {
         }
     }
 
+    private static final double[] HIST_0 = [1, 0] as double[]
+    private static final double[] HIST_1 = [0, 1] as double[]
+
+    void addPrediction(boolean observed, boolean predicted) {
+        double score = predicted ? 1 : 0
+        double[] hist = predicted ? HIST_1 : HIST_0
+        addPrediction(observed, predicted, score, hist)
+    }
+
     /**
      *
      * @param observed   observed class == 1
@@ -168,6 +177,7 @@ class ClassifierStats implements Parametrized, Writable {
     /**
      * flyweight class for 1D statistics 
      */
+    @CompileStatic
     class Metrics {
 
         private Advanced advanced = null

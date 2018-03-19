@@ -4,7 +4,7 @@ import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Prediction
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.geom.Point
-import cz.siret.prank.utils.StrUtils
+import cz.siret.prank.utils.Sutils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
@@ -49,7 +49,7 @@ class LiseLoader extends PredictionLoader {
 
         int i = 1
         for (String line : lines) {
-            List<String> cols = StrUtils.splitOnWhitespace(line)
+            List<String> cols = Sutils.splitOnWhitespace(line)
 
             LisePocket poc = new LisePocket()
 
@@ -62,7 +62,7 @@ class LiseLoader extends PredictionLoader {
             poc.centroid = new Point(x, y, z)
             
             if (liganatedProtein!=null) {
-                poc.surfaceAtoms = liganatedProtein.exposedAtoms.cutoffAroundAtom(poc.centroid, SURFACE_ATOMS_CUTOFF)
+                poc.surfaceAtoms = liganatedProtein.exposedAtoms.cutoutSphere(poc.centroid, SURFACE_ATOMS_CUTOFF)
             }
 
             res.add(poc)

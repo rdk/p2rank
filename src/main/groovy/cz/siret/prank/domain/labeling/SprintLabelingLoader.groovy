@@ -5,6 +5,7 @@ import cz.siret.prank.domain.AA
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.domain.Residue
 import cz.siret.prank.domain.ResidueChain
+import cz.siret.prank.domain.Residues
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.Writable
@@ -41,7 +42,7 @@ class SprintLabelingLoader extends ResidueLabeler<Boolean> implements Writable {
     }
 
     @Override
-    ResidueLabeling<Boolean> labelResidues(List<Residue> residues, Protein protein) {
+    ResidueLabeling<Boolean> labelResidues(Residues residues, Protein protein) {
 
         Map<Residue.Key, Boolean> labelMap = new HashMap<>()
 
@@ -82,9 +83,9 @@ class SprintLabelingLoader extends ResidueLabeler<Boolean> implements Writable {
             throw new PrankException("Labeling not defined for any chain of protein [$protein.name]")
         }
 
-        BinaryResidueLabeling result = new BinaryResidueLabeling()
+        BinaryLabeling result = new BinaryLabeling(residues.count)
 
-        for (Residue residue : residues) {
+        for (Residue residue : residues.list) {
             result.add(residue, labelMap.get(residue.key))
         }
 

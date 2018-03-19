@@ -62,11 +62,9 @@ class Protein implements Parametrized {
 
 //===========================================================================================================//
 
-    private List<Residue> proteinResidues
-    private List<Residue> exposedResidues
-    private Atoms residueAtoms
-    private Map<Residue.Key, Residue> proteinResidueMap
     private Map<String, ResidueChain> residueChainsMap
+    private Residues residues
+    private Residues exposedResidues
 
 //===========================================================================================================//
 
@@ -165,49 +163,42 @@ class Protein implements Parametrized {
     void calculateResidues() {
         residueChainsMap = Maps.uniqueIndex(residueChainsFromStructure(structure), { it.id })
 
-        //Struct.getProteinChainGroups(structure).collect { Residue.fromGroup(it) }.asList()
-        proteinResidues = (List<Residue>) residueChains.collect { it.residues }.asList().flatten()
-        proteinResidueMap = Maps.uniqueIndex(proteinResidues, { it.key })
+        residues = new Residues( (List<Residue>) residueChains.collect { it.residues }.asList().flatten() )
     }
 
     void checkResiduesCalculated() {
-        if (residueChainsMap == null) {
+        if (residues == null) {
             calculateResidues()
         }
     }
 
     void clearResidues() {
-        proteinResidues   = null
+        residues   = null
         exposedResidues   = null
-        proteinResidueMap = null
         residueChainsMap  = null
-        residueAtoms = null
     }
 
     /**
      * @return list of residues from main protein chanis
      */
-    List<Residue> getProteinResidues() {
+    Residues getResidues() {
         checkResiduesCalculated()
         
-        proteinResidues
+        residues
     }
 
     /**
-     * All atoms from proteinResidues.
+     * All atoms from residues.
      * Ideally, it should be the same as proteinAtoms,
      * however there can be minor differences due to imperfect structure model in biojava.
      */
     Atoms getResidueAtoms() {
-        if (residueAtoms == null) {
-            residueAtoms = Atoms.join(getProteinResidues().collect { it.atoms })
-        }
-        residueAtoms
+        getResidues().atoms
     }
 
-    List<Residue> getExposedResidues() {
+    Residues getExposedResidues() {
         checkResiduesCalculated()
-
+        
         // even lazier initialization, requires calculation of the surface
         if (exposedResidues == null) {
             calculateExposedResidues()
@@ -230,9 +221,7 @@ class Protein implements Parametrized {
 
     @Nullable
     Residue getResidueForAtom(Atom a) {
-        checkResiduesCalculated()
-
-        proteinResidueMap.get(Residue.Key.forAtom(a))
+        getResidues().getResidueForAtom(a)
     }
 
     private void calculateExposedResidues() {
@@ -244,7 +233,7 @@ class Protein implements Parametrized {
                 res.exposed = true
             }
         }
-        exposedResidues = proteinResidues.findAll { it.exposed }.asList()
+        exposedResidues = new Residues( residues.list.findAll { it.exposed }.asList() )
     }
 
 //===========================================================================================================//

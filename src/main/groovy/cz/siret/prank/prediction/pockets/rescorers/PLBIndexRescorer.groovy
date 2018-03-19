@@ -6,7 +6,7 @@ import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.features.tables.PropertyTable
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.PdbUtils
-import cz.siret.prank.utils.StrUtils
+import cz.siret.prank.utils.Sutils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
@@ -70,7 +70,7 @@ class PLBIndexRescorer extends PocketRescorer {
             p.ZPLB = (p.PLBi - mu) / sig
             p.pocket.newScore = p.ZPLB
 
-            log.info StrUtils.toStr(p)
+            log.info Sutils.toStr(p)
         }
 
     }

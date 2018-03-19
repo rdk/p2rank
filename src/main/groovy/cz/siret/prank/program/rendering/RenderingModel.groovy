@@ -1,7 +1,7 @@
 package cz.siret.prank.program.rendering
 
 import cz.siret.prank.domain.Protein
-import cz.siret.prank.domain.labeling.BinaryResidueLabeling
+import cz.siret.prank.domain.labeling.BinaryLabeling
 import cz.siret.prank.domain.labeling.LabeledPoint
 import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
@@ -24,7 +24,8 @@ class RenderingModel {
     String label
 
     Protein protein
-    BinaryResidueLabeling binaryLabeling
+    BinaryLabeling observedLabeling
+    BinaryLabeling predictedLabeling
     List<LabeledPoint> labeledPoints
 
     Style style = new Style() 

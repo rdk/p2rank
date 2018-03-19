@@ -4,8 +4,7 @@ import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Prediction
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.geom.Point
-import cz.siret.prank.utils.Futils
-import cz.siret.prank.utils.StrUtils
+import cz.siret.prank.utils.Sutils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
@@ -53,7 +52,7 @@ class P2RankLoader extends PredictionLoader {
 
         int i = 1
         for (String line : lines) {
-            List<String> cols = StrUtils.split(line, ',')
+            List<String> cols = Sutils.split(line, ',')
 
             P2RankPocket poc = new P2RankPocket()
 
@@ -66,7 +65,7 @@ class P2RankLoader extends PredictionLoader {
             poc.centroid = new Point(x, y, z)
 
             if (liganatedProtein!=null) {
-                poc.surfaceAtoms = liganatedProtein.exposedAtoms.cutoffAroundAtom(poc.centroid, SURFACE_ATOMS_CUTOFF)
+                poc.surfaceAtoms = liganatedProtein.exposedAtoms.cutoutSphere(poc.centroid, SURFACE_ATOMS_CUTOFF)
             }
 
             res.add(poc)

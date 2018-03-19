@@ -61,12 +61,12 @@ class Ligand implements Parametrized {
     }
 
 //    Atoms calcContactAtoms(Atoms proteinAtoms) {
-//        return proteinAtoms.cutoffAtoms(atoms, params.ligand_protein_contact_distance)
+//        return proteinAtoms.cutoutShell(atoms, params.ligand_protein_contact_distance)
 //    }
 
     Atoms getSasPoints() {
         if (sasPoints==null) {
-            sasPoints = protein.accessibleSurface.points.cutoffAtoms(this.atoms, params.ligand_induced_volume_cutoff)
+            sasPoints = protein.accessibleSurface.points.cutoutShell(this.atoms, params.ligand_induced_volume_cutoff)
         }
         return sasPoints
     }

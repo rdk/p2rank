@@ -51,7 +51,7 @@ class AsaFeature extends SasFeatureCalculator implements Parametrized, Writable 
 
     @Override
     double[] calculateForSasPoint(Atom sasPoint, SasFeatureCalculationContext context) {
-        Atoms localAtoms = context.protein.exposedAtoms.cutoffAroundAtom(sasPoint, params.feat_asa_neigh_radius)
+        Atoms localAtoms = context.protein.exposedAtoms.cutoutSphere(sasPoint, params.feat_asa_neigh_radius)
         ProtAsa protAsa = (ProtAsa) context.protein.secondaryData.get("prot_atom_asa")
         double localAsa = (double) localAtoms.collect { Atom a -> protAsa.asaByAtom.get(a.PDBserial) ?: 0 }.sum(0)
 

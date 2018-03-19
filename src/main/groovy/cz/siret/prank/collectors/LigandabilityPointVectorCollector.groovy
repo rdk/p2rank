@@ -11,7 +11,7 @@ import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.prediction.pockets.criteria.DCA
 import cz.siret.prank.prediction.pockets.criteria.PocketCriterium
-import cz.siret.prank.utils.CollectionUtils
+import cz.siret.prank.utils.Cutils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
@@ -67,7 +67,7 @@ class LigandabilityPointVectorCollector extends VectorCollector implements Param
 
             List<Pocket> usePockets = pair.prediction.pockets  // use all pockets
             if (params.train_pockets>0) {
-                usePockets = [ *pair.getCorrectlyPredictedPockets(criterium) , *CollectionUtils.head(params.train_pockets, pair.getFalsePositivePockets(criterium)) ]
+                usePockets = [ *pair.getCorrectlyPredictedPockets(criterium) , *Cutils.head(params.train_pockets, pair.getFalsePositivePockets(criterium)) ]
             }
 
             for (Pocket pocket in usePockets) {
@@ -97,7 +97,7 @@ class LigandabilityPointVectorCollector extends VectorCollector implements Param
         Atoms points = proteinExtractor.sampledPoints
 
         if (params.train_lig_cutoff > 0) {
-            points = points.cutoffAtoms(ligandAtoms, params.train_lig_cutoff)
+            points = points.cutoutShell(ligandAtoms, params.train_lig_cutoff)
         }
 
         for (Atom point in points) {        // TODO lot of repeated code with next method... refactor!

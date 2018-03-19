@@ -31,7 +31,7 @@ class Surface implements Parametrized {
     }
 
     Atoms computeExposedAtoms(Atoms proteinAtoms) {
-        return proteinAtoms.cutoffAtoms(points, solventRadius + VAN_DER_WAALS_COMPENSATION)
+        return proteinAtoms.cutoutShell(points, solventRadius + VAN_DER_WAALS_COMPENSATION)
     }
 
     /**

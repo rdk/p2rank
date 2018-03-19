@@ -49,7 +49,7 @@ class ConservationCloudFeature extends SasFeatureCalculator implements Parametri
             return [0.0] as double[]
         }
 
-       Atoms surroundingAtoms = context.extractor.deepLayer.cutoffAroundAtom(sasPoint, params.protrusion_radius)
+       Atoms surroundingAtoms = context.extractor.deepLayer.cutoutSphere(sasPoint, params.protrusion_radius)
        double value = surroundingAtoms.getDistinctGroups().stream().mapToDouble({ Group group ->
             score.getScoreForResidue(group.getResidueNumber())
         }).average().getAsDouble(); 

@@ -130,7 +130,7 @@ class Main implements Parametrized, Writable {
 
         String prefixdate = ""
         if (params.out_prefix_date) {
-            prefixdate = StrUtils.timeLabel() + "_"
+            prefixdate = Sutils.timeLabel() + "_"
         }
 
         if (label==null) {

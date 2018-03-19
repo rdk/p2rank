@@ -8,7 +8,7 @@ import cz.siret.prank.program.params.Params
 import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.utils.CmdLineArgs
 import cz.siret.prank.utils.Futils
-import cz.siret.prank.utils.StrUtils
+import cz.siret.prank.utils.Sutils
 import groovy.util.logging.Slf4j
 
 import static cz.siret.prank.utils.Futils.safe
@@ -73,7 +73,7 @@ class Experiments extends Routine {
         assert datasetArg!=null
         if (datasetArg.contains('+')) {
             // joined dataset
-            List<Dataset> datasets = StrUtils.split(datasetArg, '+').collect { prepareSingleDataset(it) }.toList()
+            List<Dataset> datasets = Sutils.split(datasetArg, '+').collect { prepareSingleDataset(it) }.toList()
             return Dataset.createJoined(datasets)
         } else {
             return prepareSingleDataset(datasetArg)

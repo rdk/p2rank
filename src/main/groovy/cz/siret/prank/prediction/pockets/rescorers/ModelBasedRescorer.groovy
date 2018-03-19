@@ -85,7 +85,7 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
             FeatureExtractor extractor = (proteinExtractor as PrankFeatureExtractor).createInstanceForWholeProtein()
 
             labeledPoints = new ArrayList<>(extractor.sampledPoints.count)
-            for (Atom point in extractor.sampledPoints) {
+            for (Atom point : extractor.sampledPoints) {
                 labeledPoints.add(new LabeledPoint(point))
             }
 

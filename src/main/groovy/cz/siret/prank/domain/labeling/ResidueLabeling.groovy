@@ -12,7 +12,7 @@ import javax.annotation.Nullable
 @CompileStatic
 class ResidueLabeling<L>  {
 
-    private List<LabeledResidue> labeledResidues
+    private List<LabeledResidue<L>> labeledResidues
     private Map<Residue.Key, LabeledResidue<L>> labeledMap
 
     ResidueLabeling(List<LabeledResidue> labeledResidues) {
@@ -20,9 +20,9 @@ class ResidueLabeling<L>  {
         this.labeledMap = Maps.uniqueIndex(labeledResidues, { it.residue.key })
     }
 
-    ResidueLabeling() {
-        this.labeledResidues = new ArrayList<>()
-        this.labeledMap = new HashMap<>()
+    ResidueLabeling(int initSize = 128) {
+        this.labeledResidues = new ArrayList<>(initSize)
+        this.labeledMap = new HashMap<>(initSize)
     }
     
     void add(Residue residue, L label) {
@@ -41,7 +41,7 @@ class ResidueLabeling<L>  {
         return labeledMap.get(residue.key)
     }
 
-    List<LabeledResidue> getLabeledResidues() {
+    List<LabeledResidue<L>> getLabeledResidues() {
         return labeledResidues
     }
     

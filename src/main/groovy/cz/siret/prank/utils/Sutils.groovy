@@ -12,22 +12,25 @@ import org.apache.commons.lang3.builder.ToStringStyle
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 
+/**
+ * String utils
+ */
 @CompileStatic
-class StrUtils {
+class Sutils {
 
 //    static DateFormat DATE_LABEL_FORMAT = new SimpleDateFormat("yyyy.MM.dd_HHmm")
-    static DateFormat DATE_LABEL_FORMAT = new SimpleDateFormat("yyMMdd_HHmm")
+    static final DateFormat DATE_LABEL_FORMAT = new SimpleDateFormat("yyMMdd_HHmm")
 
-    static Gson GSON = new GsonBuilder().setPrettyPrinting().create()
+    static final Gson GSON = new GsonBuilder().setPrettyPrinting().create()
 
     private static class MSN extends ToStringStyle {
         MSN() {
             super()
 
             this.setContentStart("[");
-            this.setFieldSeparator(SystemUtils.LINE_SEPARATOR + "  ");
+            this.setFieldSeparator(System.lineSeparator() + "  ");
             this.setFieldSeparatorAtStart(true);
-            this.setContentEnd(SystemUtils.LINE_SEPARATOR + "]");
+            this.setContentEnd(System.lineSeparator() + "]");
 
             useShortClassName = true
             useIdentityHashCode = false

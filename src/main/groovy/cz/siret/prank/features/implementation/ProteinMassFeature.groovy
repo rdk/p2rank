@@ -4,7 +4,6 @@ import cz.siret.prank.domain.Protein
 import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.features.api.SasFeatureCalculationContext
 import cz.siret.prank.features.api.SasFeatureCalculator
-import cz.siret.prank.geom.Atoms
 import cz.siret.prank.program.params.Parametrized
 import org.biojava.nbio.structure.Atom
 
@@ -35,7 +34,7 @@ class ProteinMassFeature extends SasFeatureCalculator implements Parametrized {
     @Override
     double[] calculateForSasPoint(Atom point, SasFeatureCalculationContext ctx) {
 
-        Atom center1 = ctx.protein.proteinAtoms.cutoffAroundAtom(point, params.feat_pmass_radius).centerOfMass ?: point
+        Atom center1 = ctx.protein.proteinAtoms.cutoutSphere(point, params.feat_pmass_radius).centerOfMass ?: point
 //        Atom center2 = ctx.neighbourhoodAtoms.centerOfMass ?: point
 
         double protp = dist(point, center1)

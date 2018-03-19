@@ -2,6 +2,7 @@ package cz.siret.prank.domain
 
 import com.google.common.base.CharMatcher
 import com.google.common.base.Splitter
+import cz.siret.prank.domain.labeling.BinaryLabeling
 import cz.siret.prank.domain.labeling.ResidueLabeler
 import cz.siret.prank.domain.loaders.pockets.ConcavityLoader
 import cz.siret.prank.domain.loaders.pockets.DeepSiteLoader
@@ -16,7 +17,7 @@ import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.ThreadPoolFactory
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Futils
-import cz.siret.prank.utils.StrUtils
+import cz.siret.prank.utils.Sutils
 import groovy.util.logging.Slf4j
 
 import javax.annotation.Nullable
@@ -64,6 +65,8 @@ class Dataset implements Parametrized {
     List<String> header = DEFAULT_HEADER
     List<Item> items = new ArrayList<>()
     boolean cached = false
+
+    private ResidueLabeler residueLabeler
 
 //===========================================================================================================//
 
@@ -141,7 +144,7 @@ class Dataset implements Parametrized {
      */
     Result processItems(boolean parallel, final Processor processor) {
 
-        log.trace "ITEMS: " + StrUtils.toStr(items)
+        log.trace "ITEMS: " + Sutils.toStr(items)
 
         Result result = new Result()
 
@@ -351,8 +354,11 @@ class Dataset implements Parametrized {
      */
     @Nullable
     ResidueLabeler getResidueLabeler() {
-        String labelingFile = dir + "/" + attributes.get(PARAM_RESIDUE_LABELING_FILE)
-        ResidueLabeler.loadFromFile(attributes.get(PARAM_RESIDUE_LABELING_FORMAT), labelingFile)
+        if (residueLabeler == null && hasResidueLabeling()) {
+            String labelingFile = dir + "/" + attributes.get(PARAM_RESIDUE_LABELING_FILE)
+            residueLabeler = ResidueLabeler.loadFromFile(attributes.get(PARAM_RESIDUE_LABELING_FORMAT), labelingFile)
+        }
+        return  residueLabeler
     }
 
     @Nullable
@@ -466,6 +472,10 @@ class Dataset implements Parametrized {
      * Contains file names, (optionally) ligand codes and cached structures.
      */
     class Item {
+        /**
+         * origin dataset (points to original loaded dataset when dataset is split to folds)
+         */
+        Dataset dataset
         Map<String, String> columnValues
         String proteinFile  // liganated/unliganated protein for predictions
         @Nullable String pocketPredictionFile // nullable
@@ -529,6 +539,17 @@ class Dataset implements Parametrized {
             } else {
                 Splitter.on(",").split(columnValues[COLUMN_CHAINS]).asList()
             }
+        }
+
+        /**
+         * @return binary residue labeling that is defined in the dataset
+         */
+        @Nullable
+        BinaryLabeling getDefinedBinaryLabeling() {
+            if (dataset.hasResidueLabeling()) {
+                return dataset.binaryResidueLabeler.getBinaryLabeling(protein.residues, protein)
+            }
+            return null
         }
 
         ProcessedItemContext getContext() {

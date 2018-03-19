@@ -1,6 +1,6 @@
 package cz.siret.prank.program.rendering
 
-import cz.siret.prank.domain.labeling.BinaryResidueLabeling
+import cz.siret.prank.domain.labeling.BinaryLabeling
 import cz.siret.prank.domain.labeling.LabeledResidue
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Futils
@@ -100,10 +100,11 @@ orient
 
 
     private String renderResidueColoring() {
-        renderBinaryResidueColoring(model.binaryLabeling)
+        renderBinaryResidueColoring(model.observedLabeling)
+        // TODO
     }
 
-    private String renderBinaryResidueColoring(BinaryResidueLabeling labeling) {
+    private String renderBinaryResidueColoring(BinaryLabeling labeling) {
         StringBuilder res = new StringBuilder()
 
         res << "set_color pos_res_col = " + pyColor(model.style.positiveResiduesColor) + "\n"

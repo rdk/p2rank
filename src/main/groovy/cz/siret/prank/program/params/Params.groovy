@@ -2,7 +2,7 @@ package cz.siret.prank.program.params
 
 import cz.siret.prank.program.Main
 import cz.siret.prank.utils.CmdLineArgs
-import cz.siret.prank.utils.StrUtils
+import cz.siret.prank.utils.Sutils
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
@@ -399,6 +399,11 @@ class Params {
     boolean predict_residues = false
 
     /**
+     * score threshold for predicted binary label
+     */
+    double residue_score_threshold = 1d
+
+    /**
      * minimum ligandability score for SAS point to be considered ligandable
      */
     double pred_point_threshold = 0.4
@@ -759,7 +764,7 @@ class Params {
                 if (value instanceof List) {
                     me."$pname" = value
                 } else {
-                    me."$pname" = StrUtils.parseList(value)
+                    me."$pname" = Sutils.parseList(value)
                 }
             } else if (pv instanceof Boolean) {
                 if ("0"==value) value=false
@@ -782,7 +787,7 @@ class Params {
 
     @Override
     String toString() {
-        return StrUtils.toStr(this).replace('=', ' = ') + "\n"
+        return Sutils.toStr(this).replace('=', ' = ') + "\n"
     }
 
 }

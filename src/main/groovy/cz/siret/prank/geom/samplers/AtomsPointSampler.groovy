@@ -16,7 +16,7 @@ class AtomsPointSampler extends PointSampler {
         if (pocket.surfaceAtoms.isEmpty())
             return new Atoms()
 
-        Atoms realExposedAtoms = protein.exposedAtoms.cutoffAtoms(pocket.surfaceAtoms, 1.5d)
+        Atoms realExposedAtoms = protein.exposedAtoms.cutoutShell(pocket.surfaceAtoms, 1.5d)
 
         return realExposedAtoms
     }

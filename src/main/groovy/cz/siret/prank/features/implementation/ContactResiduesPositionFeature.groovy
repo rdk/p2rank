@@ -58,7 +58,7 @@ class ContactResiduesPositionFeature extends SasFeatureCalculator implements Par
     @Override
     double[] calculateForSasPoint(Atom sasPoint, SasFeatureCalculationContext context) {
 
-        Atoms contactAtoms = context.neighbourhoodAtoms.cutoffAroundAtom(sasPoint, contactDist)
+        Atoms contactAtoms = context.neighbourhoodAtoms.cutoutSphere(sasPoint, contactDist)
         List<AminoAcid> contactResidues = (List<AminoAcid>)(List)contactAtoms.getDistinctGroups().findAll{ it instanceof AminoAcid }.toList()
 
         log.debug 'contact residues: ' + contactResidues.size()

@@ -101,7 +101,7 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
 
         protein.calcuateSurfaceAndExposedAtoms()
         double thickness = max(params.protrusion_radius, params.pair_hist_radius)
-        res.deepLayer = protein.proteinAtoms.cutoffAtoms(protein.exposedAtoms, thickness).buildKdTree()
+        res.deepLayer = protein.proteinAtoms.cutoutShell(protein.exposedAtoms, thickness).buildKdTree()
 
         // init features
         for (FeatureSetup.Feature feature : featureSetup.enabledFeatures) {
@@ -119,8 +119,8 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
         if (params.deep_surrounding) {
             surfaceLayerAtoms = deepLayer
         } else {
-            // surfaceLayerAtoms = protein.proteinAtoms.cutoffAroundAtom(pocket.surfaceAtoms, 1)  // shallow
-            //surfaceLayerAtoms = protein.exposedAtoms.cutoffAtoms(pocket.surfaceAtoms, 6) //XXX
+            // surfaceLayerAtoms = protein.proteinAtoms.cutoutSphere(pocket.surfaceAtoms, 1)  // shallow
+            //surfaceLayerAtoms = protein.exposedAtoms.cutoutShell(pocket.surfaceAtoms, 6) //XXX
             surfaceLayerAtoms = protein.exposedAtoms
         }
 
@@ -176,7 +176,7 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
     private void initForPocket() {
         log.debug "extractorFactory initForPocket for pocket $pocket.name"
 
-        //surfaceLayerAtoms = surfaceLayerAtoms.cutoffAtoms(pocket.surfaceAtoms, 6) //XXX
+        //surfaceLayerAtoms = surfaceLayerAtoms.cutoutShell(pocket.surfaceAtoms, 6) //XXX
         log.debug "surfaceLayerAtoms:$surfaceLayerAtoms.count (surfaceAtoms: $pocket.surfaceAtoms.count) "
 
         sampledPoints = pocketPointSampler.samplePointsForPocket(pocket)
@@ -188,8 +188,7 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
      * Used for predictions (P2RANK)
      * @return
      */
-    FeatureExtractor createInstanceForWholeProtein() {
-
+    FeatureExtractor createInstanceForWholeProtein(Atoms sampledPoints = null) {
         PrankFeatureExtractor res = new PrankFeatureExtractor(protein, null, this)
 
         // init for whole protein
@@ -197,14 +196,15 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
 
         res.surfaceLayerAtoms = protein.exposedAtoms
 
-
         res.preEvaluateProperties(res.surfaceLayerAtoms)
         if (DO_SMOOTH_REPRESENTATION) {
             res.preEvaluateSmoothRepresentations(surfaceLayerAtoms)
         }
-        res.sampledPoints = protein.getSurface(trainingExtractor).points
-
-
+        
+        if (sampledPoints == null) {
+            sampledPoints = protein.getSurface(trainingExtractor).points
+        }
+        res.sampledPoints = sampledPoints
 
         log.info "P2R protein:$protein.proteinAtoms.count  exposedAtoms:$res.surfaceLayerAtoms.count  deepLayer:$res.deepLayer.count sasPoints:$res.sampledPoints.count"
 
@@ -356,7 +356,7 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
      */
     private PrankFeatureVector calcSmoothRepresentation(Atom atom) {
 
-        Atoms neighbourhood = surfaceLayerAtoms.cutoffAroundAtom(atom, SMOOTHING_CUTOFF_DIST)
+        Atoms neighbourhood = surfaceLayerAtoms.cutoutSphere(atom, SMOOTHING_CUTOFF_DIST)
 
         return calcFeatureVectorFromAtoms(atom, false, neighbourhood)
     }
@@ -373,7 +373,7 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
     @Override
     public PrankFeatureVector calcFeatureVector(Atom point) {
 
-        Atoms neighbourhood = surfaceLayerAtoms.cutoffAroundAtom(point, NEIGH_CUTOFF_DIST)
+        Atoms neighbourhood = surfaceLayerAtoms.cutoutSphere(point, NEIGH_CUTOFF_DIST)
 
         return calcFeatureVectorFromAtoms(point, DO_SMOOTH_REPRESENTATION, neighbourhood)
     }

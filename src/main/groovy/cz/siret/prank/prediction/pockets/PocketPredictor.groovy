@@ -8,7 +8,7 @@ import cz.siret.prank.geom.Struct
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.domain.labeling.LabeledPoint
 import cz.siret.prank.prediction.transformation.ScoreTransformer
-import cz.siret.prank.utils.CollectionUtils
+import cz.siret.prank.utils.Cutils
 import cz.siret.prank.utils.Futils
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.StringUtils
@@ -36,7 +36,7 @@ class PocketPredictor implements Parametrized {
         double score = pointScoreCalculator.transformedPointScore(point.hist)
 
         if (BALANCE_POINT_DENSITY) {
-            int pts = surfacePoints.cutoffAroundAtom(point, BALANCE_RADIUS).count
+            int pts = surfacePoints.cutoutSphere(point, BALANCE_RADIUS).count
             score = score / pts
         }
 
@@ -63,7 +63,7 @@ class PocketPredictor implements Parametrized {
 
             List<LabeledPoint> scoringPoints = sasPoints
             if (SCORE_POINT_LIMIT > 0) {
-                scoringPoints = CollectionUtils.head(SCORE_POINT_LIMIT, sasPoints)
+                scoringPoints = Cutils.head(SCORE_POINT_LIMIT, sasPoints)
             }
 
             score = (double) scoringPoints.collect { it.score }.sum(0)
@@ -133,12 +133,12 @@ class PocketPredictor implements Parametrized {
 
             Atoms pocketPoints = clusterPoints
             if (EXTENDED_POCKET_CUTOFF > 0d) {
-                Atoms extendedPocketPoints = labeledPoints.cutoffAtoms(clusterPoints, EXTENDED_POCKET_CUTOFF)
+                Atoms extendedPocketPoints = labeledPoints.cutoutShell(clusterPoints, EXTENDED_POCKET_CUTOFF)
                 pocketPoints = extendedPocketPoints
             }
             
 //          double score = (double) pocketPoints.collect { scorePoint((LabeledPoint)it, allSasPoints) }.sum(0)
-            Atoms pocketSurfaceAtoms = protein.exposedAtoms.cutoffAtoms(pocketPoints, POCKET_PROT_SURFACE_CUTOFF)
+            Atoms pocketSurfaceAtoms = protein.exposedAtoms.cutoutShell(pocketPoints, POCKET_PROT_SURFACE_CUTOFF)
             double score = pocketScore(pocketPoints, labeledPoints, protein, pocketSurfaceAtoms)
 
             Atoms pocketSasPoints = new Atoms( pocketPoints.collect { ((LabeledPoint)it).point }.toList() )  // we want exact objects from protein.accessibleSurface

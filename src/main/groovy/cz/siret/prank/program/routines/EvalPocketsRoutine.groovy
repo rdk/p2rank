@@ -27,9 +27,8 @@ import static cz.siret.prank.utils.Futils.mkdirs
 class EvalPocketsRoutine extends EvalRoutine {
 
     Dataset dataset
-    String label
     Model model
-    EvalResults results
+    private EvalResults results
 
     EvalPocketsRoutine(Dataset dataSet, Model model, String outdir) {
         super(outdir)
@@ -37,7 +36,10 @@ class EvalPocketsRoutine extends EvalRoutine {
         this.model = model
     }
 
-    
+    EvalResults getResults() {
+        return results
+    }
+
     private PocketRescorer createRescorer(PredictionPair pair, FeatureExtractor extractor) {
         PocketRescorer rescorer
         switch ( params.rescorer ) {
@@ -82,11 +84,11 @@ class EvalPocketsRoutine extends EvalRoutine {
         }
 
         results = new EvalResults(1)
-        FeatureExtractor extractor = FeatureExtractor.createFactory()
+        final FeatureExtractor extractor = FeatureExtractor.createFactory()
 
-        Dataset.Result datasetResult = dataset.processItems { Dataset.Item item ->
+        results.datasetResult = dataset.processItems { Dataset.Item item ->
+
             PredictionPair pair = item.predictionPair
-
             PocketRescorer rescorer = createRescorer(pair, extractor)
             rescorer.reorderPockets(pair.prediction, item.context)
 
@@ -121,7 +123,6 @@ class EvalPocketsRoutine extends EvalRoutine {
         write "results saved to directory [${Futils.absPath(outdir)}]"
 
         results.evalTime = timer.time
-        results.datasetResult = datasetResult
 
         return results
     }

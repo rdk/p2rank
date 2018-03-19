@@ -1,5 +1,7 @@
 package cz.siret.prank.domain.labeling
 
+import cz.siret.prank.prediction.metrics.ClassifierStats
+
 /**
  * Calculations arond binary residua labelings
  */
@@ -12,7 +14,7 @@ class BinaryLabelings {
         int unlabeled = 0
     }
 
-    static Stats getStats(BinaryResidueLabeling labeling) {
+    static Stats getStats(BinaryLabeling labeling) {
         Stats s = new Stats()
         s.total = labeling.labeledResidues.size()
 
@@ -31,5 +33,17 @@ class BinaryLabelings {
         return s
     }
 
+    static ClassifierStats eval(BinaryLabeling observed, BinaryLabeling predicted) {
+        ClassifierStats stats = new ClassifierStats()
+
+        for (int i = 0; i < observed.labeledResidues.size(); i++) {
+            Boolean obs = observed.labeledResidues[i].label
+            Boolean pred = predicted.labeledResidues[i].label
+
+            stats.addPrediction(obs, pred)
+        }
+
+        return stats
+    }
 
 }

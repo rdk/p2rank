@@ -20,7 +20,7 @@ import org.apache.commons.lang3.StringUtils
 
 import static cz.siret.prank.geom.Atoms.intersection
 import static cz.siret.prank.geom.Atoms.union
-import static cz.siret.prank.utils.CollectionUtils.head
+import static cz.siret.prank.utils.Cutils.head
 import static cz.siret.prank.utils.Formatter.*
 import static java.util.Collections.emptyList
 
@@ -157,7 +157,7 @@ class Evaluation implements Parametrized, Writable {
         // overlaps and coverages
         int n_ligSasPoints = calcCoveragesProt(protRow, pair, sasPoints, pockets)
         // ligand coverage by positively predicted points (note: not by pockets!)
-        Atoms ligLabeledPoints = labeledPoints.cutoffAtoms(protein.allLigandAtoms, LIG_SAS_CUTOFF)
+        Atoms ligLabeledPoints = labeledPoints.cutoutShell(protein.allLigandAtoms, LIG_SAS_CUTOFF)
         int n_ligSasPointsCovered = ligLabeledPoints.toList().findAll { ((LabeledPoint) it).predicted }.toList().size()  // only for P2Rank
         //log.debug "XXXX n_ligSasPoints: $n_ligSasPoints covered: $n_ligSasPointsCovered"
 
@@ -246,7 +246,7 @@ class Evaluation implements Parametrized, Writable {
         List<Double> nonBindingScrs = new ArrayList<>();
         if (score != null) {
             protRow.avgConservation = getAvgConservationForAtoms(protein.proteinAtoms, score)
-            Atoms bindingAtoms = protein.proteinAtoms.cutoffAtoms(protein.allLigandAtoms, protein.params.ligand_protein_contact_distance)
+            Atoms bindingAtoms = protein.proteinAtoms.cutoutShell(protein.allLigandAtoms, protein.params.ligand_protein_contact_distance)
             protRow.avgBindingConservation = getAvgConservationForAtoms(bindingAtoms, score)
             Atoms nonBindingAtoms = new Atoms(protein.proteinAtoms - bindingAtoms)
             protRow.avgNonBindingConservation = getAvgConservationForAtoms(nonBindingAtoms, score)
@@ -275,7 +275,7 @@ class Evaluation implements Parametrized, Writable {
 
     private int calcCoveragesProt(ProteinRow protRow, PredictionPair pair, Atoms sasPoints, List<Pocket> pockets) {
         Protein prot = pair.protein
-        Atoms ligSasp = sasPoints.cutoffAtoms(prot.allLigandAtoms, LIG_SAS_CUTOFF)
+        Atoms ligSasp = sasPoints.cutoutShell(prot.allLigandAtoms, LIG_SAS_CUTOFF)
         int n_ligSasPoints = ligSasp.count
 
         // ligand coverage by pockets

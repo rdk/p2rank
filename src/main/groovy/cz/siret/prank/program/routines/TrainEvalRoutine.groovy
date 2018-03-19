@@ -41,7 +41,7 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
     private String trainVectorFile
     private String evalVectorFile
 
-    EvalPocketsRoutine evalRoutine
+    EvalRoutine evalRoutine
 
     TrainEvalRoutine(String outdir, Dataset trainData, Dataset evalData) {
         super(outdir)
@@ -155,7 +155,12 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
 
         timer.restart()
 
-        evalRoutine = new EvalPocketsRoutine(evalDataSet, model, outdir)
+        if (params.predict_residues) {
+            evalRoutine = new EvalResiduesRoutine(evalDataSet, model, outdir)
+        } else {
+            evalRoutine = new EvalPocketsRoutine(evalDataSet, model, outdir)
+        }
+
         EvalResults res = evalRoutine.execute()
         res.trainTime = trainTime
         res.train_positives = train_positives

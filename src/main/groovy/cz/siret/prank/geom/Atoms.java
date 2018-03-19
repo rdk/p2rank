@@ -301,9 +301,9 @@ public final class Atoms implements Iterable<Atom> {
 
 //===========================================================================================================//
 
-    public Atoms cutoffAtoms(Atoms aroundAtoms, double dist) {
+    public Atoms cutoutShell(Atoms aroundAtoms, double dist) {
         aroundAtoms.withKdTreeConditional();
-        Atoms res = new Atoms(100);
+        Atoms res = new Atoms(128);
 
         double sqrDist = dist*dist;
         for (Atom a : list) {
@@ -315,21 +315,20 @@ public final class Atoms implements Iterable<Atom> {
         return res;
     }
 
-
     /**
      * intercepting calls for further alalysis
      */
-    public Atoms cutoffAroundAtom_(Atom distanceTo, double dist) {
+    public Atoms cutSphere_(Atom distanceTo, double dist) {
         ATimer timer = startTimer();
 
-        Atoms res = doCutoffAroundAtom(distanceTo, dist);
+        Atoms res = doCutSphere(distanceTo, dist);
 
         CutoffAtomsCallLog.INST.addCall(getCount(), res.getCount(), timer.getTime());
 
         return res;
     }
 
-    private Atoms doCutoffAroundAtom(Atom distanceTo, double dist) {
+    private Atoms doCutSphere(Atom distanceTo, double dist) {
         List<Atom> res = new ArrayList<>();
         double sqrDist = dist*dist;
 
@@ -353,9 +352,9 @@ public final class Atoms implements Iterable<Atom> {
         return new Atoms(res);
     }
 
-    public Atoms cutoffAroundAtom(Atom distanceTo, double dist) {
-        List<Atom> res = new ArrayList<>();
-        double sqrDist = dist*dist;
+    public Atoms cutoutSphere(Atom distanceTo, double radius) {
+        List<Atom> res = new ArrayList<>(128);
+        double sqrDist = radius*radius;
 
         double[] toCoords = distanceTo.getCoords();
 
@@ -367,7 +366,7 @@ public final class Atoms implements Iterable<Atom> {
         return new Atoms(res);
     }
 
-    public Atoms cutoffAtomsInBox(Box box) {
+    public Atoms cutoutBox(Box box) {
         return new Atoms(Struct.cutoffAtomsInBox(this.list, box));
     }
 

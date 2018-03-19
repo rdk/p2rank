@@ -2,7 +2,7 @@ package cz.siret.prank.utils.rlang
 
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Futils
-import cz.siret.prank.utils.StrUtils
+import cz.siret.prank.utils.Sutils
 import groovyx.gpars.GParsPool
 
 import static cz.siret.prank.utils.Futils.delete
@@ -26,7 +26,7 @@ class RPlotter implements Parametrized {
         this.csvfile = csvfile
         this.outdir = outdir
 
-        header = StrUtils.split(new File(csvfile).readLines()[0], ",")
+        header = Sutils.split(new File(csvfile).readLines()[0], ",")
     }
 
     RPlotter(String outdir) {

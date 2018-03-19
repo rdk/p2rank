@@ -86,7 +86,7 @@ class MetaPocket2Loader extends PredictionLoader {
             poc.centroid = new Point(x, y, z)
 
             if (liganatedProtein!=null) {
-                poc.surfaceAtoms = liganatedProtein.exposedAtoms.cutoffAroundAtom(poc.centroid, SURFACE_ATOMS_CUTOFF)
+                poc.surfaceAtoms = liganatedProtein.exposedAtoms.cutoutSphere(poc.centroid, SURFACE_ATOMS_CUTOFF)
             }
 
             res.add(poc)

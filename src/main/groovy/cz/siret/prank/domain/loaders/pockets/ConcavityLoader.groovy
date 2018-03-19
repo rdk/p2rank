@@ -67,7 +67,7 @@ class ConcavityLoader extends PredictionLoader {
 
             int distToSurface = POCKET_GRID_TO_SURFACE_DIST
             while (poc.surfaceAtoms.empty && distToSurface<10) {    // TODO XXX
-                poc.surfaceAtoms = protein.exposedAtoms.cutoffAtoms(poc.gridPoints, distToSurface)
+                poc.surfaceAtoms = protein.exposedAtoms.cutoutShell(poc.gridPoints, distToSurface)
                 if (poc.surfaceAtoms.empty) {
                     log.warn "no surface atoms in dist=$distToSurface from gridpoints"
                 }

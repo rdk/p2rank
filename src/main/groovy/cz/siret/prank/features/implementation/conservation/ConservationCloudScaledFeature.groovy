@@ -40,7 +40,7 @@ class ConservationCloudScaledFeature extends SasFeatureCalculator implements Par
             return [0.0] as double[]
         }
 
-        Atoms surroundingAtoms = context.extractor.deepLayer.cutoffAroundAtom(sasPoint, params.protrusion_radius)
+        Atoms surroundingAtoms = context.extractor.deepLayer.cutoutSphere(sasPoint, params.protrusion_radius)
         double value = 0.0;
         for (Atom atom : surroundingAtoms) {
             double scale = 1.0 / PerfUtils.sqrDist(sasPoint.coords, atom.coords);
