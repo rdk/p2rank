@@ -36,6 +36,8 @@ import cz.siret.prank.program.params.Params
 
     //
 
+    classifier="FasterForest"
+
     atom_table_feat_keep_sgn = true
 
     atom_table_features = ["ap5sasaValids","ap5sasaInvalids","apRawValids","apRawInvalids","atomicHydrophobicity"]
@@ -59,6 +61,7 @@ import cz.siret.prank.program.params.Params
 
     clear_prim_caches = false
 
+    log_level = "WARN"
 
 
 }
