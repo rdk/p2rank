@@ -37,9 +37,14 @@ class RenderingModel {
         Color positiveResiduesColor = new Color(202,133,156)
         Color negativeResiduesColor = new Color(149,167,224)
 
-        Color tpColor = new Color(138,131,206)  // violet
-        Color fpColor = new Color(255,147,145)  // pink-red
-        Color fnColor = new Color(160,166,225)  // violet-blue
+        Color tpColor = new Color(100, 104, 142)  // blue
+        Color fpColor = new Color(246, 147, 150)    // magenta
+        Color fnColor = new Color(109, 186, 192)  // cyan
+
+        //Color tpColor = Color.BLUE     
+        //Color fpColor = Color.MAGENTA
+        //Color fnColor = Color.CYAN
+
         //Color tnColor = new Color()
     }
 

@@ -9,8 +9,12 @@ import cz.siret.prank.prediction.metrics.ClassifierStats
 import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Cutils
+import cz.siret.prank.utils.Formatter
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+
+import static cz.siret.prank.utils.Formatter.format
+import static cz.siret.prank.utils.Formatter.formatNumbers
 
 /**
  *
@@ -74,8 +78,10 @@ class ModelBasedResidueLabeler extends ResidueLabeler<Boolean> implements Parame
             if (exposed.contains(res)) { // calculate only for exposed
                 pscores = points.cutoutShell(res.atoms, radius).collect { (it as LabeledPoint).score }.asList()
             }
-
             double score = aggregateScore(pscores)
+
+            log.debug "RES[{}] pscores(n={},sum={}): {}", res, pscores.size(), format(score, 2), formatNumbers(pscores, 2)
+
             resScores.add(res, score)
         }
 

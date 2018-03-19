@@ -218,10 +218,12 @@ class Futils {
         }
     }
 
-    static void mkdirs(String s) {
-        if (s==null) return
+    static String mkdirs(String s) {
+        if (s==null) return null
 
         new File(s).mkdirs()
+
+        return s
     }
 
     static void copy(String from, String to) {

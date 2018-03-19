@@ -5,6 +5,7 @@ import cz.siret.prank.domain.Protein
 import cz.siret.prank.domain.labeling.BinaryLabeling
 import cz.siret.prank.domain.labeling.BinaryLabelings
 import cz.siret.prank.domain.labeling.LabeledPoint
+import cz.siret.prank.domain.labeling.LabeledResidue
 import cz.siret.prank.domain.labeling.ResidueBasedPointLabeler
 import cz.siret.prank.domain.labeling.ModelBasedResidueLabeler
 import cz.siret.prank.geom.Atoms
@@ -13,10 +14,13 @@ import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.rendering.PymolRenderer
 import cz.siret.prank.program.rendering.RenderingModel
 import cz.siret.prank.program.routines.results.EvalResults
+import cz.siret.prank.utils.Formatter
 import cz.siret.prank.utils.Futils
 
 import static cz.siret.prank.utils.ATimer.startTimer
+import static cz.siret.prank.utils.Formatter.bton
 import static cz.siret.prank.utils.Futils.mkdirs
+import static cz.siret.prank.utils.Futils.writeFile
 
 /**
  * Evaluate a model on a dataset.
@@ -65,6 +69,17 @@ class EvalResiduesRoutine extends EvalRoutine {
             synchronized (results) {
                 results.residuePredictionStats.addAll(predictionStats)
                 results.classifierStats.addAll(predictor.classifierStats) // asa points related stats
+            }
+
+            if (params.log_cases) {
+                String cdir = mkdirs ("$outdir/cases")
+                StringBuilder csv = new StringBuilder("obs_id, pred_id, observed, predicted\n")
+                for (int i = 0; i!=observed.labeledResidues.size(); i++) {
+                    LabeledResidue<Boolean> obs  = observed.labeledResidues[i]
+                    LabeledResidue<Boolean> pred = predicted.labeledResidues[i]
+                    csv << "$obs.residue, $pred.residue, ${bton(obs.label)}, ${bton(pred.label)}\n"
+                }
+                writeFile "$cdir/${protein.name}_residues.csv", csv
             }
 
             if (params.visualizations) {

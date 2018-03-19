@@ -13,6 +13,18 @@ class Formatter {
         DECIMAL_FORMATS[places].format(d)
     }
 
+    static String formatd(Double d, int places) {
+        d == null ? "null" : format(d, places)
+    }
+
+    static formatNumbers(List<Double> list, int places) {
+        "[" + list.collect { formatd(it, places) }.join(", ") + "]"
+    }
+
+    static String bton(boolean b) {
+        b ? "1" : "0"
+    }
+
 
     static String formatPercent(double x) {
         return new DecimalFormat("##.0").format(x*100)

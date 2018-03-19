@@ -32,7 +32,7 @@ import cz.siret.prank.program.params.Params
 
     //
 
-    residue_score_threshold = 1d
+    residue_score_threshold = 2.45d
 
     //
 
@@ -48,9 +48,9 @@ import cz.siret.prank.program.params.Params
 
     average_feat_vectors = true
 
-    balance_class_weights = false
+    balance_class_weights = true
 
-    target_class_weight_ratio = 0.07
+    target_class_weight_ratio = 0.053
 
 
     // technical

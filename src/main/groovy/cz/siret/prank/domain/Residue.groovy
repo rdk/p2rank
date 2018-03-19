@@ -27,7 +27,7 @@ class Residue {
     @Nonnull
     private AminoAcid group
 
-    /** marks solvent exposed residues */
+    /** marks solvent exposed residues (may not be filled!) */
     boolean exposed
 
     Object label
@@ -90,6 +90,11 @@ class Residue {
 
     Character getCodeChar() {
         getAa()?.codeChar
+    }
+
+    @Override
+    String toString() {
+        return key.toString()
     }
 
 //===========================================================================================================//
