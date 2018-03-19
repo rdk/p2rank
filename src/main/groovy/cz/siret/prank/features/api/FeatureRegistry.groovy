@@ -4,6 +4,7 @@ import cz.siret.prank.features.implementation.AAIndexFeature
 import cz.siret.prank.features.implementation.Asa2Feature
 import cz.siret.prank.features.implementation.AsaFeature
 import cz.siret.prank.features.implementation.AsaResiduesFeature
+import cz.siret.prank.features.implementation.AtomicResidueFeature
 import cz.siret.prank.features.implementation.BfactorFeature
 import cz.siret.prank.features.implementation.ContactResidue1Feature
 import cz.siret.prank.features.implementation.ContactResidue1PositionFeature
@@ -59,6 +60,7 @@ class FeatureRegistry {
         registerFeature(new ConservationFeature())
         registerFeature(new ConservationCloudFeature())
         registerFeature(new ConservationCloudScaledFeature())
+        registerFeature(new AtomicResidueFeature())
         registerFeature(new ContactResidue1Feature())
         registerFeature(new ContactResiduesPositionFeature())
         registerFeature(new ContactResidue1PositionFeature())

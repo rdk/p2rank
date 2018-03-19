@@ -463,6 +463,7 @@ class ClassifierStats implements Parametrized, Writable {
             sb << "\n"
             sb << "FM:, ${format(f1)}, F-measure\n"
             sb << "MCC:, ${format(MCC)}, Matthews correlation coefficient\n"
+            sb << "TPX:, ${format(TPX)}, TP / (TP + FN + FP)\n"
         }
 
         return sb.toString()
