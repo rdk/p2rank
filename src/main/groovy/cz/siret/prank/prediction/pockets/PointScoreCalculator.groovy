@@ -48,4 +48,10 @@ class PointScoreCalculator implements Parametrized {
         return score
     }
 
+    double transformScore(double score) {
+
+        score = Math.pow(score, POINT_SCORE_EXP)
+        return score
+    }
+
 }

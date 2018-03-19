@@ -6,6 +6,7 @@ import cz.siret.prank.domain.Residues
 import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.prediction.metrics.ClassifierStats
+import cz.siret.prank.prediction.pockets.PointScoreCalculator
 import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Cutils
@@ -32,6 +33,7 @@ class ModelBasedResidueLabeler extends ResidueLabeler<Boolean> implements Parame
 
     private ClassifierStats classifierStats
 
+    private final PointScoreCalculator pointScoreCalculator = new PointScoreCalculator()
     private double SCORE_THRESHOLD = params.residue_score_threshold
 
     ModelBasedResidueLabeler(Model model, Atoms sasPoints, ProcessedItemContext context) {
@@ -80,7 +82,7 @@ class ModelBasedResidueLabeler extends ResidueLabeler<Boolean> implements Parame
             }
             double score = aggregateScore(pscores)
 
-            log.debug "RES[{}] pscores(n={},sum={}): {}", res, pscores.size(), format(score, 2), formatNumbers(pscores, 2)
+            log.debug "RES[{}] (score={}) pscores(n={}): {}", res, format(score, 2), pscores.size(), formatNumbers(pscores, 2)
 
             resScores.add(res, score)
         }
@@ -88,18 +90,18 @@ class ModelBasedResidueLabeler extends ResidueLabeler<Boolean> implements Parame
         BinaryLabeling resLabels = new BinaryLabeling(residues.count)
 
         for (LabeledResidue<Double> it : resScores.labeledResidues) {
-            resLabels.add(it.residue, transformScore(it.label))
+            resLabels.add(it.residue, binaryLabel(it.label))
         }
 
         return resLabels
     }
 
-    private boolean transformScore(double score) {
+    private boolean binaryLabel(double score) {
         score >= SCORE_THRESHOLD
     }
 
     private double aggregateScore(List<Double> scores) {
-        Cutils.sum(scores)
+        Cutils.sum(scores.collect { pointScoreCalculator.transformScore(it) }.asList())
     }
 
     @Override
