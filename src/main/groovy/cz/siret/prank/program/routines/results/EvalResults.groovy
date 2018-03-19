@@ -245,9 +245,8 @@ class EvalResults implements Parametrized, Writable  {
         if (mode_residues) {
             def rst = logClassifierStats("residue_classification", "Residue classification",  residuePredictionStats, outdir)
 
-            write "\n" + CSV.tabulate(pst) + "\n"
-            write "\n"
-            write "\n" + CSV.tabulate(rst) + "\n"
+            write "\n" + CSV.tabulate(pst)
+            write  CSV.tabulate(rst) + "\n"
         }
         //else {
         //    logClassifierStats("classifier", classifierName,  classifierStats, outdir)
