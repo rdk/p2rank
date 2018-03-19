@@ -48,9 +48,9 @@ import cz.siret.prank.program.params.Params
 
     average_feat_vectors = true
 
-    balance_class_weights = true
+    balance_class_weights = false
 
-    target_class_weight_ratio = 0.055
+    target_class_weight_ratio = 0.07
 
 
     // technical
