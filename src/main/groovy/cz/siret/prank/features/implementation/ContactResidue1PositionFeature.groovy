@@ -42,17 +42,35 @@ class ContactResidue1PositionFeature extends SasFeatureCalculator implements Par
         Residue res = context.protein.residues.findNearest(sasPoint)
         AminoAcid aa = res.aminoAcid
 
-        Atom centerPoint = res.atoms.centerOfMass
+        Atom center = res.atoms.centerOfMass
+        Atom ca = aa.getCA()
+        Atom cb = aa.getCB()
 
-        double ca = Struct.dist(sasPoint, aa.getCA())
-        double cb = Struct.dist(sasPoint, aa.getCB())
-        double center = Struct.dist(sasPoint, centerPoint)
-        double closest = res.atoms.dist(sasPoint)
+        double dcenter = Struct.dist(sasPoint, center)
+        double dclosest = res.atoms.dist(sasPoint)
 
-        double CAmCB = ca - cb
-        double CAdClosest = ca / closest
-        double CAdCenter = ca / center
+        double dca = 0
+        double dcb = 0
+        double CAmCB = 0
+        double CAdClosest = 1
+        double CAdCenter = 1
 
-        return [ca, cb, center, closest, CAmCB, CAdClosest, CAdCenter] as double[]
+        if (ca != null) {
+            dca = Struct.dist(sasPoint, ca)
+            CAdClosest = dca / dclosest
+            CAdCenter = dca / dcenter
+            if (cb != null) {
+                CAmCB = dca - dcb
+            }
+        } else {
+            log.debug "WARN: CA atom not found in residue [{}]!", res
+        }
+        if (cb != null) {
+            dcb = Struct.dist(sasPoint, cb)
+        } else {
+            log.debug "WARN: CB atom not found in residue [{}]!", res
+        }
+
+        return [dca, dcb, dcenter, dclosest, CAmCB, CAdClosest, CAdCenter] as double[]
     }
 }
