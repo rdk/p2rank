@@ -136,7 +136,7 @@ class EvalResults implements Parametrized, Writable  {
     }
 
     Map<String, Double> getStats() {
-        Map<String, Double> m = new HashMap<>(200)
+        Map<String, Double> m = new TreeMap<>()
 
         if (mode_pockets) {
             m.putAll(eval.stats)
