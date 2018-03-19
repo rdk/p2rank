@@ -52,7 +52,7 @@ class Residues implements Iterable<Residue> {
     }
 
     Residue findNearest(Atom point) {
-        Atom nearestAtom = atoms.getKdTree().findNearest(point)
+        Atom nearestAtom = getAtoms().withKdTree().kdTree.findNearest(point)
         return getResidueForAtom(nearestAtom)
     }
 

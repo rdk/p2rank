@@ -483,7 +483,8 @@ class Dataset implements Parametrized {
         String label
         PredictionPair cachedPair
 
-        private Item(String proteinFile, String predictionFile, Map<String, String> columnValues) {
+        private Item(Dataset dataset, String proteinFile, String predictionFile, Map<String, String> columnValues) {
+            this.dataset = dataset
             this.columnValues = columnValues
             this.proteinFile = proteinFile
             this.pocketPredictionFile = predictionFile
@@ -558,7 +559,7 @@ class Dataset implements Parametrized {
     }
 
     Item createNewItem(String proteinFile, String predictionFile, Map<String, String> columnValues) {
-        return new Item(proteinFile, predictionFile, columnValues)
+        return new Item(this, proteinFile, predictionFile, columnValues)
     }
 
     Item createNewItem(Map<String, String> columnValues) {

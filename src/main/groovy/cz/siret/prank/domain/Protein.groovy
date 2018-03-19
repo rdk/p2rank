@@ -167,7 +167,7 @@ class Protein implements Parametrized {
     }
 
     void checkResiduesCalculated() {
-        if (residues == null) {
+        if (residueChainsMap == null) {
             calculateResidues()
         }
     }

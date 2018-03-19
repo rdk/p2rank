@@ -57,7 +57,7 @@ class RPlotter implements Parametrized {
 
         String rcode = """
             if (!require("ggplot2")) {
-                  install.packages("ggplot2", dependencies = TRUE)
+                  install.packages("ggplot2", dependencies = TRUE, repos = "http://cran.us.r-project.org")
                   library(ggplot2)
             }
             library(scales)

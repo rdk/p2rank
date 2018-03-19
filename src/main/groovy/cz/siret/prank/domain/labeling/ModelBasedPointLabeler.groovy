@@ -10,6 +10,7 @@ import cz.siret.prank.prediction.metrics.ClassifierStats
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.ml.Model
 import cz.siret.prank.utils.PerfUtils
+import cz.siret.prank.utils.WekaUtils
 import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
 import weka.core.DenseInstance
@@ -70,6 +71,7 @@ class ModelBasedPointLabeler extends PointLabeler {
         // init weka
         alloc = new double[proteinExtractor.vectorHeader.size() + 1] // one additional for stupid weka class
         auxInst = new DenseInstance( 1, alloc )
+        auxWekaDataset = WekaUtils.createDatasetWithBinaryClass(extractorFactory.vectorHeader)
         auxInst.setDataset(auxWekaDataset)
 
         // init result array

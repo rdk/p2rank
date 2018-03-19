@@ -1,6 +1,7 @@
 package cz.siret.prank.program
 
 import cz.siret.prank.domain.Dataset
+import cz.siret.prank.domain.loaders.LoaderParams
 import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.params.ConfigLoader
 import cz.siret.prank.program.params.Parametrized
@@ -306,6 +307,10 @@ class Main implements Parametrized, Writable {
         }
 
         initParams(params, "$installDir/config/default.groovy")
+
+        if (params.predict_residues) { // TODO move
+            LoaderParams.ignoreLigandsSwitch = true
+        }
 
         switch (command) {
             case 'predict':       runPredict()
