@@ -33,8 +33,8 @@ class PymolRenderer implements Parametrized {
 
         Futils.mkdirs(dataDir)
 
-        //String pointsf = "$pointsDir/${label}_points.pdb.gz"
-        //String pointsfRelName = "data/${label}_points.pdb.gz"
+        String pointsfAbs = "$dataDir/${label}_points.pdb.gz"
+        String pointsfRel = "data/" + Futils.shortName(pointsfAbs)
 
         String proteinFileAbs = Futils.absPath(model.proteinFile)
         String proteinFile = proteinFileAbs
