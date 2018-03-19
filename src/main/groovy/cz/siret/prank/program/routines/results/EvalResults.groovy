@@ -241,10 +241,12 @@ class EvalResults implements Parametrized, Writable  {
 
         writeFile "$outdir/stats.csv", statsCSV(getStats())
 
-        logClassifierStats("point_classification", classifierName,  classifierStats, outdir)
+        def pst = logClassifierStats("point_classification", classifierName,  classifierStats, outdir)
         if (mode_residues) {
             def rst = logClassifierStats("residue_classification", "Residue classification",  residuePredictionStats, outdir)
 
+            write "\n" + CSV.tabulate(pst) + "\n"
+            write "\n"
             write "\n" + CSV.tabulate(rst) + "\n"
         }
         //else {

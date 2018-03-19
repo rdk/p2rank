@@ -2,6 +2,7 @@ package cz.siret.prank.collectors
 
 import cz.siret.prank.features.implementation.ProtrusionFeature
 import cz.siret.prank.program.params.Parametrized
+import cz.siret.prank.utils.Formatter
 import cz.siret.prank.utils.PerfUtils
 import cz.siret.prank.utils.WekaUtils
 import cz.siret.prank.utils.Writable
@@ -11,6 +12,7 @@ import weka.core.Attribute
 import weka.core.Instance
 import weka.core.Instances
 
+import static cz.siret.prank.utils.Formatter.format
 import static cz.siret.prank.utils.WekaUtils.isPositiveInstance
 
 @Slf4j
@@ -58,7 +60,7 @@ class DataPreprocessor implements Parametrized, Writable {
 
         int seed = new Random(params.seed).nextInt()
 
-        write "positives/negatives  ratio: $ratio  targetRatio: $targetRatio"
+        write "positives/negatives  ratio: ${fmt ratio}  targetRatio: ${fmt targetRatio}"
 
         if ( Math.abs(ratio-targetRatio)*data.size() < 1 ) {
             write "diference between ratio and target ratio is negligible"
@@ -73,11 +75,11 @@ class DataPreprocessor implements Parametrized, Writable {
 
                 if (ratio < targetRatio) {
                     double multiplier = targetRatio / ratio
-                    write "supersampling positives (multiplier: $multiplier)"
+                    write "supersampling positives (multiplier: ${fmt multiplier})"
                     positives = WekaUtils.randomSample(multiplier, seed, positives)
                 } else {
                     double multiplier = ratio / targetRatio
-                    write "supersampling negatives (multiplier: $multiplier)"
+                    write "supersampling negatives (multiplier: ${fmt multiplier})"
                     negatives = WekaUtils.randomSample(multiplier, seed, negatives)
                 }
 
@@ -85,7 +87,7 @@ class DataPreprocessor implements Parametrized, Writable {
 
                 if (ratio < targetRatio) {
                     double multiplier = ratio / targetRatio
-                    write "subsampling negatives (multiplier: $multiplier)"
+                    write "subsampling negatives (multiplier: ${fmt multiplier})"
 
                     if (params.subsampl_high_protrusion_negatives) {
                         // sort by protrusion desc before subsampling
@@ -120,11 +122,15 @@ class DataPreprocessor implements Parametrized, Writable {
 
         double ratio = PerfUtils.round( (double)pos / neg, 6 )
 
-        "positives: $pos, negatives: $neg, ratio: $ratio"
+        "positives: $pos, negatives: $neg, ratio: ${fmt ratio}"
+    }
+
+    private static String fmt(double d) {
+        format(d, 3)
     }
 
     /**
-     * modyfying data weights in place
+     * modifying data weights in place
      */
     private Instances balanceClassWeights(Instances data) {
 
@@ -140,7 +146,8 @@ class DataPreprocessor implements Parametrized, Writable {
 
         double posWeight = targetWeightRatio / ratio
 
-        write "balancing class weights ... ratio: $ratio  target ratio: $targetWeightRatio  pos. weight: $posWeight"
+        write "balancing class weights ... ratio: ${fmt ratio}" +
+                "  target ratio: ${fmt targetWeightRatio}  pos. weight: ${fmt posWeight}"
 
         for (Instance inst : data) {
             if (isPositiveInstance(inst)) {
@@ -148,7 +155,7 @@ class DataPreprocessor implements Parametrized, Writable {
             }
         }
 
-        write "weighted ratio: ${weightedRatio(data)}"
+        write "weighted ratio: ${fmt weightedRatio(data)}"
 
         return data
     }

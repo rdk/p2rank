@@ -72,14 +72,7 @@ class EvalResiduesRoutine extends EvalRoutine {
             }
 
             if (params.log_cases) {
-                String cdir = mkdirs ("$outdir/cases")
-                StringBuilder csv = new StringBuilder("obs_id, pred_id, observed, predicted\n")
-                for (int i = 0; i!=observed.labeledResidues.size(); i++) {
-                    LabeledResidue<Boolean> obs  = observed.labeledResidues[i]
-                    LabeledResidue<Boolean> pred = predicted.labeledResidues[i]
-                    csv << "$obs.residue, $pred.residue, ${bton(obs.label)}, ${bton(pred.label)}\n"
-                }
-                writeFile "$cdir/${protein.name}_residues.csv", csv
+                logCases(observed, predicted, protein)
             }
 
             if (params.visualizations) {
@@ -111,5 +104,16 @@ class EvalResiduesRoutine extends EvalRoutine {
         return results
     }
 
-    
+    private logCases(BinaryLabeling observed, BinaryLabeling predicted, Protein protein) {
+        String cdir = mkdirs("$outdir/cases")
+        StringBuilder csv = new StringBuilder("obs_id, pred_id, observed, predicted\n")
+        for (int i = 0; i != observed.labeledResidues.size(); i++) {
+            LabeledResidue<Boolean> obs = observed.labeledResidues[i]
+            LabeledResidue<Boolean> pred = predicted.labeledResidues[i]
+            csv << "$obs.residue, $pred.residue, ${bton(obs.label)}, ${bton(pred.label)}\n"
+        }
+        writeFile "$cdir/${protein.name}_residues.csv", csv
+    }
+
+
 }
