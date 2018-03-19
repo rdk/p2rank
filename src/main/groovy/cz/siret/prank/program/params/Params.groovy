@@ -396,10 +396,13 @@ class Params {
      */
     boolean predictions = true
 
+    /**
+     * residue prediction mode (opposed to pocket prediction)
+     */
     boolean predict_residues = false
 
     /**
-     * score threshold for predicted binary label
+     * residue score threshold fir calculating predicted binary label
      */
     double residue_score_threshold = 1d
 
@@ -407,8 +410,6 @@ class Params {
      * minimum ligandability score for SAS point to be considered ligandable
      */
     double pred_point_threshold = 0.4
-
-    boolean include_surrounding_score = false
 
     /**
      * minimum cluster size (of ligandable points) for initial clustering

@@ -22,7 +22,7 @@ class PointScoreCalculator implements Parametrized {
         hist[1] / (hist[0] + hist[1])
     }
 
-    static boolean predictedPositive(double predictedScore) {
+    static boolean applyPointScoreThreshold(double predictedScore) {
         predictedScore >= Params.inst.pred_point_threshold
     }
     

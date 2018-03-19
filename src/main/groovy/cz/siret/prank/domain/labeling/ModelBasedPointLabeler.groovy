@@ -9,6 +9,7 @@ import cz.siret.prank.geom.Atoms
 import cz.siret.prank.prediction.metrics.ClassifierStats
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.ml.Model
+import cz.siret.prank.program.params.Params
 import cz.siret.prank.utils.PerfUtils
 import cz.siret.prank.utils.WekaUtils
 import groovy.transform.CompileStatic
@@ -16,7 +17,7 @@ import org.biojava.nbio.structure.Atom
 import weka.core.DenseInstance
 import weka.core.Instances
 
-import static cz.siret.prank.prediction.pockets.PointScoreCalculator.predictedPositive
+import static cz.siret.prank.prediction.pockets.PointScoreCalculator.applyPointScoreThreshold
 import static cz.siret.prank.prediction.pockets.PointScoreCalculator.predictedScore
 
 /**
@@ -101,7 +102,7 @@ class ModelBasedPointLabeler extends PointLabeler {
             // labels and statistics
 
             double predictedScore = predictedScore(hist)   // not all classifiers give histogram that sums up to 1
-            boolean predicted = predictedPositive(predictedScore)
+            boolean predicted = binaryLabel(predictedScore)
             boolean observed = false
 
             if (observedPoints != null) {
@@ -124,6 +125,12 @@ class ModelBasedPointLabeler extends PointLabeler {
         proteinExtractor.finalizeProteinPrototype()
 
         return labeledPoints
+    }
+
+    static boolean binaryLabel(double predictedScore) {
+
+        
+        applyPointScoreThreshold(predictedScore)
     }
 
     private final double[] getDistributionForPoint(Model model, FeatureVector vect) {

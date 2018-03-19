@@ -20,7 +20,7 @@ import org.biojava.nbio.structure.Atom
 import weka.core.DenseInstance
 import weka.core.Instances
 
-import static PointScoreCalculator.predictedPositive
+import static PointScoreCalculator.applyPointScoreThreshold
 import static PointScoreCalculator.predictedScore
 
 /**
@@ -99,7 +99,7 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
                 // labels and statistics
 
                 double predictedScore = predictedScore(hist)   // not all classifiers give histogram that sums up to 1
-                boolean predicted = predictedPositive(predictedScore)
+                boolean predicted = applyPointScoreThreshold(predictedScore)
                 boolean observed = false
 
                 if (ligandAtoms!=null) {
@@ -147,7 +147,7 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
 
                 double[] hist = getDistributionForPoint(model, props)
                 double predictedScore = predictedScore(hist)   // not all classifiers give histogram that sums up to 1
-                boolean predicted = predictedPositive(predictedScore)
+                boolean predicted = applyPointScoreThreshold(predictedScore)
                 boolean observed = false
 
                 if (collectingStatistics) {
