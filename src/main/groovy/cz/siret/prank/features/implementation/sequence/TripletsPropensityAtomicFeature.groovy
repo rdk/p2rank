@@ -11,6 +11,7 @@ import org.biojava.nbio.structure.Atom
 
 import javax.annotation.Nullable
 
+import static cz.siret.prank.features.implementation.sequence.TripletsPropensityFeature.calculatePropensityForResidue
 import static cz.siret.prank.utils.Futils.readResource
 
 /**
@@ -21,18 +22,15 @@ import static cz.siret.prank.utils.Futils.readResource
  */
 @Slf4j
 @CompileStatic
-class TripletsPropensityFeature extends SasFeatureCalculator implements Parametrized {
+class TripletsPropensityAtomicFeature extends SasFeatureCalculator implements Parametrized {
 
-    static final PropertyTable TABLE = PropertyTable.parse(readResource("/tables/peptides/aa-surf-seq-triplets.csv"))
-    static final String PROPERTY = 'P864' // TODO parametrize
-
-    static List<String> HEADER = ['prop']
+    static List<String> HEADER = ['prop','prop^2']
 
 //===========================================================================================================//
 
     @Override
     String getName() {
-        'seqtrip'
+        'seqtripat'
     }
 
     @Override
@@ -44,17 +42,9 @@ class TripletsPropensityFeature extends SasFeatureCalculator implements Parametr
     double[] calculateForSasPoint(Atom sasPoint, SasFeatureCalculationContext context) {
 
         Residue res = context.protein.residues.findNearest(sasPoint)
-
         double prop = calculatePropensityForResidue(res)
 
-        return [prop] as double[]
+        return [prop, prop*prop] as double[]
     }
 
-    static double calculatePropensityForResidue(@Nullable Residue res) {
-        String code = Residue.safeSorted3CodeFor(res)
-        double prop = TABLE.getValueOrDefault(code, PROPERTY, 0d)
-
-        return prop
-    }
-    
 }

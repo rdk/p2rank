@@ -22,6 +22,7 @@ import cz.siret.prank.features.implementation.conservation.ConservationFeature
 import cz.siret.prank.features.implementation.conservation.ConservationCloudFeature
 import cz.siret.prank.features.implementation.conservation.ConservationCloudScaledFeature
 import cz.siret.prank.features.implementation.histogram.PairHistogramFeature
+import cz.siret.prank.features.implementation.sequence.TripletsPropensityAtomicFeature
 import cz.siret.prank.features.implementation.sequence.TripletsPropensityFeature
 import cz.siret.prank.features.implementation.volsite.VolsiteFeature
 import cz.siret.prank.program.PrankException
@@ -40,7 +41,7 @@ class FeatureRegistry {
      * @param key unique feature key. Add this key to Params.extra_features to enable this feature.
      * @param featureCalculator
      */
-    static void registerFeature(FeatureCalculator featureCalculator) {
+    static void register(FeatureCalculator featureCalculator) {
         if (features.containsKey(featureCalculator.name)) {
             throw new PrankException("Trying to register 2 Features with the same name " + featureCalculator.name)
         }
@@ -55,30 +56,31 @@ class FeatureRegistry {
     static {
         // TODO register with names
 
-        registerFeature(new ChemFeature())
-        registerFeature(new VolsiteFeature())
-        registerFeature(new ProtrusionFeature())
-        registerFeature(new SurfaceProtrusionFeature())
-        registerFeature(new BfactorFeature())
-        registerFeature(new ProtrusionHistogramFeature())
-        registerFeature(new ConservationFeature())
-        registerFeature(new ConservationCloudFeature())
-        registerFeature(new ConservationCloudScaledFeature())
-        registerFeature(new AtomicResidueFeature())
-        registerFeature(new ContactResidue1Feature())
-        registerFeature(new ContactResiduesPositionFeature())
-        registerFeature(new ContactResidue1PositionFeature())
-        registerFeature(new AsaFeature())
-        registerFeature(new Asa2Feature())
-        registerFeature(new AsaResiduesFeature())
-        registerFeature(new XyzDummyFeature())
-        registerFeature(new PairHistogramFeature())
-        registerFeature(new PyramidFeature())
-        registerFeature(new ProteinMassFeature())
-        registerFeature(new AAIndexFeature())
-        registerFeature(new DupletsPropensityFeature())
-        registerFeature(new DupletsPropensityAtomicFeature())
-        registerFeature(new TripletsPropensityFeature())
+        register new ChemFeature()
+        register new VolsiteFeature()
+        register new ProtrusionFeature()
+        register new SurfaceProtrusionFeature()
+        register new BfactorFeature()
+        register new ProtrusionHistogramFeature()
+        register new ConservationFeature()
+        register new ConservationCloudFeature()
+        register new ConservationCloudScaledFeature()
+        register new AtomicResidueFeature()
+        register new ContactResidue1Feature()
+        register new ContactResiduesPositionFeature()
+        register new ContactResidue1PositionFeature()
+        register new AsaFeature()
+        register new Asa2Feature()
+        register new AsaResiduesFeature()
+        register new XyzDummyFeature()
+        register new PairHistogramFeature()
+        register new PyramidFeature()
+        register new ProteinMassFeature()
+        register new AAIndexFeature()
+        register new DupletsPropensityFeature()
+        register new DupletsPropensityAtomicFeature()
+        register new TripletsPropensityFeature()
+        register new TripletsPropensityAtomicFeature()
 
         // Register new feature implementations here
 
