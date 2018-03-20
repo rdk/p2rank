@@ -23,6 +23,10 @@ abstract class ResidueLabeler<L> {
         }
     }
 
+    BinaryLabeling getBinaryLabeling(Protein protein) {
+        getBinaryLabeling(protein.residues, protein)
+    }
+
     static ResidueLabeler loadFromFile(String format, String fname) {
         switch (format) {
             case "sprint":

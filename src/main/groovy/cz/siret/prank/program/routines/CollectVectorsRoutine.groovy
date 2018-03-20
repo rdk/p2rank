@@ -86,7 +86,7 @@ class CollectVectorsRoutine extends Routine {
         write "processed $ligandCount ligans in $dataset.size files"
         write "extracted $count vectors...  positives:$positives negatives:$negatives ratio:$ratio"
 
-        write "preparing data for weka...."
+        write "preparing instance dataset...."
         Instances data = prepareDataForWeka(instList, vectf)
         positives = WekaUtils.countPositives(data)
         negatives = WekaUtils.countNegatives(data)

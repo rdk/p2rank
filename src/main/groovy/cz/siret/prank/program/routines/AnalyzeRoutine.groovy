@@ -1,7 +1,9 @@
 package cz.siret.prank.program.routines
 
 import com.google.common.collect.ImmutableMap
+import cz.siret.prank.domain.AA
 import cz.siret.prank.domain.Dataset
+import cz.siret.prank.domain.labeling.LabeledResidue
 import cz.siret.prank.domain.loaders.DatasetCachedLoader
 import cz.siret.prank.domain.loaders.LoaderParams
 import cz.siret.prank.domain.Protein
@@ -15,7 +17,9 @@ import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.rendering.PymolRenderer
 import cz.siret.prank.program.rendering.RenderingModel
 import cz.siret.prank.utils.CmdLineArgs
+import cz.siret.prank.utils.Formatter
 import cz.siret.prank.utils.Futils
+import cz.siret.prank.utils.BinCounter
 import groovy.util.logging.Slf4j
 
 import static cz.siret.prank.utils.Futils.writeFile
@@ -65,6 +69,7 @@ class AnalyzeRoutine extends Routine {
     Map<String, Closure> commandRegister = ImmutableMap.copyOf([
         "binding-residues" : this.&cmdBindingResidues,
         "labeled-residues" : this.&cmdLabeledResidues,
+        "aa-propensities" : this.&cmdAaPropensities,
         "chains" : this.&cmdChains
     ])
 
@@ -122,7 +127,6 @@ class AnalyzeRoutine extends Routine {
      */
     void cmdLabeledResidues() {
         assert dataset.hasResidueLabeling()
-
         LoaderParams.ignoreLigandsSwitch = true
 
         def labeler = dataset.binaryResidueLabeler
@@ -161,7 +165,7 @@ class AnalyzeRoutine extends Routine {
     /**
      * Compare chain strings in strcture with those defined in sprint labeling file
      */
-    private printSprintChains(SprintLabelingLoader loader) {
+    private void printSprintChains(SprintLabelingLoader loader) {
         StringBuffer csv = new StringBuffer("chain_code, source, length, residue_string\n")
 
         dataset.processItems { Dataset.Item item ->
@@ -195,5 +199,40 @@ class AnalyzeRoutine extends Routine {
 
         writeFile "$outdir/sprint_chains.csv", csv
     }
+
+    private void cmdAaPropensities() {
+        assert dataset.hasResidueLabeling()
+        LoaderParams.ignoreLigandsSwitch = true
+
+        def labeler = dataset.binaryResidueLabeler
+
+        List<BinCounter<AA>> counters = Collections.synchronizedList(new ArrayList<>())
+
+        dataset.processItems { Dataset.Item item ->
+            Protein prot = item.protein
+            BinaryLabeling labeling = labeler.getBinaryLabeling(prot.exposedResidues, prot)
+
+            def counter = new BinCounter<AA>()
+
+            labeling.labeledResidues.each { LabeledResidue<Boolean> lres ->
+                AA aa = lres.residue.aa
+                if (aa != null && lres.label != null) {
+                    counter.add(aa, lres.label)
+                }
+            }
+
+            counters.add(counter)
+        }
+
+        BinCounter<AA> counter = BinCounter.join(counters)
+
+        StringBuilder csv = new StringBuilder("AA, pos_ratio, count, pos, neg\n")
+        AA.values().each {
+            def bin = counter.get(it)
+            csv << String.format("%s, %-7s, %8s, %8s, %8s\n", it, Formatter.format(bin.posRatio, 5), bin.count, bin.positives, bin.negatives)
+        }
+        writeFile "$outdir/aa_propensities.csv", csv
+    }
+
 
 }

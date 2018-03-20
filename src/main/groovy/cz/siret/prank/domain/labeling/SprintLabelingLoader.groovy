@@ -119,7 +119,7 @@ class SprintLabelingLoader extends ResidueLabeler<Boolean> implements Writable {
     }
 
     /**
-     * Element of Sprint labeling file representing one chain
+     * Bin of Sprint labeling file representing one chain
      */
     private static class Element {
         /** 4-character lower case pdb code + uppercase chain id (one char) */

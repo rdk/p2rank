@@ -15,7 +15,8 @@ class AAIndexFeature extends AtomFeatureCalculator implements Parametrized {
     
     static final PropertyTable aaIndex   = PropertyTable.parse(Futils.readResource("/tables/aa-index-full.csv")).reverse()
 
-    List<String> propertyNames = aaIndex.propertyNames.toList().toSorted()
+    static final List<String> propertyNames = aaIndex.propertyNames.toList().toSorted()
+
 
     @Override
     String getName() {
