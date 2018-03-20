@@ -144,5 +144,21 @@ class Residue {
         }
     }
 
+//===========================================================================================================//
+
+    static String safe1Code(Residue res) {
+        if (res == null) {
+            return "_"
+        } else if (res.aa == null) {
+            return "?"
+        } else {
+            return res.aa.codeChar.toString()
+        }
+    }
+
+    static String safeOrdered1Code2(Residue res1, Residue res2) {
+        safe1Code(res1) + safe1Code(res2)
+    }
+
 
 }

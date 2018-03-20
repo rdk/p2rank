@@ -3,6 +3,7 @@ package cz.siret.prank.program.routines
 import com.google.common.collect.ImmutableMap
 import cz.siret.prank.domain.AA
 import cz.siret.prank.domain.Dataset
+import cz.siret.prank.domain.Residue
 import cz.siret.prank.domain.labeling.LabeledResidue
 import cz.siret.prank.domain.loaders.DatasetCachedLoader
 import cz.siret.prank.domain.loaders.LoaderParams
@@ -71,6 +72,7 @@ class AnalyzeRoutine extends Routine {
         "binding-residues" : this.&cmdBindingResidues,
         "labeled-residues" : this.&cmdLabeledResidues,
         "aa-propensities" : this.&cmdAaPropensities,
+        "aa-surf-seq-duplets" : this.&cmdAaSurfSeqDuplets,
         "chains" : this.&cmdChains
     ])
 
@@ -229,34 +231,41 @@ class AnalyzeRoutine extends Routine {
         savePropensities("$outdir/aa-propensities.csv", counter)
     }
 
-//    private void cmdAaDuplets() {
-//        assert dataset.hasResidueLabeling()
-//        LoaderParams.ignoreLigandsSwitch = true
-//        def labeler = dataset.binaryResidueLabeler
-//
-//        List<BinCounter<String>> counters = Collections.synchronizedList(new ArrayList<>())
-//
-//        dataset.processItems { Dataset.Item item ->
-//            Protein prot = item.protein
-//            BinaryLabeling labeling = labeler.getBinaryLabeling(prot.exposedResidues, prot)
-//
-//            def counter = new BinCounter<String>()
-//
-//            labeling.labeledResidues.each { LabeledResidue<Boolean> lres ->
-//                lres.residue
-//
-//                AA aa = lres.residue.aa
-//                if (aa != null && lres.label != null) {
-//                    counter.add(aa, lres.label)
-//                }
-//            }
-//
-//            counters.add(counter)
-//        }
-//
-//        BinCounter<AA> counter = BinCounter.join(counters)
-//        savePropensities("$outdir/aa-propensities.csv", counter)
-//    }
+
+
+    /**
+     * ordering dependent sequence duplets (only starting from exposed residues)
+     */
+    private void cmdAaSurfSeqDuplets() {
+        assert dataset.hasResidueLabeling()
+        LoaderParams.ignoreLigandsSwitch = true
+        def labeler = dataset.binaryResidueLabeler
+
+        List<BinCounter<String>> counters = Collections.synchronizedList(new ArrayList<>())
+
+        dataset.processItems { Dataset.Item item ->
+            Protein prot = item.protein
+            BinaryLabeling labeling = labeler.getBinaryLabeling(prot.exposedResidues, prot)
+
+            def counter = new BinCounter<String>()
+
+            labeling.labeledResidues.each { LabeledResidue<Boolean> lres ->
+                def res = lres.residue
+                def prev = res.previousInChain
+                def next = res.nextInChain
+
+                // in each direction
+                counter.add(Residue.safeOrdered1Code2(res, prev), lres.label)
+                counter.add(Residue.safeOrdered1Code2(res, next), lres.label)
+            }
+
+            counters.add(counter)
+        }
+
+        savePropensities("$outdir/aa_surf_seq_duplet_propensities.csv", BinCounter.join(counters))
+    }
+
+
 
     private static void savePropensities(String fname, BinCounter counter) {
         StringBuilder csv = new StringBuilder("key, pos_ratio, pos_ratio^2, count, pos, neg\n")

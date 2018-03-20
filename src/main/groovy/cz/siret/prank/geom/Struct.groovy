@@ -228,7 +228,24 @@ class Struct {
     static List<Residue> getResiduesFromChain(Chain chain) {
         // use all groups or only AA groups??
 
-        chain.getAtomGroups(GroupType.AMINOACID).collect { Residue.fromGroup(it) }.asList()
+        List<Group> groups = chain.getAtomGroups(GroupType.AMINOACID)
+
+        //ordering seems reliable
+        //groups.toSorted { it.residueNumber.seqNum }
+
+        List<Residue> residues = groups.collect { Residue.fromGroup(it) }.toList()
+
+        int len = residues.size()
+        for (int i=0; i!=len; i++) {
+            if (i > 0) {
+                residues[i].previousInChain = residues[i-1]
+            }
+            if (i < len-1) {
+                residues[i].nextInChain = residues[i+1]
+            }
+        }
+
+        return residues
     }
 
     /**

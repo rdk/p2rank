@@ -13,6 +13,7 @@ import cz.siret.prank.features.implementation.ProteinMassFeature
 import cz.siret.prank.features.implementation.ProtrusionFeature
 import cz.siret.prank.features.implementation.ProtrusionHistogramFeature
 import cz.siret.prank.features.implementation.PyramidFeature
+import cz.siret.prank.features.implementation.SequenceDupletsFeature
 import cz.siret.prank.features.implementation.SurfaceProtrusionFeature
 import cz.siret.prank.features.implementation.XyzDummyFeature
 import cz.siret.prank.features.implementation.chem.ChemFeature
@@ -50,6 +51,7 @@ class FeatureRegistry {
     }
 
     static {
+        // TODO register with names
 
         registerFeature(new ChemFeature())
         registerFeature(new VolsiteFeature())
@@ -72,6 +74,7 @@ class FeatureRegistry {
         registerFeature(new PyramidFeature())
         registerFeature(new ProteinMassFeature())
         registerFeature(new AAIndexFeature())
+        registerFeature(new SequenceDupletsFeature())
 
         // Register new feature implementations here
 
