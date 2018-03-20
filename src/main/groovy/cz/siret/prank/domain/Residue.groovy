@@ -156,9 +156,24 @@ class Residue {
         }
     }
 
-    static String safeOrdered1Code2(Residue res1, Residue res2) {
+    static String safeOrderedCode2(Residue res1, Residue res2) {
         safe1Code(res1) + safe1Code(res2)
     }
 
+    /**
+     * triplet code made of single AA code characters
+     * sorted orientation
+     */
+    static String safeSorted3Code(Residue res1, Residue res2, Residue res3) {
+        String code = safe1Code(res1) + safe1Code(res2) + safe1Code(res3)
+        if (code.charAt(0) > code.charAt(2)) {
+            code = code.reverse()
+        }
+        return code
+    }
+
+    static String safeSorted3CodeFor(Residue res) {
+        safeSorted3Code(res.previousInChain, res, res.nextInChain)
+    }
 
 }

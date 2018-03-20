@@ -1,4 +1,4 @@
-package cz.siret.prank.features.implementation
+package cz.siret.prank.features.implementation.sequence
 
 import cz.siret.prank.domain.Residue
 import cz.siret.prank.features.api.SasFeatureCalculationContext
@@ -15,17 +15,20 @@ import static cz.siret.prank.utils.Futils.readResource
 
 /**
  * Sequence duplet propensities for closest residue
+ *
+ * For propensity calculation
+ * @see cz.siret.prank.program.routines.AnalyzeRoutine#cmdAaSurfSeqTriplets()
  */
 @Slf4j
 @CompileStatic
-class SequenceDupletsFeature extends SasFeatureCalculator implements Parametrized {
+class TripletsPropensityFeature extends SasFeatureCalculator implements Parametrized {
 
-    static final PropertyTable TABLE = PropertyTable.parse(readResource("/tables/peptides/aa-surf-seq-duplets.csv"))
+    static final PropertyTable TABLE = PropertyTable.parse(readResource("/tables/peptides/aa-surf-seq-triplets.csv"))
     static final String PROPERTY = 'P864' // TODO parametrize
 
-    static String NAME = 'seqdup'
+    static String NAME = 'seqtrip'
 
-    static List<String> HEADER = ['product', 'sum', 'max']
+    static List<String> HEADER = ['prop','prop2']
 
 //===========================================================================================================//
 
@@ -48,23 +51,10 @@ class SequenceDupletsFeature extends SasFeatureCalculator implements Parametrize
     }
 
     static double[] calculateForResidue(@Nullable Residue res) {
-        String code1 = Residue.safeOrdered1Code2(res, res?.previousInChain)
-        String code2 = Residue.safeOrdered1Code2(res, res?.nextInChain)
+        String code = Residue.safeSorted3CodeFor(res)
+        double prop = TABLE.getValueOrDefault(code, PROPERTY, 0d)
 
-        String property = PROPERTY
-        double val1 = TABLE.getValueWithDefault(code1, property, 0d)
-        double val2 = TABLE.getValueWithDefault(code2, property, 0d)
-
-        double product = val1*val2
-        if (val1 == 0d) {
-            product = val2*val2
-        } else if (val2 == 0d) {
-            product = val1*val1
-        }
-        double sum = val1 + val2
-        double max = Math.max(val1, val2)
-
-        return [product, sum, max] as double[]
+        return [prop, prop*prop] as double[]
     }
     
 }

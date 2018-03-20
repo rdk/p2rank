@@ -1,4 +1,4 @@
-package cz.siret.prank.features.implementation
+package cz.siret.prank.features.implementation.sequence
 
 import cz.siret.prank.domain.Residue
 import cz.siret.prank.features.api.AtomFeatureCalculationContext
@@ -8,8 +8,11 @@ import org.biojava.nbio.structure.Atom
 
 /**
  * Sequence duplet propensities for atom residue
+ *
+ * For propensity calculation see
+ * cz.siret.prank.program.routines.AnalyzeRoutine#cmdAaSurfSeqDuplets()
  */
-class SequenceDupletsAtomicFeature extends AtomFeatureCalculator implements Parametrized {
+class DupletsPropensityAtomicFeature extends AtomFeatureCalculator implements Parametrized {
 
     static String NAME = 'seqdupat'
 
@@ -22,7 +25,7 @@ class SequenceDupletsAtomicFeature extends AtomFeatureCalculator implements Para
 
     @Override
     List<String> getHeader() {
-        SequenceDupletsFeature.HEADER
+        DupletsPropensityFeature.HEADER
     }
 
     @Override
@@ -30,7 +33,7 @@ class SequenceDupletsAtomicFeature extends AtomFeatureCalculator implements Para
 
         Residue res = context.protein.getResidueForAtom(proteinSurfaceAtom)
 
-        return SequenceDupletsFeature.calculateForResidue(res)
+        return DupletsPropensityFeature.calculateForResidue(res)
     }
 
 }

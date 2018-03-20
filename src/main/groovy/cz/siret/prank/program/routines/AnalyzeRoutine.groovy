@@ -18,7 +18,6 @@ import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.rendering.PymolRenderer
 import cz.siret.prank.program.rendering.RenderingModel
 import cz.siret.prank.utils.CmdLineArgs
-import cz.siret.prank.utils.Formatter
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.BinCounter
 import groovy.util.logging.Slf4j
@@ -73,8 +72,11 @@ class AnalyzeRoutine extends Routine {
         "labeled-residues" : this.&cmdLabeledResidues,
         "aa-propensities" : this.&cmdAaPropensities,
         "aa-surf-seq-duplets" : this.&cmdAaSurfSeqDuplets,
+        "aa-surf-seq-triplets" : this.&cmdAaSurfSeqTriplets,
         "chains" : this.&cmdChains
     ])
+
+//===========================================================================================================//
 
     /**
      * Write out binding residue ids
@@ -255,14 +257,41 @@ class AnalyzeRoutine extends Routine {
                 def next = res.nextInChain
 
                 // in each direction
-                counter.add(Residue.safeOrdered1Code2(res, prev), lres.label)
-                counter.add(Residue.safeOrdered1Code2(res, next), lres.label)
+                counter.add(Residue.safeOrderedCode2(res, prev), lres.label)
+                counter.add(Residue.safeOrderedCode2(res, next), lres.label)
             }
 
             counters.add(counter)
         }
 
         savePropensities("$outdir/aa_surf_seq_duplet_propensities.csv", BinCounter.join(counters))
+    }
+
+    /**
+     * sequence triplets (only from exposed residues)
+     */
+    private void cmdAaSurfSeqTriplets() {
+        assert dataset.hasResidueLabeling()
+        LoaderParams.ignoreLigandsSwitch = true
+        def labeler = dataset.binaryResidueLabeler
+
+        List<BinCounter<String>> counters = Collections.synchronizedList(new ArrayList<>())
+
+        dataset.processItems { Dataset.Item item ->
+            Protein prot = item.protein
+            BinaryLabeling labeling = labeler.getBinaryLabeling(prot.exposedResidues, prot)
+
+            def counter = new BinCounter<String>()
+
+            labeling.labeledResidues.each { lres ->
+                String code = Residue.safeSorted3CodeFor(lres.residue)
+                counter.add(code, lres.label)
+            }
+
+            counters.add(counter)
+        }
+
+        savePropensities("$outdir/aa_surf_seq_triplet_propensities.csv", BinCounter.join(counters))
     }
 
 

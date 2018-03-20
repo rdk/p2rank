@@ -132,7 +132,7 @@ class PropertyTable {
         return values.get(new Key(itemName, propertyName))
     }
 
-    double getValueWithDefault(String itemName, String propertyName, double defaultVal) {
+    double getValueOrDefault(String itemName, String propertyName, double defaultVal) {
         return values.get(new Key(itemName, propertyName)) ?: defaultVal
     }
 
