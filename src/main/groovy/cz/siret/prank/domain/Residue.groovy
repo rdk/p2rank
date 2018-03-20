@@ -30,7 +30,9 @@ class Residue {
     /** marks solvent exposed residues (may not be filled!) */
     boolean exposed
 
-    Object label
+
+    @Nullable Residue previousInChain
+    @Nullable Residue nextInChain
 
 
     Residue(AminoAcid group) {

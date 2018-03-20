@@ -8,7 +8,7 @@ import cz.siret.prank.utils.PdbUtils
 import org.biojava.nbio.structure.Atom
 
 /**
- * 
+ * One hot encoding for residue of the atom
  */
 class AtomicResidueFeature extends AtomFeatureCalculator implements Parametrized {
 

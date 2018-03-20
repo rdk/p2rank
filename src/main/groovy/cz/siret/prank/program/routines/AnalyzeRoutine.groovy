@@ -22,6 +22,7 @@ import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.BinCounter
 import groovy.util.logging.Slf4j
 
+import static cz.siret.prank.utils.Formatter.format
 import static cz.siret.prank.utils.Futils.writeFile
 
 /**
@@ -225,13 +226,47 @@ class AnalyzeRoutine extends Routine {
         }
 
         BinCounter<AA> counter = BinCounter.join(counters)
+        savePropensities("$outdir/aa-propensities.csv", counter)
+    }
 
-        StringBuilder csv = new StringBuilder("AA, pos_ratio, count, pos, neg\n")
-        AA.values().each {
+//    private void cmdAaDuplets() {
+//        assert dataset.hasResidueLabeling()
+//        LoaderParams.ignoreLigandsSwitch = true
+//        def labeler = dataset.binaryResidueLabeler
+//
+//        List<BinCounter<String>> counters = Collections.synchronizedList(new ArrayList<>())
+//
+//        dataset.processItems { Dataset.Item item ->
+//            Protein prot = item.protein
+//            BinaryLabeling labeling = labeler.getBinaryLabeling(prot.exposedResidues, prot)
+//
+//            def counter = new BinCounter<String>()
+//
+//            labeling.labeledResidues.each { LabeledResidue<Boolean> lres ->
+//                lres.residue
+//
+//                AA aa = lres.residue.aa
+//                if (aa != null && lres.label != null) {
+//                    counter.add(aa, lres.label)
+//                }
+//            }
+//
+//            counters.add(counter)
+//        }
+//
+//        BinCounter<AA> counter = BinCounter.join(counters)
+//        savePropensities("$outdir/aa-propensities.csv", counter)
+//    }
+
+    private static void savePropensities(String fname, BinCounter counter) {
+        StringBuilder csv = new StringBuilder("key, pos_ratio, pos_ratio^2, count, pos, neg\n")
+        counter.table.keySet().toSorted().each {
             def bin = counter.get(it)
-            csv << String.format("%s, %-7s, %8s, %8s, %8s\n", it, Formatter.format(bin.posRatio, 5), bin.count, bin.positives, bin.negatives)
+            double r = bin.posRatio
+            csv << String.format("%s, %-7s, %-7s, %8s, %8s, %8s\n", it, format(r, 5), format(r*r, 5), bin.count, bin.positives, bin.negatives)
         }
-        writeFile "$outdir/aa_propensities.csv", csv
+        writeFile fname, csv
+        write "Calculated propensities saved to [$fname]"
     }
 
 

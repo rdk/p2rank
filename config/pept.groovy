@@ -15,7 +15,7 @@ import cz.siret.prank.program.params.Params
      * all output of the prorgam will be stored in subdirectores of this directory
      * (set absolute path or path relative to install dir, null defaults to working dir)
      */
-    output_base_dir = "../../p2rank-results/${version}"
+    output_base_dir = "../../p2rank-results-pept/${version}"
 
 
     predict_residues = true
