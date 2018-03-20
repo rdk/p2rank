@@ -9,7 +9,7 @@ import cz.siret.prank.utils.PdbUtils
 import org.biojava.nbio.structure.Atom
 
 /**
- * Features from AA index table
+ * Features from AA index TABLE
  */
 class AAIndexFeature extends AtomFeatureCalculator implements Parametrized {
     

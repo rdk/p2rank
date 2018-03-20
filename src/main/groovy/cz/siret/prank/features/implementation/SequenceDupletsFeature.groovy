@@ -9,6 +9,8 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 
+import javax.annotation.Nullable
+
 import static cz.siret.prank.utils.Futils.readResource
 
 /**
@@ -18,8 +20,8 @@ import static cz.siret.prank.utils.Futils.readResource
 @CompileStatic
 class SequenceDupletsFeature extends SasFeatureCalculator implements Parametrized {
 
-    static final PropertyTable table = PropertyTable.parse(readResource("/tables/peptides/aa-surf-seq-duplets.csv"))
-    static final String PROPERTY = 'P864'
+    static final PropertyTable TABLE = PropertyTable.parse(readResource("/tables/peptides/aa-surf-seq-duplets.csv"))
+    static final String PROPERTY = 'P864' // TODO parametrize
 
     static String NAME = 'seqdup'
 
@@ -42,12 +44,16 @@ class SequenceDupletsFeature extends SasFeatureCalculator implements Parametrize
 
         Residue res = context.protein.residues.findNearest(sasPoint)
 
+        return calculateForResidue(res)
+    }
+
+    static double[] calculateForResidue(@Nullable Residue res) {
         String code1 = Residue.safeOrdered1Code2(res, res?.previousInChain)
         String code2 = Residue.safeOrdered1Code2(res, res?.nextInChain)
 
         String property = PROPERTY
-        double val1 = table.getValueWithDefault(code1, property, 0d)
-        double val2 = table.getValueWithDefault(code2, property, 0d)
+        double val1 = TABLE.getValueWithDefault(code1, property, 0d)
+        double val2 = TABLE.getValueWithDefault(code2, property, 0d)
 
         double product = val1*val2
         if (val1 == 0d) {
