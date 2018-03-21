@@ -35,6 +35,9 @@ class ModelBasedResidueLabeler extends ResidueLabeler<Boolean> implements Parame
 
     private final PointScoreCalculator pointScoreCalculator = new PointScoreCalculator()
     private double SCORE_THRESHOLD = params.residue_score_threshold
+    private double RADIUS = params.getSasCutoffDist() + params.residue_score_extra_dist
+    private double SUM_TO_AVG_POW = params.residue_score_sum_to_avg
+
 
     ModelBasedResidueLabeler(Model model, Atoms sasPoints, ProcessedItemContext context) {
         this.model = model
@@ -69,7 +72,6 @@ class ModelBasedResidueLabeler extends ResidueLabeler<Boolean> implements Parame
 
         Atoms points = new Atoms(labeledPoints)
         Residues exposed = protein.getExposedResidues()
-        double radius = params.solvent_radius + params.surface_additional_cutoff
 
         // calculate binary labels by sum and threshold
 
@@ -78,7 +80,7 @@ class ModelBasedResidueLabeler extends ResidueLabeler<Boolean> implements Parame
         for (Residue res : residues) {
             List<Double> pscores = Collections.emptyList()
             if (exposed.contains(res)) { // calculate only for exposed
-                pscores = points.cutoutShell(res.atoms, radius).collect { (it as LabeledPoint).score }.asList()
+                pscores = points.cutoutShell(res.atoms, RADIUS).collect { (it as LabeledPoint).score }.asList()
             }
             double score = aggregateScore(pscores)
 
@@ -101,7 +103,16 @@ class ModelBasedResidueLabeler extends ResidueLabeler<Boolean> implements Parame
     }
 
     private double aggregateScore(List<Double> scores) {
-        Cutils.sum(scores.collect { pointScoreCalculator.transformScore(it) }.asList())
+        if (scores.empty) return 0d
+
+        List<Double> transformedScores = scores.collect { pointScoreCalculator.transformScore(it) }.asList()
+        double sum = Cutils.sum(transformedScores)
+
+        double base = scores.size()
+        base = Math.pow(base, SUM_TO_AVG_POW) // exp. of <0,1> goes from 'no average, just sum' -> 'full average'
+        double score = sum / base
+
+        return score
     }
 
     @Override

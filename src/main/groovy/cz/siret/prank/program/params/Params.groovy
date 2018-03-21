@@ -302,10 +302,15 @@ class Params {
      */
     boolean average_feat_vectors = false
 
+    /**
+     * in feature projection from atoms to SAS points:
+     * only applicable when average_feat_vectors=true
+     * <0,1> goes from 'no average, just sum' -> 'full average'
+     */
     double avg_pow = 1
 
     /**
-     * regarding feature projection to SAS points: calculate weighted average
+     * regarding feature projection from atoms to SAS points: calculate weighted average
      * (shoud be true by default, kept false for backward compatibility reasons)
      */
     boolean avg_weighted = false
@@ -405,6 +410,17 @@ class Params {
      * residue score threshold fir calculating predicted binary label
      */
     double residue_score_threshold = 1d
+
+    /**
+     * in calculation of residue score from neighboring SAS points:
+     * <0,1> goes from 'no average, just sum' -> 'full average'
+     */
+    double residue_score_sum_to_avg = 0d
+
+    /**
+     * added to the cutoff distance around residue in score aggregation from SAS points
+     */
+    double residue_score_extra_dist = 0d
 
     /**
      * minimum ligandability score for SAS point to be considered ligandable
@@ -689,6 +705,16 @@ class Params {
      * Reduce loaded protein structures to chains declared in dataset file (in optional chains column)
      */
     boolean load_only_specified_chains = false
+
+//===========================================================================================================//
+
+    /**
+     * Should be (slightly above) the distence of solvent exposed atoms to SAS points
+     * @return
+     */
+    double getSasCutoffDist() {
+        solvent_radius + surface_additional_cutoff
+    }
 
 //===========================================================================================================//
 

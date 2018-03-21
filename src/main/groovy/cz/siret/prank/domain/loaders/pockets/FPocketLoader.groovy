@@ -99,7 +99,7 @@ class FPocketLoader extends PredictionLoader implements Parametrized {
             pocket.score = pocket.stats.pocketScore
 
             // sas points
-            double surfaceSasCutoff = params.solvent_radius + params.surface_additional_cutoff
+            double surfaceSasCutoff = params.getSasCutoffDist()
             Atoms sas2 = queryProtein.accessibleSurface.points.cutoutShell(surfaceAtoms, surfaceSasCutoff)
             Atoms sas1 = queryProtein.accessibleSurface.points.cutoutShell(pocket.vornoiCenters, params.extended_pocket_cutoff) // probably not needed
             Atoms sas = Atoms.union(sas1, sas2)
