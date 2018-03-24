@@ -1,6 +1,8 @@
 package cz.siret.prank.features.implementation.secstruct
 
+import cz.siret.prank.domain.Protein
 import cz.siret.prank.domain.Residue
+import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.features.api.SasFeatureCalculationContext
 import cz.siret.prank.features.api.SasFeatureCalculator
 import cz.siret.prank.geom.Atoms
@@ -28,6 +30,11 @@ class SecStructCloudSF extends SasFeatureCalculator implements Parametrized {
     @Override
     List<String> getHeader() {
         return HEADER
+    }
+
+    @Override
+    void preProcessProtein(Protein protein, ProcessedItemContext context) {
+        protein.assignSecondaryStructure()
     }
 
     @Override

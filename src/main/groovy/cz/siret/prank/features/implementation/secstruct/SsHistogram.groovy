@@ -24,6 +24,8 @@ class SsHistogram {
     static double[] average(List<SecStrucType> types) {
         double[] res = new double[HEADER.size()]
 
+        if (types == null || types.empty) return res
+
         for (SecStrucType type : types) {
             res[type.ordinal()] += 1d
         }
