@@ -51,9 +51,7 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
 
     EvalResults execute() {
 
-        if (shouldTrainModel()) {
-            collectTrainVectors()
-        }
+        collectTrainVectors()
         EvalResults res = trainAndEvalModel()
 
         if (deleteVectors)
@@ -63,6 +61,7 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
     }
 
     void collectTrainVectors() {
+        if (!shouldTrainModel()) return
         String vectf =  "$outdir/vectorsTrain.arff"
         trainVectorFile = vectf
         trainVectors = doCollectVectors(trainDataSet, vectf)
@@ -123,7 +122,6 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
             if (ALTERADY_TRAINED) {
                 return false
             } else {
-                ALTERADY_TRAINED = true
                 return true
             }
         } else {
@@ -159,6 +157,8 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
             }
             trainStats = calculateTrainStats(model.classifier, trainVectors)
             featureImportances = calcFeatureImportances(model)
+
+            ALTERADY_TRAINED = true
         }
 
         logTime "model trained in " + timer.formatted
