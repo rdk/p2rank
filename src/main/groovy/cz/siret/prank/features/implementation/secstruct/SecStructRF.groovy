@@ -1,6 +1,8 @@
 package cz.siret.prank.features.implementation.secstruct
 
+import cz.siret.prank.domain.Protein
 import cz.siret.prank.domain.Residue
+import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.features.api.ResidueFeatureCalculationContext
 import cz.siret.prank.features.api.ResidueFeatureCalculator
 import cz.siret.prank.features.api.SasFeatureCalculationContext
@@ -19,6 +21,11 @@ class SecStructRF extends ResidueFeatureCalculator {
     @Override
     String getName() {
         return 'ss'
+    }
+
+    @Override
+    void preProcessProtein(Protein protein, ProcessedItemContext context) {
+        protein.assignSecondaryStructure()
     }
 
     @Override

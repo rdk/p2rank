@@ -1,5 +1,6 @@
 package cz.siret.prank.features.api
 
+import cz.siret.prank.domain.Protein
 import cz.siret.prank.domain.Residue
 import cz.siret.prank.features.api.ResidueFeatureCalculationContext
 import cz.siret.prank.features.api.ResidueFeatureCalculator
@@ -30,6 +31,11 @@ class ResidueToSasFeatWrapper extends SasFeatureCalculator {
     @Override
     List<String> getHeader() {
         return delegate.getHeader()
+    }
+
+    @Override
+    void preProcessProtein(Protein protein, ProcessedItemContext context) {
+        delegate.preProcessProtein(protein, context)
     }
 
     @Override

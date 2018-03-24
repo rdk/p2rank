@@ -1,5 +1,6 @@
 package cz.siret.prank.features.api
 
+import cz.siret.prank.domain.Protein
 import cz.siret.prank.domain.Residue
 import org.biojava.nbio.structure.Atom
 
@@ -24,6 +25,11 @@ class ResidueToAtomicFeatWrapper extends AtomFeatureCalculator {
     @Override
     List<String> getHeader() {
         return delegate.getHeader()
+    }
+
+    @Override
+    void preProcessProtein(Protein protein, ProcessedItemContext context) {
+        delegate.preProcessProtein(protein, context)
     }
 
     @Override
