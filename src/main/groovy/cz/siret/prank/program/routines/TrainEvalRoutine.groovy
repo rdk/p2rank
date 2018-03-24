@@ -184,7 +184,7 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
         return res
     }
 
-    private calcFeatureImportances(Model model) {
+    private List<Double> calcFeatureImportances(Model model) {
         List<Double> featureImportances = null
         if (params.feature_importances && model.hasFeatureImportances()) {
             featureImportances = model.featureImportances
