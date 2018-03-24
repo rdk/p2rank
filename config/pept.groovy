@@ -67,5 +67,14 @@ import cz.siret.prank.program.params.Params
 
     log_level = "WARN"
 
+    selected_stats = ['_blank',
+                      'MCC',
+                      'F1',
+                      'TPX',
+                      'point_MCC',
+                      'point_F1',
+                      'point_TPX',
+                      'TIME_MINUTES']
+
 
 }
