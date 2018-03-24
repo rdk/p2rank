@@ -26,6 +26,8 @@ class SsHistogram {
 
         if (types == null || types.empty) return res
 
+        types = types.findAll { it != null }.asList()
+
         for (SecStrucType type : types) {
             res[type.ordinal()] += 1d
         }
