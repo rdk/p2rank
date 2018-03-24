@@ -26,7 +26,8 @@ class DupletsPropensityFeature extends SasFeatureCalculator implements Parametri
     static final PropertyTable TABLE = PropertyTable.parse(readResource("/tables/peptides/aa-surf-seq-duplets.csv"))
     static final String PROPERTY = 'P864' // TODO parametrize
 
-    static List<String> HEADER = ['product', 'sum', 'max']
+//    static List<String> HEADER = ['product', 'sum', 'max']
+    static List<String> HEADER = ['product']
 
 //===========================================================================================================//
 
@@ -62,10 +63,11 @@ class DupletsPropensityFeature extends SasFeatureCalculator implements Parametri
         } else if (val2 == 0d) {
             product = val1*val1
         }
-        double sum = val1 + val2
-        double max = Math.max(val1, val2)
+//        double sum = val1 + val2
+//        double max = Math.max(val1, val2)
 
-        return [product, sum, max] as double[]
+        return [product] as double[]
+//        return [product, sum, max] as double[]
     }
     
 }
