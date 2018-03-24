@@ -252,7 +252,7 @@ class Protein implements Parametrized {
 
                 SecStrucType type = res.secStruct
                 int pos2 = pos + 1
-                while (chain.residues[pos2].secStruct == type) {
+                while (pos2 < chain.residues.size() && chain.residues[pos2].secStruct == type) {
                     pos2++
                 }
 
