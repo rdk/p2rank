@@ -83,6 +83,8 @@ select xlig, protein and organic
 delete xlig
 
 hide everything, all
+remove hydrogens
+remove solvent
 
 color white, elem c
 color bluewhite, protein
