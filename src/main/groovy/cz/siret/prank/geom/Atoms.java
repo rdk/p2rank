@@ -1,6 +1,7 @@
 package cz.siret.prank.geom;
 
 import com.google.common.collect.Lists;
+import cz.siret.prank.features.api.AtomFeatureCalculator;
 import cz.siret.prank.geom.kdtree.AtomKdTree;
 import cz.siret.prank.utils.ATimer;
 import cz.siret.prank.utils.CutoffAtomsCallLog;
@@ -121,6 +122,14 @@ public final class Atoms implements Iterable<Atom> {
     @Override
     public Iterator<Atom> iterator() {
         return list.iterator();
+    }
+
+    /**
+     * based on index and PDBSerial
+     */
+    public boolean contains(Atom a) {
+        withIndex();
+        return index.containsKey(a.getPDBserial());
     }
 
     /**
@@ -305,6 +314,10 @@ public final class Atoms implements Iterable<Atom> {
 //===========================================================================================================//
 
     public Atoms cutoutShell(Atoms aroundAtoms, double dist) {
+        if (aroundAtoms==null || aroundAtoms.isEmpty()) {
+            return new Atoms(0);
+        }
+
         aroundAtoms.withKdTreeConditional();
         Atoms res = new Atoms(128);
 
@@ -375,6 +388,18 @@ public final class Atoms implements Iterable<Atom> {
 
     public Atoms withoutHydrogens() {
         return withoutHydrogenAtoms(this);
+    }
+
+    public Atoms without(Atoms remove) {
+        List<Atom> res = new ArrayList<>(list.size());
+
+        for (Atom a : list) {
+            if (!remove.contains(a)) {
+                res.add(a);
+            }
+        }
+
+        return new Atoms(res);
     }
 
 //===========================================================================================================//

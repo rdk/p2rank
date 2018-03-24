@@ -31,6 +31,9 @@ class Residue {
 
     private Atoms atoms
 
+    private Atoms headAtoms
+    private Atoms sideChainAtoms
+
     /** marks solvent exposed residues (may not be filled!) */
     boolean exposed
 
@@ -85,6 +88,31 @@ class Residue {
             atoms =  Atoms.allFromGroup(group).withoutHydrogens()
         }
         atoms
+    }
+
+    private splitAtoms() {
+        getAtoms()
+
+        headAtoms = new Atoms(4)
+        sideChainAtoms = new Atoms(atoms.count - 4)
+
+        for (Atom a : atoms) {
+            if (a.name in ['CA', 'C', 'O', 'N']) {
+                headAtoms.add(a)
+            } else {
+                sideChainAtoms.add(a)
+            }
+        }
+    }
+
+    Atoms getHeadAtoms() {
+        if (headAtoms==null) splitAtoms()
+        return headAtoms
+    }
+
+    Atoms getSideChainAtoms() {
+        if (headAtoms==null) splitAtoms()
+        return sideChainAtoms
     }
 
     @Nullable

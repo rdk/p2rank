@@ -13,6 +13,7 @@ import cz.siret.prank.features.implementation.ProteinMassFeature
 import cz.siret.prank.features.implementation.ProtrusionFeature
 import cz.siret.prank.features.implementation.ProtrusionHistogramFeature
 import cz.siret.prank.features.implementation.PyramidFeature
+import cz.siret.prank.features.implementation.residue.ContactResiduesRF
 import cz.siret.prank.features.implementation.secstruct.SecStructCloudSF
 import cz.siret.prank.features.implementation.secstruct.SecStructRF
 
@@ -88,6 +89,7 @@ class FeatureRegistry {
         register new ResidueToSasFeatWrapper(new SecStructRF())
         register new ResidueToAtomicFeatWrapper(new SecStructRF())
         register new SecStructCloudSF()
+        register new ResidueToSasFeatWrapper(new ContactResiduesRF())
 
         // Register new feature implementations here
 
