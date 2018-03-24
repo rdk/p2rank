@@ -92,7 +92,7 @@ class EvalResiduesRoutine extends EvalRoutine {
             }
         }
 
-        results.logAndStore(outdir, model.label)
+        results.logAndStore(outdir, model?.label)
         //logSummaryResults(dataset.label, model.label, results)
 
         write "evaluated residue labelng prediction in $dataset.size files"

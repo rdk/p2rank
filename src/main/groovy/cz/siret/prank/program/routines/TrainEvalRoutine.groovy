@@ -51,7 +51,9 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
 
     EvalResults execute() {
 
-        collectTrainVectors()
+        if (shouldTrainModel()) {
+            collectTrainVectors()
+        }
         EvalResults res = trainAndEvalModel()
 
         if (deleteVectors)
