@@ -22,6 +22,7 @@ import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.BinCounter
 import groovy.util.logging.Slf4j
 
+import static cz.siret.prank.geom.SecondaryStructureUtils.assignSecondaryStructure
 import static cz.siret.prank.utils.Formatter.format
 import static cz.siret.prank.utils.Futils.writeFile
 
@@ -91,7 +92,7 @@ class AnalyzeRoutine extends Routine {
             Protein p = item.protein
 
             Atoms bindingAtoms = p.proteinAtoms.cutoutShell(p.allLigandAtoms, residueCutoff)
-            List<Integer> bindingResidueIds = bindingAtoms.distinctGroups.collect { it.residueNumber.seqNum }.toSet().toSorted()
+            List<Integer> bindingResidueIds = bindingAtoms.distinctGroupsSorted.collect { it.residueNumber.seqNum }.toSet().toSorted()
 
             String msg = "Protein [$p.name]  ligands: $p.ligandCount  bindingAtoms: $bindingAtoms.count  bindingResidues: ${bindingResidueIds.size()}"
             log.info msg
@@ -114,11 +115,12 @@ class AnalyzeRoutine extends Routine {
         StringBuffer csv = new StringBuffer("protein, n_chains, chain_id, n_residues, residue_string\n")
         dataset.processItems { Dataset.Item item ->
             Protein p = item.protein
+
             int nchains = p.residueChains.size()
             String rows = ""
             p.residueChains.each {
                 String chainId = it.id
-                int nres = it.size
+                int nres = it.length
                 String chars = it.codeCharString
                 rows += "${item.label}, $nchains, $chainId, $nres, $chars \n"
             }
@@ -175,6 +177,9 @@ class AnalyzeRoutine extends Routine {
 
         dataset.processItems { Dataset.Item item ->
             Protein p = item.protein
+
+            assignSecondaryStructure(p.structure)
+
             for (ResidueChain chain : p.residueChains) {
                 String chainCode = loader.toElementCode(p, chain)
                 if (loader.elementsByCode.containsKey(chainCode)) {
@@ -183,6 +188,8 @@ class AnalyzeRoutine extends Routine {
                     def strStruct = chain.codeCharString
                     def strLabeler = loader.elementsByCode.get(chainCode).chain
                     def strLabels = loader.elementsByCode.get(chainCode).labels
+
+                    def secStruct = chain.secStructString
 
                     String status = "OK"
                     if (strStruct.length() != strLabeler.length()) {
@@ -195,6 +202,7 @@ class AnalyzeRoutine extends Routine {
                     sb << String.format("%s, structure, %-6s, %6s, %s \n", chainCode, status, strStruct .length(), strStruct )
                     sb << String.format("%s,   labeler, %-6s, %6s, %s \n", chainCode, status, strLabeler.length(), strLabeler)
                     sb << String.format("%s,    labels, %-6s, %6s, %s \n", chainCode, status, strLabels .length(), strLabels )
+                    sb << String.format("%s, sec.struc, %-6s, %6s, %s \n", chainCode, status, secStruct .length(), secStruct )
                     csv << sb.toString()
                 } else {
                     log.warn "labeling for chain [{}] not found", chainCode

@@ -10,6 +10,8 @@ import org.biojava.nbio.structure.AminoAcid
 import org.biojava.nbio.structure.Atom
 import org.biojava.nbio.structure.Group
 import org.biojava.nbio.structure.ResidueNumber
+import org.biojava.nbio.structure.secstruc.SecStrucInfo
+import org.biojava.nbio.structure.secstruc.SecStrucType
 
 import javax.annotation.Nonnull
 import javax.annotation.Nullable
@@ -27,13 +29,20 @@ class Residue {
     @Nonnull
     private AminoAcid group
 
+    private Atoms atoms
+
     /** marks solvent exposed residues (may not be filled!) */
     boolean exposed
 
+    ResidueChain chain 
+
+    /** position in chain starting at 0 */
+    int posInChain
 
     @Nullable Residue previousInChain
     @Nullable Residue nextInChain
 
+    @Nullable SsInfo ss
 
     Residue(AminoAcid group) {
         this.group = group
@@ -72,7 +81,10 @@ class Residue {
 //===========================================================================================================//
 
     Atoms getAtoms() {
-        Atoms.allFromGroup(group)
+        if (atoms==null) {
+            atoms =  Atoms.allFromGroup(group).withoutHydrogens()
+        }
+        atoms
     }
 
     @Nullable
@@ -97,6 +109,49 @@ class Residue {
     @Override
     String toString() {
         return key.toString()
+    }
+
+    SecStrucInfo getSectStructInfo() {
+        SecStrucInfo ss = (SecStrucInfo) group.getProperty(Group.SEC_STRUC)
+        ss
+    }
+
+    SecStrucType getSecStruct() {
+        sectStructInfo?.type
+    }
+
+
+
+//===========================================================================================================//
+
+    static String safe1Code(Residue res) {
+        if (res == null) {
+            return "_"
+        } else if (res.aa == null) {
+            return "?"
+        } else {
+            return res.aa.codeChar.toString()
+        }
+    }
+
+    static String safeOrderedCode2(Residue res1, Residue res2) {
+        safe1Code(res1) + safe1Code(res2)
+    }
+
+    /**
+     * triplet code made of single AA code characters
+     * sorted orientation
+     */
+    static String safeSorted3Code(Residue res1, Residue res2, Residue res3) {
+        String code = safe1Code(res1) + safe1Code(res2) + safe1Code(res3)
+        if (code.charAt(0) > code.charAt(2)) {
+            code = code.reverse()
+        }
+        return code
+    }
+
+    static String safeSorted3CodeFor(Residue res) {
+        safeSorted3Code(res.previousInChain, res, res.nextInChain)
     }
 
 //===========================================================================================================//
@@ -131,12 +186,11 @@ class Residue {
         static forAtom(Atom atom) {
             ResidueNumber rn = atom?.group?.residueNumber
             if (rn != null) {
-                 new Key(rn)
+                new Key(rn)
             } else {
                 null
             }
         }
-
 
         @Override
         String toString() {
@@ -146,34 +200,51 @@ class Residue {
 
 //===========================================================================================================//
 
-    static String safe1Code(Residue res) {
-        if (res == null) {
-            return "_"
-        } else if (res.aa == null) {
-            return "?"
-        } else {
-            return res.aa.codeChar.toString()
-        }
-    }
+    static class SsInfo {
+        SsSection section
+        int posInSection
 
-    static String safeOrderedCode2(Residue res1, Residue res2) {
-        safe1Code(res1) + safe1Code(res2)
+        SsInfo(SsSection section, int posInSection) {
+            this.section = section
+            this.posInSection = posInSection
+        }
+
+        int getPosInSection() {
+            posInSection
+        }
+
+        /**
+         * relative postion from <0,1>
+         */
+        double getRelativePosInSection() {
+            int n = section.length - 1
+            if (n == 0) {
+                return 0
+            } else {
+                return (double)posInSection / n
+            }
+        }
+
+        SecStrucType getType() {
+            section.type
+        }
+
     }
 
     /**
-     * triplet code made of single AA code characters
-     * sorted orientation
+     * Secondary structure section (the longest extent of the same SS type)
      */
-    static String safeSorted3Code(Residue res1, Residue res2, Residue res3) {
-        String code = safe1Code(res1) + safe1Code(res2) + safe1Code(res3)
-        if (code.charAt(0) > code.charAt(2)) {
-            code = code.reverse()
+    static class SsSection {
+        SecStrucType type
+        int startPos // inclusive
+        int length
+
+        SsSection(SecStrucType type, int startPos, int length) {
+            this.type = type
+            this.startPos = startPos
+            this.length = length
         }
-        return code
     }
 
-    static String safeSorted3CodeFor(Residue res) {
-        safeSorted3Code(res.previousInChain, res, res.nextInChain)
-    }
 
 }

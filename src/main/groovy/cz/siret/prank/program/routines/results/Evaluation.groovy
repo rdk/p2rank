@@ -95,10 +95,10 @@ class Evaluation implements Parametrized, Writable {
     }
 
     private double getAvgConservationForAtoms(Atoms atoms, ConservationScore score) {
-        if (atoms.distinctGroups.size() == 0) {
+        if (atoms.distinctGroupsSorted.size() == 0) {
             return 0.0
         }
-        return atoms.distinctGroups.stream().mapToDouble( {
+        return atoms.distinctGroupsSorted.stream().mapToDouble( {
             group->score.getScoreForResidue(group.getResidueNumber())})
                 .average().getAsDouble()
     }
@@ -252,11 +252,11 @@ class Evaluation implements Parametrized, Writable {
             protRow.avgNonBindingConservation = getAvgConservationForAtoms(nonBindingAtoms, score)
 
             if (!protein.params.log_scores_to_file.isEmpty()) {
-                bindingScrs = bindingAtoms.distinctGroups.collect { it ->
+                bindingScrs = bindingAtoms.distinctGroupsSorted.collect { it ->
                     score.getScoreForResidue(it
                             .getResidueNumber())
                 }.toList();
-                nonBindingScrs = nonBindingAtoms.distinctGroups.collect { it ->
+                nonBindingScrs = nonBindingAtoms.distinctGroupsSorted.collect { it ->
                     score.getScoreForResidue(it.getResidueNumber())
                 }
             }

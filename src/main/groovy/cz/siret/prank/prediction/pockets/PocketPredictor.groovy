@@ -72,7 +72,7 @@ class PocketPredictor implements Parametrized {
                 if (protein.secondaryData.getOrDefault(ConservationScore.conservationLoadedKey,
                         false)) {
                     ConservationScore conservationScore = protein.secondaryData.get(ConservationScore.conservationScoreKey)
-                    double avgConservation = pocketSurfaceAtoms.distinctGroups.stream()
+                    double avgConservation = pocketSurfaceAtoms.distinctGroupsSorted.stream()
                             .mapToDouble({
                         group -> conservationScore.getScoreForResidue(group.getResidueNumber())
                     }).average().getAsDouble()

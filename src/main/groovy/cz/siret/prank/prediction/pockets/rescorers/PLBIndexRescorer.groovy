@@ -42,7 +42,7 @@ class PLBIndexRescorer extends PocketRescorer {
                 }
             } else {
                 // according to article
-                for (Group g : pocket.surfaceAtoms.distinctGroups) {
+                for (Group g : pocket.surfaceAtoms.distinctGroupsSorted) {
                     String aaCode = PdbUtils.getCorrectedResidueCode(g)
                     Double prop = aaPropensitiesTable.getValue(aaCode, "RAx")
                     if (prop!=null) {

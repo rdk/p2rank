@@ -5,6 +5,7 @@ import cz.siret.prank.domain.loaders.LoaderParams
 import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.features.implementation.conservation.ConservationScore
 import cz.siret.prank.geom.Atoms
+import cz.siret.prank.geom.SecondaryStructureUtils
 import cz.siret.prank.geom.Surface
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.Parametrized
@@ -15,6 +16,7 @@ import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 import org.biojava.nbio.structure.Structure
 import org.biojava.nbio.structure.StructureTools
+import org.biojava.nbio.structure.secstruc.SecStrucType
 
 import javax.annotation.Nullable
 import javax.print.PrintException
@@ -235,6 +237,35 @@ class Protein implements Parametrized {
         }
         exposedResidues = new Residues( residues.list.findAll { it.exposed }.asList() )
     }
+
+//===========================================================================================================//
+
+    void assignSecondaryStructure() {
+        SecondaryStructureUtils.assignSecondaryStructure(structure)
+
+        checkResiduesCalculated()
+
+        for (ResidueChain chain : residueChains) {
+            for (int pos=0; pos!=chain.length; pos++) {
+                Residue res = chain.residues[pos]
+                if (res.ss != null) continue
+
+                SecStrucType type = res.secStruct
+                int pos2 = pos + 1
+                while (chain.residues[pos2].secStruct == type) {
+                    pos2++
+                }
+
+                int secLength = pos2 - pos
+                Residue.SsSection section = new Residue.SsSection(type, pos, secLength)
+
+                for (int i=0; i!=secLength; i++) {
+                    chain.residues[pos+i].ss = new Residue.SsInfo(section, i)
+                }
+            }
+        }
+    }
+
 
 //===========================================================================================================//
 

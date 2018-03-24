@@ -2,8 +2,10 @@ package cz.siret.prank.domain
 
 import com.google.common.collect.Maps
 import cz.siret.prank.geom.Atoms
+import cz.siret.prank.geom.Struct
 import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
+import org.biojava.nbio.structure.Group
 
 import javax.annotation.Nullable
 
@@ -49,6 +51,15 @@ class Residues implements Iterable<Residue> {
     @Nullable
     Residue getResidueForAtom(Atom a) {
         getResidue(Residue.Key.forAtom(a) as Residue.Key)
+    }
+
+    @Nullable
+    Residue getResidueForGroup(Group g) {
+        getResidue(Residue.Key.forAtom(g?.atoms?.first()) as Residue.Key)
+    }
+
+    List<Residue> getDistinctForAtoms(Atoms atoms) {
+        atoms.distinctGroups.collect { getResidueForGroup(it) }.findAll{ it != null }.asList()
     }
 
     Residue findNearest(Atom point) {

@@ -42,7 +42,7 @@ class Ligand implements Parametrized {
 
         atoms = new Atoms(ligAtoms)
         this.protein = protein
-        List<Group> groups = atoms.getDistinctGroups()
+        List<Group> groups = atoms.getDistinctGroupsSorted()
         Set<String> uniqueNames = (groups*.PDBName).toSet()
         this.name = uniqueNames.join("&")
         this.code = (groups*.residueNumber).join("&")

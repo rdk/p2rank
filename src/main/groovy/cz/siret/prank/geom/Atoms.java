@@ -217,6 +217,11 @@ public final class Atoms implements Iterable<Atom> {
         return centerOfMass;
     }
 
+    public List<Group> getDistinctGroupsSorted() {
+
+        return Struct.sortedGroups(getDistinctGroups());
+    }
+
     public List<Group> getDistinctGroups() {
         Set<Group> res = new HashSet<>();
         for (Atom a : list) {
@@ -225,9 +230,7 @@ public final class Atoms implements Iterable<Atom> {
             }
         }
 
-        List<Group> sres = Struct.sortGroups(res);
-
-        return sres;
+        return new ArrayList<>(res);
     }
 
     public void add(Atom a) {

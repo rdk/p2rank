@@ -61,8 +61,8 @@ class SprintLabelingLoader extends ResidueLabeler<Boolean> implements Writable {
                 foundOneChain = true
             }
 
-            if (chain.size != element.length) {
-                throw new PrankException("Chain lengths do not match for [$chainCode] (structure: $chain.size, labeling file: $element.length)")
+            if (chain.length != element.length) {
+                throw new PrankException("Chain lengths do not match for [$chainCode] (structure: $chain.length, labeling file: $element.length)")
             }
 
             int i = 0

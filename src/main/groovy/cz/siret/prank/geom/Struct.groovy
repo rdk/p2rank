@@ -200,7 +200,7 @@ class Struct {
     }
 
 
-    static List<Group> sortGroups(Iterable<Group> groups) {
+    static List<Group> sortedGroups(Iterable<Group> groups) {
 
         new Ordering<Group>() {
             @Override

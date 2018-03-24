@@ -41,7 +41,7 @@ class AsaResiduesFeature extends SasFeatureCalculator implements Parametrized {
 
     @Override
     double[] calculateForSasPoint(Atom sasPoint, SasFeatureCalculationContext context) {
-        List<Group> groups = context.protein.exposedAtoms.cutoutSphere(sasPoint, params.feat_asa_neigh_radius).distinctGroups
+        List<Group> groups = context.protein.exposedAtoms.cutoutSphere(sasPoint, params.feat_asa_neigh_radius).distinctGroupsSorted
         ProtAsa protAsa = (ProtAsa) context.protein.secondaryData.get("prot_asa")
         double localAsa = (double) groups.collect { Group g -> protAsa.groupAsaMap.get(g.residueNumber) ?: 0 }.sum(0)
 

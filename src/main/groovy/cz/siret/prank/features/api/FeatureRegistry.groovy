@@ -13,6 +13,9 @@ import cz.siret.prank.features.implementation.ProteinMassFeature
 import cz.siret.prank.features.implementation.ProtrusionFeature
 import cz.siret.prank.features.implementation.ProtrusionHistogramFeature
 import cz.siret.prank.features.implementation.PyramidFeature
+import cz.siret.prank.features.implementation.secstruct.SecStructCloudSF
+import cz.siret.prank.features.implementation.secstruct.SecStructRF
+
 import cz.siret.prank.features.implementation.sequence.DupletsPropensityAtomicFeature
 import cz.siret.prank.features.implementation.sequence.DupletsPropensityFeature
 import cz.siret.prank.features.implementation.SurfaceProtrusionFeature
@@ -81,6 +84,10 @@ class FeatureRegistry {
         register new DupletsPropensityAtomicFeature()
         register new TripletsPropensityFeature()
         register new TripletsPropensityAtomicFeature()
+
+        register new ResidueToSasFeatWrapper(new SecStructRF())
+        register new ResidueToAtomicFeatWrapper(new SecStructRF())
+        register new SecStructCloudSF()
 
         // Register new feature implementations here
 
