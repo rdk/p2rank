@@ -62,7 +62,19 @@ class ModelBasedResidueLabeler extends ResidueLabeler<Boolean> implements Parame
     ResidueLabeling<Boolean> labelResidues(Residues residues, Protein protein) {
 
         ModelBasedPointLabeler predictor = new ModelBasedPointLabeler(model, context).withObserved(observedPoints)
-        labeledPoints = predictor.labelPoints(sasPoints, protein)
+
+        // avoid repetitive training and optimization when optimized params do not influence it
+        if (params.hopt_train_only_once) {
+            if (protein.secondaryData.containsKey('saved_labeled_points')) {
+                labeledPoints = (List<LabeledPoint>) protein.secondaryData.get('saved_labeled_points')
+            } else {
+                labeledPoints = predictor.labelPoints(sasPoints, protein)
+                protein.secondaryData.put('saved_labeled_points', labeledPoints)
+            }
+        } else {
+            labeledPoints = predictor.labelPoints(sasPoints, protein)
+        }
+
         classifierStats = predictor.classifierStats
 
         return calculateLabeling(residues, labeledPoints, protein)

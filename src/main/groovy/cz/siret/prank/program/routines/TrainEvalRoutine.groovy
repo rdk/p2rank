@@ -114,45 +114,52 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
         }
     }
 
+    private static boolean ALTERADY_TRAINED = false
+
+    boolean shouldTrainModel() {
+        if (params.hopt_train_only_once) {
+            if (ALTERADY_TRAINED) {
+                return false
+            } else {
+                ALTERADY_TRAINED = true
+                return true
+            }
+        } else {
+            true
+        }
+    }
+
     EvalResults trainAndEvalModel() {
         def timer = startTimer()
 
         mkdirs(outdir)
 
-        Model model = Model.createNewFromParams(params)
-        String modelf = "$outdir/${model.label}.model"
-
-        if (trainVectors==null) {
-            trainVectors = WekaUtils.loadData(trainVectorFile)
-        }
-
-        write "training classifier ${model.classifier.getClass().name} on dataset with ${trainVectors.size()} instances"
-
-        WekaUtils.trainClassifier(model.classifier, trainVectors)
-        long trainTime = timer.time
-        if (!params.delete_models) {
-            model.saveToFile(modelf)
-        }
-
-        ClassifierStats trainStats = calculateTrainStats(model.classifier, trainVectors)
-
-        // feature importances
+        long trainTime = 0
+        ClassifierStats trainStats = null
         List<Double> featureImportances = null
-        if (params.feature_importances && model.hasFeatureImportances()) {
-            featureImportances = model.featureImportances
-            if (featureImportances != null) {
-                List<String> names = FeatureExtractor.createFactory().vectorHeader
+        String modelf = null
+        Model model = null
 
-                Writer file = Futils.getWriter("$outdir/feature_importances.csv")
-                file << names.join(',') << "\n"
-                file << CSV.fromDoubles(featureImportances) << "\n"
-                file.close()
-                // TODO: calculate variance of feature importances over seedloop iterations
+        if (shouldTrainModel()) {
+            model = Model.createNewFromParams(params)
+            modelf = "$outdir/${model.label}.model"
+
+            if (trainVectors==null) {
+                trainVectors = WekaUtils.loadData(trainVectorFile)
             }
+
+            write "training classifier ${model.classifier.getClass().name} on dataset with ${trainVectors.size()} instances"
+
+            WekaUtils.trainClassifier(model.classifier, trainVectors)
+            trainTime = timer.time
+            if (!params.delete_models) {
+                model.saveToFile(modelf)
+            }
+            trainStats = calculateTrainStats(model.classifier, trainVectors)
+            featureImportances = calcFeatureImportances(model)
         }
 
         logTime "model trained in " + timer.formatted
-
         timer.restart()
 
         if (params.predict_residues) {
@@ -177,6 +184,22 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
         return res
     }
 
+    private calcFeatureImportances(Model model) {
+        List<Double> featureImportances = null
+        if (params.feature_importances && model.hasFeatureImportances()) {
+            featureImportances = model.featureImportances
+            if (featureImportances != null) {
+                List<String> names = FeatureExtractor.createFactory().vectorHeader
+
+                Writer file = Futils.getWriter("$outdir/feature_importances.csv")
+                file << names.join(',') << "\n"
+                file << CSV.fromDoubles(featureImportances) << "\n"
+                file.close()
+                // TODO: calculate variance of feature importances over seedloop iterations
+            }
+        }
+        featureImportances
+    }
 
 
 }

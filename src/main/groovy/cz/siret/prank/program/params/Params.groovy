@@ -706,6 +706,12 @@ class Params {
      */
     boolean load_only_specified_chains = false
 
+    /**
+     * In hyperparameter optimization (ploop and hopt commands) train model only once in the beginning
+     * (makes sense if optimized hyperparameters do't influence training and feature extraction)
+     */
+    boolean hopt_train_only_once = false
+
 //===========================================================================================================//
 
     /**
