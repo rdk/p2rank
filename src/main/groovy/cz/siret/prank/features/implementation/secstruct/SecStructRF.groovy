@@ -5,7 +5,6 @@ import cz.siret.prank.domain.Residue
 import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.features.api.ResidueFeatureCalculationContext
 import cz.siret.prank.features.api.ResidueFeatureCalculator
-import cz.siret.prank.features.api.SasFeatureCalculationContext
 import groovy.transform.CompileStatic
 
 /**
@@ -21,6 +20,11 @@ class SecStructRF extends ResidueFeatureCalculator {
     @Override
     String getName() {
         return 'ss'
+    }
+
+    @Override
+    List<String> getHeader() {
+        return HEADER
     }
 
     @Override
