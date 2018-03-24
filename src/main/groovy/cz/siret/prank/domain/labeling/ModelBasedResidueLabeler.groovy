@@ -32,6 +32,8 @@ class ModelBasedResidueLabeler extends ResidueLabeler<Boolean> implements Parame
     private List<LabeledPoint> observedPoints = null
 
     private ClassifierStats classifierStats
+    private ResidueLabeling<Double> doubleLabeling
+
 
     private final PointScoreCalculator pointScoreCalculator = new PointScoreCalculator()
     private double SCORE_THRESHOLD = params.residue_score_threshold
@@ -56,6 +58,10 @@ class ModelBasedResidueLabeler extends ResidueLabeler<Boolean> implements Parame
 
     ClassifierStats getClassifierStats() {
         return classifierStats
+    }
+
+    ResidueLabeling<Double> getDoubleLabeling() {
+        return doubleLabeling
     }
 
     @Override
@@ -100,6 +106,7 @@ class ModelBasedResidueLabeler extends ResidueLabeler<Boolean> implements Parame
 
             resScores.add(res, score)
         }
+        doubleLabeling = resScores
 
         BinaryLabeling resLabels = new BinaryLabeling(residues.count)
 

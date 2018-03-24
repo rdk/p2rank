@@ -62,6 +62,7 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
 
     void collectTrainVectors() {
         if (!shouldTrainModel()) return
+        
         String vectf =  "$outdir/vectorsTrain.arff"
         trainVectorFile = vectf
         trainVectors = doCollectVectors(trainDataSet, vectf)

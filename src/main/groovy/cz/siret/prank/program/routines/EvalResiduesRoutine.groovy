@@ -64,7 +64,7 @@ class EvalResiduesRoutine extends EvalRoutine {
             BinaryLabeling predicted = predictor.getBinaryLabeling(protein.residues, protein)
             List<LabeledPoint> predictedPoints = predictor.labeledPoints
 
-            ClassifierStats predictionStats = BinaryLabelings.eval(observed, predicted)
+            ClassifierStats predictionStats = BinaryLabelings.eval(observed, predicted, predictor.doubleLabeling)
 
             synchronized (results) {
                 results.residuePredictionStats.addAll(predictionStats)

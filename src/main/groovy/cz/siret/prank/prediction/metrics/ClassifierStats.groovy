@@ -84,6 +84,19 @@ class ClassifierStats implements Parametrized, Writable {
 
     /**
      *
+     * @param observed
+     * @param predicted
+     * @param score  must be from <0,1>
+     */
+    void addPrediction(boolean observed, boolean predicted, double score) {
+        if (score < 0d) score = 0d
+
+        double[] hist = [1-score, score] as double[]
+        addPrediction(observed, predicted, score, hist)
+    }
+
+    /**
+     *
      * @param observed   observed class == 1
      * @param predicted   predicted class == 1
      * @param score predicted score from iterval <0,1>
