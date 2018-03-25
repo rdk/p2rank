@@ -407,7 +407,7 @@ class ClassifierStats implements Parametrized, Writable {
             Advanced res = new Advanced()
 
             if (collecting && predictions!=null) {
-                if (predictions.empty)  {
+                if (!predictions.empty)  {
                     WekaStatsHelper wekaHelper = new WekaStatsHelper(predictions)
                     res.wekaAUC = wekaHelper.areaUnderROC()
                     res.wekaAUPRC = wekaHelper.areaUnderPRC()
