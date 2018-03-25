@@ -17,7 +17,7 @@ import cz.siret.prank.features.implementation.residue.ContactResiduesRF
 import cz.siret.prank.features.implementation.secstruct.SecStructCloudSF
 import cz.siret.prank.features.implementation.secstruct.SecStructRF
 
-import cz.siret.prank.features.implementation.sequence.DupletsPropensityAtomicFeature
+
 import cz.siret.prank.features.implementation.sequence.DupletsPropensityFeature
 import cz.siret.prank.features.implementation.SurfaceProtrusionFeature
 import cz.siret.prank.features.implementation.XyzDummyFeature
@@ -26,7 +26,7 @@ import cz.siret.prank.features.implementation.conservation.ConservationFeature
 import cz.siret.prank.features.implementation.conservation.ConservationCloudFeature
 import cz.siret.prank.features.implementation.conservation.ConservationCloudScaledFeature
 import cz.siret.prank.features.implementation.histogram.PairHistogramFeature
-import cz.siret.prank.features.implementation.sequence.TripletsPropensityAtomicFeature
+
 import cz.siret.prank.features.implementation.sequence.TripletsPropensityFeature
 import cz.siret.prank.features.implementation.volsite.VolsiteFeature
 import cz.siret.prank.program.PrankException
@@ -81,10 +81,11 @@ class FeatureRegistry {
         register new PyramidFeature()
         register new ProteinMassFeature()
         register new AAIndexFeature()
-        register new DupletsPropensityFeature()
-        register new DupletsPropensityAtomicFeature()
-        register new TripletsPropensityFeature()
-        register new TripletsPropensityAtomicFeature()
+
+        register new ResidueToSasFeatWrapper(new DupletsPropensityFeature())
+        register new ResidueToAtomicFeatWrapper(new DupletsPropensityFeature())
+        register new ResidueToSasFeatWrapper(new TripletsPropensityFeature())
+        register new ResidueToAtomicFeatWrapper(new TripletsPropensityFeature())
 
         register new ResidueToSasFeatWrapper(new SecStructRF())
         register new ResidueToAtomicFeatWrapper(new SecStructRF())

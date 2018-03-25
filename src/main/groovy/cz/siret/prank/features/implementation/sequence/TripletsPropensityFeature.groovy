@@ -1,6 +1,8 @@
 package cz.siret.prank.features.implementation.sequence
 
 import cz.siret.prank.domain.Residue
+import cz.siret.prank.features.api.ResidueFeatureCalculationContext
+import cz.siret.prank.features.api.ResidueFeatureCalculator
 import cz.siret.prank.features.api.SasFeatureCalculationContext
 import cz.siret.prank.features.api.SasFeatureCalculator
 import cz.siret.prank.features.tables.PropertyTable
@@ -21,18 +23,19 @@ import static cz.siret.prank.utils.Futils.readResource
  */
 @Slf4j
 @CompileStatic
-class TripletsPropensityFeature extends SasFeatureCalculator implements Parametrized {
+class TripletsPropensityFeature extends ResidueFeatureCalculator implements Parametrized {
 
-    static final PropertyTable TABLE = PropertyTable.parse(readResource("/tables/peptides/aa-surf-seq-triplets.csv"))
-    static final String PROPERTY = 'P864' // TODO parametrize
+    final PropertyTable TABLE = PropertyTable.parse(
+            readResource("/tables/peptides/$params.pept_propensities_set/triplets.csv"))
+    final String PROPERTY = 'propensity'
 
-    static List<String> HEADER = ['prop']
+    static List<String> HEADER = ['prop', 'prop^2']
 
 //===========================================================================================================//
 
     @Override
     String getName() {
-        'seqtrip'
+        'triplets'
     }
 
     @Override
@@ -41,16 +44,13 @@ class TripletsPropensityFeature extends SasFeatureCalculator implements Parametr
     }
 
     @Override
-    double[] calculateForSasPoint(Atom sasPoint, SasFeatureCalculationContext context) {
+    double[] calculateForResidue(Residue residue, ResidueFeatureCalculationContext context) {
+        double prop = calculatePropensityForResidue(residue)
 
-        Residue res = context.protein.residues.findNearest(sasPoint)
-
-        double prop = calculatePropensityForResidue(res)
-
-        return [prop] as double[]
+        return [prop, prop*prop] as double[]
     }
 
-    static double calculatePropensityForResidue(@Nullable Residue res) {
+    double calculatePropensityForResidue(@Nullable Residue res) {
         String code = Residue.safeSorted3CodeFor(res)
         double prop = TABLE.getValueOrDefault(code, PROPERTY, 0d)
 

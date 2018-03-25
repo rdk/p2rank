@@ -712,6 +712,14 @@ class Params {
      */
     boolean hopt_train_only_once = false
 
+    /**
+     * directory in program resources to take peptide propensities from
+     * (resources/tables/peptides/$var/...)
+     * Available: SprintT1070, SprintA870
+     * TODO: move to dist dir
+     */
+    String pept_propensities_set = "SprintT1070"
+
 //===========================================================================================================//
 
     /**

@@ -1,6 +1,8 @@
 package cz.siret.prank.features.implementation.sequence
 
 import cz.siret.prank.domain.Residue
+import cz.siret.prank.features.api.ResidueFeatureCalculationContext
+import cz.siret.prank.features.api.ResidueFeatureCalculator
 import cz.siret.prank.features.api.SasFeatureCalculationContext
 import cz.siret.prank.features.api.SasFeatureCalculator
 import cz.siret.prank.features.tables.PropertyTable
@@ -21,19 +23,20 @@ import static cz.siret.prank.utils.Futils.readResource
  */
 @Slf4j
 @CompileStatic
-class DupletsPropensityFeature extends SasFeatureCalculator implements Parametrized {
+class DupletsPropensityFeature extends ResidueFeatureCalculator implements Parametrized {
 
-    static final PropertyTable TABLE = PropertyTable.parse(readResource("/tables/peptides/aa-surf-seq-duplets.csv"))
-    static final String PROPERTY = 'P864' // TODO parametrize
+    final PropertyTable TABLE = PropertyTable.parse(
+            readResource("/tables/peptides/$params.pept_propensities_set/duplets.csv"))
+    final String PROPERTY = 'propensity'
 
-//    static List<String> HEADER = ['product', 'sum', 'max']
-    static List<String> HEADER = ['product']
+    static List<String> HEADER = ['product', 'sum', 'max']
+//    static List<String> HEADER = ['product']
 
 //===========================================================================================================//
 
     @Override
     String getName() {
-        'seqdup'
+        'duplets'
     }
 
     @Override
@@ -42,14 +45,7 @@ class DupletsPropensityFeature extends SasFeatureCalculator implements Parametri
     }
 
     @Override
-    double[] calculateForSasPoint(Atom sasPoint, SasFeatureCalculationContext context) {
-
-        Residue res = context.protein.residues.findNearest(sasPoint)
-
-        return calculateForResidue(res)
-    }
-
-    static double[] calculateForResidue(@Nullable Residue res) {
+    double[] calculateForResidue(Residue res, ResidueFeatureCalculationContext context) {
         String code1 = Residue.safeOrderedCode2(res, res?.previousInChain)
         String code2 = Residue.safeOrderedCode2(res, res?.nextInChain)
 
@@ -63,11 +59,12 @@ class DupletsPropensityFeature extends SasFeatureCalculator implements Parametri
         } else if (val2 == 0d) {
             product = val1*val1
         }
-//        double sum = val1 + val2
-//        double max = Math.max(val1, val2)
+        double sum = val1 + val2
+        double max = Math.max(val1, val2)
 
-        return [product] as double[]
-//        return [product, sum, max] as double[]
+//        return [product] as double[]
+        return [product, sum, max] as double[]
     }
-    
+
+
 }
