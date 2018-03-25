@@ -107,7 +107,7 @@ public class PrankFeatureVector extends FeatureVector implements Cloneable {
         String atomName = PdbUtils.getCorrectedAtomResidueCode(atom) + "." + atom.name
         Double val = atomPropertyTable.getValue(atomName, property)
 
-        //log.info "atom TABLE value ${atomName}.$property = $val"
+        //log.info "atom table value ${atomName}.$property = $val"
 
         return val==null ? 0d : val
     }

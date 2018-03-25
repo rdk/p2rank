@@ -3,13 +3,10 @@ package cz.siret.prank.features.implementation.sequence
 import cz.siret.prank.domain.Residue
 import cz.siret.prank.features.api.ResidueFeatureCalculationContext
 import cz.siret.prank.features.api.ResidueFeatureCalculator
-import cz.siret.prank.features.api.SasFeatureCalculationContext
-import cz.siret.prank.features.api.SasFeatureCalculator
 import cz.siret.prank.features.tables.PropertyTable
 import cz.siret.prank.program.params.Parametrized
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-import org.biojava.nbio.structure.Atom
 
 import javax.annotation.Nullable
 
@@ -25,9 +22,8 @@ import static cz.siret.prank.utils.Futils.readResource
 @CompileStatic
 class TripletsPropensityFeature extends ResidueFeatureCalculator implements Parametrized {
 
-    final PropertyTable TABLE = PropertyTable.parse(
-            readResource("/tables/peptides/$params.pept_propensities_set/triplets.csv"))
-    final String PROPERTY = 'propensity'
+    static final String PROPERTY = 'propensity'
+    PropertyTable table 
 
     static List<String> HEADER = ['prop', 'prop^2']
 
@@ -43,6 +39,14 @@ class TripletsPropensityFeature extends ResidueFeatureCalculator implements Para
         HEADER
     }
 
+    PropertyTable getTable() {
+        if (table == null) {
+            table = PropertyTable.parse(
+                    readResource("/tables/peptides/$params.pept_propensities_set/triplets.csv"))
+        }
+        table
+    }
+
     @Override
     double[] calculateForResidue(Residue residue, ResidueFeatureCalculationContext context) {
         double prop = calculatePropensityForResidue(residue)
@@ -52,7 +56,7 @@ class TripletsPropensityFeature extends ResidueFeatureCalculator implements Para
 
     double calculatePropensityForResidue(@Nullable Residue res) {
         String code = Residue.safeSorted3CodeFor(res)
-        double prop = TABLE.getValueOrDefault(code, PROPERTY, 0d)
+        double prop = getTable().getValueOrDefault(code, PROPERTY, 0d)
 
         return prop
     }

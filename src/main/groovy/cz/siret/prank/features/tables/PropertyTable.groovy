@@ -19,7 +19,7 @@ class PropertyTable {
 //===========================================================================================================//
 
     /**
-     * @return new TABLE with items and properties reversed
+     * @return new table with items and properties reversed
      */
     PropertyTable reverse() {
         PropertyTable res = new PropertyTable()
@@ -44,7 +44,7 @@ class PropertyTable {
 
         List<String> lines = csvText.readLines().findAll { String s -> !s.startsWith("#") && StringUtils.isNotBlank(s) }.toList()
 
-        // log.info "TABLE lines: " + lines.size()
+        // log.info "table lines: " + lines.size()
 
         List<String> propNames
 
