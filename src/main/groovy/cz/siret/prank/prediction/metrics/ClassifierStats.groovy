@@ -476,7 +476,8 @@ class ClassifierStats implements Parametrized, Writable {
             sb << "AUC:, ${format(AUC)}, area under ROC curve\n"
             sb << "F1:, ${format(f1)}, f-measure\n"
             sb << "MCC:, ${format(MCC)}, Matthews correlation coefficient\n"
-
+        }
+        
         return sb.toString()
     }
 
