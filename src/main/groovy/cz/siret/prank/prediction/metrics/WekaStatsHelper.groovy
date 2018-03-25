@@ -1,5 +1,6 @@
 package cz.siret.prank.prediction.metrics
 
+import cz.siret.prank.program.PrankException
 import groovy.transform.CompileStatic
 import weka.classifiers.evaluation.NominalPrediction
 import weka.classifiers.evaluation.Prediction
@@ -17,9 +18,16 @@ class WekaStatsHelper {
     List<PPred> preds
     Instances wekaPreds
 
+    /**
+     *
+     * @param preds
+     */
     WekaStatsHelper(List<PPred> preds) {
-        this.preds = preds
+        if (preds == null || preds.empty) {
+            throw new PrankException("Predictions cannot be empty!")
+        }
 
+        this.preds = preds
         wekaPreds = new ThresholdCurve().getCurve(toWekaNominalPredictions(preds), 1)
     }
 

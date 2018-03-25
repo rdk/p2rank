@@ -3,6 +3,7 @@ package cz.siret.prank.prediction.metrics
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Writable
 import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
 
 import java.text.DecimalFormat
 
@@ -13,6 +14,7 @@ import static java.lang.Math.log
 /**
  * Binary classifier statistics collector and calculator
  */
+@Slf4j
 @CompileStatic
 class ClassifierStats implements Parametrized, Writable {
 
@@ -404,18 +406,23 @@ class ClassifierStats implements Parametrized, Writable {
         Advanced calculateAdvanced() {
             Advanced res = new Advanced()
 
-            if (collecting) {
-                WekaStatsHelper wekaHelper = new WekaStatsHelper(predictions)
-                res.wekaAUC = wekaHelper.areaUnderROC()
-                res.wekaAUPRC = wekaHelper.areaUnderPRC()
+            if (collecting && predictions!=null) {
+                if (predictions.empty)  {
+                    WekaStatsHelper wekaHelper = new WekaStatsHelper(predictions)
+                    res.wekaAUC = wekaHelper.areaUnderROC()
+                    res.wekaAUPRC = wekaHelper.areaUnderPRC()
+                } else {
+                    log.warn "Predictions are empty! Cannot calculate AUC and AUPRC stats."
+                }
+
             }
 
             res
         }
 
         class Advanced {
-            double wekaAUC   = 0
-            double wekaAUPRC = 0
+            double wekaAUC   = Double.NaN
+            double wekaAUPRC = Double.NaN
         }
         
     }
