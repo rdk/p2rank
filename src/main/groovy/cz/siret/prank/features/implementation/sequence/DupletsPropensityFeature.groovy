@@ -23,8 +23,8 @@ class DupletsPropensityFeature extends ResidueFeatureCalculator implements Param
     static final String PROPERTY = 'propensity'
     PropertyTable table
 
-    static List<String> HEADER = ['product', 'sum', 'max']
-//    static List<String> HEADER = ['product']
+//    static List<String> HEADER = ['product', 'sum', 'max']
+    static List<String> HEADER = ['product']
 
 //===========================================================================================================//
 
@@ -64,8 +64,8 @@ class DupletsPropensityFeature extends ResidueFeatureCalculator implements Param
         double sum = val1 + val2
         double max = Math.max(val1, val2)
 
-//        return [product] as double[]
-        return [product, sum, max] as double[]
+        return [product] as double[]
+//        return [product, sum, max] as double[]
     }
 
 

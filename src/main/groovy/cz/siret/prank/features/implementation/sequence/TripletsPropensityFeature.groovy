@@ -25,7 +25,8 @@ class TripletsPropensityFeature extends ResidueFeatureCalculator implements Para
     static final String PROPERTY = 'propensity'
     PropertyTable table 
 
-    static List<String> HEADER = ['prop', 'prop^2']
+    //static List<String> HEADER = ['prop', 'prop^2']
+    static List<String> HEADER = ['prop']
 
 //===========================================================================================================//
 
@@ -51,7 +52,8 @@ class TripletsPropensityFeature extends ResidueFeatureCalculator implements Para
     double[] calculateForResidue(Residue residue, ResidueFeatureCalculationContext context) {
         double prop = calculatePropensityForResidue(residue)
 
-        return [prop, prop*prop] as double[]
+        //return [prop, prop*prop] as double[]
+        return [prop] as double[]
     }
 
     double calculatePropensityForResidue(@Nullable Residue res) {
