@@ -2,6 +2,9 @@ package cz.siret.prank.features.implementation.conservation
 
 import com.univocity.parsers.tsv.TsvParser
 import com.univocity.parsers.tsv.TsvParserSettings
+import cz.siret.prank.domain.Protein
+import cz.siret.prank.domain.Residue
+import cz.siret.prank.domain.labeling.ResidueLabeling
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Futils
 import groovy.util.logging.Slf4j
@@ -63,6 +66,14 @@ public class ConservationScore implements Parametrized {
         }
     }
 
+    ResidueLabeling<Double> toDoubleLabeling(Protein p) {
+        ResidueLabeling<Double> labeling = new ResidueLabeling<>(p.residues.size())
+        for (Residue r : p.residues) {
+            labeling.add(r, getScoreForResidue(r.residueNumber))
+        }
+        return labeling
+    }
+
     public Map<ResidueNumberWrapper, Double> getScoreMap() {
         return scores;
     }
@@ -71,7 +82,7 @@ public class ConservationScore implements Parametrized {
         return this.scores.size();
     }
 
-    public enum ScoreFormat {
+    public static enum ScoreFormat {
         ConCavityFormat,
         JSDFormat
     }
@@ -198,12 +209,17 @@ public class ConservationScore implements Parametrized {
                 File scoreFile = scoreFiles.apply(chainId);
                 if (scoreFile.exists()) {
                     chainScores = ConservationScore.loadScoreFile(scoreFile, format);
+                } else {
+                    log.error "Score file doesn't exist [{}]", scoreFile
                 }
-                if (chainScores != null) {
-                    matchSequences(chain.getAtomGroups(GroupType.AMINOACID), chainScores, scores);
-                }
+
+                log.debug "loaded chain scores:\n" +
+                        chainScores.collect { "$it.index $it.letter $it.score" }.join("\n")
+                
+                matchSequences(chain.getAtomGroups(GroupType.AMINOACID), chainScores, scores);
+
             } catch(Exception e) {
-                log.warn("Failed to load conservation file. ${e.toString()}")
+                log.error("Failed to load conservation file.", e)
             }
         }
         return new ConservationScore(scores);

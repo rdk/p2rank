@@ -145,6 +145,12 @@ class Params {
     String conservation_origin = "hssp"
 
     /**
+     * Directory in which to look for conservation score files
+     * if null: look in the same directory as protein file
+     */
+    String conservation_dir = null
+
+    /**
      * Log scores for binding and nonbinding scores to file
      */
     String log_scores_to_file = ""

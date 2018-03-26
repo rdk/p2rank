@@ -1,6 +1,7 @@
 package cz.siret.prank.domain
 
 import com.google.common.collect.Maps
+import cz.siret.prank.domain.labeling.ResidueLabeling
 import cz.siret.prank.domain.loaders.LoaderParams
 import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.features.implementation.conservation.ConservationScore
@@ -95,13 +96,27 @@ class Protein implements Parametrized {
         }
     }
 
-    void loadConservationScores(ProcessedItemContext itemContext) {
+    ConservationScore loadConservationScores(ProcessedItemContext itemContext) {
         log.info "loading conservation scores"
         ConservationScore score = ConservationScore.fromFiles(structure, (Function<String, File>)
                 itemContext.auxData.get(ConservationScore.conservationScoreKey))
         secondaryData.put(ConservationScore.conservationScoreKey, score)
         secondaryData.put(ConservationScore.conservationLoadedKey, true)
+
+        return score
     }
+
+    @Nullable
+    ConservationScore getConservationScore() {
+        (ConservationScore) secondaryData.get(ConservationScore.conservationScoreKey)
+    }
+
+    @Nullable
+    ResidueLabeling<Double> getConservationLabeling() {
+        ConservationScore score = getConservationScore()
+        return (score==null) ? null : score.toDoubleLabeling(this)
+    }
+
 
     Atoms getExposedAtoms() {
         calcuateSurfaceAndExposedAtoms()

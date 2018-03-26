@@ -5,6 +5,7 @@ import cz.siret.prank.domain.AA
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.domain.Residue
 import cz.siret.prank.domain.labeling.LabeledResidue
+import cz.siret.prank.domain.labeling.ResidueLabeling
 import cz.siret.prank.domain.loaders.DatasetCachedLoader
 import cz.siret.prank.domain.loaders.LoaderParams
 import cz.siret.prank.domain.Protein
@@ -12,6 +13,7 @@ import cz.siret.prank.domain.ResidueChain
 import cz.siret.prank.domain.labeling.BinaryLabelings
 import cz.siret.prank.domain.labeling.BinaryLabeling
 import cz.siret.prank.domain.labeling.SprintLabelingLoader
+import cz.siret.prank.features.implementation.conservation.ConservationScore
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.program.Main
 import cz.siret.prank.program.PrankException
@@ -74,6 +76,7 @@ class AnalyzeRoutine extends Routine {
         "aa-propensities" : this.&cmdAaPropensities,
         "aa-surf-seq-duplets" : this.&cmdAaSurfSeqDuplets,
         "aa-surf-seq-triplets" : this.&cmdAaSurfSeqTriplets,
+        "conservation" : this.&cmdConservation,
         "chains" : this.&cmdChains
     ])
 
@@ -157,7 +160,6 @@ class AnalyzeRoutine extends Routine {
 
             if (params.visualizations) {
                 new PymolRenderer("$outdir/visualizations", new RenderingModel(
-                        generateProteinFile: params.vis_generate_proteins,
                         proteinFile: item.proteinFile,
                         label: item.label,
                         protein: item.protein,
@@ -167,6 +169,39 @@ class AnalyzeRoutine extends Routine {
         }
 
         writeFile "$outdir/residue_stats.csv", csv
+    }
+
+    /**
+     * Analyze and visualize conservation scores
+     */
+    void cmdConservation() {
+        LoaderParams.ignoreLigandsSwitch = true
+
+        dataset.processItems { Dataset.Item item ->
+            Protein p = item.protein
+            ResidueLabeling<Double> labeling = p.getConservationLabeling()
+            if (labeling!=null) {
+
+                if (log.isDebugEnabled()) {
+                    labeling.labeledResidues.each {
+                        log.debug "conserv. for residue {}: {}", it.residue, it.label
+                    }
+                    log.debug "score map:" + p.getConservationScore().getScoreMap()
+                }
+
+                if (params.visualizations) {
+                    new PymolRenderer("$outdir/visualizations", new RenderingModel(
+                            proteinFile: item.proteinFile,
+                            label: item.label,
+                            protein: item.protein,
+                            doubleLabeling: labeling
+                    )).render()
+                }
+
+            } else {
+                log.error "Failed to load score for [{}]", item.label
+            }
+        }
     }
 
     /**

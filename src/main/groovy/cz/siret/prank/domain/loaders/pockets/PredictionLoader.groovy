@@ -5,6 +5,7 @@ import cz.siret.prank.domain.*
 import cz.siret.prank.domain.loaders.LoaderParams
 import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.features.implementation.conservation.ConservationScore
+import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Futils
 import groovy.util.logging.Slf4j
 
@@ -17,7 +18,7 @@ import java.util.function.Function
  * Also serves as a protein/dataset-item loader even if there is no prediction (TODO: refactor).
  */
 @Slf4j
-abstract class PredictionLoader {
+abstract class PredictionLoader implements Parametrized {
 
     LoaderParams loaderParams = new LoaderParams()
 
@@ -47,33 +48,41 @@ abstract class PredictionLoader {
         }
 
         // TODO: move conservation related stuff to feature implementation
-        loadConservationScores(queryProteinFile, itemContext, res)
-
+        if (loaderParams.load_conservation_paths) {
+            loadConservationScores(queryProteinFile, itemContext, res)
+        }
         
         return res
     }
 
     private loadConservationScores(String queryProteinFile, ProcessedItemContext itemContext, PredictionPair res) {
         Path parentDir = Paths.get(queryProteinFile).parent
-        if (loaderParams.load_conservation_paths) {
-            if (itemContext.datsetColumnValues.get(Dataset.COLUMN_CONSERVATION_FILES_PATTERN) == null) {
-                log.info("Setting conservation path. Origin: {}", loaderParams.conservation_origin)
-                Function<String, File> conserPathForChain = { String chainId ->
-                    parentDir.resolve(ConservationScore.scoreFileForPdbFile(
-                            Futils.shortName(queryProteinFile), chainId,
-                            loaderParams.conservation_origin)).toFile()
-                }
-                itemContext.auxData.put(ConservationScore.conservationScoreKey, conserPathForChain)
-            } else {
-                String pattern = itemContext.datsetColumnValues.get(Dataset.COLUMN_CONSERVATION_FILES_PATTERN);
-                Function<String, File> conserPathForChain = { String chainId ->
-                    parentDir.resolve(pattern.replaceAll("%chainID%", chainId)).toFile()
-                }
-                itemContext.auxData.put(ConservationScore.conservationScoreKey, conserPathForChain)
+
+        if (params.conservation_dir != null) {
+            String baseDir = itemContext.item.dataset.dir
+            String conservDir = baseDir + "/" + params.conservation_dir
+            parentDir = Paths.get(conservDir)
+        }
+        log.info "Conservation parent dir: " + parentDir
+
+
+        if (itemContext.datsetColumnValues.get(Dataset.COLUMN_CONSERVATION_FILES_PATTERN) == null) {
+            log.info("Setting conservation path. Origin: {}", loaderParams.conservation_origin)
+            Function<String, File> conserPathForChain = { String chainId ->
+                parentDir.resolve(ConservationScore.scoreFileForPdbFile(
+                        Futils.shortName(queryProteinFile), chainId,
+                        loaderParams.conservation_origin)).toFile()
             }
-            if (loaderParams.load_conservation) {
-                res.protein.loadConservationScores()
+            itemContext.auxData.put(ConservationScore.conservationScoreKey, conserPathForChain)
+        } else {
+            String pattern = itemContext.datsetColumnValues.get(Dataset.COLUMN_CONSERVATION_FILES_PATTERN);
+            Function<String, File> conserPathForChain = { String chainId ->
+                parentDir.resolve(pattern.replaceAll("%chainID%", chainId)).toFile()
             }
+            itemContext.auxData.put(ConservationScore.conservationScoreKey, conserPathForChain)
+        }
+        if (loaderParams.load_conservation) {
+            res.protein.loadConservationScores(itemContext)
         }
     }
 

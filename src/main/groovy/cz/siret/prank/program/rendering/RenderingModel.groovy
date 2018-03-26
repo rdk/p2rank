@@ -3,6 +3,8 @@ package cz.siret.prank.program.rendering
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.domain.labeling.BinaryLabeling
 import cz.siret.prank.domain.labeling.LabeledPoint
+import cz.siret.prank.domain.labeling.ResidueLabeling
+import cz.siret.prank.program.params.Parametrized
 import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
 
@@ -13,12 +15,8 @@ import java.awt.Color
  */
 @TupleConstructor
 @CompileStatic
-class RenderingModel {
+class RenderingModel implements Parametrized {
 
-    /**
-     * generate new structure (pdb) file from protein instead of reusing proteinFile
-     */
-    boolean generateProteinFile = false
     String proteinFile
 
     String label
@@ -28,8 +26,16 @@ class RenderingModel {
     BinaryLabeling predictedLabeling
     List<LabeledPoint> labeledPoints
 
-    Style style = new Style() 
+    ResidueLabeling<Double> doubleLabeling
 
+    Style style = new Style()
+
+    /**
+     * generate new structure (pdb) file from protein instead of reusing proteinFile
+     */
+    boolean getGenerateProteinFile() {
+        params.vis_generate_proteins
+    }
 
     static class Style {
         //Color defaultProteinColor

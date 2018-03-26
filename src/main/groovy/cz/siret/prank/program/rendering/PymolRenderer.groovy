@@ -3,6 +3,7 @@ package cz.siret.prank.program.rendering
 import cz.siret.prank.domain.labeling.BinaryLabeling
 import cz.siret.prank.domain.labeling.LabeledPoint
 import cz.siret.prank.domain.labeling.LabeledResidue
+import cz.siret.prank.domain.labeling.ResidueLabeling
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
@@ -41,6 +42,17 @@ class PymolRenderer implements Parametrized {
 
         String proteinFileAbs = Futils.absPath(model.proteinFile)
         String proteinFile = proteinFileAbs
+
+        if (model.doubleLabeling != null) {
+            // temporary solution: set labeling as b-factor to protein atoms
+
+            model.protein.allAtoms.each { it.setTempFactor(0f) }
+            model.doubleLabeling.labeledResidues.each { lr ->
+                lr.residue.aminoAcid.atoms.each { a ->
+                    a.setTempFactor((float)(lr.label ?: 0f))
+                }
+            }
+        }
 
         if (params.vis_generate_proteins || params.vis_copy_proteins) {
             String name = Futils.shortName(proteinFile)
@@ -111,7 +123,17 @@ orient
             } else {
                 renderBinaryResidueColoring(model.observedLabeling)
             }
+        } else if (model.doubleLabeling != null) {
+            renderDoubleColoring(model.doubleLabeling)
         }
+    }
+
+    private String renderDoubleColoring(ResidueLabeling<Double> labeling) {
+        //spectrum b, blue_red, minimum=10, maximum=50   //rainbow_rev
+        //cmd.spectrum("b", "rainbow", selection="protein", minimum=0, maximum=1)
+"""                      
+cmd.spectrum("b", "rainbow", selection="protein", minimum=0, maximum=1)
+"""
     }
 
     private String renderBinaryResidueColoring(BinaryLabeling labeling) {
