@@ -36,6 +36,7 @@ class StatSample {
     }
 
     double getMean() {
+        if (size==0) return 0
         sum / size
     }
 
@@ -58,5 +59,6 @@ class StatSample {
     double getMax() {
         Collections.max(sample)
     }
+
 
 }

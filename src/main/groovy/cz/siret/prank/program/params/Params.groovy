@@ -138,6 +138,8 @@ class Params {
      */
     int conservation_exponent = 1
 
+    double conserv_cloud_radius = 10
+
     /**
      * Conservation file with this pattern is loaded:
      * baseName + chainId + "." + origin + ".hom.gz"

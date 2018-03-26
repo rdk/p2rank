@@ -20,22 +20,17 @@ class ConservRF extends ResidueFeatureCalculator {
 
     @Override
     void preProcessProtein(Protein protein, ProcessedItemContext itemContext) {
-        // Check if conservation is already loaded.
-        if (!protein.secondaryData.getOrDefault(ConservationScore.conservationLoadedKey, false)
-                && itemContext.auxData.getOrDefault(ConservationScore.conservationScoreKey,
-                null) != null) {
-            protein.loadConservationScores(itemContext)
-        }
+        protein.ensureConservationLoaded(itemContext)
     }
 
     @Override
     double[] calculateForResidue(Residue residue, ResidueFeatureCalculationContext context) {
-        double score = getConservationForResidue(residue, context.protein)
+        double score = getScoreForResidue(residue, context.protein)
 
         return [score] as double[]
     }
 
-    static double getConservationForResidue(Residue residue, Protein protein) {
+    static double getScoreForResidue(Residue residue, Protein protein) {
         ConservationScore score = protein.getConservationScore()
         if (score == null) {
             return 0d
