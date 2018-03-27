@@ -25,9 +25,10 @@ class SsHistogram {
         double[] res = new double[HEADER.size()]
 
         if (types == null || types.empty) return res
-
         types = types.findAll { it != null }.asList()
+        if (types.empty) return res
 
+        
         for (SecStrucType type : types) {
             res[type.ordinal()] += 1d
         }
