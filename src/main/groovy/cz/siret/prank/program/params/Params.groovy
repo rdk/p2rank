@@ -342,6 +342,8 @@ class Params {
      */
     boolean delete_vectors = true
 
+    boolean check_vectors = false
+
     /**
      * collect vectors also from eval dataset (only makes sense if delete_vectors=false)
      */

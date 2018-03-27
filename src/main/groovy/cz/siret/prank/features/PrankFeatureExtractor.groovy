@@ -51,6 +51,7 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
     private double SMOOTHING_CUTOFF_DIST = params.smoothing_radius
     private final boolean AVERAGE_FEAT_VECTORS = params.average_feat_vectors
     private final boolean AVG_WEIGHTED = params.avg_weighted
+    private final boolean CHECK_VECTORS = params.check_vectors
 
     private final WeightFun weightFun = WeightFun.create(params.weight_function)
 
@@ -375,7 +376,20 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
 
         Atoms neighbourhood = surfaceLayerAtoms.cutoutSphere(point, NEIGH_CUTOFF_DIST)
 
-        return calcFeatureVectorFromAtoms(point, DO_SMOOTH_REPRESENTATION, neighbourhood)
+        def vector = calcFeatureVectorFromAtoms(point, DO_SMOOTH_REPRESENTATION, neighbourhood)
+
+        if (CHECK_VECTORS) {
+            double[] arr = vector.array
+            for (int i=0; i!=arr.length; i++) {
+                if (arr[i] == Double.NaN) {
+                    String feat = vector.header[i]
+                    throw new PrankException("Invalid value for feature $feat: NaN")
+                }
+            }
+
+        }
+
+        return vector
     }
 
     @Override
