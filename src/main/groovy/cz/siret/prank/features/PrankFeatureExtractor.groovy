@@ -383,6 +383,8 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
             for (int i=0; i!=arr.length; i++) {
                 if (arr[i] == Double.NaN) {
                     String feat = vector.header[i]
+                    String msg = "Invalid value for feature $feat: NaN"
+                    log.error(msg)
                     throw new PrankException("Invalid value for feature $feat: NaN")
                 }
             }
