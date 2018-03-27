@@ -40,9 +40,9 @@ class SecStructCloudSF extends SasFeatureCalculator implements Parametrized {
     @Override
     double[] calculateForSasPoint(Atom sasPoint, SasFeatureCalculationContext context) {
 
-        double radius = params.protrusion_radius // TODO new param
+        double radius = params.ss_cloud_radius
 
-        Atoms atoms = context.extractor.deepLayer.cutoutSphere(sasPoint, radius)
+        Atoms atoms = context.protein.exposedAtoms.cutoutSphere(sasPoint, radius)
         List<Residue> residues = context.protein.residues.getDistinctForAtoms(atoms)
         List<SecStrucType> types = residues.collect { it.ss.type }.asList()
 

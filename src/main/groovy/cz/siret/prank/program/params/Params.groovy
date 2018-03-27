@@ -140,6 +140,8 @@ class Params {
 
     double conserv_cloud_radius = 10
 
+    double ss_cloud_radius = 10
+
     /**
      * Conservation file with this pattern is loaded:
      * baseName + chainId + "." + origin + ".hom.gz"
