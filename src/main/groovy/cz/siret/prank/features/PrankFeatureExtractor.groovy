@@ -378,19 +378,19 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
 
         def vector = calcFeatureVectorFromAtoms(point, DO_SMOOTH_REPRESENTATION, neighbourhood)
 
-        if (CHECK_VECTORS) {
-            double[] arr = vector.array
-            for (int i=0; i!=arr.length; i++) {
-                if (arr[i] == Double.NaN) {
-                    String feat = vector.header[i]
-                    String msg = "Invalid value for feature $feat: NaN"
-                    System.out.println(msg)
-                    log.error(msg)
-                    throw new PrankException("Invalid value for feature $feat: NaN")
-                }
-            }
-
-        }
+//        if (CHECK_VECTORS) {
+//            double[] arr = vector.array
+//            for (int i=0; i!=arr.length; i++) {
+//                if (arr[i] == Double.NaN) {
+//                    String feat = vector.header[i]
+//                    String msg = "Invalid value for feature $feat: NaN"
+//                    System.out.println(msg)
+//                    log.error(msg)
+//                    throw new PrankException("Invalid value for feature $feat: NaN")
+//                }
+//            }
+//
+//        }
 
         return vector
     }
