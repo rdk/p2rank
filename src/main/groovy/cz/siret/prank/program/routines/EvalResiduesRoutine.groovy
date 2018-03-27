@@ -77,7 +77,6 @@ class EvalResiduesRoutine extends EvalRoutine {
 
             if (params.visualizations) {
                 new PymolRenderer("$outdir/visualizations", new RenderingModel(
-                        generateProteinFile: params.vis_generate_proteins,
                         proteinFile: item.proteinFile,
                         label: item.label,
                         protein: item.protein,
