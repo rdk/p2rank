@@ -59,6 +59,8 @@ import cz.siret.prank.program.params.Params
 
     // technical
 
+    ploop_delete_runs = true
+
     cache_datasets = true
 
     clear_sec_caches = false

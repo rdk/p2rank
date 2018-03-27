@@ -560,9 +560,9 @@ class Params {
     boolean ploop_zip_runs = true
 
     /**
-     * delete results of individual ploop runs
+     * delete results of individual ploop/hopt runs
      */
-    boolean ploop_delete_runs = false
+    boolean ploop_delete_runs = true
 
 
     /**
