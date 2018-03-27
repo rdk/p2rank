@@ -219,7 +219,7 @@ public class ConservationScore implements Parametrized {
                 matchSequences(chain.getAtomGroups(GroupType.AMINOACID), chainScores, scores);
 
             } catch(Exception e) {
-                log.error("Failed to load conservation file.", e)
+                log.warn("Failed to load conservation file.", e)
             }
         }
         return new ConservationScore(scores);

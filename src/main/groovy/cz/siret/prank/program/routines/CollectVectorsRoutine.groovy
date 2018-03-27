@@ -6,11 +6,13 @@ import cz.siret.prank.collectors.CollectorFactory
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.features.FeatureVector
+import cz.siret.prank.program.PrankException
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.PerfUtils
 import cz.siret.prank.utils.WekaUtils
 import groovy.transform.TupleConstructor
 import groovy.util.logging.Slf4j
+import weka.core.Instance
 import weka.core.Instances
 
 import java.util.concurrent.atomic.AtomicInteger
@@ -108,6 +110,21 @@ class CollectVectorsRoutine extends Routine {
 
         if (!params.delete_vectors) {
             WekaUtils.saveDataArff(arffFile, false, data)
+        }
+
+        if (params.check_vectors) {
+            for (Instance inst : data) {
+                for (int i=0; i!=inst.numAttributes(); i++) {
+                    double val = inst.value(i)
+                    if (val == Double.NaN) {
+                        String feat = inst.attribute(i).name()
+                        String msg = "Invalid value for feature $feat: NaN"
+                        System.out.println(msg)
+                        log.error(msg)
+                        throw new PrankException("Invalid value for feature $feat: NaN")
+                    }
+                }
+            }
         }
 
         return data
