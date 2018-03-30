@@ -414,10 +414,13 @@ class ClassifierStats implements Parametrized, Writable {
 
                     if (res.wekaAUC==Double.NaN) log.error "Calculated AUC is NaN"
                     if (res.wekaAUPRC==Double.NaN) log.error "Calculated AUPRC is NaN"
+
+                    // xxx
+                    log.warn "AUC: {}", res.wekaAUC
+                    log.warn "AUPRC: {}", res.wekaAUPRC
                 } else {
                     log.error "Predictions are empty! Cannot calculate AUC and AUPRC stats."
                 }
-
             }
 
             res
