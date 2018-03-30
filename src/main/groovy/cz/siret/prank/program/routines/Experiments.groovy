@@ -103,14 +103,20 @@ class Experiments extends Routine {
 
         TrainEvalRoutine iter = new TrainEvalRoutine(outdir, trainData, evalData)
 
-        iter.collectTrainVectors()
-        if (Params.inst.collect_eval_vectors) {
-            iter.collectEvalVectors() // collect and save to disk for further inspection
+        if (Params.inst.collect_only_once) {
+            iter.collectTrainVectors()
+            if (Params.inst.collect_eval_vectors) {
+                iter.collectEvalVectors() // collect and save to disk for further inspection
+            }
         }
 
         EvalRoutine trainRoutine = new EvalRoutine(outdir) {
             @Override
             EvalResults execute() {
+                if (!Params.inst.collect_only_once) { // ensures that if subsampling is turned on it is done before each training
+                    iter.collectTrainVectors()
+                }
+
                 iter.outdir = getEvalRoutineOutdir() // is set to "../seed.xx" by SeedLoop
                 iter.trainAndEvalModel()
                 return iter.evalRoutine.results
@@ -119,6 +125,7 @@ class Experiments extends Routine {
 
         return new SeedLoop(trainRoutine, outdir).execute()
     }
+
 
     /**
      * implements command: 'prank traineval...  '

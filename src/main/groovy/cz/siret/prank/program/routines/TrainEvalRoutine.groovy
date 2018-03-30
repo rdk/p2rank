@@ -4,6 +4,7 @@ import cz.siret.prank.domain.Dataset
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.params.Parametrized
+import cz.siret.prank.program.params.Params
 import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.prediction.metrics.ClassifierStats
 import cz.siret.prank.utils.ATimer

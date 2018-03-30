@@ -352,6 +352,14 @@ class Params {
     boolean collect_eval_vectors = false
 
     /**
+     * collect vectors only at the beginning of seed loop routine
+     * if dataset is subsampled (using train_ptorein_limit param) then dataset is subsampled only once
+     * set to false when doing learning curve!
+     * train_ptorein_limit>0 should be always paired with collect_only_once=false
+     */
+    boolean collect_only_once = true
+
+    /**
      * number of random seed iterations
      */
     int loop = 1
