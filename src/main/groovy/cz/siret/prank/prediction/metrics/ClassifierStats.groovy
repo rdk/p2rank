@@ -411,8 +411,11 @@ class ClassifierStats implements Parametrized, Writable {
                     WekaStatsHelper wekaHelper = new WekaStatsHelper(predictions)
                     res.wekaAUC = wekaHelper.areaUnderROC()
                     res.wekaAUPRC = wekaHelper.areaUnderPRC()
+
+                    if (res.wekaAUC==Double.NaN) log.error "Calculated AUC is NaN"
+                    if (res.wekaAUPRC==Double.NaN) log.error "Calculated AUPRC is NaN"
                 } else {
-                    log.warn "Predictions are empty! Cannot calculate AUC and AUPRC stats."
+                    log.error "Predictions are empty! Cannot calculate AUC and AUPRC stats."
                 }
 
             }
