@@ -2,12 +2,18 @@ package cz.siret.prank.domain.loaders.pockets
 
 import com.sun.istack.internal.Nullable
 import cz.siret.prank.domain.*
+import cz.siret.prank.domain.labeling.BinaryLabeling
 import cz.siret.prank.domain.loaders.LoaderParams
 import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.features.implementation.conservation.ConservationScore
+import cz.siret.prank.geom.Atoms
+import cz.siret.prank.geom.Struct
+import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Futils
 import groovy.util.logging.Slf4j
+import org.biojava.nbio.structure.Atom
+import org.biojava.nbio.structure.Chain
 
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -51,9 +57,80 @@ abstract class PredictionLoader implements Parametrized {
         if (loaderParams.load_conservation_paths) {
             loadConservationScores(queryProteinFile, itemContext, res)
         }
+
+        if (params.identify_peptides_by_labeling) {
+            loadPeptidesFromLabeling(res.protein, itemContext)
+        }
         
         return res
     }
+
+    private loadPeptidesFromLabeling(Protein prot, ProcessedItemContext ctx) {
+        log.info 'loading peptides for {}', prot.name
+        if (!ctx.dataset.hasResidueLabeling()) {
+            throw new PrankException("No labeling provided for identify_peptides_by_labeling!")
+        }
+        BinaryLabeling labeling = ctx.dataset.binaryResidueLabeler.getBinaryLabeling(prot.residues, prot)
+
+        for (Chain ch in prot.fullStructure.chains) {
+            ResidueChain rc = Struct.toResidueChain(ch)
+            log.info 'checking chain {} (len:{})', ch.chainID, rc.length
+
+            if (ch.chainID in ctx.item.chains) {
+                log.info 'is among selected chains in the dataset, skipping'
+                continue
+            }
+            //if (rc.length > 30) {
+            //    log.info 'longer than 30 res., skipping'
+            //    continue
+            //}
+
+            if (isBindingPeptide(ch, prot, labeling, ctx)) {
+                prot.structure.addChain(ch)
+                prot.peptides.add(rc)
+                prot.ligands.add new Ligand(Atoms.allFromChain(ch), prot)
+                log.info 'adding bindng peptide {}', rc.id
+            } else {
+                log.info 'refused peptide {} as non binding', rc.id
+            }
+
+        }
+    }
+
+    boolean isBindingPeptide(Chain chain, Protein toProtein, BinaryLabeling labeling, ProcessedItemContext ctx) {
+        Atoms protAtoms = toProtein.getResidueChain(ctx.item.chains.first()).atoms
+        Residues labeledRes = new Residues(toProtein.residues.findAll { labeling.getLabel(it) }.asList())
+
+
+        Atoms chainAtoms = Atoms.allFromChain(chain).withoutHydrogens()
+        Atoms contactChainAtoms = chainAtoms.cutoutShell(protAtoms, 3.5d)
+
+        if (contactChainAtoms.empty) {
+            log.info 'no chain contact atoms'
+            return false
+        }
+        int permissible = 0
+        for (Atom a : contactChainAtoms) {
+            if (labeledRes.atoms.areWithinDistance(a, 3.5d)) {
+                permissible++
+            } else {
+                log.info 'found contact atom not close to contact res'
+            }
+        }
+        int n = contactChainAtoms.count
+        double ratio = ((double)permissible) / n
+        log.info 'permissible_a:{} contact_a:{} ratio:{}', permissible, n, ratio
+
+        if (ratio >= 0.5) {
+            return true
+        } else {
+            return false
+        }
+
+        //log.info 'chain:{} binding_res:{} labeled_res:{}', chain.id, bindingRes.size(), labeledRes.size()
+        //return bindingRes.size()>0 && labeledRes.containsAll(bindingRes)
+    }
+
 
     private loadConservationScores(String queryProteinFile, ProcessedItemContext itemContext, PredictionPair res) {
         Path parentDir = Paths.get(queryProteinFile).parent

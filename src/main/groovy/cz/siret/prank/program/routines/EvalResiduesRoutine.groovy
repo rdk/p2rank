@@ -6,6 +6,7 @@ import cz.siret.prank.domain.labeling.BinaryLabeling
 import cz.siret.prank.domain.labeling.BinaryLabelings
 import cz.siret.prank.domain.labeling.LabeledPoint
 import cz.siret.prank.domain.labeling.LabeledResidue
+import cz.siret.prank.domain.labeling.LigandBasedPointLabeler
 import cz.siret.prank.domain.labeling.ResidueBasedPointLabeler
 import cz.siret.prank.domain.labeling.ModelBasedResidueLabeler
 import cz.siret.prank.geom.Atoms
@@ -58,7 +59,13 @@ class EvalResiduesRoutine extends EvalRoutine {
             Atoms sasPoints = protein.getAccessibleSurface().points
 
             BinaryLabeling observed = item.definedBinaryLabeling
-            List<LabeledPoint> observedPoints = new ResidueBasedPointLabeler(observed).labelPoints(sasPoints, protein)
+
+            List<LabeledPoint> observedPoints
+            if (params.identify_peptides_by_labeling) {
+                observedPoints = new LigandBasedPointLabeler().labelPoints(sasPoints, protein)
+            } else {
+                observedPoints = new ResidueBasedPointLabeler(observed).labelPoints(sasPoints, protein)
+            }
 
             def predictor = new ModelBasedResidueLabeler(model, sasPoints, item.context).withObserved(observedPoints)
             BinaryLabeling predicted = predictor.getBinaryLabeling(protein.residues, protein)

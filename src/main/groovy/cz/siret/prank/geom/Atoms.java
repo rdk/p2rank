@@ -473,4 +473,8 @@ public final class Atoms implements Iterable<Atom> {
         return res;
     }
 
+    public static Atoms allFromChain(Chain chain) {
+        return allFromGroups(chain.getAtomGroups());
+    }
+
 }

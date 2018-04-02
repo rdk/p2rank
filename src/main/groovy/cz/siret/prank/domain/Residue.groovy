@@ -27,7 +27,7 @@ class Residue {
     private Key key
 
     @Nonnull
-    private AminoAcid group
+    private Group group
 
     private Atoms atoms
 
@@ -47,25 +47,25 @@ class Residue {
 
     @Nullable SsInfo ss
 
-    Residue(AminoAcid group) {
+    Residue(Group group) {
         this.group = group
         this.key = new Key(group.residueNumber)
     }
 
     static Residue fromGroup(Group group) {
-        if (!Struct.isAminoAcidGroup(group))
+        if (!(Struct.isAminoAcidGroup(group) || group.getPDBName().startsWith("UNK")))
             throw new PrankException("Trying to create residue from non amino acid group: " + group)
 
-        if (! group instanceof AminoAcid)
-            throw new PrankException("Trying to create residue from group that is not of type AminoAcid: " + group)
+//        if (! group instanceof AminoAcid)
+//            throw new PrankException("Trying to create residue from group that is not of type AminoAcid: " + group)
 
-        return new Residue((AminoAcid) group)
+        return new Residue(group)
     }
 
 //===========================================================================================================//
 
     AminoAcid getAminoAcid() {
-        return group
+        return (AminoAcid)group
     }
 
     Key getKey() {
@@ -85,7 +85,7 @@ class Residue {
 
     Atoms getAtoms() {
         if (atoms==null) {
-            atoms =  Atoms.allFromGroup(group).withoutHydrogens()
+            atoms =  Atoms.allFromGroup(group) //.withoutHydrogens()
         }
         atoms
     }

@@ -34,6 +34,7 @@ class Protein implements Parametrized {
 
     String name
     Structure structure
+    Structure fullStructure // unreduced struct
 
     /** atoms indexed by id */
     Atoms allAtoms
@@ -62,6 +63,8 @@ class Protein implements Parametrized {
 
     /* ligands(hetgroups) too distant from protein surface */
     List<Ligand> distantLigands = new ArrayList<>()
+
+    List<ResidueChain> peptides = new ArrayList<>()
 
 //===========================================================================================================//
 
@@ -208,7 +211,8 @@ class Protein implements Parametrized {
      */
     Residues getResidues() {
         checkResiduesCalculated()
-        
+
+
         residues
     }
 
@@ -331,7 +335,7 @@ class Protein implements Parametrized {
 
         name = Futils.shortName(pdbFileName)
         structure = PdbUtils.loadFromFile(pdbFileName)
-
+        fullStructure = structure
         if (onlyChains != null) {
             log.info "reducing protein [{}] to chains [{}]", name, onlyChains.join(",")
 

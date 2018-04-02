@@ -19,7 +19,7 @@ class CollectorFactory {
     static VectorCollector createCollector(FeatureExtractor extractorFactory, Dataset dataset) {
         Params params = Params.getInst()
 
-        if (!params.predict_residues) {
+        if (!params.predict_residues || params.identify_peptides_by_labeling) {
             // mode: labeled residue
             return new LigandabilityPointVectorCollector(extractorFactory)
         } else {

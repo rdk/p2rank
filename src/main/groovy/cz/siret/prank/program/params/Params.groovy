@@ -16,6 +16,7 @@ class Params {
 
     public static final Params INSTANCE = new Params()
 
+
     public static Params getInst() {
         return INSTANCE
     }
@@ -739,6 +740,8 @@ class Params {
      * TODO: move to dist dir
      */
     String pept_propensities_set = "SprintT1070"
+
+    boolean identify_peptides_by_labeling = false
 
 //===========================================================================================================//
 

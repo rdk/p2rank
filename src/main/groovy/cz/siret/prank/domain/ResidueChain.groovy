@@ -1,5 +1,7 @@
 package cz.siret.prank.domain
 
+import cz.siret.prank.geom.Atoms
+
 /**
  *
  */
@@ -8,6 +10,8 @@ class ResidueChain {
     /** PDB id */
     String id
     List<Residue> residues
+
+    Atoms atoms
 
     ResidueChain(String id, List<Residue> residues) {
         this.id = id
@@ -32,4 +36,11 @@ class ResidueChain {
         residues.collect { it.secStruct?.type ?: "?" }.join("")
     }
 
+    Atoms getAtoms() {
+        if (atoms==null) {
+            atoms = Atoms.join(residues.collect { it.atoms })
+        }
+        atoms
+    }
+    
 }

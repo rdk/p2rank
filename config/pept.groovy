@@ -56,6 +56,11 @@ import cz.siret.prank.program.params.Params
 
     solvent_radius = 1.8
 
+    identify_peptides_by_labeling = true
+
+    neutral_points_margin = 0
+
+    sample_negatives_from_decoys = false
 
     // technical
 

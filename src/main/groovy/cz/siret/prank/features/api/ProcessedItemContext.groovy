@@ -23,5 +23,9 @@ class ProcessedItemContext {
         this.item = item
         this.datsetColumnValues = datsetColumnValues
     }
+
+    Dataset getDataset() {
+        item.dataset
+    }
     
 }

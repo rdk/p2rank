@@ -77,7 +77,8 @@ class AnalyzeRoutine extends Routine {
         "aa-surf-seq-duplets" : this.&cmdAaSurfSeqDuplets,
         "aa-surf-seq-triplets" : this.&cmdAaSurfSeqTriplets,
         "conservation" : this.&cmdConservation,
-        "chains" : this.&cmdChains
+        "chains" : this.&cmdChains,
+        "peptides" : this.&cmdPeptides
     ])
 
 //===========================================================================================================//
@@ -107,6 +108,19 @@ class AnalyzeRoutine extends Routine {
 
         write "\n" + summary.toString()
 
+    }
+
+    void cmdPeptides() {
+        LoaderParams.ignoreLigandsSwitch = true
+
+        StringBuffer csv = new StringBuffer("protein, pept_count, peptides\n")
+        dataset.processItems { Dataset.Item item ->
+            Protein p = item.protein
+            String ps = p.peptides.collect { "($it.id,$it.length)" }.join(" ")
+            csv << "$p.name, ${p.peptides.size()}, $ps\n"
+        }
+        writeFile "$outdir/peptides.csv", csv
+        write csv.toString()
     }
 
     /**
