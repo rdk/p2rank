@@ -124,6 +124,13 @@ class ModelBasedResidueLabeler extends ResidueLabeler<Boolean> implements Parame
     private double aggregateScore(List<Double> scores) {
         if (scores.empty) return 0d
 
+        int limit = params.score_point_limit
+        if (limit > 0) {
+            if (scores.size() > limit) {
+                scores = Cutils.head(limit, scores.toSorted())
+            }
+        }
+
         List<Double> transformedScores = scores.collect { pointScoreCalculator.transformScore(it) }.asList()
         double sum = Cutils.sum(transformedScores)
 

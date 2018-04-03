@@ -162,6 +162,7 @@ class Params {
 
     /**
      * limits how many pocket SAS points are used for scoring (after sorting), 0=unlimited
+     * affects scoring pockets and also residues
      */
     int score_point_limit = 0
 
