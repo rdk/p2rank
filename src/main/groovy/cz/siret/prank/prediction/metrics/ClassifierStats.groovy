@@ -93,7 +93,7 @@ class ClassifierStats implements Parametrized, Writable {
     void addPrediction(boolean observed, boolean predicted, double score) {
         if (score < 0d) score = 0d
 
-        double[] hist = [1-score, score] as double[]
+        double[] hist = [1d-score, score] as double[]
         addPrediction(observed, predicted, score, hist)
     }
 
@@ -120,7 +120,7 @@ class ClassifierStats implements Parametrized, Writable {
             sumSEneg += se
         }
 
-        double pCorrect = observed ? score : 1-score
+        double pCorrect = observed ? score : 1d-score
         if (pCorrect<EPS) {
             pCorrect = EPS
         }

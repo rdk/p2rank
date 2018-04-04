@@ -34,11 +34,13 @@ class RPlotter implements Parametrized {
     }
 
     void plot1DAll(int threads) {
+        plot1DVariables(header, threads)
+    }
 
+    void plot1DVariables(List<String> variables, int threads) {
         GParsPool.withPool(threads) {
-            int n = header.size()-1
-            (1..n).eachParallel {
-                plot1D(it)
+            variables.eachParallel {
+                plot1DVariable(it)
             }
         }
 
@@ -49,9 +51,9 @@ class RPlotter implements Parametrized {
         delete("$outdir/Rplots.pdf")
     }
 
-    void plot1D(int colnum) {
+    void plot1DVariable(String name) {
 
-        String label = header[colnum]
+        int column = header.indexOf(name)
 
         String tabf = "../"+Futils.shortName(csvfile) //FileUtils.relativize(csvfile, outdir)
 
@@ -67,7 +69,7 @@ class RPlotter implements Parametrized {
             data <- read.csv("$tabf")
 
             xx = names(data)[1]
-            yy = names(data)[${colnum+1}]
+            yy = names(data)[${column+1}]
 
             p <- ggplot(data, aes_string(x=xx, y=yy, colour=yy, fill = yy))
 
@@ -80,7 +82,7 @@ class RPlotter implements Parametrized {
         //     +  geom_line(size = 1, color="gray40")  + geom_point(shape=18, size=4, color="gray20")
         // dpi=150
 
-        rexec.runCode(rcode, label, outdir)
+        rexec.runCode(rcode, name, outdir)
 
     }
 

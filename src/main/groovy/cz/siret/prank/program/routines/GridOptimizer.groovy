@@ -87,10 +87,18 @@ class GridOptimizer extends ParamLooper {
         Math.min(params.threads, params.r_threads)
     }
 
+    boolean plotVariable(String name) {
+        if (name.startsWith('_stddev_')) {
+            return false
+        }
+        return true
+    }
+
     @CompileDynamic
     private make2DPlots() {
+        def vars = tables2D.keySet().findAll { plotVariable(it) }.asList()
         GParsPool.withPool(RThreads) {
-            tables2D.keySet().eachParallel { String key ->
+            vars.eachParallel { String key ->
                 String value = tables2D.get(key)
                 String label = key
                 String fname = Futils.absSafePath(value)
@@ -102,7 +110,9 @@ class GridOptimizer extends ParamLooper {
     }
 
     private make1DPlots() {
-        new RPlotter( statsTableFile, plotsDir).plot1DAll(RThreads)
+        def plotter = new RPlotter(statsTableFile, plotsDir)
+        def vars = plotter.header.findAll { plotVariable(it) }.asList()
+        plotter.plot1DVariables(vars, RThreads)
     }
 
     private make2DTable(String statName) {
