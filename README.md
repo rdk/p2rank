@@ -50,10 +50,10 @@ Slides: http://bit.ly/p2rank_slides
 
 If you use P2Rank, please cite the following papers:
 
-* [Conference paper](http://bit.ly/p2rank_conference_paper) inroducing P2Rank prediction algorithm
-Krivák R, Hoksza D. P2RANK: Knowledge-Based Ligand Binding Site Prediction Using Aggregated Local Features. InInternational Conference on Algorithms for Computational Biology 2015 Aug 4 (pp. 41-52). Springer, Cham.
-* [Research article](http://bit.ly/prank_paper) in JChem about PRANK rescoring algorithm
-Krivák R, Hoksza D. Improving protein-ligand binding site prediction accuracy by classification of inner pocket points using local features. Journal of cheminformatics. 2015 Dec;7(1):12.
+* [Conference paper](http://bit.ly/p2rank_conference_paper) inroducing P2Rank prediction algorithm  
+ Krivák R, Hoksza D. P2RANK: Knowledge-Based Ligand Binding Site Prediction Using Aggregated Local Features. InInternational Conference on Algorithms for Computational Biology 2015 Aug 4 (pp. 41-52). Springer, Cham.
+* [Research article](http://bit.ly/prank_paper) in JChem about PRANK rescoring algorithm  
+ Krivák R, Hoksza D. Improving protein-ligand binding site prediction accuracy by classification of inner pocket points using local features. Journal of cheminformatics. 2015 Dec;7(1):12.
 
 Usage Examples
 --------------
