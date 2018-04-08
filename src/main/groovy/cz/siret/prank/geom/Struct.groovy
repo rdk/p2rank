@@ -228,10 +228,12 @@ class Struct {
     static List<Residue> getResiduesFromChain(Chain chain) {
         // use all groups or only AA groups??
 
-        List<Group> groups = chain.getAtomGroups().findAll {
-            it.getType()==GroupType.AMINOACID || it.getPDBName().startsWith("UNK")
-        }
-        //chain.getAtomGroups(GroupType.AMINOACID)
+        // this is needed for lig-peptides
+        //List<Group> groups = chain.getAtomGroups().findAll {
+        //    it.getType()==GroupType.AMINOACID || it.getPDBName().startsWith("UNK")
+        //}
+
+        List<Group> groups = chain.getAtomGroups(GroupType.AMINOACID)
 
         //ordering seems reliable
         //groups.toSorted { it.residueNumber.seqNum }
