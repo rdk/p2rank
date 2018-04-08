@@ -4,11 +4,14 @@ import cz.siret.prank.program.Main
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Futils
+import cz.siret.prank.utils.ProcessRunner
 import cz.siret.prank.utils.Writable
 import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
 
 import static cz.siret.prank.utils.Futils.writeFile
 
+@Slf4j
 @CompileStatic
 class Routine implements Parametrized, Writable  {
 
@@ -34,7 +37,19 @@ class Routine implements Parametrized, Writable  {
 
     void writeParams(String outdir) {
         String v = "version: " + Main.version + "\n"
+        v += "git head:" + getGitHeadId() + "\n"
+
         writeFile("$outdir/params.txt", v + params.toString())
+    }
+
+    String getGitHeadId() {
+        String res = null
+        try {
+            res = 'git rev-parse --short HEAD'.execute().text
+        } catch (Exception e) {
+            log.warn 'failed to get git commit verson', e
+        }
+        return res
     }
 
 }
