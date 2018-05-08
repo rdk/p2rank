@@ -20,6 +20,7 @@ distro/test_output/
 logs/*
 *.log
 out/*
+*.stackdump
 
 /local*
 
