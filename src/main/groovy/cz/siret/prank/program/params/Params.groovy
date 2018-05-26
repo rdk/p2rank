@@ -355,9 +355,9 @@ class Params {
 
     /**
      * collect vectors only at the beginning of seed loop routine
-     * if dataset is subsampled (using train_ptorein_limit param) then dataset is subsampled only once
+     * if dataset is subsampled (using train_protein_limit param) then dataset is subsampled only once
      * set to false when doing learning curve!
-     * train_ptorein_limit>0 should be always paired with collect_only_once=false
+     * train_protein_limit>0 should be always paired with collect_only_once=false
      */
     boolean collect_only_once = true
 
@@ -603,7 +603,7 @@ class Params {
      * limit the number of proteins that used for training. random subset of proteins from the dataset is used each run in seedloop
      * 0 = no limit
      */
-    int train_ptorein_limit = 0
+    int train_protein_limit = 0
 
     /**
      * add weights to instances to achieve target_weight_ratio (if classifier algorithm supports it)

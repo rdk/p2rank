@@ -36,9 +36,9 @@ class CollectVectorsRoutine extends Routine {
     }
 
     private Dataset prepareDataset(Dataset dataset) {
-        if (params.train_ptorein_limit>0 && params.train_ptorein_limit < dataset.size) {
-            write "training on random subset of size $params.train_ptorein_limit"
-            dataset = dataset.randomSubset(params.train_ptorein_limit, params.seed)
+        if (params.train_protein_limit>0 && params.train_protein_limit < dataset.size) {
+            write "training on random subset of size $params.train_protein_limit"
+            dataset = dataset.randomSubset(params.train_protein_limit, params.seed)
         }
         return dataset
     }
