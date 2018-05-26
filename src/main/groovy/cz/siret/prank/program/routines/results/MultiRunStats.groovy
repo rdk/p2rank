@@ -38,9 +38,14 @@ class MultiRunStats {
     String toCSV() {
         StringBuilder sb = new StringBuilder()
 
-        sb << 'FEATURE, MEAN, STDDEV, REL_STDDEV[%], ' + (1..n).collect{"run_$it"}.join(', ') + '\n'
+        sb << fs('FEATURE') << ', '
+        sb << fs('MEAN') << ', '
+        sb << fs('STDDEV') << ', '
+        sb << fs('REL_STDDEV[%]') << ', '
+        sb << (1..n).collect{ fs "run_$it" }.join(', ') << '\n'
+
         for (String stat : names) {
-            sb << stat << ', '
+            sb << fs(stat) << ', '
             sb << fmt(mean[stat]) << ', '
             sb << fmt(stddev[stat]) << ', '
             sb << fmt(mean[stat]) << ', '
@@ -52,11 +57,11 @@ class MultiRunStats {
 
     static String fmt(Object x) {
         if (x==null) return ""
-        sprintf "%12.5f", x
+        sprintf "%13.5f", x
     }
     
-//    static String fs(String s) {
-//        String.format('%1$-12s', s)
-//    }
+    static String fs(String s) {
+        String.format('%1$-13s', s)
+    }
 
 }
