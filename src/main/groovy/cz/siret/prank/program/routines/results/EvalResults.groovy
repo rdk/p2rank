@@ -182,6 +182,17 @@ class EvalResults implements Parametrized, Writable  {
         return m
     }
 
+
+    MultiRunStats getMultiStats() {
+        assert !subResults.isEmpty()
+
+        List<Map<String, Double>> subStats = subResults.collect { it.stats }.toList()
+        List<String> statNames = subStats[0].keySet().toList()
+
+        new MultiRunStats(statNames, subStats)
+    }
+
+
     /**
      * Calculates sample standard deviation for all stats.
      * Only works for composite results (those that have subResults).
@@ -240,6 +251,12 @@ class EvalResults implements Parametrized, Writable  {
         mkdirs(outdir)
 
         writeFile "$outdir/stats.csv", statsCSV(getStats())
+        // multiple runs
+        if (subResults.size() > 1) {
+            writeFile "$outdir/stats_stddev.csv", statsCSV(getStatsStddev()) // TODo remove
+            writeFile "$outdir/stats_runs.csv", multiStats.toCSV()
+        }
+
 
         def pst = logClassifierStats("point_classification", classifierName,  classifierStats, outdir)
         if (mode_residues) {
@@ -263,10 +280,6 @@ class EvalResults implements Parametrized, Writable  {
             if (rescoring) {
                 writeFile "$outdir/success_rates_original.csv", succ_rates
                 writeFile "$outdir/success_rates_diff.csv", succ_rates_diff
-            }
-
-            if (subResults.size() > 1) {
-                writeFile "$outdir/stats_stddev.csv", statsCSV(getStatsStddev())
             }
 
             if (logIndividualCases) {

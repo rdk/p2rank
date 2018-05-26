@@ -51,6 +51,10 @@ class StatSample {
     double getStddev() {
         sqrt(variance)
     }
+    
+    double getRelativeStdev() {
+        (100*stddev) / mean
+    }
 
     double getMin() {
         Collections.min(sample)

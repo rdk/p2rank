@@ -19,6 +19,8 @@ aa-5factors.csv
 
 aa-propensities.csv
 
+RAx: amino acid ligand binding propensities 
+
 PP864: peptide binding propensity calculated from train964 dataset
 PP_ST1070: peptide binding propensity calculated from full Sprint train set (n=1070)
 PP_SA870: peptide binding propensity calculated from split A Sprint train set (n=870)
