@@ -45,7 +45,7 @@ import cz.siret.prank.program.params.Params
 
     load_conservation = 1
     conservation_origin = 'pdb.seq.fasta'
-    conservation_dir 'conservation/train_test/e5i1'
+    conservation_dir = 'conservation/train_test/e5i1'
     conserv_cloud_radius = 13
     conservation_exponent = 1
 
