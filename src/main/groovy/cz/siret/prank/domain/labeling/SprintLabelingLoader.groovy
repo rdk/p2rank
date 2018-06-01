@@ -19,11 +19,11 @@ import groovy.util.logging.Slf4j
 @CompileStatic
 class SprintLabelingLoader extends ResidueLabeler<Boolean> implements Writable {
 
-    List<Element> elements
-    Map<String, Element> elementsByCode
+    List<LabeledChain> elements
+    Map<String, LabeledChain> elementsByCode
     
 
-    private SprintLabelingLoader(List<Element> elements) {
+    private SprintLabelingLoader(List<LabeledChain> elements) {
         this.elements = elements
 
         elementsByCode = Maps.uniqueIndex(elements, { it.code })
@@ -35,7 +35,8 @@ class SprintLabelingLoader extends ResidueLabeler<Boolean> implements Writable {
     }
 
     String toElementCode(Protein protein, ResidueChain chain) {
-        String protCode = Futils.removeExtension(protein.name)
+//        String protCode = Futils.removeExtension(protein.name)
+        String protCode = protein.name.substring(0, 4)
         String chainId = chain.id
 
         return protCode + chainId
@@ -52,7 +53,7 @@ class SprintLabelingLoader extends ResidueLabeler<Boolean> implements Writable {
         for (ResidueChain chain : protein.residueChains) {
             String chainCode = toElementCode(protein, chain)
 
-            Element element = elementsByCode.get(chainCode)
+            LabeledChain element = elementsByCode.get(chainCode)
 
             if (element == null) {
                 log.info "Labels for chain [{}] not found in labeling file", chainCode
@@ -102,7 +103,7 @@ class SprintLabelingLoader extends ResidueLabeler<Boolean> implements Writable {
      */
     static SprintLabelingLoader loadFromFile(String fname) {
         List<String> lines = Futils.readLines(fname)
-        List<Element> elements = new ArrayList<>()
+        List<LabeledChain> elements = new ArrayList<>()
 
         for (int i=0; i!=lines.size(); i++) {
             String line = lines[i]
@@ -111,7 +112,7 @@ class SprintLabelingLoader extends ResidueLabeler<Boolean> implements Writable {
                 String chain = lines[i+1]
                 String labels = lines[i+2]
 
-                elements.add new Element(code, chain, labels)
+                elements.add new LabeledChain(code, chain, labels)
             }
         }
 
@@ -121,7 +122,7 @@ class SprintLabelingLoader extends ResidueLabeler<Boolean> implements Writable {
     /**
      * Bin of Sprint labeling file representing one chain
      */
-    private static class Element {
+    private static class LabeledChain {
         /** 4-character lower case pdb code + uppercase chain id (one char) */
         String code
         /** single letter residue codes */
@@ -129,7 +130,7 @@ class SprintLabelingLoader extends ResidueLabeler<Boolean> implements Writable {
         /** string of 0 and 1 */
         String labels
 
-        Element(String code, String chain, String labels) {
+        LabeledChain(String code, String chain, String labels) {
             this.code = code
             this.chain = chain
             this.labels = labels
