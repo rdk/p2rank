@@ -41,6 +41,14 @@ abstract class StaticResidueLabeler extends ResidueLabeler<Boolean> implements W
             this.path = path
         }
 
+        Double parseScore(String s) {
+            try {
+                return Double.valueOf(s)
+            } catch (Exception e) {
+                throw new PrankException("Failed to parse score " + s)
+            }
+        }
+
         @Override
         ResidueLabeling<Boolean> labelResidues(Residues residues, Protein protein) {
 
@@ -49,7 +57,7 @@ abstract class StaticResidueLabeler extends ResidueLabeler<Boolean> implements W
                 def cols = Sutils.split(line)
                 String chain = cols[0]
                 String resnum = cols[1]
-                Double score = Double.valueOf cols[3]
+                Double score = parseScore(cols[3])
 
                 String code = chain + '_' + resnum
                 scores.put(code, score)
