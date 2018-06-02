@@ -10,6 +10,7 @@ import cz.siret.prank.utils.Sutils
 import cz.siret.prank.utils.Writable
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+import org.apache.commons.lang3.StringUtils
 
 /**
  *
@@ -54,6 +55,8 @@ abstract class StaticResidueLabeler extends ResidueLabeler<Boolean> implements W
 
             Map<String, Double> scores = new HashMap<>()
             for (String line : Futils.readLines(path).tail()) {
+                if (StringUtils.isBlank(line)) continue
+
                 def cols = Sutils.split(line)
                 String chain = cols[0]
                 String resnum = cols[1]
