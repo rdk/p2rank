@@ -9,13 +9,14 @@ import cz.siret.prank.domain.labeling.LabeledResidue
 import cz.siret.prank.domain.labeling.LigandBasedPointLabeler
 import cz.siret.prank.domain.labeling.ResidueBasedPointLabeler
 import cz.siret.prank.domain.labeling.ModelBasedResidueLabeler
+import cz.siret.prank.domain.labeling.ResidueLabeler
+import cz.siret.prank.domain.labeling.StaticResidueLabeler
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.prediction.metrics.ClassifierStats
 import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.rendering.PymolRenderer
 import cz.siret.prank.program.rendering.RenderingModel
 import cz.siret.prank.program.routines.results.EvalResults
-import cz.siret.prank.utils.Formatter
 import cz.siret.prank.utils.Futils
 
 import static cz.siret.prank.utils.ATimer.startTimer
@@ -67,10 +68,18 @@ class EvalResiduesRoutine extends EvalRoutine {
                 observedPoints = new ResidueBasedPointLabeler(observed).labelPoints(sasPoints, protein)
             }
 
-            def predictor = new ModelBasedResidueLabeler(model, sasPoints, item.context).withObserved(observedPoints)
-            BinaryLabeling predicted = predictor.getBinaryLabeling(protein.residues, protein)
-            List<LabeledPoint> predictedPoints = predictor.labeledPoints
+            ResidueLabeler predictor = null
+            List<LabeledPoint> predictedPoints = null
 
+            if (dataset.hasPredictedResidueLabeling()) {   // load static labeling
+                String method = dataset.attributes.get(Dataset.PARAM_PREDICTION_METHOD)
+                predictor = StaticResidueLabeler.createForDatasetItem(item)
+            } else { // predict with model
+                predictor = new ModelBasedResidueLabeler(model, sasPoints, item.context).withObserved(observedPoints)
+                predictedPoints = predictor.labeledPoints
+            }
+
+            BinaryLabeling predicted = predictor.getBinaryLabeling(protein.residues, protein)
             ClassifierStats predictionStats = BinaryLabelings.eval(observed, predicted, predictor.doubleLabeling)
 
             synchronized (results) {

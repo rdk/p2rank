@@ -120,6 +120,10 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
     private static boolean ALTERADY_TRAINED = false
 
     boolean shouldTrainModel() {
+        if (evalDataSet.hasPredictedResidueLabeling()) {
+            return false
+        }
+
         if (params.hopt_train_only_once) {
             if (ALTERADY_TRAINED) {
                 return false

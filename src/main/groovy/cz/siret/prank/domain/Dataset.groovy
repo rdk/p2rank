@@ -350,6 +350,13 @@ class Dataset implements Parametrized {
     }
 
     /**
+     * @return true if predicted residue lbeling is defined a as a part of th dataset
+     */
+    boolean hasPredictedResidueLabeling() {
+        return attributes.containsKey(PARAM_PREDICTION_METHOD)
+    }
+
+    /**
      * Load residue labeling based on PARAM_RESIDUE_LABELING_FORMAT and PARAM_RESIDUE_LABELING_FILE attributes defined in the dataset
      */
     @Nullable
