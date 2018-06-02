@@ -57,7 +57,7 @@ abstract class StaticResidueLabeler extends ResidueLabeler<Boolean> implements W
             for (String line : Futils.readLines(path).tail()) {
                 if (StringUtils.isBlank(line)) continue
 
-                def cols = Sutils.split(line)
+                def cols = Sutils.splitOnWhitespace(line)
                 String chain = cols[0]
                 String resnum = cols[1]
                 Double score = parseScore(cols[3])
