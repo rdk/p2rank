@@ -95,7 +95,7 @@ abstract class StaticResidueLabeler extends ResidueLabeler<Boolean> implements W
         }
 
         private boolean binaryLabel(double score) {
-            score >= 0.75
+            score >= 0.65
         }
 
         @Override
