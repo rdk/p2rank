@@ -35,9 +35,7 @@ abstract class StaticResidueLabeler extends ResidueLabeler<Boolean> implements W
     }
 
     @CompileStatic
-    static class VorffipPredictedLabelingLoader extends StaticResidueLabeler implements Parametrized, Writable {
-
-        double threshold = params.residue_score_threshold
+    static class VorffipPredictedLabelingLoader extends StaticResidueLabeler implements Writable {
 
         ResidueLabeling<Double> doubleLabeling
         String path
