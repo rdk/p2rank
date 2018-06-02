@@ -72,7 +72,6 @@ class EvalResiduesRoutine extends EvalRoutine {
             List<LabeledPoint> predictedPoints = null
 
             if (dataset.hasPredictedResidueLabeling()) {   // load static labeling
-                String method = dataset.attributes.get(Dataset.PARAM_PREDICTION_METHOD)
                 predictor = StaticResidueLabeler.createForDatasetItem(item)
             } else { // predict with model
                 predictor = new ModelBasedResidueLabeler(model, sasPoints, item.context).withObserved(observedPoints)

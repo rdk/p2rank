@@ -20,7 +20,7 @@ abstract class StaticResidueLabeler extends ResidueLabeler<Boolean> implements W
 
 
     static StaticResidueLabeler createForDatasetItem(Dataset.Item item) {
-        String method = item.dataset.getProperty("METHOD")
+        String method = item.dataset.getProperty(Dataset.PARAM_PREDICTION_METHOD)
 
         if ("vorffip" == method) {
             String path = item.columnValues.get('predicted_labeling')
