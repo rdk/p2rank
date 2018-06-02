@@ -5,6 +5,7 @@ import cz.siret.prank.domain.Protein
 import cz.siret.prank.domain.Residue
 import cz.siret.prank.domain.Residues
 import cz.siret.prank.program.PrankException
+import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.Sutils
 import cz.siret.prank.utils.Writable
@@ -33,7 +34,7 @@ abstract class StaticResidueLabeler extends ResidueLabeler<Boolean> implements W
         }
     }
 
-    static class VorffipPredictedLabelingLoader extends StaticResidueLabeler implements Writable {
+    static class VorffipPredictedLabelingLoader extends StaticResidueLabeler implements Parametrized, Writable {
 
         ResidueLabeling<Double> doubleLabeling
         String path
@@ -93,7 +94,7 @@ abstract class StaticResidueLabeler extends ResidueLabeler<Boolean> implements W
         }
 
         private boolean binaryLabel(double score) {
-            score >= 0.5
+            score >= params.residue_score_threshold
         }
 
         @Override
