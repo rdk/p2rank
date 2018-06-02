@@ -34,7 +34,10 @@ abstract class StaticResidueLabeler extends ResidueLabeler<Boolean> implements W
         }
     }
 
+    @CompileStatic
     static class VorffipPredictedLabelingLoader extends StaticResidueLabeler implements Parametrized, Writable {
+
+        double threshold = params.residue_score_threshold
 
         ResidueLabeling<Double> doubleLabeling
         String path
@@ -94,7 +97,7 @@ abstract class StaticResidueLabeler extends ResidueLabeler<Boolean> implements W
         }
 
         private boolean binaryLabel(double score) {
-            score >= params.residue_score_threshold
+            score >= threshold
         }
 
         @Override
