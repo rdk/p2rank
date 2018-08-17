@@ -51,7 +51,7 @@ Slides: http://bit.ly/p2rank_slides
 If you use P2Rank, please cite relevant papers:
 
 * [Software article](https://jcheminf.springeropen.com/articles/10.1186/s13321-018-0285-8) in JChem about P2RANK pocket prediction tool
-Krivák R, Hoksza D. P2Rank: machine learning based tool for rapid and accurate prediction of ligand binding sites from protein structure. Journal of cheminformatics. 2018 Aug.
+ Krivák R, Hoksza D. P2Rank: machine learning based tool for rapid and accurate prediction of ligand binding sites from protein structure. Journal of cheminformatics. 2018 Aug.
 * [Conference paper](http://bit.ly/p2rank_conference_paper) inroducing P2Rank prediction algorithm  
  Krivák R, Hoksza D. P2RANK: Knowledge-Based Ligand Binding Site Prediction Using Aggregated Local Features. InInternational Conference on Algorithms for Computational Biology 2015 Aug 4 (pp. 41-52). Springer, Cham.
 * [Research article](http://bit.ly/prank_paper) in JChem about PRANK rescoring algorithm  
