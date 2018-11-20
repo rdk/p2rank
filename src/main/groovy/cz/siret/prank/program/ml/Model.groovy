@@ -2,6 +2,7 @@ package cz.siret.prank.program.ml
 
 import cz.siret.prank.fforest.FasterForest
 import cz.siret.prank.program.params.Params
+import cz.siret.prank.utils.ConsoleWriter
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.WekaUtils
 import cz.siret.prank.utils.Writable
@@ -15,7 +16,7 @@ import javax.annotation.Nullable
  * Machine learning prediction model
  */
 @CompileStatic
-class Model implements Writable {
+class Model {
 
     String label
     Classifier classifier
@@ -45,7 +46,7 @@ class Model implements Writable {
 
     void saveToFile(String fname) {
         WekaUtils.saveClassifier((Classifier)classifier, fname)
-        write "model saved to file $fname (${Futils.sizeMBFormatted(fname)} MB)"
+        ConsoleWriter.write "model saved to file $fname (${Futils.sizeMBFormatted(fname)} MB)"
     }
 
     static Model loadFromFile(String fname) {

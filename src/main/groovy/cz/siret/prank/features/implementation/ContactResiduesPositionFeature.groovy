@@ -72,7 +72,7 @@ class ContactResiduesPositionFeature extends SasFeatureCalculator implements Par
                 contactResIndex.put(aa, res)
             }
         }
-        Map<AA, Collection<AminoAcid>> cresmap = contactResIndex.asMap()
+        Map<AA, Collection<AminoAcid>> cresmap = (Map<AA, Collection<AminoAcid>>) contactResIndex.asMap()
 
         double[] vect = new double[HEADER.size()]
 

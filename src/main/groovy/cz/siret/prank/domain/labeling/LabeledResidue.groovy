@@ -8,7 +8,8 @@ import cz.siret.prank.domain.Residue
 class LabeledResidue<L> {
 
     private Residue residue
-    private L label
+//   private L label  // TODo make private agsain
+    L label
 
     LabeledResidue(Residue residue, L label) {
         this.residue = residue

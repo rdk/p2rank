@@ -1,5 +1,6 @@
 package cz.siret.prank.domain.labeling
 
+import cz.siret.prank.domain.Prediction
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.domain.Residue
 import cz.siret.prank.domain.Residues
@@ -23,12 +24,22 @@ class ResidueLabelings implements Parametrized {
     }
 
 
-    static ResidueLabelings calculate(Protein protein, Model model, Atoms sasPoints, List<LabeledPoint> labeledPoints, ProcessedItemContext context) {
+    static ResidueLabelings calculate(Prediction prediction, Model model, Atoms sasPoints, List<LabeledPoint> labeledPoints, ProcessedItemContext context) {
+        Protein protein = prediction.protein
+
 
         ModelBasedResidueLabeler labeler = new ModelBasedResidueLabeler(model, sasPoints, context)
         labeler.calculateLabeling(protein.residues, labeledPoints, protein)
 
         ResidueLabeling<Double> lab_score = labeler.doubleLabeling
+
+        // TODO temporaryFix
+        lab_score.labeledResidues.each {
+            if (it.label == Double.NaN) {
+                it.label = 0d
+            }
+        }
+
 
         // score transformers
         // TODO use different parametrizations for transformers, train them
@@ -44,7 +55,7 @@ class ResidueLabelings implements Parametrized {
         res.labelings.add(new NamedLabeling("zscore", lab_zscore))
         res.labelings.add(new NamedLabeling("probability", lab_probability))
         // decoys
-        res.labelings.add(new NamedLabeling("pocket", lab_score))
+        res.labelings.add(new NamedLabeling("pocket", lab_score))     // TODO
         res.labelings.add(new NamedLabeling("pocket_score", lab_score))
         res.labelings.add(new NamedLabeling("pocket_zscore", lab_score))
         res.labelings.add(new NamedLabeling("pocket_probability", lab_score))
@@ -61,9 +72,10 @@ class ResidueLabelings implements Parametrized {
 
     String toCSV() {
         StringBuilder s = new StringBuilder()
-        s << "residue, " << (labelings*.name).join(", ") << "\n"
+        s << "chain, residue_num, residue_name, " << (labelings*.name).join(", ") << "\n"
         for (Residue r : residues) {
-            s << r.key << ", " << labelings.collect { fmt it.labeling.get(r) }.join(", ") << "\n"
+            s << r.chainId << ", " << r.residueNumber.seqNum << ", " << r.code << ","
+            s << labelings.collect { fmt it.labeling.get(r).label }.join(", ") << "\n"
         }
         s.toString()
     }

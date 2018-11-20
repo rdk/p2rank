@@ -13,7 +13,6 @@ import cz.siret.prank.prediction.pockets.criteria.DCC
 import cz.siret.prank.prediction.pockets.criteria.DSO
 import cz.siret.prank.prediction.pockets.criteria.DSWO
 import cz.siret.prank.prediction.pockets.criteria.PocketCriterium
-import cz.siret.prank.utils.Writable
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.StringUtils
 
@@ -31,7 +30,7 @@ import static java.util.Collections.emptyList
  * Threadsafe.
  */
 @Slf4j
-class Evaluation implements Parametrized, Writable {
+class Evaluation implements Parametrized {
 
     /** cutoff distance in A around ligand atoms that determins which SAS points cover the ligand */
     final double LIG_SAS_CUTOFF = params.ligand_induced_volume_cutoff   // TODO consider separate value (e.g. 2)

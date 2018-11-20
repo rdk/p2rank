@@ -125,7 +125,7 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
                 prediction.labeledPoints = labeledPoints
 
                 if (params.label_residues) {
-                    prediction.residueLabelings = ResidueLabelings.calculate(prediction.protein, model, extractor.sampledPoints, labeledPoints, context)
+                    prediction.residueLabelings = ResidueLabelings.calculate(prediction, model, extractor.sampledPoints, labeledPoints, context)
                 }
             }
 
