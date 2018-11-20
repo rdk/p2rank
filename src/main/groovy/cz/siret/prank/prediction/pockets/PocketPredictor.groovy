@@ -9,9 +9,7 @@ import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.domain.labeling.LabeledPoint
 import cz.siret.prank.prediction.transformation.ScoreTransformer
 import cz.siret.prank.utils.Cutils
-import cz.siret.prank.utils.Futils
 import groovy.util.logging.Slf4j
-import org.apache.commons.lang3.StringUtils
 
 /**
  * Calculates pockets from list of SAS points with ligandability scores.
@@ -90,19 +88,7 @@ class PocketPredictor implements Parametrized {
     }
 
 
-    private ScoreTransformer loadTransformer(String paramVal) {
-        try {
-            if (StringUtils.isEmpty(paramVal)) {
-                return null
-            }
-            String path = params.installDir + "/models/score/" + paramVal
-            return ScoreTransformer.loadFromJson(Futils.readFile(path))
 
-        } catch (Exception e) {
-            log.error("Failed to load score transformer '$paramVal'", e)
-        }
-        return null
-    }
 
     /**
      *
@@ -126,8 +112,8 @@ class PocketPredictor implements Parametrized {
         log.info "FILTERED CLUSTERS: {}", filteredClusters.size()
 
         // score transformers
-        ScoreTransformer zscoreTpTransformer = loadTransformer(params.zscoretp_transformer)
-        ScoreTransformer probaTpTransformer = loadTransformer(params.probatp_transformer)
+        ScoreTransformer zscoreTpTransformer = ScoreTransformer.load(params.zscoretp_transformer)
+        ScoreTransformer probaTpTransformer = ScoreTransformer.load(params.probatp_transformer)
 
         List<PrankPocket> pockets = filteredClusters.collect { Atoms clusterPoints ->
 

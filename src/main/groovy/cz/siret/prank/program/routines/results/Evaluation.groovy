@@ -8,7 +8,6 @@ import cz.siret.prank.features.implementation.conservation.ConservationScore
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.domain.labeling.LabeledPoint
-import cz.siret.prank.prediction.pocketcriteria.*
 import cz.siret.prank.prediction.pockets.criteria.DCA
 import cz.siret.prank.prediction.pockets.criteria.DCC
 import cz.siret.prank.prediction.pockets.criteria.DSO

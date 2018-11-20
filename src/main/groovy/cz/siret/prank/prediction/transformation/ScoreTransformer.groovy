@@ -6,12 +6,17 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import cz.siret.prank.program.PrankException
+import cz.siret.prank.program.params.Params
 import cz.siret.prank.program.routines.results.Evaluation
+import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
+import org.apache.commons.lang3.StringUtils
 
 /**
  *
  */
+@Slf4j
 @CompileStatic
 abstract class ScoreTransformer {
 
@@ -58,8 +63,21 @@ abstract class ScoreTransformer {
         GSON.toJson(obj)
     }
 
+    /**
+     * Load transformer from json in P2Rank install dir subdir (/models/score/)
+     */
+    static ScoreTransformer load(String paramVal) {
+        try {
+            if (StringUtils.isEmpty(paramVal)) {
+                return null
+            }
+            String path = Params.inst.installDir + "/models/score/" + paramVal
+            return ScoreTransformer.loadFromJson(Futils.readFile(path))
 
-    static loadTransformer(String paramStr) {
+        } catch (Exception e) {
+            log.error("Failed to load score transformer '$paramVal'", e)
+        }
+        return null
     }
 
 }

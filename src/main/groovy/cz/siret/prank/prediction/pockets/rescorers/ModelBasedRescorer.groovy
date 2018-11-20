@@ -2,6 +2,7 @@ package cz.siret.prank.prediction.pockets.rescorers
 
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Prediction
+import cz.siret.prank.domain.labeling.ResidueLabelings
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.features.FeatureVector
 import cz.siret.prank.features.PrankFeatureExtractor
@@ -89,6 +90,7 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
                 labeledPoints.add(new LabeledPoint(point))
             }
 
+            // TODO refactor: use ModelBasedPointLabeler instead of this loop
             for (LabeledPoint point in labeledPoints) {
 
                 // classification
@@ -121,12 +123,19 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
                 prediction.pockets = new PocketPredictor().predictPockets(labeledPoints, prediction.protein)
                 prediction.reorderedPockets = prediction.pockets
                 prediction.labeledPoints = labeledPoints
+
+                if (params.label_residues) {
+                    prediction.residueLabelings = ResidueLabelings.calculate(prediction.protein, model, extractor.sampledPoints, labeledPoints, context)
+                }
             }
+
+
         }
 
         proteinExtractor.finalizeProteinPrototype()
 
     }
+
 
     /**
      * Rescore predictions of other method

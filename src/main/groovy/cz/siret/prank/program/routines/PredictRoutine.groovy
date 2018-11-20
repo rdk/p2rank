@@ -96,6 +96,11 @@ class PredictRoutine extends Routine {
                 PredictionSummary psum = new PredictionSummary(pair.prediction)
                 String outf = "$predDir/${item.label}_predictions.csv"
                 writeFile(outf, psum.toCSV().toString())
+
+                if (params.label_residues && pair.prediction.residueLabelings!=null) {
+                    String resf = "$predDir/${item.label}_residues.csv"
+                    writeFile(resf, pair.prediction.residueLabelings.toCSV())
+                }
             }
 
             if (collectStats) {  // expects dataset with liganated proteins

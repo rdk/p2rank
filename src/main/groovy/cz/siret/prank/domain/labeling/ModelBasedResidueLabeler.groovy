@@ -18,7 +18,7 @@ import static cz.siret.prank.utils.Formatter.format
 import static cz.siret.prank.utils.Formatter.formatNumbers
 
 /**
- *
+ * (not intended o be reused with mode proteins)
  */
 @Slf4j
 @CompileStatic
@@ -86,7 +86,10 @@ class ModelBasedResidueLabeler extends ResidueLabeler<Boolean> implements Parame
         return calculateLabeling(residues, labeledPoints, protein)
     }
 
-    private BinaryLabeling calculateLabeling(Residues residues, List<LabeledPoint> labeledPoints, Protein protein) {
+    /**
+     * calculates doubleLabeling as well
+     */
+    BinaryLabeling calculateLabeling(Residues residues, List<LabeledPoint> labeledPoints, Protein protein) {
 
         Atoms points = new Atoms(labeledPoints)
         Residues exposed = protein.getExposedResidues()

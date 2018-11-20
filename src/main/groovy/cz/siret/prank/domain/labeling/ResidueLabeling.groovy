@@ -44,5 +44,9 @@ class ResidueLabeling<L>  {
     List<LabeledResidue<L>> getLabeledResidues() {
         return labeledResidues
     }
+
+    int getSize() {
+        labeledResidues.size()
+    }
     
 }

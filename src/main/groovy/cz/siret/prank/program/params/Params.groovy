@@ -429,6 +429,11 @@ class Params {
     boolean predict_residues = false
 
     /**
+     * (in predict mode) produce residue labeling file
+     */
+    boolean label_residues = false
+
+    /**
      * residue score threshold fir calculating predicted binary label
      */
     double residue_score_threshold = 1d
