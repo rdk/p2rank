@@ -222,12 +222,15 @@ class Residue {
 
         @Override
         String toString() {
-            return residueNumber.toString()
+            return residueNumber.chainId + "_" + residueNumber.toString()
         }
     }
 
 //===========================================================================================================//
 
+    /**
+     * Secondary structure section with position
+     */
     static class SsInfo {
         SsSection section
         int posInSection

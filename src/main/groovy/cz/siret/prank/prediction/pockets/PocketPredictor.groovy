@@ -160,8 +160,9 @@ class PocketPredictor implements Parametrized {
             }
 
             it.name = "pocket" + i
+            it.rank = i
 
-            int count = it.cache.count
+            int count = it.cache.count as int
             double score = it.newScore
             int surfAtoms = it.surfaceAtoms.count
             log.info sprintf("pocket%2d -  surf_atoms: %3d   points: %3d   score: %6.1f", i, surfAtoms, count, score)

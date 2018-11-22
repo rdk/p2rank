@@ -45,7 +45,10 @@ abstract class PocketRescorer implements Parametrized {
             prediction.reorderedPockets = prediction.reorderedPockets.sort {
                 Pocket a, Pocket b -> b.newScore <=> a.newScore
             } // descending
+        }
 
+        if (params.predictions) {
+            setRanks(prediction)
         }
 
         setNewRanks(prediction)
@@ -55,6 +58,13 @@ abstract class PocketRescorer implements Parametrized {
         int i = 1
         for (Pocket pocket : prediction.reorderedPockets) {
             pocket.newRank = i++
+        }
+    }
+
+    private void setRanks(Prediction prediction) {
+        int i = 1
+        for (Pocket pocket : prediction.pockets) {
+            pocket.rank = i++
         }
     }
 

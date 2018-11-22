@@ -431,7 +431,7 @@ class Params {
     /**
      * (in predict mode) produce residue labeling file
      */
-    boolean label_residues = false
+    boolean label_residues = true
 
     /**
      * residue score threshold fir calculating predicted binary label

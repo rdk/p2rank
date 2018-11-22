@@ -34,7 +34,7 @@ class PredictionSummary {
 
             def surfAtomIds = p.surfaceAtoms*.PDBserial.join(" ")
 
-            Set resIds = new TreeSet(p.surfaceAtoms.distinctGroupsSorted.collect { it.residueNumber.toString() })
+            Set resIds = new TreeSet(p.residues.collect { it.key.toString() })  
             String strResIds = resIds.join(" ")
 
             sb << "$p.name,$p.newRank,$fmtScore,${p.sasPoints.count},$p.surfaceAtoms.count,$x,$y,$z,$strResIds,$surfAtomIds\n"

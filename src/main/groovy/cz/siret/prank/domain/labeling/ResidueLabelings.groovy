@@ -1,15 +1,19 @@
 package cz.siret.prank.domain.labeling
 
+import com.beust.jcommander.internal.Console
+import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Prediction
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.domain.Residue
 import cz.siret.prank.domain.Residues
 import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.geom.Atoms
+import cz.siret.prank.prediction.pockets.PrankPocket
 import cz.siret.prank.prediction.transformation.ScoreTransformer
 import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.params.Params
+import cz.siret.prank.utils.ConsoleWriter
 
 /**
  * 
@@ -26,10 +30,10 @@ class ResidueLabelings implements Parametrized {
 
     static ResidueLabelings calculate(Prediction prediction, Model model, Atoms sasPoints, List<LabeledPoint> labeledPoints, ProcessedItemContext context) {
         Protein protein = prediction.protein
-
+        Residues residues = protein.residues
 
         ModelBasedResidueLabeler labeler = new ModelBasedResidueLabeler(model, sasPoints, context)
-        labeler.calculateLabeling(protein.residues, labeledPoints, protein)
+        labeler.calculateLabeling(residues, labeledPoints, protein)
 
         ResidueLabeling<Double> lab_score = labeler.doubleLabeling
 
@@ -49,17 +53,38 @@ class ResidueLabelings implements Parametrized {
         ResidueLabeling<Double> lab_zscore = transformLabeling(lab_score, zscoreTpTransformer)
         ResidueLabeling<Double> lab_probability = transformLabeling(lab_score, probaTpTransformer)
 
+        ResidueLabeling<Integer> lap_pocketref = poctetReferenceLabeling(prediction, residues)
 
-        ResidueLabelings res = new ResidueLabelings(protein.residues)
+        ResidueLabelings res = new ResidueLabelings(residues)
         res.labelings.add(new NamedLabeling("score", lab_score))
         res.labelings.add(new NamedLabeling("zscore", lab_zscore))
         res.labelings.add(new NamedLabeling("probability", lab_probability))
         // decoys
-        res.labelings.add(new NamedLabeling("pocket", lab_score))     // TODO
-        res.labelings.add(new NamedLabeling("pocket_score", lab_score))
-        res.labelings.add(new NamedLabeling("pocket_zscore", lab_score))
-        res.labelings.add(new NamedLabeling("pocket_probability", lab_score))
+        res.labelings.add(new NamedLabeling("pocket", lap_pocketref))   
+//        res.labelings.add(new NamedLabeling("pocket_score", lab_score))
+//        res.labelings.add(new NamedLabeling("pocket_zscore", lab_score))
+//        res.labelings.add(new NamedLabeling("pocket_probability", lab_score))
         return res
+    }
+
+
+    static ResidueLabeling<Integer> poctetReferenceLabeling(Prediction prediction, Residues residues) {
+        Map<Residue.Key, Integer> labels = new HashMap<>()
+
+        residues.each { labels.put(it.key, 0) }
+
+        for (Pocket p  : prediction.pockets.reverse()) {    // pockets on top of the list have priority in labeling residues
+            PrankPocket pp = (PrankPocket) p
+            pp.residues.each {
+                labels.put(it.key, pp.rank) 
+            }
+        }
+
+        ResidueLabeling<Integer> res = new ResidueLabeling<>(residues.count)
+        residues.each {
+            res.add(it, labels.get(it.key))
+        }
+        res
     }
 
     static ResidueLabeling<Double> transformLabeling(ResidueLabeling<Double> orig, ScoreTransformer transformer) {
