@@ -141,6 +141,8 @@ class ModelBasedResidueLabeler extends ResidueLabeler<Boolean> implements Parame
         base = Math.pow(base, SUM_TO_AVG_POW) // exp. of <0,1> goes from 'no average, just sum' -> 'full average'
         double score = sum / base
 
+        //log.warn "AGG:{} from {}", score, scores // XXX
+
         return score
     }
 

@@ -110,8 +110,9 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
                 }
 
                 point.@hist = hist
-                point.predicted = predicted
-                point.observed = observed
+                point.@predicted = predicted
+                point.@observed = observed
+                point.@score = predictedScore
 
                 if (collectingStatistics) {
                     stats.addPrediction(observed, predicted, predictedScore, hist)

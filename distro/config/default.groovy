@@ -354,4 +354,9 @@ import cz.siret.prank.program.params.Params
      */
     probatp_transformer = "default_probatp.json"
 
+    /**
+     * added to the cutoff distance around residue in score aggregation from SAS points
+     */
+    residue_score_extra_dist = 2.0d
+    
 }

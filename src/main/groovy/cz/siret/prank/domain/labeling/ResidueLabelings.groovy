@@ -1,6 +1,5 @@
 package cz.siret.prank.domain.labeling
 
-import com.beust.jcommander.internal.Console
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Prediction
 import cz.siret.prank.domain.Protein
@@ -13,10 +12,9 @@ import cz.siret.prank.prediction.transformation.ScoreTransformer
 import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.params.Params
-import cz.siret.prank.utils.ConsoleWriter
 
 /**
- * 
+ * Logic for calculating residue lebalings during P2Rank prediction
  */
 class ResidueLabelings implements Parametrized {
 
@@ -37,14 +35,6 @@ class ResidueLabelings implements Parametrized {
 
         ResidueLabeling<Double> lab_score = labeler.doubleLabeling
 
-        // TODO temporaryFix
-        lab_score.labeledResidues.each {
-            if (it.label == Double.NaN) {
-                it.label = 0d
-            }
-        }
-
-
         // score transformers
         // TODO use different parametrizations for transformers, train them
         ScoreTransformer zscoreTpTransformer = ScoreTransformer.load(Params.inst.zscoretp_transformer)
@@ -53,7 +43,7 @@ class ResidueLabelings implements Parametrized {
         ResidueLabeling<Double> lab_zscore = transformLabeling(lab_score, zscoreTpTransformer)
         ResidueLabeling<Double> lab_probability = transformLabeling(lab_score, probaTpTransformer)
 
-        ResidueLabeling<Integer> lap_pocketref = poctetReferenceLabeling(prediction, residues)
+        ResidueLabeling<Integer> lap_pocketref = pocketReferenceLabeling(prediction, residues)
 
         ResidueLabelings res = new ResidueLabelings(residues)
         res.labelings.add(new NamedLabeling("score", lab_score))
@@ -68,7 +58,7 @@ class ResidueLabelings implements Parametrized {
     }
 
 
-    static ResidueLabeling<Integer> poctetReferenceLabeling(Prediction prediction, Residues residues) {
+    static ResidueLabeling<Integer> pocketReferenceLabeling(Prediction prediction, Residues residues) {
         Map<Residue.Key, Integer> labels = new HashMap<>()
 
         residues.each { labels.put(it.key, 0) }
