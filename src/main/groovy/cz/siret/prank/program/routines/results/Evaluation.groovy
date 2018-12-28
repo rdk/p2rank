@@ -4,6 +4,8 @@ import cz.siret.prank.domain.Ligand
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.domain.Protein
+import cz.siret.prank.domain.Residue
+import cz.siret.prank.domain.labeling.ResidueLabelings
 import cz.siret.prank.features.implementation.conservation.ConservationScore
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.program.params.Parametrized
@@ -40,9 +42,12 @@ class Evaluation implements Parametrized {
     List<ProteinRow> proteinRows = Collections.synchronizedList(new ArrayList<>())
     List<LigRow> ligandRows = Collections.synchronizedList(new ArrayList<>())
     List<PocketRow> pocketRows = Collections.synchronizedList(new ArrayList<>())
+    List<ResidueRow> residueRows = Collections.synchronizedList(new ArrayList<>())
 
     List<Double> bindingScores = Collections.synchronizedList(new ArrayList<Double>());
     List<Double> nonBindingScores = Collections.synchronizedList(new ArrayList<Double>());
+
+    
 
     int proteinCount
     int pocketCount
@@ -217,6 +222,19 @@ class Evaluation implements Parametrized {
             prow.combinedRank = combiSorted.indexOf(prow) + 1
         }
 
+        ResidueLabelings rlabs = pair.prediction.residueLabelings
+        if (rlabs != null) {
+            for (Residue res : protein.residues) {
+                boolean resLabel = rlabs.observed.getLabel(res)
+                double resScore = rlabs.scoreLabeling.getLabel(res)
+
+                ResidueRow rrow = new ResidueRow()
+                rrow.observed = resLabel
+                rrow.score = resScore
+
+                residueRows.add(rrow)
+            }
+        }
 
         synchronized (this) {
             ligandCount += pair.ligandCount
@@ -745,6 +763,11 @@ class Evaluation implements Parametrized {
         boolean isTruePocket() {
             StringUtils.isNotEmpty(ligName)
         }
-   }
+    }
+
+    static class ResidueRow {
+        double score
+        boolean observed
+    }
 
 }

@@ -24,7 +24,7 @@ abstract class ScoreTransformer {
     
     abstract double transformScore(double rawScore)
 
-    abstract void train(Evaluation evaluation)
+    abstract void trainForPockets(Evaluation evaluation)
 
     abstract JsonElement toJson()
 

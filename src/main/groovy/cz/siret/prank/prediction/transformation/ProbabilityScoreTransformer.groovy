@@ -57,24 +57,22 @@ class ProbabilityScoreTransformer extends ScoreTransformer implements Writable {
         return hist[idx] + add
     }
 
-    @Override
-    void train(Evaluation evaluation) {
+    /**
+     *
+     * @param posScores scores of (observed) positive  elements (pockets, residues)
+     * @param negScores scores of (observed) negative  elements (pockets, residues)
+     */
+    void doTrain(List<Double> posScores, List<Double> negScores) {
         nbins = NBINS
 
-        List<Double> scores   = evaluation.pocketRows.collect { it.score }.toList()
-        List<Double> tpScores = evaluation.pocketRows.findAll { it.isTruePocket()  }.collect { it.score }.toList()
-        List<Double> fpScores = evaluation.pocketRows.findAll { !it.isTruePocket() }.collect { it.score }.toList()
-
-//        write("Scores: " + scores)
-//        write("TScores: " + tpScores)
-//        write("FScores: " + fpScores)
+        List<Double> scores = posScores + negScores
 
         StatSample scoresSample = new StatSample(scores)
         min = scoresSample.min
         max = scoresSample.max
 
-        int[] tp_hist = calcHist(nbins, min, max, tpScores)
-        int[] fp_hist = calcHist(nbins, min, max, fpScores)
+        int[] tp_hist = calcHist(nbins, min, max, posScores)
+        int[] fp_hist = calcHist(nbins, min, max, negScores)
 
         for (int i=1; i<nbins; i++) {
             tp_hist[i] += tp_hist[i-1]
@@ -85,6 +83,17 @@ class ProbabilityScoreTransformer extends ScoreTransformer implements Writable {
 
         tp_cumul_hist = tp_hist
         fp_cumul_hist = fp_hist
+    }
+
+    @Override
+    void trainForPockets(Evaluation evaluation) {
+        List<Double> tpScores = evaluation.pocketRows.findAll { it.isTruePocket()  }.collect { it.score }.toList()
+        List<Double> fpScores = evaluation.pocketRows.findAll { !it.isTruePocket() }.collect { it.score }.toList()
+
+//        write("TScores: " + tpScores)
+//        write("FScores: " + fpScores)
+
+        doTrain(tpScores, fpScores)
     }
 
     /**

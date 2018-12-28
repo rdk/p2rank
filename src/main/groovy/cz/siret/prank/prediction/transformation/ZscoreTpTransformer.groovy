@@ -20,12 +20,16 @@ class ZscoreTpTransformer extends ScoreTransformer {
         (rawScore - mean) / stdev
     }
 
-    @Override
-    void train(Evaluation evaluation) {
-        List<Double> tpScores = (List<Double>) evaluation.pocketRows.findAll { it.isTruePocket() }.collect { it.score }
-        StatSample sample = new StatSample(tpScores)
+    void doTrain(List<Double> scores) {
+        StatSample sample = new StatSample(scores)
         mean = sample.mean
         stdev = sample.stddev
+    }
+
+    @Override
+    void trainForPockets(Evaluation evaluation) {
+        List<Double> tpScores = (List<Double>) evaluation.pocketRows.findAll { it.isTruePocket() }.collect { it.score }
+        doTrain(tpScores)
     }
 
     @Override

@@ -1,6 +1,9 @@
 package cz.siret.prank.program.routines
 
 import cz.siret.prank.domain.Dataset
+import cz.siret.prank.domain.labeling.BinaryLabeling
+import cz.siret.prank.domain.labeling.LigandBasedResidueLabeler
+import cz.siret.prank.domain.labeling.ResidueLabelings
 import cz.siret.prank.domain.loaders.LoaderParams
 import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.features.FeatureExtractor
@@ -104,6 +107,13 @@ class PredictRoutine extends Routine {
             }
 
             if (collectStats) {  // expects dataset with liganated proteins
+
+                // add observed binary labeling for residues (only in eval-predict)
+                if (params.label_residues && pair.prediction.residueLabelings!=null) {
+                    BinaryLabeling observed = new LigandBasedResidueLabeler().getBinaryLabeling(pair.protein)
+                    pair.prediction.residueLabelings.observed = observed
+                }
+
                 stats.evaluation.addPrediction(pair, pair.prediction.pockets)
                 synchronized (stats.classStats) {
                     stats.classStats.addAll(rescorer.stats)
@@ -115,6 +125,7 @@ class PredictRoutine extends Routine {
             }
         }
 
+        // stats and score transformer training
         if (collectStats && produceFilesystemOutput) {
             String modelLabel = model.classifier.class.simpleName + " ($modelf)"
             stats.logAndStore(outdir, modelLabel)
@@ -127,14 +138,18 @@ class PredictRoutine extends Routine {
                 for (String name : params.train_score_transformers) {
                     try {
                         ScoreTransformer transformer = ScoreTransformer.create(name)
-                        transformer.train(stats.evaluation)
+                        transformer.trainForPockets(stats.evaluation)
                         String fname = "$scoreDir/${name}.json"
-                        writeFile("$scoreDir/${name}.json", ScoreTransformer.saveToJson(transformer))
+                        writeFile(fname, ScoreTransformer.saveToJson(transformer))
                         write "Trained score transformer '$name' written to: $fname"
                     } catch (Exception e) {
                         log.error("Failed to train score transformer '$name'", e)
                     }
                 }
+            }
+
+            if (params.label_residues && params.train_score_transformers_for_residues) {
+                ResidueLabelings.trainResidueScoreTransformers(outdir, stats.evaluation)
             }
         }
 

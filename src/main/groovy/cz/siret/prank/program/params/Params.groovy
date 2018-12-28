@@ -726,7 +726,24 @@ class Params {
     String probatp_transformer = "default_probatp.json"
 
 
+    /**
+     * Path to json file that contains parameters of transformation of raw score to "z-score calculated from distribution of all residue scores".
+     * Use path relative to distro/models/score.
+     */
+    String zscoretp_res_transformer = "residue/p2rank_default_zscore.json"
+
+    /**
+     * Path to json file that contains parameters of transformation of raw score to "probability that residue with given score is true residue".
+     * Use path relative to distro/models/score.
+     */
+    String probatp_res_transformer = "residue/p2rank_default_proba.json"
+
     List<String> train_score_transformers = [] // ["ZscoreTpTransformer","ProbabilityScoreTransformer"]
+
+    /**
+     * Train resaidue score transformers on a dataset during predict-eval
+     */
+    boolean train_score_transformers_for_residues = false
 
     /**
      * Reduce loaded protein structures to chains declared in dataset file (in optional chains column)

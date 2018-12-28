@@ -8,18 +8,35 @@ import cz.siret.prank.domain.Residues
 import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.prediction.pockets.PrankPocket
+import cz.siret.prank.prediction.transformation.ProbabilityScoreTransformer
 import cz.siret.prank.prediction.transformation.ScoreTransformer
+import cz.siret.prank.prediction.transformation.ZscoreTpTransformer
 import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.params.Params
+import cz.siret.prank.program.routines.results.Evaluation
+import groovy.util.logging.Slf4j
+
+import javax.annotation.Nullable
+
+import static cz.siret.prank.utils.Futils.mkdirs
+import static cz.siret.prank.utils.Futils.writeFile
 
 /**
  * Logic for calculating residue lebalings during P2Rank prediction
  */
+@Slf4j
 class ResidueLabelings implements Parametrized {
 
     Residues residues
     List<NamedLabeling> labelings = new ArrayList<>()
+    ResidueLabeling<Double> scoreLabeling
+
+    /**
+     * positive if ligand contact residue
+     */
+    @Nullable
+    BinaryLabeling observed
 
     ResidueLabelings(Residues residues) {
         this.residues = residues
@@ -37,8 +54,8 @@ class ResidueLabelings implements Parametrized {
 
         // score transformers
         // TODO use different parametrizations for transformers, train them
-        ScoreTransformer zscoreTpTransformer = ScoreTransformer.load(Params.inst.zscoretp_transformer)
-        ScoreTransformer probaTpTransformer = ScoreTransformer.load(Params.inst.probatp_transformer)
+        ScoreTransformer zscoreTpTransformer = ScoreTransformer.load(Params.inst.zscoretp_res_transformer)
+        ScoreTransformer probaTpTransformer = ScoreTransformer.load(Params.inst.probatp_res_transformer)
 
         ResidueLabeling<Double> lab_zscore = transformLabeling(lab_score, zscoreTpTransformer)
         ResidueLabeling<Double> lab_probability = transformLabeling(lab_score, probaTpTransformer)
@@ -46,6 +63,7 @@ class ResidueLabelings implements Parametrized {
         ResidueLabeling<Integer> lap_pocketref = pocketReferenceLabeling(prediction, residues)
 
         ResidueLabelings res = new ResidueLabelings(residues)
+        res.scoreLabeling = lab_score
         res.labelings.add(new NamedLabeling("score", lab_score))
         res.labelings.add(new NamedLabeling("zscore", lab_zscore))
         res.labelings.add(new NamedLabeling("probability", lab_probability))
@@ -57,6 +75,27 @@ class ResidueLabelings implements Parametrized {
         return res
     }
 
+    static void trainResidueScoreTransformers(String outdir, Evaluation evaluation) {
+        String scoreDir = "$outdir/residue-score"
+        mkdirs(scoreDir)
+
+        ZscoreTpTransformer zt = new ZscoreTpTransformer()
+        zt.doTrain(evaluation.residueRows*.score as List<Double>)
+        String fname = "$scoreDir/ZscoreTpTransformer.json"
+        writeFile(fname, ScoreTransformer.saveToJson(zt))
+        log.info "Trained score transformer 'ZscoreTpTransformer' written to: $fname"
+
+        ProbabilityScoreTransformer pt = new ProbabilityScoreTransformer()
+
+        def posScores = evaluation.residueRows.findAll { it.observed }*.score as List<Double>
+        def negScores = evaluation.residueRows.findAll { !it.observed }*.score as List<Double>
+
+        pt.doTrain(posScores, negScores)
+        fname = "$scoreDir/ProbabilityScoreTransformer.json"
+        writeFile(fname, ScoreTransformer.saveToJson(pt))
+        log.info "Trained score transformer 'ProbabilityScoreTransformer' written to: $fname"
+        
+    }
 
     static ResidueLabeling<Integer> pocketReferenceLabeling(Prediction prediction, Residues residues) {
         Map<Residue.Key, Integer> labels = new HashMap<>()
