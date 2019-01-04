@@ -36,20 +36,7 @@ class Struct {
     }
 
     static double sqrDist(Atom a, List<Atom> list) {
-        if (list==null || list.isEmpty()) {
-            //log.debug "!! dist to empty list of atoms"
-            return Double.MAX_VALUE
-        }
-
-        double minDist = Double.MAX_VALUE
-        for (Atom b : list) {
-            double next = sqrDist(a, b)
-            if (next<minDist) {
-                minDist = next
-            }
-        }
-
-        return minDist
+        return PerfUtils.sqrDistL(a, list)
     }
 
     static double dist(List<Atom> list1, List<Atom> list2) {

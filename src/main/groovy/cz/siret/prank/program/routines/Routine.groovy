@@ -47,7 +47,7 @@ class Routine implements Parametrized, Writable  {
         try {
             res = 'git rev-parse --short HEAD'.execute().text
         } catch (Exception e) {
-            log.warn 'failed to get git commit verson', e
+            log.warn 'failed to get git commit version', e
         }
         return res
     }
