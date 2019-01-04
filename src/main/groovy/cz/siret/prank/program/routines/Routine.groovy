@@ -37,7 +37,7 @@ class Routine implements Parametrized, Writable  {
 
     void writeParams(String outdir) {
         String v = "version: " + Main.version + "\n"
-        v += "git head:" + getGitHeadId() + "\n"
+        v += "git head: " + getGitHeadId() + "\n"
 
         writeFile("$outdir/params.txt", v + params.toString())
     }

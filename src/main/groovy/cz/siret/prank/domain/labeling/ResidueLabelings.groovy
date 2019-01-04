@@ -126,9 +126,9 @@ class ResidueLabelings implements Parametrized {
 
     String toCSV() {
         StringBuilder s = new StringBuilder()
-        s << "chain, residue_num, residue_name, " << (labelings*.name).join(", ") << "\n"
+        s << "chain, residue_label, residue_name, " << (labelings*.name).join(", ") << "\n"
         for (Residue r : residues) {
-            s << r.chainId << ", " << r.residueNumber.seqNum << ", " << r.code << ","
+            s << r.chainId << ", " << r.residueNumber.toString() << ", " << r.code << ","
             s << labelings.collect { fmt it.labeling.get(r).label }.join(", ") << "\n"
         }
         s.toString()

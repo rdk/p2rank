@@ -222,7 +222,7 @@ class Residue {
 
         @Override
         String toString() {
-            return residueNumber.chainId + "_" + residueNumber.toString()
+            return residueNumber.printFull()
         }
     }
 
