@@ -369,7 +369,7 @@ public final class Atoms implements Iterable<Atom> {
     }
 
     public Atoms cutoutSphere(Atom distanceTo, double radius) {
-        List<Atom> res = new ArrayList<>(128);
+        List<Atom> res = new ArrayList<>();
         double sqrDist = radius*radius;
 
         double[] toCoords = distanceTo.getCoords();
