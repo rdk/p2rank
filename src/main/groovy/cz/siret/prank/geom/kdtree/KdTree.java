@@ -20,10 +20,9 @@ package cz.siret.prank.geom.kdtree;
  *    distribution.
  */
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import com.google.common.collect.MinMaxPriorityQueue;
+
+import java.util.*;
 
 /**
  * An efficient well-optimized kd-tree
@@ -405,6 +404,115 @@ public abstract class KdTree<T> {
 
         return results;
     }
+
+    /**
+     * Calculates the nearest 'count' points to 'location'
+     */
+    @SuppressWarnings("unchecked")
+    public List<Entry<T>> neighboursWithinDistance(double[] location, double radius, boolean sequentialSorting) {
+        KdTree<T> cursor = this;
+        cursor.status = Status.NONE;
+        double range = Double.POSITIVE_INFINITY;
+//        ResultHeap resultHeap = new ResultHeap(count);
+        PriorityQueue<Entry<T>> resultHeap = new PriorityQueue<>(new Comparator<Entry<T>>() {
+            @Override
+            public int compare(Entry<T> o1, Entry<T> o2) {
+                return -Double.compare(o1.distance, o2.distance);
+            }
+        });
+
+
+        do {
+            if (cursor.status == Status.ALLVISITED) {
+                // At a fully visited part. Move up the tree
+                cursor = cursor.parent;
+                continue;
+            }
+
+            if (cursor.status == Status.NONE && cursor.locations != null) {
+                // At a leaf. Use the data.
+                if (cursor.locationCount > 0) {
+                    if (cursor.singularity) {
+                        double dist = pointDist(cursor.locations[0], location);
+                        if (dist <= range) {
+                            for (int i = 0; i < cursor.locationCount; i++) {
+                                resultHeap.add(new Entry<>(dist, (T) cursor.data[i]));
+                            }
+                        }
+                    }
+                    else {
+                        for (int i = 0; i < cursor.locationCount; i++) {
+                            double dist = pointDist(cursor.locations[i], location);
+                            resultHeap.addValue(dist, cursor.data[i]);
+                        }
+                    }
+                    range = resultHeap.getMaxDist();
+                }
+
+                if (cursor.parent == null) {
+                    break;
+                }
+                cursor = cursor.parent;
+                continue;
+            }
+
+            // Going to descend
+            KdTree<T> nextCursor = null;
+            if (cursor.status == Status.NONE) {
+                // At a fresh node, descend the most probably useful direction
+                if (location[cursor.splitDimension] > cursor.splitValue) {
+                    // Descend right
+                    nextCursor = cursor.right;
+                    cursor.status = Status.RIGHTVISITED;
+                }
+                else {
+                    // Descend left;
+                    nextCursor = cursor.left;
+                    cursor.status = Status.LEFTVISITED;
+                }
+            }
+            else if (cursor.status == Status.LEFTVISITED) {
+                // Left node visited, descend right.
+                nextCursor = cursor.right;
+                cursor.status = Status.ALLVISITED;
+            }
+            else if (cursor.status == Status.RIGHTVISITED) {
+                // Right node visited, descend left.
+                nextCursor = cursor.left;
+                cursor.status = Status.ALLVISITED;
+            }
+
+            // Check if it's worth descending. Assume it is if it's sibling has
+            // not been visited yet.
+            if (cursor.status == Status.ALLVISITED) {
+                if (nextCursor.locationCount == 0
+                    || (!nextCursor.singularity && pointRegionDist(location, nextCursor.minLimit,
+                    nextCursor.maxLimit) > range)) {
+                    continue;
+                }
+            }
+
+            // Descend down the tree
+            cursor = nextCursor;
+            cursor.status = Status.NONE;
+        } while (cursor.parent != null || cursor.status != Status.ALLVISITED);
+
+        ArrayList<Entry<T>> results = new ArrayList<Entry<T>>(resultHeap.values);
+        if (sequentialSorting) {
+            while (resultHeap.values > 0) {
+                resultHeap.removeLargest();
+                results.add(new Entry<T>(resultHeap.removedDist, (T)resultHeap.removedData));
+            }
+        }
+        else {
+            for (int i = 0; i < resultHeap.values; i++) {
+                results.add(new Entry<T>(resultHeap.distance[i], (T)resultHeap.data[i]));
+            }
+        }
+
+        return results;
+    }
+
 
 
 

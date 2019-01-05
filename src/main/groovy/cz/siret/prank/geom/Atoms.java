@@ -382,6 +382,10 @@ public final class Atoms implements Iterable<Atom> {
         return new Atoms(res);
     }
 
+    public Atoms cutoutSphereKD(Atom distanceTo, double radius) {
+        kdTree.findNearestNAtoms()
+    }
+
     public Atoms cutoutBox(Box box) {
         return new Atoms(Struct.cutoffAtomsInBox(this.list, box));
     }
