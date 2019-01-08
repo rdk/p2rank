@@ -257,7 +257,7 @@ class Evaluation implements Parametrized {
     }
 
     private List calcConservationStats(Protein protein, ProteinRow protRow) {
-        ConservationScore score = protein.secondaryData.get(ConservationScore.conservationScoreKey) as ConservationScore
+        ConservationScore score = protein.secondaryData.get(ConservationScore.CONSERV_SCORE_KEY) as ConservationScore
         List<Double> bindingScrs = new ArrayList<>();
         List<Double> nonBindingScrs = new ArrayList<>();
         if (score != null) {

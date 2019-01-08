@@ -1,4 +1,3 @@
-import cz.siret.prank.features.weight.WeightFun
 import cz.siret.prank.program.params.Params
 
 (params as Params).with {
