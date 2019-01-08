@@ -142,22 +142,26 @@ abstract class PredictionLoader implements Parametrized {
         }
         log.info "Conservation parent dir: " + parentDir
 
+        String conservColumn = itemContext.datsetColumnValues.get(Dataset.COLUMN_CONSERVATION_FILES_PATTERN)
 
-        if (itemContext.datsetColumnValues.get(Dataset.COLUMN_CONSERVATION_FILES_PATTERN) == null) {
+        Function<String, File> conserPathForChain // maps chain ids to files
+        if (conservColumn == null) {
             log.info("Setting conservation path. Origin: {}", loaderParams.conservation_origin)
-            Function<String, File> conserPathForChain = { String chainId ->
+
+            conserPathForChain = { String chainId ->
                 parentDir.resolve(ConservationScore.scoreFileForPdbFile(
-                        Futils.shortName(queryProteinFile), chainId,
-                        loaderParams.conservation_origin)).toFile()
+                        Futils.shortName(queryProteinFile), chainId, loaderParams.conservation_origin)
+                ).toFile()
             }
-            itemContext.auxData.put(ConservationScore.conservationScoreKey, conserPathForChain)
         } else {
-            String pattern = itemContext.datsetColumnValues.get(Dataset.COLUMN_CONSERVATION_FILES_PATTERN);
-            Function<String, File> conserPathForChain = { String chainId ->
+            String pattern = conservColumn
+            conserPathForChain = { String chainId ->
                 parentDir.resolve(pattern.replaceAll("%chainID%", chainId)).toFile()
             }
-            itemContext.auxData.put(ConservationScore.conservationScoreKey, conserPathForChain)
         }
+        // TODO use inemContext attribute instead
+        itemContext.auxData.put(ConservationScore.CONSERV_PATH_FUNCTION_KEY, conserPathForChain)
+
         if (loaderParams.load_conservation) {
             res.protein.loadConservationScores(itemContext)
         }

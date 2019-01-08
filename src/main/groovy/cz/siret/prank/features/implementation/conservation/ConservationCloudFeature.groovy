@@ -25,7 +25,7 @@ class ConservationCloudFeature extends SasFeatureCalculator implements Parametri
     @Override
     void preProcessProtein(Protein protein, ProcessedItemContext itemContext) {
         // Check if conservation is already loaded.
-        if (!protein.secondaryData.getOrDefault(ConservationScore.conservationLoadedKey, false)) {
+        if (!protein.secondaryData.getOrDefault(ConservationScore.CONSERV_LOADED_KEY, false)) {
             // Load conservation score.
             protein.loadConservationScores(itemContext)
         }
@@ -44,7 +44,7 @@ class ConservationCloudFeature extends SasFeatureCalculator implements Parametri
         // optimization? - we need ~250 for protrusion=10 and in this case it is sower
         //int MAX_PROTRUSION_ATOMS = 250
         //Atoms deepLayer = this.deepLayer.withKdTree().kdTree.findNearestNAtoms(point, MAX_PROTRUSION_ATOMS, false)
-        ConservationScore score = (ConservationScore) context.protein.secondaryData.get(ConservationScore.conservationScoreKey)
+        ConservationScore score = (ConservationScore) context.protein.secondaryData.get(ConservationScore.CONSERV_SCORE_KEY)
         if (score == null) {
             return [0.0] as double[]
         }

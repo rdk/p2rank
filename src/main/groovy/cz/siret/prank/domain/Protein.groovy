@@ -23,6 +23,9 @@ import javax.annotation.Nullable
 import javax.print.PrintException
 import java.util.function.Function
 
+import static cz.siret.prank.features.implementation.conservation.ConservationScore.CONSERV_LOADED_KEY
+import static cz.siret.prank.features.implementation.conservation.ConservationScore.CONSERV_PATH_FUNCTION_KEY
+import static cz.siret.prank.features.implementation.conservation.ConservationScore.CONSERV_SCORE_KEY
 import static cz.siret.prank.geom.Struct.residueChainsFromStructure
 
 /**
@@ -100,18 +103,19 @@ class Protein implements Parametrized {
     }
 
     ConservationScore loadConservationScores(ProcessedItemContext itemContext) {
-        log.info "loading conservation scores"
-        ConservationScore score = ConservationScore.fromFiles(structure, (Function<String, File>)
-                itemContext.auxData.get(ConservationScore.conservationScoreKey))
-        secondaryData.put(ConservationScore.conservationScoreKey, score)
-        secondaryData.put(ConservationScore.conservationLoadedKey, true)
+        log.info "Loading conservation scores for [{}]", itemContext.item.label
+
+        Function<String, File> pathFunction = (Function<String, File>) itemContext.auxData.get(CONSERV_PATH_FUNCTION_KEY)
+        ConservationScore score = ConservationScore.fromFiles(structure, pathFunction)
+        secondaryData.put(CONSERV_SCORE_KEY, score)
+        secondaryData.put(CONSERV_LOADED_KEY, true)
 
         return score
     }
 
     void ensureConservationLoaded(ProcessedItemContext itemContext) {
-        if (!secondaryData.getOrDefault(ConservationScore.conservationLoadedKey, false)
-                && itemContext.auxData.getOrDefault(ConservationScore.conservationScoreKey,
+        if (!secondaryData.getOrDefault(CONSERV_LOADED_KEY, false)
+                && itemContext.auxData.getOrDefault(CONSERV_SCORE_KEY,
                 null) != null) {
             loadConservationScores(itemContext)
         }
@@ -119,7 +123,7 @@ class Protein implements Parametrized {
 
     @Nullable
     ConservationScore getConservationScore() {
-        (ConservationScore) secondaryData.get(ConservationScore.conservationScoreKey)
+        (ConservationScore) secondaryData.get(CONSERV_SCORE_KEY)
     }
 
     @Nullable

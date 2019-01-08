@@ -67,9 +67,9 @@ class PocketPredictor implements Parametrized {
             score = (double) scoringPoints.collect { it.score }.sum(0)
 
             if (params.score_pockets_by == "conservation" || params.score_pockets_by == "combi") {
-                if (protein.secondaryData.getOrDefault(ConservationScore.conservationLoadedKey,
+                if (protein.secondaryData.getOrDefault(ConservationScore.CONSERV_LOADED_KEY,
                         false)) {
-                    ConservationScore conservationScore = protein.secondaryData.get(ConservationScore.conservationScoreKey)
+                    ConservationScore conservationScore = protein.secondaryData.get(ConservationScore.CONSERV_SCORE_KEY)
                     double avgConservation = pocketSurfaceAtoms.distinctGroupsSorted.stream()
                             .mapToDouble({
                         group -> conservationScore.getScoreForResidue(group.getResidueNumber())

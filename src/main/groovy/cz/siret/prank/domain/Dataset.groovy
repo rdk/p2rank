@@ -350,7 +350,7 @@ class Dataset implements Parametrized {
     }
 
     /**
-     * @return true if predicted residue lbeling is defined a as a part of th dataset
+     * @return true if predicted residue labeling is defined a as a part of the dataset
      */
     boolean hasPredictedResidueLabeling() {
         return attributes.containsKey(PARAM_PREDICTION_METHOD)

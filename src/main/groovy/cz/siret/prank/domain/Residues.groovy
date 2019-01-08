@@ -1,9 +1,9 @@
 package cz.siret.prank.domain
 
-import com.google.common.collect.Maps
 import cz.siret.prank.geom.Atoms
-import cz.siret.prank.geom.Struct
+import cz.siret.prank.utils.Cutils
 import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 import org.biojava.nbio.structure.Group
 
@@ -12,6 +12,7 @@ import javax.annotation.Nullable
 /**
  *
  */
+@Slf4j
 @CompileStatic
 class Residues implements Iterable<Residue> {
 
@@ -21,7 +22,11 @@ class Residues implements Iterable<Residue> {
 
     Residues(List<Residue> list) {
         this.list = list
-        this.indexByKey = Maps.uniqueIndex(list, { it.key })
+        this.indexByKey = Cutils.mapWithIndex(list, { it.key })
+
+        if (indexByKey.size() < list.size()) {
+            log.warn "Multiple residues with same label! [{}]", Cutils.findDuplicates(list*.key).join(",")
+        }
     }
 
     List<Residue> getList() {

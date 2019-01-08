@@ -225,12 +225,12 @@ class Evaluation implements Parametrized {
         ResidueLabelings rlabs = pair.prediction.residueLabelings
         if (rlabs != null) {
             for (Residue res : protein.residues) {
-                boolean resLabel = rlabs.observed.getLabel(res)
                 double resScore = rlabs.scoreLabeling.getLabel(res)
+                Boolean resLabel = rlabs.observed?.getLabel(res)
 
                 ResidueRow rrow = new ResidueRow()
-                rrow.observed = resLabel
                 rrow.score = resScore
+                rrow.observed = resLabel
 
                 residueRows.add(rrow)
             }
@@ -257,7 +257,7 @@ class Evaluation implements Parametrized {
     }
 
     private List calcConservationStats(Protein protein, ProteinRow protRow) {
-        ConservationScore score = protein.secondaryData.get(ConservationScore.conservationScoreKey) as ConservationScore
+        ConservationScore score = protein.secondaryData.get(ConservationScore.CONSERV_SCORE_KEY) as ConservationScore
         List<Double> bindingScrs = new ArrayList<>();
         List<Double> nonBindingScrs = new ArrayList<>();
         if (score != null) {
@@ -767,7 +767,7 @@ class Evaluation implements Parametrized {
 
     static class ResidueRow {
         double score
-        boolean observed
+        Boolean observed
     }
 
 }
