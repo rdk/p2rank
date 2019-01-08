@@ -1,6 +1,11 @@
 package cz.siret.prank.utils
 
+import com.google.common.base.Function
+import com.google.common.collect.ImmutableMap
+import com.google.errorprone.annotations.CanIgnoreReturnValue
 import groovy.transform.CompileStatic
+
+import static com.google.common.base.Preconditions.checkNotNull
 
 /**
  * Collection utils
@@ -41,6 +46,23 @@ class Cutils {
         }
 
         return sum
+    }
+
+    static <K, V> Map<K, V> mapWithIndex(
+            Iterable<V> values, Function<? super V, K> keyFunction) {
+        return mapWithIndex(values.iterator(), keyFunction);
+    }
+
+    static <K, V> Map<K, V> mapWithIndex(
+            Iterator<V> values, Function<? super V, K> keyFunction) {
+
+        values.collectEntries {
+            [(it): keyFunction.apply(it)]
+        }
+    }
+
+    static <E> List<E> findDuplicates(Iterable<E> values) {
+        values.groupBy{ it }.values().findAll { it.size() > 1}.collect { it[0] }.toList()
     }
 
 }
