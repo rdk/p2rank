@@ -225,12 +225,12 @@ class Evaluation implements Parametrized {
         ResidueLabelings rlabs = pair.prediction.residueLabelings
         if (rlabs != null) {
             for (Residue res : protein.residues) {
-                boolean resLabel = rlabs.observed.getLabel(res)
                 double resScore = rlabs.scoreLabeling.getLabel(res)
+                Boolean resLabel = rlabs.observed?.getLabel(res)
 
                 ResidueRow rrow = new ResidueRow()
-                rrow.observed = resLabel
                 rrow.score = resScore
+                rrow.observed = resLabel
 
                 residueRows.add(rrow)
             }
@@ -767,7 +767,7 @@ class Evaluation implements Parametrized {
 
     static class ResidueRow {
         double score
-        boolean observed
+        Boolean observed
     }
 
 }
