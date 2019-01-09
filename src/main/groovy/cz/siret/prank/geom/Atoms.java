@@ -319,11 +319,32 @@ public final class Atoms implements Iterable<Atom> {
             return new Atoms(0);
         }
 
+        Atom center;
+        double additionalDist = 0d;
+        if (aroundAtoms.getCount()==1) {
+            center = aroundAtoms.list.get(0);
+            additionalDist = 0d;
+        } else {
+            Box box = Box.aroundAtoms(aroundAtoms);
+            center = box.getCenter();
+            additionalDist = Struct.dist(center, box.getMax());
+        }
+
+        Atoms ofAtoms = this.cutoutSphere(center, dist + additionalDist);
+
+        return cutoutShell(ofAtoms, aroundAtoms, dist);
+    }
+
+    public static Atoms cutoutShell(Atoms ofAtoms, Atoms aroundAtoms, double dist) {
+        if (aroundAtoms==null || aroundAtoms.isEmpty()) {
+            return new Atoms(0);
+        }
+
         aroundAtoms.withKdTreeConditional();
         Atoms res = new Atoms(128);
 
         double sqrDist = dist*dist;
-        for (Atom a : list) {
+        for (Atom a : ofAtoms) {
             if (aroundAtoms.sqrDist(a) <= sqrDist) {
                 res.add(a);
             }

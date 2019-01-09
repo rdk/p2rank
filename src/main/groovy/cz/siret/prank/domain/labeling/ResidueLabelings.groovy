@@ -53,7 +53,6 @@ class ResidueLabelings implements Parametrized {
         ResidueLabeling<Double> lab_score = labeler.doubleLabeling
 
         // score transformers
-        // TODO use different parametrizations for transformers, train them
         ScoreTransformer zscoreTpTransformer = ScoreTransformer.load(Params.inst.zscoretp_res_transformer)
         ScoreTransformer probaTpTransformer = ScoreTransformer.load(Params.inst.probatp_res_transformer)
 

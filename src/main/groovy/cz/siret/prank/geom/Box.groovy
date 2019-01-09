@@ -9,7 +9,15 @@ class Box {
     private Box(List<Atom> atoms) {
         if (atoms.empty) return
 
-        for(Atom a in atoms) {
+        Atom b = atoms.first()
+        min.x = b.x
+        max.x = b.x
+        min.y = b.y
+        max.y = b.y
+        min.z = b.z
+        max.z = b.z
+
+        for(Atom a : atoms) {
             if (a.x < min.x) min.x = a.x
             if (a.x > max.x) max.x = a.x
             if (a.y < min.y) min.y = a.y
