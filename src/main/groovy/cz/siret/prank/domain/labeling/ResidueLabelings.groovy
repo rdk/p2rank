@@ -128,7 +128,7 @@ class ResidueLabelings implements Parametrized {
         StringBuilder s = new StringBuilder()
         s << "chain, residue_label, residue_name, " << (labelings*.name).join(", ") << "\n"
         for (Residue r : residues) {
-            s << r.chainId << ", " << r.residueNumber.toString() << ", " << r.code << ","
+            s << r.chainId << ", " << r.residueNumber.toString().padLeft(4) << ", " << r.code << ","
             s << labelings.collect { fmt it.labeling.get(r).label }.join(", ") << "\n"
         }
         s.toString()
