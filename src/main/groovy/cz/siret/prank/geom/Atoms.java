@@ -23,7 +23,7 @@ public final class Atoms implements Iterable<Atom> {
     private static final Logger log = LoggerFactory.getLogger(Atoms.class);
 
     private static final int KD_TREE_THRESHOLD = 15;
-    private static final int CUTOUT_SPHERE_USE_KD_TREE_THRESHOLD = 1000; // TODo optimize thresholds for KD tree usage
+    private static final int CUTOUT_SPHERE_USE_KD_TREE_THRESHOLD = 150; // TODo optimize thresholds for KD tree usage
 
     public final List<Atom> list;
 
