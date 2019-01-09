@@ -8,10 +8,11 @@ import groovy.util.logging.Slf4j
  *
  *  TOTO: this is O(n^3), implement SLink algorithm
  */
-@CompileStatic
 @Slf4j
+@CompileStatic
 class SLinkClusterer<E> implements Clusterer<E> {
 
+    @CompileStatic
     private static class Cluster<E> {
         List<E> list
         int id
