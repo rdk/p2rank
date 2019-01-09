@@ -57,7 +57,7 @@ class Cutils {
             Iterator<V> values, Function<? super V, K> keyFunction) {
 
         values.collectEntries {
-            [(it): keyFunction.apply(it)]
+            [(keyFunction.apply(it)): it]
         }
     }
 
