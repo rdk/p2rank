@@ -766,6 +766,11 @@ class Params {
 
     boolean identify_peptides_by_labeling = false
 
+    /**
+     * Atoms size threshold for using KD-tree in cutoutSphere routine
+     */
+    int use_kdtree_cutout_sphere_thrashold = 150
+
 //===========================================================================================================//
 
     /**

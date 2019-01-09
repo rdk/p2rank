@@ -3,6 +3,7 @@ package cz.siret.prank.geom;
 import com.google.common.collect.Lists;
 import cz.siret.prank.features.api.AtomFeatureCalculator;
 import cz.siret.prank.geom.kdtree.AtomKdTree;
+import cz.siret.prank.program.params.Params;
 import cz.siret.prank.utils.ATimer;
 import cz.siret.prank.utils.CutoffAtomsCallLog;
 import cz.siret.prank.utils.PerfUtils;
@@ -23,7 +24,6 @@ public final class Atoms implements Iterable<Atom> {
     private static final Logger log = LoggerFactory.getLogger(Atoms.class);
 
     private static final int KD_TREE_THRESHOLD = 15;
-    private static final int CUTOUT_SPHERE_USE_KD_TREE_THRESHOLD = 150; // TODo optimize thresholds for KD tree usage
 
     public final List<Atom> list;
 
@@ -338,35 +338,11 @@ public final class Atoms implements Iterable<Atom> {
     public Atoms cutSphere_(Atom distanceTo, double dist) {
         ATimer timer = startTimer();
 
-        Atoms res = doCutSphere(distanceTo, dist);
+        Atoms res = cutoutSphere(distanceTo, dist);
 
         CutoffAtomsCallLog.INST.addCall(getCount(), res.getCount(), timer.getTime());
 
         return res;
-    }
-
-    private Atoms doCutSphere(Atom distanceTo, double dist) {
-        List<Atom> res = new ArrayList<>();
-        double sqrDist = dist*dist;
-
-        double[] bcoords = distanceTo.getCoords();
-
-        for (Object o : list.toArray()) {
-
-            Atom a = (Atom)o;
-            double[] acoords = a.getCoords();
-
-            double x = acoords[0] - bcoords[0];
-            double y = acoords[1] - bcoords[1];
-            double z = acoords[2] - bcoords[2];
-
-            double d = x*x + y*y + z*z;
-
-            if (d <= sqrDist) {
-                res.add(a);
-            }
-        }
-        return new Atoms(res);
     }
 
     public Atoms cutoutSphereSerial(Atom center, double radius) {
@@ -389,7 +365,7 @@ public final class Atoms implements Iterable<Atom> {
     }
 
     public Atoms cutoutSphere(Atom center, double radius) {
-        if (getCount() >= CUTOUT_SPHERE_USE_KD_TREE_THRESHOLD) {
+        if (getCount() >= Params.INSTANCE.getUse_kdtree_cutout_sphere_thrashold()) {
             return cutoutSphereKD(center, radius);
         } else {
             return cutoutSphereSerial(center, radius);
