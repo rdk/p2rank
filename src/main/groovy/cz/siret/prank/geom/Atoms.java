@@ -23,6 +23,7 @@ public final class Atoms implements Iterable<Atom> {
     private static final Logger log = LoggerFactory.getLogger(Atoms.class);
 
     private static final int KD_TREE_THRESHOLD = 15;
+    private static final int CUTOUT_SPHERE_USE_KD_TREE_THRESHOLD = 300; // TODo optimize thresholds for KD tree usage
 
     public final List<Atom> list;
 
@@ -368,11 +369,11 @@ public final class Atoms implements Iterable<Atom> {
         return new Atoms(res);
     }
 
-    public Atoms cutoutSphere(Atom distanceTo, double radius) {
+    public Atoms cutoutSphereSerial(Atom center, double radius) {
         List<Atom> res = new ArrayList<>();
         double sqrDist = radius*radius;
 
-        double[] toCoords = distanceTo.getCoords();
+        double[] toCoords = center.getCoords();
 
         for (Atom a : list) {
             if (PerfUtils.sqrDist(a.getCoords(), toCoords) <= sqrDist) {
@@ -382,8 +383,17 @@ public final class Atoms implements Iterable<Atom> {
         return new Atoms(res);
     }
 
-    public Atoms cutoutSphereKD(Atom distanceTo, double radius) {
-        kdTree.findNearestNAtoms()
+    public Atoms cutoutSphereKD(Atom center, double radius) {
+        withKdTree();
+        return kdTree.findAtomsWithinRadius(center, radius, false);
+    }
+
+    public Atoms cutoutSphere(Atom center, double radius) {
+        if (getCount() >= CUTOUT_SPHERE_USE_KD_TREE_THRESHOLD) {
+            return cutoutSphereKD(center, radius);
+        } else {
+            return cutoutSphereSerial(center, radius);
+        }
     }
 
     public Atoms cutoutBox(Box box) {

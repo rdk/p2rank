@@ -20,7 +20,7 @@ package cz.siret.prank.geom.kdtree;
  *    distribution.
  */
 
-import com.google.common.collect.MinMaxPriorityQueue;
+import cz.siret.prank.utils.ConsoleWriter;
 
 import java.util.*;
 
@@ -406,20 +406,15 @@ public abstract class KdTree<T> {
     }
 
     /**
-     * Calculates the nearest 'count' points to 'location'
+     * added by RDK
      */
     @SuppressWarnings("unchecked")
-    public List<Entry<T>> neighboursWithinDistance(double[] location, double radius, boolean sequentialSorting) {
+    public List<Entry<T>> neighboursWithinRadius(double[] location, double radius, boolean sequentialSorting) {
         KdTree<T> cursor = this;
         cursor.status = Status.NONE;
-        double range = Double.POSITIVE_INFINITY;
-//        ResultHeap resultHeap = new ResultHeap(count);
-        PriorityQueue<Entry<T>> resultHeap = new PriorityQueue<>(new Comparator<Entry<T>>() {
-            @Override
-            public int compare(Entry<T> o1, Entry<T> o2) {
-                return -Double.compare(o1.distance, o2.distance);
-            }
-        });
+        double range = radius; // Double.POSITIVE_INFINITY;
+//        PriorityQueue<Entry<T>> resultHeap = new PriorityQueue<>((o1, o2) -> Double.compare(o1.distance, o2.distance));
+        ArrayList<Entry<T>> resultHeap = new ArrayList<>();
 
 
         do {
@@ -439,14 +434,12 @@ public abstract class KdTree<T> {
                                 resultHeap.add(new Entry<>(dist, (T) cursor.data[i]));
                             }
                         }
-                    }
-                    else {
+                    } else {
                         for (int i = 0; i < cursor.locationCount; i++) {
                             double dist = pointDist(cursor.locations[i], location);
-                            resultHeap.addValue(dist, cursor.data[i]);
+                            resultHeap.add(new Entry<>(dist, (T) cursor.data[i]));
                         }
                     }
-                    range = resultHeap.getMaxDist();
                 }
 
                 if (cursor.parent == null) {
@@ -497,17 +490,18 @@ public abstract class KdTree<T> {
             cursor.status = Status.NONE;
         } while (cursor.parent != null || cursor.status != Status.ALLVISITED);
 
-        ArrayList<Entry<T>> results = new ArrayList<Entry<T>>(resultHeap.values);
-        if (sequentialSorting) {
-            while (resultHeap.values > 0) {
-                resultHeap.removeLargest();
-                results.add(new Entry<T>(resultHeap.removedDist, (T)resultHeap.removedData));
+        ArrayList<Entry<T>> results = new ArrayList<Entry<T>>(resultHeap.size());
+
+        for (Entry<T> e : resultHeap) {
+            if (e.distance <= radius) {
+                results.add(e);
             }
         }
-        else {
-            for (int i = 0; i < resultHeap.values; i++) {
-                results.add(new Entry<T>(resultHeap.distance[i], (T)resultHeap.data[i]));
-            }
+
+        //ConsoleWriter.write("heap: " + resultHeap.size() + " results: " + results.size() );
+
+        if (sequentialSorting) {
+            results.sort(Comparator.comparing(e -> e.distance));
         }
 
         return results;
