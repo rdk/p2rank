@@ -171,9 +171,9 @@ eval_train() {
 
     title TRAIN/EVAL ON MAIN DATASETS
 
-    test ./prank.sh crossval chen11-fpocket.ds                         -c config/working -loop 10                    -out_subdir TEST/EVAL_TRAIN
-    test ./prank.sh traineval -t chen11-fpocket.ds -e joined.ds        -c config/working -loop 10                    -out_subdir TEST/EVAL_TRAIN
-    test ./prank.sh traineval -t chen11-fpocket.ds -e holo4k.ds        -c config/working -loop 3   -cache_datasets 0 -out_subdir TEST/EVAL_TRAIN
+    test ./prank.sh crossval chen11-fpocket.ds                         -c config/working -loop 2                    -out_subdir TEST/EVAL_TRAIN
+    test ./prank.sh traineval -t chen11-fpocket.ds -e joined.ds        -c config/working -loop 2                    -out_subdir TEST/EVAL_TRAIN
+    test ./prank.sh traineval -t chen11-fpocket.ds -e holo4k.ds        -c config/working -loop 2  -cache_datasets 0 -out_subdir TEST/EVAL_TRAIN
 }
 
 eval_train_rest() {
@@ -181,10 +181,10 @@ eval_train_rest() {
     title TRAIN/EVAL ON OTHER DATASETS
 
     # train=test for the reference
-    test ./prank.sh traineval -t chen11-fpocket.ds -e chen11-fpocket.ds   -c config/working -loop 10                    -out_subdir TEST/EVAL_TRAIN
-    test ./prank.sh traineval -t chen11-fpocket.ds -e fptrain.ds          -c config/working -loop 10                     -out_subdir TEST/EVAL_TRAIN
-    test ./prank.sh traineval -t chen11-fpocket.ds -e 'joined(mlig).ds'   -c config/working -loop 10                     -out_subdir TEST/EVAL_TRAIN
-    test ./prank.sh traineval -t chen11-fpocket.ds -e 'holo4k(mlig).ds'   -c config/working -loop 3   -cache_datasets 0  -out_subdir TEST/EVAL_TRAIN
+    test ./prank.sh traineval -t chen11-fpocket.ds -e chen11-fpocket.ds   -c config/working -loop 2                     -out_subdir TEST/EVAL_TRAIN
+    test ./prank.sh traineval -t chen11-fpocket.ds -e fptrain.ds          -c config/working -loop 2                     -out_subdir TEST/EVAL_TRAIN
+    test ./prank.sh traineval -t chen11-fpocket.ds -e 'joined(mlig).ds'   -c config/working -loop 2                     -out_subdir TEST/EVAL_TRAIN
+    test ./prank.sh traineval -t chen11-fpocket.ds -e 'holo4k(mlig).ds'   -c config/working -loop 2  -cache_datasets 0  -out_subdir TEST/EVAL_TRAIN
 }
 
 ###################################################################################################################
