@@ -315,25 +315,30 @@ public final class Atoms implements Iterable<Atom> {
 //===========================================================================================================//
 
     public Atoms cutoutShell(Atoms aroundAtoms, double dist) {
-//        if (aroundAtoms==null || aroundAtoms.isEmpty()) {
-//            return new Atoms(0);
-//        }
-//
-//        Atom center;
-//        double additionalDist;
-//        if (aroundAtoms.getCount()==1) {
-//            center = aroundAtoms.list.get(0);
-//            additionalDist = 0d;
-//        } else {
-//            Box box = Box.aroundAtoms(aroundAtoms);
-//            center = box.getCenter();
-//            additionalDist = Struct.dist(center, box.getMax());
-//        }
-//
-//        Atoms ofAtoms = this.cutoutSphere(center, dist + additionalDist);
-//
-//        return cutoutShell(ofAtoms, aroundAtoms, dist);
-        return cutoutShell(this, aroundAtoms, dist);
+        if (aroundAtoms==null || aroundAtoms.isEmpty()) {
+            return new Atoms(0);
+        }
+
+        Atom center;
+        double additionalDist;
+        if (aroundAtoms.getCount()==1) {
+            center = aroundAtoms.list.get(0);
+            return cutoutSphere(center, dist);
+
+        } else {
+            Box box = Box.aroundAtoms(aroundAtoms);
+            center = box.getCenter();
+            additionalDist = Struct.dist(center, box.getMax());
+
+            Atoms ofAtoms = this.cutoutSphere(center, dist + additionalDist + 0.0001);
+            return cutoutShell(ofAtoms, aroundAtoms, dist);
+        }
+
+
+
+
+
+//        return cutoutShell(this, aroundAtoms, dist);
     }
 
     public static Atoms cutoutShell(Atoms ofAtoms, Atoms aroundAtoms, double dist) {
