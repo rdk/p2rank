@@ -7,6 +7,7 @@ import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.features.implementation.conservation.ConservationScore
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.SecondaryStructureUtils
+import cz.siret.prank.geom.Struct
 import cz.siret.prank.geom.Surface
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.Parametrized
@@ -339,6 +340,14 @@ class Protein implements Parametrized {
 
         name = Futils.shortName(pdbFileName)
         structure = PdbUtils.loadFromFile(pdbFileName)
+
+        // NMR structures contain multiple models with same chain ids and atom ids
+        // we always work only with first model
+        if (structure.nrModels() > 1) {
+            log.info "protein [{}] contains multiple models, reducing to model 0"
+            structure = Struct.reduceStructureToModel0(structure)
+        }
+
         fullStructure = structure
         if (onlyChains != null) {
             log.info "reducing protein [{}] to chains [{}]", name, onlyChains.join(",")
@@ -349,7 +358,7 @@ class Protein implements Parametrized {
             String chainId = onlyChains.first()
             name = name + chainId
             // TODO replace with own method that can reduce to multiple chains
-            structure = StructureTools.getReducedStructure(structure, onlyChains.first())
+            structure = StructureTools.getReducedStructure(structure, onlyChains.first()) 
         }
 
         allAtoms = Atoms.allFromStructure(structure).withIndex()
