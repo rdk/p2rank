@@ -15,10 +15,8 @@ class AtomKdTreeTest implements Writable {
 
     @Test
     void findAtomsWithinRadius() {
-
-
         test_findAtomsWithinRadius('distro/test_data/2W83.pdb')
-
+        test_findAtomsWithinRadius('distro/test_data/1fbl.pdb.gz')
     }
 
     void test_findAtomsWithinRadius(String fname) {

@@ -320,7 +320,7 @@ public final class Atoms implements Iterable<Atom> {
         }
 
         Atom center;
-        double additionalDist = 0d;
+        double additionalDist;
         if (aroundAtoms.getCount()==1) {
             center = aroundAtoms.list.get(0);
             additionalDist = 0d;

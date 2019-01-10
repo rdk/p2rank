@@ -32,7 +32,7 @@ class PredictionSummary {
             def y = formatDouble(p.centroid.y)
             def z = formatDouble(p.centroid.z)
 
-            def surfAtomIds = p.surfaceAtoms*.PDBserial.join(" ")
+            def surfAtomIds = (p.surfaceAtoms*.PDBserial).toSorted().join(" ")
 
             Set resIds = new TreeSet(p.residues.collect { it.key.toString() })  
             String strResIds = resIds.join(" ")
