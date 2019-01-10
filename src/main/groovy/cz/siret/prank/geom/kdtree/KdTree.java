@@ -429,7 +429,7 @@ public abstract class KdTree<T> {
                 if (cursor.locationCount > 0) {
                     if (cursor.singularity) {
                         double dist = pointDist(cursor.locations[0], location);
-                        if (dist <= range) {
+                        if (dist <= radius) {
                             for (int i = 0; i < cursor.locationCount; i++) {
                                 resultHeap.add(new Entry<>(dist, (T) cursor.data[i]));
                             }
@@ -437,7 +437,9 @@ public abstract class KdTree<T> {
                     } else {
                         for (int i = 0; i < cursor.locationCount; i++) {
                             double dist = pointDist(cursor.locations[i], location);
-                            resultHeap.add(new Entry<>(dist, (T) cursor.data[i]));
+                            if (dist <= radius) {
+                                resultHeap.add(new Entry<>(dist, (T) cursor.data[i]));
+                            }
                         }
                     }
                 }
@@ -490,13 +492,14 @@ public abstract class KdTree<T> {
             cursor.status = Status.NONE;
         } while (cursor.parent != null || cursor.status != Status.ALLVISITED);
 
-        ArrayList<Entry<T>> results = new ArrayList<Entry<T>>(resultHeap.size());
+//        ArrayList<Entry<T>> results = new ArrayList<Entry<T>>(resultHeap.size());
+//        for (Entry<T> e : resultHeap) {
+//            if (e.distance <= radius) {
+//                results.add(e);
+//            }
+//        }
 
-        for (Entry<T> e : resultHeap) {
-            if (e.distance <= radius) {
-                results.add(e);
-            }
-        }
+        ArrayList<Entry<T>> results = resultHeap;
 
         //ConsoleWriter.write("heap: " + resultHeap.size() + " results: " + results.size() );
 
