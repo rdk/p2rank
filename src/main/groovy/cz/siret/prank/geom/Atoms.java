@@ -330,7 +330,7 @@ public final class Atoms implements Iterable<Atom> {
             center = box.getCenter();
             additionalDist = Struct.dist(center, box.getMax());
 
-            Atoms ofAtoms = this.cutoutSphere(center, dist + additionalDist + 0.0001);
+            Atoms ofAtoms = this.cutoutSphere(center, dist + additionalDist + 1);
             return cutoutShell(ofAtoms, aroundAtoms, dist);
         }
 
