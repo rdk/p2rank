@@ -38,9 +38,14 @@ class Protein implements Parametrized {
 
     String name
     Structure structure
+    
+    /**
+     * unreduced structure (when strucure was reduced to single chain)
+     * in case of multi model structures this refers to structure reduced to model 0
+     */
     Structure fullStructure // unreduced struct
 
-    /** atoms indexed by id */
+    /** all atoms of structure indexed by id */
     Atoms allAtoms
 
     /* protein heavy atoms from chains */
