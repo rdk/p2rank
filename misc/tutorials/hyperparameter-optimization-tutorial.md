@@ -9,7 +9,8 @@ https://github.com/HIPS/Spearmint/tree/ffbab6653ae785c9acdcf2abb01c63127be40c2f
 
 ## Install Spearmint on ubuntu
 ```sh
-sudo apt install -y mongodb python 
+# Spearmint uses Python 2.7        
+sudo apt install -y mongodb python python-pip
 sudo pip install --upgrade pip
 sudo pip install numpy scipy pymongo weave
 # git clone https://github.com/HIPS/Spearmint.git  # Spearmint home repo
