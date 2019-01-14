@@ -1,5 +1,5 @@
 
-# P2RANK model training and optimization tutorial
+# P2Rank model training and optimization tutorial
 
 This file should provide introduction for people who want to train and evaluate their own models or optimize different parameters of the algorithm.
 
@@ -16,7 +16,7 @@ prank ploop -t <training_dataset>                         -paramB '(1,2,3,4)'   
 
 ## Parameters
 
-P2RANK uses global static parameters object. In code it can be accessed with `Params.getInst()` or through `Parametrized` trait. For full list of parameters see `Params.groovy`.
+P2Rank uses global static parameters object. In code it can be accessed with `Params.getInst()` or through `Parametrized` trait. For full list of parameters see `Params.groovy`.
 
 Parameters can be set in 2 ways:
 1. on the command line `-<param_name> <value>`
@@ -109,7 +109,7 @@ Related parameters:
 
 ## Grid optimization
 
-P2RANK allows you to iterate experiments (train/eval and crossvalidation) through lists of different parameter values on the command line.
+P2Rank allows you to iterate experiments (train/eval and crossvalidation) through lists of different parameter values on the command line.
 
 For that you need to use `prank ploop` command and list or range expression instead of param value for one or more params. Only numerical and boolean parameters are suppeotrd.
 
@@ -132,10 +132,11 @@ Related parameters:
 
 ### R plots
 
-In case you iterate through exactly 1 or 2 parameters P2RANK will try to produce plots of various statistics using R language. 
+In case you iterate through exactly 1 or 2 parameters P2Rank will try to produce plots of various statistics using R language. 
 For that you need to have `Rscript` on the Path. Some libraries in R need to be installed. 
 ~~~
 sudo apt install r-base
+sudo R -e "install.packages('ggplot2', dependencies=TRUE, repos='http://cran.us.r-project.org')"
 ~~~
 
 ## Output directory location
@@ -159,7 +160,8 @@ New features can be added by implementing `FeatureCalculator` interface and regi
 You can implement the feature by extending one of convenience abstract classes `AtomFeatureCalculator` or `SasFeatureCalculator`.
 
 You need to decide if the new feature will be associated with protein surface (i.e. solvent exposed) atoms or with SAS (Solvent Accessible Surface) points. 
-P2RANK works by classifying SAS point feature vectors. If you associate the feature with atoms its value will be projected to SAS point feature vectors by P2RANK from neighbouring atoms.
+P2Rank works by classifying SAS point feature vectors. 
+If you associate the feature with atoms its value will be projected to SAS point feature vectors by P2Rank from neighbouring atoms.
 
 Some features are more easily defined for atoms than SAS points and other way around. See `BfactorFeature` and `ProtrusionFeature` for comparison.
 
