@@ -1,7 +1,7 @@
 
-# P2RANK model traning and optimization turorial
+# P2RANK model training and optimization tutorial
 
-This file should provide interduction for people who want to train and evaluate their own models or optimize different parameters of the algorithm.
+This file should provide introduction for people who want to train and evaluate their own models or optimize different parameters of the algorithm.
 
 ## Kick-start examples
 
@@ -31,7 +31,7 @@ Parameter application priority (last wins):
 4. `-c <config.file>`
 5. command line
 
-Note: some parameters (`-c`,`-o`, `-l/-label`) are sctrictly command line attributes and are not defined in `Params.groovy`. 
+Note: some parameters (`-c`,`-o`, `-l/-label`) are strictly command line attributes and are not defined in `Params.groovy`. 
 
 
 ## Training and evaluation
@@ -49,10 +49,10 @@ Related parameters:
 * use `-delete_models 0` to keep model files after evaluation.
 * `-cache_datasets <bool>`: keep datasets (structures and Connolly points) in memory between crossval/traineval iterations. Turn off for huge datasets that won't fit to memory.
 * `-feature_importances <bool>`: calculate feature importances (works only if `classifier = "FastRandomForest"`)
-* `-fail_fast <bool>`: stop processing the datsaset on the first unrecoverable error with a dataset item
+* `-fail_fast <bool>`: stop processing the dataset on the first unrecoverable error with a dataset item
 
 ### Note on the dataset format (important!)
-Parameter `-sample_negatives_from_decoys` determins how points are sampled from the proteins in a training dataset. 
+Parameter `-sample_negatives_from_decoys` determines how points are sampled from the proteins in a training dataset. 
 If `sample_negatives_from_decoys = false` all of the points from the protein surface are used. 
 If `sample_negatives_from_decoys = true` only points from decoy pockets (not true ligand binding sites found by other method like Fpocket) are used. 
 For that **you need to supply a training dataset that contains pocket predictions by other method** (i.e. for predictions of Fpocket use `joined-fpocket.ds` instead of `joined.ds`). 
@@ -64,18 +64,18 @@ It also changes the ratio of sampled positives/negatives in favour of positives.
 I recent versions it might be possible to achieve better results by training from whole protein surface in combination with class balancing techniques (see the next section).
 Note that default values of other parameters (related to feature extraction and classification results aggregation) were optimized for the case where `sample_negatives_from_decoys = true`.
 
-Here are the most relevant ones (for descrptions see `Params.groovy`):
+Here are the most relevant ones (for descriptions see `Params.groovy`):
 * `-protrusion_radius` and `-neighbourhood_radius`
 * `-average_feat_vectors`
 * `-weight_function`
 * `-pred_point_threshold`
 * `-pred_min_cluster_size` 
 
-Their vallues may need to be optimized again for case of `sample_negatives_from_decoys = false`.
+Their values may need to be optimized again for case of `sample_negatives_from_decoys = false`.
 
 ### Dealing with class imbalances
 
-When using all of the protein surface for traning (`sample_negatives_from_decoys = false`) you may need to deal with class imbalances to achieve good results.
+When using all of the protein surface for training (`sample_negatives_from_decoys = false`) you may need to deal with class imbalances to achieve good results.
 Typically the ratio of positives vs. negatives will be around (1:30) depending on chosen cutoffs and margins. 
 
 Ways to deal with class imbalances:
@@ -109,9 +109,9 @@ Related parameters:
 
 ## Grid optimization
 
-P2RANK allows you to iterate exeriments (train/eval and crossvalidation) through lists of different parameter values on the command line.
+P2RANK allows you to iterate experiments (train/eval and crossvalidation) through lists of different parameter values on the command line.
 
-For that you need to use `prank ploop` command and list or range experssion instead of param value for one or more params. Only numerical and boolean parameters are suppeotrd.
+For that you need to use `prank ploop` command and list or range expression instead of param value for one or more params. Only numerical and boolean parameters are suppeotrd.
 
 
 List expression: `(val1,val2,...)` example: `'(1,2,3,4)'`
@@ -132,12 +132,15 @@ Related parameters:
 
 ### R plots
 
-In case you iterate through exactly 1 or 2 parameters P2RANK will try to procuce plots of various statistics using R language. For thet you need to have `Rscript` on the Path. Some libraries in R need to be installed. 
-
+In case you iterate through exactly 1 or 2 parameters P2RANK will try to produce plots of various statistics using R language. 
+For that you need to have `Rscript` on the Path. Some libraries in R need to be installed. 
+~~~
+sudo apt install r-base
+~~~
 
 ## Output directory location
 
-Location of output directory for any given run is influenced by several paramaters. You can organize results of your experimants with their help.
+Location of output directory for any given run is influenced by several parameters. You can organize results of your experiments with their help.
 
 * `-output_base_dir <dir>`: top level default output directory
 * `-out_subdir <dir>`: subdirectory of output_base_dir (optional)
@@ -152,11 +155,11 @@ If you are reading ths tutorial there is a good chance you want to implement a n
 
 ### Implementation
 
-New features can be added by implementing `FeatureCalculator` interface and registering the imlementation in `FeatureRegistry`.
-You can implement the feature by extending one of convenience abstrect classes `AtomFeatureCalculator` or `SasFeatureCalculator`.
+New features can be added by implementing `FeatureCalculator` interface and registering the implementation in `FeatureRegistry`.
+You can implement the feature by extending one of convenience abstract classes `AtomFeatureCalculator` or `SasFeatureCalculator`.
 
-You need to decide if the new feature will be associated with protein surface (=sovent exposed) atoms or with SAS (Solvent Accessible Surface) points. 
-P2RANK works by classifying SAS point feature vectors. If you associate the feature with atoms its value will be projected to SAS point featre vectors by P2RANK from neighbouring atoms.
+You need to decide if the new feature will be associated with protein surface (i.e. solvent exposed) atoms or with SAS (Solvent Accessible Surface) points. 
+P2RANK works by classifying SAS point feature vectors. If you associate the feature with atoms its value will be projected to SAS point feature vectors by P2RANK from neighbouring atoms.
 
 Some features are more easily defined for atoms than SAS points and other way around. See `BfactorFeature` and `ProtrusionFeature` for comparison.
 
@@ -165,13 +168,13 @@ Some features are more easily defined for atoms than SAS points and other way ar
 
 1. Prepare the environment
     * copy `misc/local-env-params.sh` to root directory of the project and edit it according to your machine (the file is then included by `prank.sh`)
-        * you will need a lot of memory: at least to store the whole trainng dataset of feature vectors and a trained model and then some  
-        * memory consumption can be drastically insfuenced by some paramaters...
-    * parameters that influence memory/time tradeoff:
-        - `-cache_datasets` determins whether datasets of proteins are kept in memory between runs. See also 
+        * you will need a lot of memory: at least to store the whole training dataset of feature vectors and a trained model and then some  
+        * memory consumption can be drastically influenced by some parameters...
+    * parameters that influence memory/time trade-off:
+        - `-cache_datasets` determines whether datasets of proteins are kept in memory between runs. See also 
             * `-clear_prim_caches` clear primary caches (protein structures) between runs (when iterating params or seed)
             * `-clear_sec_caches` clear secondary caches (protein surfaces etc.) between runs (when iterating params or seed)
-        - `-crossval_threads` when running crossvalidation it determins how many models are trained at the same time. Set to `1` if you don't have enough memory.
+        - `-crossval_threads` when running crossvalidation it determines how many models are trained at the same time. Set to `1` if you don't have enough memory.
         - `-rf_trees`, `-fr_depth` influence the size of the model in memory      
 
  2. Check `working.groovy` config file. It contains configuration ideal for training new models, but you might need to make changes or override some params on the command line. 
@@ -194,7 +197,7 @@ Quick test run:
     -extra_features '((protrusion.bfactor),(protrusion.bfactor.new_feature))'` 
 ~~~
 
-(Then check `run.log` in n results directory for errors. Check if R plots are generated correectly.)
+(Then check `run.log` in n results directory for errors. Check if R plots are generated correctly.)
 
 Real comparison experiments:
 ~~~
