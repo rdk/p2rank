@@ -7,7 +7,9 @@ import cz.siret.prank.domain.ResidueChain
 import cz.siret.prank.geom.clustering.AtomClusterer
 import cz.siret.prank.geom.clustering.AtomGroupClusterer
 import cz.siret.prank.geom.clustering.SLinkClusterer
+import cz.siret.prank.utils.ConsoleWriter
 import cz.siret.prank.utils.PerfUtils
+import cz.siret.prank.utils.Writable
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.*
@@ -205,22 +207,28 @@ class Struct {
      * @return true if amino acid residue chain
      */
     static boolean isAminoAcidChain(Chain chain) {
-
         // this is not ideal
         // TODO logic to distinguish between protein chains, peptides and small aa ligands
-        List<Group> aaGroups = chain.getAtomGroups(GroupType.AMINOACID)
-        return !aaGroups.isEmpty()
+
+        return !getResidueGroupsFromChain(chain).isEmpty()
+    }
+
+    static boolean isAminoAcidLigand(Group group) {
+
+    }
+
+    static List<Group> getResidueGroupsFromChain(Chain chain) {
+        chain.getAtomGroups().findAll {
+            log.info "{}", it.toString()
+            it.getType()==GroupType.AMINOACID || it.getPDBName().startsWith("UNK")
+        }
     }
 
     static List<Residue> getResiduesFromChain(Chain chain) {
-        // use all groups or only AA groups??
 
-        // this is needed for lig-peptides
-        List<Group> groups = chain.getAtomGroups().findAll {
-            it.getType()==GroupType.AMINOACID || it.getPDBName().startsWith("UNK")
-        }
+        List<Group> groups = getResidueGroupsFromChain(chain)
 
-        //List<Group> groups = chain.getAtomGroups(GroupType.AMINOACID)
+        log.info "{} residue groups in chain {}", groups.size(), chain.chainID
 
         //ordering seems reliable
         //groups.toSorted { it.residueNumber.seqNum }

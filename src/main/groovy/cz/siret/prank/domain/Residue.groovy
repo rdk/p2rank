@@ -49,6 +49,11 @@ class Residue {
 
     Residue(Group group) {
         this.group = group
+
+        if (group.residueNumber == null) {
+            throw new IllegalArgumentException("group without residueNumber: " + group)
+        }
+
         this.key = new Key(group.residueNumber)
     }
 

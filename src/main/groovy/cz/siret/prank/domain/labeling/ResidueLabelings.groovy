@@ -84,11 +84,11 @@ class ResidueLabelings implements Parametrized {
         writeFile(fname, ScoreTransformer.saveToJson(zt))
         log.info "Trained score transformer 'ZscoreTpTransformer' written to: $fname"
 
-        ProbabilityScoreTransformer pt = new ProbabilityScoreTransformer()
 
         def posScores = evaluation.residueRows.findAll { it.observed }*.score as List<Double>
         def negScores = evaluation.residueRows.findAll { !it.observed }*.score as List<Double>
 
+        ProbabilityScoreTransformer pt = new ProbabilityScoreTransformer()
         pt.doTrain(posScores, negScores)
         fname = "$scoreDir/ProbabilityScoreTransformer.json"
         writeFile(fname, ScoreTransformer.saveToJson(pt))

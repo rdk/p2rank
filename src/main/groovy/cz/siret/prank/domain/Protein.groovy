@@ -349,7 +349,7 @@ class Protein implements Parametrized {
         // NMR structures contain multiple models with same chain ids and atom ids
         // we always work only with first model
         if (structure.nrModels() > 1) {
-            log.info "protein [{}] contains multiple models, reducing to model 0"
+            log.info "protein [{}] contains multiple models, reducing to model 0", name
             structure = Struct.reduceStructureToModel0(structure)
         }
 
