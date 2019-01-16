@@ -215,13 +215,37 @@ class Struct {
 
     static boolean isAminoAcidLigand(Group group) {
 
+        //StructureTools
+        // TODO
+    }
+
+
+    static boolean isTerminalResidue(Group group) {
+        group.getAtom("OXT") != null
     }
 
     static List<Group> getResidueGroupsFromChain(Chain chain) {
-        chain.getAtomGroups().findAll {
-            log.info "{}", it.toString()
-            it.getType()==GroupType.AMINOACID || it.getPDBName().startsWith("UNK")
+
+//        log.info "LIGAND GROUPS:"
+//        chain.getAtomLigands().each {   // useless, returns all aa groups
+//            log.info "{}", it
+//        }
+//        log.info "END LIGAND GROUPS"
+
+        List<Group> atomGroups = chain.getAtomGroups()
+        List<Group> res = new ArrayList<>(atomGroups.size())
+
+        for (Group g : atomGroups) {
+            // log.info "{} [{}]", g.toString(), g.properties
+            if (g.getType()==GroupType.AMINOACID || g.getPDBName().startsWith("UNK")) {
+                res.add g
+                if (isTerminalResidue(g)) {
+                    break // this is done so amino acid ligands are excluded
+                }
+            }
         }
+
+        return res
     }
 
     static List<Residue> getResiduesFromChain(Chain chain) {
@@ -290,6 +314,9 @@ class Struct {
     }
 
     static final Structure reduceStructureToModel0(Structure s) {
+
+        // TODO try StructureTools.removeModels()
+
         if (s.nrModels()==1) {
             return s
         } else {
