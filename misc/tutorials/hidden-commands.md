@@ -36,3 +36,19 @@ prank analyze labeled-residues <dataset.ds>
 ~~~
 
 
+
+## more prediction examples
+
+
+~~~
+# predict using model trained with conservation
+./prank.sh predict -c distro/config/conservation ../p2rank-datasets/fptrain.ds -l conserv \
+    -conservation_dir 'fptrain/conservation_E5_I1'
+./prank.sh eval-predict -c distro/config/conservation ../p2rank-datasets/fptrain.ds -l conserv \
+    -conservation_dir 'fptrain/conservation_E5_I1' \
+    -visualizations 0 | ./logc.sh    
+./prank.sh eval-predict ../p2rank-datasets/fptrain.ds -l default \
+    -conservation_dir 'fptrain/conservation_E5_I1' \
+    -visualizations 0 | ./logc.sh   
+~~~
+
