@@ -22,15 +22,24 @@ class ConservationFeature extends AtomFeatureCalculator {
         "conservation"
     }
 
+
+    private ConservationScore getConservationScore(Protein protein) {
+        (ConservationScore) protein.secondaryData.get(ConservationScore.CONSERV_SCORE_KEY)
+    }
+
     @Override
     void preProcessProtein(Protein protein, ProcessedItemContext itemContext) {
         // Check if conservation is already loaded.
-        if (!protein.secondaryData.getOrDefault(ConservationScore.CONSERV_LOADED_KEY, false)
-                && itemContext.auxData.getOrDefault(ConservationScore.CONSERV_PATH_FUNCTION_KEY, null) != null) {
+        if (getConservationScore(protein) == null) {
             // Load conservation score.
             protein.loadConservationScores(itemContext)
         }
-        if (protein.secondaryData.get(ConservationScore.CONSERV_SCORE_KEY) == null) {
+//        if (!protein.secondaryData.getOrDefault(ConservationScore.CONSERV_LOADED_KEY, false)
+//                && itemContext.auxData.getOrDefault(ConservationScore.CONSERV_PATH_FUNCTION_KEY, null) != null) {
+//            // Load conservation score.
+//            protein.loadConservationScores(itemContext)
+//        }
+        if (getConservationScore(protein) == null) {
             log.warn "Conservation not loaded for [{}]", protein.name
         }
     }
@@ -42,7 +51,7 @@ class ConservationFeature extends AtomFeatureCalculator {
             return [0.0] as double[]
         }
 
-        ConservationScore score = (ConservationScore) context.protein.secondaryData.get(ConservationScore.CONSERV_SCORE_KEY)
+        ConservationScore score = getConservationScore(context.protein)
         if (score == null) {
             return [0.0] as double[]
         } else {
