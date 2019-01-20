@@ -213,17 +213,17 @@ public class ConservationScore implements Parametrized {
                 log.info "Loading conservation scores from file [{}]", scoreFile
                 if (scoreFile.exists()) {
                     chainScores = ConservationScore.loadScoreFile(scoreFile, format);
+
+                    log.debug "loaded chain scores:\n" +
+                            chainScores.collect { "$it.index $it.letter $it.score" }.join("\n")
+
+                    matchSequences(chain.getAtomGroups(GroupType.AMINOACID), chainScores, scores);
                 } else {
                     log.error "Score file doesn't exist [{}]", scoreFile
                 }
 
-                log.debug "loaded chain scores:\n" +
-                        chainScores.collect { "$it.index $it.letter $it.score" }.join("\n")
-                
-                matchSequences(chain.getAtomGroups(GroupType.AMINOACID), chainScores, scores);
-
             } catch(Exception e) {
-                log.warn("Failed to load conservation file.", e)
+                log.error("Failed to load conservation file.", e)
             }
         }
         return new ConservationScore(scores);
