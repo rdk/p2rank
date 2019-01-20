@@ -9,4 +9,10 @@ import cz.siret.prank.program.params.Params
 
     extra_features = ["chem","volsite","protrusion","bfactor","conservation"]
 
+    load_conservation = true
+
+    load_conservation_paths = true
+
+    conservation_origin = "hssp"
+    
 }
