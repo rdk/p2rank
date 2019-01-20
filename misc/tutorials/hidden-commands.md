@@ -78,5 +78,6 @@ prank analyze labeled-residues <dataset.ds>
 ./prank.sh eval-predict ../p2rank-datasets/fptrain.ds -l default -out_subdir CONS \
     -fail_fast 1 \
     -visualizations 0    
+
 ~~~
 
