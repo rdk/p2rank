@@ -37,9 +37,9 @@ public class ConservationScore implements Parametrized {
         } else {
             int dotIndex = fileName.lastIndexOf('.');
             baseName = fileName.substring(0, dotIndex);
-            extension = fileName.substring(dotIndex);
 
-            baseName = baseName.substring(0, 4)   // always use only 4-leter pdb code
+            //extension = fileName.substring(dotIndex);
+            //baseName = baseName.substring(0, 4)   // always use only 4-leter pdb code
         }
         return baseName + chainId + "." + origin + ".hom.gz";
     }

@@ -159,7 +159,7 @@ abstract class PredictionLoader implements Parametrized {
                 parentDir.resolve(pattern.replaceAll("%chainID%", chainId)).toFile()
             }
         }
-        // TODO use inemContext attribute instead
+        // TODO use itemContext attribute instead
         itemContext.auxData.put(ConservationScore.CONSERV_PATH_FUNCTION_KEY, conserPathForChain)
 
         if (loaderParams.load_conservation) {
