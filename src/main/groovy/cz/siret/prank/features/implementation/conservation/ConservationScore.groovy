@@ -210,6 +210,7 @@ public class ConservationScore implements Parametrized {
             List<AA> chainScores = null;
             try {
                 File scoreFile = scoreFiles.apply(chainId);
+                log.info "Loading conservation scores from file [{}]", scoreFile
                 if (scoreFile.exists()) {
                     chainScores = ConservationScore.loadScoreFile(scoreFile, format);
                 } else {
