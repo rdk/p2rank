@@ -105,7 +105,9 @@ class ModelBasedResidueLabeler extends ResidueLabeler<Boolean> implements Parame
             }
             double score = aggregateScore(pscores)
 
-            log.debug "RES[{}] (score={}) pscores(n={}): {}", res, format(score, 2), pscores.size(), formatNumbers(pscores, 2)
+            if (log.traceEnabled) {
+                log.trace "RES[{}] (score={}) pscores(n={}): {}", res, format(score, 2), pscores.size(), formatNumbers(pscores, 2)
+            }
 
             resScores.add(res, score)
         }
