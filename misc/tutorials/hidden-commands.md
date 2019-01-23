@@ -46,24 +46,23 @@ prank analyze labeled-residues <dataset.ds>
 ./prank.sh eval-predict ../p2rank-datasets/coach420.ds -l conserv -out_subdir CONS \
     -c distro/config/conservation \
     -conservation_dir 'coach420/conservation/e5i1/scores' \
-    -conservation_origin 'pdb.seq.fasta' \
-    -fail_fast 1 -log_level DEBUG -threads 1 \
+    -fail_fast 1 \
     -visualizations 0 | ./logc.sh       
 ./prank.sh eval-predict ../p2rank-datasets/holo4k.ds -l conserv -out_subdir CONS \
     -c distro/config/conservation \
     -conservation_dir 'holo4k/conservation/e5i1/scores' \
     -fail_fast 1 \
-    -visualizations 0   
+    -visualizations 0 | ./logc.sh     
 ./prank.sh eval-predict ../p2rank-datasets/joined.ds -l conserv -out_subdir CONS \
     -c distro/config/conservation \
     -conservation_dir 'joined/conservation/e5i1/scores' \
     -fail_fast 1 \
-    -visualizations 0   
+    -visualizations 0 | ./logc.sh     
 ./prank.sh eval-predict ../p2rank-datasets/fptrain.ds -l conserv -out_subdir CONS \
     -c distro/config/conservation \
     -conservation_dir 'fptrain/conservation/e5i1/scores' \
     -fail_fast 1 \
-    -visualizations 0   
+    -visualizations 0 | ./logc.sh      
     
 # same but with default model   
  
