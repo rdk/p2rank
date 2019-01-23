@@ -3,6 +3,7 @@ package cz.siret.prank.domain
 import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.features.implementation.conservation.ConservationScore
 import cz.siret.prank.geom.Atoms
+import cz.siret.prank.geom.Struct
 import cz.siret.prank.geom.Surface
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.Parametrized
@@ -154,6 +155,12 @@ class Protein implements Parametrized {
 
         name = Futils.shortName(pdbFileName)
         structure = PDBUtils.loadFromFile(pdbFileName)
+        // NMR structures contain multiple models with same chain ids and atom ids
+        // we always work only with first model
+        if (structure.nrModels() > 1) {
+            log.info "protein [{}] contains multiple models, reducing to model 0", name
+            structure = Struct.reduceStructureToModel0(structure)
+        }
         allAtoms = Atoms.allFromStructure(structure).withIndex()
         proteinAtoms = Atoms.onlyProteinAtoms(structure).withoutHydrogens()
 

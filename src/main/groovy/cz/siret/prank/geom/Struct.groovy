@@ -199,4 +199,42 @@ class Struct {
 
     }
 
+    /**
+     * 
+     * based on org.biojava.nbio.structure.StructureTools#getReducedStructure(org.biojava.nbio.structure.Structure, java.lang.String)
+     * from biojava-structure 4.2.11
+     */
+    static final Structure reduceStructureToModel(Structure s, int modelId) throws StructureException {
+
+        Structure newS = new StructureImpl();
+        newS.setPDBCode(s.getPDBCode());
+        newS.setPDBHeader(s.getPDBHeader());
+        newS.setName(s.getName());
+        newS.setSSBonds(s.getSSBonds());
+        newS.setDBRefs(s.getDBRefs());
+        newS.setSites(s.getSites());
+        newS.setBiologicalAssembly(s.isBiologicalAssembly());
+        newS.setCompounds(s.getCompounds());
+        newS.setConnections(s.getConnections());
+        newS.setSSBonds(s.getSSBonds());
+        newS.setSites(s.getSites());
+
+        // only get model 0
+        List<Chain> model = s.getModel(modelId);
+        for (Chain c : model) {
+            newS.addChain(c);
+        }
+        return newS;
+    }
+
+    static final Structure reduceStructureToModel0(Structure s) {
+
+        // TODO try StructureTools.removeModels()
+
+        if (s.nrModels()==1) {
+            return s
+        } else {
+            return reduceStructureToModel(s, 0)
+        }
+    }
 }
