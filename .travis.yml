@@ -8,12 +8,6 @@ jdk:
   - oraclejdk8
   - oraclejdk11
 
-addons:
-  apt:
-    packages:
-      - oracle-java8-installer
-      - oracle-java11-installer
-
 script:
   - java -version
   - gradle -version
