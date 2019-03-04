@@ -1,6 +1,5 @@
 package cz.siret.prank.domain
 
-import com.sun.xml.internal.bind.v2.TODO
 import cz.siret.prank.geom.Atoms
 import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom

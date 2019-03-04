@@ -122,9 +122,9 @@ dependencies {
 
     compile group: 'com.univocity', name: 'univocity-parsers', version: '2.4.0' // For parsing csv
 
-    compile 'org.slf4j:slf4j-api:1.7.24'
-    compile 'org.apache.logging.log4j:log4j-slf4j-impl:2.5' // 2.8 was causing problem with biojava
-    compile 'org.slf4j:jul-to-slf4j:1.7.24'                 // for netlib logging messages
+    compile 'org.slf4j:slf4j-api:1.7.26'
+    compile 'org.apache.logging.log4j:log4j-slf4j-impl:2.11.2' // 2.8 was causing problem with biojava
+    compile 'org.slf4j:jul-to-slf4j:1.7.26'                 // for netlib logging messages
 
     compile 'org.biojava:biojava-core:4.2.8'
     compile 'org.biojava:biojava-alignment:4.2.8'

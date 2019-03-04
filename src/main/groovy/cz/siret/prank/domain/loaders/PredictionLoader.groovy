@@ -1,12 +1,12 @@
 package cz.siret.prank.domain.loaders
 
-import com.sun.istack.internal.Nullable
 import cz.siret.prank.domain.*
 import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.features.implementation.conservation.ConservationScore
 import cz.siret.prank.utils.Futils
 import groovy.util.logging.Slf4j
 
+import javax.annotation.Nullable
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.function.Function
