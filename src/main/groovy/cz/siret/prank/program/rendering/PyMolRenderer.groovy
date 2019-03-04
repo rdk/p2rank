@@ -35,7 +35,7 @@ class PyMolRenderer implements Parametrized {
 
         int N = pair.prediction.reorderedPockets.size()
 
-        List<Color> colors = ColorUtils.createSpectrum(N, 0.6, 0.6, 1.20)
+        List<Color> colors = ColorUtils.createSpectrum(N, 0.6d, 0.6d, 1.20d)
 
 
         int i = 1;

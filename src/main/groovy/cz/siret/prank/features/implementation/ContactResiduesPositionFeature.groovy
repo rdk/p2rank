@@ -73,7 +73,7 @@ class ContactResiduesPositionFeature extends SasFeatureCalculator implements Par
                 contactResIndex.put(aa, res)
             }
         }
-        Map<AA, Collection<AminoAcid>> cresmap = contactResIndex.asMap()
+        Map<AA, Collection<AminoAcid>> cresmap = (Map<AA, Collection<AminoAcid>>) contactResIndex.asMap()
 
         double[] vect = new double[HEADER.size()]
 
@@ -84,7 +84,7 @@ class ContactResiduesPositionFeature extends SasFeatureCalculator implements Par
             double distca = MAX_DIST
             double distcenter = MAX_DIST
 
-            Collection<AminoAcid> residues = cresmap.get(aa)
+            Collection<AminoAcid> residues = (Collection<AminoAcid>) cresmap.get(aa)
             if (residues!=null && !residues.empty) {
 
                 AminoAcid closestResOfType = residues.min { Atoms.allFromGroup(it).dist(sasPoint)  }
