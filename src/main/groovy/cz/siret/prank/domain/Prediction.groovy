@@ -7,6 +7,7 @@ import groovy.util.logging.Slf4j
  * Pocket prediction result for single protein.
  */
 @Slf4j
+@CompileStatic
 class Prediction {
 
     Protein protein
