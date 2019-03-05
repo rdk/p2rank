@@ -2,6 +2,7 @@ package cz.siret.prank.domain
 
 import cz.siret.prank.program.rendering.LabeledPoint
 import groovy.util.logging.Slf4j
+import groovy.transform.CompileStatic
 
 /**
  * Pocket prediction result for single protein.
