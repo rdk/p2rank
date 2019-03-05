@@ -59,17 +59,22 @@ class FPocketLoader extends PredictionLoader implements Parametrized {
     private Prediction loadResultFromFile(String resultPdbFileName, Protein queryProtein) {
 
         Protein protein = queryProtein   // original query protein (input to fpocket)
-        protein.proteinAtoms.withIndex() // create inden on protein atoms
+        protein.proteinAtoms.withIndex() // create index on protein atoms
 
         List<Pocket> pockets = new ArrayList<>()
         File resultFile = new File(resultPdbFileName)
         List<Atoms> fpocketGroups = loadPocketGroups(resultPdbFileName)
 
+        boolean isFpocket3 = true
 
 
         log.info "loading ${fpocketGroups.size()} pockets"
 
-        int pocketIndex = 0;
+        int pocketIndex = 0
+        if (isFpocket3) {
+            pocketIndex = 1
+        }
+
         for (Atoms g in fpocketGroups) {
 
             //println "loading het group $pocketIndex $pocketGroup.PDBName"
