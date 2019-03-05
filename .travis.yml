@@ -10,6 +10,6 @@ jdk:
 
 script:
   - java -version
-  - gradle -version
-  - gradle --stop
-  - gradle --refresh-dependencies clean check -Dscan --info 
+  - ./gradlew -version
+  - ./gradlew --stop
+  - ./gradlew --refresh-dependencies clean check test -Dscan --info
