@@ -51,6 +51,16 @@ class FPocketLoader extends PredictionLoader implements Parametrized {
         return loadResultFromFile(pocketPredictionOutputFile, liganatedProtein)
     }
 
+
+    boolean isFpocket3Prediction(File resultFile) {
+        for (String fname : resultFile.parentFile.list()) {
+            if (fname.endsWith("info.txt")) {
+                return true
+            }
+        }
+        return false
+    }
+
     /**
      * must be called on main fpocket result pdb file in directory with ./pockets subdirectory
      *
@@ -63,11 +73,11 @@ class FPocketLoader extends PredictionLoader implements Parametrized {
 
         List<Pocket> pockets = new ArrayList<>()
         File resultFile = new File(resultPdbFileName)
+
+        boolean isFpocket3 = isFpocket3Prediction(resultFile)
+
+
         List<Atoms> fpocketGroups = loadPocketGroups(resultPdbFileName)
-
-        boolean isFpocket3 = true
-
-
         log.info "loading ${fpocketGroups.size()} pockets"
 
         int pocketIndex = 0
