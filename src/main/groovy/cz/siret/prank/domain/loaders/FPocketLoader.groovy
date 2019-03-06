@@ -235,7 +235,7 @@ class FPocketLoader extends PredictionLoader implements Parametrized {
 
         static final Pattern PATTERN = ~ /HEADER (\d+) [^\:]* :\s* ([-\.\d]*).*/
 
-        Double[] headers = new Double[14]
+        Double[] headers = new Double[20]
 
         double pocketScore
         int vornoiVertices
