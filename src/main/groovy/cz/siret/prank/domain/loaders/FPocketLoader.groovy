@@ -85,12 +85,13 @@ class FPocketLoader extends PredictionLoader implements Parametrized {
             pocketIndex = 1
         }
 
+        int rank = 1
         for (Atoms g in fpocketGroups) {
 
             //println "loading het group $pocketIndex $pocketGroup.PDBName"
 
             FPocketPocket pocket = new FPocketPocket()
-            pocket.rank = pocketIndex + 1
+            pocket.rank = rank++
             pocket.vornoiCenters = g
 
             String pocketAtmFile = resultFile.parent + File.separator + "pockets" + File.separator + "pocket${pocketIndex}_atm.pdb"
@@ -101,6 +102,7 @@ class FPocketLoader extends PredictionLoader implements Parametrized {
             Atoms surfaceAtoms = new Atoms()
             for (Atom atm in pocketAtmAtoms.list) {
                 Atom linkedAtom = protein.proteinAtoms.getByID(atm.PDBserial)
+                // TODO fpocket3: check why ids not found / select atoms by distance
                 if (linkedAtom!=null) {
                     surfaceAtoms.add(linkedAtom)
                 } else {
