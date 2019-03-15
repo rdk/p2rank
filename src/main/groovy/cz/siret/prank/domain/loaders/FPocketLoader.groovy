@@ -53,12 +53,16 @@ class FPocketLoader extends PredictionLoader implements Parametrized {
 
 
     boolean isFpocket3Prediction(File resultFile) {
-        for (String fname : resultFile.parentFile.list()) {
-            if (fname.endsWith("info.txt")) {
-                return true
+        // Fpocket 3.0 pockets are indexed starting with 1 (older versions from 0)
+        // TODO find better way to check fpocket version
+
+        File pocketsSubdir = new File(resultFile.parent + "/pockets")
+        for (String fname : pocketsSubdir.list()) {
+            if (fname.startsWith("pocket0")) {
+                return false
             }
         }
-        return false
+        return true
     }
 
     /**
