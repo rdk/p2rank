@@ -42,9 +42,9 @@ class LogManager implements Writable {
         loggerConfig = config.getLoggerConfig(loggerName)
 
         // loggerConfig.getAppenders().each { System.out.println "APPENDER: " + it.value.name }
-        write "logToConsole: $logToConsole"
-        write "logToFile: $logToFile"
-        write "logLevel: ${level.name()}"
+        //log.debug "logToConsole: $logToConsole"
+        //log.debug "logToFile: $logToFile"
+        //log.debug "logLevel: ${level.name()}"
 
         loggerConfig.setLevel(level)
 
