@@ -13,7 +13,7 @@ export JAVA_OPTS="$JAVA_OPTS -Xmx2048m"
 
 # -XX:+UseConcMarkSweepGC
 # -XX:+UseG1GC
-export JAVA_OPTS="$JAVA_OPTS -XX:+CMSClassUnloadingEnabled"
+export JAVA_OPTS="$JAVA_OPTS -XX:+CMSClassUnloadingEnabled -XX:+UseG1GC"
 
 if [[ "$OSTYPE" = msys* ]] ; then
     PATH_SEPARATOR=';' # for win ... we want this script to run on Windows with MSYS / Git Bash
