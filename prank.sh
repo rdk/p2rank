@@ -13,7 +13,7 @@ echo PRANK_LOCALENV_PARAMS = $PRANK_LOCALENV_PARAMS
 
 #-XX:+UseG1GC
 #-XX:+UseConcMarkSweepGC
-export JAVA_OPTS="$JAVA_OPTS -XX:+CMSClassUnloadingEnabled -XX:+UseG1GC"
+export JAVA_OPTS="$JAVA_OPTS -XX:+CMSClassUnloadingEnabled"
 export JAVA_OPTS="$JAVA_OPTS $JAVA_LOCALENV_PARAMS"
 
 
