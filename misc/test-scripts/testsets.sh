@@ -39,7 +39,7 @@ test() {
 
     # run command
     # echo error $CMD >> $APPLOG
-    $CMD >> $RUN_LOG
+    $CMD &>> $RUN_LOG
     EXIT_CODE=$?
 
     end=`date +%s`
@@ -73,24 +73,25 @@ quick() {
 
     title RUNNING QUICK TESTS
 
+    # files relative to distro/test_data/
+
     test ./prank.sh predict -f distro/test_data/liganated/1aaxa.pdb               -out_subdir TEST/TESTS
     test ./prank.sh predict test.ds                                               -out_subdir TEST/TESTS
     test ./prank.sh eval-predict -f distro/test_data/liganated/1aaxa.pdb          -out_subdir TEST/TESTS
     test ./prank.sh eval-predict test.ds                                          -out_subdir TEST/TESTS
 
-#    test ./prank.sh rescore -f distro/test_data/fpocket/1aaxa_out/1aaxa_out.pdb   -out_subdir TEST/TESTS
-    test ./prank.sh rescore fpocket-pairs.ds                                      -out_subdir TEST/TESTS
-    test ./prank.sh rescore distro/test_data/fpocket3.ds                          -out_subdir TEST/TESTS
-    test ./prank.sh rescore concavity-pairs.ds                                    -out_subdir TEST/TESTS
-    test ./prank.sh eval-rescore fpocket-pairs.ds                                 -out_subdir TEST/TESTS
-    test ./prank.sh eval-rescore concavity-pairs.ds                               -out_subdir TEST/TESTS
+    test ./prank.sh rescore fpocket.ds                                            -out_subdir TEST/TESTS
+    test ./prank.sh rescore fpocket3.ds                                           -out_subdir TEST/TESTS
+    test ./prank.sh rescore concavity.ds                                          -out_subdir TEST/TESTS
+    test ./prank.sh eval-rescore fpocket.ds                                       -out_subdir TEST/TESTS
+    test ./prank.sh eval-rescore concavity.ds                                     -out_subdir TEST/TESTS
 
-    test ./prank.sh traineval -loop 1 -t fpocket-pairs.ds -e test.ds               -fail_fast 1 -out_subdir TEST/TESTS
-    test ./prank.sh crossval -loop 1 fpocket-pairs.ds                              -fail_fast 1 -out_subdir TEST/TESTS
+    test ./prank.sh traineval -loop 1 -t fpocket.ds -e test.ds       -fail_fast 1 -out_subdir TEST/TESTS
+    test ./prank.sh crossval  -loop 1 fpocket.ds                     -fail_fast 1 -out_subdir TEST/TESTS
 }
 
 quick_train() {
-    test ./prank.sh traineval -loop 1 -t fpocket-pairs.ds -e test.ds               -fail_fast 1 -out_subdir TEST/TESTS
+    test ./prank.sh traineval -loop 1 -t fpocket.ds -e test.ds       -fail_fast 1 -out_subdir TEST/TESTS
 }
 
 basic() {
