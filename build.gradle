@@ -82,6 +82,7 @@ jar {
 clean {
     delete "$buildDir/../distro/bin"
     delete "$buildDir/../distro/test_output"
+    delete "$buildDir/../distro/log/prank.log"
 }
 
 test {
