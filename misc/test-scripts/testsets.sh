@@ -79,8 +79,9 @@ quick() {
     test ./prank.sh eval-predict test.ds                                          -out_subdir TEST/TESTS
 
 #    test ./prank.sh rescore -f distro/test_data/fpocket/1aaxa_out/1aaxa_out.pdb   -out_subdir TEST/TESTS
-    test ./prank.sh rescore fpocket-pairs.ds                                            -out_subdir TEST/TESTS
-    test ./prank.sh rescore concavity-pairs.ds                                         -out_subdir TEST/TESTS
+    test ./prank.sh rescore fpocket-pairs.ds                                      -out_subdir TEST/TESTS
+    test ./prank.sh rescore distro/test_data/fpocket3.ds                          -out_subdir TEST/TESTS
+    test ./prank.sh rescore concavity-pairs.ds                                    -out_subdir TEST/TESTS
     test ./prank.sh eval-rescore fpocket-pairs.ds                                 -out_subdir TEST/TESTS
     test ./prank.sh eval-rescore concavity-pairs.ds                               -out_subdir TEST/TESTS
 
