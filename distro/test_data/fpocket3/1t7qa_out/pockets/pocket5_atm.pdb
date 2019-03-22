@@ -1,0 +1,38 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket     5:
+HEADER 0  - Pocket Score                      : 0.2711
+HEADER 1  - Drug Score                        : 0.0749
+HEADER 2  - Number of alpha spheres           :    17
+HEADER 3  - Mean alpha-sphere radius          : 3.8898
+HEADER 4  - Mean alpha-sphere Solvent Acc.    : 0.7173
+HEADER 5  - Mean B-factor of pocket residues  : 0.4625
+HEADER 6  - Hydrophobicity Score              : 26.6000
+HEADER 7  - Polarity Score                    :     3
+HEADER 8  - Amino Acid based volume Score     : 3.4000
+HEADER 9  - Pocket volume (Monte Carlo)       : 176.3439
+HEADER 10  -Pocket volume (convex hull)       : 4.4555
+HEADER 11 - Charge Score                      :     1
+HEADER 12 - Local hydrophobic density Score   : 10.0000
+HEADER 13 - Number of apolar alpha sphere     :    11
+HEADER 14 - Proportion of apolar alpha sphere : 0.6471
+ATOM   4153   CA ILE A 545      60.741  28.722 -11.696  0.00  0.00           C 0
+ATOM   4178   CG HIS A 548      56.186  25.506 -10.758  0.00  0.00           C 0
+ATOM   4150    O ALA A 544      59.353  28.556  -9.315  0.33  5.36           O 0
+ATOM   4157  CG1 ILE A 545      60.657  30.317 -13.645  0.00  0.00           C 0
+ATOM   4177   CB HIS A 548      57.571  25.857 -10.312  0.00  0.00           C 0
+ATOM   4179  ND1 HIS A 548      55.935  24.672 -11.826  0.50  2.19           N 0
+ATOM   4176    O HIS A 548      58.959  23.625 -11.294  0.39  1.07           O 0
+ATOM   4201  ND2 ASN A 550      57.905  22.808 -14.312  0.51  6.56           N 0
+ATOM   4158  CG2 ILE A 545      61.751  28.074 -13.919  0.00  0.00           C 0
+ATOM   4155    O ILE A 545      61.058  26.388 -11.210  0.62  2.14           O 0
+ATOM   4125    O THR A 541      61.369  32.586 -11.325  0.00  0.00           O 0
+ATOM   4151   CB ALA A 544      58.960  31.849  -9.074  0.00  0.00           C 0
+ATOM   4128  CG2 THR A 541      60.427  34.501 -13.557  0.00  0.00           C 0
+ATOM   4149    C ALA A 544      59.952  29.600  -9.572  0.00  0.00           C 0
+ATOM   4180  CD2 HIS A 548      54.975  25.863 -10.267  0.00  0.00           C 0
+ATOM   4152    N ILE A 545      60.647  29.774 -10.690  0.00  0.00           N 0
+TER
+END

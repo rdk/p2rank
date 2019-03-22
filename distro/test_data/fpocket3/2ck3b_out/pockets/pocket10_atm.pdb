@@ -1,0 +1,37 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket    10:
+HEADER 0  - Pocket Score                      : 0.0681
+HEADER 1  - Drug Score                        : 0.0009
+HEADER 2  - Number of alpha spheres           :    15
+HEADER 3  - Mean alpha-sphere radius          : 4.1991
+HEADER 4  - Mean alpha-sphere Solvent Acc.    : 0.6763
+HEADER 5  - Mean B-factor of pocket residues  : 0.5960
+HEADER 6  - Hydrophobicity Score              : 35.3333
+HEADER 7  - Polarity Score                    :     2
+HEADER 8  - Amino Acid based volume Score     : 4.5000
+HEADER 9  - Pocket volume (Monte Carlo)       : 283.0954
+HEADER 10  -Pocket volume (convex hull)       : 5.5630
+HEADER 11 - Charge Score                      :     2
+HEADER 12 - Local hydrophobic density Score   : 5.0000
+HEADER 13 - Number of apolar alpha sphere     :     6
+HEADER 14 - Proportion of apolar alpha sphere : 0.4000
+ATOM   4282    N VAL B  95     128.554  10.607  38.501  0.00  0.00           N 0
+ATOM   4285    O VAL B  95     126.017   9.681  37.329  0.00  0.00           O 0
+ATOM   4535    N GLY B 130     122.253  12.324  36.319  0.55  1.09           N 0
+ATOM   4536   CA GLY B 130     121.896  13.740  36.180  0.00  0.00           C 0
+ATOM   4286   CB VAL B  95     126.745  10.365  40.218  0.00  0.00           C 0
+ATOM   4534  CG2 VAL B 129     122.767  10.531  39.060  0.00  0.00           C 0
+ATOM   4521   CB ARG B 128     125.281  10.672  33.672  0.00  0.00           C 0
+ATOM   4523   CD ARG B 128     127.212  11.856  32.614  0.00  0.00           C 0
+ATOM   4537    C GLY B 130     121.771  14.269  34.755  0.00  0.00           C 0
+ATOM   4538    O GLY B 130     121.692  15.480  34.546  0.00  0.00           O 0
+ATOM   4540   CA LEU B 131     121.712  13.761  32.361  0.00  0.00           C 0
+ATOM   4547    N LYS B 132     120.746  15.761  31.348  0.70  2.19           N 0
+ATOM   4546  CD2 LEU B 131     123.018  13.634  29.627  0.00  0.00           C 0
+ATOM   4526  NH1 ARG B 128     128.676  14.023  31.513  0.00  0.00           N 0
+ATOM   4539    N LEU B 131     121.728  13.370  33.776  0.00  0.00           N 0
+TER
+END

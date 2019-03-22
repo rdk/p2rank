@@ -1,0 +1,40 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket     9:
+HEADER 0  - Pocket Score                      : 0.0806
+HEADER 1  - Drug Score                        : 0.0021
+HEADER 2  - Number of alpha spheres           :    16
+HEADER 3  - Mean alpha-sphere radius          : 3.9293
+HEADER 4  - Mean alpha-sphere Solvent Acc.    : 0.6132
+HEADER 5  - Mean B-factor of pocket residues  : 0.4605
+HEADER 6  - Hydrophobicity Score              : -1.4286
+HEADER 7  - Polarity Score                    :     3
+HEADER 8  - Amino Acid based volume Score     : 4.7143
+HEADER 9  - Pocket volume (Monte Carlo)       : 227.7959
+HEADER 10  -Pocket volume (convex hull)       : 9.2442
+HEADER 11 - Charge Score                      :     1
+HEADER 12 - Local hydrophobic density Score   : 7.0000
+HEADER 13 - Number of apolar alpha sphere     :     8
+HEADER 14 - Proportion of apolar alpha sphere : 0.5000
+ATOM   5989  CD2 PHE B 316     117.363  11.813  19.570  0.00  0.00           C 0
+ATOM   5526   CB ASP B 259     117.770   6.598  24.439  0.00  0.00           C 0
+ATOM   5985    O PHE B 316     115.606   7.662  19.201  0.73  4.29           O 0
+ATOM   5525    O ASP B 259     117.622   4.881  21.971  0.65  7.50           O 0
+ATOM   5991  CE2 PHE B 316     118.233  12.903  19.527  0.00  0.00           C 0
+ATOM   4566   CG PRO B 134     115.286  13.784  25.745  0.00  0.00           C 0
+ATOM   4562   CA PRO B 134     116.023  16.036  25.526  0.00  0.00           C 0
+ATOM   4565   CB PRO B 134     115.136  14.976  24.876  0.00  0.00           C 0
+ATOM   4561    N PRO B 134     116.019  15.649  26.937  0.00  0.00           N 0
+ATOM   4550    O LYS B 132     119.038  15.378  29.115  0.68  6.43           O 0
+ATOM   5960   CE MET B 312     114.678  11.792  22.421  0.00  0.00           C 0
+ATOM   4592   CB PRO B 138     115.207  15.048  20.652  0.00  0.00           C 0
+ATOM   5528  OD1 ASP B 259     116.547   8.659  24.572  0.78  5.36           O 0
+ATOM   5529  OD2 ASP B 259     118.269   8.420  25.895  0.00  0.00           O 0
+ATOM   4593   CG PRO B 138     116.157  16.193  20.743  0.00  0.00           C 0
+ATOM   5527   CG ASP B 259     117.508   7.989  25.010  0.00  0.00           C 0
+ATOM   5521  NH2 ARG B 258     116.646  10.555  27.167  0.51  5.47           N 0
+ATOM   4567   CD PRO B 134     115.405  14.319  27.132  0.00  0.00           C 0
+TER
+END

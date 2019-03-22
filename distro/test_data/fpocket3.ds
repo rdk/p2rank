@@ -1,0 +1,20 @@
+# dataset for rescoring
+# predictions generated with fpocket 3.1.2 on "./clean" structures
+
+PARAM.PREDICTION_METHOD=fpocket
+
+# uncomment if ligands are separated with TER record:
+PARAM.LIGANDS_SEPARATED_BY_TER=true
+
+HEADER: prediction
+
+fpocket3/1a82a_out/1a82a_out.pdb
+fpocket3/1aaxa_out/1aaxa_out.pdb
+fpocket3/1nlua_out/1nlua_out.pdb
+fpocket3/1t7qa_out/1t7qa_out.pdb
+fpocket3/2ck3b_out/2ck3b_out.pdb
+
+
+
+
+
