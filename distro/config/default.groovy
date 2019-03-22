@@ -342,4 +342,25 @@ import cz.siret.prank.program.params.Params
      */
     output_only_stats = false
 
+
+    /**
+     * logging level (TRACE/DEBUG/INFO/WARN/ERROR)
+     */
+    log_level = "INFO"
+
+    /**
+     * print log messages to console
+     */
+    log_to_console = true
+
+    /**
+     * print log messages to file (run.log in outdir)
+     */
+    log_to_file = true
+
+    /**
+     * compress and delete log file at the end (if log_to_file)
+     */
+    zip_log_file = false
+
 }
