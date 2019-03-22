@@ -51,6 +51,20 @@ class FPocketLoader extends PredictionLoader implements Parametrized {
         return loadResultFromFile(pocketPredictionOutputFile, liganatedProtein)
     }
 
+
+    boolean isFpocket3Prediction(File resultFile) {
+        // Fpocket 3.0 pockets are indexed starting with 1 (older versions from 0)
+        // TODO find better way to check fpocket version
+
+        File pocketsSubdir = new File(resultFile.parent + "/pockets")
+        for (String fname : pocketsSubdir.list()) {
+            if (fname.startsWith("pocket0")) {
+                return false
+            }
+        }
+        return true
+    }
+
     /**
      * must be called on main fpocket result pdb file in directory with ./pockets subdirectory
      *
@@ -59,23 +73,29 @@ class FPocketLoader extends PredictionLoader implements Parametrized {
     private Prediction loadResultFromFile(String resultPdbFileName, Protein queryProtein) {
 
         Protein protein = queryProtein   // original query protein (input to fpocket)
-        protein.proteinAtoms.withIndex() // create inden on protein atoms
+        protein.proteinAtoms.withIndex() // create index on protein atoms
 
         List<Pocket> pockets = new ArrayList<>()
         File resultFile = new File(resultPdbFileName)
+
+        boolean isFpocket3 = isFpocket3Prediction(resultFile)
+
+
         List<Atoms> fpocketGroups = loadPocketGroups(resultPdbFileName)
-
-
-
         log.info "loading ${fpocketGroups.size()} pockets"
 
-        int pocketIndex = 0;
+        int pocketIndex = 0
+        if (isFpocket3) {
+            pocketIndex = 1
+        }
+
+        int rank = 1
         for (Atoms g in fpocketGroups) {
 
             //println "loading het group $pocketIndex $pocketGroup.PDBName"
 
             FPocketPocket pocket = new FPocketPocket()
-            pocket.rank = pocketIndex + 1
+            pocket.rank = rank++
             pocket.vornoiCenters = g
 
             String pocketAtmFile = resultFile.parent + File.separator + "pockets" + File.separator + "pocket${pocketIndex}_atm.pdb"
@@ -86,6 +106,7 @@ class FPocketLoader extends PredictionLoader implements Parametrized {
             Atoms surfaceAtoms = new Atoms()
             for (Atom atm in pocketAtmAtoms.list) {
                 Atom linkedAtom = protein.proteinAtoms.getByID(atm.PDBserial)
+                // TODO fpocket3: check why ids not found / select atoms by distance
                 if (linkedAtom!=null) {
                     surfaceAtoms.add(linkedAtom)
                 } else {
@@ -230,7 +251,7 @@ class FPocketLoader extends PredictionLoader implements Parametrized {
 
         static final Pattern PATTERN = ~ /HEADER (\d+) [^\:]* :\s* ([-\.\d]*).*/
 
-        Double[] headers = new Double[14]
+        Double[] headers = new Double[20]
 
         double pocketScore
         int vornoiVertices

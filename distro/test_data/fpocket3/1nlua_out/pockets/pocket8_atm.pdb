@@ -1,0 +1,38 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket     8:
+HEADER 0  - Pocket Score                      : 0.1085
+HEADER 1  - Drug Score                        : 0.0006
+HEADER 2  - Number of alpha spheres           :    15
+HEADER 3  - Mean alpha-sphere radius          : 3.8104
+HEADER 4  - Mean alpha-sphere Solvent Acc.    : 0.5782
+HEADER 5  - Mean B-factor of pocket residues  : 0.3909
+HEADER 6  - Hydrophobicity Score              : 18.7143
+HEADER 7  - Polarity Score                    :     5
+HEADER 8  - Amino Acid based volume Score     : 4.0000
+HEADER 9  - Pocket volume (Monte Carlo)       : 265.4316
+HEADER 10  -Pocket volume (convex hull)       : 6.5801
+HEADER 11 - Charge Score                      :     1
+HEADER 12 - Local hydrophobic density Score   : 5.0000
+HEADER 13 - Number of apolar alpha sphere     :     6
+HEADER 14 - Proportion of apolar alpha sphere : 0.4000
+ATOM    844  OD1 ASN A 119      30.933  25.343  -6.228  0.00  0.00           O 0
+ATOM   1087   CB ARG A 152      35.623  19.383  -7.920  0.00  0.00           C 0
+ATOM   1123  OG1 THR A 156      37.929  24.396  -6.360  0.00  0.00           O 0
+ATOM   1099  CG1 ILE A 153      32.360  21.939  -5.123  0.00  0.00           C 0
+ATOM    867    N SER A 123      32.636  29.301  -3.094  0.00  0.00           N 0
+ATOM    868   CA SER A 123      32.586  30.392  -4.052  0.00  0.00           C 0
+ATOM    865  CG1 VAL A 122      35.389  26.776  -2.860  0.00  0.00           C 0
+ATOM   1086    O ARG A 152      37.031  21.475  -5.840  0.65  2.14           O 0
+ATOM   1085    C ARG A 152      36.190  20.565  -5.811  0.00  0.00           C 0
+ATOM   1094    N ILE A 153      35.072  20.664  -5.106  0.00  0.00           N 0
+ATOM   1124  CG2 THR A 156      37.903  26.603  -5.364  0.00  0.00           C 0
+ATOM    863    O VAL A 122      34.673  29.932  -2.364  0.00  0.00           O 0
+ATOM   1148  NE2 GLN A 160      38.341  30.125  -3.626  0.65  5.47           N 0
+ATOM   1122   CB THR A 156      37.924  25.092  -5.097  0.00  0.00           C 0
+ATOM    871   CB SER A 123      31.299  30.244  -4.874  0.00  0.00           C 0
+ATOM   1095   CA ILE A 153      34.756  21.856  -4.298  0.00  0.00           C 0
+TER
+END

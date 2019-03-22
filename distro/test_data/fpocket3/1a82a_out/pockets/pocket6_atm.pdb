@@ -1,0 +1,38 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket     6:
+HEADER 0  - Pocket Score                      : 0.1599
+HEADER 1  - Drug Score                        : 0.0053
+HEADER 2  - Number of alpha spheres           :    16
+HEADER 3  - Mean alpha-sphere radius          : 3.9530
+HEADER 4  - Mean alpha-sphere Solvent Acc.    : 0.7434
+HEADER 5  - Mean B-factor of pocket residues  : 0.2301
+HEADER 6  - Hydrophobicity Score              : 36.6000
+HEADER 7  - Polarity Score                    :     3
+HEADER 8  - Amino Acid based volume Score     : 4.6000
+HEADER 9  - Pocket volume (Monte Carlo)       : 273.1752
+HEADER 10  -Pocket volume (convex hull)       : 3.2718
+HEADER 11 - Charge Score                      :     1
+HEADER 12 - Local hydrophobic density Score   : 6.0000
+HEADER 13 - Number of apolar alpha sphere     :     7
+HEADER 14 - Proportion of apolar alpha sphere : 0.4375
+ATOM   1412    C MET A 188      17.768  29.432  -3.022  0.00  0.00           C 0
+ATOM   1423  OG1 THR A 189      20.749  29.661  -5.792  0.00  0.00           O 0
+ATOM   1414   CB MET A 188      18.320  27.216  -1.906  0.00  0.00           C 0
+ATOM   1418    N THR A 189      18.312  29.488  -4.241  0.00  0.00           N 0
+ATOM   1444   CB THR A 192      18.741  33.306  -1.208  0.00  0.00           C 0
+ATOM   1445  OG1 THR A 192      18.775  32.026  -0.559  0.00  0.00           O 0
+ATOM   1446  CG2 THR A 192      19.747  34.221  -0.535  0.00  0.00           C 0
+ATOM   1500  CD2 LEU A 199      19.685  30.550   3.060  0.00  0.00           C 0
+ATOM   1417   CE MET A 188      18.144  27.685   1.260  0.00  0.00           C 0
+ATOM   1419   CA THR A 189      18.842  30.733  -4.786  0.00  0.00           C 0
+ATOM   1424  CG2 THR A 189      20.122  31.776  -6.676  0.00  0.00           C 0
+ATOM   1413    O MET A 188      17.629  30.423  -2.303  0.00  0.00           O 0
+ATOM   1451   CB ARG A 193      17.096  36.454  -5.303  0.00  0.00           C 0
+ATOM   1448   CA ARG A 193      17.005  36.624  -3.772  0.00  0.00           C 0
+ATOM   1447    N ARG A 193      17.113  35.339  -3.091  0.00  0.00           N 0
+ATOM   1421    O THR A 189      17.833  32.904  -4.734  0.00  0.00           O 0
+TER
+END

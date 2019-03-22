@@ -1,0 +1,37 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket     8:
+HEADER 0  - Pocket Score                      : 0.0908
+HEADER 1  - Drug Score                        : 0.0001
+HEADER 2  - Number of alpha spheres           :    17
+HEADER 3  - Mean alpha-sphere radius          : 4.0912
+HEADER 4  - Mean alpha-sphere Solvent Acc.    : 0.6290
+HEADER 5  - Mean B-factor of pocket residues  : 0.5379
+HEADER 6  - Hydrophobicity Score              : 20.5000
+HEADER 7  - Polarity Score                    :     2
+HEADER 8  - Amino Acid based volume Score     : 3.8333
+HEADER 9  - Pocket volume (Monte Carlo)       : 224.0080
+HEADER 10  -Pocket volume (convex hull)       : 8.7410
+HEADER 11 - Charge Score                      :     0
+HEADER 12 - Local hydrophobic density Score   : 1.0000
+HEADER 13 - Number of apolar alpha sphere     :     2
+HEADER 14 - Proportion of apolar alpha sphere : 0.1176
+ATOM   1479   CG PRO A 196      11.540  41.143   1.827  0.00  0.00           C 0
+ATOM   1480   CD PRO A 196      11.655  39.792   1.146  0.00  0.00           C 0
+ATOM   1461    O MET A 194      11.966  38.519  -1.789  0.00  0.00           O 0
+ATOM   1478   CB PRO A 196      12.895  41.766   1.595  0.00  0.00           C 0
+ATOM   1228  NE2 GLN A 163       8.822  43.369   1.875  0.00  0.00           N 0
+ATOM   1196    N GLN A 160       5.362  40.005   1.379  0.00  0.00           N 0
+ATOM   1201   CG GLN A 160       3.540  42.544  -0.916  0.00  0.00           C 0
+ATOM   1200   CB GLN A 160       4.139  41.197  -0.439  0.00  0.00           C 0
+ATOM   1204  NE2 GLN A 160       3.776  42.038  -3.293  0.00  0.00           N 0
+ATOM   1195   CB ALA A 159       7.962  38.302   2.073  0.00  0.00           C 0
+ATOM   1173   CG MET A 156       8.102  35.951  -3.738  0.00  0.00           C 0
+ATOM   1171    O MET A 156       5.377  37.920  -0.819  0.61  1.07           O 0
+ATOM   1169   CA MET A 156       6.574  36.069  -1.714  0.00  0.00           C 0
+ATOM   1172   CB MET A 156       6.669  36.080  -3.245  0.00  0.00           C 0
+ATOM   1197   CA GLN A 160       4.764  41.282   0.971  0.00  0.00           C 0
+TER
+END

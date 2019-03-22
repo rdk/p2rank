@@ -1,0 +1,37 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket     4:
+HEADER 0  - Pocket Score                      : 0.2840
+HEADER 1  - Drug Score                        : 0.0044
+HEADER 2  - Number of alpha spheres           :    19
+HEADER 3  - Mean alpha-sphere radius          : 4.2284
+HEADER 4  - Mean alpha-sphere Solvent Acc.    : 0.6528
+HEADER 5  - Mean B-factor of pocket residues  : 0.5909
+HEADER 6  - Hydrophobicity Score              : -7.7143
+HEADER 7  - Polarity Score                    :     3
+HEADER 8  - Amino Acid based volume Score     : 4.1429
+HEADER 9  - Pocket volume (Monte Carlo)       : 290.5498
+HEADER 10  -Pocket volume (convex hull)       : 5.4595
+HEADER 11 - Charge Score                      :     1
+HEADER 12 - Local hydrophobic density Score   : 7.0000
+HEADER 13 - Number of apolar alpha sphere     :     8
+HEADER 14 - Proportion of apolar alpha sphere : 0.4211
+ATOM   4253   CA ALA A 558      64.111  -2.393  -1.689  0.00  0.00           C 0
+ATOM   4262   CG LYS A 559      66.716  -6.416  -0.009  0.00  0.00           C 0
+ATOM   4249   CB PRO A 557      66.869   0.950  -3.280  0.00  0.00           C 0
+ATOM   4248    O PRO A 557      64.766   0.204  -1.111  0.00  0.00           O 0
+ATOM   4257    N LYS A 559      64.585  -4.729  -1.315  0.00  0.00           N 0
+ATOM   4254    C ALA A 558      64.412  -3.776  -2.223  0.00  0.00           C 0
+ATOM   4255    O ALA A 558      64.509  -3.973  -3.439  0.59  4.29           O 0
+ATOM   4252    N ALA A 558      64.560  -1.410  -2.655  0.65  1.09           N 0
+ATOM   4415    O PRO A 580      66.865  -1.400  -7.949  0.65  2.14           O 0
+ATOM   3164   NZ LYS A 419      70.721  -2.706  -6.561  0.00  0.00           N 0
+ATOM   4420   CA MET A 581      66.131  -3.796  -9.013  0.00  0.00           C 0
+ATOM   4258   CA LYS A 559      64.837  -6.100  -1.720  0.00  0.00           C 0
+ATOM   4426   CE MET A 581      63.862  -6.152  -5.990  0.00  0.00           C 0
+ATOM   4247    C PRO A 557      64.863  -0.179  -2.274  0.00  0.00           C 0
+ATOM   4427    N GLU A 582      67.815  -5.411  -9.735  0.77  4.37           N 0
+TER
+END

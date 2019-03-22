@@ -130,9 +130,8 @@ dependencies {
     compile 'org.biojava:biojava-core:4.2.12'
     compile 'org.biojava:biojava-alignment:4.2.12'
     compile 'org.biojava:biojava-structure:4.2.12'
-    //compile 'javax.xml.bind:jaxb-api:2.3.0'           // dependency of biojava for java 11
 
-    compile 'javax.xml.bind:jaxb-api:2.2.11'
+    compile 'javax.xml.bind:jaxb-api:2.2.11'      // dependencies of biojava for java 11
     compile 'com.sun.xml.bind:jaxb-core:2.2.11'
     compile 'com.sun.xml.bind:jaxb-impl:2.2.11'
     compile 'javax.activation:activation:1.1.1'

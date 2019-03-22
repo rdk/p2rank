@@ -1,0 +1,36 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket    12:
+HEADER 0  - Pocket Score                      : 0.0551
+HEADER 1  - Drug Score                        : 0.0014
+HEADER 2  - Number of alpha spheres           :    16
+HEADER 3  - Mean alpha-sphere radius          : 3.6521
+HEADER 4  - Mean alpha-sphere Solvent Acc.    : 0.5557
+HEADER 5  - Mean B-factor of pocket residues  : 0.5986
+HEADER 6  - Hydrophobicity Score              : 47.5000
+HEADER 7  - Polarity Score                    :     3
+HEADER 8  - Amino Acid based volume Score     : 5.1667
+HEADER 9  - Pocket volume (Monte Carlo)       : 99.0178
+HEADER 10  -Pocket volume (convex hull)       : 0.8296
+HEADER 11 - Charge Score                      :     1
+HEADER 12 - Local hydrophobic density Score   : 9.0000
+HEADER 13 - Number of apolar alpha sphere     :    10
+HEADER 14 - Proportion of apolar alpha sphere : 0.6250
+ATOM   4531    O VAL B 129     120.131  11.609  36.607  0.00  0.00           O 0
+ATOM   5438   CG TYR B 248     117.806  12.132  40.089  0.00  0.00           C 0
+ATOM   4534  CG2 VAL B 129     122.767  10.531  39.060  0.00  0.00           C 0
+ATOM   4536   CA GLY B 130     121.896  13.740  36.180  0.00  0.00           C 0
+ATOM   5412   OH TYR B 244     120.996  16.052  43.569  0.00  0.00           O 0
+ATOM   5894   NE ARG B 304     118.472  17.784  39.360  0.64  4.37           N 0
+ATOM   5897  NH2 ARG B 304     118.977  17.772  41.598  0.00  0.00           N 0
+ATOM   5439  CD1 TYR B 248     117.798  12.373  41.456  0.00  0.00           C 0
+ATOM   5410  CE2 TYR B 244     121.103  14.158  45.046  0.00  0.00           C 0
+ATOM   5419  CD1 LEU B 245     121.633   9.011  42.432  0.00  0.00           C 0
+ATOM   5440  CD2 TYR B 248     117.237  13.085  39.244  0.00  0.00           C 0
+ATOM   5442  CE2 TYR B 248     116.707  14.274  39.748  0.00  0.00           C 0
+ATOM   5441  CE1 TYR B 248     117.270  13.550  41.972  0.00  0.00           C 0
+ATOM   5443   CZ TYR B 248     116.720  14.487  41.121  0.00  0.00           C 0
+TER
+END
