@@ -351,7 +351,7 @@ class Main implements Parametrized, Writable {
     }
 
     static String getVersionName() {
-        return "P2RANK $version"
+        return "P2Rank $version"
     }
 
     static void main(String[] args) {
