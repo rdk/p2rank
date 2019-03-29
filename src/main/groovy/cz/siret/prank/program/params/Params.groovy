@@ -2,7 +2,7 @@ package cz.siret.prank.program.params
 
 import cz.siret.prank.program.Main
 import cz.siret.prank.utils.CmdLineArgs
-import cz.siret.prank.utils.StrUtils
+import cz.siret.prank.utils.Sutils
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
@@ -16,6 +16,7 @@ class Params {
 
     public static final Params INSTANCE = new Params()
 
+
     public static Params getInst() {
         return INSTANCE
     }
@@ -27,7 +28,7 @@ class Params {
     String dataset_base_dir = null
 
     /**
-     * all output of the prorgam will be stored in subdirectores of this directory
+     * all output of the program will be stored in subdirectores of this directory
      * (set absolute path or path relative to install dir, null defaults to working dir)
      */
     String output_base_dir = null
@@ -138,11 +139,22 @@ class Params {
      */
     int conservation_exponent = 1
 
+    double conserv_cloud_radius = 10
+
+    double ss_cloud_radius = 10
+
     /**
      * Conservation file with this pattern is loaded:
      * baseName + chainId + "." + origin + ".hom.gz"
      */
     String conservation_origin = "hssp"
+
+    /**
+     * Directory in which to look for conservation score files.
+     * Path relative to dataset directory.
+     * if null: look in the same directory as protein file
+     */
+    String conservation_dir = null
 
     /**
      * Log scores for binding and nonbinding scores to file
@@ -151,6 +163,7 @@ class Params {
 
     /**
      * limits how many pocket SAS points are used for scoring (after sorting), 0=unlimited
+     * affects scoring pockets and also residues
      */
     int score_point_limit = 0
 
@@ -237,7 +250,7 @@ class Params {
     Set<String> ignore_het_groups = ["HOH","DOD","WAT","NAG","MAN","UNK","GLC","ABA","MPD","GOL","SO4","PO4"] as Set
 
     /**
-     * positive point defining ligand types acceped values: "relevant", "ignored", "small", "distant"
+     * positive point defining ligand types accepted values: "relevant", "ignored", "small", "distant"
      */
     List<String> positive_def_ligtypes = ["relevant"]
 
@@ -302,10 +315,15 @@ class Params {
      */
     boolean average_feat_vectors = false
 
+    /**
+     * in feature projection from atoms to SAS points:
+     * only applicable when average_feat_vectors=true
+     * <0,1> goes from 'no average, just sum' -> 'full average'
+     */
     double avg_pow = 1
 
     /**
-     * regarding feature projection to SAS points: calculate weighted average
+     * regarding feature projection from atoms to SAS points: calculate weighted average
      * (shoud be true by default, kept false for backward compatibility reasons)
      */
     boolean avg_weighted = false
@@ -329,10 +347,20 @@ class Params {
      */
     boolean delete_vectors = true
 
+    boolean check_vectors = false
+
     /**
      * collect vectors also from eval dataset (only makes sense if delete_vectors=false)
      */
     boolean collect_eval_vectors = false
+
+    /**
+     * collect vectors only at the beginning of seed loop routine
+     * if dataset is subsampled (using train_protein_limit param) then dataset is subsampled only once
+     * set to false when doing learning curve!
+     * train_protein_limit>0 should be always paired with collect_only_once=false
+     */
+    boolean collect_only_once = true
 
     /**
      * number of random seed iterations
@@ -366,12 +394,18 @@ class Params {
     boolean vis_copy_proteins = true
 
     /**
+     * generate new protein pdb files from structures in memory instead of reusing input files
+     * (useful when structures were manipulated in memory, e.g. when reducing to specified chains)
+     */
+    boolean vis_generate_proteins = true
+
+    /**
      * zip PyMol visualizations to save space
      */
     boolean zip_visualizations = false
 
     /**
-     * use sctrictly inner pocket points or more wider pocket neighbourhood
+     * use strictly inner pocket points or more wider pocket neighbourhood
      */
     boolean strict_inner_points = false
 
@@ -391,11 +425,35 @@ class Params {
     boolean predictions = true
 
     /**
+     * residue prediction mode (opposed to pocket prediction)
+     */
+    boolean predict_residues = false
+
+    /**
+     * (in predict mode) produce residue labeling file
+     */
+    boolean label_residues = true
+
+    /**
+     * residue score threshold fir calculating predicted binary label
+     */
+    double residue_score_threshold = 1d
+
+    /**
+     * in calculation of residue score from neighboring SAS points:
+     * <0,1> goes from 'no average, just sum' -> 'full average'
+     */
+    double residue_score_sum_to_avg = 0d
+
+    /**
+     * added to the cutoff distance around residue in score aggregation from SAS points
+     */
+    double residue_score_extra_dist = 0d
+
+    /**
      * minimum ligandability score for SAS point to be considered ligandable
      */
     double pred_point_threshold = 0.4
-
-    boolean include_surrounding_score = false
 
     /**
      * minimum cluster size (of ligandable points) for initial clustering
@@ -478,7 +536,10 @@ class Params {
      */
     double ligc_prot_dist = 5.5
 
-    String rescorer = "WekaSumRescorer"
+    /**
+     * pocket rescoring algorithm PRANK="ModelBasedRescorer"
+     */
+    String rescorer = "ModelBasedRescorer"
 
     boolean plb_rescorer_atomic = false
 
@@ -493,13 +554,15 @@ class Params {
      */
     double target_class_ratio = 0.1
 
+    /**
+     * in training use subsampling to deal with class imbalance
+     */
     boolean subsample = false
 
     /**
-     *
+     * in training use supersampling to deal with class imbalance
      */
     boolean supersample = false
-
 
     /**
      * sort negatives desc by protrusion before subsampling
@@ -507,7 +570,7 @@ class Params {
     boolean subsampl_high_protrusion_negatives = false
 
     /**
-     * don't procuce prediction files for individual proteins (useful for long repetitive experiments)
+     * don't produce prediction files for individual proteins (useful for long repetitive experiments)
      */
     boolean output_only_stats = false
 
@@ -517,9 +580,9 @@ class Params {
     boolean ploop_zip_runs = true
 
     /**
-     * delete results of individual ploop runs
+     * delete results of individual ploop/hopt runs
      */
-    boolean ploop_delete_runs = false
+    boolean ploop_delete_runs = true
 
 
     /**
@@ -535,10 +598,10 @@ class Params {
     /**
      * print log messages to file (run.log in outdir)
      */
-    boolean log_to_file = false
+    boolean log_to_file = true
 
     /**
-     * cmompress and delete log file at the end (if log_to_file)
+     * compress and delete log file at the end (if log_to_file)
      */
     boolean zip_log_file = false
 
@@ -546,7 +609,7 @@ class Params {
      * limit the number of proteins that used for training. random subset of proteins from the dataset is used each run in seedloop
      * 0 = no limit
      */
-    int train_ptorein_limit = 0
+    int train_protein_limit = 0
 
     /**
      * add weights to instances to achieve target_weight_ratio (if classifier algorithm supports it)
@@ -600,6 +663,9 @@ class Params {
     
     int feat_pmass_nsasp = 40
 
+    /**
+     * selected sub-features in aa index feature
+     */
     List<String> feat_aa_properties = null
 
     /**
@@ -613,13 +679,13 @@ class Params {
     String hopt_spearmint_dir = ""
 
     /**
-     * Statistic to minimize
+     * Metric to minimize in hyperparameter optimization
      * (minus sign allowed)
      */
     String hopt_objective = "-DCA_4_0"
 
     /**
-     * number of inetarions
+     * max number of iterations in hyperparameter optimization
      */
     int hopt_max_iterations = 1000
 
@@ -661,8 +727,60 @@ class Params {
     String probatp_transformer = "default_probatp.json"
 
 
+    /**
+     * Path to json file that contains parameters of transformation of raw score to "z-score calculated from distribution of all residue scores".
+     * Use path relative to distro/models/score.
+     */
+    String zscoretp_res_transformer = "residue/p2rank_default_zscore.json"
+
+    /**
+     * Path to json file that contains parameters of transformation of raw score to "probability that residue with given score is true residue".
+     * Use path relative to distro/models/score.
+     */
+    String probatp_res_transformer = "residue/p2rank_default_proba.json"
+
     List<String> train_score_transformers = [] // ["ZscoreTpTransformer","ProbabilityScoreTransformer"]
 
+    /**
+     * Train resaidue score transformers on a dataset during predict-eval
+     */
+    boolean train_score_transformers_for_residues = false
+
+    /**
+     * Reduce loaded protein structures to chains declared in dataset file (in optional chains column)
+     */
+    boolean load_only_specified_chains = false
+
+    /**
+     * In hyperparameter optimization (ploop and hopt commands) train model only once in the beginning
+     * (makes sense if optimized hyperparameters do't influence training and feature extraction)
+     */
+    boolean hopt_train_only_once = false
+
+    /**
+     * directory in program resources to take peptide propensities from
+     * (resources/tables/peptides/$var/...)
+     * Available: SprintT1070, SprintA870
+     * TODO: move to dist dir
+     */
+    String pept_propensities_set = "SprintT1070"
+
+    boolean identify_peptides_by_labeling = false
+
+    /**
+     * Atoms size threshold for using KD-tree in cutoutSphere routine
+     */
+    int use_kdtree_cutout_sphere_thrashold = 150
+
+//===========================================================================================================//
+
+    /**
+     * Should be (slightly above) the distence of solvent exposed atoms to SAS points
+     * @return
+     */
+    double getSasCutoffDist() {
+        solvent_radius + surface_additional_cutoff
+    }
 
 //===========================================================================================================//
 
@@ -739,7 +857,7 @@ class Params {
                 if (value instanceof List) {
                     me."$pname" = value
                 } else {
-                    me."$pname" = StrUtils.parseList(value)
+                    me."$pname" = Sutils.parseList(value)
                 }
             } else if (pv instanceof Boolean) {
                 if ("0"==value) value=false
@@ -762,7 +880,7 @@ class Params {
 
     @Override
     String toString() {
-        return StrUtils.toStr(this).replace('=', ' = ') + "\n"
+        return Sutils.toStr(this).replace('=', ' = ') + "\n"
     }
 
 }

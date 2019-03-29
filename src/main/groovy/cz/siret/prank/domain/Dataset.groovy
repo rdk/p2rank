@@ -2,22 +2,25 @@ package cz.siret.prank.domain
 
 import com.google.common.base.CharMatcher
 import com.google.common.base.Splitter
-import cz.siret.prank.domain.loaders.ConcavityLoader
-import cz.siret.prank.domain.loaders.DeepSiteLoader
-import cz.siret.prank.domain.loaders.FPocketLoader
-import cz.siret.prank.domain.loaders.LiseLoader
-import cz.siret.prank.domain.loaders.MetaPocket2Loader
-import cz.siret.prank.domain.loaders.P2RankLoader
-import cz.siret.prank.domain.loaders.PredictionLoader
-import cz.siret.prank.domain.loaders.SiteHoundLoader
+import cz.siret.prank.domain.labeling.BinaryLabeling
+import cz.siret.prank.domain.labeling.ResidueLabeler
+import cz.siret.prank.domain.loaders.pockets.ConcavityLoader
+import cz.siret.prank.domain.loaders.pockets.DeepSiteLoader
+import cz.siret.prank.domain.loaders.pockets.FPocketLoader
+import cz.siret.prank.domain.loaders.pockets.LiseLoader
+import cz.siret.prank.domain.loaders.pockets.MetaPocket2Loader
+import cz.siret.prank.domain.loaders.pockets.P2RankLoader
+import cz.siret.prank.domain.loaders.pockets.PredictionLoader
+import cz.siret.prank.domain.loaders.pockets.SiteHoundLoader
 import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.ThreadPoolFactory
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Futils
-import cz.siret.prank.utils.StrUtils
+import cz.siret.prank.utils.Sutils
 import groovy.util.logging.Slf4j
 
+import javax.annotation.Nullable
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -35,10 +38,12 @@ class Dataset implements Parametrized {
 
     /*
      * dataset parameter names
-     * Dataset parameters an be defined in dataset file as PARAM.<PARAM_NAME>=<value>
+     * Dataset parameters can be defined in dataset file as PARAM.<PARAM_NAME>=<value>
      */
     static final String PARAM_PREDICTION_METHOD = "PREDICTION_METHOD"
     static final String PARAM_LIGANDS_SEPARATED_BY_TER = "LIGANDS_SEPARATED_BY_TER"
+    static final String PARAM_RESIDUE_LABELING_FORMAT = "RESIDUE_LABELING_FORMAT"
+    static final String PARAM_RESIDUE_LABELING_FILE = "RESIDUE_LABELING_FILE"
 
     /*
      * dataset column names
@@ -47,118 +52,10 @@ class Dataset implements Parametrized {
     static final String COLUMN_PREDICTION = "prediction"
     static final String COLUMN_LIGAND_CODES = "ligand_codes"
     static final String COLUMN_CONSERVATION_FILES_PATTERN = "conservation_files_pattern"
+    static final String COLUMN_CHAINS = "chains"
 
     static final List<String> DEFAULT_HEADER = [ COLUMN_PROTEIN ]
 
-
-    /**
-     * Contains file names, (optionally) ligand codes and cached structures.
-     */
-    class Item {
-        Map<String, String> columnValues
-        String proteinFile  // liganated/unliganated protein for predictions
-        String pocketPredictionFile // nullable
-
-        String label
-        PredictionPair cachedPair
-
-        private Item(String proteinFile, String predictionFile, Map<String, String> columnValues) {
-            this.columnValues = columnValues
-            this.proteinFile = proteinFile
-            this.pocketPredictionFile = predictionFile
-            this.label = Futils.shortName( pocketPredictionFile ?: proteinFile )
-        }
-
-        Prediction getPrediction() {
-            // when running 'prank rescore' on a dataset with one column prediction is in proteinFile
-            String file = pocketPredictionFile ?: proteinFile
-            return getLoader(this).loadPredictionWithoutProtein(file)
-        }
-
-        PredictionPair getPredictionPair() {
-            if (cached) {
-                if (cachedPair==null) {
-                    cachedPair = loadPredictionPair()
-                    log.info "caching structures in dataset item [$label]"
-                }
-                return cachedPair
-            } else {
-                return loadPredictionPair()
-            }
-        }
-
-        // for one column datasets
-        Protein getProtein() {
-            getPredictionPair().queryProtein
-        }
-
-        PredictionPair loadPredictionPair() {
-            getLoader(this).loadPredictionPair(proteinFile, pocketPredictionFile, getContext())
-        }
-
-        /**
-         * explicitely specified ligand codes
-         * @return null if column is not defined
-         */
-        Set<String> getLigandCodes() {
-            if (!columnValues.containsKey(COLUMN_LIGAND_CODES)) {
-                null
-            } else {
-                Splitter.on(",").split(columnValues[COLUMN_LIGAND_CODES]).toList()
-            }
-        }
-
-        ProcessedItemContext getContext() {
-            new ProcessedItemContext(columnValues)
-        }
-    }
-
-    Item createNewItem(String proteinFile, String predictionFile, Map<String, String> columnValues) {
-        return new Item(proteinFile, predictionFile, columnValues)
-    }
-
-    Item createNewItem(Map<String, String> columnValues) {
-        String proteinFile = dir + "/" + columnValues.get(COLUMN_PROTEIN)
-        String predictionFile = null
-        if (header.contains(COLUMN_PREDICTION)) {
-            predictionFile = dir + "/" + columnValues.get(COLUMN_PREDICTION)
-        }
-
-        return createNewItem(proteinFile, predictionFile, columnValues)
-    }
-
-//===========================================================================================================//
-
-    static final class Fold {
-        int num
-        Dataset trainset
-        Dataset evalset
-        Fold(int num, Dataset trainset, Dataset evalset) {
-            this.num = num
-            this.trainset = trainset
-            this.evalset = evalset
-        }
-    }
-
-    interface Processor {
-
-        abstract void processItem(Item item)
-    }
-
-    /**
-     * summary of a dataset processing run
-     */
-    static class Result {
-        List<Item> errorItems = Collections.synchronizedList(new ArrayList<Item>())
-
-        boolean hasErrors() {
-            errorItems.size() > 0
-        }
-
-        int getErrorCount() {
-            errorItems.size()
-        }
-    }
 
 //===========================================================================================================//
 
@@ -169,6 +66,8 @@ class Dataset implements Parametrized {
     List<Item> items = new ArrayList<>()
     boolean cached = false
 
+    private ResidueLabeler residueLabeler
+
 //===========================================================================================================//
 
     Dataset withCache(boolean c = true) {
@@ -177,7 +76,7 @@ class Dataset implements Parametrized {
     }
 
     String getLabel() {
-        Futils.removeExtention(name)
+        Futils.removeExtension(name)
     }
 
     int getSize() {
@@ -192,7 +91,7 @@ class Dataset implements Parametrized {
         items.each {
             if (it.cachedPair!=null) {
                 it.cachedPair.prediction.protein.clearSecondaryData()
-                it.cachedPair.queryProtein.clearSecondaryData()
+                it.cachedPair.protein.clearSecondaryData()
             }
         }
     }
@@ -231,12 +130,21 @@ class Dataset implements Parametrized {
         return processItems(params.parallel, processor)
     }
 
+    Result processItems(final Closure processor) {
+        return processItems(new Processor() {
+            @Override
+            void processItem(Item item) {
+                processor.call(item)
+            }
+        })
+    }
+
     /**
      * Process all dataset items with provided processor.
      */
     Result processItems(boolean parallel, final Processor processor) {
 
-        log.trace "ITEMS: " + StrUtils.toStr(items)
+        log.trace "ITEMS: " + Sutils.toStr(items)
 
         Result result = new Result()
 
@@ -264,7 +172,7 @@ class Dataset implements Parametrized {
                 })
             }
             executor.invokeAll(tasks)
-            executor.shutdownNow();
+            executor.shutdownNow()
 
         } else {
             log.info "processing dataset [$name] using 1 thread"
@@ -434,6 +342,41 @@ class Dataset implements Parametrized {
         return header.contains(COLUMN_LIGAND_CODES)
     }
 
+    /**
+     * @return true if residue lbeling is defined a as a part of th dataset
+     */
+    boolean hasResidueLabeling() {
+        return attributes.containsKey(PARAM_RESIDUE_LABELING_FORMAT)
+    }
+
+    /**
+     * @return true if predicted residue labeling is defined a as a part of the dataset
+     */
+    boolean hasPredictedResidueLabeling() {
+        return attributes.containsKey(PARAM_PREDICTION_METHOD)
+    }
+
+    /**
+     * Load residue labeling based on PARAM_RESIDUE_LABELING_FORMAT and PARAM_RESIDUE_LABELING_FILE attributes defined in the dataset
+     */
+    @Nullable
+    ResidueLabeler getResidueLabeler() {
+        if (residueLabeler == null && hasResidueLabeling()) {
+            String labelingFile = dir + "/" + attributes.get(PARAM_RESIDUE_LABELING_FILE)
+            residueLabeler = ResidueLabeler.loadFromFile(attributes.get(PARAM_RESIDUE_LABELING_FORMAT), labelingFile)
+        }
+        return  residueLabeler
+    }
+
+    @Nullable
+    ResidueLabeler<Boolean> getBinaryResidueLabeler() {
+        ResidueLabeler labeler = getResidueLabeler()
+        if (!labeler.binary) {
+            throw new PrankException("Dataset residue labeling is not binary!")
+        }
+        return (ResidueLabeler<Boolean>) labeler
+    }
+
     Dataset(String name, String dir) {
         this.name = name
         this.dir = dir
@@ -528,6 +471,147 @@ class Dataset implements Parametrized {
         }
 
         return res
+    }
+
+//===========================================================================================================//
+
+    /**
+     * Contains file names, (optionally) ligand codes and cached structures.
+     */
+    class Item {
+        /**
+         * origin dataset (points to original loaded dataset when dataset is split to folds)
+         */
+        Dataset dataset
+        Map<String, String> columnValues
+        String proteinFile  // liganated/unliganated protein for predictions
+        @Nullable String pocketPredictionFile // nullable
+
+        String label
+        PredictionPair cachedPair
+
+        private Item(Dataset dataset, String proteinFile, String predictionFile, Map<String, String> columnValues) {
+            this.dataset = dataset
+            this.columnValues = columnValues
+            this.proteinFile = proteinFile
+            this.pocketPredictionFile = predictionFile
+            this.label = Futils.shortName( pocketPredictionFile ?: proteinFile )
+        }
+
+        Prediction getPrediction() {
+            // when running 'prank rescore' on a dataset with one column prediction is in proteinFile
+            String file = pocketPredictionFile ?: proteinFile
+            return getLoader(this).loadPredictionWithoutProtein(file)
+        }
+
+        PredictionPair getPredictionPair() {
+            if (cached) {
+                if (cachedPair==null) {
+                    cachedPair = loadPredictionPair()
+                    log.info "caching structures in dataset item [$label]"
+                }
+                return cachedPair
+            } else {
+                return loadPredictionPair()
+            }
+        }
+
+        // for one column datasets
+        Protein getProtein() {
+            getPredictionPair().protein
+        }
+
+        PredictionPair loadPredictionPair() {
+            getLoader(this).loadPredictionPair(proteinFile, pocketPredictionFile, getContext())
+        }
+
+        /**
+         * explicitely specified ligand codes
+         * @return null if column is not defined
+         */
+        Set<String> getLigandCodes() {
+            if (!columnValues.containsKey(COLUMN_LIGAND_CODES)) {
+                null
+            } else {
+                Splitter.on(",").split(columnValues[COLUMN_LIGAND_CODES]).toSet()
+            }
+        }
+
+        /**
+         * explicitely specified chain codes
+         * @return null if column is not defined
+         */
+        List<String> getChains() {
+            if (!columnValues.containsKey(COLUMN_CHAINS)) {
+                null
+            } else {
+                Splitter.on(",").split(columnValues[COLUMN_CHAINS]).asList()
+            }
+        }
+
+        /**
+         * @return binary residue labeling that is defined in the dataset
+         */
+        @Nullable
+        BinaryLabeling getDefinedBinaryLabeling() {
+            if (dataset.hasResidueLabeling()) {
+                return dataset.binaryResidueLabeler.getBinaryLabeling(protein.residues, protein)
+            }
+            return null
+        }
+
+        ProcessedItemContext getContext() {
+            new ProcessedItemContext(this, columnValues)
+        }
+    }
+
+    Item createNewItem(String proteinFile, String predictionFile, Map<String, String> columnValues) {
+        return new Item(this, proteinFile, predictionFile, columnValues)
+    }
+
+    Item createNewItem(Map<String, String> columnValues) {
+        String proteinFile = dir + "/" + columnValues.get(COLUMN_PROTEIN)
+        String predictionFile = null
+        if (header.contains(COLUMN_PREDICTION)) {
+            predictionFile = dir + "/" + columnValues.get(COLUMN_PREDICTION)
+        }
+
+        return createNewItem(proteinFile, predictionFile, columnValues)
+    }
+
+//===========================================================================================================//
+
+    static final class Fold {
+        int num
+        Dataset trainset
+        Dataset evalset
+        Fold(int num, Dataset trainset, Dataset evalset) {
+            this.num = num
+            this.trainset = trainset
+            this.evalset = evalset
+        }
+    }
+
+
+    @FunctionalInterface
+    interface Processor {
+
+        abstract void processItem(Item item)
+    }
+
+    /**
+     * summary of a dataset processing run
+     */
+    static class Result {
+        List<Item> errorItems = Collections.synchronizedList(new ArrayList<Item>())
+
+        boolean hasErrors() {
+            errorItems.size() > 0
+        }
+
+        int getErrorCount() {
+            errorItems.size()
+        }
     }
 
 }

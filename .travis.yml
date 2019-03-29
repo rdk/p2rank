@@ -6,14 +6,10 @@ env:
 
 jdk:
   - oraclejdk8
-
-addons:
-  apt:
-    packages:
-      - oracle-java8-installer
+  - oraclejdk11
 
 script:
   - java -version
-  - gradle -version
-  - gradle --stop
-  - gradle --refresh-dependencies clean check -Dscan --info 
+  - ./gradlew -version
+  - ./gradlew --stop
+  - ./gradlew --refresh-dependencies clean check test -Dscan --info

@@ -1,6 +1,5 @@
-
-# dataset that explicitely specifies which ligands should be considered in evaluation phase
-# ligands are declared as list of pdb HET group codes separated with a coma without spaces
+# Dataset that explicitely specifies which ligands should be considered in evaluation phase.
+# Ligands are declared as list of pdb HET group codes separated with a coma without spaces.
 
 HEADER:  protein  ligand_codes
 

@@ -116,6 +116,6 @@ class CmdLineArgs {
 
     @Override
     String toString() {
-        return StrUtils.toStr(this)
+        return Sutils.toStr(this)
     }
 }

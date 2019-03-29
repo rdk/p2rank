@@ -4,7 +4,6 @@ import cz.siret.prank.domain.Protein
 import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.features.api.SasFeatureCalculationContext
 import cz.siret.prank.features.api.SasFeatureCalculator
-import cz.siret.prank.geom.Atoms
 import cz.siret.prank.program.params.Parametrized
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
@@ -42,7 +41,7 @@ class AsaResiduesFeature extends SasFeatureCalculator implements Parametrized {
 
     @Override
     double[] calculateForSasPoint(Atom sasPoint, SasFeatureCalculationContext context) {
-        List<Group> groups = context.protein.exposedAtoms.cutoffAroundAtom(sasPoint, params.feat_asa_neigh_radius).distinctGroups
+        List<Group> groups = context.protein.exposedAtoms.cutoutSphere(sasPoint, params.feat_asa_neigh_radius).distinctGroupsSorted
         ProtAsa protAsa = (ProtAsa) context.protein.secondaryData.get("prot_asa")
         double localAsa = (double) groups.collect { Group g -> protAsa.groupAsaMap.get(g.residueNumber) ?: 0 }.sum(0)
 

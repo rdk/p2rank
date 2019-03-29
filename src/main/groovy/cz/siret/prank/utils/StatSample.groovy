@@ -36,6 +36,7 @@ class StatSample {
     }
 
     double getMean() {
+        if (size==0) return 0
         sum / size
     }
 
@@ -50,6 +51,10 @@ class StatSample {
     double getStddev() {
         sqrt(variance)
     }
+    
+    double getRelativeStdev() {
+        (100*stddev) / mean
+    }
 
     double getMin() {
         Collections.min(sample)
@@ -58,5 +63,6 @@ class StatSample {
     double getMax() {
         Collections.max(sample)
     }
+
 
 }

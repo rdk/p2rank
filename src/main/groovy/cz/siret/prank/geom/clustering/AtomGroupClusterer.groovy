@@ -21,7 +21,7 @@ class AtomGroupClusterer implements Clusterer<Atoms> {
     }
 
     List<Atoms> clusterGroups(List<Atoms> elements, double minDist) {
-        cluster(elements, minDist, EUCLID_DIST).collect { list -> Atoms.joinAll(list) }.toList()
+        cluster(elements, minDist, EUCLID_DIST).collect { list -> Atoms.join(list) }.toList()
     }
 
 

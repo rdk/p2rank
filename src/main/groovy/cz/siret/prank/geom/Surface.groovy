@@ -1,10 +1,9 @@
 package cz.siret.prank.geom
 
 import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.utils.CDKUtils
+import cz.siret.prank.utils.CdkUtils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-import org.openscience.cdk.CDK
 import org.openscience.cdk.geometry.surface.NumericalSurface
 import org.openscience.cdk.interfaces.IAtomContainer
 
@@ -32,7 +31,7 @@ class Surface implements Parametrized {
     }
 
     Atoms computeExposedAtoms(Atoms proteinAtoms) {
-        return proteinAtoms.cutoffAtoms(points, solventRadius + VAN_DER_WAALS_COMPENSATION)
+        return proteinAtoms.cutoutShell(points, solventRadius + VAN_DER_WAALS_COMPENSATION)
     }
 
     /**
@@ -42,11 +41,11 @@ class Surface implements Parametrized {
 
         log.debug "proteinAtoms.count:" + proteinAtoms.count
 
-        IAtomContainer container = CDKUtils.toAtomContainer(proteinAtoms)
+        IAtomContainer container = CdkUtils.toAtomContainer(proteinAtoms)
         NumericalSurface numericalSurface = new NumericalSurface(container, solventRadius, tesslevel)
         numericalSurface.calculateSurface()
 
-        Atoms surfacePoints = CDKUtils.toAtomPoints(numericalSurface.allSurfacePoints)
+        Atoms surfacePoints = CdkUtils.toAtomPoints(numericalSurface.allSurfacePoints)
 
         log.debug "numerical surface: {} points", surfacePoints.count
         // CDK returns lots of duplicate or too-close atoms (bug in the implementation?)

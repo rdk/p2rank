@@ -1,0 +1,38 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket    16:
+HEADER 0  - Pocket Score                      : 0.0048
+HEADER 1  - Drug Score                        : 0.0004
+HEADER 2  - Number of alpha spheres           :    17
+HEADER 3  - Mean alpha-sphere radius          : 3.8879
+HEADER 4  - Mean alpha-sphere Solvent Acc.    : 0.6210
+HEADER 5  - Mean B-factor of pocket residues  : 0.4008
+HEADER 6  - Hydrophobicity Score              : -2.3333
+HEADER 7  - Polarity Score                    :     4
+HEADER 8  - Amino Acid based volume Score     : 4.0000
+HEADER 9  - Pocket volume (Monte Carlo)       : 206.3779
+HEADER 10  -Pocket volume (convex hull)       : 5.7057
+HEADER 11 - Charge Score                      :     1
+HEADER 12 - Local hydrophobic density Score   : 5.0000
+HEADER 13 - Number of apolar alpha sphere     :     6
+HEADER 14 - Proportion of apolar alpha sphere : 0.3529
+ATOM   5265  OD1 ASP B 224     105.026 -14.230  35.142  0.00  0.00           O 0
+ATOM   5284   CB LYS B 227     108.957 -11.237  33.909  0.00  0.00           C 0
+ATOM   5280    N LYS B 227     108.440  -9.680  35.762  0.69  2.19           N 0
+ATOM   5245  CG2 THR B 221     106.764 -13.485  41.562  0.00  0.00           C 0
+ATOM   5276   CB MET B 226     107.987  -9.454  39.020  0.00  0.00           C 0
+ATOM   5242    O THR B 221     104.004 -13.211  39.690  0.12  3.21           O 0
+ATOM   5240   CA THR B 221     105.250 -11.554  40.916  0.00  0.00           C 0
+ATOM   5272    N MET B 226     106.293  -8.896  37.319  0.00  0.00           N 0
+ATOM   4451   NZ LYS B 118     112.851 -13.110  42.217  0.53  9.84           N 0
+ATOM   5277   CG MET B 226     109.183  -8.941  39.827  0.00  0.00           C 0
+ATOM   5244  OG1 THR B 221     107.273 -11.217  42.224  0.58  3.21           O 0
+ATOM   4357   CA GLY B 105     112.690  -8.739  37.262  0.00  0.00           C 0
+ATOM   5274    C MET B 226     108.696  -8.767  36.696  0.00  0.00           C 0
+ATOM   5260   CA ASP B 224     103.372 -12.226  36.329  0.00  0.00           C 0
+ATOM   4359    O GLY B 105     113.355  -9.417  39.466  0.27  3.21           O 0
+ATOM   5281   CA LYS B 227     109.394  -9.992  34.689  0.00  0.00           C 0
+TER
+END

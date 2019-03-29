@@ -1,0 +1,18 @@
+# Dataset for rescoring Fpocket 3 predictions.
+# (predictions generated with Fpocket 3.1.2 on "./clean" structures)
+#
+# Note: this dataset (unlike fpocket.ds) cannot be used for eval-rescore
+# because protein column points to proteins without known ligands.
+
+PARAM.PREDICTION_METHOD=fpocket
+
+# uncomment if ligands are separated with TER record:
+PARAM.LIGANDS_SEPARATED_BY_TER=true
+
+HEADER: prediction protein
+
+predictions/fpocket3/1a82a_out/1a82a_out.pdb  clean/1a82a.pdb
+predictions/fpocket3/1aaxa_out/1aaxa_out.pdb  clean/1aaxa.pdb
+predictions/fpocket3/1nlua_out/1nlua_out.pdb  clean/1nlua.pdb
+predictions/fpocket3/1t7qa_out/1t7qa_out.pdb  clean/1t7qa.pdb
+predictions/fpocket3/2ck3b_out/2ck3b_out.pdb  clean/2ck3b.pdb

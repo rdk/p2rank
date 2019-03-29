@@ -1,4 +1,3 @@
-import cz.siret.prank.features.weight.WeightFun
 import cz.siret.prank.program.params.Params
 
 (params as Params).with {
@@ -328,7 +327,7 @@ import cz.siret.prank.program.params.Params
      */
     ligc_prot_dist = 5.5
 
-    rescorer = "WekaSumRescorer"
+    rescorer = "ModelBasedRescorer"
 
     plb_rescorer_atomic = false
 
@@ -353,5 +352,31 @@ import cz.siret.prank.program.params.Params
      * Use path relative to distro/models/score.
      */
     probatp_transformer = "default_probatp.json"
+
+    /**
+     * added to the cutoff distance around residue in score aggregation from SAS points
+     */
+    residue_score_extra_dist = 2.0d
+    
+
+    /**
+     * logging level (TRACE/DEBUG/INFO/WARN/ERROR)
+     */
+    log_level = "INFO"
+
+    /**
+     * print log messages to console
+     */
+    log_to_console = true
+
+    /**
+     * print log messages to file (run.log in outdir)
+     */
+    log_to_file = true
+
+    /**
+     * compress and delete log file at the end (if log_to_file)
+     */
+    zip_log_file = false
 
 }

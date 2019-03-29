@@ -6,7 +6,7 @@ import cz.siret.prank.features.generic.GenericVector
 import cz.siret.prank.features.tables.PropertyTable
 import cz.siret.prank.program.params.Params
 import cz.siret.prank.utils.Futils
-import cz.siret.prank.utils.PDBUtils
+import cz.siret.prank.utils.PdbUtils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
@@ -52,7 +52,7 @@ public class PrankFeatureVector extends FeatureVector implements Cloneable {
 
 
     public static PrankFeatureVector forAtom(Atom atom, PrankFeatureExtractor extractor) {
-        String residueCode = PDBUtils.normAAcode(PDBUtils.getAtomResidueCode(atom))
+        String residueCode = PdbUtils.normAAcode(PdbUtils.getCorrectedAtomResidueCode(atom))
 
         PrankFeatureVector p = new PrankFeatureVector()
         p.valueVector = new GenericVector(extractor.headerAdditionalFeatures)
@@ -104,7 +104,7 @@ public class PrankFeatureVector extends FeatureVector implements Cloneable {
     }
 
     private static Double getAtomTableValue(Atom atom, String property) {
-        String atomName = PDBUtils.getAtomResidueCode(atom) + "." + atom.name
+        String atomName = PdbUtils.getCorrectedAtomResidueCode(atom) + "." + atom.name
         Double val = atomPropertyTable.getValue(atomName, property)
 
         //log.info "atom table value ${atomName}.$property = $val"
@@ -113,7 +113,7 @@ public class PrankFeatureVector extends FeatureVector implements Cloneable {
     }
 
     private static Double getResidueTableValue(Atom atom, String property) {
-        Double val = aaPropertyTable.getValue(PDBUtils.getAtomResidueCode(atom), property)
+        Double val = aaPropertyTable.getValue(PdbUtils.getCorrectedAtomResidueCode(atom), property)
         return val==null ? 0d : val
     }
 

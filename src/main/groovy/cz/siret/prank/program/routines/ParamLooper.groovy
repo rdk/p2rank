@@ -2,15 +2,13 @@ package cz.siret.prank.program.routines
 
 import cz.siret.prank.program.params.Params
 import cz.siret.prank.program.routines.results.EvalResults
-import cz.siret.prank.utils.CollectionUtils
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
 import groovy.util.logging.Slf4j
 
 import static cz.siret.prank.utils.ATimer.startTimer
-import static cz.siret.prank.utils.CollectionUtils.prefixKeys
-import static cz.siret.prank.utils.Futils.append
+import static cz.siret.prank.utils.Cutils.prefixMapKeys
 import static cz.siret.prank.utils.Futils.appendl
 import static cz.siret.prank.utils.Futils.exists
 import static cz.siret.prank.utils.Futils.mkdirs
@@ -62,7 +60,7 @@ abstract class ParamLooper extends Routine {
         step.results.putAll( res.stats )
         step.results.TIME_MINUTES = stepTimer.minutes
         if (res.subResults.size() > 1) {
-            step.results.putAll prefixKeys(res.statsStddev, '_stddev_') as Map<String, Double>
+            step.results.putAll prefixMapKeys(res.statsStddev, '_stddev_')
         }
 
         // save stats

@@ -3,16 +3,17 @@ package cz.siret.prank.program.routines.results
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.score.metrics.ClassifierStats
-import cz.siret.prank.score.metrics.Curves
-import cz.siret.prank.score.metrics.Histogram
+import cz.siret.prank.prediction.metrics.ClassifierStats
+import cz.siret.prank.prediction.metrics.Curves
+import cz.siret.prank.prediction.metrics.Histogram
 import cz.siret.prank.utils.CSV
+import cz.siret.prank.utils.Cutils
 import cz.siret.prank.utils.Formatter
-import cz.siret.prank.utils.PerfUtils
 import cz.siret.prank.utils.Writable
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
+import static cz.siret.prank.utils.Cutils.prefixMapKeys
 import static cz.siret.prank.utils.Futils.mkdirs
 import static cz.siret.prank.utils.Futils.writeFile
 import static cz.siret.prank.utils.MathUtils.stddev
@@ -34,6 +35,8 @@ class EvalResults implements Parametrized, Writable  {
     ClassifierStats classifierStats
     ClassifierStats classifierTrainStats // classifier stats on train data
 
+    ClassifierStats residuePredictionStats
+
     Dataset.Result datasetResult
 
     Long trainTime
@@ -47,7 +50,9 @@ class EvalResults implements Parametrized, Writable  {
 
     Map<String, Double> additionalStats = new HashMap<>()
 
-    boolean rescoring = !params.predictions  // new predictions vs. rescoring
+    boolean mode_residues = params.predict_residues
+    boolean mode_pockets = !mode_residues
+    boolean rescoring = !params.predictions  // in mode_pockets: new predictions vs. rescoring
 
     EvalResults(int runs) {
         this.runs = runs
@@ -57,6 +62,8 @@ class EvalResults implements Parametrized, Writable  {
         if (params.classifier_train_stats) {
             classifierTrainStats = new ClassifierStats()
         }
+
+        residuePredictionStats = new ClassifierStats()
     }
 
     private static List<Double> repeat(Double value, int times) {
@@ -89,6 +96,8 @@ class EvalResults implements Parametrized, Writable  {
         if (classifierTrainStats!=null && results.classifierTrainStats!=null) {
             classifierTrainStats.addAll(results.classifierTrainStats)
         }
+
+        residuePredictionStats.addAll(results.residuePredictionStats)
 
         // set only once to because of varoius caching
         if (trainTime==null) trainTime = results.trainTime
@@ -127,20 +136,21 @@ class EvalResults implements Parametrized, Writable  {
     }
 
     Map<String, Double> getStats() {
-        Map<String, Double> m = eval.stats
+        Map<String, Double> m = new TreeMap<>()
 
-        m.PROTEINS         = (double)m.PROTEINS         / runs
-        m.POCKETS          = (double)m.POCKETS          / runs
-        m.LIGANDS          = (double)m.LIGANDS          / runs
-        m.LIGANDS_IGNORED  = (double)m.LIGANDS_IGNORED  / runs
-        m.LIGANDS_SMALL    = (double)m.LIGANDS_SMALL    / runs
-        m.LIGANDS_DISTANT  = (double)m.LIGANDS_DISTANT  / runs
-
-        //===========================================================================================================//
+        if (mode_pockets) {
+            m.putAll(eval.stats)
+            m.PROTEINS         = (double)m.PROTEINS         / runs
+            m.POCKETS          = (double)m.POCKETS          / runs
+            m.LIGANDS          = (double)m.LIGANDS          / runs
+            m.LIGANDS_IGNORED  = (double)m.LIGANDS_IGNORED  / runs
+            m.LIGANDS_SMALL    = (double)m.LIGANDS_SMALL    / runs
+            m.LIGANDS_DISTANT  = (double)m.LIGANDS_DISTANT  / runs
+        }
 
         m.TIME_TRAIN_M = (double)(trainTime ?: 0) / 60000
         m.TIME_EVAL_M = (double)(evalTime ?: 0) / 60000
-        m.TIME_M = m.TIME_TRAIN_M + m.TIME_EVAL_M
+        m.TIME_M = (double)m.TIME_TRAIN_M + (double)m.TIME_EVAL_M
 
         m.TRAIN_VECTORS = avgTrainVectors
         m.TRAIN_POSITIVES = avgTrainPositives
@@ -148,9 +158,16 @@ class EvalResults implements Parametrized, Writable  {
         m.TRAIN_RATIO = trainRatio
         m.TRAIN_POS_RATIO = trainPositivesRatio
 
-        m.putAll classifierStats.metricsMap
-        if (params.classifier_train_stats && classifierTrainStats!=null) {
-            m.putAll classifierTrainStats.metricsMap.collectEntries { key, value -> ["train_" + key, value] } as Map<String, Double>
+        if (mode_pockets) {
+            m.putAll classifierStats.metricsMap
+            if (params.classifier_train_stats && classifierTrainStats!=null) {
+                m.putAll classifierTrainStats.metricsMap.collectEntries { key, value -> ["train_" + key, value] } as Map<String, Double>
+            }
+        }
+
+        if (mode_residues) {
+            m.putAll residuePredictionStats.metricsMap
+            m.putAll prefixMapKeys(classifierStats.metricsMap, "point_")
         }
 
         if (params.feature_importances && featureImportances!=null) {
@@ -164,6 +181,17 @@ class EvalResults implements Parametrized, Writable  {
 
         return m
     }
+
+
+    MultiRunStats getMultiStats() {
+        assert !subResults.isEmpty()
+
+        List<Map<String, Double>> subStats = subResults.collect { it.stats }.toList()
+        List<String> statNames = subStats[0].keySet().toList()
+
+        new MultiRunStats(statNames, subStats)
+    }
+
 
     /**
      * Calculates sample standard deviation for all stats.
@@ -187,19 +215,29 @@ class EvalResults implements Parametrized, Writable  {
     }
 
 
-    void logClassifierStats(ClassifierStats cs, String outdir) {
-        String dir = "$outdir/classifier"
+    String logClassifierStats(String fileLabel, String classifierLabel, ClassifierStats cs, String outdir) {
+
+        // main stats
+
+        String stats_str    = cs.toCSV(" $classifierLabel ")
+        writeFile "$outdir/${fileLabel}.csv", stats_str
+
+        // additional stats: histograms, roc
+
+        String dir = "$outdir/$fileLabel"
         mkdirs(dir)
 
-        cs.histograms.properties.findAll { it.value instanceof Histogram }.each {
-            String label = it.key
-            Histogram hist = (Histogram) it.value
-
-            writeFile "$dir/hist_${label}.csv", hist.toCSV()
-        }
+        //cs.histograms.properties.findAll { it.value instanceof Histogram }.each {
+        //    String hist_label = it.key
+        //    Histogram hist = (Histogram) it.value
+        //
+        //    writeFile "$dir/hist_${hist_label}.csv", hist.toCSV()
+        //}
 
         if (cs.collecting && params.stats_curves)
             writeFile "$dir/roc_curve.csv", Curves.roc(cs.predictions).toCSV()
+
+        return stats_str
     }
 
     /**
@@ -208,46 +246,64 @@ class EvalResults implements Parametrized, Writable  {
      * @param classifierName
      * @param summaryStats  in summary stats (like over multiple seed runs) we dont want all pocket details multiple times
      */
-    void logAndStore(String outdir, String classifierName, Boolean logIndividualCases=null) {
-
-        if (logIndividualCases==null) {
-            logIndividualCases = params.log_cases
-        }
+    void logAndStore(String outdir, String classifierName, Boolean logIndividualCases = params.log_cases) {
 
         mkdirs(outdir)
 
-        List<Integer> tolerances = params.eval_tolerances
-
-        String succ_rates          = origEval.toSuccRatesCSV(tolerances)
-        String succ_rates_rescored = eval.toSuccRatesCSV(tolerances)  // P2RANK predictions are in eval
-        String succ_rates_diff     = eval.diffSuccRatesCSV(tolerances, origEval)
-        String classifier_stats    = classifierStats.toCSV(" $classifierName ")
-
-        writeFile "$outdir/success_rates.csv", succ_rates_rescored
-        if (rescoring) {
-            writeFile "$outdir/success_rates_original.csv", succ_rates
-            writeFile "$outdir/success_rates_diff.csv", succ_rates_diff
-        }
-        writeFile "$outdir/classifier.csv", classifier_stats
         writeFile "$outdir/stats.csv", statsCSV(getStats())
+        // multiple runs
         if (subResults.size() > 1) {
-            writeFile "$outdir/stats_stddev.csv", statsCSV(getStatsStddev())
+            writeFile "$outdir/stats_stddev.csv", statsCSV(getStatsStddev()) // TODo remove
+            writeFile "$outdir/stats_runs.csv", multiStats.toCSV()
         }
 
-        logClassifierStats(classifierStats, outdir)
 
-        if (logIndividualCases) {
-            origEval.sort()
-            eval.sort()
+        def pst = logClassifierStats("point_classification", classifierName,  classifierStats, outdir)
+        if (mode_residues) {
+            def rst = logClassifierStats("residue_classification", "Residue classification",  residuePredictionStats, outdir)
 
-            String casedir = "$outdir/cases"
-            mkdirs(casedir)
-            writeFile "$casedir/proteins.csv", eval.toProteinsCSV()
-            writeFile "$casedir/ligands.csv", eval.toLigandsCSV()
-            writeFile "$casedir/pockets.csv", eval.toPocketsCSV()
-            writeFile "$casedir/ranks.csv", eval.toRanksCSV()
+            write "\n" + CSV.tabulate(pst)
+            write  CSV.tabulate(rst) + "\n"
+        }
+        //else {
+        //    logClassifierStats("classifier", classifierName,  classifierStats, outdir)
+        //}
+
+        if (mode_pockets) {
+            List<Integer> tolerances = params.eval_tolerances
+
+            String succ_rates          = origEval.toSuccRatesCSV(tolerances)
+            String succ_rates_rescored = eval.toSuccRatesCSV(tolerances)  // P2RANK predictions are in eval
+            String succ_rates_diff     = eval.diffSuccRatesCSV(tolerances, origEval)
+
+            writeFile "$outdir/success_rates.csv", succ_rates_rescored
             if (rescoring) {
-                writeFile "$casedir/ranks_original.csv", origEval.toRanksCSV()
+                writeFile "$outdir/success_rates_original.csv", succ_rates
+                writeFile "$outdir/success_rates_diff.csv", succ_rates_diff
+            }
+
+            if (logIndividualCases) {
+                origEval.sort()
+                eval.sort()
+
+                String casedir = "$outdir/cases"
+                mkdirs(casedir)
+                writeFile "$casedir/proteins.csv", eval.toProteinsCSV()
+                writeFile "$casedir/ligands.csv", eval.toLigandsCSV()
+                writeFile "$casedir/pockets.csv", eval.toPocketsCSV()
+                writeFile "$casedir/ranks.csv", eval.toRanksCSV()
+                if (rescoring) {
+                    writeFile "$casedir/ranks_original.csv", origEval.toRanksCSV()
+                }
+            }
+
+            //log.info "\n" + CSV.tabulate(classifier_stats) + "\n\n"
+            if (rescoring) {
+                log.info "\nSucess Rates - Original:\n" + CSV.tabulate(succ_rates) + "\n"
+            }
+            write "\nSucess Rates:\n" + CSV.tabulate(succ_rates_rescored) + "\n"
+            if (rescoring) {
+                log.info "\nSucess Rates - Diff:\n" + CSV.tabulate(succ_rates_diff) + "\n\n"
             }
         }
 
@@ -255,17 +311,9 @@ class EvalResults implements Parametrized, Writable  {
             List<FeatureImportance> namedImportances = getNamedImportances()
             namedImportances.sort { -it.importance } // descending
             String sortedCsv = namedImportances.collect { it.name + ", " + fmt_fi(it.importance) }.join("\n") + "\n"
-            writeFile("$outdir/feature_importances_sorted.csv", sortedCsv)
+            writeFile"$outdir/feature_importances_sorted.csv", sortedCsv
         }
 
-        log.info "\n" + CSV.tabulate(classifier_stats) + "\n\n"
-        if (rescoring) {
-            log.info "\nSucess Rates - Original:\n" + CSV.tabulate(succ_rates) + "\n"
-        }
-        write "\nSucess Rates:\n" + CSV.tabulate(succ_rates_rescored) + "\n"
-        if (rescoring) {
-            log.info "\nSucess Rates - Diff:\n" + CSV.tabulate(succ_rates_diff) + "\n\n"
-        }
     }
 
     static String fmt_fi(Object x) {

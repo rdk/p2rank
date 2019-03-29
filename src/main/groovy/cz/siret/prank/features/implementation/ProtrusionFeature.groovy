@@ -32,7 +32,7 @@ class ProtrusionFeature extends SasFeatureCalculator implements Parametrized {
         //int MAX_PROTRUSION_ATOMS = 250
         //Atoms deepLayer = this.deepLayer.withKdTree().kdTree.findNearestNAtoms(point, MAX_PROTRUSION_ATOMS, false)
 
-        double protAtoms = context.extractor.deepLayer.cutoffAroundAtom(sasPoint, params.protrusion_radius).count  // deepLayer is previously generated in PrankFeatureExtractor, depth is params.protrusion_radius
+        double protAtoms = context.extractor.deepLayer.cutoutSphere(sasPoint, params.protrusion_radius).count  // deepLayer is previously generated in PrankFeatureExtractor, depth is params.protrusion_radius
         return [protAtoms] as double[]
     }
 

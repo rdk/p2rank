@@ -1,5 +1,8 @@
 package cz.siret.prank.program.routines
 
+import cz.siret.prank.domain.Dataset
+import cz.siret.prank.program.ml.Model
+import cz.siret.prank.program.params.Params
 import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
@@ -66,12 +69,12 @@ abstract class EvalRoutine extends Routine {
         String mainRes = toMainResultsCsv(label, model, results)
         writeFile "$outdir/summary.csv", mainRes
 
-        // collecting results
-        File collectedf = new File("$outdir/../runs.csv")
-        if (!collectedf.exists()) {
-            collectedf << mainRes.readLines()[0] + "\n" // add header
-        }
-        collectedf << mainRes.readLines()[1] + "\n"
+        // collecting results (runs.csv in .. dir)
+        //File collectedf = new File("$outdir/../runs.csv")
+        //if (!collectedf.exists()) {
+        //    collectedf << mainRes.readLines()[0] + "\n" // add header
+        //}
+        //collectedf << mainRes.readLines()[1] + "\n"
     }
 
     String getEvalRoutineOutdir() {

@@ -1,6 +1,7 @@
 package cz.siret.prank.features.api
 
 import cz.siret.prank.domain.Protein
+import cz.siret.prank.domain.Residue
 import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
 
@@ -16,9 +17,10 @@ interface FeatureCalculator {
 
     /**
      * ATOM ... feature is calculated for protein solvent exposed atoms and then projected to SAS points by P2RANK
+     * RESIDUE
      * SAS_POINT ... feature is calculated directly for SAS points
      */
-    enum Type { ATOM, SAS_POINT } // TODO: BOTH... feature calculator that can set values to atoms and then project them to SAS point (and thus not rely on default P2RANK projection)
+    enum Type { ATOM, RESIDUE, SAS_POINT } // TODO: BOTH... feature calculator that can set values to atoms and then project them to SAS point (and thus not rely on default P2RANK projection)
 
     Type getType()
 
@@ -43,19 +45,22 @@ interface FeatureCalculator {
 
     /**
      *
+     * @param proteinSurfaceAtom
+     * @param protein
+     * @return
+     */
+    double[] calculateForAtom(Atom proteinSurfaceAtom, AtomFeatureCalculationContext context)
+
+    /**
+     *
      * @param sasPoint one of the points on the Protein's SAS (Solvent Accessible Surface)
      * @param context local context for feature calculation that corresponds to the given SAS point
      * @return array of values, length must be the same as length of the header
      */
     double[] calculateForSasPoint(Atom sasPoint, SasFeatureCalculationContext context)
 
-    /**
-     *
-     * @param proteinSurfaceAtom
-     * @param protein
-     * @return
-     */
-    double[] calculateForAtom(Atom proteinSurfaceAtom, AtomFeatureCalculationContext context)
+
+    double[] calculateForResidue(Residue residue, ResidueFeatureCalculationContext context)
 
     /**
      * (Optionally) perform post processing on the whole protein.

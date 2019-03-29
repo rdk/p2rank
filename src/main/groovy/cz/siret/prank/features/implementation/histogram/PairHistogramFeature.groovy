@@ -30,9 +30,9 @@ class PairHistogramFeature extends SasFeatureCalculator implements Parametrized 
 
     private Atoms getAtoms(Atom sasPoint, SasFeatureCalculationContext context) {
         if (params.pair_hist_deep) {
-            return context.extractor.deepLayer.cutoffAroundAtom(sasPoint, params.pair_hist_radius)
+            return context.extractor.deepLayer.cutoutSphere(sasPoint, params.pair_hist_radius)
         } else {
-            return context.protein.exposedAtoms.cutoffAroundAtom(sasPoint, params.pair_hist_radius)
+            return context.protein.exposedAtoms.cutoutSphere(sasPoint, params.pair_hist_radius)
         }
     }
 

@@ -97,11 +97,17 @@ public class AtomKdTree extends KdTree.SqrEuclid<Atom> {
     }
 
     public Atoms findNearestNAtoms(Atom a, int count, boolean sorted) {
-        return new Atoms((List<Atom>)findNearestN(a, count, sorted)*.value)
+        return new Atoms((List<Atom>) findNearestN(a, count, sorted)*.value )
     }
 
     public Atoms findNearestNDifferentAtoms(Atom a, int count, boolean sorted) {
-        return new Atoms((List<Atom>)findNearestNDifferent(a, count, sorted)*.value)
+        return new Atoms((List<Atom>) findNearestNDifferent(a, count, sorted)*.value )
+    }
+
+    public final Atoms findAtomsWithinRadius(Atom a, double radius, boolean sorted) {
+        radius = radius*radius // since we inherit from SqrEuclid
+
+        return new Atoms((List<Atom>) neighboursWithinRadius(a.coords, radius, sorted)*.value )
     }
 
 }

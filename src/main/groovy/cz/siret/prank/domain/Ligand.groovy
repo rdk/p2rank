@@ -2,15 +2,17 @@ package cz.siret.prank.domain
 
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.utils.PDBUtils
+import cz.siret.prank.utils.PdbUtils
+import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 import org.biojava.nbio.structure.Group
 
 /**
- * Ligand mado of one or several pdb groups
+ * Ligand made of one or several pdb groups
  */
 @Slf4j
+@CompileStatic
 class Ligand implements Parametrized {
 
     /**
@@ -40,13 +42,13 @@ class Ligand implements Parametrized {
 
         atoms = new Atoms(ligAtoms)
         this.protein = protein
-        List<Group> groups = atoms.getDistinctGroups()
+        List<Group> groups = atoms.getDistinctGroupsSorted()
         Set<String> uniqueNames = (groups*.PDBName).toSet()
         this.name = uniqueNames.join("&")
         this.code = (groups*.residueNumber).join("&")
 
         for (Atom a : atoms) {
-            PDBUtils.correctBioJavaElement(a)
+            PdbUtils.correctBioJavaElement(a)
         }
 
         if (log.debugEnabled) {
@@ -59,12 +61,12 @@ class Ligand implements Parametrized {
     }
 
 //    Atoms calcContactAtoms(Atoms proteinAtoms) {
-//        return proteinAtoms.cutoffAtoms(atoms, params.ligand_protein_contact_distance)
+//        return proteinAtoms.cutoutShell(atoms, params.ligand_protein_contact_distance)
 //    }
 
     Atoms getSasPoints() {
         if (sasPoints==null) {
-            sasPoints = protein.accessibleSurface.points.cutoffAtoms(this.atoms, params.ligand_induced_volume_cutoff)
+            sasPoints = protein.accessibleSurface.points.cutoutShell(this.atoms, params.ligand_induced_volume_cutoff)
         }
         return sasPoints
     }

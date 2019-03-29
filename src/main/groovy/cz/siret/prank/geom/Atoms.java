@@ -1,8 +1,9 @@
 package cz.siret.prank.geom;
 
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
+import cz.siret.prank.features.api.AtomFeatureCalculator;
 import cz.siret.prank.geom.kdtree.AtomKdTree;
+import cz.siret.prank.program.params.Params;
 import cz.siret.prank.utils.ATimer;
 import cz.siret.prank.utils.CutoffAtomsCallLog;
 import cz.siret.prank.utils.PerfUtils;
@@ -11,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static cz.siret.prank.utils.ATimer.startTimer;
 
@@ -66,6 +68,11 @@ public final class Atoms implements Iterable<Atom> {
         return copyPoints(this.list.toArray(new Atom[0]));
     }
 
+
+    public List<Integer> getIndexes() {
+        return list.stream().map(Atom::getPDBserial).collect(Collectors.toList());
+    }
+
     public Atoms(Atom atom) {
         this(Lists.newArrayList(atom));
     }
@@ -116,6 +123,14 @@ public final class Atoms implements Iterable<Atom> {
     @Override
     public Iterator<Atom> iterator() {
         return list.iterator();
+    }
+
+    /**
+     * based on index and PDBSerial
+     */
+    public boolean contains(Atom a) {
+        withIndex();
+        return index.containsKey(a.getPDBserial());
     }
 
     /**
@@ -212,6 +227,11 @@ public final class Atoms implements Iterable<Atom> {
         return centerOfMass;
     }
 
+    public List<Group> getDistinctGroupsSorted() {
+
+        return Struct.sortedGroups(getDistinctGroups());
+    }
+
     public List<Group> getDistinctGroups() {
         Set<Group> res = new HashSet<>();
         for (Atom a : list) {
@@ -220,9 +240,7 @@ public final class Atoms implements Iterable<Atom> {
             }
         }
 
-        List<Group> sres = Struct.sortGroups(res);
-
-        return sres;
+        return new ArrayList<>(res);
     }
 
     public void add(Atom a) {
@@ -247,14 +265,14 @@ public final class Atoms implements Iterable<Atom> {
         return this;
     }
 
-    public static Atoms joinAll(Collection<Atoms> col) {
+    public static Atoms join(Collection<Atoms> col) {
         return new Atoms().addAll(col);
     }
 
     /**
      * @return new instance
      */
-    public Atoms join(Atoms atoms) {
+    public Atoms joinWith(Atoms atoms) {
         List<Atom> newlist = new ArrayList<>(list.size() + atoms.getCount());
         newlist.addAll(list);
         newlist.addAll(atoms.list);
@@ -265,7 +283,7 @@ public final class Atoms implements Iterable<Atom> {
      * @return new instance
      */
     public Atoms plus(Atoms atoms) {
-        return join(atoms);
+        return joinWith(atoms);
     }
 
     public static Atoms union(Atoms... aa) {
@@ -296,12 +314,39 @@ public final class Atoms implements Iterable<Atom> {
 
 //===========================================================================================================//
 
-    public Atoms cutoffAtoms(Atoms aroundAtoms, double dist) {
+    public Atoms cutoutShell(Atoms aroundAtoms, double dist) {
+        if (aroundAtoms==null || aroundAtoms.isEmpty()) {
+            return new Atoms(0);
+        }
+
+        Atom center;
+        double additionalDist;
+        if (aroundAtoms.getCount()==1) {
+            center = aroundAtoms.list.get(0);
+            return cutoutSphere(center, dist);
+
+        } else {
+            Box box = Box.aroundAtoms(aroundAtoms);
+            center = box.getCenter();
+            additionalDist = Struct.dist(center, box.getMax());
+
+            Atoms ofAtoms = this.cutoutSphere(center, dist + additionalDist);
+            return cutoutShell(ofAtoms, aroundAtoms, dist);
+        }
+
+        // return cutoutShell(this, aroundAtoms, dist);
+    }
+
+    public static Atoms cutoutShell(Atoms ofAtoms, Atoms aroundAtoms, double dist) {
+        if (aroundAtoms==null || aroundAtoms.isEmpty()) {
+            return new Atoms(0);
+        }
+
         aroundAtoms.withKdTreeConditional();
-        Atoms res = new Atoms(100);
+        Atoms res = new Atoms(128);
 
         double sqrDist = dist*dist;
-        for (Atom a : list) {
+        for (Atom a : ofAtoms) {
             if (aroundAtoms.sqrDist(a) <= sqrDist) {
                 res.add(a);
             }
@@ -310,49 +355,24 @@ public final class Atoms implements Iterable<Atom> {
         return res;
     }
 
-
     /**
      * intercepting calls for further alalysis
      */
-    public Atoms cutoffAroundAtom_(Atom distanceTo, double dist) {
+    public Atoms cutSphere_(Atom distanceTo, double dist) {
         ATimer timer = startTimer();
 
-        Atoms res = doCutoffAroundAtom(distanceTo, dist);
+        Atoms res = cutoutSphere(distanceTo, dist);
 
         CutoffAtomsCallLog.INST.addCall(getCount(), res.getCount(), timer.getTime());
 
         return res;
     }
 
-    private Atoms doCutoffAroundAtom(Atom distanceTo, double dist) {
+    public Atoms cutoutSphereSerial(Atom center, double radius) {
         List<Atom> res = new ArrayList<>();
-        double sqrDist = dist*dist;
+        double sqrDist = radius*radius;
 
-        double[] bcoords = distanceTo.getCoords();
-
-        for (Object o : list.toArray()) {
-
-            Atom a = (Atom)o;
-            double[] acoords = a.getCoords();
-
-            double x = acoords[0] - bcoords[0];
-            double y = acoords[1] - bcoords[1];
-            double z = acoords[2] - bcoords[2];
-
-            double d = x*x + y*y + z*z;
-
-            if (d <= sqrDist) {
-                res.add(a);
-            }
-        }
-        return new Atoms(res);
-    }
-
-    public Atoms cutoffAroundAtom(Atom distanceTo, double dist) {
-        List<Atom> res = new ArrayList<>();
-        double sqrDist = dist*dist;
-
-        double[] toCoords = distanceTo.getCoords();
+        double[] toCoords = center.getCoords();
 
         for (Atom a : list) {
             if (PerfUtils.sqrDist(a.getCoords(), toCoords) <= sqrDist) {
@@ -362,12 +382,37 @@ public final class Atoms implements Iterable<Atom> {
         return new Atoms(res);
     }
 
-    public Atoms cutoffAtomsInBox(Box box) {
+    public Atoms cutoutSphereKD(Atom center, double radius) {
+        withKdTree();
+        return kdTree.findAtomsWithinRadius(center, radius, false);
+    }
+
+    public Atoms cutoutSphere(Atom center, double radius) {
+        if (getCount() >= Params.INSTANCE.getUse_kdtree_cutout_sphere_thrashold()) {
+            return cutoutSphereKD(center, radius);
+        } else {
+            return cutoutSphereSerial(center, radius);
+        }
+    }
+
+    public Atoms cutoutBox(Box box) {
         return new Atoms(Struct.cutoffAtomsInBox(this.list, box));
     }
 
     public Atoms withoutHydrogens() {
         return withoutHydrogenAtoms(this);
+    }
+
+    public Atoms without(Atoms remove) {
+        List<Atom> res = new ArrayList<>(list.size());
+
+        for (Atom a : list) {
+            if (!remove.contains(a)) {
+                res.add(a);
+            }
+        }
+
+        return new Atoms(res);
     }
 
 //===========================================================================================================//
@@ -439,6 +484,10 @@ public final class Atoms implements Iterable<Atom> {
             res.list.addAll(g.getAtoms());
         }
         return res;
+    }
+
+    public static Atoms allFromChain(Chain chain) {
+        return allFromGroups(chain.getAtomGroups());
     }
 
 }

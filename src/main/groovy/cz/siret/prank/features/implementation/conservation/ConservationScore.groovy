@@ -2,6 +2,9 @@ package cz.siret.prank.features.implementation.conservation
 
 import com.univocity.parsers.tsv.TsvParser
 import com.univocity.parsers.tsv.TsvParserSettings
+import cz.siret.prank.domain.Protein
+import cz.siret.prank.domain.Residue
+import cz.siret.prank.domain.labeling.ResidueLabeling
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Futils
 import groovy.util.logging.Slf4j
@@ -15,8 +18,9 @@ import java.util.stream.Collectors
 @Slf4j
 public class ConservationScore implements Parametrized {
     /** conservation keys for secondaryData map in Protein class. */
-    public static String conservationLoadedKey = "isConservationLoaded"
-    public static String conservationScoreKey = "conservationScore"
+    public static final String CONSERV_LOADED_KEY = "CONSERVATION_LOADED"
+    public static final String CONSERV_SCORE_KEY = "CONSERVATION_SCORE"
+    public static final String CONSERV_PATH_FUNCTION_KEY = "CONSERVATION_PATH_FUNCTION"
 
     private Map<ResidueNumberWrapper, Double> scores;
     private final transient Logger logger = LoggerFactory.getLogger(getClass());
@@ -33,7 +37,9 @@ public class ConservationScore implements Parametrized {
         } else {
             int dotIndex = fileName.lastIndexOf('.');
             baseName = fileName.substring(0, dotIndex);
-            extension = fileName.substring(dotIndex);
+
+            //extension = fileName.substring(dotIndex);
+            //baseName = baseName.substring(0, 4)   // always use only 4-leter pdb code
         }
         return baseName + chainId + "." + origin + ".hom.gz";
     }
@@ -63,6 +69,14 @@ public class ConservationScore implements Parametrized {
         }
     }
 
+    ResidueLabeling<Double> toDoubleLabeling(Protein p) {
+        ResidueLabeling<Double> labeling = new ResidueLabeling<>(p.residues.size())
+        for (Residue r : p.residues) {
+            labeling.add(r, getScoreForResidue(r.residueNumber))
+        }
+        return labeling
+    }
+
     public Map<ResidueNumberWrapper, Double> getScoreMap() {
         return scores;
     }
@@ -71,7 +85,7 @@ public class ConservationScore implements Parametrized {
         return this.scores.size();
     }
 
-    public enum ScoreFormat {
+    public static enum ScoreFormat {
         ConCavityFormat,
         JSDFormat
     }
@@ -80,7 +94,7 @@ public class ConservationScore implements Parametrized {
         TsvParserSettings settings = new TsvParserSettings();
         settings.setLineSeparatorDetectionEnabled(true);
         TsvParser parser = new TsvParser(settings);
-        List<String[]> lines = parser.parseAll(Futils.readFile(scoreFile));
+        List<String[]> lines = parser.parseAll(Futils.inputStream(scoreFile));
         List<AA> result = new ArrayList<>(lines.size());
         for (String[] line : lines) {
             int index = -1;
@@ -196,14 +210,20 @@ public class ConservationScore implements Parametrized {
             List<AA> chainScores = null;
             try {
                 File scoreFile = scoreFiles.apply(chainId);
+                log.info "Loading conservation scores from file [{}]", scoreFile
                 if (scoreFile.exists()) {
                     chainScores = ConservationScore.loadScoreFile(scoreFile, format);
-                }
-                if (chainScores != null) {
+
+                    log.debug "loaded chain scores:\n" +
+                            chainScores.collect { "$it.index $it.letter $it.score" }.join("\n")
+
                     matchSequences(chain.getAtomGroups(GroupType.AMINOACID), chainScores, scores);
+                } else {
+                    log.error "Score file doesn't exist [{}]", scoreFile
                 }
+
             } catch(Exception e) {
-                log.warn("Failed to load conservation file. ${e.toString()}")
+                log.error("Failed to load conservation file.", e)
             }
         }
         return new ConservationScore(scores);

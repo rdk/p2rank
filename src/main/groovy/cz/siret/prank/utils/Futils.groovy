@@ -68,14 +68,16 @@ class Futils {
         return Formatter.format(size, 1)
     }
 
-
+    /**
+     * file name stripped of path 
+     */
     static String shortName(String path) {
         if (path==null) return null
 
         new File(path).name
     }
 
-    static String removeExtention(String path) {
+    static String removeExtension(String path) {
         path?.replaceFirst(~/\.[^\.]+$/, '')
     }
 
@@ -89,12 +91,16 @@ class Futils {
     /**
      * Opens and decompresses file (if it has gzip extension)
      */
-    static InputStream readFile(File file) throws IOException {
+    static InputStream inputStream(File file) throws IOException {
         if (file.getName().endsWith(".gz")) {
             return new GZIPInputStream(new FileInputStream(file));
         } else {
             return new FileInputStream(file);
         }
+    }
+
+    static String readFile(String fname) {
+        new File(fname).text
     }
 
     /**
@@ -134,13 +140,18 @@ class Futils {
         return new PrintWriter(new BufferedWriter(new OutputStreamWriter(gos), OUTPUT_BUFFER_SIZE))
     }
 
+    static void writeGzip(String fname, Object text) {
+        PrintWriter writer = getGzipWriter(fname)
+        writer.print(text)
+        writer.close()
+    }
+
     /**
      * writeFile text file
      * @param fname
      * @param text
      */
     static void writeFile(String fname, Object text) {
-
         try {
             String dir = dir(fname)
             if (dir!=null && !exists(dir)) {
@@ -157,10 +168,6 @@ class Futils {
         } catch (Exception e) {
             log.error "Error writing to file [$fname]:"+e.message, e
         }
-    }
-
-    static String readFile(String fname) {
-        new File(fname).text
     }
 
     static void append(String fname, Object text) {
@@ -211,13 +218,16 @@ class Futils {
         }
     }
 
-    static void mkdirs(String s) {
-        if (s==null) return
+    static String mkdirs(String s) {
+        if (s==null) return null
 
         new File(s).mkdirs()
+
+        return s
     }
 
     static void copy(String from, String to) {
+        log.debug "copying [{}] to [{}]", from, to
         Files.copy(new File(from), new File(to))
     }
 
@@ -259,6 +269,8 @@ class Futils {
         delete(fileOrDirectory)
     }
 
-
-
+    static List<String> readLines(String fname) {
+        File file = new File(fname)
+        return file.readLines()
+    }
 }

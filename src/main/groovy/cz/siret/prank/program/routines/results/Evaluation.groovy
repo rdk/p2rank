@@ -4,18 +4,23 @@ import cz.siret.prank.domain.Ligand
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.domain.Protein
+import cz.siret.prank.domain.Residue
+import cz.siret.prank.domain.labeling.ResidueLabelings
 import cz.siret.prank.features.implementation.conservation.ConservationScore
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.program.rendering.LabeledPoint
-import cz.siret.prank.score.criteria.*
-import cz.siret.prank.utils.Writable
+import cz.siret.prank.domain.labeling.LabeledPoint
+import cz.siret.prank.prediction.pockets.criteria.DCA
+import cz.siret.prank.prediction.pockets.criteria.DCC
+import cz.siret.prank.prediction.pockets.criteria.DSO
+import cz.siret.prank.prediction.pockets.criteria.DSWO
+import cz.siret.prank.prediction.pockets.criteria.PocketCriterium
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.StringUtils
 
 import static cz.siret.prank.geom.Atoms.intersection
 import static cz.siret.prank.geom.Atoms.union
-import static cz.siret.prank.utils.CollectionUtils.head
+import static cz.siret.prank.utils.Cutils.head
 import static cz.siret.prank.utils.Formatter.*
 import static java.util.Collections.emptyList
 
@@ -27,19 +32,22 @@ import static java.util.Collections.emptyList
  * Threadsafe.
  */
 @Slf4j
-class Evaluation implements Parametrized, Writable {
+class Evaluation implements Parametrized {
 
     /** cutoff distance in A around ligand atoms that determins which SAS points cover the ligand */
     final double LIG_SAS_CUTOFF = params.ligand_induced_volume_cutoff   // TODO consider separate value (e.g. 2)
 
-    IdentificationCriterium standardCriterium = new DCA(4.0)
-    List<IdentificationCriterium> criteria
+    PocketCriterium standardCriterium = new DCA(4.0)
+    List<PocketCriterium> criteria
     List<ProteinRow> proteinRows = Collections.synchronizedList(new ArrayList<>())
     List<LigRow> ligandRows = Collections.synchronizedList(new ArrayList<>())
     List<PocketRow> pocketRows = Collections.synchronizedList(new ArrayList<>())
+    List<ResidueRow> residueRows = Collections.synchronizedList(new ArrayList<>())
 
     List<Double> bindingScores = Collections.synchronizedList(new ArrayList<Double>());
     List<Double> nonBindingScores = Collections.synchronizedList(new ArrayList<Double>());
+
+    
 
     int proteinCount
     int pocketCount
@@ -53,7 +61,7 @@ class Evaluation implements Parametrized, Writable {
     int ligSASPointsCoveredCount
 
 
-    Evaluation(List<IdentificationCriterium> criteria) {
+    Evaluation(List<PocketCriterium> criteria) {
         this.criteria = criteria
     }
 
@@ -90,16 +98,16 @@ class Evaluation implements Parametrized, Writable {
     }
 
     private double getAvgConservationForAtoms(Atoms atoms, ConservationScore score) {
-        if (atoms.distinctGroups.size() == 0) {
+        if (atoms.distinctGroupsSorted.size() == 0) {
             return 0.0
         }
-        return atoms.distinctGroups.stream().mapToDouble( {
+        return atoms.distinctGroupsSorted.stream().mapToDouble( {
             group->score.getScoreForResidue(group.getResidueNumber())})
                 .average().getAsDouble()
     }
 
     private Pocket findPocketForLigand(Ligand ligand, List<Pocket> pockets,
-                                       IdentificationCriterium criterium, EvalContext context) {
+                                       PocketCriterium criterium, EvalContext context) {
         for (Pocket pocket in pockets) {
             if (criterium.isIdentified(ligand, pocket, context)) {
                 return pocket
@@ -118,14 +126,14 @@ class Evaluation implements Parametrized, Writable {
     void addPrediction(PredictionPair pair, List<Pocket> pockets) {
         EvalContext context = new EvalContext()
 
-        pair.queryProtein.ligands.each { it.sasPoints = null } // clear sas points cache
+        pair.protein.ligands.each { it.sasPoints = null } // clear sas points cache
 
-        assignPocketsToLigands(pair.queryProtein.ligands, pockets, context)
+        assignPocketsToLigands(pair.protein.ligands, pockets, context)
 
         List<LigRow> tmpLigRows = new ArrayList<>()
         List<PocketRow> tmpPockets = new ArrayList<>()
 
-        Protein protein = pair.queryProtein
+        Protein protein = pair.protein
         Atoms sasPoints = pair.prediction.protein.accessibleSurface.points
         Atoms labeledPoints = new Atoms(pair.prediction.labeledPoints ?: emptyList())
         
@@ -152,7 +160,7 @@ class Evaluation implements Parametrized, Writable {
         // overlaps and coverages
         int n_ligSasPoints = calcCoveragesProt(protRow, pair, sasPoints, pockets)
         // ligand coverage by positively predicted points (note: not by pockets!)
-        Atoms ligLabeledPoints = labeledPoints.cutoffAtoms(protein.allLigandAtoms, LIG_SAS_CUTOFF)
+        Atoms ligLabeledPoints = labeledPoints.cutoutShell(protein.allLigandAtoms, LIG_SAS_CUTOFF)
         int n_ligSasPointsCovered = ligLabeledPoints.toList().findAll { ((LabeledPoint) it).predicted }.toList().size()  // only for P2Rank
         //log.debug "XXXX n_ligSasPoints: $n_ligSasPoints covered: $n_ligSasPointsCovered"
 
@@ -214,6 +222,19 @@ class Evaluation implements Parametrized, Writable {
             prow.combinedRank = combiSorted.indexOf(prow) + 1
         }
 
+        ResidueLabelings rlabs = pair.prediction.residueLabelings
+        if (rlabs != null) {
+            for (Residue res : protein.residues) {
+                double resScore = rlabs.scoreLabeling.getLabel(res)
+                Boolean resLabel = rlabs.observed?.getLabel(res)
+
+                ResidueRow rrow = new ResidueRow()
+                rrow.score = resScore
+                rrow.observed = resLabel
+
+                residueRows.add(rrow)
+            }
+        }
 
         synchronized (this) {
             ligandCount += pair.ligandCount
@@ -236,22 +257,22 @@ class Evaluation implements Parametrized, Writable {
     }
 
     private List calcConservationStats(Protein protein, ProteinRow protRow) {
-        ConservationScore score = protein.secondaryData.get(ConservationScore.conservationScoreKey) as ConservationScore
+        ConservationScore score = protein.secondaryData.get(ConservationScore.CONSERV_SCORE_KEY) as ConservationScore
         List<Double> bindingScrs = new ArrayList<>();
         List<Double> nonBindingScrs = new ArrayList<>();
         if (score != null) {
             protRow.avgConservation = getAvgConservationForAtoms(protein.proteinAtoms, score)
-            Atoms bindingAtoms = protein.proteinAtoms.cutoffAtoms(protein.allLigandAtoms, protein.params.ligand_protein_contact_distance)
+            Atoms bindingAtoms = protein.proteinAtoms.cutoutShell(protein.allLigandAtoms, protein.params.ligand_protein_contact_distance)
             protRow.avgBindingConservation = getAvgConservationForAtoms(bindingAtoms, score)
             Atoms nonBindingAtoms = new Atoms(protein.proteinAtoms - bindingAtoms)
             protRow.avgNonBindingConservation = getAvgConservationForAtoms(nonBindingAtoms, score)
 
             if (!protein.params.log_scores_to_file.isEmpty()) {
-                bindingScrs = bindingAtoms.distinctGroups.collect { it ->
+                bindingScrs = bindingAtoms.distinctGroupsSorted.collect { it ->
                     score.getScoreForResidue(it
                             .getResidueNumber())
                 }.toList();
-                nonBindingScrs = nonBindingAtoms.distinctGroups.collect { it ->
+                nonBindingScrs = nonBindingAtoms.distinctGroupsSorted.collect { it ->
                     score.getScoreForResidue(it.getResidueNumber())
                 }
             }
@@ -269,8 +290,8 @@ class Evaluation implements Parametrized, Writable {
     }
 
     private int calcCoveragesProt(ProteinRow protRow, PredictionPair pair, Atoms sasPoints, List<Pocket> pockets) {
-        Protein prot = pair.queryProtein
-        Atoms ligSasp = sasPoints.cutoffAtoms(prot.allLigandAtoms, LIG_SAS_CUTOFF)
+        Protein prot = pair.protein
+        Atoms ligSasp = sasPoints.cutoutShell(prot.allLigandAtoms, LIG_SAS_CUTOFF)
         int n_ligSasPoints = ligSasp.count
 
         // ligand coverage by pockets
@@ -577,7 +598,7 @@ class Evaluation implements Parametrized, Writable {
     /**
      * get list of evaluation criteria used during eval routines
      */
-    static List<IdentificationCriterium> getDefaultEvalCrtieria() {
+    static List<PocketCriterium> getDefaultEvalCrtieria() {
         double REQUIRED_POCKET_COVERAGE = 0.2  //  like in fpocket MOc criterion
         ((1..15).collect { new DCA(it) }) +         // 0-14
         ((1..10).collect { new DCC(it) }) +         // 15-24
@@ -742,6 +763,11 @@ class Evaluation implements Parametrized, Writable {
         boolean isTruePocket() {
             StringUtils.isNotEmpty(ligName)
         }
-   }
+    }
+
+    static class ResidueRow {
+        double score
+        Boolean observed
+    }
 
 }

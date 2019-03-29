@@ -1,6 +1,8 @@
 package cz.siret.prank.program
 
 import cz.siret.prank.domain.Dataset
+import cz.siret.prank.domain.loaders.LoaderParams
+import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.params.ConfigLoader
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.params.Params
@@ -129,7 +131,7 @@ class Main implements Parametrized, Writable {
 
         String prefixdate = ""
         if (params.out_prefix_date) {
-            prefixdate = StrUtils.timeLabel() + "_"
+            prefixdate = Sutils.timeLabel() + "_"
         }
 
         if (label==null) {
@@ -249,9 +251,9 @@ class Main implements Parametrized, Writable {
 
         configureLoggers(outdir)
 
-        new EvalModelRoutine(
+        new EvalPocketsRoutine(
                 dataset,
-                findModel(),
+                Model.loadFromFile(findModel()),
                 outdir).execute()
 
     }
@@ -288,7 +290,7 @@ class Main implements Parametrized, Writable {
      * @return false if successful, true it there was some (recoverable) error during execution
      */
     boolean run() {
-        write args.toString() 
+
         command = args.unnamedArgs.size()>0 ? args.unnamedArgs.first() : "help"
         args.shiftUnnamedArgs()
 
@@ -305,6 +307,10 @@ class Main implements Parametrized, Writable {
         }
 
         initParams(params, "$installDir/config/default.groovy")
+
+        if (params.predict_residues) { // TODO move
+            LoaderParams.ignoreLigandsSwitch = true
+        }
 
         switch (command) {
             case 'predict':       runPredict()
@@ -352,7 +358,7 @@ class Main implements Parametrized, Writable {
     }
 
     static String getVersionName() {
-        return "P2RANK $version"
+        return "P2Rank $version"
     }
 
     static void main(String[] args) {

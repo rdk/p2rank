@@ -1,5 +1,6 @@
 package cz.siret.prank.features.api
 
+import cz.siret.prank.domain.Residue
 import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
 
@@ -23,4 +24,9 @@ abstract class AtomFeatureCalculator extends AbstractFeatureCalculator {
         throw new UnsupportedOperationException()
     }
 
+    @Override
+    double[] calculateForResidue(Residue residue, ResidueFeatureCalculationContext context) {
+        throw new UnsupportedOperationException()
+    }
+    
 }

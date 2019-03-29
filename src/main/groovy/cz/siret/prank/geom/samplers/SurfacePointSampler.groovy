@@ -2,7 +2,7 @@ package cz.siret.prank.geom.samplers
 
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Protein
-import cz.siret.prank.domain.loaders.FPocketLoader
+import cz.siret.prank.domain.loaders.pockets.FPocketLoader
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.params.Params
@@ -34,10 +34,10 @@ class SurfacePointSampler extends PointSampler implements Parametrized {
         Atoms res
         if (Params.inst.strict_inner_points && (pocket instanceof FPocketLoader.FPocketPocket)) {
             FPocketLoader.FPocketPocket fpocket = (FPocketLoader.FPocketPocket) pocket
-            res = protSurf.cutoffAtoms(fpocket.vornoiCenters, 6) // 6 is max radius of fpocket alpha sphere
+            res = protSurf.cutoutShell(fpocket.vornoiCenters, 6) // 6 is max radius of fpocket alpha sphere
         } else {
 
-            res = protSurf.cutoffAtoms(pocket.surfaceAtoms, protein.accessibleSurface.solventRadius + VAN_DER_WAALS_COMPENSATION)
+            res = protSurf.cutoutShell(pocket.surfaceAtoms, protein.accessibleSurface.solventRadius + VAN_DER_WAALS_COMPENSATION)
         }
 
         pocket.cache.put(cacheKey, res)

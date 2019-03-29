@@ -3,7 +3,7 @@ package cz.siret.prank.program.params
 import cz.siret.prank.utils.CmdLineArgs
 import cz.siret.prank.utils.Formatter
 import cz.siret.prank.utils.PerfUtils
-import cz.siret.prank.utils.StrUtils
+import cz.siret.prank.utils.Sutils
 import groovy.transform.CompileStatic
 
 /**
@@ -30,11 +30,11 @@ class ListParam {
 
         if (list) {
 
-            res.values = StrUtils.split(inner, ",")
+            res.values = Sutils.split(inner, ",")
 
         } else { // range
 
-            def vals = StrUtils.split(inner, ":")
+            def vals = Sutils.split(inner, ":")
 
             assert vals.size() == 3, "inavlid range definition!"
 

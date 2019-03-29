@@ -5,17 +5,17 @@ import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.features.FeatureVector
 import cz.siret.prank.features.api.ProcessedItemContext
-import cz.siret.prank.score.criteria.IdentificationCriterium
-import cz.siret.prank.utils.CollectionUtils
+import cz.siret.prank.prediction.pockets.criteria.PocketCriterium
+import cz.siret.prank.utils.Cutils
 import groovy.util.logging.Slf4j
 
 @Slf4j
 class PocketFingerprintCollector extends VectorCollector  {
 
     FeatureExtractor evalFactory
-    IdentificationCriterium assessor
+    PocketCriterium assessor
 
-    PocketFingerprintCollector(FeatureExtractor evalFactory, IdentificationCriterium assessor) {
+    PocketFingerprintCollector(FeatureExtractor evalFactory, PocketCriterium assessor) {
         this.assessor = assessor
         this.evalFactory = evalFactory
     }
@@ -28,7 +28,7 @@ class PocketFingerprintCollector extends VectorCollector  {
             processPocket(pair, pocket, true, res)
         }
 
-        CollectionUtils.head(3,
+        Cutils.head(3,
         pair.getFalsePositivePockets(assessor)).each { Pocket pocket ->
             processPocket(pair, pocket, false, res)
         }
@@ -38,7 +38,7 @@ class PocketFingerprintCollector extends VectorCollector  {
 
     private processPocket(PredictionPair pair, Pocket pocket, boolean isPositive, Result res ) {
         try {
-            FeatureExtractor eval = evalFactory.createInstanceForPocket(pair.queryProtein.structure, pocket)
+            FeatureExtractor eval = evalFactory.createInstanceForPocket(pair.protein.structure, pocket)
             FeatureVector prop = eval.calcFingerprint(pocket.vornoiCenters)
 
             if (isPositive) {

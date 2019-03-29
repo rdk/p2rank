@@ -1,17 +1,13 @@
-//plugins {
-//    id 'com.github.ben-manes.versions' version '0.14.0'
-//    // run "gradle dependencyUpdates -Drevision=release" to check dependency updates
-//}
-
 apply plugin: 'groovy'
 apply plugin: 'java'
 apply plugin: 'idea'
 
 
 group = 'cz.siret'
-version = '2.0'
+version = '2.0-dev7'
 
 description = 'Ligand binding site prediction based on machine learning.'
+
 
 allprojects {
     apply plugin: 'java'
@@ -34,8 +30,6 @@ repositories {
 
     flatDir(dirs: 'lib')
 }
-
-
 
 sourceSets {
     main {
@@ -88,6 +82,7 @@ jar {
 clean {
     delete "$buildDir/../distro/bin"
     delete "$buildDir/../distro/test_output"
+    delete "$buildDir/../distro/log/prank.log"
 }
 
 test {
@@ -112,27 +107,34 @@ test {
 
 
 dependencies {
-    compile 'org.codehaus.groovy:groovy-all:2.4.12'
+    compile 'org.codehaus.groovy:groovy-all:2.5.6'
+    
     compile 'org.codehaus.gpars:gpars:1.2.1'
-    compile "org.apache.commons:commons-lang3:3.6"
-    compile "commons-io:commons-io:2.5"
-    compile "com.google.guava:guava:23.0"
-    compile 'com.google.code.gson:gson:2.8.1'
+    compile "org.apache.commons:commons-lang3:3.7"
+    compile "commons-io:commons-io:2.6"
+    compile "com.google.guava:guava:24.0-jre"
+    compile 'com.google.code.gson:gson:2.8.2'
     compile 'org.zeroturnaround:zt-zip:1.12'
 
-    compile group: 'com.univocity', name: 'univocity-parsers', version: '2.4.0' // For parsing csv
+    compile 'com.univocity:univocity-parsers:2.4.0' // for parsing csv
 
-    compile 'org.slf4j:slf4j-api:1.7.24'
-    compile 'org.apache.logging.log4j:log4j-slf4j-impl:2.5' // 2.8 was causing problem with biojava
-    compile 'org.slf4j:jul-to-slf4j:1.7.24'                 // for netlib logging messages
+    compile 'org.slf4j:slf4j-api:1.7.26'
+    compile 'org.apache.logging.log4j:log4j-slf4j-impl:2.11.2' 
+    compile 'org.apache.logging.log4j:log4j-core:2.11.2'
+    compile 'org.slf4j:jul-to-slf4j:1.7.26'         // for netlib logging messages
 
-    compile 'org.biojava:biojava-core:4.2.8'
-    compile 'org.biojava:biojava-alignment:4.2.8'
-    compile 'org.biojava:biojava-structure:4.2.8'
+    compile 'org.biojava:biojava-core:4.2.12'
+    compile 'org.biojava:biojava-alignment:4.2.12'
+    compile 'org.biojava:biojava-structure:4.2.12'
 
-    compile 'org.openscience.cdk:cdk-qsarmolecular:1.5.15'    // for NumericalSurface class
-    compile 'org.openscience.cdk:cdk-data:1.5.15'             // for Atom class
-    compile 'nz.ac.waikato.cms.weka:weka-dev:3.9.1'
+    compile 'javax.xml.bind:jaxb-api:2.2.11'      // extra dependencies of biojava for java 11
+    compile 'com.sun.xml.bind:jaxb-core:2.2.11'
+    compile 'com.sun.xml.bind:jaxb-impl:2.2.11'
+    compile 'javax.activation:activation:1.1.1'
+
+    compile 'org.openscience.cdk:cdk-qsarmolecular:2.1.1'    // for NumericalSurface class
+    compile 'org.openscience.cdk:cdk-data:2.1.1'             // for Atom class
+    compile 'nz.ac.waikato.cms.weka:weka-dev:3.9.2'
     compile fileTree(dir: 'lib', include: '*.jar')
 
     testCompile 'junit:junit:4.12'

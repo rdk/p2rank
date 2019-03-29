@@ -41,6 +41,25 @@ public class PerfUtils {
         return x*x + y*y + z*z;
     }
 
+    public static double sqrDistL(Atom a, List<Atom> list) {
+        if (list==null || list.isEmpty()) {
+            //log.debug "!! dist to empty list of atoms"
+            return Double.MAX_VALUE;
+        }
+
+        final double[] acoords = a.getCoords();
+
+        double minDist = Double.MAX_VALUE;
+        for (Atom b : list) {
+            double next = sqrDist(acoords, b.getCoords());
+            if (next<minDist) {
+                minDist = next;
+            }
+        }
+
+        return minDist;
+    }
+
     public static double dist(double[] a, double[] b) {
         final double d = sqrDist(a, b);
         return Math.sqrt(d);

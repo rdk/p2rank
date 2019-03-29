@@ -1,16 +1,14 @@
 package cz.siret.prank.program.routines
 
 import cz.siret.prank.domain.Dataset
-import cz.siret.prank.domain.DatasetCachedLoader
+import cz.siret.prank.domain.loaders.DatasetCachedLoader
 import cz.siret.prank.program.Main
 import cz.siret.prank.program.params.ListParam
-import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.params.Params
 import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.utils.CmdLineArgs
 import cz.siret.prank.utils.Futils
-import cz.siret.prank.utils.StrUtils
-import cz.siret.prank.utils.WekaUtils
+import cz.siret.prank.utils.Sutils
 import groovy.util.logging.Slf4j
 
 import static cz.siret.prank.utils.Futils.safe
@@ -75,7 +73,7 @@ class Experiments extends Routine {
         assert datasetArg!=null
         if (datasetArg.contains('+')) {
             // joined dataset
-            List<Dataset> datasets = StrUtils.split(datasetArg, '+').collect { prepareSingleDataset(it) }.toList()
+            List<Dataset> datasets = Sutils.split(datasetArg, '+').collect { prepareSingleDataset(it) }.toList()
             return Dataset.createJoined(datasets)
         } else {
             return prepareSingleDataset(datasetArg)
@@ -105,14 +103,20 @@ class Experiments extends Routine {
 
         TrainEvalRoutine iter = new TrainEvalRoutine(outdir, trainData, evalData)
 
-        iter.collectTrainVectors()
-        if (Params.inst.collect_eval_vectors) {
-            iter.collectEvalVectors() // collect and save to disk for further inspection
+        if (Params.inst.collect_only_once) {
+            iter.collectTrainVectors()
+            if (Params.inst.collect_eval_vectors) {
+                iter.collectEvalVectors() // collect and save to disk for further inspection
+            }
         }
 
         EvalRoutine trainRoutine = new EvalRoutine(outdir) {
             @Override
             EvalResults execute() {
+                if (!Params.inst.collect_only_once) { // ensures that if subsampling is turned on it is done before each training
+                    iter.collectTrainVectors()
+                }
+
                 iter.outdir = getEvalRoutineOutdir() // is set to "../seed.xx" by SeedLoop
                 iter.trainAndEvalModel()
                 return iter.evalRoutine.results
@@ -121,6 +125,7 @@ class Experiments extends Routine {
 
         return new SeedLoop(trainRoutine, outdir).execute()
     }
+
 
     /**
      * implements command: 'prank traineval...  '

@@ -1,4 +1,3 @@
-import cz.siret.prank.features.weight.WeightFun
 import cz.siret.prank.program.params.Params
 
 (params as Params).with {
@@ -301,7 +300,7 @@ import cz.siret.prank.program.params.Params
      */
     ligc_prot_dist = 5.5
 
-    rescorer = "WekaSumRescorer"
+    rescorer = "ModelBasedRescorer"
 
     plb_rescorer_atomic = false
 

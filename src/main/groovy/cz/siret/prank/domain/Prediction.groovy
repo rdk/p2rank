@@ -1,12 +1,18 @@
 package cz.siret.prank.domain
 
-import cz.siret.prank.program.rendering.LabeledPoint
+import cz.siret.prank.domain.labeling.LabeledPoint
+import cz.siret.prank.domain.labeling.ResidueLabelings
+import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+import groovy.transform.CompileStatic
+
+import javax.annotation.Nullable
 
 /**
  * Pocket prediction result for single protein.
  */
 @Slf4j
+@CompileStatic
 class Prediction {
 
     Protein protein
@@ -26,10 +32,13 @@ class Prediction {
      */
     List<LabeledPoint> labeledPoints = null
 
+    @Nullable
+    ResidueLabelings residueLabelings
+
 
     Prediction(Protein protein, List<? extends Pocket> pockets) {
         this.protein = protein
-        this.pockets = pockets
+        this.pockets = (List<Pocket>) pockets
     }
 
     int getPocketCount() {

@@ -18,8 +18,6 @@ class CSV {
         tabulate(csvString, colWidths)
     }
 
-
-
     @Override
     String toString() {
         csvString
@@ -60,7 +58,5 @@ class CSV {
             return System.sprintf(fmt, split)
         }.join('\n')
     }
-
-
 
 }

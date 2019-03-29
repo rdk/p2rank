@@ -26,7 +26,7 @@ class ConservationCloudScaledFeature extends SasFeatureCalculator implements Par
     @Override
     void preProcessProtein(Protein protein, ProcessedItemContext itemContext) {
         // Check if conservation is already loaded.
-        if (!protein.secondaryData.getOrDefault(ConservationScore.conservationLoadedKey, false)) {
+        if (!protein.secondaryData.getOrDefault(ConservationScore.CONSERV_LOADED_KEY, false)) {
             // Load conservation score.
             protein.loadConservationScores(itemContext)
         }
@@ -35,17 +35,18 @@ class ConservationCloudScaledFeature extends SasFeatureCalculator implements Par
     @Override
     double[] calculateForSasPoint(Atom sasPoint, SasFeatureCalculationContext context) {
 
-        ConservationScore score = (ConservationScore) context.protein.secondaryData.get(ConservationScore.conservationScoreKey)
+        ConservationScore score = (ConservationScore) context.protein.secondaryData.get(ConservationScore.CONSERV_SCORE_KEY)
         if (score == null) {
             return [0.0] as double[]
         }
 
-        Atoms surroundingAtoms = context.extractor.deepLayer.cutoffAroundAtom(sasPoint, params.protrusion_radius)
+        Atoms surroundingAtoms = context.extractor.deepLayer.cutoutSphere(sasPoint, params.protrusion_radius)
         double value = 0.0;
         for (Atom atom : surroundingAtoms) {
             double scale = 1.0 / PerfUtils.sqrDist(sasPoint.coords, atom.coords);
             value += scale * score.getScoreForResidue(atom.getGroup().getResidueNumber());
         }
+        
         return [value] as double[]
     }
 

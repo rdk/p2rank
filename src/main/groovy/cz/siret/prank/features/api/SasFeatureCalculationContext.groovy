@@ -25,4 +25,5 @@ class SasFeatureCalculationContext {
         this.neighbourhoodAtoms = neighbourhoodAtoms
         this.extractor = extractor
     }
+    
 }

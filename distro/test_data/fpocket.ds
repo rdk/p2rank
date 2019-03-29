@@ -1,18 +1,21 @@
-# dataset for rescoring
+# Dataset for rescoring Fpocket 1 predictions / evaluating rescoring.
+# (predictions generated with Fpocket 1.0)
+#
+# Note: this dataset (unlike fpocket3.ds) can be used for eval-rescore
+# because protein column points to proteins with known ligands.
 
 PARAM.PREDICTION_METHOD=fpocket
 
 # uncomment if ligands are separated with TER record:
 PARAM.LIGANDS_SEPARATED_BY_TER=true
 
-HEADER: prediction 
+HEADER: prediction protein
 
-fpocket/1a82a_out/1a82a_out.pdb
-fpocket/1aaxa_out/1aaxa_out.pdb
-fpocket/1nlua_out/1nlua_out.pdb
-fpocket/1t7qa_out/1t7qa_out.pdb
-fpocket/2ck3b_out/2ck3b_out.pdb
-
+predictions/fpocket/1a82a_out/1a82a_out.pdb  liganated/1a82a.pdb
+predictions/fpocket/1aaxa_out/1aaxa_out.pdb  liganated/1aaxa.pdb
+predictions/fpocket/1nlua_out/1nlua_out.pdb  liganated/1nlua.pdb
+predictions/fpocket/1t7qa_out/1t7qa_out.pdb  liganated/1t7qa.pdb
+predictions/fpocket/2ck3b_out/2ck3b_out.pdb  liganated/2ck3b.pdb
 
 
 

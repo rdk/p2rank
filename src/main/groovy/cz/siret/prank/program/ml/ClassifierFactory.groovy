@@ -90,6 +90,7 @@ class ClassifierFactory implements Parametrized, Writable {
             seed = params.seed
             numThreads = getRfThreads()
             computeImportances = params.feature_importances
+            calcOutOfBag =  params.feature_importances
             // TODO try importancesNew
         }
         return cs

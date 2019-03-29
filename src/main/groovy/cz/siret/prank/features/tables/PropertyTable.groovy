@@ -132,6 +132,10 @@ class PropertyTable {
         return values.get(new Key(itemName, propertyName))
     }
 
+    double getValueOrDefault(String itemName, String propertyName, double defaultVal) {
+        return values.get(new Key(itemName, propertyName)) ?: defaultVal
+    }
+
     public String toCSV() {
         StringBuilder sb = new StringBuilder()
 

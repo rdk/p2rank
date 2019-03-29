@@ -5,17 +5,18 @@ import cz.siret.prank.features.api.AtomFeatureCalculator
 import cz.siret.prank.features.tables.PropertyTable
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Futils
-import cz.siret.prank.utils.PDBUtils
+import cz.siret.prank.utils.PdbUtils
 import org.biojava.nbio.structure.Atom
 
 /**
- * Simple single value Atom feature that adds B-factor (temperature factor) from PDB to Atom feature vector.
+ * Features from AA index table
  */
 class AAIndexFeature extends AtomFeatureCalculator implements Parametrized {
     
     static final PropertyTable aaIndex   = PropertyTable.parse(Futils.readResource("/tables/aa-index-full.csv")).reverse()
 
-    List<String> propertyNames = aaIndex.propertyNames.toList().toSorted()
+    static final List<String> propertyNames = aaIndex.propertyNames.toList().toSorted()
+
 
     @Override
     String getName() {
@@ -28,7 +29,7 @@ class AAIndexFeature extends AtomFeatureCalculator implements Parametrized {
     }
 
     private Double getTableValue(Atom atom, String property) {
-        Double val = aaIndex.getValue(PDBUtils.getAtomResidueCode(atom), property)
+        Double val = aaIndex.getValue(PdbUtils.getCorrectedAtomResidueCode(atom), property)
         return val==null ? 0d : val
     }
 
