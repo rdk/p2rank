@@ -9,7 +9,7 @@ import org.biojava.nbio.structure.Atom
 import org.biojava.nbio.structure.Group
 
 /**
- * Ligand mado of one or several pdb groups
+ * Ligand made of one or several pdb groups
  */
 @Slf4j
 @CompileStatic
