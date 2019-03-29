@@ -1,6 +1,6 @@
 package cz.siret.prank.domain.loaders.pockets
 
-import com.sun.istack.internal.Nullable
+import javax.annotation.Nullable
 import cz.siret.prank.domain.*
 import cz.siret.prank.domain.labeling.BinaryLabeling
 import cz.siret.prank.domain.loaders.LoaderParams
