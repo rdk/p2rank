@@ -1,0 +1,36 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket    15:
+HEADER 0  - Pocket Score                      : 0.0231
+HEADER 1  - Drug Score                        : 0.0001
+HEADER 2  - Number of alpha spheres           :    17
+HEADER 3  - Mean alpha-sphere radius          : 3.8790
+HEADER 4  - Mean alpha-sphere Solvent Acc.    : 0.6596
+HEADER 5  - Mean B-factor of pocket residues  : 0.3253
+HEADER 6  - Hydrophobicity Score              : 1.6000
+HEADER 7  - Polarity Score                    :     2
+HEADER 8  - Amino Acid based volume Score     : 4.0000
+HEADER 9  - Pocket volume (Monte Carlo)       : 213.8412
+HEADER 10  -Pocket volume (convex hull)       : 2.4531
+HEADER 11 - Charge Score                      :     0
+HEADER 12 - Local hydrophobic density Score   : 0.0000
+HEADER 13 - Number of apolar alpha sphere     :     1
+HEADER 14 - Proportion of apolar alpha sphere : 0.0588
+ATOM   4577  CG1 ILE B 136     111.911  23.020  22.478  0.00  0.00           C 0
+ATOM   4573   CA ILE B 136     112.652  20.703  21.761  0.00  0.00           C 0
+ATOM   4602   NE ARG B 139     111.551  17.057  25.209  0.71  1.09           N 0
+ATOM   4601   CD ARG B 139     110.651  17.003  24.064  0.00  0.00           C 0
+ATOM   4572    N ILE B 136     113.856  20.593  22.589  0.37  4.37           N 0
+ATOM   4570    C GLY B 135     114.154  19.484  23.259  0.00  0.00           C 0
+ATOM   4571    O GLY B 135     113.466  18.463  23.203  0.00  0.00           O 0
+ATOM   4603   CZ ARG B 139     111.186  16.763  26.457  0.00  0.00           C 0
+ATOM   5921  OE1 GLU B 307     112.310  19.944  30.020  0.00  0.00           O 0
+ATOM   4605  NH2 ARG B 139     112.051  16.872  27.454  0.59  1.09           N 0
+ATOM   4564    O PRO B 134     114.443  17.766  26.040  0.36  4.29           O 0
+ATOM   4569   CA GLY B 135     115.420  19.526  24.100  0.00  0.00           C 0
+ATOM   5922  OE2 GLU B 307     110.206  20.236  30.579  0.00  0.00           O 0
+ATOM   4604  NH1 ARG B 139     109.948  16.360  26.710  0.00  0.00           N 0
+TER
+END

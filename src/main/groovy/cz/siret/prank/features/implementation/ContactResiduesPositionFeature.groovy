@@ -83,7 +83,7 @@ class ContactResiduesPositionFeature extends SasFeatureCalculator implements Par
             double distca = MAX_DIST
             double distcenter = MAX_DIST
 
-            Collection<AminoAcid> residues = cresmap.get(aa)
+            Collection<AminoAcid> residues = (Collection<AminoAcid>) cresmap.get(aa)
             if (residues!=null && !residues.empty) {
 
                 AminoAcid closestResOfType = residues.min { Atoms.allFromGroup(it).dist(sasPoint)  }

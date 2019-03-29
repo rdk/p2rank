@@ -4,6 +4,7 @@ import cz.siret.prank.domain.labeling.LabeledPoint
 import cz.siret.prank.domain.labeling.ResidueLabelings
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+import groovy.transform.CompileStatic
 
 import javax.annotation.Nullable
 

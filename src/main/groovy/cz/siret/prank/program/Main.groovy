@@ -290,7 +290,7 @@ class Main implements Parametrized, Writable {
      * @return false if successful, true it there was some (recoverable) error during execution
      */
     boolean run() {
-        write args.toString() 
+
         command = args.unnamedArgs.size()>0 ? args.unnamedArgs.first() : "help"
         args.shiftUnnamedArgs()
 
@@ -358,7 +358,7 @@ class Main implements Parametrized, Writable {
     }
 
     static String getVersionName() {
-        return "P2RANK $version"
+        return "P2Rank $version"
     }
 
     static void main(String[] args) {

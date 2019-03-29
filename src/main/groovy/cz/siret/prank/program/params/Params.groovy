@@ -28,7 +28,7 @@ class Params {
     String dataset_base_dir = null
 
     /**
-     * all output of the prorgam will be stored in subdirectores of this directory
+     * all output of the program will be stored in subdirectores of this directory
      * (set absolute path or path relative to install dir, null defaults to working dir)
      */
     String output_base_dir = null
@@ -250,7 +250,7 @@ class Params {
     Set<String> ignore_het_groups = ["HOH","DOD","WAT","NAG","MAN","UNK","GLC","ABA","MPD","GOL","SO4","PO4"] as Set
 
     /**
-     * positive point defining ligand types acceped values: "relevant", "ignored", "small", "distant"
+     * positive point defining ligand types accepted values: "relevant", "ignored", "small", "distant"
      */
     List<String> positive_def_ligtypes = ["relevant"]
 
@@ -405,7 +405,7 @@ class Params {
     boolean zip_visualizations = false
 
     /**
-     * use sctrictly inner pocket points or more wider pocket neighbourhood
+     * use strictly inner pocket points or more wider pocket neighbourhood
      */
     boolean strict_inner_points = false
 
@@ -570,7 +570,7 @@ class Params {
     boolean subsampl_high_protrusion_negatives = false
 
     /**
-     * don't procuce prediction files for individual proteins (useful for long repetitive experiments)
+     * don't produce prediction files for individual proteins (useful for long repetitive experiments)
      */
     boolean output_only_stats = false
 
@@ -598,10 +598,10 @@ class Params {
     /**
      * print log messages to file (run.log in outdir)
      */
-    boolean log_to_file = false
+    boolean log_to_file = true
 
     /**
-     * cmompress and delete log file at the end (if log_to_file)
+     * compress and delete log file at the end (if log_to_file)
      */
     boolean zip_log_file = false
 
@@ -685,7 +685,7 @@ class Params {
     String hopt_objective = "-DCA_4_0"
 
     /**
-     * max number of itetarions in hyperparameter optimization
+     * max number of iterations in hyperparameter optimization
      */
     int hopt_max_iterations = 1000
 

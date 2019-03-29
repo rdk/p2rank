@@ -1,0 +1,38 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket    11:
+HEADER 0  - Pocket Score                      : 0.0636
+HEADER 1  - Drug Score                        : 0.0007
+HEADER 2  - Number of alpha spheres           :    15
+HEADER 3  - Mean alpha-sphere radius          : 3.9709
+HEADER 4  - Mean alpha-sphere Solvent Acc.    : 0.7060
+HEADER 5  - Mean B-factor of pocket residues  : 0.3617
+HEADER 6  - Hydrophobicity Score              : 9.8571
+HEADER 7  - Polarity Score                    :     5
+HEADER 8  - Amino Acid based volume Score     : 4.7143
+HEADER 9  - Pocket volume (Monte Carlo)       : 206.3906
+HEADER 10  -Pocket volume (convex hull)       : 4.2130
+HEADER 11 - Charge Score                      :     1
+HEADER 12 - Local hydrophobic density Score   : 5.0000
+HEADER 13 - Number of apolar alpha sphere     :     6
+HEADER 14 - Proportion of apolar alpha sphere : 0.4000
+ATOM   5491    O TYR B 256     116.946   2.609  26.233  0.00  0.00           O 0
+ATOM   5534   CB ASN B 260     116.839   1.155  23.467  0.00  0.00           C 0
+ATOM   5525    O ASP B 259     117.622   4.881  21.971  0.65  7.50           O 0
+ATOM   5536  OD1 ASN B 260     118.382   0.188  21.899  0.59  9.64           O 0
+ATOM   5530    N ASN B 260     116.367   3.575  23.322  0.00  0.00           N 0
+ATOM   4494   CB ALA B 125     125.274   0.152  28.843  0.00  0.00           C 0
+ATOM   4316  CG1 VAL B  99     121.792   1.790  30.787  0.00  0.00           C 0
+ATOM   4498    O ARG B 126     125.829   4.620  30.811  0.50  7.50           O 0
+ATOM   4511   CG ARG B 127     122.271   5.641  30.430  0.00  0.00           C 0
+ATOM   5494  CD1 TYR B 256     119.407   0.607  27.738  0.00  0.00           C 0
+ATOM   4512   CD ARG B 127     120.786   5.763  30.059  0.00  0.00           C 0
+ATOM   4515  NH1 ARG B 127     120.004   7.052  27.632  0.52  6.56           N 0
+ATOM   5496  CE1 TYR B 256     119.526  -0.562  26.979  0.00  0.00           C 0
+ATOM   5524    C ASP B 259     116.884   4.751  22.951  0.00  0.00           C 0
+ATOM   5489   CA TYR B 256     117.642   3.281  28.436  0.00  0.00           C 0
+ATOM   5526   CB ASP B 259     117.770   6.598  24.439  0.00  0.00           C 0
+TER
+END

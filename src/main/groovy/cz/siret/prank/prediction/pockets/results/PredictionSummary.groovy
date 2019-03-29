@@ -3,12 +3,14 @@ package cz.siret.prank.prediction.pockets.results
 import cz.siret.prank.domain.Prediction
 import cz.siret.prank.prediction.pockets.PrankPocket
 import cz.siret.prank.utils.CSV
+import groovy.transform.CompileStatic
 
 import static cz.siret.prank.utils.PerfUtils.formatDouble
 
 /**
  * Summary of predicted pockets for one protein.
  */
+@CompileStatic
 class PredictionSummary {
 
     private Prediction prediction
@@ -34,7 +36,11 @@ class PredictionSummary {
 
             def surfAtomIds = (p.surfaceAtoms*.PDBserial).toSorted().join(" ")
 
+<<<<<<< HEAD:src/main/groovy/cz/siret/prank/prediction/pockets/results/PredictionSummary.groovy
             Set resIds = new TreeSet(p.residues.collect { it.key.toString() })  
+=======
+            Set resIds = new TreeSet(p.surfaceAtoms.distinctGroups.collect { it.residueNumber.printFull() })
+>>>>>>> master:src/main/groovy/cz/siret/prank/score/results/PredictionSummary.groovy
             String strResIds = resIds.join(" ")
 
             sb << "$p.name,$p.newRank,$fmtScore,${p.sasPoints.count},$p.surfaceAtoms.count,$x,$y,$z,$strResIds,$surfAtomIds\n"

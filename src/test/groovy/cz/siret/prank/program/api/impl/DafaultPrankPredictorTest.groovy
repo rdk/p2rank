@@ -19,7 +19,7 @@ import static org.junit.Assert.assertTrue
 /**
  *
  */
-@CompileStatic
+//@CompileStatic
 class DafaultPrankPredictorTest {
 
     Path installDir = Paths.get("distro").toAbsolutePath()
@@ -53,7 +53,9 @@ class DafaultPrankPredictorTest {
     }
 
     private void doTestPredict(Path protFile) {
-        Prediction prediction = predictor.predict( protFile )
+        Prediction prediction = predictor.predict(
+                protFile
+        )
 
         String fname = protFile.fileName.toString()
         
@@ -79,7 +81,9 @@ class DafaultPrankPredictorTest {
         Futils.delete(outDir.toString())
 
         Path testOutDir = path(outDir, "predict_2W83_test")
-        predictor.runPrediction( testFile1, testOutDir )
+        predictor.runPrediction(
+                testFile1,
+                testOutDir )
 
         def outf = testOutDir.toString() + "/2W83.pdb_predictions.csv"
 

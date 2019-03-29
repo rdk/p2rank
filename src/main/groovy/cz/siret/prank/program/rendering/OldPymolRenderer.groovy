@@ -37,6 +37,10 @@ class OldPymolRenderer implements Parametrized {
         int N = pair.prediction.reorderedPockets.size()
 
         List<Color> colors = ColorUtils.createSpectrum(N, 0.6d, 0.6d, 1.20d)
+<<<<<<< HEAD:src/main/groovy/cz/siret/prank/program/rendering/OldPymolRenderer.groovy
+=======
+
+>>>>>>> master:src/main/groovy/cz/siret/prank/program/rendering/PyMolRenderer.groovy
 
         int i = 1;
         pair.prediction.reorderedPockets.each { Pocket pocket ->
@@ -87,14 +91,9 @@ class OldPymolRenderer implements Parametrized {
         // XXX
         //colorExposedAtoms = pair.prediction.protein.exposedAtoms.list.collect { "set surface_color, grey30, id $it.PDBserial \n set sphere_color, grey30, id $it.PDBserial" }.join("\n")
 
-//        #set ray_shadow, 0
-//        #set depth_cue, 0
-//        #set ray_trace_fog, 0
-          //#set antialias, 2
-//        set bg_rgb_top, [10,10,10]
-//        set bg_rgb_bottom, [36,36,85]
-        Futils.writeFile(pmlf, """
-from pymol import cmd,stored
+
+        Futils.writeFile(pmlf,
+"""from pymol import cmd,stored
 
 set depth_cue, 1
 set fog_start, 0.4
@@ -109,17 +108,9 @@ set  spec_power  =  200
 set  spec_refl   =  0
 
 load $proteinf, protein
-#create protein, fprotein and polymer
 create ligands, protein and organic
 select xlig, protein and organic
 delete xlig
-#delete fprotein
-
-#color bluewhite, fprotein
-#remove solvent
-#set stick_color, magenta
-#hide lines
-#show sticks
 
 hide everything, all
 
@@ -129,39 +120,27 @@ color bluewhite, protein
 show surface, protein
 #set transparency, 0.15
 
-
-#show_as sticks, ligands
 show sticks, ligands
-#show spheres, ligand
-#set sphere_scale, 0.33
 set stick_color, magenta
-
 
 load $pointsfRelName, points
 hide nonbonded, points
 show nb_spheres, points
+set sphere_scale, 0.2, points
 cmd.spectrum("b", "green_red", selection="points", minimum=0, maximum=0.7)
 
-#select pockets, resn STP
+
 stored.list=[]
-cmd.iterate("(resn STP)","stored.list.append(resi)")    #read info about residues STP
-#print stored.list
-lastSTP=stored.list[-1] #get the index of the last residu
+cmd.iterate("(resn STP)","stored.list.append(resi)")    # read info about residues STP
+lastSTP=stored.list[-1] # get the index of the last residue
 hide lines, resn STP
 
-#show spheres, resn STP
 cmd.select("rest", "resn STP and resi 0")
 
 for my_index in range(1,int(lastSTP)+1): cmd.select("pocket"+str(my_index), "resn STP and resi "+str(my_index))
-#for my_index in range(2,int(lastSTP)+2): cmd.color(my_index,"pocket"+str(my_index))
 for my_index in range(1,int(lastSTP)+1): cmd.show("spheres","pocket"+str(my_index))
 for my_index in range(1,int(lastSTP)+1): cmd.set("sphere_scale","0.4","pocket"+str(my_index))
 for my_index in range(1,int(lastSTP)+1): cmd.set("sphere_transparency","0.1","pocket"+str(my_index))
-
-#load $pointsf0RelName, points0
-#hide nonbonded, points0
-#show nb_spheres, points0
-#cmd.spectrum("b", "yellow_blue", selection="points0", minimum=0.3, maximum=1)
 
 $colorExposedAtoms
 
@@ -170,10 +149,7 @@ $colorPocketSurfaces
 deselect
 
 orient
-
-#set ray_trace_mode, 1
-
-            """)
+""")
          // predefined gradients:  http://kpwu.wordpress.com/2007/11/27/pymol-example-coloring-surface-by-b-factor/
         // http://cupnet.net/pdb_format/
         // http://www.pymolwiki.org/index.php/Colorama
@@ -225,4 +201,42 @@ orient
         }
     }
 
+
+    /*
+#set ray_shadow, 0
+#set depth_cue, 0
+#set ray_trace_fog, 0
+//#set antialias, 2
+set bg_rgb_top, [10,10,10]
+set bg_rgb_bottom, [36,36,85]
+
+
+#create protein, fprotein and polymer
+#delete fprotein
+
+#color bluewhite, fprotein
+#remove solvent
+#set stick_color, magenta
+#hide lines
+#show sticks
+
+#set sphere_scale, 0.33
+#show_as sticks, ligands
+
+#show spheres, ligand
+
+#select pockets, resn STP
+#print stored.list
+
+#show spheres, resn STP
+
+#for my_index in range(2,int(lastSTP)+2): cmd.color(my_index,"pocket"+str(my_index))
+
+#load $pointsf0RelName, points0
+#hide nonbonded, points0
+#show nb_spheres, points0
+#cmd.spectrum("b", "yellow_blue", selection="points0", minimum=0.3, maximum=1)
+
+#set ray_trace_mode, 1
+ */
 }

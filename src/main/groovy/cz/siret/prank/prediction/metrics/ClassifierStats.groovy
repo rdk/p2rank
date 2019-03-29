@@ -246,7 +246,7 @@ class ClassifierStats implements Parametrized, Writable {
         }
 
         double getF2() {
-            getFWeighted(2)
+            getFWeighted(2d)
         }
         double getF05() {
             getFWeighted(0.5d)
