@@ -36,11 +36,7 @@ class PredictionSummary {
 
             def surfAtomIds = (p.surfaceAtoms*.PDBserial).toSorted().join(" ")
 
-<<<<<<< HEAD:src/main/groovy/cz/siret/prank/prediction/pockets/results/PredictionSummary.groovy
-            Set resIds = new TreeSet(p.residues.collect { it.key.toString() })  
-=======
-            Set resIds = new TreeSet(p.surfaceAtoms.distinctGroups.collect { it.residueNumber.printFull() })
->>>>>>> master:src/main/groovy/cz/siret/prank/score/results/PredictionSummary.groovy
+            Set resIds = new TreeSet(p.residues.collect { it.key.toString() })
             String strResIds = resIds.join(" ")
 
             sb << "$p.name,$p.newRank,$fmtScore,${p.sasPoints.count},$p.surfaceAtoms.count,$x,$y,$z,$strResIds,$surfAtomIds\n"

@@ -341,7 +341,6 @@ import cz.siret.prank.program.params.Params
      */
     output_only_stats = false
 
-<<<<<<< HEAD
     /**
      * Path to json file that contains parameters of transformation of raw score to "z-score calculated from distribution of true pockets" (pocket.auxInfo.zScoreTP).
      * Use path relative to distro/models/score.
@@ -359,7 +358,6 @@ import cz.siret.prank.program.params.Params
      */
     residue_score_extra_dist = 2.0d
     
-=======
 
     /**
      * logging level (TRACE/DEBUG/INFO/WARN/ERROR)
@@ -381,5 +379,4 @@ import cz.siret.prank.program.params.Params
      */
     zip_log_file = false
 
->>>>>>> master
 }

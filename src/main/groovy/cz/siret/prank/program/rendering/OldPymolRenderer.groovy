@@ -37,10 +37,6 @@ class OldPymolRenderer implements Parametrized {
         int N = pair.prediction.reorderedPockets.size()
 
         List<Color> colors = ColorUtils.createSpectrum(N, 0.6d, 0.6d, 1.20d)
-<<<<<<< HEAD:src/main/groovy/cz/siret/prank/program/rendering/OldPymolRenderer.groovy
-=======
-
->>>>>>> master:src/main/groovy/cz/siret/prank/program/rendering/PyMolRenderer.groovy
 
         int i = 1;
         pair.prediction.reorderedPockets.each { Pocket pocket ->
