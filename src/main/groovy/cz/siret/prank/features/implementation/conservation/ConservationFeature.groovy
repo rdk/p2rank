@@ -4,6 +4,8 @@ import cz.siret.prank.domain.Protein
 import cz.siret.prank.features.api.AtomFeatureCalculationContext
 import cz.siret.prank.features.api.AtomFeatureCalculator
 import cz.siret.prank.features.api.ProcessedItemContext
+import cz.siret.prank.program.PrankException
+import cz.siret.prank.program.params.Parametrized
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
@@ -15,7 +17,7 @@ import org.biojava.nbio.structure.GroupType
  */
 @Slf4j
 @CompileStatic
-class ConservationFeature extends AtomFeatureCalculator {
+class ConservationFeature extends AtomFeatureCalculator implements Parametrized {
 
     @Override
     String getName() {
@@ -40,7 +42,12 @@ class ConservationFeature extends AtomFeatureCalculator {
 //            protein.loadConservationScores(itemContext)
 //        }
         if (getConservationScore(protein) == null) {
-            log.warn "Conservation not loaded for [{}]", protein.name
+            String msg = "Failed to load conservation for protein [$protein.name]"
+            if (params.fail_fast) {
+                throw new PrankException(msg)
+            } else {
+                log.warn msg
+            }
         }
     }
 

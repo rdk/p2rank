@@ -5,7 +5,9 @@ import com.univocity.parsers.tsv.TsvParserSettings
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.domain.Residue
 import cz.siret.prank.domain.labeling.ResidueLabeling
+import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.Parametrized
+import cz.siret.prank.program.params.Params
 import cz.siret.prank.utils.Futils
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.*
@@ -223,7 +225,12 @@ public class ConservationScore implements Parametrized {
                 }
 
             } catch(Exception e) {
-                log.error("Failed to load conservation file.", e)
+                String msg = "Failed to load conservation file for $structure.name"
+                if (Params.inst.fail_fast) {
+                    throw new PrankException(msg, e)
+                } else {
+                    log.error msg, e
+                }
             }
         }
         return new ConservationScore(scores);
