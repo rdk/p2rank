@@ -1,5 +1,7 @@
 language: groovy
 
+dist: trusty
+
 env:
   global:
     - GRADLE_OPTS=-Xmx1524m
