@@ -56,7 +56,6 @@ class Dataset implements Parametrized {
 
     static final List<String> DEFAULT_HEADER = [ COLUMN_PROTEIN ]
 
-
 //===========================================================================================================//
 
     String name
@@ -379,7 +378,7 @@ class Dataset implements Parametrized {
 
     Dataset(String name, String dir) {
         this.name = name
-        this.dir = dir
+        this.dir = dir  ?: "."  // safeguard for github#7
     }
 
      /**
@@ -411,7 +410,8 @@ class Dataset implements Parametrized {
 
         log.info "loading dataset [$file.absolutePath]"
 
-        Dataset dataset = new Dataset(file.name, file.parent)
+        String dir = file.parent ?: "." // fix for bug github#7
+        Dataset dataset = new Dataset(file.name, dir)
 
         for (String line in file.readLines()) {
             line = line.trim()
