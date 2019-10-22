@@ -299,7 +299,7 @@ import cz.siret.prank.program.params.Params
      * collect negatives just from decoy pockets found by other method
      * (alternatively take negative points from all of the protein's surface)
      */
-    sample_negatives_from_decoys = true
+    sample_negatives_from_decoys = false
 
     /**
      * cutoff atound ligand atoms to select negatives, 0=all

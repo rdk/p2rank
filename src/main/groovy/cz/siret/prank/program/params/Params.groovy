@@ -506,7 +506,7 @@ class Params {
      * collect negatives just from decoy pockets found by other method
      * (alternatively take negative points from all of the protein's surface)
      */
-    boolean sample_negatives_from_decoys = true
+    boolean sample_negatives_from_decoys = false
 
     /**
      * cutoff atound ligand atoms to select negatives, 0=all
