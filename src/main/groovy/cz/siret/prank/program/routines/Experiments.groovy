@@ -97,7 +97,7 @@ class Experiments extends Routine {
 
     /**
      * train/eval on different datasets for different seeds
-     * collecting train vectors only once and training+evaluatng many times
+     * collecting train vectors only once and training+evaluating many times
      */
     private static EvalResults doTrainEval(String outdir, Dataset trainData, Dataset evalData) {
 

@@ -1,10 +1,10 @@
 package cz.siret.prank.utils
 
+import cz.siret.prank.program.PrankException
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import weka.classifiers.Classifier
-import weka.classifiers.evaluation.Evaluation
 import weka.core.*
 import weka.core.converters.ArffSaver
 import weka.core.converters.ConverterUtils
@@ -98,7 +98,18 @@ class WekaUtils implements Writable {
     }
 
     static void trainClassifier(Classifier classifier, Instances data) {
+        validateDataset(data)
         classifier.buildClassifier(data)
+    }
+
+    static void validateDataset(Instances data) {
+        DatasetStats stats = stats(data)
+        if (stats.positives == 0) {
+            throw new PrankException("There are no positive instances in the training dataset! " + stats)
+        }
+        if (stats.negatives == 0) {
+            throw new PrankException("There are no negative instances in the training dataset! " + stats)
+        }
     }
 
     // == data ===
@@ -242,9 +253,27 @@ class WekaUtils implements Writable {
         return Filter.useFilter(data, filter)
     }
 
+    static DatasetStats stats(Instances data) {
+        return new DatasetStats(countPositives(data), countNegatives(data))
+    }
 
-    {
+    //===========================================================================================================//
 
-        Evaluation
+    static class DatasetStats {
+        int count
+        int positives
+        int negatives
+
+        DatasetStats(int positives, int negatives) {
+            this.positives = positives
+            this.negatives = negatives
+            this.count = positives + negatives
+        }
+
+
+        @Override
+        String toString() {
+            return "(count:$count, positives:$positives, negatives:$negatives)"
+        }
     }
 }

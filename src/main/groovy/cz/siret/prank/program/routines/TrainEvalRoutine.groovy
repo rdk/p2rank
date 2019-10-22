@@ -46,8 +46,8 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
 
     TrainEvalRoutine(String outdir, Dataset trainData, Dataset evalData) {
         super(outdir)
-        this.trainDataSet = trainData
-        this.evalDataSet = evalData
+        this.trainDataSet = Objects.requireNonNull(trainData, "Training dataset must be provided.")
+        this.evalDataSet = Objects.requireNonNull(evalData, "Evaluation dataset must be provided.")
     }
 
     EvalResults execute() {
