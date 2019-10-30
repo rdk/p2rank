@@ -91,7 +91,10 @@ test {
     // testLogging.showStandardStreams = true
 
     // set heap size for the test JVM(s)
+    def distroDir = "$project.projectDir/distro"
     maxHeapSize = "1512m"
+    inputs.dir "$distroDir/test_data"
+    inputs.files("$distroDir/models", "$distroDir/config/default.groovy")
 
     // listen to events in the test execution lifecycle
     beforeTest { descriptor ->
