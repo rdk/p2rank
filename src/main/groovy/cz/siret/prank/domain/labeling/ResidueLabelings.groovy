@@ -23,7 +23,7 @@ import static cz.siret.prank.utils.Futils.mkdirs
 import static cz.siret.prank.utils.Futils.writeFile
 
 /**
- * Logic for calculating residue lebalings during P2Rank prediction
+ * Logic for calculating residue labelings during P2Rank prediction
  */
 @Slf4j
 class ResidueLabelings implements Parametrized {

@@ -10,7 +10,7 @@ import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
 
 /**
- * Mapping Closest Residue to SAS
+ * Mapping Closest Residue to SAS point
  */
 @CompileStatic
 class ResidueToSasFeatWrapper extends SasFeatureCalculator {

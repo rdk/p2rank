@@ -18,7 +18,7 @@ import static cz.siret.prank.utils.Formatter.format
 import static cz.siret.prank.utils.Formatter.formatNumbers
 
 /**
- * (not intended o be reused with mode proteins)
+ * (not intended to be reused with mode proteins)
  */
 @Slf4j
 @CompileStatic

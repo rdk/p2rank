@@ -6,7 +6,7 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
 /**
- *
+ * Encapsulates system (command line) process
  */
 @Slf4j
 @CompileStatic

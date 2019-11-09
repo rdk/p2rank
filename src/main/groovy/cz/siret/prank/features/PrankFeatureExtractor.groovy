@@ -37,15 +37,9 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
     List<String> atomTableFeatures
     List<String> residueTableFeatures
 
-
     // tied to a protein
     private PointSampler pocketPointSampler
 
-    /**
-     * if set to true extractorFactory will use zero vectors for unknown residues
-     * otherwise throws exception (so the whole pocket can be ignored)
-     */
-    private boolean MASK_UNKNOWN_RESIDUES = params.mask_unknown_residues
     private double NEIGH_CUTOFF_DIST = params.neighbourhood_radius
     private boolean DO_SMOOTH_REPRESENTATION = params.smooth_representation
     private double SMOOTHING_CUTOFF_DIST = params.smoothing_radius
@@ -112,7 +106,6 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
         return res
     }
 
-
     @Override
     void prepareProteinPrototypeForPockets() {
         pocketPointSampler = PointSampler.create(protein, trainingExtractor)
@@ -143,7 +136,6 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
         this.protein = protein
         this.pocket = pocket
 
-        this.MASK_UNKNOWN_RESIDUES = proteinPrototype.MASK_UNKNOWN_RESIDUES
         this.headerAdditionalFeatures = proteinPrototype.headerAdditionalFeatures
         this.pocketPointSampler    = proteinPrototype.pocketPointSampler
         this.extraFeaturesHeader   = proteinPrototype.extraFeaturesHeader
@@ -156,10 +148,6 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
         this.surfaceLayerAtoms = proteinPrototype.surfaceLayerAtoms
         this.properties = proteinPrototype.properties
         this.smoothRepresentations = proteinPrototype.smoothRepresentations
-
-
-
-
     }
 
     @Override

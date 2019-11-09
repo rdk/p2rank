@@ -1,5 +1,9 @@
 package cz.siret.prank.features.api
 
+
+import cz.siret.prank.features.api.FeatureCalculator
+import cz.siret.prank.features.api.ResidueToAtomicFeatWrapper
+import cz.siret.prank.features.api.ResidueToSasFeatWrapper
 import cz.siret.prank.features.implementation.AAIndexFeature
 import cz.siret.prank.features.implementation.Asa2Feature
 import cz.siret.prank.features.implementation.AsaFeature

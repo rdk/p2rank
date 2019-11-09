@@ -215,6 +215,10 @@ class Dataset implements Parametrized {
         return getLoader(attributes.get(PARAM_PREDICTION_METHOD), item)
     }
 
+    /**
+     * Get configured instance of prediction loader.
+     * @param method LBS prediction method name
+     */
     private PredictionLoader getLoader(String method, Item item) {
         PredictionLoader res
         switch (method) {

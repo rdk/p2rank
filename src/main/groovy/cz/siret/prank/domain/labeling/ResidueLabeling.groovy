@@ -7,7 +7,7 @@ import groovy.transform.CompileStatic
 import javax.annotation.Nullable
 
 /**
- * Holds partiticular assignment of labels to a set of residues.
+ * Holds particular assignment of labels to a set of residues.
  */
 @CompileStatic
 class ResidueLabeling<L>  {
@@ -15,7 +15,7 @@ class ResidueLabeling<L>  {
     private List<LabeledResidue<L>> labeledResidues
     private Map<Residue.Key, LabeledResidue<L>> labeledMap
 
-    ResidueLabeling(List<LabeledResidue> labeledResidues) {
+    ResidueLabeling(List<LabeledResidue<L>> labeledResidues) {
         this.labeledResidues = labeledResidues
         this.labeledMap = Maps.uniqueIndex(labeledResidues, { it.residue.key })
     }

@@ -8,7 +8,7 @@ import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 
 /**
- *
+ * Labels points according to nearest residue.
  */
 @Slf4j
 @CompileStatic

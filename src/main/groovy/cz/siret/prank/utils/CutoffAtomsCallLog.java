@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- *
+ * Utility for debugging and profiling cutoffAtoms methods
  */
 public class CutoffAtomsCallLog {
 

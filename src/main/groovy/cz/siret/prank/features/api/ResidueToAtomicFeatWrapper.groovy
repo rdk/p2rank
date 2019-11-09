@@ -5,7 +5,7 @@ import cz.siret.prank.domain.Residue
 import org.biojava.nbio.structure.Atom
 
 /**
- *
+ * Maps a residue features to atom feature
  */
 class ResidueToAtomicFeatWrapper extends AtomFeatureCalculator {
 
