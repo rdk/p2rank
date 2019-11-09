@@ -92,6 +92,10 @@ test {
 
     // set heap size for the test JVM(s)
     maxHeapSize = "1512m"
+    
+    def distroDir = "$project.projectDir/distro"
+    inputs.dir "$distroDir/test_data"
+    inputs.files("$distroDir/models", "$distroDir/config/default.groovy")
 
     // listen to events in the test execution lifecycle
     beforeTest { descriptor ->
