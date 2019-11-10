@@ -51,11 +51,15 @@ Slides: http://bit.ly/p2rank_slides
 If you use P2Rank, please cite relevant papers:
 
 * [Software article](https://doi.org/10.1186/s13321-018-0285-8) in JChem about P2Rank pocket prediction tool  
- Krivák R, Hoksza D. *P2Rank: machine learning based tool for rapid and accurate prediction of ligand binding sites from protein structure. Journal of cheminformatics.* 2018 Aug.
+ Krivak R, Hoksza D. *P2Rank: machine learning based tool for rapid and accurate prediction of ligand binding sites from protein structure.* Journal of Cheminformatics. 2018 Aug.
+* [Web-server article](https://doi.org/10.1093/nar/gkz424) in NAR about the web interface accessible at [prankweb.cz](http://prankweb.cz)  
+ Jendele L, Krivak R, Skoda P, Novotny M, Hoksza D. *PrankWeb: a web server for ligand binding site prediction and visualization.* Nucleic Acids Research, Volume 47, Issue W1, 02 July 2019, Pages W345–W349 
 * [Conference paper](https://doi.org/10.1007/978-3-319-21233-3_4) inroducing P2Rank prediction algorithm  
- Krivák R, Hoksza D. *P2RANK: Knowledge-Based Ligand Binding Site Prediction Using Aggregated Local Features.* InInternational Conference on Algorithms for Computational Biology 2015 Aug 4 (pp. 41-52). Springer, Cham.
+ Krivak R, Hoksza D. *P2RANK: Knowledge-Based Ligand Binding Site Prediction Using Aggregated Local Features.* InInternational Conference on Algorithms for Computational Biology 2015 Aug 4 (pp. 41-52). Springer
 * [Research article](https://doi.org/10.1186/s13321-015-0059-5) in JChem about PRANK rescoring algorithm  
- Krivák R, Hoksza D. *Improving protein-ligand binding site prediction accuracy by classification of inner pocket points using local features.* Journal of cheminformatics. 2015 Dec;7(1):12.
+ Krivak R, Hoksza D. *Improving protein-ligand binding site prediction accuracy by classification of inner pocket points using local features.* Journal of Cheminformatics. 2015 Dec.
+
+
 
 Usage Examples
 --------------
