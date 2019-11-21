@@ -1,9 +1,9 @@
 import cz.siret.prank.program.params.Params
 
 /**
- * This configiration file is setting technical parameterss ideal for training and evaluating new models.
+ * This config file is setting technical parameters ideal for training and evaluating new models.
  *
- * In other poarameters of the algorithm should stay as close as possible do default config.
+ * In other parameters of the algorithm should stay as close as possible do default config.
  */
 (params as Params).with {
 
@@ -14,7 +14,7 @@ import cz.siret.prank.program.params.Params
     dataset_base_dir = "../../p2rank-datasets"
 
     /**
-     * all output of the prorgam will be stored in subdirectores of this directory
+     * all output of the program will be stored in subdirectories of this directory
      * (set absolute path or path relative to install dir, null defaults to working dir)
      */
     output_base_dir = "../../p2rank-results/${version}"
@@ -28,7 +28,7 @@ import cz.siret.prank.program.params.Params
     max_train_instances = 0
 
     /**
-     * stop processing a datsaset on the first unrecoverable error with a dataset item
+     * stop processing a dataset on the first unrecoverable error with a dataset item
      */
     fail_fast = true
 
@@ -69,5 +69,14 @@ import cz.siret.prank.program.params.Params
     ploop_delete_runs = true
 
     zip_log_file = true
+
+    /**
+     * collect negatives just from decoy pockets found by other method
+     * (alternatively take negative points from all of the protein's surface)
+     *
+     * here set to true for backwards compatibility for training on *-fpocket.ds datasets in misc/test-scripts/testsets.sh script
+     */
+    sample_negatives_from_decoys = true
+
 
 }

@@ -1,5 +1,8 @@
 import cz.siret.prank.program.params.Params
 
+/**
+ * This config file contains the default configuration of P2Rank running in predict mode (prank predict -f xxxx.pdb).
+ */
 (params as Params).with {
 
     /**
@@ -9,7 +12,7 @@ import cz.siret.prank.program.params.Params
     dataset_base_dir = "./test_data"
 
     /**
-     * all output of the prorgam will be stored in subdirectores of this directory
+     * all output of the program will be stored in subdirectories of this directory
      * (set absolute path or path relative to install dir, null defaults to working dir)
      */
     output_base_dir = "./test_output"
@@ -43,7 +46,7 @@ import cz.siret.prank.program.params.Params
      */
     ligand_protein_contact_distance = 4
 
-    //== FAETURES
+    //== FEATURES
 
     atom_table_features = ["apRawValids","apRawInvalids","atomicHydrophobicity"]
 
