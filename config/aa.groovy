@@ -1,9 +1,7 @@
 import cz.siret.prank.program.params.Params
 
 /**
- * This configiration file is setting technical parameterss ideal for training and evaluating new models.
- *
- * In other poarameters of the algorithm should stay as close as possible do default config.
+ * Config file for testing AA index
  */
 (params as Params).with {
 

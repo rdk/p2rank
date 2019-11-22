@@ -1,5 +1,8 @@
 import cz.siret.prank.program.params.Params
 
+/**
+ * Config file for testing AA index
+ */
 (params as Params).with {
 
     /**
