@@ -42,7 +42,7 @@ class StatSample {
 
     double getVariance() {
         double mean = mean
-        double xx = 0;
+        double xx = 0
         for (double a : sample)
             xx += (a - mean) * (a - mean)
         xx / (size - 1)
