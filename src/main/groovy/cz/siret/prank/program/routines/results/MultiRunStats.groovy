@@ -1,12 +1,14 @@
 package cz.siret.prank.program.routines.results
 
 import cz.siret.prank.utils.StatSample
+import groovy.transform.CompileStatic
 
 import static cz.siret.prank.utils.StatSample.newStatSample
 
 /**
  * Stats table for multiple runs
  */
+@CompileStatic
 class MultiRunStats {
 
     List<String> names
@@ -48,7 +50,7 @@ class MultiRunStats {
             sb << fs(stat) << ', '
             sb << fmt(mean[stat]) << ', '
             sb << fmt(stddev[stat]) << ', '
-            sb << fmt(mean[stat]) << ', '
+            sb << fmt(relativeStddev[stat]) << ', '
             sb << statsForRuns.collect{ fmt(it[stat]) }.join(', ') << '\n'
         }
 
