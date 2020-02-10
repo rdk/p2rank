@@ -14,8 +14,9 @@ import java.awt.Color
 
 
 /**
- * Generates Pymol visualizatin of RenderingModel.
- * Do not resue!
+ * Generates PyMol visualization of RenderingModel.
+ *
+ * Used for visualization of residue predictions.
  */
 @Slf4j
 @CompileStatic
@@ -89,7 +90,7 @@ set bg_gradient
 set  spec_power  =  200
 set  spec_refl   =  0
 
-load $proteinFile, protein
+load "$proteinFile", protein
 create ligands, protein and organic
 select xlig, protein and organic
 delete xlig
@@ -201,7 +202,7 @@ cmd.spectrum("b", "rainbow", selection="protein", minimum=0, maximum=1)
         writeLabeledPoints(pointsfAbs, model.labeledPoints)
 
 """
-load $pointsfRel, points
+load "$pointsfRel", points
 hide nonbonded, points
 show nb_spheres, points
 cmd.spectrum("b", "green_red", selection="points", minimum=0, maximum=0.7)

@@ -17,6 +17,11 @@ import org.zeroturnaround.zip.ZipUtil
 import java.awt.*
 import java.util.List
 
+/**
+ * Generates PyMol visualizations.
+ *
+ * Used for visualization of binding site predictions.
+ */
 @Slf4j
 @CompileStatic
 class OldPymolRenderer implements Parametrized {
@@ -103,7 +108,7 @@ set bg_gradient
 set  spec_power  =  200
 set  spec_refl   =  0
 
-load $proteinf, protein
+load "$proteinf", protein
 create ligands, protein and organic
 select xlig, protein and organic
 delete xlig
@@ -119,7 +124,7 @@ show surface, protein
 show sticks, ligands
 set stick_color, magenta
 
-load $pointsfRelName, points
+load "$pointsfRelName", points
 hide nonbonded, points
 show nb_spheres, points
 set sphere_scale, 0.2, points
