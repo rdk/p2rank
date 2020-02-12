@@ -19,6 +19,15 @@ public class ConsoleWriter {
         log.info msg
     }
 
+    public static void writeln(String msg) {
+        write(msg + "\n")
+    }
+
+    public static void writeln() {
+        write("\n")
+    }
+
+
     public static void writeError(String msg, Throwable t) {
         String stack = t==null ? "" : "\n" + stackTrace(t)
 

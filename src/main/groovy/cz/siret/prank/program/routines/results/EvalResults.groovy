@@ -258,27 +258,31 @@ class EvalResults implements Parametrized, Writable  {
         }
 
 
+        write "\n"
         def pst = logClassifierStats("point_classification", classifierName,  classifierStats, outdir)
+        write CSV.tabulate(pst)
         if (mode_residues) {
             def rst = logClassifierStats("residue_classification", "Residue classification",  residuePredictionStats, outdir)
-
-            write "\n" + CSV.tabulate(pst)
-            write  CSV.tabulate(rst) + "\n"
+            write  CSV.tabulate(rst)
         }
-        //else {
-        //    logClassifierStats("classifier", classifierName,  classifierStats, outdir)
-        //}
+        write "\n"
+
 
         if (mode_pockets) {
             List<Integer> tolerances = params.eval_tolerances
 
-            String succ_rates          = origEval.toSuccRatesCSV(tolerances)
-            String succ_rates_rescored = eval.toSuccRatesCSV(tolerances)  // P2RANK predictions are in eval
-            String succ_rates_diff     = eval.diffSuccRatesCSV(tolerances, origEval)
-
-            writeFile "$outdir/success_rates.csv", succ_rates_rescored
+            String succ_rates = eval.toSuccRatesCSV(tolerances)  // P2RANK predictions are in eval
+            String succ_rates_original = null                    // predictions of other method in origEval (in rescore mode)
+            String succ_rates_diff     = null
             if (rescoring) {
-                writeFile "$outdir/success_rates_original.csv", succ_rates
+                succ_rates_original = origEval.toSuccRatesCSV(tolerances)
+                succ_rates_diff = eval.diffSuccRatesCSV(tolerances, origEval)
+            }
+
+
+            writeFile "$outdir/success_rates.csv", succ_rates
+            if (rescoring) {
+                writeFile "$outdir/success_rates_original.csv", succ_rates_original
                 writeFile "$outdir/success_rates_diff.csv", succ_rates_diff
             }
 
@@ -299,11 +303,11 @@ class EvalResults implements Parametrized, Writable  {
 
             //log.info "\n" + CSV.tabulate(classifier_stats) + "\n\n"
             if (rescoring) {
-                log.info "\nSucess Rates - Original:\n" + CSV.tabulate(succ_rates) + "\n"
+                log.info "\nSuccess Rates - Original:\n" + CSV.tabulate(succ_rates_original) + "\n"
             }
-            write "\nSucess Rates:\n" + CSV.tabulate(succ_rates_rescored) + "\n"
+            write "\nSuccess Rates:\n" + CSV.tabulate(succ_rates) + "\n"
             if (rescoring) {
-                log.info "\nSucess Rates - Diff:\n" + CSV.tabulate(succ_rates_diff) + "\n\n"
+                log.info "\nSuccess Rates - Diff:\n" + CSV.tabulate(succ_rates_diff) + "\n\n"
             }
         }
 

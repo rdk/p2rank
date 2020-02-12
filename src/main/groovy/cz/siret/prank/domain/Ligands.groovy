@@ -4,6 +4,7 @@ import cz.siret.prank.domain.loaders.LoaderParams
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Struct
 import cz.siret.prank.program.params.Parametrized
+import cz.siret.prank.utils.Writable
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
@@ -14,7 +15,7 @@ import org.biojava.nbio.structure.Group
  */
 @Slf4j
 @CompileStatic
-class Ligands implements Parametrized {
+class Ligands implements Parametrized, Writable {
 
     /* ligands counted in predictions */
     List<Ligand> relevantLigands = new ArrayList<>()
@@ -42,6 +43,10 @@ class Ligands implements Parametrized {
             relevantLigands = ligands
 
         } else {
+            if (loaderParams.relevantLigandsDefined) {
+                log.info "Relevant ligand names defined in the dataset: " + loaderParams.relevantLigandNames
+            }
+
             List<Group> relevantGroups = ligandGroups.findAll { isRelevantLigGroup(it, loaderParams) }
             List<Group> ignoredGroups = ligandGroups.findAll { ! isRelevantLigGroup(it, loaderParams) }
 
@@ -58,6 +63,8 @@ class Ligands implements Parametrized {
 
             ignoredLigands = makeLigands(ignoredAtomGroups, protein)
         }
+
+        log.info "Loaded ${relevantLigands.size()} relevant ligands: " + relevantLigands*.name
 
         sortLigands relevantLigands
         sortLigands ignoredLigands

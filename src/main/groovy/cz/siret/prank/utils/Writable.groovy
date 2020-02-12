@@ -19,6 +19,14 @@ trait Writable {
         ConsoleWriter.write(msg)
     }
 
+    static void writeln(String msg) {
+        ConsoleWriter.writeln(msg)
+    }
+
+    static void writeln() {
+        ConsoleWriter.writeln()
+    }
+
     static void writeError(String msg, Throwable t) {
         ConsoleWriter.writeError(msg, t)
     }
