@@ -57,7 +57,7 @@ import cz.siret.prank.program.params.Params
 
     // Training
 
-    balance_class_weights = true
+    balance_class_weights = false
     target_class_weight_ratio = 0.05
     //target_class_weight_ratio = 0.2160
     //subsample = true
