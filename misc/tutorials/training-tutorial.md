@@ -47,7 +47,7 @@ Results of any single train/eval run and averaged results will be written to the
 
 Related parameters:
 * use `-delete_models 0` to keep model files after evaluation.
-* `-cache_datasets <bool>`: keep datasets (structures and Connolly points) in memory between crossval/traineval iterations. Turn off for huge datasets that won't fit to memory.
+* `-cache_datasets <bool>`: keep datasets (structures and SAS points) in memory between crossval/traineval iterations. Turn off for huge datasets that won't fit to memory.
 * `-feature_importances <bool>`: calculate feature importances (works only if `classifier = "FastRandomForest"`)
 * `-fail_fast <bool>`: stop processing the dataset on the first unrecoverable error with a dataset item
 

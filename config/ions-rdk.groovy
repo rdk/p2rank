@@ -22,7 +22,7 @@ import cz.siret.prank.program.params.Params
     fail_fast = true
     threads = Runtime.getRuntime().availableProcessors() + 1;
 
-    load_only_specified_chains = true
+    load_only_specified_chains = false
 
 
     log_level = "WARN"
@@ -36,17 +36,15 @@ import cz.siret.prank.program.params.Params
     clear_prim_caches = false
 
     selected_stats = ['_blank',
+                      'DCA_4_0',
+                      'DCA_4_2',
                       'MCC',
                       'F1',
                       'AUC',
                       'AUPRC',
                       'TPX',
-                      'point_MCC',
-                      'point_F1',
-                      'point_TPX',
-                      'point_AUC',
-                      'point_AUPRC',
                       'TIME_MINUTES']
+
 
     // General feature extraction
 
@@ -57,16 +55,17 @@ import cz.siret.prank.program.params.Params
 
     // Training
 
-    balance_class_weights = false
-    target_class_weight_ratio = 0.05
-    //target_class_weight_ratio = 0.2160
+    positive_point_ligand_distance = 4.6
+    balance_class_weights = true
+    target_class_weight_ratio = 0.08
     //subsample = true
     //target_class_ratio = 1
 
     // Prediction
 
-    pred_point_threshold = 0.5
     point_score_pow = 5.2717
+    pred_point_threshold = 0.5
+    pred_min_cluster_size = 3
 
     // Classifier
 
