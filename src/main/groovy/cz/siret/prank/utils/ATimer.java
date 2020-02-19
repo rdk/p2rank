@@ -32,7 +32,7 @@ public class ATimer {
     }
 
     public double getMinutes() {
-        return getTimeSec() / 60;
+        return (double)getTimeSec() / 60;
     }
 
     public String getFormatted() {
