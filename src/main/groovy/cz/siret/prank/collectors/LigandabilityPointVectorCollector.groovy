@@ -105,7 +105,7 @@ class LigandabilityPointVectorCollector extends VectorCollector implements Param
             try {
                 double closestLigandDistance = ligandAtoms.dist(point)
                 boolean ligPoint = (closestLigandDistance <= POSITIVE_VC_LIGAND_DISTANCE)
-                boolean negPoint = (closestLigandDistance >= NEGATIVES_DIST)
+                boolean negPoint = (closestLigandDistance > NEGATIVES_DIST)
                 // points in between are left out from training
 
                 if (ligPoint || negPoint) {
