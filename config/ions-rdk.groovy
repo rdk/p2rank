@@ -56,7 +56,7 @@ import cz.siret.prank.program.params.Params
     // Training
 
     positive_point_ligand_distance = 4.6
-    neutral_points_margin 0
+    neutral_points_margin = 5.5
     balance_class_weights = true
     target_class_weight_ratio = 0.08
     //subsample = true
