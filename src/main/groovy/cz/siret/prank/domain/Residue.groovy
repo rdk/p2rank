@@ -77,7 +77,7 @@ class Residue {
      */
     AminoAcid getAminoAcid() {
         if (group instanceof  AminoAcid) {
-            return group
+            return (AminoAcid)group
         } else {
             return null
         }
