@@ -43,8 +43,12 @@ class ContactResidue1PositionFeature extends SasFeatureCalculator implements Par
         AminoAcid aa = res.aminoAcid
 
         Atom center = res.atoms.centerOfMass
-        Atom ca = aa.getCA()
-        Atom cb = aa.getCB()
+        Atom ca = center
+        Atom cb = center
+        if (aa!=null) {
+            ca = aa.getCA()
+            cb = aa.getCB()    
+        }
 
         double dcenter = Struct.dist(sasPoint, center)
         double dclosest = res.atoms.dist(sasPoint)

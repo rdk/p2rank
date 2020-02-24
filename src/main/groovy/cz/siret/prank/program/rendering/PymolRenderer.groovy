@@ -49,7 +49,7 @@ class PymolRenderer implements Parametrized {
 
             model.protein.allAtoms.each { it.setTempFactor(0f) }
             model.doubleLabeling.labeledResidues.each { lr ->
-                lr.residue.aminoAcid.atoms.each { a ->
+                lr.residue.atoms.each { a ->
                     a.setTempFactor((float)(lr.label ?: 0f))
                 }
             }

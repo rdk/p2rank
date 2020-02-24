@@ -57,6 +57,9 @@ class Residue {
         this.key = new Key(group.residueNumber)
     }
 
+    /**
+     * note: in biojava UNK Groups sometimes implement AminoAcid and sometimes HetatomImpl!
+     */
     static Residue fromGroup(Group group) {
         if (!(Struct.isAminoAcidGroup(group) || group.getPDBName().startsWith("UNK")))
             throw new PrankException("Trying to create residue from non amino acid group: " + group)
@@ -69,8 +72,15 @@ class Residue {
 
 //===========================================================================================================//
 
+    /**
+     * note: in biojava UNK Groups sometimes implement AminoAcid and sometimes HetatomImpl!
+     */
     AminoAcid getAminoAcid() {
-        return (AminoAcid)group
+        if (group instanceof  AminoAcid) {
+            return group
+        } else {
+            return null
+        }
     }
 
     Key getKey() {
