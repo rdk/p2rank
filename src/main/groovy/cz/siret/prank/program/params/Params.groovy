@@ -314,7 +314,7 @@ class Params {
     double ligand_induced_volume_cutoff = 2.5
 
     /**
-     * points between [positive_point_ligand_distance,positive_point_ligand_distance+neutral_point_margin] will be left out form training
+     * points between (positive_point_ligand_distance, positive_point_ligand_distance + neutral_point_margin) will not be considered positives or negatives and will be left out form training
      */
     @ModelParam // training
     double neutral_points_margin = 5.5

@@ -105,39 +105,7 @@ Runs 10 independent 5-fold crossvalidation runs with different values of a rando
 Related parameters:
 * `-crossval_threads <int>`: number of folds to work on simultaneously
 
-    
 
-## Grid optimization
-
-P2Rank allows you to iterate experiments (train/eval and crossvalidation) through lists of different parameter values on the command line.
-
-For that you need to use `prank ploop` command and list or range expression instead of param value for one or more params. Only numerical and boolean parameters are suppeotrd.
-
-
-List expression: `(val1,val2,...)` example: `'(1,2,3,4)'`
-
-Range expression: `[min:max:step]` example: `[-1:1.5:0.5]`
-
-Examples:
-~~~
-prank ploop -t <training_dataset> -e <evaluation_dataset> -paramA '[min:max:step]' -paramB '(val1,val2,val3,val4)'
-prank ploop -t <dataset>                                  -paramA '[min:max:step]' -paramB '(val1,val2,val3,val4)'   # runs crossvalidation
-~~~
-
-Random seed iteration (`-loop` and `-seed` params) works here as well.
-
-Related parameters:
-* `-clear_prim_caches <bool>`: clear primary caches (protein structures) when iterating params
-* `-clear_sec_caches <bool>`: clear secondary caches (protein surfaces etc.) when iterating params
-
-### R plots
-
-In case you iterate through exactly 1 or 2 parameters P2Rank will try to produce plots of various statistics using R language. 
-For that you need to have `Rscript` on the Path. Some libraries in R need to be installed. 
-~~~
-sudo apt install r-base
-sudo R -e "install.packages('ggplot2', dependencies=TRUE, repos='http://cran.us.r-project.org')"
-~~~
 
 ## Output directory location
 
@@ -185,35 +153,12 @@ Some features are more easily defined for atoms than SAS points and other way ar
     * train with the new feature by adding its name to the list of `-extra_features`. i.e.:
         - in the groovy config file: `extra_features = ["protrusion","bfactor","new_feature"]`
         - on the command line: `-extra_features '(protrusion.bfactor.new_feature)'` (dot is used as separator)
+    * if the feature has arbitrary parameters, they can be optimized with `prank ploop` or `prank hopt` commands
+        - see hyperparameter-optimization-tutorial.md    
     * you can even compare different feature sets running `prank ploop ...`. i.e.:
-        - `-extra_features '((protrusion),(new_feature),(protrusion.new_feature))'`   
+        - `-extra_features '((protrusion),(new_feature),(protrusion.new_feature))'`
     
-#### Real examples
-    
-Quick test run:
-~~~   
-./prank.sh ploop 
-    -c working                      \      # override default config with working.groovy config file
-    -t chen11-fpocket.ds            \      # crossvalidate on chen11 datsest
-    -loop 1 -rf_trees 5 -rf_depth 5 \      # make it quick (1 pass, small model)
-    -extra_features '((protrusion.bfactor),(protrusion.bfactor.new_feature))'` 
-~~~
 
-(Then check `run.log` in n results directory for errors. Check if R plots are generated correctly.)
-
-Real comparison experiments:
-~~~
-./prank.sh ploop -c working             \      
-    -t chen11-fpocket.ds                \      
-    -loop 10 -rf_trees 100 -rf_depth 10 \      
-    -extra_features '((protrusion.bfactor),(protrusion.bfactor.new_feature))'` 
-
-./prank.sh ploop -c working             \      
-    -t chen11-fpocket.ds                \  # train on chen11 
-    -e joined.ds                        \  # and evaluate on a different dataset
-    -loop 10 -rf_trees 100 -rf_depth 10 \      
-    -extra_features '((protrusion.bfactor),(protrusion.bfactor.new_feature))'` 
-~~~
 
 
 
