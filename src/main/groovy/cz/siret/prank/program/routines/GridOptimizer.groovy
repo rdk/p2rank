@@ -74,6 +74,7 @@ class GridOptimizer extends ParamLooper {
     }
 
     private makePlots() {
+        def timer = startTimer()
         write "generating R plots..."
         mkdirs(plotsDir)
         if (listParams.size()==1) {
@@ -81,6 +82,7 @@ class GridOptimizer extends ParamLooper {
         } else if (listParams.size()==2) {
             make2DPlots()
         }
+        logTime "generating plots finished in $timer.formatted"
     }
 
     private int getRThreads() {
@@ -88,7 +90,7 @@ class GridOptimizer extends ParamLooper {
     }
 
     boolean plotVariable(String name) {
-        if (name.startsWith('_stddev_')) {
+        if (!params.r_plot_stddevs && name.startsWith('_stddev_')) {
             return false
         }
         return true

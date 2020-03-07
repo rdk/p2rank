@@ -66,6 +66,12 @@ class Params {
     int r_threads = 2
 
     /**
+     *  Generate sdddev plot for each statistic when generating R plots
+     */
+    @RuntimeParam
+    boolean r_plot_stddevs = false
+
+    /**
      * Number of cross-validation folds to work on simultaneously.
      * (Multiplies required memory)
      */
