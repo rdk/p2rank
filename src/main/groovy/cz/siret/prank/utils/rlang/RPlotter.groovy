@@ -73,7 +73,7 @@ class RPlotter implements Parametrized {
 
             p <- ggplot(data, aes_string(x=xx, y=yy, colour=yy, fill = yy))
 
-            p + geom_bar(stat="identity", position = 'dodge', alpha = 3/4, color="gray20") + scale_fill_gradientn(colours=r) + theme(legend.direction = "vertical") 
+            p + geom_bar(stat="identity", position = 'dodge', alpha = 3/4, color="gray20") + scale_fill_gradientn(colours=r) + theme(axis.text.x = element_text(angle = 340, hjust = 1))
 
             ggsave(file=paste(yy,".png"), dpi=$dpi)
         """
