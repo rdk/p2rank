@@ -138,4 +138,37 @@ the same proteins they were calculated from.
 ./prank.sh analyze aa-surf-seq-triplets   -c config/ions-rdk 2020-01/mg/dev200-inverse.ds 
 ~~~
 
+Results need to be moved in to the codebase:
+* Move `duplets.csv` and `triplets.csv` to `src/main/resources/tables/propensities/Ions_Mg_Dev200Inv`.
+* From `aa-propensities.csv` take columns `(pos_ratio, pos_ratio^2)` and add to `src/main/resources/tables/aa-propensities.csv` as `(Ions_Mg_Dev200Inv, Ions_Mg_Dev200Inv^2)`.
+
+Note: these propensity features were added ad hoc during peptide binding site prediction and the whole prosess should be redesigned.
+
+Now we can use new features (after rebuild).
+~~~
+./prank.sh traineval -c config/ions-rdk -out_subdir HOPT -label propensity-features-1 \
+    -t 2020-01/mg/train200.ds \
+    -e 2020-01/mg/dev200.ds \
+    -loop 3 -log_to_console 0 -log_to_file 1 -log_level ERROR \
+    -ploop_delete_runs 0 -hopt_max_iterations 2999 \
+    -collect_only_once 0 \
+    -clear_prim_caches 1 -clear_sec_caches 1 \
+    -hopt_objective '"-DCA_4_0"' \
+    -balance_class_weights 1 \
+    -residue_table_features '(Ions_Mg_Dev200Inv.Ions_Mg_Dev200Inv^2)' \
+    -atom_table_features '(atomicHydrophobicity)' \
+    -extra_features '(chem.volsite.bfactor.protrusion.duplets.triplets)' \
+    -feat_propensities_set 'Ions_Mg_Dev200Inv' \
+    -rf_bagsize 55 -rf_depth 12 -rf_trees 100 \
+    -target_class_weight_ratio 0.0684 \
+    -positive_point_ligand_distance 5.1286 \
+    -pred_point_threshold 0.5678 \
+    -pred_min_cluster_size 1 \
+    -extended_pocket_cutoff 1 \
+    -point_score_pow 10 \
+    -neighbourhood_radius 5.9 \
+    -protrusion_radius 7 \
+    -solvent_radius 1.2781 \
+    -rf_threads 12
+~~~
 

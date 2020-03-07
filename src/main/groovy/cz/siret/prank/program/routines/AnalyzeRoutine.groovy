@@ -326,7 +326,7 @@ class AnalyzeRoutine extends Routine {
             counters.add(counter)
         }
 
-        savePropensities("$outdir/aa_surf_seq_duplet_propensities.csv", BinCounter.join(counters))
+        savePropensities("$outdir/duplets.csv", BinCounter.join(counters))
     }
 
     /**
@@ -351,13 +351,13 @@ class AnalyzeRoutine extends Routine {
             counters.add(counter)
         }
 
-        savePropensities("$outdir/aa_surf_seq_triplet_propensities.csv", BinCounter.join(counters))
+        savePropensities("$outdir/triplets.csv", BinCounter.join(counters))
     }
 
 
 
     private static void savePropensities(String fname, BinCounter counter) {
-        StringBuilder csv = new StringBuilder("key, pos_ratio, pos_ratio^2, count, pos, neg\n")
+        StringBuilder csv = new StringBuilder("key, propensity, propensity^2, count, pos, neg\n")
         counter.table.keySet().toSorted().each {
             def bin = counter.get(it)
             double r = bin.posRatio
