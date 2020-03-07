@@ -365,7 +365,8 @@ class Params {
     double solvent_radius = 1.6
 
     /**
-     * SAS tessellation (~density) used in prediction step
+     * SAS tessellation (~density) used in prediction step.
+     * Higher tessellation = higher density (+1 ~~ x4 points)
      */
     @ModelParam
     int tessellation = 2
