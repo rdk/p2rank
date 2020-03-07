@@ -41,14 +41,18 @@ class RExecutor {
 
         int exitcode = proc.exitValue()
 
-        log.info "R exit code: $exitcode"
-        if (out)
-            log.info "R stdout:\n{}", out
-        if (err)
-            log.info "R stderr:\n{}", err
-
-        if (exitcode!=0) {
-            log.error "Rscript finished with error on [$scriptFile]"
+        if (exitcode==0) {
+            log.info "R exit code: $exitcode"
+            if (out)
+                log.info "R stdout:\n{}", out
+            if (err)
+                log.info "R stderr:\n{}", err
+        } else {
+            log.error "Rscript finished with error (exit code = $exitcode) on [$scriptFile]"
+            if (out)
+                log.error "R stdout:\n{}", out
+            if (err)
+                log.error "R stderr:\n{}", err
         }
 
         return exitcode
