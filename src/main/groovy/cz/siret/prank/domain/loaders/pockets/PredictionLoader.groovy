@@ -70,7 +70,7 @@ abstract class PredictionLoader implements Parametrized {
         if (!ctx.dataset.hasExplicitResidueLabeling()) {
             throw new PrankException("No labeling provided for identify_peptides_by_labeling!")
         }
-        BinaryLabeling labeling = ctx.dataset.binaryResidueLabeler.getBinaryLabeling(prot.residues, prot)
+        BinaryLabeling labeling = ctx.dataset.explicitBinaryResidueLabeler.getBinaryLabeling(prot.residues, prot)
 
         for (Chain ch in prot.fullStructure.chains) {
             ResidueChain rc = Struct.toResidueChain(ch)

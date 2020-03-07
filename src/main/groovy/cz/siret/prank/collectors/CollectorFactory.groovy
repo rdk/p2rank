@@ -24,7 +24,7 @@ class CollectorFactory {
             return new LigandabilityPointVectorCollector(extractorFactory)
         } else {
             // mode: ligandable pockets
-            return new ResidueDerivedPointVectorCollector(extractorFactory, dataset.binaryResidueLabeler)
+            return new ResidueDerivedPointVectorCollector(extractorFactory, dataset.explicitBinaryResidueLabeler)
         }
     }
 

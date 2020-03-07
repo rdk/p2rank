@@ -3,6 +3,7 @@ package cz.siret.prank.domain
 import com.google.common.base.CharMatcher
 import com.google.common.base.Splitter
 import cz.siret.prank.domain.labeling.BinaryLabeling
+import cz.siret.prank.domain.labeling.LigandBasedResidueLabeler
 import cz.siret.prank.domain.labeling.ResidueLabeler
 import cz.siret.prank.domain.loaders.pockets.ConcavityLoader
 import cz.siret.prank.domain.loaders.pockets.DeepSiteLoader
@@ -350,7 +351,7 @@ class Dataset implements Parametrized {
     }
 
     /**
-     * Load residue labeling based on PARAM_RESIDUE_LABELING_FORMAT and PARAM_RESIDUE_LABELING_FILE attributes defined in the dataset
+     * Loads residue labeling based on PARAM_RESIDUE_LABELING_FORMAT and PARAM_RESIDUE_LABELING_FILE attributes defined in the dataset
      */
     @Nullable
     ResidueLabeler getResidueLabeler() {
@@ -361,13 +362,28 @@ class Dataset implements Parametrized {
         return  residueLabeler
     }
 
+    /**
+     * Loads residue labeling based on PARAM_RESIDUE_LABELING_FORMAT and PARAM_RESIDUE_LABELING_FILE attributes defined in the dataset
+     */
     @Nullable
-    ResidueLabeler<Boolean> getBinaryResidueLabeler() {
+    ResidueLabeler<Boolean> getExplicitBinaryResidueLabeler() {
         ResidueLabeler labeler = getResidueLabeler()
         if (!labeler.binary) {
             throw new PrankException("Dataset residue labeling is not binary!")
         }
         return (ResidueLabeler<Boolean>) labeler
+    }
+
+    /**
+     * Returns either explicit labeler (if defined in dataset) or ligand based labeler
+     */
+    @Nullable
+    ResidueLabeler<Boolean> getBinaryResidueLabeler() {
+        if (hasExplicitResidueLabeling()) {
+            return getExplicitBinaryResidueLabeler()
+        } else {
+            return new LigandBasedResidueLabeler()
+        }
     }
 
     Dataset(String name, String dir) {
@@ -520,7 +536,7 @@ class Dataset implements Parametrized {
         }
 
         /**
-         * explicitely specified ligand codes
+         * explicitly specified ligand codes
          * @return null if column is not defined
          */
         Set<String> getLigandCodes() {
@@ -547,16 +563,25 @@ class Dataset implements Parametrized {
          * @return binary residue labeling that is defined in the dataset
          */
         @Nullable
-        BinaryLabeling getDefinedBinaryLabeling() {
+        BinaryLabeling getExplicitBinaryLabeling() {
             if (dataset.hasExplicitResidueLabeling()) {
-                return dataset.binaryResidueLabeler.getBinaryLabeling(protein.residues, protein)
+                return dataset.explicitBinaryResidueLabeler.getBinaryLabeling(protein.residues, protein)
             }
             return null
+        }
+
+        /**
+         * @return explicit (if defined in the dataset) or ligand based labeling
+         */
+        @Nullable
+        BinaryLabeling getBinaryLabeling() {
+            return dataset.binaryResidueLabeler.getBinaryLabeling(protein.residues, protein)
         }
 
         ProcessedItemContext getContext() {
             new ProcessedItemContext(this, columnValues)
         }
+        
     }
 
     Item createNewItem(String proteinFile, String predictionFile, Map<String, String> columnValues) {

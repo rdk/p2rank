@@ -10,6 +10,7 @@ Smaller subsets created from original training datasets:
 * train200.ds 
 * dev100.ds 
 * dev200.ds 
+* dav200-inverse.ds
 
 See also `config/ions-rdk.groovy` which is used as a base config file.
 
@@ -119,3 +120,22 @@ Result:
 ![DCA_4_0 / neutral_points_margin bar chart](balancing-01-ploop-1_DCA_4_0.png)
 
 Optimal value is clearly around 3.
+
+
+
+### Calculating propensity statistics
+
+Propensities of singe residues (20 AA codes), sequence duplets and triplets can be calculated from the 
+dataset and used as additional features. 
+We will use larger dev200-inverse.ds dataset.
+
+Note: be mindful of data leakage. These statistical features shouldn't be used during evaluation on 
+the same proteins they were calculated from. 
+
+~~~sh
+./prank.sh analyze aa-propensities        -c config/ions-rdk 2020-01/mg/dev200-inverse.ds   
+./prank.sh analyze aa-surf-seq-duplets    -c config/ions-rdk 2020-01/mg/dev200-inverse.ds    
+./prank.sh analyze aa-surf-seq-triplets   -c config/ions-rdk 2020-01/mg/dev200-inverse.ds 
+~~~
+
+

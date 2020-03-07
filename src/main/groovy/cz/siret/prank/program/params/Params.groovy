@@ -1018,16 +1018,15 @@ class Params {
     boolean hopt_train_only_once = false
 
     /**
-     * Parameter of propensity feature.
+     * Parameter of sequence duplets/triplets propensity features.
      * directory in program resources to take peptide propensities from
-     * (resources/tables/peptides/$var/...)
+     * (resources/tables/propensities/$var/...)
      * Available: SprintT1070, SprintA870
      *
-     * TODO: rename param and make it general, not only specific to peptide binding
      * TODO: move to dist dir on release
      */
     @ModelParam
-    String pept_propensities_set = "SprintT1070"
+    String feat_propensities_set = "SprintT1070"
 
 
     /**

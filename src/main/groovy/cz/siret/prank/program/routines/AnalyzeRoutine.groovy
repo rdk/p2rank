@@ -5,6 +5,8 @@ import cz.siret.prank.domain.AA
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.domain.Residue
 import cz.siret.prank.domain.labeling.LabeledResidue
+import cz.siret.prank.domain.labeling.LigandBasedResidueLabeler
+import cz.siret.prank.domain.labeling.ResidueLabeler
 import cz.siret.prank.domain.labeling.ResidueLabeling
 import cz.siret.prank.domain.loaders.DatasetCachedLoader
 import cz.siret.prank.domain.loaders.LoaderParams
@@ -152,7 +154,7 @@ class AnalyzeRoutine extends Routine {
         assert dataset.hasExplicitResidueLabeling()
         LoaderParams.ignoreLigandsSwitch = true
 
-        def labeler = dataset.binaryResidueLabeler
+        def labeler = dataset.explicitBinaryResidueLabeler
         StringBuffer csv = new StringBuffer("protein, n_chains, chain_ids, n_residues, n_residues_in_labeling, positives, negatives, unlabeled\n")
 
         if (labeler instanceof SprintLabelingLoader) {
@@ -261,11 +263,17 @@ class AnalyzeRoutine extends Routine {
         writeFile "$outdir/sprint_chains.csv", csv
     }
 
+    /**
+     * calculate AA propensities of exposed residues
+     * i.e. propensity of being labeled as 1 by binary labeling
+     * which is either explicitly defined by dataset or derived from ligands
+     */
     private void cmdAaPropensities() {
-        assert dataset.hasExplicitResidueLabeling()
-        LoaderParams.ignoreLigandsSwitch = true
 
-        def labeler = dataset.binaryResidueLabeler
+        //if (dataset.hasExplicitResidueLabeling()) {
+        //    LoaderParams.ignoreLigandsSwitch = true
+        //}
+        ResidueLabeler<Boolean> labeler = dataset.binaryResidueLabeler
 
         List<BinCounter<AA>> counters = Collections.synchronizedList(new ArrayList<>())
 
@@ -295,9 +303,7 @@ class AnalyzeRoutine extends Routine {
      * ordering dependent sequence duplets (only starting from exposed residues)
      */
     private void cmdAaSurfSeqDuplets() {
-        assert dataset.hasExplicitResidueLabeling()
-        LoaderParams.ignoreLigandsSwitch = true
-        def labeler = dataset.binaryResidueLabeler
+        ResidueLabeler<Boolean> labeler = dataset.binaryResidueLabeler
 
         List<BinCounter<String>> counters = Collections.synchronizedList(new ArrayList<>())
 
@@ -327,9 +333,7 @@ class AnalyzeRoutine extends Routine {
      * sequence triplets (only from exposed residues)
      */
     private void cmdAaSurfSeqTriplets() {
-        assert dataset.hasExplicitResidueLabeling()
-        LoaderParams.ignoreLigandsSwitch = true
-        def labeler = dataset.binaryResidueLabeler
+        ResidueLabeler<Boolean> labeler = dataset.binaryResidueLabeler
 
         List<BinCounter<String>> counters = Collections.synchronizedList(new ArrayList<>())
 
