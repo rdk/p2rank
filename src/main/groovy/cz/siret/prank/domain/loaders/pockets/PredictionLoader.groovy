@@ -67,7 +67,7 @@ abstract class PredictionLoader implements Parametrized {
 
     private loadPeptidesFromLabeling(Protein prot, ProcessedItemContext ctx) {
         log.info 'loading peptides for {}', prot.name
-        if (!ctx.dataset.hasResidueLabeling()) {
+        if (!ctx.dataset.hasExplicitResidueLabeling()) {
             throw new PrankException("No labeling provided for identify_peptides_by_labeling!")
         }
         BinaryLabeling labeling = ctx.dataset.binaryResidueLabeler.getBinaryLabeling(prot.residues, prot)

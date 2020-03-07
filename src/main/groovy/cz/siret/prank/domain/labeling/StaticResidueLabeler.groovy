@@ -14,7 +14,10 @@ import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.StringUtils
 
 /**
+ * Loads labeling explicitly defined in dataset column "predicted_labeling" for each item.
+ * Intended to load labelings predicted by other methods.
  *
+ * So far only Vorffip (peptide binding site) method is supported.
  */
 @Slf4j
 @CompileStatic

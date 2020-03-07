@@ -58,7 +58,7 @@ abstract class ParamLooper extends Routine {
         EvalResults res = closure.call(stepDir)     // execute an experiment in closure for a step
 
         step.results.putAll( res.stats )
-        step.results.TIME_MINUTES = stepTimer.minutes
+        step.results.TIME_MINUTES = stepTimer.minutes // absolute time spent on this step
         if (res.subResults.size() > 1) {
             step.results.putAll prefixMapKeys(res.statsStddev, '_stddev_')
         }

@@ -151,14 +151,6 @@ class Dataset implements Parametrized {
             int nt = ThreadPoolFactory.pool.poolSize
             log.info "processing dataset [$name] using $nt threads"
 
-//            AtomicInteger counter = new AtomicInteger(1);
-//            GParsPool.withExistingPool(ThreadPoolFactory.pool) {
-//                items.eachParallel { Item item ->
-//                    int num = counter.getAndAdd(1)
-//                    processItem(item, num, processor, result)
-//                }
-//            }
-
             ExecutorService executor = Executors.newFixedThreadPool(params.threads)
             List<Callable> tasks = new ArrayList<>()
             items.eachWithIndex { Item item, int idx ->
@@ -318,8 +310,6 @@ class Dataset implements Parametrized {
         Dataset ds = new Dataset(Futils.shortName(pdbFile), Futils.dir(pdbFile))
 
         Map<String, String> columnValues = new HashMap<>()
-        //columnValues.put(COLUMN_PROTEIN, pdbFile)
-        //columnValues.put(COLUMN_PREDICTION, pdbFile)
 
         if (itemContext!=null) {
             columnValues.putAll(itemContext.datsetColumnValues)
@@ -346,9 +336,9 @@ class Dataset implements Parametrized {
     }
 
     /**
-     * @return true if residue lbeling is defined a as a part of th dataset
+     * @return true if explicit residue labeling is defined a as a part of th dataset
      */
-    boolean hasResidueLabeling() {
+    boolean hasExplicitResidueLabeling() {
         return attributes.containsKey(PARAM_RESIDUE_LABELING_FORMAT)
     }
 
@@ -364,7 +354,7 @@ class Dataset implements Parametrized {
      */
     @Nullable
     ResidueLabeler getResidueLabeler() {
-        if (residueLabeler == null && hasResidueLabeling()) {
+        if (residueLabeler == null && hasExplicitResidueLabeling()) {
             String labelingFile = dir + "/" + attributes.get(PARAM_RESIDUE_LABELING_FILE)
             residueLabeler = ResidueLabeler.loadFromFile(attributes.get(PARAM_RESIDUE_LABELING_FORMAT), labelingFile)
         }
@@ -542,7 +532,7 @@ class Dataset implements Parametrized {
         }
 
         /**
-         * explicitely specified chain codes
+         * explicitly specified chain codes
          * @return null if column is not defined
          */
         List<String> getChains() {
@@ -558,7 +548,7 @@ class Dataset implements Parametrized {
          */
         @Nullable
         BinaryLabeling getDefinedBinaryLabeling() {
-            if (dataset.hasResidueLabeling()) {
+            if (dataset.hasExplicitResidueLabeling()) {
                 return dataset.binaryResidueLabeler.getBinaryLabeling(protein.residues, protein)
             }
             return null

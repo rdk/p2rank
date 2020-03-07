@@ -13,7 +13,6 @@ import cz.siret.prank.domain.ResidueChain
 import cz.siret.prank.domain.labeling.BinaryLabelings
 import cz.siret.prank.domain.labeling.BinaryLabeling
 import cz.siret.prank.domain.labeling.SprintLabelingLoader
-import cz.siret.prank.features.implementation.conservation.ConservationScore
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.program.Main
 import cz.siret.prank.program.PrankException
@@ -150,7 +149,7 @@ class AnalyzeRoutine extends Routine {
      * Statistics about binary residue labeling + visualizations
      */
     void cmdLabeledResidues() {
-        assert dataset.hasResidueLabeling()
+        assert dataset.hasExplicitResidueLabeling()
         LoaderParams.ignoreLigandsSwitch = true
 
         def labeler = dataset.binaryResidueLabeler
@@ -263,7 +262,7 @@ class AnalyzeRoutine extends Routine {
     }
 
     private void cmdAaPropensities() {
-        assert dataset.hasResidueLabeling()
+        assert dataset.hasExplicitResidueLabeling()
         LoaderParams.ignoreLigandsSwitch = true
 
         def labeler = dataset.binaryResidueLabeler
@@ -296,7 +295,7 @@ class AnalyzeRoutine extends Routine {
      * ordering dependent sequence duplets (only starting from exposed residues)
      */
     private void cmdAaSurfSeqDuplets() {
-        assert dataset.hasResidueLabeling()
+        assert dataset.hasExplicitResidueLabeling()
         LoaderParams.ignoreLigandsSwitch = true
         def labeler = dataset.binaryResidueLabeler
 
@@ -328,7 +327,7 @@ class AnalyzeRoutine extends Routine {
      * sequence triplets (only from exposed residues)
      */
     private void cmdAaSurfSeqTriplets() {
-        assert dataset.hasResidueLabeling()
+        assert dataset.hasExplicitResidueLabeling()
         LoaderParams.ignoreLigandsSwitch = true
         def labeler = dataset.binaryResidueLabeler
 
