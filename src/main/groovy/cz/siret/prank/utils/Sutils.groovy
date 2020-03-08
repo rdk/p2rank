@@ -65,6 +65,11 @@ class Sutils {
         Splitter.on(splitter).omitEmptyStrings().trimResults().split(str).toList()
     }
 
+    static List<String> splitKeepEmpty(String str, String splitter) {
+        Splitter.on(splitter).trimResults().split(str).toList()
+    }
+
+
     static List<String> splitOnWhitespace(String str) {
         Splitter.on(CharMatcher.whitespace()).omitEmptyStrings().trimResults().split(str).toList()
     }

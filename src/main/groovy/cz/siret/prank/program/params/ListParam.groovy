@@ -30,7 +30,7 @@ class ListParam {
 
         if (list) {
 
-            res.values = Sutils.split(inner, ",")
+            res.values = Sutils.splitKeepEmpty(inner, ",")
 
         } else { // range
 
