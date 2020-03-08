@@ -157,7 +157,7 @@ Now we can use new features (after rebuild).
     -balance_class_weights 1 \
     -residue_table_features '(Ions_Mg_Dev200Inv.Ions_Mg_Dev200Inv^2)' \
     -atom_table_features '(atomicHydrophobicity)' \
-    -extra_features '(chem.volsite.bfactor.protrusion.duplets.triplets)' \
+    -extra_features '(chem.volsite.bfactor.protrusion.duplets_atomic.duplets_sas.triplets_atomic.triplets_sas)' \
     -feat_propensities_set 'Ions_Mg_Dev200Inv' \
     -rf_bagsize 55 -rf_depth 12 -rf_trees 100 \
     -target_class_weight_ratio 0.0684 \

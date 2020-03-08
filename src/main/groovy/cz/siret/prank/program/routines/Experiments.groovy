@@ -146,7 +146,7 @@ class Experiments extends Routine {
 
     private void gridOptimize(List<ListParam> rparams) {
 
-        log.info "List variables: " + rparams.toListString()
+        write "List variables: " + rparams.toListString()
 
         String topOutdir = outdir
 

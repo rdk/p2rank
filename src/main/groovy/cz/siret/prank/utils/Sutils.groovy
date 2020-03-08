@@ -5,6 +5,7 @@ import com.google.common.base.Splitter
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import groovy.transform.CompileStatic
+import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.SystemUtils
 import org.apache.commons.lang3.builder.ToStringBuilder
 import org.apache.commons.lang3.builder.ToStringStyle
@@ -78,7 +79,7 @@ class Sutils {
      * @return
      */
     static List<String> parseList(String liststr) {
-        if (liststr==null || liststr=='()' || liststr=='[]' ) {
+        if (StringUtils.isBlank(liststr) || liststr=='()' || liststr=='[]' ) {
             return Collections.emptyList()
         }
         assert liststr.length()>=2 : "invalid list string: '$liststr'"
