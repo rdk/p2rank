@@ -7,7 +7,7 @@ import cz.siret.prank.utils.Sutils
 import groovy.transform.CompileStatic
 
 /**
- * Parameter which represents s list of values (defined explicitely or as range and step)
+ * Parameter which represents s list of values (defined explicitly or as range and step)
  * Used in grid optimization with 'prank ploop'
  */
 @CompileStatic
@@ -36,7 +36,7 @@ class ListParam {
 
             def vals = Sutils.split(inner, ":")
 
-            assert vals.size() == 3, "inavlid range definition!"
+            assert vals.size() == 3, "invalid range definition!"
 
             double start = vals[0].toDouble()
             double end =   vals[1].toDouble()

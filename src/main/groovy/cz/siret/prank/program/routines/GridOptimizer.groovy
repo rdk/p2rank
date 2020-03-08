@@ -31,8 +31,8 @@ class GridOptimizer extends ParamLooper {
     }
 
     /**
-     * Iterate through al steps running closue.
-     * Step is a particular assignment of flexible variables, (e.g. "prram1=val1 param2=val2")
+     * Iterate through al steps running closure.
+     * Step is a particular assignment of flexible variables, (e.g. "param1=val1 param2=val2")
      * @param closure takes outdir as param
      *
      * TODO: merge with code in Experiments, there is no point in separation with closure

@@ -220,7 +220,7 @@ class AnalyzeRoutine extends Routine {
     }
 
     /**
-     * Compare chain strings in strcture with those defined in sprint labeling file
+     * Compare chain strings in structure with those defined in sprint labeling file
      */
     private void printSprintChains(SprintLabelingLoader loader) {
         StringBuffer csv = new StringBuffer("chain_code, source, length, residue_string\n")
@@ -269,10 +269,6 @@ class AnalyzeRoutine extends Routine {
      * which is either explicitly defined by dataset or derived from ligands
      */
     private void cmdAaPropensities() {
-
-        //if (dataset.hasExplicitResidueLabeling()) {
-        //    LoaderParams.ignoreLigandsSwitch = true
-        //}
         ResidueLabeler<Boolean> labeler = dataset.binaryResidueLabeler
 
         List<BinCounter<AA>> counters = Collections.synchronizedList(new ArrayList<>())
