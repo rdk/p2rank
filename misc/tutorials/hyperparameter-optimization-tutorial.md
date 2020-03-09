@@ -2,7 +2,10 @@
 
 P2Rank has routines for optimizing arbitrary parameters with Grid and Bayesian optimization. 
 
-Note: here by hyper-parameters we mean actual hyper-parameters of the machine learning models (eg. number of trees in RF) but also any arbitrary parameter ot the whole algorithm.
+Here by hyper-parameters we mean actual hyper-parameters of the machine learning models (eg. number of trees in RF) but also any arbitrary parameter ot the whole algorithm.
+
+Comprehensive list of all parameters with descriptions is in `Params.groovy`.
+
 
 **Grid optimization**: 
 * generates plots for all stats 
@@ -17,13 +20,20 @@ Note: here by hyper-parameters we mean actual hyper-parameters of the machine le
 ## Grid optimization (ploop command)
 
 P2Rank allows you to iterate experiments (train/eval and crossvalidation) through lists of different parameter values on the command line.
+For that you need to use `prank ploop` command and list or range expression instead of param value for one or more params. 
 
-For that you need to use `prank ploop` command and list or range expression instead of param value for one or more params. Numerical, boolean and feature set parameters are supported.
+Supported parameter types: numerical, boolean, string and 'list of strings' (e.g feature set).
 
+#### Defining grid
+**List expression**: `(val1,val2,...)` 
 
-List expression: `(val1,val2,...)` example: `'(1,2,3,4)'`
+Examples:
+* list of numbers: `'(1,2,3,4)'`
+* list of strings: `'(RandomForest,FasterForest)'`
+* list of lists: `'((protrusion.bfactor.volsite),(protrusion.bfactor),(protrusion),())'`
 
-Range expression: `[min:max:step]` example: `[-1:1.5:0.5]`
+**Range expression**: `[min:max:step]` example: `[-1:1.5:0.5]`
+(Valid only for numerical parameters)
 
 Examples:
 ~~~
@@ -77,7 +87,9 @@ Feature set comparisons:
 
 Hopt command (`p2rank hopt`) implements Bayesian optimization using program Speramint.
 (Other optimization tools might be employed in similar fashion with little additional work. 
-See how integration wihth Spearmint is implemented in HSpearmintOptimizer.groovy)
+See how integration wihth Spearmint is implemented in HSpearmintOptimizer.groovy).
+
+Supported parameter types: numerical, boolean. 
 
 ## Install Spearmint (on ubuntu)
 ```sh
