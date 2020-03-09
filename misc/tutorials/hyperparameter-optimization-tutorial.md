@@ -1,14 +1,15 @@
 # (Hyper-)parameter optimization
 
 P2Rank has routines for optimizing arbitrary parameters with Grid and Bayesian optimization. 
-Note: Here by hyper-parameters we mean actual hyper-parameters of the machine learning models (eg. number of trees in RF) but also any arbitrary parameter ot the whole algorithm.
 
-Grid optimization: 
+Note: here by hyper-parameters we mean actual hyper-parameters of the machine learning models (eg. number of trees in RF) but also any arbitrary parameter ot the whole algorithm.
+
+**Grid optimization**: 
 * generates plots for all stats 
 * gives better overview of objective landscapes (and relationships of different objectives/metrics by comparing plots)  
 * sensible for optimizing up to 2 parameters simultaneously
 
-Bayesian optimization: 
+**Bayesian optimization**: 
 * more efficient  
 * allows to feasibly optimize multiple (6+) parameters simultaneously
 * see https://doi.org/10.1109/BIBM.2017.8218024
@@ -26,8 +27,8 @@ Range expression: `[min:max:step]` example: `[-1:1.5:0.5]`
 
 Examples:
 ~~~
-prank ploop -t <training_dataset> -e <evaluation_dataset> -paramA '[min:max:step]' -paramB '(val1,val2,val3,val4)'
-prank ploop -t <dataset>                                  -paramA '[min:max:step]' -paramB '(val1,val2,val3,val4)'   # runs crossvalidation
+./prank.sh ploop -t <training_dataset> -e <evaluation_dataset> -<param1> '[min:max:step]' -<param2> '(val1,val2,val3,val4)'
+./prank.sh ploop -t <dataset>                                  -<param1> '[min:max:step]' -<param2> '(val1,val2,val3,val4)'   # runs crossvalidation
 ~~~
 
 Random seed iteration (`-loop` and `-seed` params) works here as well.
@@ -92,9 +93,8 @@ sudo pip install -e Spearmint
 ## Run optimization experiment
 
 ```sh
-prank hopt -t <dataset>               -<param1> '(<min>,<max>)'     # crossvalidation
-prank hopt -t <dataset> -e <dataset>  -<param1> '(<min>,<max>)'
-
+./prank.sh hopt -t <dataset>               -<param1> '(<min>,<max>)'     # crossvalidation
+./prank.sh hopt -t <dataset> -e <dataset>  -<param1> '(<min>,<max>)'
 ```
 
 Example:

@@ -8,6 +8,6 @@
 
 # -XX:+UseConcMarkSweepGC
 # -XX:+UseG1GC
-export JAVA_LOCALENV_PARAMS="-Xmx6G -XX:+UseConcMarkSweepGC"
+export JAVA_LOCALENV_PARAMS="-Xmx6G"
 
 export PRANK_LOCALENV_PARAMS="-threads 4"

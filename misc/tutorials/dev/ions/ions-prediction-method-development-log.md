@@ -1,6 +1,6 @@
-
 ### Introduction
 
+This is a case study that cans serve as a tutorial on how to start training and optimizing new prediction models (i.e. adapting P2Rank for new prediction tasks with new datasets).
 
 ### Prerequisites
 

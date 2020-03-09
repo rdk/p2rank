@@ -6,11 +6,11 @@ This file should provide introduction for people who want to train and evaluate 
 ## Kick-start examples
 
 ~~~
-prank traineval -t <training_dataset> -e <evaluation_dataset>  # train and evaluate model (execute n run with difefrent random seed, see -loop and -seed params)
-prank crossval <dataset>                                       # run crossvalidation on a single dataset (see -folds param)
+./prank.sh traineval -t <training_dataset> -e <evaluation_dataset>  # train and evaluate model (execute n run with difefrent random seed, see -loop and -seed params)
+./prank.sh crossval <dataset>                                       # run crossvalidation on a single dataset (see -folds param)
 
-prank ploop -t <training_dataset> -e <evaluation_dataset> -paramA '[min:max:step]'  # iterate through param values
-prank ploop -t <training_dataset>                         -paramB '(1,2,3,4)'       # iterate through param values (crossvalidation)
+./prank.sh ploop -t <training_dataset> -e <evaluation_dataset> -paramA '[min:max:step]'  # iterate through param values
+./prank.sh ploop -t <training_dataset>                         -paramB '(1,2,3,4)'       # iterate through param values (crossvalidation)
 ~~~
 
 
@@ -33,6 +33,15 @@ Parameter application priority (last wins):
 
 Note: some parameters (`-c`,`-o`, `-l/-label`) are strictly command line attributes and are not defined in `Params.groovy`. 
 
+## Preparing the environment
+
+Training and optimization runs shoud be run from the project directory (repo root) using `./prank.sh` wrapper.
+
+* clone P2Rank repo (https://github.com/rdk/p2rank) 
+* clone dataset repo (https://github.com/rdk/p2rank-datasets) or prepare your datasets 
+* copy `misc/local-env.sh` to root directory of the project and edit it according to your machine (the file is then included by `prank.sh`)
+* you will need a lot of memory: at least to store the whole training dataset of feature vectors and a trained model and then some (see _Raquired memory and memory/time trade-offs_) 
+
 
 ## Training and evaluation
 
@@ -40,18 +49,50 @@ To train a model on one dataset and evaluate its performance on the other use `p
 
 Example:
 ~~~
-prank traineval -loop 10 -seed 42 -t <training_dataset> -e <evaluation_dataset>`
+./prank.sh traineval -loop 10 -seed 42 -t <training_dataset> -e <evaluation_dataset>`
 ~~~
 Runs 10 training/evaluation cycles with different values of a random seed starting at 42. 
 Results of any single train/eval run and averaged results will be written to the output directory.
 
 Related parameters:
 * use `-delete_models 0` to keep model files after evaluation.
-* `-cache_datasets <bool>`: keep datasets (structures and SAS points) in memory between crossval/traineval iterations. Turn off for huge datasets that won't fit to memory.
-* `-feature_importances <bool>`: calculate feature importances (works only if `classifier = "FastRandomForest"`)
+* use `-delete_vactors 0` to export feature vector files 
+* `-feature_importances <bool>`: calculate feature importances (works only if `-classifier` supports it, examples: `RandomForest`, `FastRandomForest`, `FasterForest`)
 * `-fail_fast <bool>`: stop processing the dataset on the first unrecoverable error with a dataset item
 
-### Note on the dataset format (important!)
+### Raquired memory and memory/time trade-offs
+
+Memory consumption can be drastically influenced by some parameters.
+
+Random Forest implementations train trees in parallell using number of threads defined in`-rf_threads` variable.
+Ideally, this would be set to number of CPU cores in the machine.
+However, required memory during training grows linearly with number trees trained in paralell (`-rf_threads`) 
+so you mey need to lower number of threads.
+
+Parameters that influence memory/time trade-off:
+* `-cache_datasets` determines whether datasets of proteins are kept in memory between runs. **
+   See also 
+    - `-clear_prim_caches` clear primary caches (protein structures) between runs (when iterating params or seed)
+    - `-clear_sec_caches` clear secondary caches (protein surfaces etc.) between runs (when iterating params or seed)
+* `-rf_threads` number of trees trained in parallell 
+* `-rf_trees`, `-fr_depth` influence the size of the model in memory      
+* `-crossval_threads` when running crossvalidation it determines how many models are trained at the same time. Set to `1` if you don't have enough memory.
+
+** `-cache_datasets <bool>`: keep datasets (structures and SAS points) in memory between crossval/traineval iterations. 
+   For single pass training (`-loop 1`) it does not make sense to keep it on.
+   Turn off when evaluating model on huge datasets that won't fit to memory (e.g. whole PDB). 
+   When switched off it will leave more memory for RF at the cost of needing to parse all structure files (PDBs) again.
+
+Additional notes:
+* Subsampling and supersampling influence the size of training vercor dataset and required memory (see _Dealing with class imbalances_).
+* Memory also grows linearly with "bag size" (`-rf_bagsize`) but this would generally be in range (50%-100%).
+* Keep in mind how JVM deals with compressed OOPs. Basically it doesn't make sense to have heap size between 32G and ~48G.
+
+
+
+### Historical note on the dataset format
+(This secton should be moved no historical notes as soon as there will be new default P2Rank model.)
+
 Parameter `-sample_negatives_from_decoys` determines how points are sampled from the proteins in a training dataset. 
 If `sample_negatives_from_decoys = false` all of the points from the protein surface are used. 
 If `sample_negatives_from_decoys = true` only points from decoy pockets (not true ligand binding sites found by other method like Fpocket) are used. 
@@ -88,9 +129,10 @@ Ways to deal with class imbalances:
     - `-subsample`
     - `-supersample`
     - use in combination with `-target_class_ratio`
+    - can sbstantially influence the size of the training vactor dataset and consequentially the required memory
 * class weight balancing
     - use `-balance_class_weights 1` in combination with `-target_class_weight_ratio`
-    - works only with weight sensitive classifiers (`RandomForest`, `FastRandomForest`)
+    - works only with weight sensitive classifiers (`RandomForest`, `FastRandomForest`, `FasterForest`, `FasterForest2`)
 
 
 ## Crossvalidation
@@ -98,7 +140,7 @@ To run crossvalidation on a single dataset use `prank crossval` command.
 
 Example:
 ~~~
-prank crossval -loop 10 -seed 42 -folds 5 <dataset>    
+./prank crossval -loop 10 -seed 42 -folds 5 <dataset>    
 ~~~
 Runs 10 independent 5-fold crossvalidation runs with different values of a random seed starting at 42. Averaged results will be written to the output directory.
 
@@ -118,45 +160,7 @@ Location of output directory for any given run is influenced by several paramete
 * `-o <dir>`: overrides previous params and places output in specified directory
 
 
-## Case study: Implementing and evaluating new feature
 
-If you are reading ths tutorial there is a good chance you want to implement a new feature and evaluate if it contributes to prediction success rates.
-
-### Implementation
-
-New features can be added by implementing `FeatureCalculator` interface and registering the implementation in `FeatureRegistry`.
-You can implement the feature by extending one of convenience abstract classes `AtomFeatureCalculator` or `SasFeatureCalculator`.
-
-You need to decide if the new feature will be associated with protein surface (i.e. solvent exposed) atoms or with SAS (Solvent Accessible Surface) points. 
-P2Rank works by classifying SAS point feature vectors. 
-If you associate the feature with atoms its value will be projected to SAS point feature vectors by P2Rank from neighbouring atoms.
-
-Some features are more easily defined for atoms than SAS points and other way around. See `BfactorFeature` and `ProtrusionFeature` for comparison.
-
-
-### Evaluation
-
-1. Prepare the environment
-    * copy `misc/local-env-params.sh` to root directory of the project and edit it according to your machine (the file is then included by `prank.sh`)
-        * you will need a lot of memory: at least to store the whole training dataset of feature vectors and a trained model and then some  
-        * memory consumption can be drastically influenced by some parameters...
-    * parameters that influence memory/time trade-off:
-        - `-cache_datasets` determines whether datasets of proteins are kept in memory between runs. See also 
-            * `-clear_prim_caches` clear primary caches (protein structures) between runs (when iterating params or seed)
-            * `-clear_sec_caches` clear secondary caches (protein surfaces etc.) between runs (when iterating params or seed)
-        - `-crossval_threads` when running crossvalidation it determines how many models are trained at the same time. Set to `1` if you don't have enough memory.
-        - `-rf_trees`, `-fr_depth` influence the size of the model in memory      
-
- 2. Check `working.groovy` config file. It contains configuration ideal for training new models, but you might need to make changes or override some params on the command line. 
- 
- 3. Train with the new feature
-    * train with the new feature by adding its name to the list of `-extra_features`. i.e.:
-        - in the groovy config file: `extra_features = ["protrusion","bfactor","new_feature"]`
-        - on the command line: `-extra_features '(protrusion.bfactor.new_feature)'` (dot is used as separator)
-    * if the feature has arbitrary parameters, they can be optimized with `prank ploop` or `prank hopt` commands
-        - see hyperparameter-optimization-tutorial.md    
-    * you can even compare different feature sets running `prank ploop ...`. i.e.:
-        - `-extra_features '((protrusion),(new_feature),(protrusion.new_feature))'`
     
 
 
