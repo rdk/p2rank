@@ -35,7 +35,7 @@ Note: some parameters (`-c`,`-o`, `-l/-label`) are strictly command line attribu
 
 ## Preparing the environment
 
-Training and optimization runs shoud be run from the project directory (repo root) using `./prank.sh` wrapper.
+Training and optimization runs can be run from the project directory (repo root) using `./prank.sh` wrapper.
 
 * clone P2Rank repo (https://github.com/rdk/p2rank) 
 * clone dataset repo (https://github.com/rdk/p2rank-datasets) or prepare your datasets 
@@ -70,8 +70,7 @@ However, required memory during training grows linearly with number trees traine
 so you mey need to lower number of threads.
 
 Parameters that influence memory/time trade-off:
-* `-cache_datasets` determines whether datasets of proteins are kept in memory between runs. **
-   See also 
+* `-cache_datasets` determines whether datasets of proteins are kept in memory between runs**. Related parameters: 
     - `-clear_prim_caches` clear primary caches (protein structures) between runs (when iterating params or seed)
     - `-clear_sec_caches` clear secondary caches (protein surfaces etc.) between runs (when iterating params or seed)
 * `-rf_threads` number of trees trained in parallell 
@@ -87,7 +86,6 @@ Additional notes:
 * Subsampling and supersampling influence the size of training vercor dataset and required memory (see _Dealing with class imbalances_).
 * Memory also grows linearly with "bag size" (`-rf_bagsize`) but this would generally be in range (50%-100%).
 * Keep in mind how JVM deals with compressed OOPs. Basically it doesn't make sense to have heap size between 32G and ~48G.
-
 
 
 ### Historical note on the dataset format
