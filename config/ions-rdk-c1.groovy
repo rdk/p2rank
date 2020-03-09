@@ -38,6 +38,7 @@ import cz.siret.prank.program.params.Params
     selected_stats = ['_blank',
                       'DCA_4_0',
                       'DCA_4_2',
+                      'DCA_4_99',
                       'MCC',
                       'F1',
                       'AUC',
@@ -51,43 +52,42 @@ import cz.siret.prank.program.params.Params
     average_feat_vectors = true
     avg_weighted = true
     atom_table_feat_keep_sgn = true
-    solvent_radius = 1.8
+    solvent_radius = 1.2781
 
     // Training
 
-    positive_point_ligand_distance = 4.6
-    neutral_points_margin = 5.5
+    positive_point_ligand_distance = 5.1286
+    neutral_points_margin = 3
     balance_class_weights = true
-    target_class_weight_ratio = 0.08
+    target_class_weight_ratio = 0.0684
     //subsample = true
     //target_class_ratio = 1
 
     // Prediction
 
-    point_score_pow = 5.2717
-    pred_point_threshold = 0.5
-    pred_min_cluster_size = 3
+    point_score_pow = 10
+    pred_point_threshold = 0.5678
+    pred_min_cluster_size = 1
+    extended_pocket_cutoff = 1
 
     // Classifier
 
     classifier="FasterForest"
     rf_trees = 100
     rf_bagsize = 55
-    rf_depth = 0
+    rf_depth = 12
 
     // Features
 
     residue_table_features = ["RAx"]
     atom_table_features = ["atomicHydrophobicity"]
-    // atom_table_features = ["atomicHydrophobicity","ap5sasaValids","ap5sasaInvalids","apRawValids","apRawInvalids"]
     extra_features = ["chem","volsite","bfactor","protrusion"]
-    // extra_features = ["chem","volsite","bfactor","protrusion","pmass","cr1pos","ss_atomic","ss_sas","ss_cloud"]
 
     // Feature params
 
-    neighbourhood_radius = 7
-    protrusion_radius = 11
-    feat_pmass_radius = 7
-    ss_cloud_radius = 6
+    neighbourhood_radius = 5.9
+    protrusion_radius = 7
+    feat_pmass_radius = 7 // feature not used
+    ss_cloud_radius = 6   // feature not used
 
 }
