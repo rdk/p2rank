@@ -7,12 +7,13 @@ This is a case study that cans serve as a tutorial on how to start training and 
 Datasets located in `../p2rank-ions-data-rdk/` (cloned from https://github.com/rdk/p2rank-ions-data-rdk) relative to this repo.
 
 Smaller subsets created from original training datasets:
-* train200.ds 
-* dev100.ds 
-* dev200.ds 
-* dav200-inverse.ds
+* dataset-train.ds (n=2349, original dataset)
+* dev200.ds (n=200)
+* dev100.ds (n=100, subset of dev200.ds)
+* dev200-inverse.ds (n=2149)
+* train200.ds (n=200, subset of dev200-inverse.ds) 
 
-See also `config/ions-rdk.groovy` which is used as a base config file.
+See also `config/ions-rdk.groovy` which will be used as a base config file.
 
 
 ### Development log
@@ -164,10 +165,36 @@ Result:
 Optimal value is around 3.
 
 
+#### Confirmation run
+
+Now let's move the results of previous optimizations to checkpoint config file `ions-rdk-c1.groovy`
+and run further tests to confirm the results (avg. of 10 iterations with `-loop 10`) and produce visualizations. 
+
+~~~sh
+./prank.sh traineval -c config/ions-rdk-c1 -out_subdir HOPT -label balancing-06-test-1 \
+    -t 2020-01/mg/train200.ds \
+    -e 2020-01/mg/dev200.ds \
+    -loop 10
+
+./prank.sh traineval -c config/ions-rdk-c1 -out_subdir HOPT -label balancing-06-test-1-visualizations \
+    -t 2020-01/mg/train200.ds \
+    -e 2020-01/mg/dev200.ds \
+    -loop 1 -visualizations 1 
+~~~
+Results (loop 10):
+~~~           
+Finished in 30 minutes on 12 cores.
+
+DCA_4_0:  38.7
+DCA_4_2:  42.2
+DCA_4_99: 45.4     # how many were perdicted basically without regards to the ordering (i.e. Top-n+99)
+AUPRC:     0.1618
+AUC:       0.8203
+~~~
 
 
 
-### Calculating propensity statistics
+### Calculating and testing propensity statistics features
 
 Propensities of singe residues (20 AA codes), sequence duplets and triplets can be calculated from the 
 dataset and used as additional features. 
@@ -212,7 +239,11 @@ Now we can use new features (after rebuild).
     -point_score_pow 10 \
     -neighbourhood_radius 5.9 \
     -protrusion_radius 7 \
-    -solvent_radius 1.2781 \
-    -rf_threads 12
+    -solvent_radius 1.2781 
 ~~~
+
+
+
+
+
 
