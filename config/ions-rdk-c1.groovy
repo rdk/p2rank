@@ -30,6 +30,7 @@ import cz.siret.prank.program.params.Params
     delete_models = true
     ploop_delete_runs = false
     stats_collect_predictions = true
+    log_cases = false
 
     cache_datasets = true
     clear_sec_caches = false

@@ -179,7 +179,10 @@ and run further tests to confirm the results (avg. of 10 iterations with `-loop 
 ./prank.sh traineval -c config/ions-rdk-c1 -out_subdir HOPT -label balancing-06-test-1-visualizations \
     -t 2020-01/mg/train200.ds \
     -e 2020-01/mg/dev200.ds \
-    -loop 1 -visualizations 1 
+    -loop 1 \
+    -visualizations 1 \
+    -stats_curves 1 \       # produce data for plotting ROC curve
+    -log_cases 1            # produce overview of all lgands / pockets / proteins
 ~~~
 Results (loop 10):
 ~~~           
