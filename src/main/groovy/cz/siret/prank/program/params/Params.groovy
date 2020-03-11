@@ -1012,7 +1012,7 @@ class Params {
 
     /**
      * In hyper-parameter optimization (ploop and hopt commands) train model only once in the beginning
-     * (makes sense if optimized hyper-parameters do't influence training and feature extraction)
+     * (makes sense if optimized hyper-parameters don't influence training and feature extraction)
      */
     @RuntimeParam
     boolean hopt_train_only_once = false

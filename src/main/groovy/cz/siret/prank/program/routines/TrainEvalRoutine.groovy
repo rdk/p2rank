@@ -43,6 +43,7 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
     private String evalVectorFile
 
     EvalRoutine evalRoutine
+    static Model staticModel = null
 
     TrainEvalRoutine(String outdir, Dataset trainData, Dataset evalData) {
         super(outdir)
@@ -165,6 +166,8 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
             featureImportances = calcFeatureImportances(model)
 
             ALTERADY_TRAINED = true
+        } else {
+            model = staticModel
         }
 
         logTime "model trained in " + timer.formatted
