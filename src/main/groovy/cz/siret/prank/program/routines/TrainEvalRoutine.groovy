@@ -165,7 +165,10 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
             trainStats = calculateTrainStats(model.classifier, trainVectors)
             featureImportances = calcFeatureImportances(model)
 
-            ALTERADY_TRAINED = true
+            if (params.hopt_train_only_once) {
+                ALTERADY_TRAINED = true
+                staticModel = model
+            }
         } else {
             model = staticModel
         }
