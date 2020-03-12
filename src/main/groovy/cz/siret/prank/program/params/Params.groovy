@@ -1059,6 +1059,15 @@ class Params {
         solvent_radius + surface_additional_cutoff
     }
 
+    /**
+     * Derive point labeling from ligands or from labeled residues.
+     *
+     * @see this.ligand_derived_point_labeling
+     */
+    boolean derivePointLabelingFromLigands() {
+        !predict_residues || ligand_derived_point_labeling || identify_peptides_by_labeling
+    }
+
 //===========================================================================================================//
 
     /**

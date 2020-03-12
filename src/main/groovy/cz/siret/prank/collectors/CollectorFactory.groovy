@@ -19,10 +19,7 @@ class CollectorFactory {
     static VectorCollector createCollector(FeatureExtractor extractorFactory, Dataset dataset) {
         Params params = Params.getInst()
 
-
-        boolean labelPointsByLigands = !params.predict_residues || params.identify_peptides_by_labeling || params.ligand_derived_point_labeling
-
-        if (labelPointsByLigands) {
+        if (params.derivePointLabelingFromLigands()) {
             // label (i.e. assign class) to SAS points based on proximity to relevant ligands
             return new LigandabilityPointVectorCollector(extractorFactory)
         } else {

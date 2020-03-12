@@ -62,13 +62,13 @@ class EvalResiduesRoutine extends EvalRoutine {
             BinaryLabeling observed = item.explicitBinaryLabeling
 
             List<LabeledPoint> observedPoints
-            if (params.identify_peptides_by_labeling) {
+            if (params.derivePointLabelingFromLigands()) {
                 observedPoints = new LigandBasedPointLabeler().labelPoints(sasPoints, protein)
             } else {
                 observedPoints = new ResidueBasedPointLabeler(observed).labelPoints(sasPoints, protein)
             }
 
-            ResidueLabeler predictor = null
+            ResidueLabeler predictor
             List<LabeledPoint> predictedPoints = null
 
             if (dataset.hasPredictedResidueLabeling()) {   // load static labeling
