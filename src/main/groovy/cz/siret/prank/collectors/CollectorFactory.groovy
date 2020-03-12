@@ -19,12 +19,15 @@ class CollectorFactory {
     static VectorCollector createCollector(FeatureExtractor extractorFactory, Dataset dataset) {
         Params params = Params.getInst()
 
-        if (!params.predict_residues || params.identify_peptides_by_labeling) {
-            // mode: labeled residue
+
+        boolean labelPointsByLigands = !params.predict_residues || params.identify_peptides_by_labeling || params.ligand_derived_point_labeling
+
+        if (labelPointsByLigands) {
+            // label (i.e. assign class) to SAS points based on proximity to relevant ligands
             return new LigandabilityPointVectorCollector(extractorFactory)
         } else {
-            // mode: ligandable pockets
-            return new ResidueDerivedPointVectorCollector(extractorFactory, dataset.explicitBinaryResidueLabeler)
+            // label (i.e. assign class) to SAS points based on labeling of nearest residue
+            return new ResidueDerivedPointVectorCollector(extractorFactory, dataset.binaryResidueLabeler)
         }
     }
 

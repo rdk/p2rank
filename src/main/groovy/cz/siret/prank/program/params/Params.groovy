@@ -601,6 +601,14 @@ class Params {
     boolean predict_residues = false
 
     /**
+     * If true, assign class to SAS points in training dataset based on proximity to the ligand.
+     * If false, assign class based the class of nearest residue.
+     * Distinction only makes sense running in residue prediction mode (predict_residues = true).
+     */
+    @RuntimeParam
+    boolean ligand_derived_point_labeling = true
+
+    /**
      * produce residue labeling file (in predict mode)
      *
      * Even in full pocket prediction mode (predict_residues=false) we can label and score residues using transformers.
