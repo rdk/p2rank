@@ -308,7 +308,7 @@ class Main implements Parametrized, Writable {
 
         initParams(params, "$installDir/config/default.groovy")
 
-        if (params.predict_residues) { // TODO move
+        if (params.predict_residues && !params.ligand_derived_point_labeling) { // TODO move
             LoaderParams.ignoreLigandsSwitch = true
         }
 

@@ -154,7 +154,7 @@ class AnalyzeRoutine extends Routine {
         assert dataset.hasExplicitResidueLabeling()
         LoaderParams.ignoreLigandsSwitch = true
 
-        def labeler = dataset.explicitBinaryResidueLabeler
+        def labeler = dataset.binaryResidueLabeler
         StringBuffer csv = new StringBuffer("protein, n_chains, chain_ids, n_residues, n_residues_in_labeling, positives, negatives, unlabeled\n")
 
         if (labeler instanceof SprintLabelingLoader) {
