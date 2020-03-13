@@ -58,8 +58,8 @@ class SeedLoop extends EvalRoutine {
         }
         params.seed = origSeed // set seed back for other experiments
 
-        write "loop training time: " + fmt(results.trainingTimeMinutes)
-        write "loop evaluation time: " + fmt(results.evalTimeMinutes)
+        write "loop training time: " + Formatter.formatTime(results.trainTime)
+        write "loop evaluation time: " + Formatter.formatTime(results.evalTime)
         logTime "random seed iteration finished in $timer.formatted"
         write "results saved to directory [${Futils.absPath(outdir)}]"
 
