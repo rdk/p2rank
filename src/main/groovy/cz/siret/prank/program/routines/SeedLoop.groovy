@@ -6,7 +6,6 @@ import cz.siret.prank.utils.Futils
 import groovy.util.logging.Slf4j
 
 import static cz.siret.prank.utils.ATimer.startTimer
-import static cz.siret.prank.utils.Formatter.fmt
 import static cz.siret.prank.utils.Futils.mkdirs
 import static cz.siret.prank.utils.MathUtils.ranndomInt
 
@@ -58,8 +57,8 @@ class SeedLoop extends EvalRoutine {
         }
         params.seed = origSeed // set seed back for other experiments
 
-        write "loop training time: " + Formatter.formatTime(results.trainTime)
-        write "loop evaluation time: " + Formatter.formatTime(results.evalTime)
+        write "avg training time: " + Formatter.formatTime(results.avgTrainingTime)
+        write "first evaluation time: " + Formatter.formatTime(results.firstEvalTime)
         logTime "random seed iteration finished in $timer.formatted"
         write "results saved to directory [${Futils.absPath(outdir)}]"
 

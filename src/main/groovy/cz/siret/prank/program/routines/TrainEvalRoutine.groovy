@@ -4,11 +4,11 @@ import cz.siret.prank.domain.Dataset
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.program.params.Params
 import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.prediction.metrics.ClassifierStats
 import cz.siret.prank.utils.ATimer
 import cz.siret.prank.utils.CSV
+import cz.siret.prank.utils.Formatter
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.WekaUtils
 import groovy.transform.CompileStatic
@@ -20,6 +20,7 @@ import weka.core.Instances
 import static cz.siret.prank.prediction.pockets.PointScoreCalculator.applyPointScoreThreshold
 import static cz.siret.prank.prediction.pockets.PointScoreCalculator.predictedScore
 import static cz.siret.prank.utils.ATimer.startTimer
+import static cz.siret.prank.utils.Formatter.formatTime
 import static cz.siret.prank.utils.Futils.mkdirs
 
 @Slf4j
@@ -157,8 +158,11 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
 
             write "training classifier ${model.classifier.getClass().name} on dataset with ${trainVectors.size()} instances"
 
+            def trainTimer = startTimer()
             WekaUtils.trainClassifier(model.classifier, trainVectors)
-            trainTime = timer.time
+            trainTime = trainTimer.time
+            logTime "model trained in " + formatTime(trainTime)
+
             if (!params.delete_models) {
                 model.saveToFile(modelf)
             }
@@ -173,7 +177,7 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
             model = staticModel
         }
 
-        logTime "model trained in " + timer.formatted
+        logTime "model prepared in " + timer.formatted
         timer.restart()
 
         if (params.predict_residues) {
@@ -183,7 +187,7 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
         }
 
         EvalResults res = evalRoutine.execute()
-        res.trainTime = trainTime
+        res.totalTrainingTime = trainTime
         res.train_positives = train_positives
         res.train_negatives = train_negatives
         res.featureImportances = featureImportances

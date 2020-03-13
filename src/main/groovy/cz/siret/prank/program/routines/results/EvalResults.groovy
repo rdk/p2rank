@@ -5,9 +5,7 @@ import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.prediction.metrics.ClassifierStats
 import cz.siret.prank.prediction.metrics.Curves
-import cz.siret.prank.prediction.metrics.Histogram
 import cz.siret.prank.utils.CSV
-import cz.siret.prank.utils.Cutils
 import cz.siret.prank.utils.Formatter
 import cz.siret.prank.utils.Writable
 import groovy.transform.CompileStatic
@@ -39,8 +37,10 @@ class EvalResults implements Parametrized, Writable  {
 
     Dataset.Result datasetResult
 
-    Long trainTime
-    Long evalTime
+    /** total time in ms spent by model training */
+    Long totalTrainingTime = 0
+    /** time of first evaluation, may be longer than subsequent ones in seedloop due to caching */
+    Long firstEvalTime = null
 
     int train_positives = 0
     int train_negatives = 0
@@ -99,9 +99,8 @@ class EvalResults implements Parametrized, Writable  {
 
         residuePredictionStats.addAll(results.residuePredictionStats)
 
-        // set only once to because of varoius caching
-        if (trainTime==null) trainTime = results.trainTime
-        if (evalTime==null) evalTime = results.evalTime
+        totalTrainingTime += results.totalTrainingTime
+        if (firstEvalTime==null) firstEvalTime = results.firstEvalTime  // set only once to because of varoius caching
 
         train_negatives += results.train_negatives
         train_positives += results.train_positives
@@ -135,12 +134,16 @@ class EvalResults implements Parametrized, Writable  {
         (double)train_positives / train_negatives
     }
 
-    double getTrainingTimeMinutes() {
-        (double)(trainTime ?: 0d) / 60000d
+    double getAvgTrainingTime() {
+        (double)totalTrainingTime / runs
+    }
+
+    double getAvgTrainingTimeMinutes() {
+        (double)(avgTrainingTime ?: 0d) / 60000d
     }
 
     double getEvalTimeMinutes() {
-        (double)(evalTime ?: 0d) / 60000d
+        (double)(firstEvalTime ?: 0d) / 60000d
     }
 
     Map<String, Double> getStats() {
@@ -156,9 +159,9 @@ class EvalResults implements Parametrized, Writable  {
             m.LIGANDS_DISTANT  = (double)m.LIGANDS_DISTANT  / runs
         }
 
-        m.TIME_TRAIN_M = trainingTimeMinutes
+        m.TIME_TRAIN_M = avgTrainingTimeMinutes
         m.TIME_EVAL_M = evalTimeMinutes
-        m.TIME_M = trainingTimeMinutes + evalTimeMinutes
+        m.TIME_M = avgTrainingTimeMinutes + evalTimeMinutes
 
         m.TRAIN_VECTORS = avgTrainVectors
         m.TRAIN_POSITIVES = avgTrainPositives

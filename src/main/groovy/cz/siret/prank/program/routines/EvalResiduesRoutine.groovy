@@ -114,7 +114,7 @@ class EvalResiduesRoutine extends EvalRoutine {
         logTime "model evaluation finished in $timer.formatted"
         write "results saved to directory [${Futils.absPath(outdir)}]"
 
-        results.evalTime = timer.time
+        results.firstEvalTime = timer.time
 
         return results
     }
