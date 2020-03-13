@@ -1,10 +1,12 @@
 package cz.siret.prank.program.routines
 
 import cz.siret.prank.program.routines.results.EvalResults
+import cz.siret.prank.utils.Formatter
 import cz.siret.prank.utils.Futils
 import groovy.util.logging.Slf4j
 
 import static cz.siret.prank.utils.ATimer.startTimer
+import static cz.siret.prank.utils.Formatter.fmt
 import static cz.siret.prank.utils.Futils.mkdirs
 import static cz.siret.prank.utils.MathUtils.ranndomInt
 
@@ -56,6 +58,8 @@ class SeedLoop extends EvalRoutine {
         }
         params.seed = origSeed // set seed back for other experiments
 
+        write "loop training time: " + fmt(results.trainingTimeMinutes)
+        write "loop evaluation time: " + fmt(results.evalTimeMinutes)
         logTime "random seed iteration finished in $timer.formatted"
         write "results saved to directory [${Futils.absPath(outdir)}]"
 

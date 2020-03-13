@@ -266,7 +266,7 @@ class ClassifierStats implements Parametrized, Writable {
             div TN , (TN + FP)
         }
 
-        /** accuraccy */
+        /** accuracy */
         double getACC() {
             div( (TP + TN) , count )
         }
@@ -320,7 +320,7 @@ class ClassifierStats implements Parametrized, Writable {
             div FP , (TP + FP)
         }
 
-        /** false ommision rate */
+        /** false omission rate */
         double getFOR() {
             div FN , (FN + TN)
         }

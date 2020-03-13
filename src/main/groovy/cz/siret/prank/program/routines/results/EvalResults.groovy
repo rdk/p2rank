@@ -135,6 +135,14 @@ class EvalResults implements Parametrized, Writable  {
         (double)train_positives / train_negatives
     }
 
+    double getTrainingTimeMinutes() {
+        (double)(trainTime ?: 0d) / 60000d
+    }
+
+    double getEvalTimeMinutes() {
+        (double)(trainTime ?: 0d) / 60000d
+    }
+
     Map<String, Double> getStats() {
         Map<String, Double> m = new TreeMap<>()
 
@@ -148,9 +156,9 @@ class EvalResults implements Parametrized, Writable  {
             m.LIGANDS_DISTANT  = (double)m.LIGANDS_DISTANT  / runs
         }
 
-        m.TIME_TRAIN_M = (double)(trainTime ?: 0) / 60000
-        m.TIME_EVAL_M = (double)(evalTime ?: 0) / 60000
-        m.TIME_M = (double)m.TIME_TRAIN_M + (double)m.TIME_EVAL_M
+        m.TIME_TRAIN_M = trainingTimeMinutes
+        m.TIME_EVAL_M = evalTimeMinutes
+        m.TIME_M = trainingTimeMinutes + evalTimeMinutes
 
         m.TRAIN_VECTORS = avgTrainVectors
         m.TRAIN_POSITIVES = avgTrainPositives
