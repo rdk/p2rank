@@ -140,7 +140,7 @@ class EvalResults implements Parametrized, Writable  {
     }
 
     double getEvalTimeMinutes() {
-        (double)(trainTime ?: 0d) / 60000d
+        (double)(evalTime ?: 0d) / 60000d
     }
 
     Map<String, Double> getStats() {
