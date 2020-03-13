@@ -38,7 +38,7 @@ class EvalResults implements Parametrized, Writable  {
     Dataset.Result datasetResult
 
     /** total time in ms spent by model training */
-    Long totalTrainingTime = 0
+    long totalTrainingTime = 0
     /** time of first evaluation, may be longer than subsequent ones in seedloop due to caching */
     Long firstEvalTime = null
 
@@ -100,7 +100,7 @@ class EvalResults implements Parametrized, Writable  {
         residuePredictionStats.addAll(results.residuePredictionStats)
 
         totalTrainingTime += results.totalTrainingTime
-        if (firstEvalTime==null) firstEvalTime = results.firstEvalTime  // set only once to because of varoius caching
+        if (firstEvalTime==null) firstEvalTime = results.firstEvalTime  // set only once for first run because of varoius caching mechanisms
 
         train_negatives += results.train_negatives
         train_positives += results.train_positives
@@ -134,8 +134,8 @@ class EvalResults implements Parametrized, Writable  {
         (double)train_positives / train_negatives
     }
 
-    double getAvgTrainingTime() {
-        (double)totalTrainingTime / runs
+    long getAvgTrainingTime() {
+        Math.round((double)totalTrainingTime / runs)
     }
 
     double getAvgTrainingTimeMinutes() {
