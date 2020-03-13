@@ -59,7 +59,7 @@ class EvalResiduesRoutine extends EvalRoutine {
             Protein protein = item.protein
             Atoms sasPoints = protein.getAccessibleSurface().points
 
-            BinaryLabeling observed = item.explicitBinaryLabeling
+            BinaryLabeling observed = item.binaryLabeling
 
             List<LabeledPoint> observedPoints
             if (params.derivePointLabelingFromLigands()) {
