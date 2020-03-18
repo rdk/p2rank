@@ -7,6 +7,8 @@ import cz.siret.prank.program.params.Params
 import cz.siret.prank.utils.Writable
 import groovy.transform.CompileStatic
 import hr.irb.fastRandomForest.FastRandomForest
+import smile.classification.DecisionTree
+import smile.classification.SmileRandomForest
 import weka.classifiers.Classifier
 import weka.classifiers.CostMatrix
 import weka.classifiers.functions.Logistic
@@ -96,6 +98,20 @@ class ClassifierFactory implements Parametrized, Writable {
         return cs
     }
 
+    SmileRandomForest createSmileRandomForest() {
+        SmileRandomForest cs = new SmileRandomForest()
+        cs.with {
+            numTrees = params.rf_trees
+            numFeatures = params.rf_features > 1 ? -1 : params.rf_features
+            minNodeSize = 5 // default
+            maxNodes = 100 // default
+            splitRule = DecisionTree.SplitRule.GINI // default
+            subSample = params.rf_bagsize / 100d  // not sure if it is semantically the same in Smile
+        }
+        null
+    }
+
+
     Classifier createClassifier(String name) {
 
         ClassifierOption option = ClassifierOption.valueOf(name)
@@ -113,6 +129,9 @@ class ClassifierFactory implements Parametrized, Writable {
 
             case ClassifierOption.FasterForest2:
                 return createFasterForest2()
+
+            case ClassifierOption.SmileRandomForest:
+                return createSmileRandomForest()
 
             case ClassifierOption.AdaBoostM1_RF:
                 AdaBoostM1 cs = new AdaBoostM1()
@@ -173,5 +192,6 @@ class ClassifierFactory implements Parametrized, Writable {
     static Classifier createClassifier(Params params) {
         new ClassifierFactory(params).createClassifier(params.classifier)
     }
+
 
 }

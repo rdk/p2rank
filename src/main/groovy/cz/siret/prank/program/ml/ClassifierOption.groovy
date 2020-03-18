@@ -14,6 +14,7 @@ public enum ClassifierOption {
     FastRandomForest,
     FasterForest,
     FasterForest2,
+    SmileRandomForest,
     Bagging,
     SimpleLogistic,
     Logistic,

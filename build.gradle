@@ -139,6 +139,16 @@ dependencies {
     compile 'org.openscience.cdk:cdk-qsarmolecular:2.1.1'    // for NumericalSurface class
     compile 'org.openscience.cdk:cdk-data:2.1.1'             // for Atom class
     compile 'nz.ac.waikato.cms.weka:weka-dev:3.9.2'
+
+    //compile 'com.github.haifengl:smile-core:2.2.2'
+    //compile 'com.github.haifengl:smile-netlib:2.2.2'
+
+    compile 'com.github.haifengl:smile-core:1.5.3'
+    compile('com.github.fracpete:smile-weka-package:2020.03-rdk-SNAPSHOT') {
+        exclude group: 'nz.ac.waikato.cms.weka', module: 'weka-dev'
+        exclude group: 'com.github.haifengl', module: 'smile-core'
+    }
+
     compile fileTree(dir: 'lib', include: '*.jar')
 
     testCompile 'junit:junit:4.12'
