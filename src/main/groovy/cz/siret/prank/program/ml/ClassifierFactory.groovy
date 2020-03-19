@@ -109,7 +109,7 @@ class ClassifierFactory implements Parametrized, Writable {
             splitRule = DecisionTree.SplitRule.GINI // default
             subSample = params.rf_bagsize / 100d  // not sure if it is semantically the same in Smile
         }
-        null
+        return cs
     }
 
 
