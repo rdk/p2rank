@@ -7,7 +7,7 @@ Ligand-binding site prediction based on machine learning.
     <img src="http://siret.ms.mff.cuni.cz/krivak/p2rank/figures/points2_small.png" width="600">
 </p>
 
-[![version 2.0.1](https://img.shields.io/badge/version-2.0.1-green.svg)](/build.gradle)
+[![version 2.1-beta.1](https://img.shields.io/badge/version-2.1.beta.1-green.svg)](/build.gradle)
 [![Build Status](https://travis-ci.org/rdk/p2rank.svg?branch=master)](https://travis-ci.org/rdk/p2rank)
 [![License: MIT](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](/LICENSE.txt)
 
