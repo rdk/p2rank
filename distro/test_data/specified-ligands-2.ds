@@ -1,0 +1,18 @@
+# Dataset that explicitely specifies which ligands should be considered in training and evaluation phase.
+# Ligands are declared as a list of PDB HET group names with optional specifiers.
+
+HEADER: protein ligands
+
+2W83.pdb  GTP                     # n_ligands = 3
+2W83.pdb  MG                      # n_ligands = 3
+2W83.pdb  GTP,MG                  # n_ligands = 6
+2W83.pdb  GTP[atom_id:4995]       # n_ligands = 1
+2W83.pdb  GTP[group_id:B_1173]    # n_ligands = 1
+2W83.pdb  GTP[B_1173]             # n_ligands = 1
+2W83.pdb  MG[atom_id:5027]        # n_ligands = 1
+2W83.pdb  MG[group_id:B_1174]     # n_ligands = 1
+2W83.pdb  MG[B_1174]              # n_ligands = 1
+2W83.pdb  GTP[B_1173],MG[B_1174]  # n_ligands = 2
+2W83.pdb  GTP[B_1173],MG          # n_ligands = 4
+
+

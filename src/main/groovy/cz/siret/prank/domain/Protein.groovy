@@ -91,6 +91,9 @@ class Protein implements Parametrized {
 
 //===========================================================================================================//
 
+    /**
+     * relevant ligand count
+     */
     int getLigandCount() {
         ligands.size()
     }
