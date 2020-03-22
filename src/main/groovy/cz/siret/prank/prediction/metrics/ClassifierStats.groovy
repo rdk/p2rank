@@ -446,7 +446,7 @@ class ClassifierStats implements Parametrized, Writable {
         return new DecimalFormat("#.####").format(x)
     }
 
-    String relative(double x) {
+    private static String relative(double x, int count) {
         return formatPercent((double)x/count)
     }
 
@@ -475,8 +475,8 @@ class ClassifierStats implements Parametrized, Writable {
             sb << "       , ${formatPercent(NPV)},  ${formatPercent(P)}\n"
             sb << "\n"
             sb << "%:\n"
-            sb << ", ${relative(TN)}, ${relative(FP)}\n"
-            sb << ", ${relative(FN)}, ${relative(TP)}\n"
+            sb << ", ${relative(TN, count)}, ${relative(FP, count)}\n"
+            sb << ", ${relative(FN, count)}, ${relative(TP, count)}\n"
             sb << "\n"
             sb << "ACC:, ${format(ACC)}, accuracy\n"
             sb << "P:, ${format(P)}, precision / positive predictive value    ,,TP / (TP + FP)\n"
