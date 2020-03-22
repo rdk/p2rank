@@ -111,7 +111,7 @@ test {
 
 
 dependencies {
-    compile 'org.codehaus.groovy:groovy-all:2.5.10'
+    compile 'org.codehaus.groovy:groovy-all:3.0.2'
     
     compile 'org.codehaus.gpars:gpars:1.2.1'
     compile "org.apache.commons:commons-lang3:3.7"
