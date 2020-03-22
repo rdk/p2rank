@@ -38,7 +38,7 @@ See more usage examples below...
 
 ### Compilation
 
-To compile P2Rank you need Gradle (https://gradle.org/). Build with `./make.sh` or `gradle assemble`.
+This project uses [Gradle](https://gradle.org/) build system. Build with `./make.sh` or `./gradlew assemble`.
 
 ### Algorithm
 
