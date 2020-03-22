@@ -1,0 +1,14 @@
+# Dataset with explicitly defined chains. Structures will be reduced to specidied chains when loaded. '*' means structure won't be reduced.
+
+HEADER:  protein  chains
+
+2W83.pdb   A           # n_chains = 1
+2W83.pdb   B           # n_chains = 1
+2W83.pdb   C           # n_chains = 1
+2W83.pdb   D           # n_chains = 1
+2W83.pdb   E           # n_chains = 1
+2W83.pdb   A,B         # n_chains = 2
+2W83.pdb   A,B,C       # n_chains = 3
+2W83.pdb   A,B,C,D     # n_chains = 4
+2W83.pdb   A,B,C,D,E   # n_chains = 5
+2W83.pdb   *           # n_chains = 5 ( * = all)

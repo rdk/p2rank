@@ -41,7 +41,7 @@ abstract class PredictionLoader implements Parametrized {
         PredictionPair res = new PredictionPair()
         res.name = protf.name
 
-        if (loaderParams.load_only_specified_chains) {
+        if (itemContext.item.hasSpecifiedChaids()) {
             res.protein = Protein.loadReduced(queryProteinFile, loaderParams, itemContext.item.getChains())
         } else {
             res.protein = Protein.load(queryProteinFile, loaderParams)

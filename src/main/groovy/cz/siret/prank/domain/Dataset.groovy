@@ -656,10 +656,22 @@ class Dataset implements Parametrized {
             return columnValues.getOrDefault(COLUMN_LIGANDS, columnValues.get(COLUMN_LIGAND_CODES))
         }
 
+        @Nullable
+        private String getChainsColumnValue() {
+            return columnValues.get(COLUMN_CHAINS)
+        }
+
+        boolean hasSpecifiedChaids() {
+            String chains = getChainsColumnValue()
+            
+            return chains!=null && chains.trim()!="*"
+        }
+
         /**
          * explicitly specified chain codes
          * @return null if column is not defined
          */
+        @Nullable
         List<String> getChains() {
             if (!columnValues.containsKey(COLUMN_CHAINS)) {
                 null

@@ -360,13 +360,8 @@ class Protein implements Parametrized {
         if (onlyChains != null) {
             log.info "reducing protein [{}] to chains [{}]", name, onlyChains.join(",")
 
-            if (onlyChains.size() > 1) {
-                throw new PrintException("Reducing structure to multiple chains is not supported yet!")
-            }
-            String chainId = onlyChains.first()
-            name = name + chainId
-            // TODO replace with own method that can reduce to multiple chains
-            structure = StructureTools.getReducedStructure(structure, onlyChains.first()) 
+            name = name + onlyChains.join("")
+            structure = PdbUtils.getReducedStructure(structure, onlyChains)
         }
 
         allAtoms = Atoms.allFromStructure(structure).withIndex()
