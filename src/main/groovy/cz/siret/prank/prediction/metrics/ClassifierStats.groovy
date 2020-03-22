@@ -446,7 +446,7 @@ class ClassifierStats implements Parametrized, Writable {
         return new DecimalFormat("#.####").format(x)
     }
 
-    private String rel(double x) {
+    String relative(double x) {
         return formatPercent((double)x/count)
     }
 
@@ -454,14 +454,14 @@ class ClassifierStats implements Parametrized, Writable {
     //@CompileStatic
     String toCSV(String classifierLabel) {
 
-        Metrics s = metrics
+        Metrics m = metrics
 
-        double P = s.p      // precision / positive predictive value
-        double R = s.r       // recall / sensitivity / true positive rate
+        double P = m.p      // precision / positive predictive value
+        double R = m.r       // recall / sensitivity / true positive rate
 
         StringBuilder sb = new StringBuilder()
 
-        metrics.with {
+        m.with {
             sb << "classifier: ${classifierLabel}\n"
             sb << "\n"
             sb << ",TN   , FP, (spc)\n"
@@ -475,8 +475,8 @@ class ClassifierStats implements Parametrized, Writable {
             sb << "       , ${formatPercent(NPV)},  ${formatPercent(P)}\n"
             sb << "\n"
             sb << "%:\n"
-            sb << ", ${rel(TN)}, ${rel(FP)}\n"
-            sb << ", ${rel(FN)}, ${rel(TP)}\n"
+            sb << ", ${relative(TN)}, ${relative(FP)}\n"
+            sb << ", ${relative(FN)}, ${relative(TP)}\n"
             sb << "\n"
             sb << "ACC:, ${format(ACC)}, accuracy\n"
             sb << "P:, ${format(P)}, precision / positive predictive value    ,,TP / (TP + FP)\n"
