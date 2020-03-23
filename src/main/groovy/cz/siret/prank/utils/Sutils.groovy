@@ -99,4 +99,29 @@ class Sutils {
         return split(liststr, splitter)
     }
 
+    static String partBefore(String str, String sub) {
+        if (str==null) {
+            return null
+        }
+        int split = str.indexOf(sub)
+        if (split < 0) {
+            return str
+        } else {
+            return str.substring(0, split)
+        }
+    }
+
+    static String partBetween(String str, String left, String right) {
+        if (str==null || left==null || right==null) {
+            return str
+        }
+        int li = str.indexOf(left)
+        int ri = str.lastIndexOf(right)
+
+        if (li<0) li=0
+        if (ri<0) ri=str.length()
+        
+        return str.substring(li+left.length(), ri)
+    }
+
 }

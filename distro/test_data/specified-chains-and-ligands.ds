@@ -1,0 +1,16 @@
+# Dataset with explicitly defined chains and ligands.
+
+HEADER:  protein  chains  ligands
+
+2W83.pdb   *          MG          # n_ligands = 3
+2W83.pdb   A,B,C,D,E  MG          # n_ligands = 3
+2W83.pdb   *          GTP         # n_ligands = 3
+2W83.pdb   A,B,C,D,E  GTP         # n_ligands = 3
+2W83.pdb   *          MG,GTP      # n_ligands = 6
+2W83.pdb   A,B,C,D,E  MG,GTP      # n_ligands = 6
+
+2W83.pdb   A          MG          # n_ligands = 1
+2W83.pdb   B          MG          # n_ligands = 1
+2W83.pdb   E          MG          # n_ligands = 1
+2W83.pdb   A,B        MG          # n_ligands = 2
+2W83.pdb   A,B,E      MG          # n_ligands = 3

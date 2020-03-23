@@ -1011,12 +1011,6 @@ class Params {
     @RuntimeParam
     boolean train_score_transformers_for_residues = false
 
-    /**
-     * Reduce loaded protein structures to chains declared in dataset file (in optional chains column).
-     * If false all protein chains will be loaded.
-     */
-    @RuntimeParam
-    boolean load_only_specified_chains = false
 
     /**
      * In hyper-parameter optimization (ploop and hopt commands) train model only once in the beginning

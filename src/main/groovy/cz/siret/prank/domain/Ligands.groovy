@@ -17,16 +17,16 @@ import org.biojava.nbio.structure.Group
 @CompileStatic
 class Ligands implements Parametrized, Writable {
 
-    /* ligands counted in predictions */
+    /* ligands that are considered during training and evaluation, other ligands are ignored */
     List<Ligand> relevantLigands = new ArrayList<>()
 
-    /* too small ligands */
+    /* ligands that are ignored because they are too small */
     List<Ligand> smallLigands = new ArrayList<>()
 
-    /* usually cofactors and biologcally unrelevant ligands */
+    /* usually cofactors and biologically not relevant ligands */
     List<Ligand> ignoredLigands = new ArrayList<>()
 
-    /* ligands(hetgroups) too distant from protein surface */
+    /* ligands(hetgroups) that are too distant from the protein surface */
     List<Ligand> distantLigands = new ArrayList<>()
 
 //===========================================================================================================//
@@ -44,7 +44,7 @@ class Ligands implements Parametrized, Writable {
 
         } else {
             if (loaderParams.relevantLigandsDefined) {
-                log.info "Relevant ligand names defined in the dataset: " + loaderParams.relevantLigandNames
+                log.info "Relevant ligands are explicitly defined in the dataset: " + loaderParams.relevantLigandDefinitions
             }
 
             List<Group> relevantGroups = ligandGroups.findAll { isRelevantLigGroup(it, loaderParams) }
@@ -76,7 +76,12 @@ class Ligands implements Parametrized, Writable {
 
     private static boolean isRelevantLigGroup(Group group, LoaderParams loaderParams) {
         if (loaderParams.relevantLigandsDefined) {
-            return loaderParams.relevantLigandNames.contains(group.PDBName)
+            for (Dataset.LigandDefinition ligDef : loaderParams.relevantLigandDefinitions) {
+                if (ligDef.matchesGroup(group)) {
+                    return true
+                }
+            }
+            return false
         } else {
             return ! loaderParams.ignoredHetGroups.contains(group.PDBName)
         }

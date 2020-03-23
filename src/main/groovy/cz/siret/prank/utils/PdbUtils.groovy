@@ -3,9 +3,14 @@ package cz.siret.prank.utils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
+import org.biojava.nbio.structure.Chain
+import org.biojava.nbio.structure.Compound
 import org.biojava.nbio.structure.Element
 import org.biojava.nbio.structure.Group
 import org.biojava.nbio.structure.Structure
+import org.biojava.nbio.structure.StructureException
+import org.biojava.nbio.structure.StructureImpl
+import org.biojava.nbio.structure.StructureTools
 import org.biojava.nbio.structure.io.FileParsingParameters
 import org.biojava.nbio.structure.io.PDBFileParser
 import org.biojava.nbio.structure.io.PDBFileReader
@@ -155,6 +160,61 @@ class PdbUtils {
                 trySetElement(a, a.name.substring(0,1))
             }
         }
+    }
+
+
+    /**
+     * Reduces the structure to specified chains (and model 0 in case of multi-model structures).
+     *
+     * The code is based on StructureTools.getReducedStructure(String, String) from BioJava 4.2.12
+     *
+     * TODO: has to be revised after upgrade to BioJava 5!
+     *
+     * @param struct
+     * @param chainIds
+     * @return
+     */
+    static Structure getReducedStructure(Structure s, List<String> chainIds) {
+        // since we deal here with structure alignments,
+        // only use Model 1...
+
+        Structure newS = new StructureImpl();
+        newS.setPDBCode(s.getPDBCode());
+        newS.setPDBHeader(s.getPDBHeader());
+        newS.setName(s.getName());
+        newS.setSSBonds(s.getSSBonds());
+        newS.setDBRefs(s.getDBRefs());
+        newS.setSites(s.getSites());
+        newS.setBiologicalAssembly(s.isBiologicalAssembly());
+        newS.setCompounds(s.getCompounds());
+        newS.setConnections(s.getConnections());
+        newS.setSSBonds(s.getSSBonds());
+        newS.setSites(s.getSites());
+
+        for (String chainId : chainIds) {
+            Chain c = null;
+            try {
+                c = s.getChainByPDB(chainId);
+            } catch (StructureException e) {
+                log.warn(e.getMessage() + ". Chain id " + chainId
+                        + " did not match, trying upper case Chain id.");
+                c = s.getChainByPDB(chainId.toUpperCase());
+            }
+            if (c != null) {
+                newS.addChain(c);
+                for (Compound comp : s.getCompounds()) {
+                    if (comp.getChainIds() != null
+                            && comp.getChainIds().contains(c.getChainID())) {
+                        // found matching compound. set description...
+                        newS.getPDBHeader().setDescription(
+                                "Chain " + c.getChainID() + " of " + s.getPDBCode()
+                                        + " " + comp.getMolName());
+                    }
+                }
+            }
+        }
+
+        return newS;
     }
 
 }

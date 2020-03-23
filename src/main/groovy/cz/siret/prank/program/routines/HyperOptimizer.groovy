@@ -25,7 +25,7 @@ import java.nio.file.Paths
 @CompileStatic
 class HyperOptimizer extends ParamLooper {
 
-    static final String HOPT_OBJECTIVE = 'HOPT_OBJECTIVE'
+    static final String HOPT_OBJECTIVE = "HOPT_OBJECTIVE"
 
     List<ListParam> listParams
 

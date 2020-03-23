@@ -9,10 +9,16 @@ env:
 jdk:
   - oraclejdk8
   - oraclejdk11
+  - oraclejdk12
+  - oraclejdk13
+  - oraclejdk14
   - oraclejdk-ea
   - openjdk8
   - openjdk11
-  - openjdk-ea  
+  - openjdk12
+  - openjdk13
+  - openjdk14
+  - openjdk-ea
   
 matrix:
   allow_failures:
