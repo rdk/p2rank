@@ -67,7 +67,7 @@ class CmdLineArgs {
         return arg
     }
 
-    private boolean isArgName(String arg) {
+    public boolean isArgName(String arg) {
         if (arg==null) return false
         return arg.startsWith("-") || arg.startsWith("--")
     }
