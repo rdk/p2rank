@@ -38,7 +38,6 @@ class CmdLineArgs {
         return new CmdLineArgs(args)
     }
 
-    @CompileStatic
     private CmdLineArgs(String[] args) {
         this.argList = args
 
@@ -64,13 +63,13 @@ class CmdLineArgs {
         }
     }
 
-    private String stripArgName(String arg) {
+    protected String stripArgName(String arg) {
         if (arg.startsWith("--")) return arg.substring(2)
         if (arg.startsWith("-")) return arg.substring(1)
         return arg
     }
 
-    public boolean isArgName(String arg) {
+    protected boolean isArgName(String arg) {
         if (arg==null) return false
         return arg.startsWith("-") || arg.startsWith("--")
     }
