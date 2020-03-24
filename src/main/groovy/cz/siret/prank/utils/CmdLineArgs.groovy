@@ -44,7 +44,7 @@ class CmdLineArgs {
             String arg = args[i]
             String next = (i+1<args.length) ? args[i+1] : null
 
-            if (isArgName(arg)) {
+            if (this.isArgName(arg)) {
                 String argName = stripArgName(arg)
                 if (next==null || isArgName(next) ) {
                     switches.add(argName)
