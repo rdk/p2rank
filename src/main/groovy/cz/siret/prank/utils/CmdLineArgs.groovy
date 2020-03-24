@@ -1,5 +1,7 @@
 package cz.siret.prank.utils
 
+import groovy.transform.CompileStatic
+
 /**
  * Represents parsed command line arguments
  * <p>
@@ -36,6 +38,7 @@ class CmdLineArgs {
         return new CmdLineArgs(args)
     }
 
+    @CompileStatic
     private CmdLineArgs(String[] args) {
         this.argList = args
 
