@@ -81,7 +81,7 @@ class HyperOptimizer extends ParamLooper {
                         double objective = HyperOptimizer.getObjectiveValue(res, Params.inst)
                         // we want to calc objective before calling processStep
                         // that will save it to selected_stats table
-                        res.additionalStats.put(HOPT_OBJECTIVE, objective)
+                        res.additionalStats.put((String)HOPT_OBJECTIVE, objective)
                         return res
                     }
                     if (!params.selected_stats.contains(HOPT_OBJECTIVE)) {
