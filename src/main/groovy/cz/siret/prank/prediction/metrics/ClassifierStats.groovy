@@ -266,7 +266,7 @@ class ClassifierStats implements Parametrized, Writable {
             div TN , (TN + FP)
         }
 
-        /** accuraccy */
+        /** accuracy */
         double getACC() {
             div( (TP + TN) , count )
         }
@@ -320,7 +320,7 @@ class ClassifierStats implements Parametrized, Writable {
             div FP , (TP + FP)
         }
 
-        /** false ommision rate */
+        /** false omission rate */
         double getFOR() {
             div FN , (FN + TN)
         }
@@ -475,8 +475,8 @@ class ClassifierStats implements Parametrized, Writable {
             sb << "       , ${formatPercent(NPV)},  ${formatPercent(P)}\n"
             sb << "\n"
             sb << "%:\n"
-            sb << ", ${relative(TN, count)}, ${relative(FP, count)}\n"
-            sb << ", ${relative(FN, count)}, ${relative(TP, count)}\n"
+            sb << ", ${relative(TN, count as int)}, ${relative(FP, count as int)}\n"
+            sb << ", ${relative(FN, count as int)}, ${relative(TP, count as int)}\n"
             sb << "\n"
             sb << "ACC:, ${format(ACC)}, accuracy\n"
             sb << "P:, ${format(P)}, precision / positive predictive value    ,,TP / (TP + FP)\n"

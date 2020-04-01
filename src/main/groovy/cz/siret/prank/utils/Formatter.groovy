@@ -45,4 +45,10 @@ class Formatter {
             ""+val
     }
 
+//===========================================================================================================//
+
+    static String formatTime(long ms) {
+        ATimer.formatTime(ms)
+    }
+
 }

@@ -2,6 +2,7 @@ package cz.siret.prank.program.ml
 
 import cz.siret.prank.fforest.FasterForest
 import cz.siret.prank.fforest2.FasterForest2
+import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.params.Params
 import cz.siret.prank.utils.Writable
@@ -166,6 +167,9 @@ class ClassifierFactory implements Parametrized, Writable {
                 st.setClassifiers(cls)
 
                 return st
+            
+            default:
+                throw new PrankException("Invalid classifier name: $name. Valid values are: " + ClassifierOption.values())
         }
 
     }
@@ -173,5 +177,6 @@ class ClassifierFactory implements Parametrized, Writable {
     static Classifier createClassifier(Params params) {
         new ClassifierFactory(params).createClassifier(params.classifier)
     }
+
 
 }

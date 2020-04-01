@@ -43,6 +43,12 @@ public class ATimer {
         return getFormatted();
     }
 
+//===============================================================================================//
+
+    public static String formatTime(long ms) {
+        return new Duration(ms).toString();
+    }
+
     public static class Duration {
         private long millis;
         private long seconds;

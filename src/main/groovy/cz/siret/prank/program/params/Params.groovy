@@ -609,6 +609,14 @@ class Params {
     boolean predict_residues = false
 
     /**
+     * If true, assign class to SAS points in training dataset based on proximity to the ligand.
+     * If false, assign class based the class of nearest residue.
+     * Distinction only makes sense running in residue prediction mode (predict_residues = true).
+     */
+    @RuntimeParam
+    boolean ligand_derived_point_labeling = true
+
+    /**
      * produce residue labeling file (in predict mode)
      *
      * Even in full pocket prediction mode (predict_residues=false) we can label and score residues using transformers.
@@ -1015,7 +1023,7 @@ class Params {
 
     /**
      * In hyper-parameter optimization (ploop and hopt commands) train model only once in the beginning
-     * (makes sense if optimized hyper-parameters do't influence training and feature extraction)
+     * (makes sense if optimized hyper-parameters don't influence training and feature extraction)
      */
     @RuntimeParam
     boolean hopt_train_only_once = false
@@ -1052,6 +1060,15 @@ class Params {
      */
     double getSasCutoffDist() {
         solvent_radius + surface_additional_cutoff
+    }
+
+    /**
+     * Derive point labeling from ligands or from labeled residues.
+     *
+     * @see this.ligand_derived_point_labeling
+     */
+    boolean derivePointLabelingFromLigands() {
+        !predict_residues || ligand_derived_point_labeling || identify_peptides_by_labeling
     }
 
 //===========================================================================================================//

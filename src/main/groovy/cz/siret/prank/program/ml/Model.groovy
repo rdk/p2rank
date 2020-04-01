@@ -23,7 +23,7 @@ class Model {
 
     Model(String label, Classifier classifier) {
         this.label = label
-        this.classifier = classifier
+        this.classifier = Objects.requireNonNull(classifier)
     }
 
     void disableParalelism() {

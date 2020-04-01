@@ -379,6 +379,7 @@ class Protein implements Parametrized {
 
         if (!loaderParams.ignoreLigands) {
             // load ligands
+            log.info "loading ligands"
 
             Ligands categorizedLigands = new Ligands().loadForProtein(this, loaderParams, pdbFileName)
 
@@ -386,6 +387,8 @@ class Protein implements Parametrized {
             smallLigands = categorizedLigands.smallLigands
             distantLigands = categorizedLigands.distantLigands
             ignoredLigands = categorizedLigands.ignoredLigands
+        } else {
+            log.info "ignoring ligands"
         }
 
     }

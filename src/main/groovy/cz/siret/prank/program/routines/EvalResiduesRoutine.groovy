@@ -59,16 +59,16 @@ class EvalResiduesRoutine extends EvalRoutine {
             Protein protein = item.protein
             Atoms sasPoints = protein.getAccessibleSurface().points
 
-            BinaryLabeling observed = item.explicitBinaryLabeling
+            BinaryLabeling observed = item.binaryLabeling
 
             List<LabeledPoint> observedPoints
-            if (params.identify_peptides_by_labeling) {
+            if (params.derivePointLabelingFromLigands()) {
                 observedPoints = new LigandBasedPointLabeler().labelPoints(sasPoints, protein)
             } else {
                 observedPoints = new ResidueBasedPointLabeler(observed).labelPoints(sasPoints, protein)
             }
 
-            ResidueLabeler predictor = null
+            ResidueLabeler predictor
             List<LabeledPoint> predictedPoints = null
 
             if (dataset.hasPredictedResidueLabeling()) {   // load static labeling
@@ -114,7 +114,7 @@ class EvalResiduesRoutine extends EvalRoutine {
         logTime "model evaluation finished in $timer.formatted"
         write "results saved to directory [${Futils.absPath(outdir)}]"
 
-        results.evalTime = timer.time
+        results.firstEvalTime = timer.time
 
         return results
     }
