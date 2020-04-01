@@ -383,7 +383,7 @@ class Main implements Parametrized, Writable {
             main = new Main(parsedArgs)
             error = main.run()
 
-        } catch (Exception e) {
+        } catch (Throwable e) {
 
             error = true
 
@@ -394,8 +394,12 @@ class Main implements Parametrized, Writable {
                 writeError e.getMessage(), e // on unknown exception also print stack trace
             }
 
-            if (main!=null && main.logManager.loggingToFile) {
-                write "For details see log file: $main.logManager.logFile"
+            if (main!=null) {
+                String logLocation = "$main.installDir/log/prank.log"
+                if (main.logManager.loggingToFile) {
+                    logLocation = main.logManager.logFile
+                }
+                write "For details see log file: $logLocation"
             }
 
         }
