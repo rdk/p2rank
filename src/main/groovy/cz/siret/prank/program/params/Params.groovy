@@ -8,7 +8,15 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
 /**
- * global program parameters
+ * Holds all global parameters of the program.
+ *
+ * This file is also main source of parameter description/documenmtation.
+ *
+ * Parameter annotations:
+ * @RuntimeParam            ... Parameters related to program execution.
+ * @ModelParam              ... Actual parameters of the algorithm, related to extracting features and calculating results.
+ *                              It is important that those parameters stay the same when training a model and then using it for inference.
+ * @ModelParam // training  ... Model params used only in training phase but not during inference.
  */
 @CompileStatic
 @Slf4j
@@ -28,14 +36,14 @@ class Params {
     String dataset_base_dir = null
 
     /**
-     * all output of the program will be stored in subdirectores of this directory
+     * all output of the program will be stored in subdirectories of this directory
      * (set absolute path or path relative to install dir, null defaults to working dir)
      */
     @RuntimeParam
     String output_base_dir = null
 
     /**
-     * serialized model
+     * Location of pre-trained serialized model.
      * (set path relative to install_dir/models/)
      */
     @RuntimeParam
@@ -60,13 +68,13 @@ class Params {
     int threads = Runtime.getRuntime().availableProcessors() + 1
 
     /**
-     *  Number for threads for generating R plots
+     * Number for threads used for generating R plots
      */
     @RuntimeParam
     int r_threads = 2
 
     /**
-     *  Generate sdddev plot for each statistic when generating R plots
+     * Generate standard deviation plot for each statistic when generating R plots
      */
     @RuntimeParam
     boolean r_plot_stddevs = false
@@ -76,7 +84,7 @@ class Params {
      * (Multiplies required memory)
      */
     @RuntimeParam
-    int crossval_threads = 1 // Math.min(5, Runtime.getRuntime().availableProcessors())
+    int crossval_threads = 1
 
     /**
      * defines witch atoms around the ligand are considered to be part of the pocket
@@ -98,13 +106,13 @@ class Params {
      * see atomic-properties.csv
      */
     @ModelParam
-    List<String> atom_table_features = ["apRawValids","apRawInvalids","atomicHydrophobicity"] // "ap5sasaValids","ap5sasaInvalids"
+    List<String> atom_table_features = ["apRawValids","apRawInvalids","atomicHydrophobicity"]
 
     /**
      * List of features that come directly from residue table
      */
     @ModelParam
-    List<String> residue_table_features = [] // ['aa5fact1','aa5fact2','aa5fact3','aa5fact4','aa5fact5']
+    List<String> residue_table_features = []
 
     /**
      * Exponent applied to all atom table features
@@ -847,7 +855,7 @@ class Params {
     /**
      * Collect predictions for all points in the dataset.
      * Allows calculation of AUC and AUPRC classifier statistics but consumes a lot of memory.
-     * (>1GB for holo4k dataset with tesselation=2)
+     * (>1GB for holo4k dataset with tessellation=2)
      */
     @RuntimeParam
     boolean stats_collect_predictions = false
@@ -992,9 +1000,10 @@ class Params {
     /**
      * List of pocket score transformers that should be trained (i.e. fitted / inferred) during predict-eval.
      * Transformers are tied to the output distribution of the model (and its parametrization) so new transformers should be trained for every released model.
+     * Examples: "ZscoreTpTransformer","ProbabilityScoreTransformer"
      */
     @RuntimeParam
-    List<String> train_score_transformers = [] // ["ZscoreTpTransformer","ProbabilityScoreTransformer"]
+    List<String> train_score_transformers = [] 
 
     /**
      * Train residue score transformers on a dataset during predict-eval.

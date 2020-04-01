@@ -1,4 +1,4 @@
-# Dataset with explicitly defined chains. Structures will be reduced to specidied chains when loaded. '*' means structure won't be reduced.
+# Dataset with explicitly defined chains. Structures will be reduced to specified chains when loaded. '*' means structure won't be reduced.
 
 HEADER:  protein  chains
 

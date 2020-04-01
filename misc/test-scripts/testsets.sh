@@ -125,6 +125,17 @@ predict() {
 
 }
 
+conservation() {
+
+   title PREDICTIONS USING CONSERVATION
+
+   test ./prank.sh predict joined.ds   -c distro/config/conservation -conservation_dir 'joined/conservation/e5i1/scores'   -fail_fast 1 -log_cases 1 -visualizations 0 -out_subdir TEST/PREDICT_CONSERV
+   test ./prank.sh predict coach420.ds -c distro/config/conservation -conservation_dir 'coach420/conservation/e5i1/scores' -fail_fast 1 -log_cases 1 -visualizations 0 -out_subdir TEST/PREDICT_CONSERV
+   test ./prank.sh predict holo4k.ds   -c distro/config/conservation -conservation_dir 'holo4k/conservation/e5i1/scores'   -fail_fast 1 -log_cases 1 -visualizations 0 -out_subdir TEST/PREDICT_CONSERV
+
+}
+
+
 
 # evaluate default model/settings on main datasets
 eval_predict() {
@@ -318,6 +329,7 @@ tests() {
 all() {
     tests
     predict
+    conservation
     eval_predict_all
     eval_rescore
     eval_train_all

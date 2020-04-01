@@ -64,10 +64,17 @@ task copyBinaryToDist( type: Copy ) {
     include "*.jar"
 }
 
+task copyDocumentation( type: Copy ) {
+    into "$buildDir/../distro/"
+    from "$buildDir/../"
+    include "README.md", "LICENSE.txt"
+}
+
 assemble {
     dependsOn processResources
     dependsOn copyBinaryToDist
     dependsOn copyDependenciesToDist // copy dependencies to distro dir
+    dependsOn copyDocumentation
 }
 
 jar {

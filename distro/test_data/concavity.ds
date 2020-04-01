@@ -2,7 +2,7 @@
 
 PARAM.PREDICTION_METHOD=concavity
 
-# uncomment if ligands are separated with TER record:
+# specifies that ligands are separated by TER record (relevant only for lagacy CHEN11 and derived datasets)
 PARAM.LIGANDS_SEPARATED_BY_TER=true
 
 HEADER: prediction protein

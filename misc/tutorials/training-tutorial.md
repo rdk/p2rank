@@ -112,7 +112,7 @@ Here are the most relevant ones (for descriptions see `Params.groovy`):
 
 Their values may need to be optimized again for case of `sample_negatives_from_decoys = false`.
 
-### Dealing with class imbalances
+### Dealing with class imbalance
 
 When using all of the protein surface for training (`sample_negatives_from_decoys = false`) you may need to deal with class imbalances to achieve good results.
 Typically the ratio of positives vs. negatives will be around (1:30) depending on chosen cutoffs and margins. 
