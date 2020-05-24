@@ -3,11 +3,23 @@ package cz.siret.prank.utils
 import groovy.transform.CompileStatic
 
 import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
 
 @CompileStatic
 class Formatter {
 
-    static List<DecimalFormat> DECIMAL_FORMATS = (0..6).collect { new DecimalFormat("#."+("#"*it)) }.asList()
+    static DecimalFormatSymbols formatSymbols;
+
+    static List<DecimalFormat> DECIMAL_FORMATS;
+
+    static {
+        formatSymbols = new DecimalFormatSymbols();
+        formatSymbols.setDecimalSeparator('.' as char);
+        //
+        DECIMAL_FORMATS = (0..6).collect {
+            new DecimalFormat("#."+("#"*it), formatSymbols)
+        }.asList()
+    }
 
     static String format(double d, int places) {
         DECIMAL_FORMATS[places].format(d)
@@ -27,7 +39,7 @@ class Formatter {
 
 
     static String formatPercent(double x) {
-        return new DecimalFormat("##.0").format(x*100)
+        return new DecimalFormat("##.0", formatSymbols).format(x*100)
     }
 
     static String pc(double x) {
