@@ -61,8 +61,7 @@ public class ExternalAtomFeature {
             String path = dir + File.separator + fileName + ".csv";
             loadCsv(new File(path), directoryMetadata.get(dir));
         }
-        validate();
-        // TODO We should validate that all features has same size !
+        validate(directories, fileName);
     }
 
     private void ensureMetadataAreLoaded(
@@ -197,7 +196,7 @@ public class ExternalAtomFeature {
         }
     }
 
-    private void validate() {
+    private void validate(List<String> directories, String fileName) {
         for (Map.Entry<String, List<Double>> entry : atomFeatures.entrySet()) {
             if (entry.value.size() != totalAtomFeatureSize) {
                 throw new PrankException(
@@ -214,6 +213,10 @@ public class ExternalAtomFeature {
                                 " of ${entry.value.size()} " +
                                 "expected ${totalResidueFeatureSize}")
             }
+        }
+        if (totalResidueFeatureSize + totalAtomFeatureSize == 0) {
+            throw new PrankException(
+                    "No features loaded for: ${fileName} from ${directories}");
         }
     }
 
