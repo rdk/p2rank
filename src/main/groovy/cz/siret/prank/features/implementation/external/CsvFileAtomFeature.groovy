@@ -3,11 +3,14 @@ package cz.siret.prank.features.implementation.external;
 import cz.siret.prank.domain.Protein;
 import cz.siret.prank.features.api.AtomFeatureCalculationContext;
 import cz.siret.prank.features.api.AtomFeatureCalculator;
-import cz.siret.prank.features.api.ProcessedItemContext;
+import cz.siret.prank.features.api.ProcessedItemContext
+import cz.siret.prank.features.implementation.conservation.ConservationScore
+import cz.siret.prank.program.PrankException;
 import cz.siret.prank.program.params.Parametrized;
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j;
 import org.biojava.nbio.structure.Atom
+import org.biojava.nbio.structure.Group
 
 @Slf4j
 @CompileStatic
@@ -56,7 +59,7 @@ class CsvFileAtomFeature extends AtomFeatureCalculator implements Parametrized {
 
 
     private static ExternalAtomFeature getFeature(Protein protein) {
-        return (ExternalAtomFeature)protein.getSecondaryData().get(DATA_KEY);
+        return (ExternalAtomFeature) protein.getSecondaryData().get(DATA_KEY);
     }
 
 }
