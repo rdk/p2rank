@@ -4,17 +4,14 @@ import cz.siret.prank.domain.Protein;
 import cz.siret.prank.features.api.AtomFeatureCalculationContext;
 import cz.siret.prank.features.api.AtomFeatureCalculator;
 import cz.siret.prank.features.api.ProcessedItemContext
-import cz.siret.prank.features.implementation.conservation.ConservationScore
-import cz.siret.prank.program.PrankException;
 import cz.siret.prank.program.params.Parametrized;
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j;
 import org.biojava.nbio.structure.Atom
-import org.biojava.nbio.structure.Group
 
 @Slf4j
 @CompileStatic
-class CsvFileAtomFeature extends AtomFeatureCalculator implements Parametrized {
+class CsvFileFeature extends AtomFeatureCalculator implements Parametrized {
 
     private static final String DATA_LOADED_KEY = "CSV_FILE_DATA_LOADED";
 
@@ -22,7 +19,7 @@ class CsvFileAtomFeature extends AtomFeatureCalculator implements Parametrized {
 
     @Override
     public String getName() {
-        return "csv_file_atom_feature";
+        return "csv_file_feature";
     }
 
     @Override
@@ -41,7 +38,7 @@ class CsvFileAtomFeature extends AtomFeatureCalculator implements Parametrized {
     }
 
     private void loadCsvFileForProtein(Protein protein) {
-        List<String> directories = getParams().csv_file_feature_directories;
+        List<String> directories = getParams().feat_csv_directories;
         ExternalAtomFeature feature = new ExternalAtomFeature();
         feature.load(directories, protein.name);
         Map<String, Object> secondaryData = protein.getSecondaryData();

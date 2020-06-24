@@ -1056,7 +1056,7 @@ class Params {
      * Used by csv_file_atom_feature.
      */
     @RuntimeParam
-    List<String> csv_file_feature_directories = [];
+    List<String> feat_csv_directories = [];
 
 //===========================================================================================================//
 
