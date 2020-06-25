@@ -46,12 +46,12 @@ public class ConservationScore implements Parametrized {
         return baseName + chainId + "." + origin + ".hom.gz";
     }
 
-    private static class AA {
+    private static class AAScore {
         public String letter;
         public double score;
         public int index;
 
-        public AA(String letter, double score, int index) {
+        public AAScore(String letter, double score, int index) {
             this.letter = letter;
             this.score = score;
             this.index = index;
@@ -92,12 +92,12 @@ public class ConservationScore implements Parametrized {
         JSDFormat
     }
 
-    private static List<AA> loadScoreFile(File scoreFile, ScoreFormat format) {
+    private static List<AAScore> loadScoreFile(File scoreFile, ScoreFormat format) {
         TsvParserSettings settings = new TsvParserSettings();
         settings.setLineSeparatorDetectionEnabled(true);
         TsvParser parser = new TsvParser(settings);
         List<String[]> lines = parser.parseAll(Futils.inputStream(scoreFile));
-        List<AA> result = new ArrayList<>(lines.size());
+        List<AAScore> result = new ArrayList<>(lines.size());
         for (String[] line : lines) {
             int index = -1;
             double score = 0;
@@ -116,7 +116,7 @@ public class ConservationScore implements Parametrized {
             }
             score = score < 0 ? 0 : score;
             if (letter != "-") {
-                result.add(new AA(letter, score, index));
+                result.add(new AAScore(letter, score, index));
             }
         }
         return result;
@@ -133,13 +133,14 @@ public class ConservationScore implements Parametrized {
      * @param chainScores Parse conservation scores.
      * @param outResult   Add matched scores to map (residual number -> conservation score)
      */
-    public static void matchSequences(List<Group> chain, List<AA> chainScores,
+    public static void matchSequences(List<Group> chain, List<AAScore> chainScores,
                                       Map<ResidueNumberWrapper, Double> outResult) {
         // Check if the strings match
         String pdbChain = chain.stream().map {ch -> ch.getChemComp().getOne_letter_code()
                 .toUpperCase()}.collect(Collectors.joining());
         String scoreChain = chainScores.stream().map{ch -> ch.letter.toUpperCase()}
                 .collect(Collectors.joining());
+
         if (pdbChain.equals(scoreChain)) {
             for (int i = 0; i < chainScores.size(); i++) {
                 outResult.put(new ResidueNumberWrapper(chain.get(i).getResidueNumber()),
@@ -171,7 +172,7 @@ public class ConservationScore implements Parametrized {
         }
     }
 
-    public static int[][] calcLongestCommonSubSequence(List<Group> chain, List<AA> chainScores) {
+    public static int[][] calcLongestCommonSubSequence(List<Group> chain, List<AAScore> chainScores) {
         // Implementation of Longest Common SubSequence
         // https://en.wikipedia.org/wiki/Longest_common_subsequence_problem
         int[][] lcs = new int[chain.size() + 1][chainScores.size() + 1];
@@ -208,8 +209,8 @@ public class ConservationScore implements Parametrized {
                 continue;
             }
             String chainId = chain.getChainID();
-            chainId = chainId.trim().isEmpty() ? "A" : chainId;
-            List<AA> chainScores = null;
+            chainId = chainId.trim().isEmpty() ? "A" : chainId;   // TODO review. are there ever chains with no id?
+            List<AAScore> chainScores = null;
             try {
                 File scoreFile = scoreFiles.apply(chainId);
                 log.info "Loading conservation scores from file [{}]", scoreFile

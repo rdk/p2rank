@@ -7,7 +7,7 @@ Ligand-binding site prediction based on machine learning.
     <img src="http://siret.ms.mff.cuni.cz/krivak/p2rank/figures/points2_small.png" width="600">
 </p>
 
-[![version 2.1-beta.1](https://img.shields.io/badge/version-2.1.beta.1-green.svg)](/build.gradle)
+[![version 2.1](https://img.shields.io/badge/version-2.1-green.svg)](/build.gradle)
 [![Build Status](https://travis-ci.org/rdk/p2rank.svg?branch=master)](https://travis-ci.org/rdk/p2rank)
 [![License: MIT](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](/LICENSE.txt)
 
@@ -17,8 +17,8 @@ P2Rank is a stand-alone command line program that predicts ligand-binding pocket
 
 ### Requirements
 
-* JRE 8 (Java 1.8) or JRE 11 (Java 11)
-* PyMOL 1.7.x for viewing visualizations (optional)
+* Java 8 or newer
+* PyMOL 1.7 (or newer) for viewing visualizations (optional)
 
 ### Setup
 
@@ -44,7 +44,7 @@ This project uses [Gradle](https://gradle.org/) build system. Build with `./make
 
 P2Rank makes predictions by scoring and clustering points on the protein's solvent accessible surface. Ligandability score of individual points is determined by a machine learning based model trained on the dataset of known protein-ligand complexes. For more details see slides and publications.
 
-Slides: http://bit.ly/p2rank_slides 
+Slides introducing original version of the algotithm: http://bit.ly/p2rank_slides 
 
 ### Publications
 
@@ -96,17 +96,20 @@ prank eval-predict test.ds
 
 ### Prediction output 
 
-   For each file in the dataset program produces a CSV file in the output directory named 
-   `<pdb_file_name>_predictions.csv`, which contains an ordered list of predicted pockets, their scores, coordinates 
-   of their centroids and list of PDBSerials of adjacent amino acids and solvent exposed atoms.
+   For each file in the dataset P2Rank produces produces several output files:
+   * `<pdb_file_name>_predictions.csv`: contains an ordered list of predicted pockets, their scores, coordinates 
+   of their centers together with a list of adjacent residues and a list of adjacent protein surface atoms
+   * `<pdb_file_name>_residues.csv`: contains list of all residues from the input protein with their scores, 
+   mapping to predicted pockets and calibrated probability of being a ligand-binding residue
+   * PyMol visualization (`.pml` script with data files) 
 
-   If coordinates of SAS points that belong to predicted pockets are needed they can be found
+   If coordinates of SAS points that belong to predicted pockets are needed, they can be found
    in `visualizations/data/<pdb_file_name>_points.pdb`. There "Residue sequence number" (23-26) of HETATM record 
    corresponds to the rank of corresponding pocket (points with value 0 do not belong to any pocket).
 
 ### Configuration
 
-You can override default params with custom config file:
+You can override the default params with a custom config file:
 
 ~~~
 prank predict -c config/example.groovy  test.ds

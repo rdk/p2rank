@@ -4,7 +4,7 @@ apply plugin: 'idea'
 
 
 group = 'cz.siret'
-version = '2.1'
+version = '2.2-dev.1'
 
 description = 'Ligand binding site prediction based on machine learning.'
 
@@ -120,7 +120,6 @@ test {
 dependencies {
     compile 'org.codehaus.groovy:groovy-all:2.5.10'
 //    compile 'org.codehaus.groovy:groovy-all:3.0.2' // still buggy
-    compile group: 'org.apache.commons', name: 'commons-csv', version: '1.8'
 
     compile 'org.codehaus.gpars:gpars:1.2.1'
     compile 'org.apache.commons:commons-lang3:3.9'
@@ -128,7 +127,8 @@ dependencies {
     compile 'com.google.guava:guava:28.2-jre'
     compile 'com.google.code.gson:gson:2.8.6'
     compile 'org.zeroturnaround:zt-zip:1.14'
-    compile 'com.univocity:univocity-parsers:2.8.4' // for parsing csv
+    compile 'com.univocity:univocity-parsers:2.8.4' // csv parser
+    compile 'org.apache.commons:commons-csv:1.8:'
 
     compile 'org.slf4j:slf4j-api:1.7.30'
     compile 'org.apache.logging.log4j:log4j-slf4j-impl:2.13.1'
