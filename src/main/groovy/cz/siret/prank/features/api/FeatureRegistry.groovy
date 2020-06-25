@@ -1,9 +1,6 @@
 package cz.siret.prank.features.api
 
 
-import cz.siret.prank.features.api.FeatureCalculator
-import cz.siret.prank.features.api.ResidueToAtomicFeatWrapper
-import cz.siret.prank.features.api.ResidueToSasFeatWrapper
 import cz.siret.prank.features.implementation.AAIndexFeature
 import cz.siret.prank.features.implementation.Asa2Feature
 import cz.siret.prank.features.implementation.AsaFeature
@@ -19,6 +16,7 @@ import cz.siret.prank.features.implementation.ProtrusionHistogramFeature
 import cz.siret.prank.features.implementation.PyramidFeature
 import cz.siret.prank.features.implementation.conservation.ConservCloudSF
 import cz.siret.prank.features.implementation.conservation.ConservRF
+import cz.siret.prank.features.implementation.external.CsvFileFeature
 import cz.siret.prank.features.implementation.residue.ContactResiduesRF
 import cz.siret.prank.features.implementation.secstruct.SecStructCloudSF
 import cz.siret.prank.features.implementation.secstruct.SecStructRF
@@ -101,6 +99,8 @@ class FeatureRegistry {
         register new ResidueToSasFeatWrapper(new ConservRF())
         register new ResidueToAtomicFeatWrapper(new ConservRF())
         register new ConservCloudSF()
+
+        register new CsvFileFeature()
 
         // Register new feature implementations here
 
