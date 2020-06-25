@@ -920,7 +920,7 @@ class Params {
      * selected sub-features in aa index feature
      */
     @ModelParam
-    List<String> feat_aa_properties = null
+    List<String> feat_aa_properties = []
 
     /**
      * Hyperparameter optimizer implementation (so far only "spearmint")
@@ -999,7 +999,7 @@ class Params {
     String zscoretp_res_transformer = "residue/p2rank_default_zscore.json"
 
     /**
-     * Path to json file that contains parameters of transformation of raw score to "probability that residue with given score is true residue".
+     * Path to json file that contains parameters of transformation of raw score to "probability that residue with given score is true (binding) residue".
      * Use path relative to distro/models/score.
      */
     @RuntimeParam
@@ -1142,8 +1142,10 @@ class Params {
         String pname = propertyName
         Object me = this
         Object pv = me."$pname"
+
+        // TODO assign based on real property type not the type of property value bc. it may be null
         
-        if (pv == null) {
+        if (value == null || pv == null) {
             me."$pname" = value
         } else if (pv instanceof String) {
             String v = (String) value

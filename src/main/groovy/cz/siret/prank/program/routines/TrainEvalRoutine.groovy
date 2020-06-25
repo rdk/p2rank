@@ -142,6 +142,10 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
 
         mkdirs(outdir)
 
+        // TODO perform subsampling or supersampling if needed
+        // -> move subsampling/supersampling logic from cz.siret.prank.collectors.DataPreprocessor.preProcessTrainData
+        // here so befire every seedloop run there is new random sampling
+
         long trainTime = 0
         ClassifierStats trainStats = null
         List<Double> featureImportances = null
