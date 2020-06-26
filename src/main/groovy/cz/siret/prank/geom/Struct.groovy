@@ -122,8 +122,6 @@ class Struct {
     static boolean isHetGroup(Group group) {
         if (group==null) return false
 
-
-
         GroupType.HETATM == group.type
     }
 
@@ -135,17 +133,6 @@ class Struct {
             res.add(g)
         }
         return res
-    }
-
-    static boolean isAminoAcidGroup(Group g) {
-        g.type == GroupType.AMINOACID
-    }
-
-    static boolean isProteinChainGroup(Group g) {
-        // older clumsier version
-        // return !isHetGroup(g) && !"STP".equals(g.PDBName) && !"HOH".equals(g.PDBName)
-
-        isAminoAcidGroup(g) && g.chainId != null
     }
 
     /**
@@ -213,11 +200,6 @@ class Struct {
         return !getResidueGroupsFromChain(chain).isEmpty()
     }
 
-    static boolean isAminoAcidLigand(Group group) {
-
-        //StructureTools
-        // TODO
-    }
 
 
     static boolean isTerminalResidue(Group group) {
@@ -235,9 +217,11 @@ class Struct {
         List<Group> atomGroups = chain.getAtomGroups()
         List<Group> res = new ArrayList<>(atomGroups.size())
 
+        log.info "groups in chain {}: {}", chain.chainID, atomGroups.size()
+
         for (Group g : atomGroups) {
             // log.info "{} [{}]", g.toString(), g.properties
-            if (g.getType()==GroupType.AMINOACID || g.getPDBName().startsWith("UNK")) {
+            if (isAminoAcidResidue(g)) {
                 res.add g
                 if (isTerminalResidue(g)) {
                     break // this is done so amino acid ligands are excluded
@@ -247,6 +231,40 @@ class Struct {
 
         return res
     }
+
+//===========================================================================================================//
+
+    static boolean isAminoAcidGroup(Group g) {
+        g.type == GroupType.AMINOACID
+    }
+
+    /**
+     * TODO consolidate with isAminoAcidResidue()
+     */
+    static boolean isProteinChainGroup(Group g) {
+        // older clumsier version
+        // return !isHetGroup(g) && !"STP".equals(g.PDBName) && !"HOH".equals(g.PDBName)
+
+        isAminoAcidGroup(g) && g.chainId != null
+    }
+
+    /**
+     * Should distinguish in particular between modified amino acid residues that are part of the chain (and return true)
+     * and amino acid ligands that are not residues (and return false)
+     * // TODO revisit
+     */
+    static boolean isAminoAcidResidue(Group g) {
+        if (isAminoAcidGroup(g)) return true
+        if (g.getPDBName().startsWith("UNK")) return true
+        return false
+    }
+
+//    static boolean isAminoAcidLigand(Group group) {
+//        //StructureTools
+//        // TODO
+//    }
+    
+//===========================================================================================================//
 
     static List<Residue> getResiduesFromChain(Chain chain) {
 

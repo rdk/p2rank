@@ -108,7 +108,7 @@ basic() {
     #test ./prank.sh eval-predict mlig-joined.ds   -c config/working -visualizations 1  -l VISUALIZATIONS                     -c config/working -out_subdir TEST/TESTS
 }
 
-# test predieciton on all datasets
+# test prediction on all datasets
 predict() {
 
    title PREDICTIONS ON ALL DATASETS
