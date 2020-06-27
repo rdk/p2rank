@@ -5,6 +5,7 @@ import com.univocity.parsers.tsv.TsvParserSettings
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.domain.Residue
 import cz.siret.prank.domain.labeling.ResidueLabeling
+import cz.siret.prank.geom.Struct
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.params.Params
@@ -208,7 +209,7 @@ public class ConservationScore implements Parametrized {
             if (chain.getAtomGroups(GroupType.AMINOACID).size() <= 0) {
                 continue;
             }
-            String chainId = chain.getChainID();
+            String chainId = Struct.getAuthorId(chain); // authorId == chain letter in old PDB model
             chainId = chainId.trim().isEmpty() ? "A" : chainId;   // TODO review. are there ever chains with no id?
             List<AAScore> chainScores = null;
             try {

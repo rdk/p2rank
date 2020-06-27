@@ -143,10 +143,8 @@ class Evaluation implements Parametrized {
         protRow.atoms = protein.allAtoms.count
         protRow.protAtoms = protein.proteinAtoms.count
         protRow.exposedAtoms = pair.prediction.protein.exposedAtoms.count
-        // TODO count only model 1
-        // TODO count only protein chains
-        protRow.chains = protein.structure.chains.size()
-        protRow.chainNames = protein.structure.chains.collect {it.chainID}.join(" ")
+        protRow.chains = protein.residueChains.size()
+        protRow.chainNames = protein.residueChains.collect {it.authorId}.join(" ")
         protRow.ligands = pair.ligandCount
         protRow.pockets = pair.prediction.pocketCount
         protRow.ligNames = protein.ligands.collect { "$it.name($it.size)" }.join(" ")

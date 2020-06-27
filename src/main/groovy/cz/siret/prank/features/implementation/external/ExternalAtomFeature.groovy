@@ -237,9 +237,7 @@ public class ExternalAtomFeature {
             double[] residueFeature = residueFeatures.get(residueNumber);
             if (residueFeature == null) {
                 throw new PrankException(
-                        "Missing residue for: ${residueNumber.chainId}" +
-                                " ${residueNumber.insCode}" +
-                                " ${residueNumber.seqNum} ");
+                        "Missing residue for: ${residueNumber}")
             }
             copyToArray(residueFeature, result, totalAtomFeatureSize);
         }

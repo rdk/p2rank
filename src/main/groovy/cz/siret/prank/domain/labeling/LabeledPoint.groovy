@@ -6,6 +6,8 @@ import org.biojava.nbio.structure.Bond
 import org.biojava.nbio.structure.Element
 import org.biojava.nbio.structure.Group
 
+import javax.vecmath.Point3d
+
 /**
  * Annotated point used for generating visualizations and pocket predictions.
  */
@@ -62,6 +64,11 @@ class LabeledPoint implements Atom {
     }
 
 //===========================================================================================================//
+
+    @Override
+    Point3d getCoordsAsPoint3d() {
+        return point.getCoordsAsPoint3d()
+    }
 
     @Override
     public void setName(String s) {

@@ -5,7 +5,6 @@ import cz.siret.prank.domain.Protein
 import cz.siret.prank.domain.Residue
 import cz.siret.prank.domain.Residues
 import cz.siret.prank.program.PrankException
-import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.Sutils
 import cz.siret.prank.utils.Writable
@@ -74,7 +73,7 @@ abstract class StaticResidueLabeler extends ResidueLabeler<Boolean> implements W
             int loaded = 0
             doubleLabeling = new ResidueLabeling<Double>(residues.count)
             for (Residue res : residues) {
-                String code = res.chain.id + '_' + res.residueNumber.seqNum + (res.residueNumber.insCode ?: "")
+                String code = res.chain.authorId + '_' + res.residueNumber.seqNum + (res.residueNumber.insCode ?: "")
                 Double score = scores.get(code)
 
                 if (score==null) {

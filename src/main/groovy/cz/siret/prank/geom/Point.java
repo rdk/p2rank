@@ -6,6 +6,7 @@ import org.biojava.nbio.structure.Bond;
 import org.biojava.nbio.structure.Element;
 import org.biojava.nbio.structure.Group;
 
+import javax.vecmath.Point3d;
 import java.util.List;
 
 /**
@@ -44,6 +45,11 @@ public final class Point implements Atom {
     }
 
 //===============================================================================================//
+
+    @Override
+    public Point3d getCoordsAsPoint3d() {
+        return new Point3d(coords[0],coords[1],coords[2]);
+    }
 
     @Override
     public void setName(String s) {

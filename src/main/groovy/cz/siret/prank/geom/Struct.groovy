@@ -7,9 +7,8 @@ import cz.siret.prank.domain.ResidueChain
 import cz.siret.prank.geom.clustering.AtomClusterer
 import cz.siret.prank.geom.clustering.AtomGroupClusterer
 import cz.siret.prank.geom.clustering.SLinkClusterer
-import cz.siret.prank.utils.ConsoleWriter
+import cz.siret.prank.utils.PdbUtils
 import cz.siret.prank.utils.PerfUtils
-import cz.siret.prank.utils.Writable
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.*
@@ -191,16 +190,17 @@ class Struct {
     }
 
     /**
-     * @return true if amino acid residue chain
+     * Returns true if amino acid residue chain.
+     *
+     * Should distinguish between protein AA chains (->true), peptides and small aa ligands (->false)
      */
-    static boolean isAminoAcidChain(Chain chain) {
-        // this is not ideal
-        // TODO logic to distinguish between protein chains, peptides and small aa ligands
-
-        return !getResidueGroupsFromChain(chain).isEmpty()
+    static boolean isProteinAaResidueChain(Chain chain) {
+        return isPolyChain(chain) && !getResidueGroupsFromChain(chain).isEmpty()
     }
 
-
+    static boolean isPolyChain(Chain chain) {
+        return chain.entityInfo.type == EntityType.POLYMER
+    }
 
     static boolean isTerminalResidue(Group group) {
         group.getAtom("OXT") != null
@@ -217,7 +217,7 @@ class Struct {
         List<Group> atomGroups = chain.getAtomGroups()
         List<Group> res = new ArrayList<>(atomGroups.size())
 
-        log.info "groups in chain {}: {}", chain.chainID, atomGroups.size()
+        log.info "groups in chain {}: {}", getAuthorId(chain), atomGroups.size()
 
         for (Group g : atomGroups) {
             // log.info "{} [{}]", g.toString(), g.properties
@@ -266,11 +266,22 @@ class Struct {
     
 //===========================================================================================================//
 
+    /**
+     * returns chain authorId == chain letter in old PDB model
+     */
+    static String getAuthorId(Chain chain) {
+        return chain?.name
+    }
+
+    static String getMmcifId(Chain chain) {
+        return chain?.id
+    }
+
     static List<Residue> getResiduesFromChain(Chain chain) {
 
         List<Group> groups = getResidueGroupsFromChain(chain)
 
-        log.info "{} residue groups in chain {}", groups.size(), chain.chainID
+        log.info "{} groups in chain {}", groups.size(), getAuthorId(chain)
 
         //ordering seems reliable
         //groups.toSorted { it.residueNumber.seqNum }
@@ -294,41 +305,16 @@ class Struct {
      * does not perform checks
      */
     static ResidueChain toResidueChain(Chain chain) {
-        new ResidueChain(chain.getChainID(), getResiduesFromChain(chain))
+        new ResidueChain(getAuthorId(chain), getMmcifId(chain), getResiduesFromChain(chain))
     }
 
     static List<ResidueChain> residueChainsFromStructure(Structure struc) {
-        struc.chains.findAll { isAminoAcidChain(it) }
+
+        struc.getPolyChains()
+
+        struc.chains.findAll { isProteinAaResidueChain(it) }
                     .collect { toResidueChain(it) }
                     .asList()      
-    }
-
-    /**
-     * 
-     * based on org.biojava.nbio.structure.StructureTools#getReducedStructure(org.biojava.nbio.structure.Structure, java.lang.String)
-     * from biojava-structure 4.2.11
-     */
-    static final Structure reduceStructureToModel(Structure s, int modelId) throws StructureException {
-
-        Structure newS = new StructureImpl();
-        newS.setPDBCode(s.getPDBCode());
-        newS.setPDBHeader(s.getPDBHeader());
-        newS.setName(s.getName());
-        newS.setSSBonds(s.getSSBonds());
-        newS.setDBRefs(s.getDBRefs());
-        newS.setSites(s.getSites());
-        newS.setBiologicalAssembly(s.isBiologicalAssembly());
-        newS.setCompounds(s.getCompounds());
-        newS.setConnections(s.getConnections());
-        newS.setSSBonds(s.getSSBonds());
-        newS.setSites(s.getSites());
-
-        // only get model 0
-        List<Chain> model = s.getModel(modelId);
-        for (Chain c : model) {
-            newS.addChain(c);
-        }
-        return newS;
     }
 
     static final Structure reduceStructureToModel0(Structure s) {
@@ -338,7 +324,7 @@ class Struct {
         if (s.nrModels()==1) {
             return s
         } else {
-            return reduceStructureToModel(s, 0)
+            return PdbUtils.reduceStructureToModel(s, 0)
         }
     }
 

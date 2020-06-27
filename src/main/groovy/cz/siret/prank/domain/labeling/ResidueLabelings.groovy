@@ -125,9 +125,10 @@ class ResidueLabelings implements Parametrized {
 
     String toCSV() {
         StringBuilder s = new StringBuilder()
+        // TODO add chain_name and chain_id colmuns instead of chain (after adding mmcif support)
         s << "chain, residue_label, residue_name, " << (labelings*.name).join(", ") << "\n"
         for (Residue r : residues) {
-            s << r.chainId << ", " << r.residueNumber.toString().padLeft(4) << ", " << r.code << ","
+            s << r.chainAuthorId << ", " << r.residueNumber.toString().padLeft(4) << ", " << r.code << ","
             s << labelings.collect { fmt it.labeling.get(r).label }.join(", ") << "\n"
         }
         s.toString()

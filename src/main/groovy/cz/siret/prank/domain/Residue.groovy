@@ -16,6 +16,9 @@ import org.biojava.nbio.structure.secstruc.SecStrucType
 import javax.annotation.Nonnull
 import javax.annotation.Nullable
 
+import static cz.siret.prank.geom.Struct.getAuthorId
+import static cz.siret.prank.geom.Struct.getMmcifId
+
 /**
  * Represents protein amino acid residue
  */
@@ -88,8 +91,13 @@ class Residue {
     }
     
     @Nullable
-    String getChainId() {
-        group.chainId
+    String getChainMmcifId() {
+        getMmcifId(group?.chain)
+    }
+
+    @Nullable
+    String getChainAuthorId() {
+        getAuthorId(group?.chain)
     }
 
     ResidueNumber getResidueNumber() {

@@ -5,7 +5,6 @@ import cz.siret.prank.domain.AA
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.domain.Residue
 import cz.siret.prank.domain.labeling.LabeledResidue
-import cz.siret.prank.domain.labeling.LigandBasedResidueLabeler
 import cz.siret.prank.domain.labeling.ResidueLabeler
 import cz.siret.prank.domain.labeling.ResidueLabeling
 import cz.siret.prank.domain.loaders.DatasetCachedLoader
@@ -117,7 +116,7 @@ class AnalyzeRoutine extends Routine {
         StringBuffer csv = new StringBuffer("protein, pept_count, peptides\n")
         dataset.processItems { Dataset.Item item ->
             Protein p = item.protein
-            String ps = p.peptides.collect { "($it.id,$it.length)" }.join(" ")
+            String ps = p.peptides.collect { "($it.authorId,$it.length)" }.join(" ")
             csv << "$p.name, ${p.peptides.size()}, $ps\n"
         }
         writeFile "$outdir/peptides.csv", csv
@@ -137,7 +136,7 @@ class AnalyzeRoutine extends Routine {
             int nchains = p.residueChains.size()
             String rows = ""
             p.residueChains.each {
-                String chainId = it.id
+                String chainId = it.authorId
                 int nres = it.length
                 String chars = it.codeCharString
                 rows += "${item.label}, $nchains, $chainId, $nres, $chars \n"
@@ -168,7 +167,7 @@ class AnalyzeRoutine extends Routine {
             def s = BinaryLabelings.getStats(labeling)
 
             int nchains = p.residueChains.size()
-            String chainIds = p.residueChains.collect { it.id }.join(" ")
+            String chainIds = p.residueChains.collect { it.authorId }.join(" ")
             int nres = p.residues.size()
             int nlabres = s.total
             csv << "${item.label}, $nchains, $chainIds, $nres, $nlabres, ${s.positives}, ${s.negatives}, ${s.unlabeled}\n"

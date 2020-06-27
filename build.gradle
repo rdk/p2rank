@@ -4,7 +4,7 @@ apply plugin: 'idea'
 
 
 group = 'cz.siret'
-version = '2.2-dev.1-g3'
+version = '2.2-dev.2-bio5'
 
 description = 'Ligand binding site prediction based on machine learning.'
 
@@ -121,6 +121,7 @@ configurations {
 }
 
 dependencies {
+
     implementation 'org.codehaus.groovy:groovy-all:3.0.4'
 
     implementation 'org.codehaus.gpars:gpars:1.2.1'
@@ -137,9 +138,9 @@ dependencies {
     implementation 'org.apache.logging.log4j:log4j-core:2.13.1'
     implementation 'org.slf4j:jul-to-slf4j:1.7.30'         // for netlib logging messages
 
-    implementation 'org.biojava:biojava-core:4.2.12'
-    implementation 'org.biojava:biojava-alignment:4.2.12'
-    implementation 'org.biojava:biojava-structure:4.2.12'
+    implementation 'org.biojava:biojava-core:5.3.0'
+    implementation 'org.biojava:biojava-alignment:5.3.0'
+    implementation 'org.biojava:biojava-structure:5.3.0'
     implementation 'javax.xml.bind:jaxb-api:2.3.1'      // extra dependencies of biojava for java 11
     implementation 'com.sun.xml.bind:jaxb-core:2.3.0.1' // ~
     implementation 'com.sun.xml.bind:jaxb-impl:2.3.2'   // ~
@@ -151,5 +152,6 @@ dependencies {
     implementation fileTree(dir: 'lib', include: '*.jar')
 
     testImplementation 'junit:junit:4.13'
+
 }
 

@@ -1,5 +1,8 @@
-package cz.siret.prank.domain;
+package cz.siret.prank.domain
 
+import cz.siret.prank.geom.Atoms
+import cz.siret.prank.geom.Struct
+import groovy.util.logging.Slf4j;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -7,6 +10,7 @@ import static org.junit.Assert.*;
 /**
  *
  */
+@Slf4j
 class DatasetTest {
 
 
@@ -48,6 +52,16 @@ class DatasetTest {
     @Test
     void testReducedStructresWithSpecifiedLigands() {
         Dataset ds = Dataset.loadFromFile('distro/test_data/specified-chains-and-ligands.ds')
+
+
+        //def s = ds.items[0].protein.structure
+        //log.info "XXX chains: {} ", s.chains*.getChainID()
+        //log.info "XXX chains:{} atoms:{} ", s.chains.size(), Atoms.allFromStructure(s).size()
+        //log.info "XXX: "+ Struct.getGroups(s).findAll { it.getPDBName() == "MG" }
+        //
+        //s = ds.items[1].protein.structure
+        //log.info "XXX chains:{} atoms:{} ", s.chains.size(), Atoms.allFromStructure(s).size()
+        //log.info "XXX: "+ Struct.getGroups(s).findAll { it.getPDBName() == "MG" }
 
         assertEquals 3, ds.items[0].protein.ligandCount
         assertEquals 3, ds.items[1].protein.ligandCount

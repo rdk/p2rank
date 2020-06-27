@@ -17,11 +17,9 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 import org.biojava.nbio.structure.Structure
-import org.biojava.nbio.structure.StructureTools
 import org.biojava.nbio.structure.secstruc.SecStrucType
 
 import javax.annotation.Nullable
-import javax.print.PrintException
 import java.util.function.Function
 
 import static cz.siret.prank.features.implementation.conservation.ConservationScore.CONSERV_LOADED_KEY
@@ -40,7 +38,7 @@ class Protein implements Parametrized {
     Structure structure
     
     /**
-     * unreduced structure (when strucure was reduced to single chain)
+     * unreduced structure (when structure was reduced to single chain)
      * in case of multi model structures this refers to structure reduced to model 0
      */
     Structure fullStructure // unreduced struct
@@ -77,7 +75,8 @@ class Protein implements Parametrized {
 
 //===========================================================================================================//
 
-    private Map<String, ResidueChain> residueChainsMap
+    private List<ResidueChain> residueChains
+    private Map<String, ResidueChain> residueChainsByAuthorId 
     private Residues residues
     private Residues exposedResidues
 
@@ -201,14 +200,36 @@ class Protein implements Parametrized {
 
 //===========================================================================================================//
 
-    void calculateResidues() {
-        residueChainsMap = Maps.uniqueIndex(residueChainsFromStructure(structure), { it.id })
+    /**
+     * Note: problem is that occasionally multiple protein chains may have the same authorID
+     * In that case, the longer one is indexed. The shorter one may possibly be a peptide ligand.
+     */
+    private Map<String, ResidueChain> buildChainIndexByAuthorId(List<ResidueChain> chains) {
+        Map<String, ResidueChain> map = new HashMap<>()
+        for (ResidueChain ch : chains) {
+            if (map.containsKey(ch.authorId)) {
+                ResidueChain ch0 = map.get(ch.authorId)
 
-        residues = new Residues( (List<Residue>) residueChains.collect { it.residues }.asList().flatten() )
+                log.warn("Two protein chains with the same authorId: {} {}", ch.labelWithLength, ch0.labelWithLength)
+
+                if (ch0.length < ch.length) {   // keep the longer one
+                    map.put(ch.authorId, ch)
+                }
+            } else {
+                map.put(ch.authorId, ch)
+            }
+        }
+        return map
     }
 
-    void checkResiduesCalculated() {
-        if (residueChainsMap == null) {
+    private void calculateResidues() {
+        residueChains = residueChainsFromStructure(structure)
+        residues = new Residues( (List<Residue>) residueChains.collect { it.residues }.asList().flatten() )
+        residueChainsByAuthorId = buildChainIndexByAuthorId(residueChains)
+    }
+
+    private void ensureResiduesCalculated() {
+        if (residueChains == null) {
             calculateResidues()
         }
     }
@@ -216,15 +237,14 @@ class Protein implements Parametrized {
     void clearResidues() {
         residues   = null
         exposedResidues   = null
-        residueChainsMap  = null
+        residueChainsByAuthorId  = null
     }
 
     /**
      * @return list of residues from main protein chanis
      */
     Residues getResidues() {
-        checkResiduesCalculated()
-
+        ensureResiduesCalculated()
 
         residues
     }
@@ -239,7 +259,7 @@ class Protein implements Parametrized {
     }
 
     Residues getExposedResidues() {
-        checkResiduesCalculated()
+        ensureResiduesCalculated()
         
         // even lazier initialization, requires calculation of the surface
         if (exposedResidues == null) {
@@ -250,15 +270,15 @@ class Protein implements Parametrized {
     }
 
     List<ResidueChain> getResidueChains() {
-        checkResiduesCalculated()
+        ensureResiduesCalculated()
 
-        residueChainsMap.values().asList()
+        residueChains
     }
 
-    ResidueChain getResidueChain(String id) {
-        checkResiduesCalculated()
+    ResidueChain getResidueChain(String authorId) {
+        ensureResiduesCalculated()
 
-        residueChainsMap.get(id)
+        residueChainsByAuthorId.get(authorId)
     }
 
     @Nullable
@@ -267,7 +287,7 @@ class Protein implements Parametrized {
     }
 
     private void calculateExposedResidues() {
-        checkResiduesCalculated()
+        ensureResiduesCalculated()
 
         getExposedAtoms().each {
             Residue res = getResidueForAtom(it)
@@ -283,7 +303,7 @@ class Protein implements Parametrized {
     void assignSecondaryStructure() {
         SecondaryStructureUtils.assignSecondaryStructure(structure)
 
-        checkResiduesCalculated()
+        ensureResiduesCalculated()
 
         for (ResidueChain chain : residueChains) {
             for (int pos=0; pos!=chain.length; pos++) {

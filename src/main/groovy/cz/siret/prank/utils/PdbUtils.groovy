@@ -1,11 +1,13 @@
 package cz.siret.prank.utils
 
+import cz.siret.prank.geom.Struct
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 import org.biojava.nbio.structure.Chain
-import org.biojava.nbio.structure.Compound
 import org.biojava.nbio.structure.Element
+import org.biojava.nbio.structure.EntityInfo
+import org.biojava.nbio.structure.EntityType
 import org.biojava.nbio.structure.Group
 import org.biojava.nbio.structure.Structure
 import org.biojava.nbio.structure.StructureException
@@ -16,6 +18,8 @@ import org.biojava.nbio.structure.io.PDBFileParser
 import org.biojava.nbio.structure.io.PDBFileReader
 import org.biojava.nbio.structure.io.mmcif.ChemCompGroupFactory
 import org.biojava.nbio.structure.io.mmcif.ReducedChemCompProvider
+
+import static cz.siret.prank.geom.Struct.getAuthorId
 
 
 /**
@@ -163,20 +167,13 @@ class PdbUtils {
     }
 
 
+
     /**
-     * Reduces the structure to specified chains (and model 0 in case of multi-model structures).
+     * The code is based on StructureTools.getReducedStructure(String, String) from BioJava 5.3.0
      *
-     * The code is based on StructureTools.getReducedStructure(String, String) from BioJava 4.2.12
-     *
-     * TODO: has to be revised after upgrade to BioJava 5!
-     *
-     * @param struct
-     * @param chainIds
-     * @return
+     * Note: has to be revised after upgrade to new BioJava versions!
      */
-    static Structure getReducedStructure(Structure s, List<String> chainIds) {
-        // since we deal here with structure alignments,
-        // only use Model 1...
+    static final Structure reduceStructureToModel(Structure s, int modelId) throws StructureException {
 
         Structure newS = new StructureImpl();
         newS.setPDBCode(s.getPDBCode());
@@ -186,33 +183,87 @@ class PdbUtils {
         newS.setDBRefs(s.getDBRefs());
         newS.setSites(s.getSites());
         newS.setBiologicalAssembly(s.isBiologicalAssembly());
-        newS.setCompounds(s.getCompounds());
-        newS.setConnections(s.getConnections());
+        newS.setEntityInfos(s.getEntityInfos());
         newS.setSSBonds(s.getSSBonds());
         newS.setSites(s.getSites());
 
-        for (String chainId : chainIds) {
-            Chain c = null;
-            try {
-                c = s.getChainByPDB(chainId);
-            } catch (StructureException e) {
-                log.warn(e.getMessage() + ". Chain id " + chainId
-                        + " did not match, trying upper case Chain id.");
-                c = s.getChainByPDB(chainId.toUpperCase());
-            }
-            if (c != null) {
-                newS.addChain(c);
-                for (Compound comp : s.getCompounds()) {
-                    if (comp.getChainIds() != null
-                            && comp.getChainIds().contains(c.getChainID())) {
-                        // found matching compound. set description...
-                        newS.getPDBHeader().setDescription(
-                                "Chain " + c.getChainID() + " of " + s.getPDBCode()
-                                        + " " + comp.getMolName());
-                    }
-                }
+        // only get model modelId
+        List<Chain> model = s.getModel(modelId);
+        for (Chain c : model) {
+            newS.addChain(c);
+        }
+        return newS;
+    }
+
+
+//    private static shouldCopyChain(Chain ch, List<String> chainIds) {
+//        if (ch == null) return false
+//        if (ch.entityType == EntityType.POLYMER && chainIds.contains(ch.id)) return true
+//        if (ch.entityType == EntityType.NONPOLYMER) return true
+//
+//        ch.atomGroups[0].getChain().
+//
+//        return false
+//    }
+
+    private static shouldCopyChain(Chain ch, List<String> chainIds) {
+        return chainIds.contains(getAuthorId(ch))
+    }
+
+    static List<Chain> getChanisForAuthorId(Structure s, String authorId) {
+        List<Chain> res = new ArrayList<>()
+        
+        Chain polyChian = s.getPolyChainByPDB(authorId)
+        if (polyChian != null) {
+            res.add polyChian
+        }
+        res.addAll (s.getNonPolyChainsByPDB(authorId) ?: [])
+
+        return res
+    }
+
+    /**
+     * Reduces the structure to specified chains (and model 0 in case of multi-model structures).
+     *
+     * The code is based on StructureTools.getReducedStructure(String, String) from BioJava 5.3.0
+     *
+     * Note: has to be revised after upgrade to new BioJava versions!
+     *
+     * @param struct
+     * @param chainIds
+     * @return
+     */
+    static Structure getReducedStructure(Structure s, List<String> chainIds) {
+        // since we deal here with structure alignments,
+        // only use Model 1...
+
+        ///// copied from StructureTools
+        Structure newS = new StructureImpl();
+        newS.setPDBCode(s.getPDBCode());
+        newS.setPDBHeader(s.getPDBHeader());
+        newS.setName(s.getName());
+        newS.setSSBonds(s.getSSBonds());
+        newS.setDBRefs(s.getDBRefs());
+        newS.setSites(s.getSites());
+        newS.setBiologicalAssembly(s.isBiologicalAssembly());
+        newS.setEntityInfos(s.getEntityInfos());
+        newS.setSSBonds(s.getSSBonds());
+        newS.setSites(s.getSites());
+        ///// end copied
+
+        for (Chain ch : s.chains) {
+            ///// end copied
+            if (shouldCopyChain(ch, chainIds)) {
+                newS.addChain(ch)
             }
         }
+
+        //for (String authorId : chainIds) {
+        //    getChanisForAuthorId(s, authorId).each {
+        //        newS.addChain(it)
+        //    }
+        //}
+
 
         return newS;
     }

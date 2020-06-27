@@ -42,7 +42,7 @@ class SprintLabelingLoader extends ResidueLabeler<Boolean> implements Writable {
     String toElementCode(Protein protein, ResidueChain chain) {
 //        String protCode = Futils.removeExtension(protein.name)
         String protCode = protein.name.substring(0, 4)
-        String chainId = chain.id
+        String chainId = chain.authorId
 
         return protCode + chainId
     }
