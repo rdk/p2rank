@@ -53,16 +53,6 @@ class DatasetTest {
     void testReducedStructresWithSpecifiedLigands() {
         Dataset ds = Dataset.loadFromFile('distro/test_data/specified-chains-and-ligands.ds')
 
-
-        //def s = ds.items[0].protein.structure
-        //log.info "XXX chains: {} ", s.chains*.getChainID()
-        //log.info "XXX chains:{} atoms:{} ", s.chains.size(), Atoms.allFromStructure(s).size()
-        //log.info "XXX: "+ Struct.getGroups(s).findAll { it.getPDBName() == "MG" }
-        //
-        //s = ds.items[1].protein.structure
-        //log.info "XXX chains:{} atoms:{} ", s.chains.size(), Atoms.allFromStructure(s).size()
-        //log.info "XXX: "+ Struct.getGroups(s).findAll { it.getPDBName() == "MG" }
-
         assertEquals 3, ds.items[0].protein.ligandCount
         assertEquals 3, ds.items[1].protein.ligandCount
         assertEquals 3, ds.items[2].protein.ligandCount
