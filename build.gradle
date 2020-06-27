@@ -4,7 +4,7 @@ apply plugin: 'idea'
 
 
 group = 'cz.siret'
-version = '2.2-dev.1'
+version = '2.2-dev.1-g3'
 
 description = 'Ligand binding site prediction based on machine learning.'
 
@@ -118,8 +118,7 @@ test {
 
 
 dependencies {
-    compile 'org.codehaus.groovy:groovy-all:2.5.12'
-//    compile 'org.codehaus.groovy:groovy-all:3.0.2' // still buggy
+    compile 'org.codehaus.groovy:groovy-all:3.0.4'
 
     compile 'org.codehaus.gpars:gpars:1.2.1'
     compile 'org.apache.commons:commons-lang3:3.10'
