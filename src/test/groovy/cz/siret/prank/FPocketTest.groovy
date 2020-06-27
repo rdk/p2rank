@@ -1,10 +1,12 @@
 package cz.siret.prank
 
 import cz.siret.prank.domain.loaders.pockets.FPocketLoader
+import groovy.transform.CompileStatic
 import org.junit.Test
 
 import static org.junit.Assert.assertEquals
 
+@CompileStatic
 class FPocketTest {
 
     static final double DELTA = 0.00001
@@ -24,7 +26,7 @@ class FPocketTest {
 
         assertEquals(54, stats.vornoiVertices)
         assertEquals(4, stats.polarityScore, DELTA)
-        assertEquals(1217.1342, stats.realVolumeApprox, DELTA)
+        assertEquals(1217.1342d, stats.realVolumeApprox, DELTA)
 
         assertEquals(-1.5909d, stats.pocketScore, DELTA)
 

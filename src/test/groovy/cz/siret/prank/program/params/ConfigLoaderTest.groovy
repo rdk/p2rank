@@ -1,7 +1,9 @@
-package cz.siret.prank.program.params;
+package cz.siret.prank.program.params
 
+import groovy.transform.CompileStatic;
 import org.junit.Test
 
+@CompileStatic
 public class ConfigLoaderTest {
 
     @Test

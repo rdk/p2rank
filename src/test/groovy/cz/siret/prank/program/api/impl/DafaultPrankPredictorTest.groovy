@@ -19,7 +19,7 @@ import static org.junit.Assert.assertTrue
 /**
  *
  */
-//@CompileStatic
+@CompileStatic
 class DafaultPrankPredictorTest {
 
     Path installDir = Paths.get("distro").toAbsolutePath()

@@ -1,6 +1,7 @@
 package cz.siret.prank.geom
 
 import cz.siret.prank.domain.Protein
+import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j;
 import org.junit.Test;
 
@@ -10,6 +11,7 @@ import static org.junit.Assert.*;
  *
  */
 @Slf4j
+@CompileStatic
 class StructTest {
 
     static String dataDir = 'src/test/resources/data'

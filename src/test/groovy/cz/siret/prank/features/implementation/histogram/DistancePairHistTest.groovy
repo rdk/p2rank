@@ -1,5 +1,6 @@
 package cz.siret.prank.features.implementation.histogram
 
+import groovy.transform.CompileStatic
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -28,7 +29,7 @@ public class DistancePairHistTest {
     }
 
     private void assertEqualValue(double a, double b) {
-        assertEquals(a, b, 0.0001)
+        assertEquals(a, b, 0.0001d)
     }
 
     @Test

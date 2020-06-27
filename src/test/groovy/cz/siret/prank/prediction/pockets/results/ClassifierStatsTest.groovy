@@ -1,8 +1,10 @@
 package cz.siret.prank.prediction.pockets.results
 
 import cz.siret.prank.prediction.metrics.ClassifierStats
+import groovy.transform.CompileStatic
 import org.junit.Test
 
+@CompileStatic
 class ClassifierStatsTest {
 
     @Test

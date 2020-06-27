@@ -3,6 +3,7 @@ package cz.siret.prank.geom
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.domain.Residue
 import cz.siret.prank.utils.Writable
+import groovy.transform.CompileStatic
 import org.junit.Test
 
 import static org.junit.Assert.assertEquals
@@ -10,6 +11,7 @@ import static org.junit.Assert.assertEquals
 /**
  * 
  */
+@CompileStatic
 class AtomsTest implements Writable {
 
     @Test
