@@ -78,8 +78,8 @@ assemble {
 }
 
 jar {
-    archiveName = "p2rank.jar"
-    destinationDir = file("build/bin")
+    archiveFileName = "p2rank.jar"
+    destinationDirectory = file("build/bin")
 
     manifest {
         attributes 'Main-Class': 'cz.siret.prank.program.Main'
@@ -118,35 +118,35 @@ test {
 
 
 dependencies {
-    compile 'org.codehaus.groovy:groovy-all:3.0.4'
+    implementation 'org.codehaus.groovy:groovy-all:3.0.4'
 
-    compile 'org.codehaus.gpars:gpars:1.2.1'
-    compile 'org.apache.commons:commons-lang3:3.10'
-    compile 'commons-io:commons-io:2.7'
-    compile 'com.google.guava:guava:29.0-jre'
-    compile 'com.google.code.gson:gson:2.8.6'
-    compile 'org.zeroturnaround:zt-zip:1.14'
-    compile 'com.univocity:univocity-parsers:2.8.4' // csv parser
-    compile 'org.apache.commons:commons-csv:1.8'
+    implementation 'org.codehaus.gpars:gpars:1.2.1'
+    implementation 'org.apache.commons:commons-lang3:3.10'
+    implementation 'commons-io:commons-io:2.7'
+    implementation 'com.google.guava:guava:29.0-jre'
+    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'org.zeroturnaround:zt-zip:1.14'
+    implementation 'com.univocity:univocity-parsers:2.8.4' // csv parser
+    implementation 'org.apache.commons:commons-csv:1.8'
 
-    compile 'org.slf4j:slf4j-api:1.7.30'
-    compile 'org.apache.logging.log4j:log4j-slf4j-impl:2.13.1'
-    compile 'org.apache.logging.log4j:log4j-core:2.13.1'
-    compile 'org.slf4j:jul-to-slf4j:1.7.30'         // for netlib logging messages
+    implementation 'org.slf4j:slf4j-api:1.7.30'
+    implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.13.1'
+    implementation 'org.apache.logging.log4j:log4j-core:2.13.1'
+    implementation 'org.slf4j:jul-to-slf4j:1.7.30'         // for netlib logging messages
 
-    compile 'org.biojava:biojava-core:4.2.12'
-    compile 'org.biojava:biojava-alignment:4.2.12'
-    compile 'org.biojava:biojava-structure:4.2.12'
-    compile 'javax.xml.bind:jaxb-api:2.3.1'      // extra dependencies of biojava for java 11
-    compile 'com.sun.xml.bind:jaxb-core:2.3.0.1' // ~
-    compile 'com.sun.xml.bind:jaxb-impl:2.3.2'   // ~
-    compile 'javax.activation:activation:1.1.1'  // ~
+    implementation 'org.biojava:biojava-core:4.2.12'
+    implementation 'org.biojava:biojava-alignment:4.2.12'
+    implementation 'org.biojava:biojava-structure:4.2.12'
+    implementation 'javax.xml.bind:jaxb-api:2.3.1'      // extra dependencies of biojava for java 11
+    implementation 'com.sun.xml.bind:jaxb-core:2.3.0.1' // ~
+    implementation 'com.sun.xml.bind:jaxb-impl:2.3.2'   // ~
+    implementation 'javax.activation:activation:1.1.1'  // ~
 
-    compile 'org.openscience.cdk:cdk-qsarmolecular:2.3'    // for NumericalSurface class
-    compile 'org.openscience.cdk:cdk-data:2.3'             // for Atom class
-    compile 'nz.ac.waikato.cms.weka:weka-dev:3.9.4'
-    compile fileTree(dir: 'lib', include: '*.jar')
+    implementation 'org.openscience.cdk:cdk-qsarmolecular:2.3'    // for NumericalSurface class
+    implementation 'org.openscience.cdk:cdk-data:2.3'             // for Atom class
+    implementation 'nz.ac.waikato.cms.weka:weka-dev:3.9.4'
+    implementation fileTree(dir: 'lib', include: '*.jar')
 
-    testCompile 'junit:junit:4.13'
+    testImplementation 'junit:junit:4.13'
 }
 
