@@ -116,6 +116,9 @@ test {
     
 }
 
+configurations {
+    runtime.extendsFrom implementation
+}
 
 dependencies {
     implementation 'org.codehaus.groovy:groovy-all:3.0.4'
