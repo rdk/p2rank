@@ -333,8 +333,6 @@ public final class Atoms implements Iterable<Atom> {
             Atoms ofAtoms = this.cutoutSphere(center, dist + additionalDist);
             return cutoutShell(ofAtoms, aroundAtoms, dist);
         }
-
-        // return cutoutShell(this, aroundAtoms, dist);
     }
 
     public static Atoms cutoutShell(Atoms ofAtoms, Atoms aroundAtoms, double dist) {
@@ -356,7 +354,7 @@ public final class Atoms implements Iterable<Atom> {
     }
 
     /**
-     * intercepting calls for further alalysis
+     * intercepting calls for further analysis
      */
     public Atoms cutSphere_(Atom distanceTo, double dist) {
         ATimer timer = startTimer();
@@ -456,22 +454,6 @@ public final class Atoms implements Iterable<Atom> {
         }
 
         return res;
-    }
-
-    public static Atoms onlyProteinAtoms(Atoms structAtoms) {
-        List<Atom> res = new ArrayList<>(structAtoms.getCount());
-        for (Atom a : structAtoms) {
-            if (Struct.isProteinChainGroup(a.getGroup())) {
-                res.add(a);
-            }
-        }
-
-        return new Atoms(res);
-    }
-
-    public static Atoms onlyProteinAtoms(Structure struc) {
-        // TODO UNK residues, double models
-        return onlyProteinAtoms(allFromStructure(struc));
     }
 
     public static Atoms allFromGroup(Group group) {

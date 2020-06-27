@@ -5,6 +5,8 @@ import com.google.common.collect.ImmutableMap
 import com.google.errorprone.annotations.CanIgnoreReturnValue
 import groovy.transform.CompileStatic
 
+import javax.annotation.Nullable
+
 import static com.google.common.base.Preconditions.checkNotNull
 
 /**
@@ -63,6 +65,16 @@ class Cutils {
 
     static <E> List<E> findDuplicates(Iterable<E> values) {
         values.groupBy{ it }.values().findAll { it.size() > 1}.collect { it[0] }.toList()
+    }
+
+    /**
+     * get element or null
+     */
+    @Nullable
+    static <E> E listElement(int idx, List<E> list) {
+        if (list == null) return null
+        if (idx < 0 || idx >= list.size()) return null
+        return list.get(idx)
     }
 
 }

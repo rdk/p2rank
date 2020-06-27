@@ -33,8 +33,6 @@ class Ligands implements Parametrized, Writable {
 
     public Ligands loadForProtein(Protein protein, LoaderParams loaderParams, String pdbFileName) {
 
-        List<Group> ligandGroups = Struct.getLigandGroups(protein.structure)
-
         if (loaderParams.ligandsSeparatedByTER) {
             // ligands are separated by TER lines in specific datasets (CHEN11)
             // we are assuming all ligands are relevant
@@ -43,6 +41,8 @@ class Ligands implements Parametrized, Writable {
             relevantLigands = ligands
 
         } else {
+            List<Group> ligandGroups = Struct.getLigandGroups(protein)
+
             if (loaderParams.relevantLigandsDefined) {
                 log.info "Relevant ligands are explicitly defined in the dataset: " + loaderParams.relevantLigandDefinitions
             }
@@ -64,7 +64,7 @@ class Ligands implements Parametrized, Writable {
             ignoredLigands = makeLigands(ignoredAtomGroups, protein)
         }
 
-        log.info "Loaded ${relevantLigands.size()} relevant ligands: " + relevantLigands*.name
+        log.info "Loaded ${relevantLigands.size()} relevant ligands: " + (relevantLigands*.name)
 
         sortLigands relevantLigands
         sortLigands ignoredLigands

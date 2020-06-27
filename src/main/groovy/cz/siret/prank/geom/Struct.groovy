@@ -2,16 +2,20 @@ package cz.siret.prank.geom
 
 import com.google.common.collect.ComparisonChain
 import com.google.common.collect.Ordering
+import cz.siret.prank.domain.Protein
 import cz.siret.prank.domain.Residue
 import cz.siret.prank.domain.ResidueChain
 import cz.siret.prank.geom.clustering.AtomClusterer
 import cz.siret.prank.geom.clustering.AtomGroupClusterer
 import cz.siret.prank.geom.clustering.SLinkClusterer
+import cz.siret.prank.utils.Cutils
 import cz.siret.prank.utils.PdbUtils
 import cz.siret.prank.utils.PerfUtils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.*
+
+import javax.annotation.Nullable
 
 @Slf4j
 @CompileStatic
@@ -109,14 +113,6 @@ class Struct {
         return false
     }
 
-    /**
-     * comes from HETATM record
-     *
-     * depends on modified biojava library
-     */
-    static boolean isHetAtom(Atom atom) {
-        isHetGroup(atom.group)
-    }
 
     static boolean isHetGroup(Group group) {
         if (group==null) return false
@@ -137,16 +133,26 @@ class Struct {
     /**
      * @return true if ligand group (except HOH)
      */
-    static boolean isLigandGroup(Group g) {
+    static boolean isHetNonWaterGroup(Group g) {
 
-        return isHetGroup(g) && !"HOH".equals(g.PDBName)
+        return isHetGroup(g) && !g.isWater()
+    }
+
+
+    static List<Group> getResidueHetGroups(Protein protein) {
+        protein.residues*.group.findAll { isHetGroup(it) }
     }
 
     /**
      * @return ligand groups without HOH
      */
-    static List<Group> getLigandGroups(Structure struc) {
-        return getGroups(struc).findAll{ isLigandGroup(it) }.asList()
+    static List<Group> getLigandGroups(Protein protein) {
+        List<Group> residueHetGroups = getResidueHetGroups(protein)
+        List<Group> groups = getGroups(protein.structure).findAll{ isHetNonWaterGroup(it) }.toList()
+        
+        groups.removeAll { residueHetGroups.contains(it) }  // biojava doesn't implement equals() on groups
+
+        return groups
     }
 
     /**
@@ -156,12 +162,9 @@ class Struct {
         return getGroups(struc).findAll{ isHetGroup(it) }.asList()
     }
 
-    static List<Group> getProteinChainGroups(Structure struc) {
-        return getGroups(struc).findAll{ isProteinChainGroup(it) }.asList()
-    }
-    
+
     /**
-     * single lincage clustering
+     * single linkage clustering
      * @param clusters
      * @param clusterDist
      * @return
@@ -208,23 +211,18 @@ class Struct {
 
     static List<Group> getResidueGroupsFromChain(Chain chain) {
 
-//        log.info "LIGAND GROUPS:"
-//        chain.getAtomLigands().each {   // useless, returns all aa groups
-//            log.info "{}", it
-//        }
-//        log.info "END LIGAND GROUPS"
+        List<Group> chainGroups = chain.getAtomGroups()
+        int n = chainGroups.size()
+        List<Group> res = new ArrayList<>(n)
 
-        List<Group> atomGroups = chain.getAtomGroups()
-        List<Group> res = new ArrayList<>(atomGroups.size())
+        log.info "groups in chain {}: {}", getAuthorId(chain), n
 
-        log.info "groups in chain {}: {}", getAuthorId(chain), atomGroups.size()
-
-        for (Group g : atomGroups) {
-            // log.info "{} [{}]", g.toString(), g.properties
-            if (isAminoAcidResidue(g)) {
+        for (int i=0; i!=n; i++) {
+            if (isAminoAcidResidueHeuristic(i, chainGroups)) {
+                Group g = chainGroups[i]
                 res.add g
                 if (isTerminalResidue(g)) {
-                    break // this is done so amino acid ligands are excluded
+                    break // this is done so amino acid ligands at the end are excluded
                 }
             }
         }
@@ -235,35 +233,47 @@ class Struct {
 //===========================================================================================================//
 
     static boolean isAminoAcidGroup(Group g) {
-        g.type == GroupType.AMINOACID
-    }
-
-    /**
-     * TODO consolidate with isAminoAcidResidue()
-     */
-    static boolean isProteinChainGroup(Group g) {
-        // older clumsier version
-        // return !isHetGroup(g) && !"STP".equals(g.PDBName) && !"HOH".equals(g.PDBName)
-
-        isAminoAcidGroup(g) && g.chainId != null
+        if (g == null) return false
+        return g.type == GroupType.AMINOACID
     }
 
     /**
      * Should distinguish in particular between modified amino acid residues that are part of the chain (and return true)
      * and amino acid ligands that are not residues (and return false)
-     * // TODO revisit
      */
-    static boolean isAminoAcidResidue(Group g) {
+    static boolean isAminoAcidResidue(@Nullable Group g) {
+        if (g == null) return false
+
         if (isAminoAcidGroup(g)) return true
-        if (g.getPDBName().startsWith("UNK")) return true
+        if (g.getPDBName()?.startsWith("UNK")) return true  // TODO revisit
+
         return false
     }
 
-//    static boolean isAminoAcidLigand(Group group) {
-//        //StructureTools
-//        // TODO
-//    }
-    
+    /**
+     * Tries to determine status of Residue vs AA lLigand based on neighbours in the chain
+     * @return
+     */
+    static boolean isAminoAcidResidueHeuristic(@Nullable Group g, @Nullable Group prev, @Nullable Group next) {
+        if (isAminoAcidResidue(g)) return true
+
+        if (g.hasAminoAtoms()
+                && (prev == null || isAminoAcidGroup(prev))
+                && (next != null && isAminoAcidGroup(next)) ) {  //    next==null clause not admissible, AA ligands are often at the end of the chain
+
+            return true
+        }
+        return false
+    }
+
+    static boolean isAminoAcidResidueHeuristic(int idx, List<Group> chainGroups) {
+        return isAminoAcidResidueHeuristic(
+                Cutils.listElement(idx, chainGroups),
+                Cutils.listElement(idx-1, chainGroups),
+                Cutils.listElement(idx+1, chainGroups),
+        )
+    }
+
 //===========================================================================================================//
 
     /**

@@ -30,8 +30,8 @@ class StructTest {
         // Contains modified AA residue in the middle of the chain as HET record ("PTR A 527").
         // Should not be removed from chain and should not be considered a ligand.
         Protein p3 = Protein.load("$dataDir/2src.pdb")
-        // assertEquals 450, p3.getResidueChain("A").length   // currently fails. TODO try with biojava 5
-        //assertEquals 1, p3.ligandCount  // currently fails. TODO try with biojava 5
+        assertEquals 450, p3.getResidueChain("A").length
+        assertEquals 1, p3.ligandCount  
 
         // TODo add test for chain with phosphorylated residue
     }

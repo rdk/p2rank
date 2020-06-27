@@ -249,15 +249,6 @@ class Protein implements Parametrized {
         residues
     }
 
-    /**
-     * All atoms from residues.
-     * Ideally, it should be the same as proteinAtoms,
-     * however there can be minor differences due to imperfect structure model in biojava.
-     */
-    Atoms getResidueAtoms() {
-        getResidues().atoms
-    }
-
     Residues getExposedResidues() {
         ensureResiduesCalculated()
         
@@ -384,8 +375,10 @@ class Protein implements Parametrized {
             structure = PdbUtils.getReducedStructure(structure, onlyChains)
         }
 
+        calculateResidues()
+
         allAtoms = Atoms.allFromStructure(structure).withIndex()
-        proteinAtoms = Atoms.onlyProteinAtoms(structure).withoutHydrogens()
+        proteinAtoms = Atoms.allFromGroups(residues*.group).withoutHydrogens()
 
         log.info "structure atoms: $allAtoms.count"
         log.info "protein   atoms: $proteinAtoms.count"

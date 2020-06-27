@@ -64,11 +64,11 @@ class Residue {
      * note: in biojava UNK Groups sometimes implement AminoAcid and sometimes HetatomImpl!
      */
     static Residue fromGroup(Group group) {
-        if (!(Struct.isAminoAcidGroup(group) || group.getPDBName().startsWith("UNK")))
-            throw new PrankException("Trying to create residue from non amino acid group: " + group)
-
-//        if (! group instanceof AminoAcid)
-//            throw new PrankException("Trying to create residue from group that is not of type AminoAcid: " + group)
+        // some modified residues are included as HETATM, so we cannot rely on checks like that:
+        // also UNK Groups sometimes implement AminoAcid and sometimes HetatomImpl!
+        
+        //if (!(group.isAminoAcid() || group.getPDBName().startsWith("UNK")))
+        //    throw new PrankException("Trying to create residue from non amino acid group: " + group)
 
         return new Residue(group)
     }
@@ -105,6 +105,11 @@ class Residue {
     }
 
 //===========================================================================================================//
+
+    @Nonnull
+    Group getGroup() {
+        return group
+    }
 
     Atoms getAtoms() {
         if (atoms==null) {
