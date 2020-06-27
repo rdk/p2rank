@@ -1,18 +1,9 @@
 package cz.siret.prank.utils
 
-import cz.siret.prank.geom.Struct
+
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-import org.biojava.nbio.structure.Atom
-import org.biojava.nbio.structure.Chain
-import org.biojava.nbio.structure.Element
-import org.biojava.nbio.structure.EntityInfo
-import org.biojava.nbio.structure.EntityType
-import org.biojava.nbio.structure.Group
-import org.biojava.nbio.structure.Structure
-import org.biojava.nbio.structure.StructureException
-import org.biojava.nbio.structure.StructureImpl
-import org.biojava.nbio.structure.StructureTools
+import org.biojava.nbio.structure.*
 import org.biojava.nbio.structure.io.FileParsingParameters
 import org.biojava.nbio.structure.io.PDBFileParser
 import org.biojava.nbio.structure.io.PDBFileReader
@@ -20,7 +11,6 @@ import org.biojava.nbio.structure.io.mmcif.ChemCompGroupFactory
 import org.biojava.nbio.structure.io.mmcif.ReducedChemCompProvider
 
 import static cz.siret.prank.geom.Struct.getAuthorId
-
 
 /**
  * BioJava PDB utility methods.
@@ -31,10 +21,8 @@ class PdbUtils {
 
     private static final int BUFFER_SIZE = 5*1024*1024;
 
-    static final FileParsingParameters PARSING_PARAMS = new FileParsingParameters();
+    static final FileParsingParameters PARSING_PARAMS = new FileParsingParameters()
     static {
-        ChemCompGroupFactory.setChemCompProvider(new ReducedChemCompProvider()); // does not download any chem comp definitions (by default BioJava does)
-
         PARSING_PARAMS.setAlignSeqRes(false);  // should the ATOM and SEQRES residues be aligned when creating the internal data model?
         PARSING_PARAMS.setParseSecStruc(false);  // should secondary structure getByID parsed from the file
 
@@ -42,7 +30,20 @@ class PdbUtils {
         PARSING_PARAMS.setCreateAtomCharges(false)
         PARSING_PARAMS.setParseBioAssembly(false)
 
+        disableBiojavaFetching()
         //PARSING_PARAMS.setLoadChemCompInfo(Params.inst.biojava_load_chem_info); // info about modified amino acid residues, not available in BioJava4
+    }
+
+    /**
+     * Tries to disable BioJava fetching external information since it leads to inconsistent protein parsing.
+     */
+    private static void disableBiojavaFetching() {
+        ChemCompGroupFactory.setChemCompProvider(new ReducedChemCompProvider()) 
+    }
+
+    private static FileParsingParameters getParsingParams() {
+        disableBiojavaFetching()
+        return PARSING_PARAMS
     }
 
     static Structure loadFromFile(String file) {
@@ -55,13 +56,13 @@ class PdbUtils {
         if (file.endsWith(".pdb")) {
             // load with buffer
             PDBFileParser pdbpars = new PDBFileParser();
-            pdbpars.setFileParsingParameters(PARSING_PARAMS);
+            pdbpars.setFileParsingParameters(parsingParams);
             InputStream inStream = new BufferedInputStream(new FileInputStream(file), BUFFER_SIZE)
             struct = pdbpars.parsePDBFile(inStream)
         } else {
             // for tar.gz files
             PDBFileReader pdbReader = new PDBFileReader()
-            pdbReader.setFileParsingParameters(PARSING_PARAMS)
+            pdbReader.setFileParsingParameters(parsingParams)
             struct = pdbReader.getStructure(file)
         }
 
@@ -70,7 +71,7 @@ class PdbUtils {
 
     static Structure loadFromString(String pdbText)  {
         PDBFileParser pdbpars = new PDBFileParser();
-        pdbpars.setFileParsingParameters(PARSING_PARAMS);
+        pdbpars.setFileParsingParameters(parsingParams);
 
         BufferedReader br = new BufferedReader(new StringReader(pdbText))
 
