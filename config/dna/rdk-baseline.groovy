@@ -79,15 +79,13 @@ import cz.siret.prank.program.params.Params
     // Classifier
                   
     classifier="FasterForest2"
-    rf_trees = 50
+    rf_trees = 100
     rf_bagsize = 55
     rf_depth = 0
 
     // Features
 
-    feat_propensity_tables = "dna/TrainD40"
-
-    residue_table_features = ["RAx","DnaTrainD40"]
+    residue_table_features = ["RAx"]
     atom_table_features = ["atomicHydrophobicity"]
     extra_features = ["chem","volsite","bfactor","protrusion","pmass","cr1pos","ss_atomic","ss_sas","ss_cloud"]
 
