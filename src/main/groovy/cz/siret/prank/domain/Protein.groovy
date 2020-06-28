@@ -250,8 +250,6 @@ class Protein implements Parametrized {
     }
 
     Residues getExposedResidues() {
-        ensureResiduesCalculated()
-        
         // even lazier initialization, requires calculation of the surface
         if (exposedResidues == null) {
             calculateExposedResidues()

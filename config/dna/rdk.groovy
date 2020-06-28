@@ -21,7 +21,7 @@ import cz.siret.prank.program.params.Params
     vis_generate_proteins = false
 
     fail_fast = true
-    threads = Runtime.getRuntime().availableProcessors() + 1;
+    //threads = Runtime.getRuntime().availableProcessors() + 1;
 
     load_only_specified_chains = true
 
@@ -37,16 +37,20 @@ import cz.siret.prank.program.params.Params
     clear_prim_caches = false
 
     selected_stats = ['_blank',
+                  'P',
+                  'R',
                   'MCC',
-                  'F1',
                   'AUC',
                   'AUPRC',
+                  'F1',
                   'TPX',
+                  'point_P',
+                  'point_R',
                   'point_MCC',
-                  'point_F1',
-                  'point_TPX',
                   'point_AUC',
                   'point_AUPRC',
+                  'point_F1',
+                  'point_TPX',
                   'TIME_MINUTES']
 
     // General feature extraction 
@@ -54,7 +58,8 @@ import cz.siret.prank.program.params.Params
     average_feat_vectors = true
     avg_weighted = true
     atom_table_feat_keep_sgn = true
-    solvent_radius = 1.8   
+    solvent_radius = 1.8
+    surface_additional_cutoff = 2.2   // should be equal to (residue-labeling-threshold - solvent_radius), where residue-labeling-threshold is 4.0, 4.5, 6.0 etc.
 
     // Training 
 
