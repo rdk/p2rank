@@ -6,15 +6,18 @@ import cz.siret.prank.program.params.Params
      * define this if you want dataset program parameters to be evaluated relative to this directory
      * (set absolute path or path relative to install dir, null defaults to working dir)
      */
-    dataset_base_dir = "../../p2rank-data-dna/"
+
+    //dataset_base_dir = "../../dna_datasets/"
 
     /**
-     * all output of the program will be stored in subdirectores of this directory
+     * all output of the prorgam will be stored in subdirectores of this directory
      * (set absolute path or path relative to install dir, null defaults to working dir)
      */
-    output_base_dir = "../../p2rank-results-dna/"
+
+    //output_base_dir = "../../dna_datasets/"
 
     predict_residues = true
+    ligand_derived_point_labeling = false
 
     visualizations = false
 
@@ -31,7 +34,7 @@ import cz.siret.prank.program.params.Params
 
     classifier="FasterForest"
     rf_trees = 10
-    rf_bagsize = 10
+    rf_bagsize = 50
     rf_depth = 10
 
     cache_datasets = false
@@ -41,7 +44,7 @@ import cz.siret.prank.program.params.Params
 
     residue_table_features = ["RAx"]
     atom_table_features = ["atomicHydrophobicity"]
-    extra_features = ["chem","volsite","bfactor","protrusion","pmass","cr1pos","ss_atomic","ss_sas","ss_cloud","conserv_cloud","conserv_atomic","conserv_sas"]
+    extra_features = ["chem","volsite","bfactor","protrusion","pmass","cr1pos","ss_atomic","ss_sas","ss_cloud"]
 
     log_level = "WARN"
 
@@ -59,5 +62,6 @@ import cz.siret.prank.program.params.Params
                       'TIME_MINUTES']
 
 
+    stats_collect_predictions = true // to enable AUC and AUPRC metrics
 
 }

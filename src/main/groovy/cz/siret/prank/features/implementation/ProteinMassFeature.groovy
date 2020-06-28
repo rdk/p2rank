@@ -27,7 +27,7 @@ class ProteinMassFeature extends SasFeatureCalculator implements Parametrized {
 
     @Override
     void preProcessProtein(Protein protein, ProcessedItemContext context) {
-//        protein.proteinAtoms.buildKdTree()
+          protein.proteinAtoms.withKdTreeConditional()
 //        protein.accessibleSurface.points.buildKdTree()
     }
 

@@ -26,8 +26,9 @@ PP_ST1070: peptide binding propensity calculated from full Sprint train set (n=1
 PP_SA870: peptide binding propensity calculated from split A Sprint train set (n=870)
 
 
+DnaTrainD40
 
-
+calculated from DNA binding dataset pr2ank-data-dna distance_4.0/train_chains.ds
 
 
 
