@@ -15,6 +15,7 @@ import cz.siret.prank.program.params.Params
     output_base_dir = "../../p2rank-results-dna/"
 
     predict_residues = true
+    ligand_derived_point_labeling = false
 
     visualizations = false
     vis_generate_proteins = false
