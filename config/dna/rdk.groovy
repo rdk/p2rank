@@ -64,8 +64,7 @@ import cz.siret.prank.program.params.Params
     // Training 
 
     balance_class_weights = true
-    target_class_weight_ratio = 0.05
-    //target_class_weight_ratio = 0.2160
+    target_class_weight_ratio = 0.2160
     //subsample = true
     //target_class_ratio = 1
 
@@ -80,13 +79,15 @@ import cz.siret.prank.program.params.Params
     // Classifier
                   
     classifier="FasterForest2"
-    rf_trees = 100
+    rf_trees = 50
     rf_bagsize = 55
     rf_depth = 0
 
     // Features
 
-    residue_table_features = ["RAx"]
+    feat_propensity_tables = "dna/TrainD40"
+
+    residue_table_features = ["RAx","DnaTrainD40"]
     atom_table_features = ["atomicHydrophobicity"]
     extra_features = ["chem","volsite","bfactor","protrusion","pmass","cr1pos","ss_atomic","ss_sas","ss_cloud"]
 
@@ -96,11 +97,5 @@ import cz.siret.prank.program.params.Params
     protrusion_radius = 13
     feat_pmass_radius = 7
     ss_cloud_radius = 6
-
-    
-
-
-
-
 
 }

@@ -43,7 +43,7 @@ class TripletsPropensityFeature extends ResidueFeatureCalculator implements Para
     PropertyTable getTable() {
         if (table == null) {
             table = PropertyTable.parse(
-                    readResource("/tables/propensities/$params.feat_propensities_set/triplets.csv"))
+                    readResource("/tables/propensities/$params.feat_propensity_tables/triplets.csv"))
         }
         table
     }

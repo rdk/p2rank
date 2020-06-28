@@ -41,7 +41,7 @@ class DupletsPropensityFeature extends ResidueFeatureCalculator implements Param
     PropertyTable getTable() {
         if (table == null) {
             table = PropertyTable.parse(
-                    readResource("/tables/propensities/$params.feat_propensities_set/duplets.csv"))
+                    readResource("/tables/propensities/$params.feat_propensity_tables/duplets.csv"))
         }
         table
     }
