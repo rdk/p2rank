@@ -61,5 +61,6 @@ import cz.siret.prank.program.params.Params
                       'TIME_MINUTES']
 
 
+    stats_collect_predictions = true // to enable AUC and AUPRC metrics
 
 }
