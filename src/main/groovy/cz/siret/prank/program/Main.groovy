@@ -7,6 +7,7 @@ import cz.siret.prank.program.params.ConfigLoader
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.params.Params
 import cz.siret.prank.program.routines.*
+import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.utils.*
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.StringUtils
@@ -121,7 +122,7 @@ class Main implements Parametrized, Writable {
     }
 
     /**
-     * -o makes outdir in wrking path
+     * -o makes outdir in working path
      * -l makes outdir in output_base_dir
      * @param defaultName of dir created in output_base_dir
      */
@@ -258,6 +259,21 @@ class Main implements Parametrized, Writable {
 
     }
 
+    void runEval() {
+        Dataset dataset = loadDatasetOrFile()
+        String outdir = findOutdir("eval_$dataset.label")
+        configureLoggers(outdir)
+
+        Model model = Model.loadFromFile(findModel())
+        model.disableParalelism()
+
+        EvalRoutine evalRoutine = EvalRoutine.create(params.predict_residues, dataset, model, outdir)
+
+        EvalResults res = evalRoutine.execute()
+
+        finalizeDatasetResult(result)
+    }
+
     private runExperiment(String routineName) {
 
         new Experiments(args, this, routineName).execute()
@@ -322,6 +338,8 @@ class Main implements Parametrized, Writable {
             case 'eval-rescore':  runEvalRescore()
                 break
             case 'crossval':      runCrossvalidation()
+                break
+            case 'eval':          runEval()
                 break
             case 'analyze':       runAnalyze()
                 break

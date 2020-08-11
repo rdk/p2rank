@@ -376,7 +376,7 @@ class Evaluation implements Parametrized {
     }
 
     /**
-     * n tolerance -> site considered sucesfully identified if pocket is predicted with rank within (#ligands + n)
+     * n tolerance -> site considered successfully identified if pocket is predicted with rank within (#ligands + n)
      *
      * @return by [accessor, tolerance]
      */
