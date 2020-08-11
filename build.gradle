@@ -138,9 +138,9 @@ dependencies {
     implementation 'org.apache.logging.log4j:log4j-core:2.13.1'
     implementation 'org.slf4j:jul-to-slf4j:1.7.30'         // for netlib logging messages
 
-    implementation 'org.biojava:biojava-core:5.3.0'
-    implementation 'org.biojava:biojava-alignment:5.3.0'
-    implementation 'org.biojava:biojava-structure:5.3.0'
+    implementation 'org.biojava:biojava-core:5.4.0'
+    implementation 'org.biojava:biojava-alignment:5.4.0'
+    implementation 'org.biojava:biojava-structure:5.4.0'
     implementation 'javax.xml.bind:jaxb-api:2.3.1'      // extra dependencies of biojava for java 11
     implementation 'com.sun.xml.bind:jaxb-core:2.3.0.1' // ~
     implementation 'com.sun.xml.bind:jaxb-impl:2.3.2'   // ~
