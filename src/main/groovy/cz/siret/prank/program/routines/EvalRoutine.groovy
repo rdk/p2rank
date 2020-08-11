@@ -81,4 +81,16 @@ abstract class EvalRoutine extends Routine {
         outdir
     }
 
+
+    /**
+     * Create EvalRoutine for residues or pockets depending on residueMode
+     */
+    static EvalRoutine create(boolean residueMode, Dataset dataset, Model model, String outdir) {
+        if (residueMode) {
+            return new EvalResiduesRoutine(dataset, model, outdir)
+        } else {
+            return new EvalPocketsRoutine(dataset, model, outdir)
+        }
+    }
+
 }

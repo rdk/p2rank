@@ -184,11 +184,7 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
         logTime "model prepared in " + timer.formatted
         timer.restart()
 
-        if (params.predict_residues) {
-            evalRoutine = new EvalResiduesRoutine(evalDataSet, model, outdir)
-        } else {
-            evalRoutine = new EvalPocketsRoutine(evalDataSet, model, outdir)
-        }
+        evalRoutine = EvalRoutine.create(params.predict_residues, evalDataSet, model, outdir)
 
         EvalResults res = evalRoutine.execute()
         res.totalTrainingTime = trainTime
