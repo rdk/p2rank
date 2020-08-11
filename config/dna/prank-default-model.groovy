@@ -1,5 +1,8 @@
 import cz.siret.prank.program.params.Params
 
+/**
+ * Config that applies default P2Rank ligand binding site model to DNA binding residue prediction
+ */
 (params as Params).with {
 
     /**
@@ -55,7 +58,7 @@ import cz.siret.prank.program.params.Params
 
 
     residue_score_extra_dist = 1.9806
-    residue_score_threshold = 0.4857
+    residue_score_threshold = 0.55
     
 //
 //    // General feature extraction
