@@ -271,7 +271,7 @@ class Main implements Parametrized, Writable {
 
         EvalResults res = evalRoutine.execute()
 
-        finalizeDatasetResult(result)
+        finalizeDatasetResult(res.datasetResult)
     }
 
     private runExperiment(String routineName) {
