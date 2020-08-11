@@ -227,7 +227,7 @@ import cz.siret.prank.program.params.Params
     vis_copy_proteins = true
 
     /**
-     * use sctrictly inner pocket points or more wider pocket neighbourhood
+     * use strictly inner pocket points or more wider pocket neighbourhood
      */
     strict_inner_points = false
 
@@ -282,7 +282,7 @@ import cz.siret.prank.program.params.Params
     out_subdir = null
 
     /**
-     * balance Connolly poscore weight by density
+     * balance Connolly points score weight by density
      */
     balance_density = false
 
@@ -340,7 +340,7 @@ import cz.siret.prank.program.params.Params
     fail_fast = false
 
     /**
-     * don't procuce prediction files for individual proteins (useful for long repetitive experments)
+     * don't produce prediction files for individual proteins (useful for long repetitive experiments)
      */
     output_only_stats = false
 
