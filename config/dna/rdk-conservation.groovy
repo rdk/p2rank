@@ -83,11 +83,19 @@ import cz.siret.prank.program.params.Params
     rf_bagsize = 55
     rf_depth = 0
 
+    // Conservation
+
+    load_conservation = 1
+    conservation_origin = 'pdb.gz.seq.fasta'
+    conservation_dir = 'conservation/e5i1/scores'
+    conserv_cloud_radius = 7
+    conservation_exponent = 1
+
     // Features
 
     residue_table_features = ["RAx"]
     atom_table_features = ["atomicHydrophobicity"]
-    extra_features = ["chem","volsite","bfactor","protrusion","pmass","cr1pos","ss_atomic","ss_sas","ss_cloud"]
+    extra_features = ["chem","volsite","bfactor","protrusion","pmass","cr1pos","ss_atomic","ss_sas","ss_cloud","conserv_cloud","conserv_atomic","conserv_sas"]
 
     // Feature params
 
