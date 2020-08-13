@@ -3,6 +3,7 @@ package cz.siret.prank.program.routines
 import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.utils.Formatter
 import cz.siret.prank.utils.Futils
+import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
 import static cz.siret.prank.utils.ATimer.startTimer
@@ -13,6 +14,7 @@ import static cz.siret.prank.utils.MathUtils.ranndomInt
  * Routine that iterates through different values of random seed param
  */
 @Slf4j
+@CompileStatic
 class SeedLoop extends EvalRoutine {
 
     EvalRoutine innerRoutine  // routine to iterate on

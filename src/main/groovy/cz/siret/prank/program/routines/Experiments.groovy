@@ -118,8 +118,8 @@ class Experiments extends Routine {
                 }
 
                 iter.outdir = getEvalRoutineOutdir() // is set to "../seed.xx" by SeedLoop
-                iter.trainAndEvalModel()
-                return iter.evalRoutine.results
+                def res = iter.trainAndEvalModel()
+                return res
             }
         }
 
