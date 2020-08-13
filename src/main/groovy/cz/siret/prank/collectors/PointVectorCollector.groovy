@@ -56,7 +56,7 @@ abstract class PointVectorCollector extends VectorCollector implements Parametri
             }
         }
 
-        log.info "Vectors collected for protein: {}", res
+        log.info "vectors collected for protein: {}", res
 
         proteinExtractorPrototype.finalizeProteinPrototype()
         return res
