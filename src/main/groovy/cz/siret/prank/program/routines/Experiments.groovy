@@ -126,6 +126,7 @@ class Experiments extends Routine {
         return new SeedLoop(trainRoutine, outdir).execute()
     }
 
+//===========================================================================================================//
 
     /**
      * implements command: 'prank traineval...  '
@@ -134,7 +135,6 @@ class Experiments extends Routine {
         doTrainEval(outdir, trainDataset, evalDataset)
     }
 
-//===========================================================================================================//
 
     /**
      *  iterative parameter optimization
@@ -143,6 +143,8 @@ class Experiments extends Routine {
 
         gridOptimize(ListParam.parseListArgs(cmdLineArgs))
     }
+
+//===========================================================================================================//
 
     private void gridOptimize(List<ListParam> rparams) {
 
@@ -158,7 +160,7 @@ class Experiments extends Routine {
     }
 
     /**
-     * run trineval or crosvalidation with current paramenter assignment
+     * run trineval or crossvalidation with current parameter assignment
      */
     private static EvalResults runExperimentStep(String dir, Dataset trainData, Dataset evalData, boolean doCrossValidation) {
         EvalResults res

@@ -49,12 +49,14 @@ abstract class PointVectorCollector extends VectorCollector implements Parametri
 
             } catch (Exception e) {
                 if (params.fail_fast) {
-                    throw new PrankException("failed extraction for point", e)
+                    throw new PrankException("Failed extraction for point", e)
                 } else {
-                    log.error("skipping extraction for point", e)
+                    log.error("Failed extraction for point. Skipping.", e)
                 }
             }
         }
+
+        log.info "Vectors collected for protein: {}", res
 
         proteinExtractorPrototype.finalizeProteinPrototype()
         return res

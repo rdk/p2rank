@@ -65,6 +65,12 @@ abstract class VectorCollector {
             }
             return sb.toString()
         }
+
+        @Override
+        String toString() {
+            return "all:${vectors.size()}  positives:$positives negatives:$negatives"
+        }
+        
     }
 
 }
