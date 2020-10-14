@@ -10,7 +10,7 @@ class ProcessedItemContext {
     Dataset.Item item
 
     /**
-     * Column falues from dataset item
+     * Column values from dataset item
      */
     Map<String, String> datsetColumnValues
 

@@ -237,6 +237,10 @@ class Params {
     @RuntimeParam
     String conservation_dir = null
 
+    @RuntimeParam
+    String electrostatics_dir = null
+
+
     /**
      * Log scores for binding and nonbinding scores to file
      */
