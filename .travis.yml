@@ -18,12 +18,13 @@ jdk:
   - openjdk12
   - openjdk13
   - openjdk14
+  - openjdk15
   - openjdk-ea
   
 matrix:
   allow_failures:
-    - jdk: openjdk-ea  
-    - jdk: oraclejdk-ea 
+    - jdk: openjdk-ea
+    - jdk: oraclejdk-ea
 
 script:
   - java -version
