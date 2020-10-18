@@ -30,4 +30,5 @@ script:
   - java -version
   - ./gradlew -version
   - ./gradlew --stop
-  - ./gradlew --refresh-dependencies clean check test -Dscan --info
+  - ./gradlew --refresh-dependencies clean check test assemble -Dscan --info
+  - ./distro/prank predict -f ./distro/test_data/2W83.pdb
