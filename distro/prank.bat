@@ -11,7 +11,7 @@ rem
 rem set "JAVA_HOME=c:\java8"
 
 
-set "JAVA_OPTS=%JAVA_OPTS% -XX:+CMSClassUnloadingEnabled -XX:+UseConcMarkSweepGC"
+set "JAVA_OPTS=%JAVA_OPTS%"
 
 set "INSTALL_DIR=%~dp0%"
 set "CLASSPATH=%INSTALL_DIR%/bin/p2rank.jar;%INSTALL_DIR%/bin/lib/*"
