@@ -11,9 +11,7 @@ export JAVA_OPTS="$JAVA_OPTS -Xmx2048m"
 #JAVA_HOME="/opt/java8"
 
 
-# -XX:+UseConcMarkSweepGC
-# -XX:+UseG1GC
-export JAVA_OPTS="$JAVA_OPTS -XX:+CMSClassUnloadingEnabled -XX:+UseG1GC"
+export JAVA_OPTS="$JAVA_OPTS"
 
 if [[ "$OSTYPE" = msys* ]] ; then
     PATH_SEPARATOR=';' # for win ... we want this script to run on Windows with MSYS / Git Bash

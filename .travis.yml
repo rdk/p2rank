@@ -18,15 +18,17 @@ jdk:
   - openjdk12
   - openjdk13
   - openjdk14
+  - openjdk15
   - openjdk-ea
   
 matrix:
   allow_failures:
-    - jdk: openjdk-ea  
-    - jdk: oraclejdk-ea 
+    - jdk: openjdk-ea
+    - jdk: oraclejdk-ea
 
 script:
   - java -version
   - ./gradlew -version
   - ./gradlew --stop
-  - ./gradlew --refresh-dependencies clean check test -Dscan --info
+  - ./gradlew --refresh-dependencies clean check test assemble -Dscan --info
+  - ./distro/prank predict -f ./distro/test_data/2W83.pdb
