@@ -30,3 +30,5 @@ out/*
 !*.md
 
 *.stackdump
+
+venv/

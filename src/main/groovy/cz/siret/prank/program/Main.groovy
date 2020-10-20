@@ -39,27 +39,44 @@ class Main implements Parametrized, Writable {
         args.get('config','c')
     }
 
+    File findConfigFile(List<String> paths) {
+        for (String path : paths) {
+            log.info "Looking for config in " + Futils.absPath(path)
+            if (Futils.exists(path)) {
+                return new File(path)
+            }
+        }
+        return null
+    }
+
+    File findConfigFile(String configParam) {
+        String path = configParam
+
+        File configFile = findConfigFile([
+            path,
+            "${path}.groovy",
+            "$installDir/config/${path}",
+            "$installDir/config/${path}.groovy"
+        ])
+
+        if (configFile == null) {
+            throw new PrankException("Config file not found '$configParam'")
+        }
+        return configFile
+    }
+
     void initParams(Params params, String defaultConfigFile) {
 
-        log.info "loading default config from [${Futils.absPath(defaultConfigFile)}]"
-        File defaultParams = new File(defaultConfigFile)
-        ConfigLoader.overrideConfig(params, defaultParams)
+        File fdefault = new File(defaultConfigFile)
+        log.info "loading default config from [$fdefault.absolutePath}]"
+        ConfigLoader.overrideConfig(params, fdefault)
+
         String configParam = configFileParam
-
-        // TODO allow multiple -c variables override default+dev+working
-        if (configParam!=null) {
-
-            if (!configParam.endsWith(".groovy") && Futils.exists(configParam+".groovy"))  {
-                configParam = configParam + ".groovy"
-            }
-
-            File customParams = new File(configParam)
-            if (!customParams.exists()) {
-                customParams = new File("$installDir/config/$configParam")
-            }
-
-            log.info "overriding default config with [${Futils.absPath(customParams.path)}]"
-            ConfigLoader.overrideConfig(params, customParams)
+        if (configParam != null) {
+            // TODO allow multiple -c variables override default+dev+working
+            File fcustom = findConfigFile(configParam)
+            log.info "overriding default config with [$fcustom.absolutePath}]"
+            ConfigLoader.overrideConfig(params, fcustom)
         }
 
         params.updateFromCommandLine(args)
