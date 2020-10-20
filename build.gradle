@@ -125,9 +125,9 @@ dependencies {
     implementation 'org.codehaus.groovy:groovy-all:3.0.6'
 
     implementation 'org.codehaus.gpars:gpars:1.2.1'
-    implementation 'org.apache.commons:commons-lang3:3.10'
-    implementation 'commons-io:commons-io:2.7'
-    implementation 'com.google.guava:guava:29.0-jre'
+    implementation 'org.apache.commons:commons-lang3:3.11'
+    implementation 'commons-io:commons-io:2.8.0'
+    implementation 'com.google.guava:guava:30.0-jre'
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'org.zeroturnaround:zt-zip:1.14'
     implementation 'com.univocity:univocity-parsers:2.8.4' // csv parser
