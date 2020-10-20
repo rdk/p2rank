@@ -1,6 +1,6 @@
 package cz.siret.prank.features.weight
 
-import cz.siret.prank.program.params.Parametrized
+import cz.siret.prank.program.params.Params
 import cz.siret.prank.utils.MathUtils
 import groovy.transform.CompileStatic
 
@@ -8,7 +8,7 @@ import groovy.transform.CompileStatic
  * Distance weight functions.
  */
 @CompileStatic
-abstract class WeightFun implements Parametrized {
+abstract class WeightFun {
 
     static enum Option { ONE, OLD, NEW, GAUSS, INV, INV2, INVPOW, INVPOW2 }
 
@@ -39,7 +39,7 @@ abstract class WeightFun implements Parametrized {
     }
 
     static class New extends WeightFun {
-        double base = params.point_min_distfrom_protein
+        double base = Params.inst.point_min_distfrom_protein
         double weight(double dist) {
             calcWeightNew(dist, base)
         }
@@ -53,8 +53,8 @@ abstract class WeightFun implements Parametrized {
     }
 
     static class Old extends WeightFun {
-        final double MIN_DIST = params.weight_dist_param
-        double exp = params.weight_power
+        final double MIN_DIST = Params.inst.weight_dist_param
+        double exp = Params.inst.weight_power
 
         double weight(double dist) {
             double weight
@@ -69,8 +69,8 @@ abstract class WeightFun implements Parametrized {
     }
 
     static class Gauss extends WeightFun {
-        double mean = params.point_min_distfrom_protein
-        double sigma = params.weight_sigma
+        double mean = Params.inst.point_min_distfrom_protein
+        double sigma = Params.inst.weight_sigma
 
         double weight(double dist) {
             return MathUtils.gaussNorm(dist-mean, sigma)
@@ -78,7 +78,7 @@ abstract class WeightFun implements Parametrized {
     }
 
     static class Inv extends WeightFun {
-        double rmax = params.neighbourhood_radius
+        double rmax = Params.inst.neighbourhood_radius
 
         double weight(double dist) {
             return 1 - dist/rmax
@@ -86,8 +86,8 @@ abstract class WeightFun implements Parametrized {
     }
 
     static class InvPow extends WeightFun {
-        double rmax = params.neighbourhood_radius
-        double exp = params.weight_power
+        double rmax = Params.inst.neighbourhood_radius
+        double exp = Params.inst.weight_power
 
         double weight(double dist) {
             double w = 1 - dist/rmax
@@ -97,8 +97,8 @@ abstract class WeightFun implements Parametrized {
     }
 
     static class Inv2 extends WeightFun {
-        double rmin = params.solvent_radius
-        double rmax = params.neighbourhood_radius
+        double rmin = Params.inst.solvent_radius
+        double rmax = Params.inst.neighbourhood_radius
 
         double weight(double dist) {
             return (rmax-dist)/(rmax-rmin)
@@ -106,9 +106,9 @@ abstract class WeightFun implements Parametrized {
     }
 
     static class InvPow2 extends WeightFun {
-        double rmin = params.weight_dist_param 
-        double rmax = params.neighbourhood_radius
-        double exp = params.weight_power
+        double rmin = Params.inst.weight_dist_param
+        double rmax = Params.inst.neighbourhood_radius
+        double exp = Params.inst.weight_power
         
         double weight(double dist) {
             if (dist < rmin)
