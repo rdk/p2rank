@@ -234,7 +234,7 @@ class Metrics implements Parametrized {
 
 //===========================================================================================================//
 
-    double calcMCC(double TP, double FP, double TN, double FN) {
+    static double calcMCC(double TP, double FP, double TN, double FN) {
         double n = TP*TN - FP*FN
         double d = (TP+FP)*(TP+FN)*(TN+FP)*(TN+FN)
         d = Math.sqrt(d)
