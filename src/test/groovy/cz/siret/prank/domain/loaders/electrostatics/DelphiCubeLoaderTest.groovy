@@ -15,16 +15,6 @@ import static org.junit.Assert.assertEquals
 class DelphiCubeLoaderTest {
 
     @Test
-    void testLoadFromFile() {
-        GaussianCube cube = DelphiCubeLoader.loadFromFile('src/test/resources/data/electrostatics/delphi/delphi-2src.cube')
-
-        assertEquals 205, cube.nx
-        assertEquals 205, cube.ny
-        assertEquals 205, cube.nz
-
-    }
-
-    @Test
     void testLoadFromFileGz() {
         GaussianCube cube = DelphiCubeLoader.loadFromFile('src/test/resources/data/electrostatics/delphi/delphi-2src.cube.gz')
 
