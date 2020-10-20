@@ -290,9 +290,10 @@ class Dataset implements Parametrized {
         // create folds
         List<Fold> folds = new ArrayList<>(k)
         for (int i=0; i!=k; ++i) {
-            Dataset evalset = createSubset(subsets[i], "${name}_fold.${k}.${i}_eval")
-            Dataset trainset = createSubset( shuffledItems - subsets[i], "${name}_fold.${k}.${i}_train" )
-            folds.add(new Fold(i+1, trainset, evalset))
+            int num = i+1
+            Dataset evalset = createSubset(subsets[i], "${name}_fold.${k}.${num}_eval")
+            Dataset trainset = createSubset( shuffledItems - subsets[i], "${name}_fold.${k}.${num}_train" )
+            folds.add(new Fold(num, trainset, evalset))
         }
 
         return folds
