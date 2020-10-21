@@ -54,7 +54,7 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
     Atoms surfaceLayerAtoms
 
     /**
-     * deep layer of atums unter the protein surface
+     * deep layer of atoms under the protein surface
      * serves as cache for speeding up calculation of protrusion and other features
      */
     Atoms deepLayer
@@ -92,7 +92,7 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
     @Override
     FeatureExtractor createPrototypeForProtein(Protein protein, ProcessedItemContext context) {
         PrankFeatureExtractor res = new PrankFeatureExtractor(protein)
-        res.trainingExtractor = this.trainingExtractor
+        res.isTrainingExtractor = this.isTrainingExtractor
 
         protein.calcuateSurfaceAndExposedAtoms()
         double thickness = max(params.protrusion_radius, params.pair_hist_radius)
@@ -108,7 +108,7 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
 
     @Override
     void prepareProteinPrototypeForPockets() {
-        pocketPointSampler = PointSampler.create(protein, trainingExtractor)
+        pocketPointSampler = PointSampler.create(protein, isTrainingExtractor)
 
         if (params.deep_surrounding) {
             surfaceLayerAtoms = deepLayer
@@ -141,7 +141,7 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
         this.extraFeaturesHeader   = proteinPrototype.extraFeaturesHeader
         this.atomTableFeatures     = proteinPrototype.atomTableFeatures
         this.residueTableFeatures  = proteinPrototype.residueTableFeatures
-        this.trainingExtractor     = proteinPrototype.trainingExtractor
+        this.isTrainingExtractor     = proteinPrototype.isTrainingExtractor
         this.featureSetup     = proteinPrototype.featureSetup
 
         this.deepLayer = proteinPrototype.deepLayer
@@ -191,7 +191,7 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
         }
         
         if (sampledPoints == null) {
-            sampledPoints = protein.getSurface(trainingExtractor).points
+            sampledPoints = protein.getSurface(isTrainingExtractor).points
         }
         res.sampledPoints = sampledPoints
 

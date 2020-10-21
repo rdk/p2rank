@@ -41,7 +41,7 @@ class Protein implements Parametrized {
      * unreduced structure (when structure was reduced to single chain)
      * in case of multi model structures this refers to structure reduced to model 0
      */
-    Structure fullStructure // unreduced struct
+    Structure fullStructure 
 
     /** all atoms of structure indexed by id */
     Atoms allAtoms
@@ -55,7 +55,15 @@ class Protein implements Parametrized {
     /** solvent accessible surface */
     Surface accessibleSurface
 
+    /**
+     * surface for sampling training points (different from accessibleSurface only when params.tessellation != params.train_tessellation)
+     */
     Surface trainSurface
+
+    /**
+     * surface for sampling negative training points (different from trainSurface only when params.train_tessellation != params.train_negatives_tessellation )
+     */
+    Surface trainSurfaceNagatives
 
 //===========================================================================================================//
 
@@ -65,7 +73,7 @@ class Protein implements Parametrized {
     /* too small ligands */
     List<Ligand> smallLigands = new ArrayList<>()
 
-    /* usually cofactors and biologcally unrelevant ligands */
+    /* usually cofactors and biologically irrelevant ligands */
     List<Ligand> ignoredLigands = new ArrayList<>()
 
     /* ligands(hetgroups) too distant from protein surface */

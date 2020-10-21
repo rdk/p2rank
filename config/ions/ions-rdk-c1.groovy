@@ -1,5 +1,8 @@
 import cz.siret.prank.program.params.Params
 
+/**
+ * Config for ion binding site prediction: checkpoint 1
+ */
 (params as Params).with {
 
     /**
