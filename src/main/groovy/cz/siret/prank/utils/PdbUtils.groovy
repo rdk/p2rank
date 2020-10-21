@@ -1,6 +1,6 @@
 package cz.siret.prank.utils
 
-
+import cz.siret.prank.program.PrankException
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.*
@@ -52,21 +52,24 @@ class PdbUtils {
 
         if (file==null) throw new IllegalArgumentException("file name not provided")
 
-        Structure struct
-        if (file.endsWith(".pdb")) {
-            // load with buffer
-            PDBFileParser pdbpars = new PDBFileParser();
-            pdbpars.setFileParsingParameters(parsingParams);
-            InputStream inStream = new BufferedInputStream(new FileInputStream(file), BUFFER_SIZE)
-            struct = pdbpars.parsePDBFile(inStream)
-        } else {
-            // for tar.gz files
-            PDBFileReader pdbReader = new PDBFileReader()
-            pdbReader.setFileParsingParameters(parsingParams)
-            struct = pdbReader.getStructure(file)
+        try {
+            Structure struct
+            if (file.endsWith(".pdb")) {
+                // load with buffer
+                PDBFileParser pdbpars = new PDBFileParser();
+                pdbpars.setFileParsingParameters(parsingParams);
+                InputStream inStream = new BufferedInputStream(new FileInputStream(file), BUFFER_SIZE)
+                struct = pdbpars.parsePDBFile(inStream)
+            } else {
+                // for .gz files
+                PDBFileReader pdbReader = new PDBFileReader()
+                pdbReader.setFileParsingParameters(parsingParams)
+                struct = pdbReader.getStructure(file)
+            }
+            return struct
+        } catch (Exception e) {
+            throw new PrankException("Failed to load structure from '$file'", e)
         }
-
-        return struct
     }
 
     static Structure loadFromString(String pdbText)  {
