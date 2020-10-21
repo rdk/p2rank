@@ -99,9 +99,9 @@ class Protein implements Parametrized {
 
     void calcuateSurfaceAndExposedAtoms() {
         if (exposedAtoms == null) {
-            if (proteinAtoms.empty) {
-                throw new PrankException("Protein with no chain atoms [$name]!")
-            }
+            //if (proteinAtoms.empty) {
+            //    throw new PrankException("Protein with no chain atoms [$name]!")
+            //}
 
             exposedAtoms = getAccessibleSurface().computeExposedAtoms(proteinAtoms)
 
@@ -385,7 +385,11 @@ class Protein implements Parametrized {
 
         if (proteinAtoms.empty) {
             log.error "protein with no chain atoms! [$name]"
-            throw new PrankException("Protein with no chain atoms [$name]!")
+            if (params.fail_fast) {
+                throw new PrankException("Protein with no chain atoms [$name]!")
+            } else {
+                log.error("Protein with no chain atoms [$name]!")
+            }
         }
 
         if (!loaderParams.ignoreLigands) {
