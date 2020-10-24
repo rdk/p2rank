@@ -2,6 +2,8 @@ package cz.siret.prank.program.routines
 
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.domain.loaders.DatasetCachedLoader
+import cz.siret.prank.domain.loaders.electrostatics.DelphiCubeLoader
+import cz.siret.prank.domain.loaders.electrostatics.GaussianCube
 import cz.siret.prank.program.Main
 import cz.siret.prank.program.params.ListParam
 import cz.siret.prank.program.params.Params
@@ -11,7 +13,16 @@ import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.Sutils
 import groovy.util.logging.Slf4j
 
+import static cz.siret.prank.utils.Bench.timeit
+import static cz.siret.prank.utils.Bench.timeit
+import static cz.siret.prank.utils.Bench.timeit
+import static cz.siret.prank.utils.Bench.timeit
+import static cz.siret.prank.utils.Bench.timeit
+import static cz.siret.prank.utils.Futils.deserializeFromFile
+import static cz.siret.prank.utils.Futils.deserializeFromFile
 import static cz.siret.prank.utils.Futils.safe
+import static cz.siret.prank.utils.Futils.serializeToFile
+import static cz.siret.prank.utils.Futils.serializeToZstd
 import static cz.siret.prank.utils.Futils.writeFile
 import static cz.siret.prank.utils.ThreadUtils.async
 
@@ -209,6 +220,36 @@ class Experiments extends Routine {
         write params.toString()
     }
 
+
+//===========================================================================================================//
+
+    public bench1() {
+        String dir = 'src/test/resources/data/electrostatics/delphi'
+        def fname = "$dir/delphi-6PW2.cube"
+
+        GaussianCube cube
+
+        int n = 100
+
+        timeit("loading from text",    n, { cube = DelphiCubeLoader.loadFile(fname)      })
+        
+        //timeit("loading from gz text", n, { cube = DelphiCubeLoader.loadFromFile(fname+".gz")      })
+
+        //timeit("loading from ser",  n, { cube = deserializeFromFile("${fname}.jser")     })
+        //timeit("saving to ser",     n, { serializeToFile("${fname}.jser", cube)      })
+
+        //timeit("saving to gz",      n, { serializeToGzip(fname+".jser.gz", cube, 6)    })
+        //timeit("loading from gz",   n, { cube = deserializeFromFile(fname+".jser.gz")   })
+        //
+        //timeit("saving to lzma",    n, { serializeToLzma(fname+".jser.lzma", cube, 6)    })
+        //timeit("loading from lzma", n, { cube = deserializeFromFile(fname+".jser.lzma")   })
+
+        //(1..9).each { l ->
+        //    timeit("   saving to zstd$l", n, { serializeToZstd(fname+".jser.${l}.zstd", cube, l)    })
+        //    timeit("loading from zstd$l", n, { cube = deserializeFromFile(fname+".jser.${l}.zstd")   })
+        //}
+
+    }
 }
 
 

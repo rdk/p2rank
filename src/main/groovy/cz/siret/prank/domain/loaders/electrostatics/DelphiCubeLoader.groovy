@@ -1,10 +1,13 @@
 package cz.siret.prank.domain.loaders.electrostatics
 
-import cz.siret.prank.geom.Point
+import com.google.common.base.CharMatcher
 import cz.siret.prank.program.PrankException
+import cz.siret.prank.utils.Futils
+import cz.siret.prank.utils.text.CharMatchers
+import cz.siret.prank.utils.text.FastTokenizer
+import cz.siret.prank.utils.text.FastTokenizer2
+import cz.siret.prank.utils.text.Tokenizer
 import groovy.transform.CompileStatic
-
-import java.util.zip.GZIPInputStream
 
 import static cz.siret.prank.utils.Sutils.splitOnWhitespace
 
@@ -16,73 +19,73 @@ class DelphiCubeLoader {
 
     private static int HEADER_SIZE = 7
 
+    private static final CharMatcher WHITESPACE_MATCHER = CharMatchers.SPACE
+
+    static GaussianCube loadFile(String fname) {
+        return new DelphiCubeLoader().loadFromFile(fname)
+    }
+
 
     /**
      * Load from *.cube or *.cube.gz file
      * @return
      */
-    static GaussianCube loadFromFile(String fname) {
-        File file = new File(fname)
-        InputStream is
-        if (fname.endsWith(".gz")) {
-            is = new GZIPInputStream(new FileInputStream(file));
-        } else {
-            is = new FileInputStream(file);
-        }
-        return loadFromStream(is)
+    GaussianCube loadFromFile(String fname) {
+        return loadFromStream(Futils.inputStream(fname))
     }
 
-    static GaussianCube loadFromStream(InputStream is) {
-        Reader reader = new BufferedReader(new InputStreamReader(is))
 
-        List<String> header = loadHeader(reader)
-        GaussianCube cube = createFromHeader(header)
-        cube.data = loadData(reader, cube.nx, cube.ny, cube.nz)
+    GaussianCube loadFromStream(InputStream is) {
+        Reader reader = new BufferedReader(new InputStreamReader(is), 1024*1024)
 
-        reader.close()
-
-        return cube
+        try {
+            List<String> header = loadHeader(reader)
+            GaussianCube cube = createFromHeader(header)
+            cube.data = loadData(reader, cube.sizeX, cube.sizeY, cube.sizeZ)
+            return cube
+        } finally {
+            reader.close()
+        }
     }
 
     /**
-     *
+     * Delphi cube file format.
+     * 
      * <pre>
-     *   2.000000   205 20.279000 34.476500 65.844500
-     * Gaussian cube format phimap
-     *     1    -58.054276    -31.224890     28.052039
-     *   205      0.944863      0.000000      0.000000
-     *   205      0.000000      0.944863      0.000000
-     *   205      0.000000      0.000000      0.944863
-     *     1      0.000000      0.000000      0.000000      0.000000
-     *  -3.54102e+01 -3.55270e+01 -3.56440e+01 -3.57610e+01 -3.58780e+01 -3.59949e+01
+     * 0|   2.000000   205 20.279000 34.476500 65.844500                                   |
+     * 1| Gaussian cube format phimap                                                      |
+     * 2|     1    -58.054276    -31.224890     28.052039                                  |            , origin coordinates (x,y,z)
+     * 3|   205      0.944863      0.000000      0.000000                                  | x grid size, x step
+     * 4|   205      0.000000      0.944863      0.000000                                  | y grid size,       , y step
+     * 5|   205      0.000000      0.000000      0.944863                                  | z grid size,               , z step
+     * 6|     1      0.000000      0.000000      0.000000      0.000000                    |
+     * 7|  -3.54102e+01 -3.55270e+01 -3.56440e+01 -3.57610e+01 -3.58780e+01 -3.59949e+01   | data ...
      *  ....
      * </pre>
      */
-    private static GaussianCube createFromHeader(List<String> header) {
+    private GaussianCube createFromHeader(List<String> header) {
         GaussianCube cube = new GaussianCube()
 
         List<List<String>> tokens = header.collect { splitOnWhitespace(it) }
 
         cube.header = header
 
-        cube.nx = tokens[3][0].toInteger()
-        cube.ny = tokens[4][0].toInteger()
-        cube.nz = tokens[5][0].toInteger()
+        cube.sizeX = tokens[3][0].toInteger()
+        cube.sizeY = tokens[4][0].toInteger()
+        cube.sizeZ = tokens[5][0].toInteger()
 
-        cube.dx = tokens[3][1].toDouble()
-        cube.dy = tokens[4][2].toDouble()
-        cube.dz = tokens[5][3].toDouble()
+        cube.deltaX = tokens[3][1].toDouble()
+        cube.deltaY = tokens[4][2].toDouble()
+        cube.deltaZ = tokens[5][3].toDouble()
 
-        double ox = tokens[2][1].toDouble()     // ??
-        double oy = tokens[2][2].toDouble()     // ??
-        double oz = tokens[2][3].toDouble()     // ??
-
-        cube.origin = new Point(ox, oy, oz)
+        cube.originX = tokens[2][1].toDouble()
+        cube.originY = tokens[2][2].toDouble()
+        cube.originZ = tokens[2][3].toDouble()
 
         return cube
     }
 
-    private static List<String> loadHeader(Reader reader) {
+    private List<String> loadHeader(Reader reader) {
         List<String> res = new ArrayList<>()
         for (int i=0; i!=HEADER_SIZE; i++) {
             res.add(reader.readLine())
@@ -90,24 +93,26 @@ class DelphiCubeLoader {
         return res
     }
 
-    private static float[][][] loadData(Reader reader, int nx, int ny, int nz) {
-        Scanner scanner = new Scanner(reader)
-
+    private float[][][] loadData(Reader reader, int nx, int ny, int nz) {
+//        Tokenizer tokenizer = new FastTokenizer(reader)
+        Tokenizer tokenizer = new FastTokenizer2(reader, WHITESPACE_MATCHER)
         float[][][] data = new float[nx][ny][nz]
+
+        String token = null
 
         for (int i=0; i!=nx; ++i) {
             for (int j=0; j!=ny; ++j) {
                 for (int k=0; k!=nz; ++k) {
-                    if (!scanner.hasNext()) {
+                    token = tokenizer.nextToken()
+                    if (token == null) {
                         throw new PrankException("Not enough data in the cube file. Missing data for cell ($i,$j,$k) of grid of dimensions ($nx,$ny,$nz).")
                     }
-
-                    float val = (float) scanner.nextDouble()
-                    data[i][j][k] = val
+                    data[i][j][k] = Float.parseFloat(token)
                 }
             }
         }
 
         return data
     }
+
 }

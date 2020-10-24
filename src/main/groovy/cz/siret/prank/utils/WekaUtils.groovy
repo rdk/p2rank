@@ -20,7 +20,7 @@ import java.util.zip.ZipOutputStream
 @CompileStatic
 class WekaUtils implements Writable {
 
-    private static final int BUFFER_SIZE = 10 * 1024 * 1024;
+    private static final int BUFFER_SIZE = 16 * 1024 * 1024;
 
     static Instances createDatasetWithBinaryClass(List<String> header, int initialCapacity = 10) {
 

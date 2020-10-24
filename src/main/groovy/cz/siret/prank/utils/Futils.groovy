@@ -3,9 +3,21 @@ package cz.siret.prank.utils
 import com.google.common.io.Files
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+import org.apache.commons.compress.compressors.CompressorStreamFactory
+import org.apache.commons.compress.compressors.lzma.LZMACompressorOutputStream
+import org.apache.commons.compress.compressors.zstandard.ZstdCompressorInputStream
+import org.apache.commons.compress.compressors.zstandard.ZstdCompressorOutputStream
+import org.apache.commons.compress.compressors.zstandard.ZstdUtils
 import org.apache.commons.io.FileUtils
+import org.apache.tools.bzip2.CBZip2InputStream
+import org.apache.tools.bzip2.CBZip2OutputStream
+import org.tukaani.xz.LZMA2Options
+import org.tukaani.xz.LZMAInputStream
+import org.tukaani.xz.LZMAOutputStream
+import org.tukaani.xz.XZIOException
 import org.zeroturnaround.zip.ZipUtil
 
+import java.util.zip.Deflater
 import java.util.zip.GZIPInputStream
 import java.util.zip.GZIPOutputStream
 
@@ -22,7 +34,7 @@ class Futils {
 
     public static final int ZIP_BEST_COMPRESSION = 9
 
-    private static final int OUTPUT_BUFFER_SIZE = 10000
+    private static final int BUFFER_SIZE = 4 * 1024 * 1024
 
     static String normalize(String path) {
         if (path==null) return null
@@ -89,19 +101,57 @@ class Futils {
     }
 
     /**
+     * Opens and decompresses file (if it has gz or bz2 extension)
+     */
+    static InputStream inputStream(File file) {
+        String fname = file.getName()
+
+        InputStream is = bufferedInputStream(file)
+
+        if (fname.endsWith(".gz")) {
+            is = new GZIPInputStream(is)
+        } else if (fname.endsWith(".bz2")) {
+            is = new CBZip2InputStream(is)
+        } else if (fname.endsWith(".lzma")) {
+            is = new LZMAInputStream(is)
+        } else if (fname.endsWith(".zstd")) {
+            is = new ZstdCompressorInputStream(is)
+        }
+
+        return is
+    }
+
+    /**
      * Opens and decompresses file (if it has gzip extension)
      */
-    static InputStream inputStream(File file) throws IOException {
-        if (file.getName().endsWith(".gz")) {
-            return new GZIPInputStream(new FileInputStream(file));
-        } else {
-            return new FileInputStream(file);
-        }
+    static InputStream inputStream(String fname) throws IOException {
+        return inputStream(new File(fname))
     }
+
+    static BufferedInputStream bufferedInputStream(File file) {
+        return new BufferedInputStream(new FileInputStream(file), BUFFER_SIZE)
+    }
+
+    static BufferedInputStream bufferedInputStream(String fname) {
+        return new BufferedInputStream(new FileInputStream(fname), BUFFER_SIZE)
+    }
+
+    static OutputStream outputStream(String fname) {
+        return new FileOutputStream(fname)
+    }
+
+    static OutputStream bufferedOutputStream(String fname) {
+        return new BufferedOutputStream(outputStream(fname), BUFFER_SIZE)
+    }
+
+
+
+
 
     static String readFile(String fname) {
         new File(fname).text
     }
+
 
     /**
      * loads properties from classpath
@@ -111,6 +161,7 @@ class Futils {
         res.load(Futils.class.getResourceAsStream(path))
         return res
     }
+
 
     /**
      * Overwrites the file if exists and returns the writer
@@ -122,8 +173,10 @@ class Futils {
         }
         file.createNewFile()
 
-        return new PrintWriter(new BufferedWriter(new FileWriter(file), OUTPUT_BUFFER_SIZE))
+        return new PrintWriter(new BufferedWriter(new FileWriter(file), BUFFER_SIZE))
     }
+
+//===========================================================================================================//
 
     /**
      * Overwrites the file if exists and returns the writer to gzipped output stream
@@ -135,16 +188,107 @@ class Futils {
         }
         file.createNewFile()
 
-        GZIPOutputStream gos = new GZIPOutputStream(new FileOutputStream(file), OUTPUT_BUFFER_SIZE)
+        GZIPOutputStream gos = new GZIPOutputStream(new FileOutputStream(file), BUFFER_SIZE)
 
-        return new PrintWriter(new BufferedWriter(new OutputStreamWriter(gos), OUTPUT_BUFFER_SIZE))
+        return new PrintWriter(new BufferedWriter(new OutputStreamWriter(gos), BUFFER_SIZE))
+    }
+
+
+    static GZIPOutputStream getGzipOutputStream(String fname, int compressionLevel = Deflater.DEFAULT_COMPRESSION) {
+        return new GZIPOutputStream(bufferedOutputStream(fname), BUFFER_SIZE) {
+            {
+                this.@def.level = compressionLevel
+            }
+        }
+    }
+
+
+    static CBZip2OutputStream getBzip2OutputStream(String fname, int blockSize = CBZip2OutputStream.MAX_BLOCKSIZE) {
+        return new CBZip2OutputStream(bufferedOutputStream(fname), blockSize)
+    }
+
+    static OutputStream getLzmaOutputStream(String fname, int level = LZMA2Options.PRESET_DEFAULT) {
+        return new LZMAOutputStream(bufferedOutputStream(fname), new LZMA2Options(level), -1)
+    }
+
+    static OutputStream getZstdOutputStream(String fname, int level = 6) {
+        return new ZstdCompressorOutputStream(bufferedOutputStream(fname), level)
+    }
+
+    /**
+     *
+     * @param fname
+     * @param format see constants in CompressorStreamFactory.GZIP
+     * @return
+     */
+    private static OutputStream getCompressedOuts(String fname, String format) {
+        return new CompressorStreamFactory().createCompressorOutputStream(format, bufferedOutputStream(fname))
+    }
+
+
+    static void serializeToGzip(String fname, Serializable object, int level = Deflater.DEFAULT_COMPRESSION) {
+        serializeTo(fname, object, getGzipOutputStream(fname, level))
+    }
+
+    static void serializeToZstd(String fname, Serializable object, int level = 6) {
+        serializeTo(fname, object, getZstdOutputStream(fname, level))
+    }
+
+    static void serializeToLzma(String fname, Serializable object, int level = LZMA2Options.PRESET_DEFAULT) {
+        def lzmas = getLzmaOutputStream(fname, level)
+        def oos = new ObjectOutputStream(lzmas)
+        try {
+            oos.writeObject(object)
+            oos.close()
+        } catch (XZIOException e) {
+            // ignore expected exception that LZMAOutputStream does not support flushing
+        } finally {
+            lzmas.close()
+        }
+    }
+
+    static void compressToLzma(String fname, int compresLevel = LZMA2Options.PRESET_DEFAULT) {
+        ZstdCompressorOutputStream
+    }
+
+    static void serializeToBzip2(String fname, Serializable object) {
+        serializeTo(fname, object, getBzip2OutputStream(fname))
+    }
+
+    static void serializeToFile(String fname, Serializable object) {
+        serializeTo(fname, object, bufferedOutputStream(fname))
+    }
+
+    private static void serializeTo(String fname, Serializable object, OutputStream stream) {
+        def oos = new ObjectOutputStream(stream)
+        try {
+            oos.writeObject(object)
+        } finally {
+            oos.close()
+        }
+    }
+
+    /**
+     * @param file can be compressed (*.gz / *.bz2) or uncompressed
+     * @return
+     */
+    static <T> T deserializeFromFile(String fname) {
+        ObjectInputStream ois = new ObjectInputStream(inputStream(fname))
+        T res = (T) ois.readObject()
+        ois.close()
+        return res
     }
 
     static void writeGzip(String fname, Object text) {
         PrintWriter writer = getGzipWriter(fname)
-        writer.print(text)
-        writer.close()
+        try {
+            writer.print(text)
+        } finally {
+            writer.close()
+        }
     }
+
+//===========================================================================================================//
 
     /**
      * writeFile text file

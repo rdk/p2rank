@@ -1,6 +1,7 @@
 package cz.siret.prank.domain.loaders.electrostatics
 
-import cz.siret.prank.geom.Point
+
+import groovy.transform.CompileStatic
 
 /**
  * Represents data loaded from Gaussian cube format (*.cube)
@@ -8,17 +9,22 @@ import cz.siret.prank.geom.Point
  * Based on DelPhi output.
  *
  */
-class GaussianCube {
+@CompileStatic
+class GaussianCube implements Serializable {
 
-    Point origin
+    static final long serialVersionUID = 1L;
 
-    int nx
-    int ny
-    int nz
+    double originX
+    double originY
+    double originZ
 
-    double dx
-    double dy
-    double dz
+    int sizeX
+    int sizeY
+    int sizeZ
+
+    double deltaX
+    double deltaY
+    double deltaZ
 
     List<String> header
 
