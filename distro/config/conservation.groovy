@@ -14,5 +14,7 @@ import cz.siret.prank.program.params.Params
     load_conservation_paths = true
 
     conservation_origin = "pdb.seq.fasta"
+
+    classifier = "FasterForest"
     
 }
