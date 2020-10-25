@@ -3,6 +3,7 @@ package cz.siret.prank.program.ml
 import cz.siret.prank.fforest.FasterForest
 import cz.siret.prank.program.params.Params
 import cz.siret.prank.utils.ConsoleWriter
+import cz.siret.prank.utils.Cutils
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.WekaUtils
 import cz.siret.prank.utils.Writable
@@ -36,12 +37,15 @@ class Model {
 
     @Nullable
     List<Double> getFeatureImportances() {
-        if (classifier instanceof  FastRandomForest) {
-            return (classifier as FastRandomForest).featureImportances.toList()
+        List<Double> res = null
+        if (classifier instanceof FastRandomForest) {
+            res = (classifier as FastRandomForest).featureImportances.toList()
+            res = Cutils.head(res.size()-1, res)                 // random forest returns column for class
         } else if (classifier instanceof FasterForest) {
-            return (classifier as FasterForest).featureImportances.toList()
+            res = (classifier as FasterForest).featureImportances.toList()
+            res = Cutils.head(res.size()-1, res)
         }
-        return null
+        return res
     }
 
     void saveToFile(String fname) {

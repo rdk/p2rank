@@ -125,16 +125,8 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
     private static boolean ALTERADY_TRAINED = false
 
     boolean shouldTrainModel() {
-//        if (evalDataSet.hasPredictedResidueLabeling()) {
-//            return false
-//        }
-
         if (params.hopt_train_only_once) {
-            if (ALTERADY_TRAINED) {
-                return false
-            } else {
-                return true
-            }
+            return !ALTERADY_TRAINED
         } else {
             true
         }
@@ -147,7 +139,7 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
 
         // TODO perform subsampling or supersampling if needed
         // -> move subsampling/supersampling logic from cz.siret.prank.collectors.DataPreprocessor.preProcessTrainData
-        // here so befire every seedloop run there is new random sampling
+        // here so before every seedloop run there is new random sampling
 
         long trainTime = 0
         ClassifierStats trainStats = null
@@ -208,11 +200,11 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
     private List<Double> calcFeatureImportances(Model model) {
         List<Double> featureImportances = null
         if (params.feature_importances && model.hasFeatureImportances()) {
-            featureImportances = model.featureImportances
+            featureImportances = model.getFeatureImportances()
             if (featureImportances != null) {
-                FeatureImportances namedImportances = FeatureImportances.from(featureImportances)
+                def namedImportances = FeatureImportances.from(featureImportances)
 
-                String rowCsv =  namedImportances.names.join(',') + '\n' + namedImportances.values.collect {FeatureImportances.fmt_fi(it) }.join(',') + '\n'
+                def rowCsv =  namedImportances.names.join(',') + '\n' + namedImportances.values.collect {FeatureImportances.fmt_fi(it) }.join(',') + '\n'
                 writeFile"$outdir/feature_importances.csv", rowCsv
 
                 writeFile"$outdir/feature_importances_sorted.csv", namedImportances.sorted().toCsv()
