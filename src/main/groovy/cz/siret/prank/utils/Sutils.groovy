@@ -19,8 +19,10 @@ import java.text.SimpleDateFormat
 @CompileStatic
 class Sutils {
 
-//    static DateFormat DATE_LABEL_FORMAT = new SimpleDateFormat("yyyy.MM.dd_HHmm")
-    static final DateFormat DATE_LABEL_FORMAT = new SimpleDateFormat("yyMMdd_HHmm")
+    static DateFormat DATE_LABEL_FORMAT = new SimpleDateFormat("yyyy.MM.dd_HHmm")
+//    static final DateFormat DATE_LABEL_FORMAT = new SimpleDateFormat("yyMMdd_HHmm")
+    
+    static final Splitter WHITESPACE_SPLITTER = Splitter.on(CharMatcher.whitespace()).omitEmptyStrings().trimResults()
 
     static final Gson GSON = new GsonBuilder().setPrettyPrinting().create()
 
@@ -71,7 +73,7 @@ class Sutils {
 
 
     static List<String> splitOnWhitespace(String str) {
-        Splitter.on(CharMatcher.whitespace()).omitEmptyStrings().trimResults().split(str).toList()
+        WHITESPACE_SPLITTER.split(str).toList()
     }
 
     static List<String> split(String str) {

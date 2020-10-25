@@ -124,7 +124,7 @@ class Futils {
     /**
      * Opens and decompresses file (if it has gzip extension)
      */
-    static InputStream inputStream(String fname) throws IOException {
+    static InputStream inputStream(String fname) {
         return inputStream(new File(fname))
     }
 

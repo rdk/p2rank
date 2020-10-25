@@ -14,18 +14,7 @@ import cz.siret.prank.utils.Sutils
 import groovy.util.logging.Slf4j
 
 import static cz.siret.prank.utils.Bench.timeit
-import static cz.siret.prank.utils.Bench.timeit
-import static cz.siret.prank.utils.Bench.timeit
-import static cz.siret.prank.utils.Bench.timeit
-import static cz.siret.prank.utils.Bench.timeit
-import static cz.siret.prank.utils.Futils.deserializeFromFile
-import static cz.siret.prank.utils.Futils.deserializeFromFile
-import static cz.siret.prank.utils.Futils.safe
-import static cz.siret.prank.utils.Futils.serializeToFile
-import static cz.siret.prank.utils.Futils.serializeToGzip
-import static cz.siret.prank.utils.Futils.serializeToLzma
-import static cz.siret.prank.utils.Futils.serializeToZstd
-import static cz.siret.prank.utils.Futils.writeFile
+import static cz.siret.prank.utils.Futils.*
 import static cz.siret.prank.utils.ThreadUtils.async
 
 /**
@@ -102,8 +91,10 @@ class Experiments extends Routine {
 
         this."$command"()  // dynamic exec method
 
-        writeFile "$outdir/status.done", "done"
-        log.info "results saved to directory [${Futils.absPath(outdir)}]"
+        if (outdir != null) {
+            writeFile "$outdir/status.done", "done"
+            log.info "results saved to directory [${Futils.absPath(outdir)}]"
+        }
     }
 
 //===========================================================================================================//
@@ -228,17 +219,17 @@ class Experiments extends Routine {
     /**
      * for jvm profiler
      */
-    bench_delphi_loading() {
+    def bench_delphi_loading() {
         def fname = 'src/test/resources/data/electrostatics/delphi/tmp/delphi-6PW2.cube'
         GaussianCube cube
-        int n = 100
+        int n = 5
         timeit("loading from text",    n, { cube = DelphiCubeLoader.loadFile(fname)      })
     }
 
     /**
      * Benchmark compression algorithms on small binary file
      */
-    bench_compression_large() {
+    def bench_compression_large() {
         _benchmarkCompression('src/test/resources/data/electrostatics/delphi/tmp/delphi-6PW2.cube', 1)
 
     }
@@ -246,7 +237,7 @@ class Experiments extends Routine {
     /**
      * Benchmark compression algorithms on small binary file
      */
-    bench_compression_small() {
+    def bench_compression_small() {
         _benchmarkCompression("src/test/resources/data/electrostatics/delphi/tmp/delphi-2src.cube", 10)
     }
 
