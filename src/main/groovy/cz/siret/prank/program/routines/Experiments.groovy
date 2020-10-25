@@ -11,6 +11,8 @@ import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.utils.CmdLineArgs
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.Sutils
+import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode
 import groovy.util.logging.Slf4j
 
 import static cz.siret.prank.utils.Bench.timeit
@@ -21,6 +23,7 @@ import static cz.siret.prank.utils.ThreadUtils.async
  * ploop, hopt and traineval routines for optimization experiments
  */
 @Slf4j
+@CompileStatic
 class Experiments extends Routine {
 
     String command
@@ -81,11 +84,13 @@ class Experiments extends Routine {
             return prepareSingleDataset(datasetArg)
         }
     }
+
     Dataset prepareSingleDataset(String datasetArg) {
         String file = Main.findDataset(datasetArg)
         return DatasetCachedLoader.loadDataset(file)
     }
 
+    @CompileStatic(value = TypeCheckingMode.SKIP)
     void execute() {
         log.info "executing $command()"
 
@@ -197,7 +202,8 @@ class Experiments extends Routine {
      *  hyperparameter optimization
      */
     public hopt() {
-        HyperOptimizer ho = new HyperOptimizer(outdir, ListParam.parseListArgs(cmdLineArgs)).init()
+        HyperOptimizer ho = new HyperOptimizer(outdir, ListParam.parseListArgs(cmdLineArgs))
+        ho.init()
 
         ho.optimizeParameters {  String stepDir ->
             return runExperimentStep(stepDir, trainDataset, evalDataset, doCrossValidation)
