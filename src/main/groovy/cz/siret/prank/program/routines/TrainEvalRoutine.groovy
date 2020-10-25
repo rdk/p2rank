@@ -6,6 +6,8 @@ import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.prediction.metrics.ClassifierStats
+import cz.siret.prank.program.routines.results.FeatureImportance
+import cz.siret.prank.program.routines.results.FeatureImportances
 import cz.siret.prank.utils.ATimer
 import cz.siret.prank.utils.CSV
 import cz.siret.prank.utils.Formatter
@@ -22,6 +24,7 @@ import static cz.siret.prank.prediction.pockets.PointScoreCalculator.predictedSc
 import static cz.siret.prank.utils.ATimer.startTimer
 import static cz.siret.prank.utils.Formatter.formatTime
 import static cz.siret.prank.utils.Futils.mkdirs
+import static cz.siret.prank.utils.Futils.writeFile
 
 @Slf4j
 @CompileStatic
@@ -207,13 +210,12 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
         if (params.feature_importances && model.hasFeatureImportances()) {
             featureImportances = model.featureImportances
             if (featureImportances != null) {
-                List<String> names = FeatureExtractor.createFactory().vectorHeader
+                FeatureImportances namedImportances = FeatureImportances.from(featureImportances)
 
-                Writer file = Futils.getWriter("$outdir/feature_importances.csv")
-                file << names.join(',') << "\n"
-                file << CSV.fromDoubles(featureImportances) << "\n"
-                file.close()
-                // TODO: calculate variance of feature importances over seedloop iterations
+                String rowCsv =  namedImportances.names.join(',') + '\n' + namedImportances.values.collect {FeatureImportances.fmt_fi(it) }.join(',') + '\n'
+                writeFile"$outdir/feature_importances.csv", rowCsv
+
+                writeFile"$outdir/feature_importances_sorted.csv", namedImportances.sorted().toCsv()
             }
         }
         featureImportances

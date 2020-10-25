@@ -183,7 +183,7 @@ class EvalResults implements Parametrized, Writable  {
 
         if (params.feature_importances && featureImportances!=null) {
             featureImportances = featureImportances.collect { (double)it/runs }.<Double>toList()
-            getNamedImportances().each {
+            FeatureImportances.from(featureImportances).items.each {
                 m.put "_FI_"+it.name, it.importance
             }
         }
@@ -323,40 +323,10 @@ class EvalResults implements Parametrized, Writable  {
         }
 
         if (params.feature_importances && featureImportances!=null) {
-            List<FeatureImportance> namedImportances = getNamedImportances()
-            namedImportances.sort { -it.importance } // descending
-            String sortedCsv = namedImportances.collect { it.name + ", " + fmt_fi(it.importance) }.join("\n") + "\n"
-            writeFile"$outdir/feature_importances_sorted.csv", sortedCsv
+            writeFile"$outdir/feature_importances_sorted.csv", FeatureImportances.from(featureImportances).sorted().toCsv()
         }
 
     }
 
-    static String fmt_fi(Object x) {
-        if (x==null) return ""
-        sprintf "%8.6f", x
-    }
-
-    List<FeatureImportance> getNamedImportances() {
-        if (featureImportances==null) return null
-
-        List<String> names = FeatureExtractor.createFactory().vectorHeader
-        List<FeatureImportance> namedImportances = new ArrayList<>()
-
-        for (int i=0; i!=names.size(); ++i) {
-            namedImportances.add new FeatureImportance( names[i] , featureImportances[i])
-        }
-     
-        return namedImportances
-    }
-
-    static class FeatureImportance {
-        String name
-        double importance
-
-        FeatureImportance(String name, double importance) {
-            this.name = name
-            this.importance = importance
-        }
-    }
 
 }
