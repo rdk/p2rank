@@ -36,7 +36,7 @@ class Futils {
 
     public static final int ZIP_BEST_COMPRESSION = 9
 
-    private static final int BUFFER_SIZE = 64 * 1024
+    private static final int BUFFER_SIZE = 128 * 1024
 
 
     private static final Set<String> COMPR_EXT = ["gz", "zstd", "zip", "bz2"].toSet()
@@ -307,10 +307,6 @@ class Futils {
         }
     }
 
-    static void compressToLzma(String fname, int compresLevel = LZMA2Options.PRESET_DEFAULT) {
-        ZstdCompressorOutputStream
-    }
-
     static void serializeToBzip2(String fname, Serializable object) {
         serializeTo(fname, object, getBzip2OutputStream(fname))
     }
@@ -334,9 +330,11 @@ class Futils {
      */
     static <T> T deserializeFromFile(String fname) {
         ObjectInputStream ois = new ObjectInputStream(inputStream(fname))
-        T res = (T) ois.readObject()
-        ois.close()
-        return res
+        try {
+            return (T) ois.readObject()
+        } finally {
+            ois.close()
+        }
     }
 
     static void writeGzip(String fname, Object text) {

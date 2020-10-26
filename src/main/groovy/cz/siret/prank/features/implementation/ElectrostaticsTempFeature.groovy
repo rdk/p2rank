@@ -46,7 +46,7 @@ class ElectrostaticsTempFeature extends SasFeatureCalculator implements Parametr
             }
 
             if (cube == null) {
-                log.error("Cube for ${protein.name} not found.!")
+                log.error("Cube for ${protein.name} not loaded")
             }
             protein.secondaryData.put(CUBE_ATTR, cube)
         } else {
@@ -57,23 +57,40 @@ class ElectrostaticsTempFeature extends SasFeatureCalculator implements Parametr
     GaussianCube loadCube(ProcessedItemContext context) {
         def pname = Futils.shortNameWo1CExt(context.item.proteinFile)
 
-        // electrostatics/delphi/3GNA/delphi-3GNA.cube.gz
-        def fname = "${pname}/delphi-${pname}.cube.gz"
+        GaussianCube cube = null
+
+        // try loading serialized version
+
+        def sfname = "${pname}/delphi-${pname}.cube.jser"
+        def scubeFile = Futils.findFileInDirs(sfname, params.electrostatics_dirs)
+        if (scubeFile) {
+            try {
+                cube = Futils.deserializeFromFile(scubeFile)
+            } catch(Exception e) {
+                log.error "Failed to deserialize cube from $scubeFile", e
+            }
+        }
+
+        if (cube) {
+            return cube
+        }
+
+        // try loading text version
+
+        def fname = "${pname}/delphi-${pname}.cube.gz" // e.g electrostatics/delphi/3GNA/delphi-3GNA.cube.gz
         def cubeFile = Futils.findFileInDirs(fname, params.electrostatics_dirs)
 
         if (cubeFile) {
-            GaussianCube cube =  DelphiCubeLoader.loadFile(cubeFile)
+            cube =  DelphiCubeLoader.loadFile(cubeFile)
 
-            if (cube!=null) {
+            if (cube) {
                 def serf = Futils.removeLastExtension(cubeFile)
                 Futils.serializeToFile("${serf}.jser", cube)
             }
 
             return cube
-        } else {
-            return null
         }
-
+        return null
     }
 
     /**
@@ -81,22 +98,22 @@ class ElectrostaticsTempFeature extends SasFeatureCalculator implements Parametr
      */
     static double valueForPoint(GaussianCube c, Atom p) {
 
-        double res = 0
+        double val = 0
 
-        if (!c.boundingBox.contains(p)) {
+        Box bb = c.boundingBox
+        if (!bb.contains(p)) {
             // log.debug "Point is out of bounds."
         } else {
-            Box bb = c.boundingBox
             Point dist = Struct.distPoint(p, bb.min)
 
             int ix = indexInCube(dist.x, bb.wx, c.sizeX)
             int iy = indexInCube(dist.y, bb.wy, c.sizeY)
             int iz = indexInCube(dist.z, bb.wz, c.sizeZ)
 
-            res = c.data[ix][iy][iz]
+            val = c.data[ix][iy][iz]
         }
 
-        return res
+        return val
     }
 
     /**
@@ -121,7 +138,7 @@ class ElectrostaticsTempFeature extends SasFeatureCalculator implements Parametr
         GaussianCube cube = (GaussianCube) context.protein.secondaryData.get(CUBE_ATTR)
 
         double val = 0
-        if (cube != null) {
+        if (cube) {
             val = valueForPoint(cube, sasPoint)
         }
 
