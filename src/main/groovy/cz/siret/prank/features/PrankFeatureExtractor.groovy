@@ -206,6 +206,9 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
         for (FeatureSetup.Feature feature : featureSetup.enabledFeatures) {
             feature.calculator.postProcessProtein(protein)
         }
+        if (params.clear_sec_caches) {
+            protein.secondaryData.clear() // clear caches immediately after feature extraction
+        }
     }
 
 //===========================================================================================================//

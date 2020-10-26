@@ -52,8 +52,6 @@ class ElectrostaticsTempFeature extends SasFeatureCalculator implements Parametr
         } else {
             log.info "Cube for protein $label already loaded"
         }
-
-
     }
 
     GaussianCube loadCube(ProcessedItemContext context) {
@@ -64,7 +62,15 @@ class ElectrostaticsTempFeature extends SasFeatureCalculator implements Parametr
         def cubeFile = Futils.findFileInDirs(fname, params.electrostatics_dirs)
 
         if (cubeFile) {
-            return DelphiCubeLoader.loadFile(cubeFile)
+            GaussianCube cube =  DelphiCubeLoader.loadFile(cubeFile)
+
+            if (cube!=null) {
+                def serf = Futils.removeLastExtension(fname)
+                serf += ".jser"
+                Futils.serializeToFile("${serf}.jser", cube)
+            }
+
+            return cube
         } else {
             return null
         }
