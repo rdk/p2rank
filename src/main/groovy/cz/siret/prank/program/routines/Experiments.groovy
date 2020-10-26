@@ -5,6 +5,7 @@ import cz.siret.prank.domain.loaders.DatasetCachedLoader
 import cz.siret.prank.domain.loaders.electrostatics.DelphiCubeLoader
 import cz.siret.prank.domain.loaders.electrostatics.GaussianCube
 import cz.siret.prank.program.Main
+import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.ListParam
 import cz.siret.prank.program.params.Params
 import cz.siret.prank.program.routines.results.EvalResults
@@ -52,6 +53,9 @@ class Experiments extends Routine {
     void prepareDatasets(Main main) {
 
         String trainSetArg =  cmdLineArgs.get('train', 't')
+        if (trainSetArg == null) {
+            throw new PrankException("Training dataset is not specified (-t/--train)")
+        }
         trainDataset = prepareDataset(trainSetArg)
 
         // TODO: enable executing 'prank ploop crossval'
@@ -86,8 +90,12 @@ class Experiments extends Routine {
     }
 
     Dataset prepareSingleDataset(String datasetArg) {
-        String file = Main.findDataset(datasetArg)
-        return DatasetCachedLoader.loadDataset(file)
+        try {
+            String file = Main.findDataset(datasetArg)
+            return DatasetCachedLoader.loadDataset(file)
+        } catch (Exception e) {
+            throw new PrankException("Failed to load dataset '${datasetArg}'", e)
+        }
     }
 
     @CompileStatic(value = TypeCheckingMode.SKIP)
