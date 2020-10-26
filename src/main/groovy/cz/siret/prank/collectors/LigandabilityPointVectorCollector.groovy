@@ -49,12 +49,22 @@ class LigandabilityPointVectorCollector extends VectorCollector implements Param
 
     @Override
     Result collectVectors(PredictionPair pair, ProcessedItemContext context) {
-        Result finalRes = new Result()
-
         FeatureExtractor proteinExtractorPrototype = extractorFactory.createPrototypeForProtein(pair.prediction.protein, context)
 
-        Atoms ligandAtoms = getTrainingRelevantLigandAtoms(pair) //pair.protein.allLigandAtoms.withKdTreeConditional()
+        Result result = null
+        try {
+            result = doCollectVectors(pair, proteinExtractorPrototype)
+        } finally {
+            proteinExtractorPrototype.finalizeProteinPrototype()
+        }
 
+        return result
+    }
+
+    private Result doCollectVectors(PredictionPair pair, FeatureExtractor proteinExtractorPrototype) {
+        Result finalRes = new Result()
+
+        Atoms ligandAtoms = getTrainingRelevantLigandAtoms(pair) //pair.protein.allLigandAtoms.withKdTreeConditional()
 
         if (ligandAtoms.empty) {
             log.error "no ligands! [{}]", pair.protein.name
@@ -82,8 +92,6 @@ class LigandabilityPointVectorCollector extends VectorCollector implements Param
                 }
             }
         }
-
-        proteinExtractorPrototype.finalizeProteinPrototype()
 
         return finalRes
     }
