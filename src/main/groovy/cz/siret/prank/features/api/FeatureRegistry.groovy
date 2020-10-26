@@ -10,6 +10,7 @@ import cz.siret.prank.features.implementation.BfactorFeature
 import cz.siret.prank.features.implementation.ContactResidue1Feature
 import cz.siret.prank.features.implementation.ContactResidue1PositionFeature
 import cz.siret.prank.features.implementation.ContactResiduesPositionFeature
+import cz.siret.prank.features.implementation.ElectrostaticsTempFeature
 import cz.siret.prank.features.implementation.ProteinMassFeature
 import cz.siret.prank.features.implementation.ProtrusionFeature
 import cz.siret.prank.features.implementation.ProtrusionHistogramFeature
@@ -101,6 +102,7 @@ class FeatureRegistry {
         register new ConservCloudSF()
 
         register new CsvFileFeature()
+        register new ElectrostaticsTempFeature()
 
         // Register new feature implementations here
 

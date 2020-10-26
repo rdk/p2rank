@@ -54,6 +54,11 @@ class Struct {
         return list1.collect{Atom a -> dist(a, list2)}.min()
     }
 
+    static Point distPoint(Atom a, Atom b) {
+        Point.of(Math.abs(a.x-b.x), Math.abs(a.y-b.y), Math.abs(a.z-b.z))
+    }
+
+
     static boolean areWithinDistance(Atom a, List<Atom> list, double dis) {
         dis = dis*dis
         for (Atom b : list) {

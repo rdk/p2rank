@@ -7,6 +7,7 @@ import org.biojava.nbio.structure.Element;
 import org.biojava.nbio.structure.Group;
 
 import javax.vecmath.Point3d;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -32,7 +33,7 @@ public final class Point implements Atom {
     }
 
     public Point copy() {
-        return new Point(coords[0],coords[1],coords[2]);
+        return new Point(Arrays.copyOf(coords, 3));
     }
 
     @Override
@@ -42,6 +43,14 @@ public final class Point implements Atom {
 
     public double dist(Atom a) {
         return PerfUtils.dist(coords, a.getCoords());
+    }
+
+    public static Point of(double x, double y, double z) {
+        return new Point(x, y, z);
+    }
+
+    public static Point copyOf(Atom a) {
+        return new Point(Arrays.copyOf(a.getCoords(), 3));
     }
 
 //===============================================================================================//
@@ -144,7 +153,7 @@ public final class Point implements Atom {
 
     @Override
     public Object clone() {
-        return null;
+        return copy();
     }
 
     @Override

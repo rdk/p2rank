@@ -1,6 +1,8 @@
 package cz.siret.prank.utils
 
+import com.google.common.collect.ImmutableSet
 import com.google.common.io.Files
+import cz.siret.prank.geom.Struct
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.apache.commons.compress.compressors.CompressorStreamFactory
@@ -35,6 +37,11 @@ class Futils {
     public static final int ZIP_BEST_COMPRESSION = 9
 
     private static final int BUFFER_SIZE = 4 * 1024 * 1024
+
+
+    private static final Set<String> COMPR_EXT = ["gz", "zstd", "zip", "bz2"].toSet()
+
+//===========================================================================================================//
 
     static String normalize(String path) {
         if (path==null) return null
@@ -89,7 +96,60 @@ class Futils {
         new File(path).name
     }
 
-    static String removeExtension(String path) {
+    static String removeCompressExt(String path) {
+        if (path==null) return null
+
+        if (isCompressed(path)) {
+            path = removeLastExtension(path)
+        }
+
+        return path
+    }
+
+    static boolean isCompressed(String fname) {
+        return COMPR_EXT.contains(lastExt(fname))
+    }
+
+    /**
+     * @return non-empty last file extension or null
+     */
+    static String lastExt(String fname) {
+        if (fname == null) {
+            return null
+        }
+
+        fname = shortName(fname)
+
+        int idx = fname.lastIndexOf('.')
+        if (idx >= 0) {
+            if (idx+1 == fname.length()) {
+                return null
+            }
+            return fname.substring(idx+1)
+        } else {
+            return null
+        }
+    }
+
+    /**
+     * removes one extension including one additional potential compression ext
+     * Other extensions / dots in filename ale preserved.
+     *
+     * "/dir/ABCD.pdb" -> "ABCD"
+     * "/dir/ABCD.pdb.gz" -> "ABCD"
+     * "/dir/ABCD.pdb.cube.gz" -> "ABCD.pdb"
+     *
+     * @param path
+     * @return
+     */
+    static String shortNameWo1CExt(String path) {
+        if (path==null) return null
+
+        return removeLastExtension(removeCompressExt(shortName(path)))
+    }
+
+    // TODO fix make path safe
+    static String removeLastExtension(String path) {
         path?.replaceFirst(~/\.[^\.]+$/, '')
     }
 
@@ -413,8 +473,29 @@ class Futils {
         delete(fileOrDirectory)
     }
 
+//===========================================================================================================//
+
     static List<String> readLines(String fname) {
         File file = new File(fname)
         return file.readLines()
     }
+
+    /**
+     * Looks for file in dirs
+     * @return null if not found
+     */
+    static String findFileInDirs(String fname, List<String> dirs) {
+        if (fname == null || dirs == null) {
+            return null
+        }
+        for (String dir : dirs) {
+            String ff = "$dir/$fname"
+            if (exists(ff)) {
+                return ff
+            }
+        }
+        return null
+    }
+
+
 }

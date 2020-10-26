@@ -85,7 +85,7 @@ class Dataset implements Parametrized {
     }
 
     String getLabel() {
-        Futils.removeExtension(name)
+        Futils.removeLastExtension(name)
     }
 
     int getSize() {

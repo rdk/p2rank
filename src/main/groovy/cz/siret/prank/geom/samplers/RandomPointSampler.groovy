@@ -45,7 +45,7 @@ class RandomPointSampler extends  PointSampler implements Parametrized {
 
         //log.debug "BOX " + box
 
-        Atoms surroundingProteinAtoms = protein.proteinAtoms.cutoutBox(box.enlarge(MIN_DISTFROM_PROTEIN))
+        Atoms surroundingProteinAtoms = protein.proteinAtoms.cutoutBox(box.withMargin(MIN_DISTFROM_PROTEIN))
         Atoms realSurfaceAtoms = protein.proteinAtoms.cutoutShell(pocket.surfaceAtoms, 1)
 
         int SAMPLING_TRIAL_LIMIT = count*400

@@ -238,7 +238,7 @@ class Params {
     String conservation_dir = null
 
     @RuntimeParam
-    String electrostatics_dir = null
+    List<String> electrostatics_dirs = null
 
 
     /**
