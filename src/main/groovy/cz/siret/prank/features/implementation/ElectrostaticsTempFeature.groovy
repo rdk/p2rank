@@ -120,7 +120,7 @@ class ElectrostaticsTempFeature extends SasFeatureCalculator implements Parametr
             val = valueForPoint(cube, sasPoint)
         }
 
-        return new double[val]
+        return [val] as double[]
     }
 
 }
