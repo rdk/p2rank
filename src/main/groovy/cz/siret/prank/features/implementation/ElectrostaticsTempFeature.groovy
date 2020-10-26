@@ -26,7 +26,7 @@ class ElectrostaticsTempFeature extends SasFeatureCalculator implements Parametr
 
     @Override
     String getName() {
-        return "electrostatics-temp"
+        return "electrostatics_temp"
     }
 
     @Override
