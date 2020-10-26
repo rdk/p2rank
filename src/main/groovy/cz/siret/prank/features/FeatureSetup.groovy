@@ -46,9 +46,9 @@ class FeatureSetup {
         for (Feature feat : enabledFeatures) {
             List<String> header = feat.calculator.header
             if (header.size() == 1) {
-                jointHeader.add(feat.calculator.name)
+                jointHeader.add(feat.name)
             } else {
-                jointHeader.addAll(header.collect { feat.calculator.name + '.' + it  }) // prefix with "feat_name."
+                jointHeader.addAll(header.collect { feat.name + '.' + it  }) // prefix with "feat_name."
             }
 
             feat.startIndex = start
@@ -64,6 +64,10 @@ class FeatureSetup {
 
         Feature(FeatureCalculator calculator) {
             this.calculator = calculator
+        }
+
+        String getName() {
+            return calculator.name
         }
     }
 

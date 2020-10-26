@@ -40,6 +40,11 @@ class DelphiCubeLoader {
 
         try {
             List<String> header = loadHeader(reader)
+
+            if (header.size() != HEADER_SIZE) {
+                throw new PrankException("Cube file header is too short.")
+            }
+
             GaussianCube cube = createFromHeader(header)
             cube.data = loadData(reader, cube.sizeX, cube.sizeY, cube.sizeZ)
             return cube
@@ -90,7 +95,7 @@ class DelphiCubeLoader {
         for (int i=0; i!=HEADER_SIZE; i++) {
             res.add(reader.readLine())
         }
-        return res
+        return res.findAll {it != null }
     }
 
     private float[][][] loadData(Reader reader, int nx, int ny, int nz) {

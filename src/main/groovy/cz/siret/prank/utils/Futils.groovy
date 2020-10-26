@@ -36,7 +36,7 @@ class Futils {
 
     public static final int ZIP_BEST_COMPRESSION = 9
 
-    private static final int BUFFER_SIZE = 4 * 1024 * 1024
+    private static final int BUFFER_SIZE = 64 * 1024
 
 
     private static final Set<String> COMPR_EXT = ["gz", "zstd", "zip", "bz2"].toSet()

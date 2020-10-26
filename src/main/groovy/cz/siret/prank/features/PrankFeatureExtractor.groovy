@@ -204,7 +204,11 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
     void finalizeProteinPrototype() {
         // finalize features
         for (FeatureSetup.Feature feature : featureSetup.enabledFeatures) {
-            feature.calculator.postProcessProtein(protein)
+            try {
+                feature.calculator.postProcessProtein(protein)
+            } catch (Exception e) {
+                log.error("Failed to finalize feature ${feature.name}", e)
+            }
         }
         if (params.clear_sec_caches) {
             protein.secondaryData.clear() // clear caches immediately after feature extraction
