@@ -65,8 +65,7 @@ class ElectrostaticsTempFeature extends SasFeatureCalculator implements Parametr
             GaussianCube cube =  DelphiCubeLoader.loadFile(cubeFile)
 
             if (cube!=null) {
-                def serf = Futils.removeLastExtension(fname)
-                serf += ".jser"
+                def serf = Futils.removeLastExtension(cubeFile)
                 Futils.serializeToFile("${serf}.jser", cube)
             }
 
