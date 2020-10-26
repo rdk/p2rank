@@ -1,4 +1,4 @@
-package cz.siret.prank.program.routines
+package cz.siret.prank.program.routines.predict
 
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.domain.labeling.BinaryLabeling
@@ -9,6 +9,7 @@ import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.rendering.OldPymolRenderer
+import cz.siret.prank.program.routines.Routine
 import cz.siret.prank.program.routines.results.PredictResults
 import cz.siret.prank.prediction.pockets.rescorers.PocketRescorer
 import cz.siret.prank.prediction.pockets.rescorers.ModelBasedRescorer

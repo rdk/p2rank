@@ -1,8 +1,8 @@
-package cz.siret.prank.program.routines
+package cz.siret.prank.program.routines.traineval
 
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.program.ml.Model
-import cz.siret.prank.program.params.Params
+import cz.siret.prank.program.routines.Routine
 import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic

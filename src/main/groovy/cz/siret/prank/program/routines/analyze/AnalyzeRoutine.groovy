@@ -1,27 +1,20 @@
-package cz.siret.prank.program.routines
+package cz.siret.prank.program.routines.analyze
 
 import com.google.common.collect.ImmutableMap
-import cz.siret.prank.domain.AA
-import cz.siret.prank.domain.Dataset
-import cz.siret.prank.domain.Residue
-import cz.siret.prank.domain.labeling.LabeledResidue
-import cz.siret.prank.domain.labeling.ResidueLabeler
-import cz.siret.prank.domain.labeling.ResidueLabeling
+import cz.siret.prank.domain.*
+import cz.siret.prank.domain.labeling.*
 import cz.siret.prank.domain.loaders.DatasetCachedLoader
 import cz.siret.prank.domain.loaders.LoaderParams
-import cz.siret.prank.domain.Protein
-import cz.siret.prank.domain.ResidueChain
-import cz.siret.prank.domain.labeling.BinaryLabelings
-import cz.siret.prank.domain.labeling.BinaryLabeling
-import cz.siret.prank.domain.labeling.SprintLabelingLoader
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.program.Main
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.rendering.PymolRenderer
 import cz.siret.prank.program.rendering.RenderingModel
+import cz.siret.prank.program.routines.Routine
+import cz.siret.prank.utils.BinCounter
 import cz.siret.prank.utils.CmdLineArgs
 import cz.siret.prank.utils.Futils
-import cz.siret.prank.utils.BinCounter
+import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
 import static cz.siret.prank.geom.SecondaryStructureUtils.assignSecondaryStructure
@@ -29,9 +22,11 @@ import static cz.siret.prank.utils.Formatter.format
 import static cz.siret.prank.utils.Futils.writeFile
 
 /**
- * Various tools for analyzing datasets
+ * Various tools for analyzing datasets.
+ * Routine with sub-commands.
  */
 @Slf4j
+@CompileStatic
 class AnalyzeRoutine extends Routine {
 
     String subCommand
@@ -44,7 +39,7 @@ class AnalyzeRoutine extends Routine {
 
         subCommand = args.unnamedArgs[0]
         if (!commandRegister.containsKey(subCommand)) {
-            write "Invalid analyze command '$subCommand'! Available commands: "+commandRegister.keySet()
+            write "Invalid analyze sub-command '$subCommand'! Available commands: "+commandRegister.keySet()
             throw new PrankException("Invalid command.")
         }
 
@@ -67,10 +62,10 @@ class AnalyzeRoutine extends Routine {
     }
     
  //===========================================================================================================//
- // Commands
+ // Sub-Commands
  //===========================================================================================================//
 
-    Map<String, Closure> commandRegister = ImmutableMap.copyOf([
+    static final Map<String, Closure> commandRegister = ImmutableMap.copyOf([
         "binding-residues" : this.&cmdBindingResidues,
         "labeled-residues" : this.&cmdLabeledResidues,
         "aa-propensities" : this.&cmdAaPropensities,

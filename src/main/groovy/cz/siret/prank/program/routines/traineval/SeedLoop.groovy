@@ -1,6 +1,8 @@
-package cz.siret.prank.program.routines
+package cz.siret.prank.program.routines.traineval
 
 import cz.siret.prank.program.routines.results.EvalResults
+import cz.siret.prank.program.routines.traineval.CrossValidation
+import cz.siret.prank.program.routines.traineval.EvalRoutine
 import cz.siret.prank.utils.Formatter
 import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic

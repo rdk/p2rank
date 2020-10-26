@@ -1,4 +1,4 @@
-package cz.siret.prank.program.routines
+package cz.siret.prank.program.routines.predict
 
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.domain.Prediction
@@ -9,6 +9,7 @@ import cz.siret.prank.program.ml.Model
 import cz.siret.prank.prediction.pockets.rescorers.PocketRescorer
 import cz.siret.prank.prediction.pockets.rescorers.ModelBasedRescorer
 import cz.siret.prank.prediction.pockets.results.RescoringSummary
+import cz.siret.prank.program.routines.Routine
 import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
@@ -43,8 +44,8 @@ class RescoreRoutine extends Routine {
 
         write "rescoring pockets on proteins from dataset [$dataset.name]"
 
-        if (!(dataset.header.contains(COLUMN_PROTEIN) && dataset.header.contains(COLUMN_PREDICTION))) {
-            throw new PrankException("Dataset must contain '${COLUMN_PROTEIN}' and '${COLUMN_PREDICTION}' columns!")
+        if (!(dataset.header.contains(Dataset.COLUMN_PROTEIN) && dataset.header.contains(Dataset.COLUMN_PREDICTION))) {
+            throw new PrankException("Dataset must contain '${Dataset.COLUMN_PROTEIN}' and '${Dataset.COLUMN_PREDICTION}' columns!")
         }
 
         log.info "outdir: $outdir"

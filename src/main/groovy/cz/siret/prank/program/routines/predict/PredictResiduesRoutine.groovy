@@ -1,4 +1,4 @@
-package cz.siret.prank.program.routines
+package cz.siret.prank.program.routines.predict
 
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.domain.PredictionPair
@@ -13,6 +13,7 @@ import cz.siret.prank.prediction.pockets.results.PredictionSummary
 import cz.siret.prank.prediction.transformation.ScoreTransformer
 import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.rendering.OldPymolRenderer
+import cz.siret.prank.program.routines.Routine
 import cz.siret.prank.program.routines.results.PredictResults
 import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
@@ -27,7 +28,7 @@ import static cz.siret.prank.utils.Futils.writeFile
  *
  * Backs prank commands 'predict' and 'eval-predict' when param -predict_residues = true
  *
- * TODO work in progress
+ * TODO work in progress - not used yet
  */
 @Slf4j
 @CompileStatic

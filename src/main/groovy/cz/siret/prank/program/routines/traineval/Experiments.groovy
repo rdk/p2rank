@@ -1,4 +1,4 @@
-package cz.siret.prank.program.routines
+package cz.siret.prank.program.routines.traineval
 
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.domain.loaders.DatasetCachedLoader
@@ -8,6 +8,9 @@ import cz.siret.prank.program.Main
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.ListParam
 import cz.siret.prank.program.params.Params
+import cz.siret.prank.program.routines.optimize.GridOptimizer
+import cz.siret.prank.program.routines.optimize.HyperOptimizer
+import cz.siret.prank.program.routines.Routine
 import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.utils.CmdLineArgs
 import cz.siret.prank.utils.Futils

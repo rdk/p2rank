@@ -16,7 +16,7 @@ import static cz.siret.prank.utils.Futils.readResource
  * Sequence duplet propensities for closest residue
  *
  * For propensity calculation
- * @see cz.siret.prank.program.routines.AnalyzeRoutine#cmdAaSurfSeqTriplets()
+ * @see cz.siret.prank.program.routines.analyze.AnalyzeRoutine#cmdAaSurfSeqTriplets()
  */
 @Slf4j
 @CompileStatic

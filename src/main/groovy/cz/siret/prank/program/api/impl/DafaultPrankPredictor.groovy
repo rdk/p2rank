@@ -7,7 +7,7 @@ import cz.siret.prank.program.Main
 import cz.siret.prank.program.api.PrankPredictor
 import cz.siret.prank.program.params.ConfigLoader
 import cz.siret.prank.program.params.Params
-import cz.siret.prank.program.routines.PredictRoutine
+import cz.siret.prank.program.routines.predict.PredictRoutine
 import groovy.transform.CompileStatic
 
 import java.nio.file.Path

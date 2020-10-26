@@ -6,8 +6,15 @@ import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.params.ConfigLoader
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.params.Params
-import cz.siret.prank.program.routines.*
+import cz.siret.prank.program.routines.analyze.AnalyzeRoutine
+import cz.siret.prank.program.routines.predict.PredictRoutine
+import cz.siret.prank.program.routines.predict.RescoreRoutine
 import cz.siret.prank.program.routines.results.EvalResults
+import cz.siret.prank.program.routines.traineval.CrossValidation
+import cz.siret.prank.program.routines.traineval.EvalPocketsRoutine
+import cz.siret.prank.program.routines.traineval.EvalRoutine
+import cz.siret.prank.program.routines.traineval.Experiments
+import cz.siret.prank.program.routines.traineval.SeedLoop
 import cz.siret.prank.utils.*
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.StringUtils
@@ -88,6 +95,10 @@ class Main implements Parametrized, Writable {
         String mod = args.get('m')
         if (mod!=null) {
             params.model = mod
+        }
+
+        if (params.predict_residues && !params.ligand_derived_point_labeling) { // TODO move
+            LoaderParams.ignoreLigandsSwitch = true
         }
 
         log.debug "CMD LINE ARGS: " + args
@@ -341,9 +352,6 @@ class Main implements Parametrized, Writable {
 
         initParams(params, "$installDir/config/default.groovy")
 
-        if (params.predict_residues && !params.ligand_derived_point_labeling) { // TODO move
-            LoaderParams.ignoreLigandsSwitch = true
-        }
 
         switch (command) {
             case 'predict':       runPredict()

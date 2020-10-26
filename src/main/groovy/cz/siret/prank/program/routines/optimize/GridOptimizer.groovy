@@ -1,4 +1,4 @@
-package cz.siret.prank.program.routines
+package cz.siret.prank.program.routines.optimize
 
 import cz.siret.prank.program.params.ListParam
 import cz.siret.prank.program.routines.results.EvalResults
@@ -71,7 +71,7 @@ class GridOptimizer extends ParamLooper {
         tablesDir = "$outdir/tables"
         tables2D = [:]
         step.results.each {
-            make2DTable(it.key)
+            make2DTable(it.key as String)
         }
     }
 

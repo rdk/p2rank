@@ -1,6 +1,7 @@
-package cz.siret.prank.program.routines
+package cz.siret.prank.program.routines.optimize
 
 import cz.siret.prank.program.params.Params
+import cz.siret.prank.program.routines.Routine
 import cz.siret.prank.program.routines.results.EvalResults
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic

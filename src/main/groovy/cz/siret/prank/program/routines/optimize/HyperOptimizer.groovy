@@ -1,4 +1,4 @@
-package cz.siret.prank.program.routines
+package cz.siret.prank.program.routines.optimize
 
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.ListParam
@@ -11,8 +11,8 @@ import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.utils.Futils
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
-import cz.siret.prank.program.routines.ParamLooper.ParamVal
-import cz.siret.prank.program.routines.ParamLooper.Step
+import cz.siret.prank.program.routines.optimize.ParamLooper.ParamVal
+import cz.siret.prank.program.routines.optimize.ParamLooper.Step
 import groovy.util.logging.Slf4j
 
 import java.nio.file.Path
@@ -85,7 +85,7 @@ class HyperOptimizer extends ParamLooper {
                         return res
                     }
                     if (!params.selected_stats.contains(HOPT_OBJECTIVE)) {
-                        params.selected_stats.add(HOPT_OBJECTIVE)
+                        params.selected_stats.add(HOPT_OBJECTIVE as String)
                     }
                     EvalResults res = processStep(step, "step.$stepNumber", calcObjectiveWrapper)
 
@@ -119,7 +119,8 @@ class HyperOptimizer extends ParamLooper {
     }
 
     private HOptimizer createOptimizer(List<HVariable> variables) {
-        // TODO: other optimizers
+
+        // possible create other optimizers than Spearmint here
 
         Path spearmintDir = Paths.get( Futils.absSafePath(params.hopt_spearmint_dir) )
         Path expeimentDir = Paths.get( Futils.absSafePath("$outdir/hopt") )

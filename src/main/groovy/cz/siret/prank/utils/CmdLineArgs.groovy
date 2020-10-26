@@ -30,7 +30,7 @@ class CmdLineArgs {
     /** arguments with -(dash) prefix but no followup value */
     List<String> switches = new ArrayList<>()
 
-    /** arguments without -(dash) that are not values of any dashed argument */
+    /** arguments without -(dash) prefix that are not values of any dashed argument */
     List<String> unnamedArgs = new ArrayList<>()
 
 

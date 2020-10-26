@@ -73,7 +73,7 @@ class ElectrostaticsTempSasFeature extends SasFeatureCalculator implements Param
      */
     static int indexInCube(double posOnEdge, double edgeWidth, int edgeSize) {
         double rel = posOnEdge / edgeWidth
-        int ix = (int)(rel * edgeSize)        // does floor rounding - this is what we want here
+        int ix = (int)Math.floor(rel * edgeSize)        // does floor rounding - this is what we want here
         ix = Math.min(ix, edgeSize-1)
         return ix
     }
@@ -158,7 +158,7 @@ class ElectrostaticsTempSasFeature extends SasFeatureCalculator implements Param
 
                 if (cube) {
                     def serf = Futils.removeLastExtension(cubeFile)
-                    Futils.serializeToFile("${serf}.jser", cube)
+                    Futils.serializeToZstd("${serf}.jser.zstd", cube, 2)
                 }
 
                 return cube

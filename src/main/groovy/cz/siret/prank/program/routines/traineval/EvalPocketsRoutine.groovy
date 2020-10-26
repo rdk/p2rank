@@ -1,4 +1,4 @@
-package cz.siret.prank.program.routines
+package cz.siret.prank.program.routines.traineval
 
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.domain.Pocket
