@@ -79,7 +79,7 @@ class ElectrostaticsTempFeature extends SasFeatureCalculator implements Parametr
         double res = 0
 
         if (!c.boundingBox.contains(p)) {
-            log.warn "Point $p is out of bounds."
+            // log.debug "Point is out of bounds."
         } else {
             Box bb = c.boundingBox
             Point dist = Struct.distPoint(p, bb.min)
