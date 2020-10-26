@@ -25,8 +25,8 @@ import static cz.siret.prank.utils.Futils.writeFile
  * Various tools for analyzing datasets.
  * Routine with sub-commands.
  */
+//@CompileStatic
 @Slf4j
-@CompileStatic
 class AnalyzeRoutine extends Routine {
 
     String subCommand
