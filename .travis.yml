@@ -1,6 +1,8 @@
 language: groovy
 
-dist: trusty
+arch: amd64    # routes to a full VM
+os: linux            
+dist: focal          
 
 env:
   global:
