@@ -4,7 +4,7 @@ arch: amd64    # routes to a full VM
 os: 
   - linux
   - osx
-dist: xenial  
+dist: trusty  
 
 jobs:
   include:
