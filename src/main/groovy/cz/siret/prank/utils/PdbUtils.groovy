@@ -19,7 +19,7 @@ import static cz.siret.prank.geom.Struct.getAuthorId
 @CompileStatic
 class PdbUtils {
 
-    private static final int BUFFER_SIZE = 5*1024*1024;
+    private static final int BUFFER_SIZE = 4*1024*1024;
 
     static final FileParsingParameters PARSING_PARAMS = new FileParsingParameters()
     static {
@@ -50,26 +50,21 @@ class PdbUtils {
 
         log.info "loading file [$file]"
 
-        if (file==null) throw new IllegalArgumentException("file name not provided")
+        if (file==null) {
+            throw new IllegalArgumentException("file name not provided")
+        }
 
+        InputStream inputs = Futils.bufferedInputStream(file)
         try {
-            Structure struct
-            if (file.endsWith(".pdb")) {
-                // load with buffer
-                PDBFileParser pdbpars = new PDBFileParser();
-                pdbpars.setFileParsingParameters(parsingParams);
-                InputStream inStream = new BufferedInputStream(new FileInputStream(file), BUFFER_SIZE)
-                struct = pdbpars.parsePDBFile(inStream)
-            } else {
-                // for .gz files
-                PDBFileReader pdbReader = new PDBFileReader()
-                pdbReader.setFileParsingParameters(parsingParams)
-                struct = pdbReader.getStructure(file)
-            }
-            return struct
+            PDBFileParser pdbpars = new PDBFileParser()
+            pdbpars.setFileParsingParameters(parsingParams)
+            return pdbpars.parsePDBFile(inputs)
         } catch (Exception e) {
             throw new PrankException("Failed to load structure from '$file'", e)
+        } finally {
+            inputs.close()
         }
+    
     }
 
     static Structure loadFromString(String pdbText)  {

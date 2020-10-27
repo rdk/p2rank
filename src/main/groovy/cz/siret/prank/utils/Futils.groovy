@@ -106,6 +106,9 @@ class Futils {
         return path
     }
 
+    /**
+     * @return true is file has extension that P2Rank can work with ("gz","zstd",...)
+     */
     static boolean isCompressed(String fname) {
         return COMPR_EXT.contains(lastExt(fname))
     }

@@ -78,7 +78,7 @@ class WekaUtils implements Writable {
     }
 
     /**
-     * tries to make sure that classifer uses only one thread for each classification (we then parallelize dataset)
+     * tries to make sure that classifier uses only one thread for each classification (we then parallelize dataset)
      * @param classifier
      */
     @CompileDynamic
@@ -115,7 +115,7 @@ class WekaUtils implements Writable {
     // == data ===
 
     static Instances loadData(String fileName) {
-        ConverterUtils.DataSource source = new ConverterUtils.DataSource(fileName)
+        ConverterUtils.DataSource source = new ConverterUtils.DataSource(Futils.bufferedInputStream(fileName))
         Instances data = source.getDataSet();
 
         // setting class attribute if the data format does not provide this information
@@ -125,22 +125,15 @@ class WekaUtils implements Writable {
         return data
     }
 
-    static void saveDataArff(String fileName, boolean compressed, Instances data) {
-        File arff = new File(fileName)
 
-        if (arff.exists())
-            arff.delete()
-
-
-        ArffSaver saver = new ArffSaver();
-        saver.setCompressOutput(compressed)
-
-        saver.setDestination(new BufferedOutputStream(new FileOutputStream(arff), BUFFER_SIZE))
-        //saver.setFile(arff);
-
-        saver.setInstances(data);
-        saver.writeBatch();
+    static void saveDataArff(OutputStream outs, Instances data) {
+        ArffSaver saver = new ArffSaver()
+        saver.setCompressOutput(false)
+        saver.setDestination(outs)
+        saver.setInstances(data)
+        saver.writeBatch() // closes outs
     }
+
 
 
     static Instances joinInstances(List<Instances> instList) {
