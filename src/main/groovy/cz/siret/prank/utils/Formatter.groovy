@@ -63,4 +63,8 @@ class Formatter {
         ATimer.formatTime(ms)
     }
 
+    static String formatSeconds(long ms) {
+        sprintf "%8.3f", ((double)ms) / 1000d
+    }
+
 }

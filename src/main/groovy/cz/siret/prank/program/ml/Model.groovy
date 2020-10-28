@@ -1,15 +1,16 @@
 package cz.siret.prank.program.ml
 
 import cz.siret.prank.fforest.FasterForest
+import cz.siret.prank.fforest2.FasterForest2
 import cz.siret.prank.program.params.Params
 import cz.siret.prank.utils.ConsoleWriter
 import cz.siret.prank.utils.Cutils
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.WekaUtils
-import cz.siret.prank.utils.Writable
 import groovy.transform.CompileStatic
 import hr.irb.fastRandomForest.FastRandomForest
 import weka.classifiers.Classifier
+import weka.classifiers.trees.RandomForest
 
 import javax.annotation.Nullable
 
@@ -63,6 +64,48 @@ class Model {
         return new Model(label, classifier)
     }
 
+
+    Info getInfo() {
+
+        Info info = new Info()
+
+        if (classifier instanceof RandomForest) {
+            RandomForest rf = (RandomForest)classifier
+            info.isForest    = true
+            info.numTrees    = rf.numIterations
+            info.numFeatures = rf.@m_data?.enumerateAttributes()?.toList()?.size()
+            info.maxDepth    = rf.maxDepth
+        } else if (classifier instanceof FastRandomForest) {
+            FastRandomForest rf = (FastRandomForest)classifier
+            info.isForest    = true
+            info.numTrees    = rf.numTrees
+            info.numFeatures = rf.@m_Info?.enumerateAttributes()?.toList()?.size()
+            info.maxDepth    = rf.maxDepth
+        } else if (classifier instanceof FasterForest) {
+            FasterForest rf = (FasterForest)classifier
+            info.isForest    = true
+            info.numTrees    = rf.numTrees
+            info.numFeatures = rf.@m_Info?.enumerateAttributes()?.toList()?.size()
+            info.maxDepth    = rf.maxDepth
+        } else if (classifier instanceof FasterForest2) {
+            FasterForest2 rf = (FasterForest2)classifier
+            info.isForest    = true
+            info.numTrees    = rf.numTrees
+            info.numFeatures = rf.@m_Info?.enumerateAttributes()?.toList()?.size()
+            info.maxDepth    = rf.maxDepth
+        } else {
+            // nothing
+        }
+
+        return info
+    }
+
+    static class Info {
+        boolean isForest = false
+        Integer numTrees    = null
+        Integer numFeatures = null
+        Integer maxDepth    = null
+    }
 
 
 }

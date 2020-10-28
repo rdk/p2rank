@@ -12,7 +12,7 @@ import static cz.siret.prank.utils.ATimer.startTimer
 @CompileStatic
 class Bench {
 
-    static long timeit(String label, Closure c, boolean doLog) {
+    static long doTmeit(String label, Closure c, boolean doLog) {
         def timer = startTimer()
         c.call()
         long time = timer.time
@@ -20,14 +20,23 @@ class Bench {
         return time
     }
 
+
+
+    static long timeitLog(String label, Closure c) {
+        return doTmeit(label, c, true)
+    }
     static long timeit(String label, Closure c) {
-        return timeit(label, c, true)
+        return doTmeit(label, c, false)
     }
 
-    static long timeit(String label, int reps, Closure c) {
+    static long timeit(Closure c) {
+        return doTmeit(null, c, false)
+    }
+
+    static long timeitLog(String label, int reps, Closure c) {
         def timer = startTimer()
         for (int i=0; i!=reps; ++i) {
-            timeit("    " + label + " (run ${i+1})", c, reps>1)
+            doTmeit("    " + label + " (run ${i+1})", c, reps>1)
         }
         long sum = timer.time
         long avg = (long)(sum/reps)

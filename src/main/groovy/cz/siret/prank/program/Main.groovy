@@ -6,7 +6,9 @@ import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.params.ConfigLoader
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.params.Params
+import cz.siret.prank.program.routines.Routine
 import cz.siret.prank.program.routines.analyze.AnalyzeRoutine
+import cz.siret.prank.program.routines.analyze.PrintRoutine
 import cz.siret.prank.program.routines.predict.PredictRoutine
 import cz.siret.prank.program.routines.predict.RescoreRoutine
 import cz.siret.prank.program.routines.results.EvalResults
@@ -321,6 +323,10 @@ class Main implements Parametrized, Writable {
         new AnalyzeRoutine(args, this).execute()
     }
 
+    private runPrint() {
+        new PrintRoutine(args, this).execute()
+    }
+
     void runHelp() {
         println Futils.readResource('/help.txt')
     }
@@ -367,6 +373,8 @@ class Main implements Parametrized, Writable {
             case 'eval':          runEval()
                 break
             case 'analyze':       runAnalyze()
+                break
+            case 'print':         runPrint()
                 break
             case 'run':           runExperiment(args.unnamedArgs[0])
                 break
