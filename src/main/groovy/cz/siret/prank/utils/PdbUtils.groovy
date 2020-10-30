@@ -53,7 +53,7 @@ class PdbUtils {
             throw new IllegalArgumentException("file name not provided")
         }
 
-        InputStream inputs = Futils.bufferedInputStream(file)
+        InputStream inputs = Futils.inputStream(file)
         try {
             PDBFileParser pdbpars = new PDBFileParser()
             pdbpars.setFileParsingParameters(parsingParams)

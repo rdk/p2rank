@@ -39,10 +39,12 @@ class DelphiCubeLoaderTest {
 
     @Test
     void testSerializeDeserialize() {
+        Futils.mkdirs"$dir/tmp"
         def fname = "$dir/tmp/delphi-2src.jser"
         Futils.serializeToFile(fname, cube)
         cube = Futils.deserializeFromFile(fname)
         test2srcCube(cube)
+        Futils.delete "$dir/tmp"
     }
 
 }

@@ -181,18 +181,15 @@ class Futils {
     }
 
     /**
+     * Returns buffered decompressing file stream.
      * Opens and decompresses file (if it has gzip extension)
      */
     static InputStream inputStream(String fname) {
         return inputStream(new File(fname))
     }
 
-    static BufferedInputStream bufferedInputStream(File file) {
+    private static BufferedInputStream bufferedInputStream(File file) {
         return new BufferedInputStream(new FileInputStream(file), BUFFER_SIZE)
-    }
-
-    static BufferedInputStream bufferedInputStream(String fname) {
-        return new BufferedInputStream(new FileInputStream(fname), BUFFER_SIZE)
     }
 
     static OutputStream outputStream(String fname) {
@@ -203,14 +200,9 @@ class Futils {
         return new BufferedOutputStream(outputStream(fname), BUFFER_SIZE)
     }
 
-
-
-
-
     static String readFile(String fname) {
         new File(fname).text
     }
-
 
     /**
      * loads properties from classpath

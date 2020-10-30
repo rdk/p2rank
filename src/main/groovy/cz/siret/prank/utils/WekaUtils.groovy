@@ -125,7 +125,7 @@ class WekaUtils implements Writable {
     // == data ===
 
     static Instances loadData(String fileName) {
-        ConverterUtils.DataSource source = new ConverterUtils.DataSource(Futils.bufferedInputStream(fileName))
+        ConverterUtils.DataSource source = new ConverterUtils.DataSource(Futils.inputStream(fileName))
         Instances data = source.getDataSet();
 
         // setting class attribute if the data format does not provide this information

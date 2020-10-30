@@ -331,13 +331,13 @@ class Protein implements Parametrized {
         return fileName
     }
 
-    public static Protein load(String pdbFileName, LoaderParams loaderParams = new LoaderParams()) {
+    static Protein load(String pdbFileName, LoaderParams loaderParams = new LoaderParams()) {
         Protein res = new Protein()
         res.loadFile(pdbFileName, loaderParams, null)
         return res
     }
 
-    public static Protein loadReduced(String pdbFileName, LoaderParams loaderParams, List<String> onlyChains) {
+    static Protein loadReduced(String pdbFileName, LoaderParams loaderParams, List<String> onlyChains) {
         Protein res = new Protein()
         res.loadFile(pdbFileName, loaderParams, onlyChains)
         return res
