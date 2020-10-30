@@ -6,6 +6,7 @@ import cz.siret.prank.domain.loaders.electrostatics.DelphiCubeLoader
 import cz.siret.prank.domain.loaders.electrostatics.GaussianCube
 import cz.siret.prank.program.Main
 import cz.siret.prank.program.PrankException
+import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.params.ListParam
 import cz.siret.prank.program.params.Params
 import cz.siret.prank.program.routines.optimize.GridOptimizer
@@ -20,6 +21,7 @@ import groovy.transform.CompileStatic
 import groovy.transform.TypeCheckingMode
 import groovy.util.logging.Slf4j
 
+import static cz.siret.prank.utils.Bench.timeit
 import static cz.siret.prank.utils.Bench.timeitLog
 import static cz.siret.prank.utils.Futils.*
 import static cz.siret.prank.utils.ThreadUtils.async
@@ -42,12 +44,14 @@ class Experiments extends Routine {
 
     String label
 
+    Main main
     CmdLineArgs cmdLineArgs
 
     public Experiments(CmdLineArgs args, Main main, String command) {
         super(null)
         this.cmdLineArgs = args
         this.command = command
+        this.main = main
 
         if (command in ['traineval', 'ploop', 'hopt']) {
             prepareDatasets(main)
@@ -281,7 +285,17 @@ class Experiments extends Routine {
             timeitLog("loading from zstd$l", n, { cube = deserializeFromFile(fname+".jser.${l}.zstd")   })
         }
     }
-    
+
+    def bench_model_loading() {
+        String modelf = main.findModel()
+
+        def model = null
+        timeitLog "loading model", params.loop, {
+            model = Model.loadFromFile(modelf)
+        }
+    }
+
+
 }
 
 

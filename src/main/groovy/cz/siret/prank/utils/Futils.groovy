@@ -39,7 +39,7 @@ class Futils {
     private static final int BUFFER_SIZE = 128 * 1024
 
 
-    private static final Set<String> COMPR_EXT = ["gz", "zstd", "zip", "bz2"].toSet()
+    private static final Set<String> COMPR_EXT = ["gz", "zst", "zip", "bz2"].toSet()
 
 //===========================================================================================================//
 
@@ -177,7 +177,7 @@ class Futils {
             is = new CBZip2InputStream(is)
         } else if (fname.endsWith(".lzma")) {
             is = new LZMAInputStream(is)
-        } else if (fname.endsWith(".zstd")) {
+        } else if (fname.endsWith(".zst") || fname.endsWith(".zstd")) {
             is = new ZstdCompressorInputStream(is)
         }
 
@@ -289,15 +289,15 @@ class Futils {
     }
 
 
-    static void serializeToGzip(String fname, Serializable object, int level = Deflater.DEFAULT_COMPRESSION) {
+    static void serializeToGzip(String fname, Object object, int level = Deflater.DEFAULT_COMPRESSION) {
         serializeTo(fname, object, getGzipOutputStream(fname, level))
     }
 
-    static void serializeToZstd(String fname, Serializable object, int level = 6) {
+    static void serializeToZstd(String fname, Object object, int level = 6) {
         serializeTo(fname, object, getZstdOutputStream(fname, level))
     }
 
-    static void serializeToLzma(String fname, Serializable object, int level = LZMA2Options.PRESET_DEFAULT) {
+    static void serializeToLzma(String fname, Object object, int level = LZMA2Options.PRESET_DEFAULT) {
         def lzmas = getLzmaOutputStream(fname, level)
         def oos = new ObjectOutputStream(lzmas)
         try {
@@ -310,15 +310,15 @@ class Futils {
         }
     }
 
-    static void serializeToBzip2(String fname, Serializable object) {
+    static void serializeToBzip2(String fname, Object object) {
         serializeTo(fname, object, getBzip2OutputStream(fname))
     }
 
-    static void serializeToFile(String fname, Serializable object) {
+    static void serializeToFile(String fname, Object object) {
         serializeTo(fname, object, bufferedOutputStream(fname))
     }
 
-    private static void serializeTo(String fname, Serializable object, OutputStream stream) {
+    private static void serializeTo(String fname, Object object, OutputStream stream) {
         def oos = new ObjectOutputStream(stream)
         try {
             oos.writeObject(object)

@@ -4,7 +4,7 @@ apply plugin: 'idea'
 
 
 group = 'cz.siret'
-version = '2.2-dev.5'
+version = '2.2-dev.6'
 
 description = 'Ligand binding site prediction based on machine learning.'
 
@@ -98,7 +98,7 @@ test {
     // testLogging.showStandardStreams = true
 
     // set heap size for the test JVM(s)
-    maxHeapSize = "4g"
+    maxHeapSize = "2g"
     
     def distroDir = "$project.projectDir/distro"
     inputs.dir "$distroDir/test_data"

@@ -259,7 +259,7 @@ import cz.siret.prank.program.params.Params
     pred_clustering_dist = 5
 
     /**
-     * cuttoff distance of protein surface atoms considered as part of the pocket
+     * cutoff distance of protein surface atoms considered as part of the pocket
      */
     pred_protein_surface_cutoff = 3.5
 

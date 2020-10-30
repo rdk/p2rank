@@ -36,7 +36,7 @@ Examples:
 (Valid only for numerical parameters)
 
 Examples:
-~~~
+~~~sh
 ./prank.sh ploop -t <training_dataset> -e <evaluation_dataset> -<param1> '[min:max:step]' -<param2> '(val1,val2,val3,val4)'
 ./prank.sh ploop -t <dataset>                                  -<param1> '[min:max:step]' -<param2> '(val1,val2,val3,val4)'   # runs crossvalidation
 ~~~
@@ -51,7 +51,7 @@ Related parameters:
 
 In case you optimize exactly 1 or 2 parameters, P2Rank will try to produce plots of various statistics using R language. 
 For that you need to have `Rscript` on the Path. Some libraries in R need to be installed. 
-~~~
+~~~sh
 sudo apt install r-base
 sudo R -e "install.packages('ggplot2', dependencies=TRUE, repos='http://cran.us.r-project.org')"
 ~~~
@@ -59,7 +59,7 @@ sudo R -e "install.packages('ggplot2', dependencies=TRUE, repos='http://cran.us.
 #### Real examples
     
 Quick test run:
-~~~   
+~~~sh   
 ./prank.sh ploop 
     -c working                      \      # override default config with working.groovy config file
     -t chen11-fpocket.ds            \      # crossvalidate on chen11 datsest
@@ -70,7 +70,7 @@ Quick test run:
 (Then check `run.log` in n results directory for errors. Check if R plots are generated correctly.)
 
 Feature set comparisons:
-~~~
+~~~sh
 ./prank.sh ploop -c working             \      
     -t chen11-fpocket.ds                \  # crossvalidate on chen11 datsest    
     -loop 10 -rf_trees 100 -rf_depth 10 \      

@@ -5,7 +5,7 @@ This file should provide introduction for people who want to train and evaluate 
 
 ## Kick-start examples
 
-~~~
+~~~sh
 ./prank.sh traineval -t <training_dataset> -e <evaluation_dataset>  # train and evaluate model (execute n run with difefrent random seed, see -loop and -seed params)
 ./prank.sh crossval <dataset>                                       # run crossvalidation on a single dataset (see -folds param)
 
@@ -48,7 +48,7 @@ Training and optimization runs can be run from the project directory (repo root)
 To train a model on one dataset and evaluate its performance on the other use `prank traineval` command. 
 
 Example:
-~~~
+~~~sh
 ./prank.sh traineval -loop 10 -seed 42 -t <training_dataset> -e <evaluation_dataset>`
 ~~~
 Runs 10 training/evaluation cycles with different values of a random seed starting at 42. 
@@ -77,7 +77,7 @@ Parameters that influence memory/time trade-off:
 * `-rf_trees`, `-fr_depth` influence the size of the model in memory      
 * `-crossval_threads` when running crossvalidation it determines how many models are trained at the same time. Set to `1` if you don't have enough memory.
 
-** `-cache_datasets <bool>`: keep datasets (structures and SAS points) in memory between crossval/traineval iterations. 
+* `-cache_datasets <bool>`: keep datasets (structures and SAS points) in memory between crossval/traineval iterations. 
    For single pass training (`-loop 1`) it does not make sense to keep it on.
    Turn off when evaluating model on huge datasets that won't fit to memory (e.g. whole PDB). 
    When switched off it will leave more memory for RF at the cost of needing to parse all structure files (PDBs) again.
@@ -137,7 +137,7 @@ Ways to deal with class imbalances:
 To run crossvalidation on a single dataset use `prank crossval` command.
 
 Example:
-~~~
+~~~sh
 ./prank crossval -loop 10 -seed 42 -folds 5 <dataset>    
 ~~~
 Runs 10 independent 5-fold crossvalidation runs with different values of a random seed starting at 42. Averaged results will be written to the output directory.

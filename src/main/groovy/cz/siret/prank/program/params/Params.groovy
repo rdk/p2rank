@@ -705,7 +705,7 @@ class Params {
      * output detailed tables for all proteins, ligands and pockets
      */
     @RuntimeParam
-    boolean log_cases = false
+    boolean log_cases = true
 
     /**
      * cutoff for protein exposed atoms calculation (distance from SAS surface is solv.radius. + surf_cutoff)
@@ -870,7 +870,7 @@ class Params {
      * (>1GB for holo4k dataset with tessellation=2)
      */
     @RuntimeParam
-    boolean stats_collect_predictions = false
+    boolean stats_collect_predictions = true
 
     /**
      * produce ROC and PR curve graphs (not fully implemented yet)

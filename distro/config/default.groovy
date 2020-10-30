@@ -139,7 +139,7 @@ import cz.siret.prank.program.params.Params
     point_sampler = "SurfacePointSampler"
 
     /**
-     * multiplier for random posampling
+     * multiplier for random sampling
      */
     sampling_multiplier = 3
 
@@ -149,12 +149,12 @@ import cz.siret.prank.program.params.Params
     solvent_radius = 1.6
 
     /**
-     * Connolly potessellation (~density) used in pradiction step
+     * SAS Points tessellation (~= density) used in prediction step
      */
     tessellation = 2
 
     /**
-     * Connolly potessellation (~density) used in training step
+     * SAS Points tessellation (~= density) used in training step
      */
     train_tessellation = 2
 
@@ -247,7 +247,7 @@ import cz.siret.prank.program.params.Params
     predictions = true
 
     /**
-     * minimum ligandability score for Connolly poto be considered ligandable
+     * minimum ligandability score for SAS point be considered ligandable
      */
     pred_point_threshold = 0.35
 
@@ -267,7 +267,7 @@ import cz.siret.prank.program.params.Params
     extended_pocket_cutoff = 3.5
 
     /**
-     * cuttoff distance of protein surface atoms considered as part of the pocket
+     * cutoff distance of protein surface atoms considered as part of the pocket
      */
     pred_protein_surface_cutoff = 3.5
 
@@ -291,7 +291,7 @@ import cz.siret.prank.program.params.Params
     /**
      * output detailed tables for all proteins, ligands and pockets
      */
-    log_cases = false
+    log_cases = true
 
     /**
      * cutoff for protein exposed atoms calculation (distance from connolly surface is solv.radius. + surf_cutoff)
@@ -305,8 +305,8 @@ import cz.siret.prank.program.params.Params
     sample_negatives_from_decoys = false
 
     /**
-     * cutoff atound ligand atoms to select negatives, 0=all
-     * valid if training from whole surface (collenct_negatives_from_decoys=false)
+     * cutoff around ligand atoms to select negatives, 0=all
+     * valid if training from whole surface (collect_negatives_from_decoys=false)
      */
     train_lig_cutoff = 0
 

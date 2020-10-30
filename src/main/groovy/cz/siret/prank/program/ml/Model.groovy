@@ -55,6 +55,20 @@ class Model {
     }
 
     static Model loadFromFile(String fname) {
+        if (fname.contains(".model2")) {
+            return loadFromFileV2(fname)
+        } else {
+            return loadFromFileV1(fname)
+        }
+    }
+
+    private static Model loadFromFileV2(String fname) {
+        //fname += ".zst"
+        Classifier classifier = WekaUtils.loadClassifier(Futils.inputStream(fname))
+        return new Model(Futils.shortName(fname), classifier)
+    }
+
+    private static Model loadFromFileV1(String fname) {
         return new Model(Futils.shortName(fname), WekaUtils.loadClassifier(fname))
     }
 
@@ -106,6 +120,5 @@ class Model {
         Integer numFeatures = null
         Integer maxDepth    = null
     }
-
 
 }

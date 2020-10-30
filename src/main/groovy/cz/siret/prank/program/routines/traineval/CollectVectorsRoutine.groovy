@@ -110,7 +110,7 @@ class CollectVectorsRoutine extends Routine {
         data = new DataPreprocessor().preProcessTrainData(data)
 
         if (!params.delete_vectors) {
-            WekaUtils.saveDataArff(Futils.getGzipOutputStream(arffFile), data)
+            WekaUtils.saveDataArff(Futils.getGzipOutputStream(arffFile+".gz"), data)
         }
 
         if (params.check_vectors) {

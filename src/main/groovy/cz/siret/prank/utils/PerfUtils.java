@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *  Methods that needed to be written in Java for preformance reasons.
+ *  Methods that needed to be written in Java for performance reasons.
  */
 public class PerfUtils {
 

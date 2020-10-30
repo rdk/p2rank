@@ -54,7 +54,8 @@ class PrintRoutine extends Routine {
     final Map<String, Closure> commandRegister = ImmutableMap.copyOf([
             "features" : this.&features,
             //"feature-sets" : this.&feature_sets,
-            "model-info" : this.&model_info
+            "model-info" : this.&model_info,
+            "transform-model" : this.&transform_model     // temporary
     ])
 
 //===========================================================================================================//
@@ -85,10 +86,6 @@ class PrintRoutine extends Routine {
             model = Model.loadFromFile(modelf)
         }
 
-        if (!model) {
-            throw new PrankException("Model not found.")
-        }
-
         Model.Info info = model.info
 
         write "Model Info"
@@ -105,4 +102,18 @@ class PrintRoutine extends Routine {
         }
     }
 
+
+    void transform_model() {
+        String modelf = main.findModel()
+        Model model = Model.loadFromFile(modelf)
+
+        def newf = modelf+".model2.zst"
+        Futils.serializeToZstd(newf, model.classifier, 3)
+//        Futils.serializeToFile(newf, model.classifier)
+
+        Model.loadFromFile(newf)
+        
+        write "Transformed model saved to file ${Futils.absPath(newf)}"
+    }
+    
 }

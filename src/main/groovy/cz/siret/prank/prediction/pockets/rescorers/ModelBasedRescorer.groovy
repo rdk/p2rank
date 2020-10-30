@@ -21,8 +21,8 @@ import org.biojava.nbio.structure.Atom
 import weka.core.DenseInstance
 import weka.core.Instances
 
-import static PointScoreCalculator.applyPointScoreThreshold
-import static PointScoreCalculator.predictedScore
+import static cz.siret.prank.prediction.pockets.PointScoreCalculator.applyPointScoreThreshold
+import static cz.siret.prank.prediction.pockets.PointScoreCalculator.predictedScore
 
 /**
  * rescorer and predictor

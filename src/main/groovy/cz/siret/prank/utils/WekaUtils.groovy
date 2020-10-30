@@ -66,14 +66,24 @@ class WekaUtils implements Writable {
     }
 
     static Classifier loadClassifier(String fileName) {
+        InputStream zis = null
         try {
-            ZipInputStream zis = new ZipInputStream(new BufferedInputStream(new FileInputStream(fileName), BUFFER_SIZE))
-
+            zis = new ZipInputStream(new BufferedInputStream(new FileInputStream(fileName), BUFFER_SIZE))
             zis.getNextEntry()
 
-            return (Classifier) SerializationHelper.read(zis)
-        } catch (FileNotFoundException e) {
-            log.error "model file doesn't exist! ($fileName)"
+            return loadClassifier(zis)
+        } catch (Exception e) {
+            throw new PrankException("Failed to load model from file '$fileName'", e)
+        } finally {
+            zis?.close()
+        }
+    }
+
+    static Classifier loadClassifier(InputStream ins) {
+        try {
+            return (Classifier) SerializationHelper.read(ins)
+        } finally {
+            ins.close()
         }
     }
 
