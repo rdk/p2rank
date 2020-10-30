@@ -52,7 +52,7 @@ If you use P2Rank, please cite relevant papers:
 
 * [Software article](https://doi.org/10.1186/s13321-018-0285-8) in JChem about P2Rank pocket prediction tool  
  Krivak R, Hoksza D. *P2Rank: machine learning based tool for rapid and accurate prediction of ligand binding sites from protein structure.* Journal of Cheminformatics. 2018 Aug.
-* [Web-server article](https://doi.org/10.1093/nar/gkz424) in NAR about the web interface accessible at [prankweb.cz](http://prankweb.cz)  
+* [Web-server article](https://doi.org/10.1093/nar/gkz424) in NAR about the web interface accessible at [p2rank.cz](https://p2rank.cz)  
  Jendele L, Krivak R, Skoda P, Novotny M, Hoksza D. *PrankWeb: a web server for ligand binding site prediction and visualization.* Nucleic Acids Research, Volume 47, Issue W1, 02 July 2019, Pages W345–W349 
 * [Conference paper](https://doi.org/10.1007/978-3-319-21233-3_4) inroducing P2Rank prediction algorithm  
  Krivak R, Hoksza D. *P2RANK: Knowledge-Based Ligand Binding Site Prediction Using Aggregated Local Features.* InInternational Conference on Algorithms for Computational Biology 2015 Aug 4 (pp. 41-52). Springer
@@ -68,13 +68,13 @@ Following commands can be executed in the installation directory.
 
 ### Print help
 
-~~~
+~~~sh
 prank help
 ~~~
 
 ### Predict ligand binding sites (P2Rank algorithm)
 
-~~~
+~~~sh
 prank predict test.ds                             # run on whole dataset (containing list of pdb files)
 
 prank predict -f test_data/1fbl.pdb               # run on single pdb file
@@ -89,7 +89,7 @@ prank predict -c predict2.groovy  test.ds         # specify configuration file (
 ### Evaluate prediction model
 ...on a file or a dataset with known ligands.
 
-~~~
+~~~sh
 prank eval-predict -f test_data/1fbl.pdb
 prank eval-predict test.ds
 ~~~
@@ -111,7 +111,7 @@ prank eval-predict test.ds
 
 You can override the default params with a custom config file:
 
-~~~
+~~~sh
 prank predict -c config/example.groovy  test.ds
 prank predict -c example.groovy         test.ds
 ~~~
@@ -119,7 +119,7 @@ prank predict -c example.groovy         test.ds
 
 It is also possible to override the default params on the command line using their full name. To see complete list of params look into `config/default.groovy`.
 
-~~~
+~~~sh
 prank predict                   -seed 151 -threads 8  test.ds
 prank predict -c example.groovy -seed 151 -threads 8  test.ds
 ~~~
@@ -130,7 +130,7 @@ In addition to predicting new ligand binding sites,
 P2Rank is also able to rescore pockets predicted by other methods 
 (Fpocket, ConCavity, SiteHound, MetaPocket2, LISE and DeepSite are supported at the moment).
 
-~~~
+~~~sh
 prank rescore test_data/fpocket.ds
 prank rescore fpocket.ds                 # test_data/ is default 'dataset_base_dir'
 prank rescore fpocket.ds -o output_dir   # test_output/ is default 'output_base_dir'
@@ -146,7 +146,7 @@ prank eval-rescore fpocket.ds
 
 [Fpocket](http://fpocket.sourceforge.net/) is widely used open source ligand binding site prediction program.
 It is fast, easy to use and well documented. As such, it was a great inspiration for this project.
-Fpocket is written in C and it is based on a different geometric algorithm.
+Fpocket is written in C, and it is based on a different geometric algorithm.
 
 Some practical differences:
 
@@ -170,7 +170,7 @@ Both Fpocket and P2Rank have many configurable parameters that influence behavio
 
 ## Thanks
 
-This program builds upon software written by other people, either through library dependencies or through code included in it's source tree (where no library builds were available). Notably:
+This program builds upon software written by other people, either through library dependencies or through code included in its source tree (where no library builds were available). Notably:
 * FastRandomForest by Fran Supek (https://code.google.com/archive/p/fast-random-forest/)
 * KDTree by Rednaxela (http://robowiki.net/wiki/User:Rednaxela/kD-Tree)
 * BioJava (https://github.com/biojava)
