@@ -19,7 +19,7 @@ repeat() {
     for (( i=1; i<=N; i++ ))
     do
         echo run ${i}/${N} command: \[${CMD}\]
-        ${CMD}
+        ${CMD} &>> $DEBUG_LOG
     done
 }
 
@@ -32,9 +32,9 @@ benchmark() {
         ${COM} ${MODIFIER}
     fi
 
-    start=`date +%s`
+    start=$(date +%s)
     repeat "$COM $MODIFIER"
-    end=`date +%s`
+    end=$(date +%s)
 
     runtime=$((end-start))
     avg_time=$((runtime/REPETITIONS))
@@ -48,7 +48,7 @@ main() {
     # iterate over thread numbers
     for i in ${@}
     do
-        benchmark "$COMMAND" "-threads $i" 2>&1 >> $DEBUG_LOG
+        benchmark "$COMMAND" "-threads $i" &>> $DEBUG_LOG
     done
 
     cat ${OUTFILE}

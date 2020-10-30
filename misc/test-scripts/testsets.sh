@@ -35,16 +35,16 @@ test() {
 
     echo "${reset}testing command [${blue}$CMD${reset}]${reset}"
 
-    start=`date +%s`
+    start=$(date +%s)
 
     # run command
     # echo error $CMD >> $APPLOG
     $CMD &>> $RUN_LOG
     EXIT_CODE=$?
 
-    end=`date +%s`
+    end=$(date +%s)
     runtime=$((end-start))
-    ftime=`format_time runtime`
+    ftime=$(format_time runtime)
 
     if [[ $EXIT_CODE == 0 ]]; then
         echo "${green}[OK]${reset}" "time: $ftime"
@@ -184,9 +184,9 @@ eval_train() {
 
     title TRAIN/EVAL ON MAIN DATASETS
 
-    test ./prank.sh crossval chen11-fpocket.ds                         -c config/working -loop 2                    -out_subdir TEST/EVAL_TRAIN
-    test ./prank.sh traineval -t chen11-fpocket.ds -e joined.ds        -c config/working -loop 2                    -out_subdir TEST/EVAL_TRAIN
-    test ./prank.sh traineval -t chen11-fpocket.ds -e holo4k.ds        -c config/working -loop 2  -cache_datasets 0 -out_subdir TEST/EVAL_TRAIN
+    test ./prank.sh crossval chen11-fpocket.ds                         -c config/working -loop 1                    -out_subdir TEST/EVAL_TRAIN
+    test ./prank.sh traineval -t chen11-fpocket.ds -e joined.ds        -c config/working -loop 1                    -out_subdir TEST/EVAL_TRAIN
+    test ./prank.sh traineval -t chen11-fpocket.ds -e holo4k.ds        -c config/working -loop 1  -cache_datasets 0 -out_subdir TEST/EVAL_TRAIN
 }
 
 eval_train_rest() {
@@ -194,10 +194,10 @@ eval_train_rest() {
     title TRAIN/EVAL ON OTHER DATASETS
 
     # train=test for the reference
-    test ./prank.sh traineval -t chen11-fpocket.ds -e chen11-fpocket.ds   -c config/working -loop 2                     -out_subdir TEST/EVAL_TRAIN
-    test ./prank.sh traineval -t chen11-fpocket.ds -e fptrain.ds          -c config/working -loop 2                     -out_subdir TEST/EVAL_TRAIN
-    test ./prank.sh traineval -t chen11-fpocket.ds -e 'joined(mlig).ds'   -c config/working -loop 2                     -out_subdir TEST/EVAL_TRAIN
-    test ./prank.sh traineval -t chen11-fpocket.ds -e 'holo4k(mlig).ds'   -c config/working -loop 2  -cache_datasets 0  -out_subdir TEST/EVAL_TRAIN
+    test ./prank.sh traineval -t chen11-fpocket.ds -e chen11-fpocket.ds   -c config/working -loop 1                     -out_subdir TEST/EVAL_TRAIN
+    test ./prank.sh traineval -t chen11-fpocket.ds -e fptrain.ds          -c config/working -loop 1                     -out_subdir TEST/EVAL_TRAIN
+    test ./prank.sh traineval -t chen11-fpocket.ds -e 'joined(mlig).ds'   -c config/working -loop 1                     -out_subdir TEST/EVAL_TRAIN
+    test ./prank.sh traineval -t chen11-fpocket.ds -e 'holo4k(mlig).ds'   -c config/working -loop 1  -cache_datasets 0  -out_subdir TEST/EVAL_TRAIN
 }
 
 ###################################################################################################################
@@ -243,8 +243,8 @@ speed() {
 
     title SPEED TESTS
 
-    misc/test-scripts/benchmark.sh 5  "FPTRAIN"   "1 4 12 16 24"     "./prank.sh predict fptrain.ds -c config/workdef -out_subdir TEST/SPEED"
-    misc/test-scripts/benchmark.sh 25 "1FILE" "1"                    "./prank.sh predict -f distro/test_data/liganated/1aaxa.pdb -c config/workdef -out_subdir TEST/SPEED"
+    misc/test-scripts/benchmark.sh 5  "FPTRAIN" "1 4 12"           "./prank.sh predict fptrain.ds -c config/workdef -out_subdir TEST/SPEED"
+    misc/test-scripts/benchmark.sh 15 "1FILE"   "1"                "./prank.sh predict -f distro/test_data/liganated/1aaxa.pdb -c config/workdef -out_subdir TEST/SPEED"
 }
 
 speed_basic() {
