@@ -1,7 +1,4 @@
 package cz.siret.prank.utils
-
-import groovy.transform.CompileStatic
-
 /**
  * Represents parsed command line arguments
  * <p>

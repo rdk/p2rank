@@ -20,8 +20,6 @@ package cz.siret.prank.geom.kdtree;
  *    distribution.
  */
 
-import cz.siret.prank.utils.ConsoleWriter;
-
 import java.util.*;
 
 /**

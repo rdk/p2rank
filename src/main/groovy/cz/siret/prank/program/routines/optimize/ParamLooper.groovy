@@ -10,9 +10,7 @@ import groovy.util.logging.Slf4j
 
 import static cz.siret.prank.utils.ATimer.startTimer
 import static cz.siret.prank.utils.Cutils.prefixMapKeys
-import static cz.siret.prank.utils.Futils.appendl
-import static cz.siret.prank.utils.Futils.exists
-import static cz.siret.prank.utils.Futils.mkdirs
+import static cz.siret.prank.utils.Futils.*
 
 /**
  * Base class for hyperparameter optimization routines

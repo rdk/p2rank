@@ -8,7 +8,8 @@ import cz.siret.prank.program.params.Parametrized
 import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
 
-import java.awt.Color
+import java.awt.*
+import java.util.List
 
 /**
  *

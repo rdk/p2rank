@@ -1,13 +1,9 @@
 package cz.siret.prank.utils
 
 import com.google.common.base.Function
-import com.google.common.collect.ImmutableMap
-import com.google.errorprone.annotations.CanIgnoreReturnValue
 import groovy.transform.CompileStatic
 
 import javax.annotation.Nullable
-
-import static com.google.common.base.Preconditions.checkNotNull
 
 /**
  * Collection utils

@@ -14,7 +14,6 @@ import cz.siret.prank.program.routines.Routine
 import cz.siret.prank.utils.BinCounter
 import cz.siret.prank.utils.CmdLineArgs
 import cz.siret.prank.utils.Futils
-import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
 import static cz.siret.prank.geom.SecondaryStructureUtils.assignSecondaryStructure

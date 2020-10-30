@@ -6,7 +6,6 @@ import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.*
 import org.biojava.nbio.structure.io.FileParsingParameters
 import org.biojava.nbio.structure.io.PDBFileParser
-import org.biojava.nbio.structure.io.PDBFileReader
 import org.biojava.nbio.structure.io.mmcif.ChemCompGroupFactory
 import org.biojava.nbio.structure.io.mmcif.ReducedChemCompProvider
 

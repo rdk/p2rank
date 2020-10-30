@@ -4,18 +4,16 @@ import cz.siret.prank.domain.Dataset
 import cz.siret.prank.domain.Prediction
 import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.features.FeatureExtractor
+import cz.siret.prank.prediction.pockets.rescorers.ModelBasedRescorer
+import cz.siret.prank.prediction.pockets.rescorers.PocketRescorer
+import cz.siret.prank.prediction.pockets.results.RescoringSummary
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.ml.Model
-import cz.siret.prank.prediction.pockets.rescorers.PocketRescorer
-import cz.siret.prank.prediction.pockets.rescorers.ModelBasedRescorer
-import cz.siret.prank.prediction.pockets.results.RescoringSummary
 import cz.siret.prank.program.routines.Routine
 import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
-import static cz.siret.prank.domain.Dataset.COLUMN_PREDICTION
-import static cz.siret.prank.domain.Dataset.COLUMN_PROTEIN
 import static cz.siret.prank.utils.ATimer.startTimer
 import static cz.siret.prank.utils.Futils.mkdirs
 import static cz.siret.prank.utils.Futils.writeFile

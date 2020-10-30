@@ -1,15 +1,12 @@
 package cz.siret.prank.utils
 
-import com.google.common.collect.ImmutableSet
+
 import com.google.common.io.Files
-import cz.siret.prank.geom.Struct
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.apache.commons.compress.compressors.CompressorStreamFactory
-import org.apache.commons.compress.compressors.lzma.LZMACompressorOutputStream
 import org.apache.commons.compress.compressors.zstandard.ZstdCompressorInputStream
 import org.apache.commons.compress.compressors.zstandard.ZstdCompressorOutputStream
-import org.apache.commons.compress.compressors.zstandard.ZstdUtils
 import org.apache.commons.io.FileUtils
 import org.apache.tools.bzip2.CBZip2InputStream
 import org.apache.tools.bzip2.CBZip2OutputStream
@@ -22,7 +19,6 @@ import org.zeroturnaround.zip.ZipUtil
 import java.util.zip.Deflater
 import java.util.zip.GZIPInputStream
 import java.util.zip.GZIPOutputStream
-
 
 /**
  * Safe file utility methods

@@ -1,7 +1,6 @@
 package cz.siret.prank.domain.labeling
 
 import cz.siret.prank.domain.Protein
-import cz.siret.prank.domain.Residue
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.program.params.Parametrized
 import groovy.transform.CompileStatic

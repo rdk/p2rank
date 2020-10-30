@@ -2,15 +2,7 @@ package cz.siret.prank.program.routines.traineval
 
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.domain.Protein
-import cz.siret.prank.domain.labeling.BinaryLabeling
-import cz.siret.prank.domain.labeling.BinaryLabelings
-import cz.siret.prank.domain.labeling.LabeledPoint
-import cz.siret.prank.domain.labeling.LabeledResidue
-import cz.siret.prank.domain.labeling.LigandBasedPointLabeler
-import cz.siret.prank.domain.labeling.ResidueBasedPointLabeler
-import cz.siret.prank.domain.labeling.ModelBasedResidueLabeler
-import cz.siret.prank.domain.labeling.ResidueLabeler
-import cz.siret.prank.domain.labeling.StaticResidueLabeler
+import cz.siret.prank.domain.labeling.*
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.prediction.metrics.ClassifierStats
 import cz.siret.prank.program.ml.Model

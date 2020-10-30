@@ -9,7 +9,6 @@ import cz.siret.prank.geom.Atoms
 import cz.siret.prank.prediction.metrics.ClassifierStats
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.ml.Model
-import cz.siret.prank.program.params.Params
 import cz.siret.prank.utils.PerfUtils
 import cz.siret.prank.utils.WekaUtils
 import groovy.transform.CompileStatic

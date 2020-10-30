@@ -1,6 +1,5 @@
 package cz.siret.prank.domain.loaders.pockets
 
-import javax.annotation.Nullable
 import cz.siret.prank.domain.*
 import cz.siret.prank.domain.labeling.BinaryLabeling
 import cz.siret.prank.domain.loaders.LoaderParams
@@ -15,6 +14,7 @@ import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 import org.biojava.nbio.structure.Chain
 
+import javax.annotation.Nullable
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.function.Function

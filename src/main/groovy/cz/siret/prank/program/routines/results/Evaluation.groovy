@@ -1,23 +1,14 @@
 package cz.siret.prank.program.routines.results
 
-import cz.siret.prank.domain.Ligand
-import cz.siret.prank.domain.Pocket
-import cz.siret.prank.domain.PredictionPair
-import cz.siret.prank.domain.Protein
-import cz.siret.prank.domain.Residue
+import cz.siret.prank.domain.*
+import cz.siret.prank.domain.labeling.LabeledPoint
 import cz.siret.prank.domain.labeling.ResidueLabelings
 import cz.siret.prank.features.implementation.conservation.ConservationScore
 import cz.siret.prank.geom.Atoms
+import cz.siret.prank.prediction.pockets.criteria.*
 import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.domain.labeling.LabeledPoint
-import cz.siret.prank.prediction.pockets.criteria.DCA
-import cz.siret.prank.prediction.pockets.criteria.DCC
-import cz.siret.prank.prediction.pockets.criteria.DSO
-import cz.siret.prank.prediction.pockets.criteria.DSWO
-import cz.siret.prank.prediction.pockets.criteria.PocketCriterium
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.StringUtils
-import org.codehaus.groovy.runtime.StackTraceUtils
 
 import static cz.siret.prank.geom.Atoms.intersection
 import static cz.siret.prank.geom.Atoms.union

@@ -7,10 +7,10 @@ import cz.siret.prank.features.FeatureVector
 import cz.siret.prank.features.PrankFeatureExtractor
 import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.geom.Atoms
-import cz.siret.prank.program.PrankException
-import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.prediction.pockets.criteria.DCA
 import cz.siret.prank.prediction.pockets.criteria.PocketCriterium
+import cz.siret.prank.program.PrankException
+import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Cutils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j

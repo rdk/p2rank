@@ -1,6 +1,6 @@
 package cz.siret.prank.domain
 
-import com.google.common.collect.Maps
+
 import cz.siret.prank.domain.labeling.ResidueLabeling
 import cz.siret.prank.domain.loaders.LoaderParams
 import cz.siret.prank.features.api.ProcessedItemContext
@@ -22,9 +22,7 @@ import org.biojava.nbio.structure.secstruc.SecStrucType
 import javax.annotation.Nullable
 import java.util.function.Function
 
-import static cz.siret.prank.features.implementation.conservation.ConservationScore.CONSERV_LOADED_KEY
-import static cz.siret.prank.features.implementation.conservation.ConservationScore.CONSERV_PATH_FUNCTION_KEY
-import static cz.siret.prank.features.implementation.conservation.ConservationScore.CONSERV_SCORE_KEY
+import static cz.siret.prank.features.implementation.conservation.ConservationScore.*
 import static cz.siret.prank.geom.Struct.residueChainsFromStructure
 
 /**

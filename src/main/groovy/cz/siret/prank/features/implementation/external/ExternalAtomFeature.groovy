@@ -3,13 +3,13 @@ package cz.siret.prank.features.implementation.external
 import cz.siret.prank.program.PrankException
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVFormat
-import org.apache.commons.csv.CSVRecord;
-import org.biojava.nbio.structure.Atom;
+import org.apache.commons.csv.CSVParser
+import org.apache.commons.csv.CSVRecord
+import org.biojava.nbio.structure.Atom
 import org.biojava.nbio.structure.ResidueNumber
 
-import java.nio.charset.StandardCharsets;
+import java.nio.charset.StandardCharsets
 
 /**
  * We expect in each directory file with same name as protein but with added

@@ -5,14 +5,7 @@ import com.google.common.base.Splitter
 import cz.siret.prank.domain.labeling.BinaryLabeling
 import cz.siret.prank.domain.labeling.LigandBasedResidueLabeler
 import cz.siret.prank.domain.labeling.ResidueLabeler
-import cz.siret.prank.domain.loaders.pockets.ConcavityLoader
-import cz.siret.prank.domain.loaders.pockets.DeepSiteLoader
-import cz.siret.prank.domain.loaders.pockets.FPocketLoader
-import cz.siret.prank.domain.loaders.pockets.LiseLoader
-import cz.siret.prank.domain.loaders.pockets.MetaPocket2Loader
-import cz.siret.prank.domain.loaders.pockets.P2RankLoader
-import cz.siret.prank.domain.loaders.pockets.PredictionLoader
-import cz.siret.prank.domain.loaders.pockets.SiteHoundLoader
+import cz.siret.prank.domain.loaders.pockets.*
 import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.ThreadPoolFactory
@@ -29,9 +22,7 @@ import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-import static cz.siret.prank.utils.Sutils.partBefore
-import static cz.siret.prank.utils.Sutils.partBetween
-import static cz.siret.prank.utils.Sutils.split
+import static cz.siret.prank.utils.Sutils.*
 import static org.apache.commons.lang3.StringUtils.isBlank
 
 /**

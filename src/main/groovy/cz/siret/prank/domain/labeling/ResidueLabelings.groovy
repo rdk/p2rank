@@ -1,10 +1,6 @@
 package cz.siret.prank.domain.labeling
 
-import cz.siret.prank.domain.Pocket
-import cz.siret.prank.domain.Prediction
-import cz.siret.prank.domain.Protein
-import cz.siret.prank.domain.Residue
-import cz.siret.prank.domain.Residues
+import cz.siret.prank.domain.*
 import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.prediction.pockets.PrankPocket

@@ -1,7 +1,4 @@
 package cz.siret.prank.program
-
-import groovy.transform.MapConstructor
-
 /**
  *
  */

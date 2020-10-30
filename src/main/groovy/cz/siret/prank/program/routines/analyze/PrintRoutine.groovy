@@ -6,7 +6,6 @@ import cz.siret.prank.program.Main
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.routines.Routine
-import cz.siret.prank.utils.Bench
 import cz.siret.prank.utils.CmdLineArgs
 import cz.siret.prank.utils.Formatter
 import cz.siret.prank.utils.Futils

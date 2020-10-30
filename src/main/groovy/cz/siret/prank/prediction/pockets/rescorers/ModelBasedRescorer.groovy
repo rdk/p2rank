@@ -2,17 +2,17 @@ package cz.siret.prank.prediction.pockets.rescorers
 
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Prediction
+import cz.siret.prank.domain.labeling.LabeledPoint
 import cz.siret.prank.domain.labeling.ResidueLabelings
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.features.FeatureVector
 import cz.siret.prank.features.PrankFeatureExtractor
 import cz.siret.prank.features.api.ProcessedItemContext
-import cz.siret.prank.program.ml.Model
-import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.domain.labeling.LabeledPoint
 import cz.siret.prank.prediction.metrics.ClassifierStats
 import cz.siret.prank.prediction.pockets.PocketPredictor
 import cz.siret.prank.prediction.pockets.PointScoreCalculator
+import cz.siret.prank.program.ml.Model
+import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.PerfUtils
 import cz.siret.prank.utils.WekaUtils
 import groovy.transform.CompileStatic

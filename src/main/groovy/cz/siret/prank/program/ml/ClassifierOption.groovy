@@ -1,9 +1,6 @@
 package cz.siret.prank.program.ml
 
 import groovy.transform.CompileStatic
-import weka.classifiers.functions.Logistic
-import weka.classifiers.functions.SimpleLogistic
-import weka.classifiers.meta.Bagging
 
 @CompileStatic
 public enum ClassifierOption {

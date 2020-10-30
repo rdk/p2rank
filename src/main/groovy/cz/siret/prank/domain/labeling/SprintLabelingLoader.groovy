@@ -1,11 +1,7 @@
 package cz.siret.prank.domain.labeling
 
 import com.google.common.collect.Maps
-import cz.siret.prank.domain.AA
-import cz.siret.prank.domain.Protein
-import cz.siret.prank.domain.Residue
-import cz.siret.prank.domain.ResidueChain
-import cz.siret.prank.domain.Residues
+import cz.siret.prank.domain.*
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.Writable

@@ -2,8 +2,8 @@ package cz.siret.prank.prediction.pockets.criteria
 
 import cz.siret.prank.domain.Ligand
 import cz.siret.prank.domain.Pocket
-import cz.siret.prank.program.routines.results.EvalContext
 import cz.siret.prank.prediction.pockets.PrankPocket
+import cz.siret.prank.program.routines.results.EvalContext
 import groovy.transform.CompileStatic
 
 /**

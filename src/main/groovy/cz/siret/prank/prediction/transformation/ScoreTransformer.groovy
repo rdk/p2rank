@@ -1,10 +1,6 @@
 package cz.siret.prank.prediction.transformation
 
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonElement
-import com.google.gson.JsonObject
-import com.google.gson.JsonParser
+import com.google.gson.*
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.Params
 import cz.siret.prank.program.routines.results.Evaluation

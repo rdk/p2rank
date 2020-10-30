@@ -1,7 +1,6 @@
 package cz.siret.prank.geom;
 
 import com.google.common.collect.Lists;
-import cz.siret.prank.features.api.AtomFeatureCalculator;
 import cz.siret.prank.geom.kdtree.AtomKdTree;
 import cz.siret.prank.program.params.Params;
 import cz.siret.prank.utils.ATimer;

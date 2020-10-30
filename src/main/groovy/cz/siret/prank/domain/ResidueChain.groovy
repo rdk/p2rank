@@ -1,7 +1,6 @@
 package cz.siret.prank.domain
 
 import cz.siret.prank.geom.Atoms
-import org.codehaus.groovy.runtime.StringGroovyMethods
 
 /**
  *

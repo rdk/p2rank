@@ -1,7 +1,7 @@
 package cz.siret.prank.domain
 
-import cz.siret.prank.program.routines.results.EvalContext
 import cz.siret.prank.prediction.pockets.criteria.PocketCriterium
+import cz.siret.prank.program.routines.results.EvalContext
 import groovy.transform.CompileStatic
 
 /**

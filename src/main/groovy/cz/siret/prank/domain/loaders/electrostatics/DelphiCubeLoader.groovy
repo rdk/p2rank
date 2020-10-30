@@ -4,7 +4,6 @@ import com.google.common.base.CharMatcher
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.text.CharMatchers
-import cz.siret.prank.utils.text.FastTokenizer
 import cz.siret.prank.utils.text.FastTokenizer2
 import cz.siret.prank.utils.text.Tokenizer
 import groovy.transform.CompileStatic

@@ -1,7 +1,6 @@
 package cz.siret.prank.utils;
 
 import cz.siret.prank.geom.Atoms;
-import cz.siret.prank.geom.Point;
 import org.biojava.nbio.structure.Atom;
 
 import java.util.ArrayList;

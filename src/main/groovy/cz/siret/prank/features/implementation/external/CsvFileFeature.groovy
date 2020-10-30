@@ -1,12 +1,12 @@
-package cz.siret.prank.features.implementation.external;
+package cz.siret.prank.features.implementation.external
 
-import cz.siret.prank.domain.Protein;
-import cz.siret.prank.features.api.AtomFeatureCalculationContext;
-import cz.siret.prank.features.api.AtomFeatureCalculator;
+import cz.siret.prank.domain.Protein
+import cz.siret.prank.features.api.AtomFeatureCalculationContext
+import cz.siret.prank.features.api.AtomFeatureCalculator
 import cz.siret.prank.features.api.ProcessedItemContext
-import cz.siret.prank.program.params.Parametrized;
+import cz.siret.prank.program.params.Parametrized
 import groovy.transform.CompileStatic
-import groovy.util.logging.Slf4j;
+import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 
 @Slf4j

@@ -10,7 +10,8 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 
-import java.awt.Color
+import java.awt.*
+import java.util.List
 
 
 /**

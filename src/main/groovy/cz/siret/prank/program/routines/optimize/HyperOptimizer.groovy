@@ -7,12 +7,12 @@ import cz.siret.prank.program.params.optimizer.HObjectiveFunction
 import cz.siret.prank.program.params.optimizer.HOptimizer
 import cz.siret.prank.program.params.optimizer.HVariable
 import cz.siret.prank.program.params.optimizer.spearmint.HSpearmintOptimizer
+import cz.siret.prank.program.routines.optimize.ParamLooper.ParamVal
+import cz.siret.prank.program.routines.optimize.ParamLooper.Step
 import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.utils.Futils
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
-import cz.siret.prank.program.routines.optimize.ParamLooper.ParamVal
-import cz.siret.prank.program.routines.optimize.ParamLooper.Step
 import groovy.util.logging.Slf4j
 
 import java.nio.file.Path
