@@ -14,7 +14,6 @@ public abstract class PrankPredictor {
     /**
      * Get config object used by this predictor.
      * (For now still uses global static config object :/)
-     * @return
      */
     public abstract Params getParams();
 

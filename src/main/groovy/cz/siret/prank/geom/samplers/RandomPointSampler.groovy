@@ -19,12 +19,12 @@ class RandomPointSampler extends  PointSampler implements Parametrized {
 
     private Random rand = new Random()
 
-    public RandomPointSampler(Protein protein) {
+    RandomPointSampler(Protein protein) {
         super(protein)
     }
 
     Atom randomPoint(Box box) {
-        Atom a = new AtomImpl();
+        Atom a = new AtomImpl()
             a.x = randomFromRange(box.min.x, box.max.x)
             a.y = randomFromRange(box.min.y, box.max.y)
             a.z = randomFromRange(box.min.z, box.max.z)

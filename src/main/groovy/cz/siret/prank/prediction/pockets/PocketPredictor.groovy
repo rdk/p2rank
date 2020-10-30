@@ -75,9 +75,9 @@ class PocketPredictor implements Parametrized {
                         group -> conservationScore.getScoreForResidue(group.getResidueNumber())
                     }).average().getAsDouble()
                     if (params.score_pockets_by == "conservation") {
-                        score = avgConservation;
+                        score = avgConservation
                     } else {
-                        score *= avgConservation;
+                        score *= avgConservation
                     }
                 }
             }
@@ -168,7 +168,7 @@ class PocketPredictor implements Parametrized {
             log.info sprintf("pocket%2d -  surf_atoms: %3d   points: %3d   score: %6.1f", i, surfAtoms, count, score)
         }
 
-        return pockets;
+        return pockets
     }
 
 }

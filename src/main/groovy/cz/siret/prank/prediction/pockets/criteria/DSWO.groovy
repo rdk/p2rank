@@ -8,7 +8,7 @@ import groovy.transform.CompileStatic
 /**
  * discretized surface weighted overlap
  *
- * given threshols from <0,1>
+ * given thresholds from <0,1>
  *
  * pocket is correctly predicted iff:
  *  at least ligandCoverageThreshold of the ligand is covered by the pocket and

@@ -13,7 +13,7 @@ import org.biojava.nbio.structure.Atom
 import org.biojava.nbio.structure.Group
 
 /**
- * implemention of PLB index from
+ * implementation of PLB index from
  * Soga et al. 2007 "Use of Amino Acid Composition to Predict Ligand-Binding Sites"
  */
 @Slf4j
@@ -64,7 +64,7 @@ class PLBIndexRescorer extends PocketRescorer {
             double x = p.PLBi - mu
             sig += x*x
         }
-        sig = Math.sqrt(sig/M)
+        sig = Math.sqrt((double)sig/M)
 
         for (ExtPocket p : extPockets) {
             p.ZPLB = (p.PLBi - mu) / sig

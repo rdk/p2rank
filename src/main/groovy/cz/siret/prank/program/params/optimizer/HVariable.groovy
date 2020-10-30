@@ -23,13 +23,13 @@ class HVariable {
     }
 
     @Override
-    public String toString() {
+    String toString() {
         return "HVariable{" +
                 "name='" + name + '\'' +
                 ", type=" + type +
                 ", min=" + min +
                 ", max=" + max +
-                '}';
+                '}'
     }
 
 }

@@ -57,7 +57,7 @@ class HyperOptimizer extends ParamLooper {
         listParams.collect { convertListParam(it) }.toList()
     }
 
-    public void optimizeParameters(Closure<EvalResults> evalClosure) {
+    void optimizeParameters(Closure<EvalResults> evalClosure) {
 
         log.info "List variables: " + listParams.toListString()
         List<HVariable> variables = convertListParams(listParams)

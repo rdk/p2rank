@@ -20,7 +20,7 @@ class GridPointSampler extends PointSampler implements Parametrized {
 
     private double CELL_EDGE = params.grid_cell_edge
 
-    public GridPointSampler(Protein protein) {
+    GridPointSampler(Protein protein) {
         super(protein)
     }
 

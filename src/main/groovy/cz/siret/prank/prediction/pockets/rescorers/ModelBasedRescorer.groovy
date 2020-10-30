@@ -29,7 +29,7 @@ import static cz.siret.prank.prediction.pockets.PointScoreCalculator.predictedSc
  * 
  * Not thread safe!
  *
- * This is the main rrescore used by P2RANK to make predictions based on machine learning
+ * This is the main rescore used by P2RANK to make predictions based on machine learning
  *
  */
 @Slf4j

@@ -49,11 +49,9 @@ class CrossValidation extends EvalRoutine {
                 String label = "fold.${numFolds}.${fold.num}"
                 TrainEvalRoutine iter = new TrainEvalRoutine("$outdir/$label", fold.data.trainset, fold.data.evalset)
                 iter.trainVectors = fold.trainVectors // pre-collected vectors
-                
-                iter.trainAndEvalModel()
-                return iter.evalRoutine.results
 
-            }.toList()
+                return iter.trainAndEvalModel()
+            }
         }
 
         resultsList.each { results.addSubResults(it) }

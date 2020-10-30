@@ -5,7 +5,7 @@ import cz.siret.prank.program.PrankException
 import groovy.transform.CompileStatic
 
 /**
- *
+ * List of feature importances with associated feature names
  */
 @CompileStatic
 class FeatureImportances {

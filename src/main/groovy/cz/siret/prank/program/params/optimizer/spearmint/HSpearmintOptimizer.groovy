@@ -125,7 +125,7 @@ class HSpearmintOptimizer extends HOptimizer implements Writable {
 
             
             // parse variable assignment
-            Map<String, Object> vars = new Gson().fromJson(readFile(varf), Map.class);
+            Map<String, Object> vars = new Gson().fromJson(readFile(varf), Map.class)
             log.info "vars: {}", vars
 
             // eval objective function

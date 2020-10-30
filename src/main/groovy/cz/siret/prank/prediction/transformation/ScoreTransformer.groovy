@@ -16,7 +16,7 @@ import org.apache.commons.lang3.StringUtils
 @CompileStatic
 abstract class ScoreTransformer {
 
-    static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    static final Gson GSON = new GsonBuilder().setPrettyPrinting().create()
     
     abstract double transformScore(double rawScore)
 
@@ -39,7 +39,7 @@ abstract class ScoreTransformer {
     }
 
     static ScoreTransformer loadFromJson(String json) {
-        JsonObject obj = new JsonParser().parse(json).getAsJsonObject()
+        JsonObject obj = new JsonParser().parseString(json).getAsJsonObject()
         String name = obj.get("name").getAsString()
 
         ScoreTransformer transformer = create(name)

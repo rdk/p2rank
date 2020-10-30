@@ -133,7 +133,7 @@ class ClassifierFactory implements Parametrized, Writable {
                 return cs
 
             case ClassifierOption.Bagging:
-                Bagging cs = new Bagging();
+                Bagging cs = new Bagging()
                 double bagsize = 100/params.threads       // TODO add baging_bag_size param
                 cs.setBagSizePercent((int)bagsize)
                 cs.setNumExecutionSlots(params.threads)
@@ -157,7 +157,7 @@ class ClassifierFactory implements Parametrized, Writable {
                 return cs
 
             case ClassifierOption.Stack1:
-                Stacking st = new Stacking();
+                Stacking st = new Stacking()
                 st.setNumFolds(5)
                 st.setNumExecutionSlots(params.threads)
                 st.setSeed(params.seed)

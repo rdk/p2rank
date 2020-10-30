@@ -45,10 +45,10 @@ abstract class ParamLooper extends Routine {
     }
 
     /**
-     * Execute and proecss resuts of one experiment step
+     * Execute and process results of one experiment step
      * init() must be called before first calling this method
      */
-    public EvalResults processStep(Step step, String dirLabel, Closure<EvalResults> closure) {
+    EvalResults processStep(Step step, String dirLabel, Closure<EvalResults> closure) {
         def stepTimer = startTimer()
 
         step.applyToParams(params)
@@ -123,18 +123,18 @@ abstract class ParamLooper extends Routine {
             params.collect{ fmt(it.value) }.join(', ') + ', ' + selectedStats.collect{ fmt(results.get(it)) }.join(', ')
         }
 
-        public String toString() {
-            return "Step{${params.toListString()}, ${results.toMapString()}}";
+        String toString() {
+            return "Step{${params.toListString()}, ${results.toMapString()}}"
         }
 
     }
 
     @TupleConstructor
-    public static class ParamVal {
+    static class ParamVal {
         String name
         Object value
 
-        public String toString() {
+        String toString() {
             name + ":" + value
         }
     }

@@ -6,8 +6,6 @@ import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.program.routines.results.FeatureImportances
-import cz.siret.prank.program.routines.traineval.CollectVectorsRoutine
-import cz.siret.prank.program.routines.traineval.EvalRoutine
 import cz.siret.prank.utils.ATimer
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.WekaUtils

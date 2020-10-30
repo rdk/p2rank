@@ -13,7 +13,7 @@ import java.util.function.Function
  * discretized surface overlap ratio (similar to DeepSite DVO criterion)
  * |intersection|/|union| of SAS points induced by ligand and defined by pocket
  *
- * TODO unfifished
+ * TODO unfinished
  */
 @Slf4j
 @CompileStatic

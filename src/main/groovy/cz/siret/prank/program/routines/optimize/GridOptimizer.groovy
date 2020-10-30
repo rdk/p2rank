@@ -157,7 +157,7 @@ class GridOptimizer extends ParamLooper {
         genStepsRecur(new ArrayList<Step>(), new Step(), lparams)
     }
     
-    private List<Step> genStepsRecur(List<Step> steps, Step base, List<ListParam> rparams) {
+    private void genStepsRecur(List<Step> steps, Step base, List<ListParam> rparams) {
         if (rparams.empty) {
             steps.add(base); return
         }
@@ -168,7 +168,6 @@ class GridOptimizer extends ParamLooper {
             genStepsRecur(steps, deeperStep, rparams.tail())
         }
 
-        return steps
     }
 
 }

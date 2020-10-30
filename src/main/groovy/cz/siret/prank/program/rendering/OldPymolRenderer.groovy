@@ -43,7 +43,7 @@ class OldPymolRenderer implements Parametrized {
 
         List<Color> colors = ColorUtils.createSpectrum(N, 0.6d, 0.6d, 1.20d)
 
-        int i = 1;
+        int i = 1
         pair.prediction.reorderedPockets.each { Pocket pocket ->
             String ids = pocket.surfaceAtoms.indexes.join(",")
             String name = "surf_pocket$i"
@@ -73,7 +73,7 @@ class OldPymolRenderer implements Parametrized {
         String pointsf0RelName = "data/${label}_points0.pdb"
 
         String proteinf = Futils.absPath(item.proteinFile)
-        String proteinfabs = proteinf;
+        String proteinfabs = proteinf
         if (params.vis_copy_proteins) {
             String name = Futils.shortName(proteinf)
             String newf = "$pointsDir/$name"
@@ -83,7 +83,7 @@ class OldPymolRenderer implements Parametrized {
             Futils.copy(proteinf, newf)
 
             proteinf = newfrel
-            proteinfabs = newf;
+            proteinfabs = newf
         }
 
         String colorPocketSurfaces = colorPocketSurfaces(pair)
@@ -191,13 +191,13 @@ orient
         if (params.zip_visualizations) {
             List<File> fileList = [new File(pmlf), new File(pointsf)]
             if (params.vis_copy_proteins) {
-                fileList.add(new File(proteinfabs));
+                fileList.add(new File(proteinfabs))
             }
-            File zipFile = new File("$outdir/${label}_visualization.zip");
+            File zipFile = new File("$outdir/${label}_visualization.zip")
             NameMapper mapper = { String fileName ->
-                return fileName.endsWith(".pml") ? fileName : "data/".concat(fileName);
+                return fileName.endsWith(".pml") ? fileName : "data/".concat(fileName)
             }
-            ZipUtil.packEntries(fileList.toArray(new File[0]), zipFile, mapper);
+            ZipUtil.packEntries(fileList.toArray(new File[0]) as File[], zipFile, mapper)
             fileList.forEach({File f->f.delete()})
         }
     }

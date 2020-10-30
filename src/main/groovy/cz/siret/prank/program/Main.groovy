@@ -115,7 +115,7 @@ class Main implements Parametrized, Writable {
         return dir
     }
 
-    public static String findModel(String installDir, Params params) {
+    static String findModel(String installDir, Params params) {
         String modelName = params.model
 
         String modelf = modelName
@@ -197,8 +197,8 @@ class Main implements Parametrized, Writable {
 
     String findInstallDir() {
 
-        String path = Main.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-        String decodedPath = URLDecoder.decode(path, "UTF-8");
+        String path = Main.class.getProtectionDomain().getCodeSource().getLocation().getPath()
+        String decodedPath = URLDecoder.decode(path, "UTF-8")
 
         return Futils.normalize(Futils.dir(decodedPath) + "/../")
 

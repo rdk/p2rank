@@ -43,7 +43,7 @@ class Surface implements Parametrized {
 
         IAtomContainer container = CdkUtils.toAtomContainer(proteinAtoms)
         NumericalSurface numericalSurface = new NumericalSurface(container, solventRadius, tesslevel)
-        numericalSurface.calculateSurface()
+        numericalSurface.calculateSurface()  // for CDK since 2 or so surface is calculated in constructor, left here in case of temporary switch to cdk 1.*
 
         Atoms surfacePoints = CdkUtils.toAtomPoints(numericalSurface.allSurfacePoints)
 

@@ -98,9 +98,9 @@ class Struct {
     }
 
     static boolean isInBox(Atom a, Box box) {
-        if (a.x>box.max.x || a.x<box.min.x) return false;
-        if (a.y>box.max.y || a.y<box.min.y) return false;
-        if (a.z>box.max.z || a.z<box.min.z) return false;
+        if (a.x>box.max.x || a.x<box.min.x) return false
+        if (a.y>box.max.y || a.y<box.min.y) return false
+        if (a.z>box.max.z || a.z<box.min.z) return false
         return true
     }
 
@@ -129,7 +129,7 @@ class Struct {
         List<Group> res = new ArrayList<>()
         GroupIterator gi = new GroupIterator(struc)
         while (gi.hasNext()){
-            Group g = (Group) gi.next();
+            Group g = (Group) gi.next()
             res.add(g)
         }
         return res
