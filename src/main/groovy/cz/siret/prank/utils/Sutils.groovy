@@ -79,6 +79,15 @@ class Sutils {
         split(str, " ")
     }
 
+    static String removeSuffix(String s, String suffix) {
+        if (s == null || suffix == null) return null
+        if (s.endsWith(suffix)) {
+            return s.substring(0, s.length()-suffix.length())
+        } else {
+            return s
+        }
+    }
+
     /**
      *
      * @param liststr format: [a, b,c]

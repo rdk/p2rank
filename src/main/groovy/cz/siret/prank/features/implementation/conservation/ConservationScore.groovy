@@ -10,6 +10,7 @@ import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.params.Params
 import cz.siret.prank.utils.Futils
+import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.*
 import org.slf4j.Logger
@@ -19,51 +20,58 @@ import java.util.function.Function
 import java.util.stream.Collectors
 
 @Slf4j
-public class ConservationScore implements Parametrized {
+@CompileStatic
+class ConservationScore implements Parametrized {
     /** conservation keys for secondaryData map in Protein class. */
     public static final String CONSERV_LOADED_KEY = "CONSERVATION_LOADED"
     public static final String CONSERV_SCORE_KEY = "CONSERVATION_SCORE"
     public static final String CONSERV_PATH_FUNCTION_KEY = "CONSERVATION_PATH_FUNCTION"
 
     private Map<ResidueNumberWrapper, Double> scores;
-    private final transient Logger logger = LoggerFactory.getLogger(getClass());
 
     private ConservationScore(Map<ResidueNumberWrapper, Double> scores) {
         this.scores = scores;
     }
 
-    static String scoreFileForPdbFile(String fileName, String chainId, String origin) {
-        String baseName, extension;
-        if (fileName.endsWith(".pdb.gz") || fileName.endsWith("ent.gz")) {
-            baseName = fileName.substring(0, fileName.length() - 7);
-            extension = fileName.substring(fileName.length() - 7);
-        } else {
-            int dotIndex = fileName.lastIndexOf('.');
-            baseName = fileName.substring(0, dotIndex);
-
-            //extension = fileName.substring(dotIndex);
-            //baseName = baseName.substring(0, 4)   // always use only 4-leter pdb code
-        }
-        return baseName + chainId + "." + origin + ".hom.gz";
-    }
+//    /**
+//     *
+//     * @param fileName
+//     * @param chainId
+//     * @param scoreOrigin "hssp" | "seq.fasta"
+//     * @return
+//     */
+//    static String scoreFileForPdbFile(String fileName, String chainId, String scoreOrigin) {
+//        String baseName, extension;
+//        if (fileName.endsWith(".pdb.gz") || fileName.endsWith("ent.gz")) {
+//            baseName = fileName.substring(0, fileName.length() - 7);
+//            extension = fileName.substring(fileName.length() - 7);
+//        } else {
+//            int dotIndex = fileName.lastIndexOf('.');
+//            baseName = fileName.substring(0, dotIndex);
+//
+//            //extension = fileName.substring(dotIndex);
+//            //baseName = baseName.substring(0, 4)   // always use only 4-leter pdb code
+//        }
+//        return baseName + chainId + "." + scoreOrigin + ".hom.gz";
+//    }
 
     private static class AAScore {
         public String letter;
         public double score;
         public int index;
 
-        public AAScore(String letter, double score, int index) {
+        AAScore(String letter, double score, int index) {
             this.letter = letter;
             this.score = score;
             this.index = index;
         }
     }
 
-    public double getScoreForResidue(ResidueNumber residueNum) {
+    double getScoreForResidue(ResidueNumber residueNum) {
         return getScoreForResidue(new ResidueNumberWrapper(residueNum));
     }
 
-    public double getScoreForResidue(ResidueNumberWrapper residueNum) {
+    double getScoreForResidue(ResidueNumberWrapper residueNum) {
         Double res = scores.get(residueNum);
         if (res == null) {
             return 0;
@@ -80,15 +88,15 @@ public class ConservationScore implements Parametrized {
         return labeling
     }
 
-    public Map<ResidueNumberWrapper, Double> getScoreMap() {
+    Map<ResidueNumberWrapper, Double> getScoreMap() {
         return scores;
     }
 
-    public int size() {
+    int size() {
         return this.scores.size();
     }
 
-    public static enum ScoreFormat {
+    static enum ScoreFormat {
         ConCavityFormat,
         JSDFormat
     }
@@ -123,7 +131,7 @@ public class ConservationScore implements Parametrized {
         return result;
     }
 
-    public static ConservationScore fromFiles(Structure structure,
+    static ConservationScore fromFiles(Structure structure,
                                               Function<String, File> scoresFiles)
             throws FileNotFoundException {
         return fromFiles(structure, scoresFiles, ScoreFormat.JSDFormat);
@@ -134,13 +142,11 @@ public class ConservationScore implements Parametrized {
      * @param chainScores Parse conservation scores.
      * @param outResult   Add matched scores to map (residual number -> conservation score)
      */
-    public static void matchSequences(List<Group> chain, List<AAScore> chainScores,
+    static void matchSequences(List<Group> chain, List<AAScore> chainScores,
                                       Map<ResidueNumberWrapper, Double> outResult) {
         // Check if the strings match
-        String pdbChain = chain.stream().map {ch -> ch.getChemComp().getOne_letter_code()
-                .toUpperCase()}.collect(Collectors.joining());
-        String scoreChain = chainScores.stream().map{ch -> ch.letter.toUpperCase()}
-                .collect(Collectors.joining());
+        String pdbChain =         chain.collect {ch -> ch.getChemComp().getOne_letter_code().toUpperCase()}.join("")
+        String scoreChain = chainScores.collect {ch -> ch.letter.toUpperCase()}.join("")
 
         if (pdbChain.equals(scoreChain)) {
             for (int i = 0; i < chainScores.size(); i++) {
@@ -173,7 +179,7 @@ public class ConservationScore implements Parametrized {
         }
     }
 
-    public static int[][] calcLongestCommonSubSequence(List<Group> chain, List<AAScore> chainScores) {
+    static int[][] calcLongestCommonSubSequence(List<Group> chain, List<AAScore> chainScores) {
         // Implementation of Longest Common SubSequence
         // https://en.wikipedia.org/wiki/Longest_common_subsequence_problem
         int[][] lcs = new int[chain.size() + 1][chainScores.size() + 1];
@@ -201,7 +207,7 @@ public class ConservationScore implements Parametrized {
      * @param format     Score format (JSD or ConCavity), default: JSD
      * @return new instance of ConservationScore (map from residual numbers to conservation scores)
      */
-    public static ConservationScore fromFiles(Structure structure,
+    static ConservationScore fromFiles(Structure structure,
                                               Function<String, File> scoreFiles,
                                               ScoreFormat format) throws FileNotFoundException {
         Map<ResidueNumberWrapper, Double> scores = new HashMap<>();

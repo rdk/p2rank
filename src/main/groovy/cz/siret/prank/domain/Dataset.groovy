@@ -5,6 +5,8 @@ import com.google.common.base.Splitter
 import cz.siret.prank.domain.labeling.BinaryLabeling
 import cz.siret.prank.domain.labeling.LigandBasedResidueLabeler
 import cz.siret.prank.domain.labeling.ResidueLabeler
+import cz.siret.prank.domain.loaders.DatasetItemLoader
+import cz.siret.prank.domain.loaders.LoaderParams
 import cz.siret.prank.domain.loaders.pockets.*
 import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.program.PrankException
@@ -12,6 +14,7 @@ import cz.siret.prank.program.ThreadPoolFactory
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.Sutils
+import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 import org.biojava.nbio.structure.Group
@@ -21,6 +24,7 @@ import javax.annotation.Nullable
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import java.util.concurrent.atomic.AtomicBoolean
 
 import static cz.siret.prank.utils.Sutils.*
 import static org.apache.commons.lang3.StringUtils.isBlank
@@ -32,6 +36,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank
  * see distro/test_data/readme.txt for dataset format specification
  */
 @Slf4j
+@CompileStatic
 class Dataset implements Parametrized {
 
     static final Splitter SPLITTER = Splitter.on(CharMatcher.whitespace()).trimResults().omitEmptyStrings()
@@ -88,8 +93,8 @@ class Dataset implements Parametrized {
      * (clears generated surfaces and secondary data calculated by feature implementations)
      */
     void clearSecondaryCaches() {
-        items.each {
-            if (it.cachedPair!=null) {
+        processItems { Item it ->
+            if (it.cachedPair != null) {
                 it.cachedPair.prediction.protein.clearSecondaryData()
                 it.cachedPair.protein.clearSecondaryData()
             }
@@ -104,32 +109,41 @@ class Dataset implements Parametrized {
     }
 
     boolean checkFilesExist() {
-        boolean ok = true
-        items.each {
-            if (header.contains(COLUMN_PREDICTION)) {
-                if (!Futils.exists(it.pocketPredictionFile)) {
-                    log.error "prediction file doesn't exist: $it.pocketPredictionFile"
-                    ok = false
-                }
-            }
-            if (header.contains(COLUMN_PROTEIN)) {
+        AtomicBoolean allOk = new AtomicBoolean(true)
+
+        boolean checkPrediction = header.contains(COLUMN_PREDICTION)
+        boolean checkProtein = header.contains(COLUMN_PROTEIN)
+
+        processItems { Item it ->
+            if (checkProtein) {
                 if (!Futils.exists(it.proteinFile)) {
                     log.error "protein file doesn't exist: $it.proteinFile"
-                    ok = false
+                    allOk.set(false)
                 }
             }
-
+            if (checkPrediction) {
+                if (!Futils.exists(it.pocketPredictionFile)) {
+                    log.error "prediction file doesn't exist: $it.pocketPredictionFile"
+                    allOk.set(false)
+                }
+            }
         }
-        return ok
+
+        return allOk.get()
     }
 
     /**
-     * Process all dataset items with provided processor.
+     * Process all dataset items.
+     * Runs in parallel or serially depending on configuration.
      */
     Result processItems(final Processor processor) {
-        return processItems(params.parallel, processor)
+        return doProcessItems(params.parallel, processor)
     }
 
+    /**
+     * Process all dataset items.
+     * Runs in parallel or serially depending on configuration.
+     */
     Result processItems(final Closure processor) {
         return processItems(new Processor() {
             @Override
@@ -142,7 +156,7 @@ class Dataset implements Parametrized {
     /**
      * Process all dataset items with provided processor.
      */
-    Result processItems(boolean parallel, final Processor processor) {
+    private Result doProcessItems(boolean parallel, final Processor processor) {
 
         log.trace "ITEMS: " + Sutils.toStr(items)
 
@@ -153,17 +167,18 @@ class Dataset implements Parametrized {
             log.info "processing dataset [$name] using $nt threads"
 
             ExecutorService executor = Executors.newFixedThreadPool(params.threads)
-            List<Callable> tasks = new ArrayList<>()
+            List<Callable<Object>> tasks = new ArrayList<>()
             items.eachWithIndex { Item item, int idx ->
                 int num = idx + 1
                 tasks.add(new Callable() {
                     @Override
                     Object call() throws Exception {
                         processItem(item, num, processor, result)
+                        return null
                     }
                 })
             }
-            executor.invokeAll(tasks)
+            executor.invokeAll((Collection<Callable<Object>>)tasks)
             executor.shutdownNow()
 
         } else {
@@ -204,17 +219,34 @@ class Dataset implements Parametrized {
 
     }
 
-    private PredictionLoader getLoader(Item item) {
-        return getLoader(attributes.get(PARAM_PREDICTION_METHOD), item)
+    private DatasetItemLoader getLoader(Item item) {
+        new DatasetItemLoader(getLoaderParams(item), getPredictionLoader())
+    }
+
+    private LoaderParams getLoaderParams(Item item) {
+        LoaderParams lp = new LoaderParams()
+        lp.ligandsSeparatedByTER = (attributes.get(PARAM_LIGANDS_SEPARATED_BY_TER) == "true")  // for bench11 dataset
+        lp.relevantLigandsDefined = hasExplicitlyDefinedLigands()
+        lp.relevantLigandDefinitions = item.getLigandDefinitions()
+        lp.load_conservation_paths = (params.load_conservation || params.extra_features.any{s->s.contains("conservation")})
+        lp.load_conservation = params.load_conservation
+        return lp
     }
 
     /**
-     * Get configured instance of prediction loader.
-     * @param method LBS prediction method name
+     * Get instance of prediction loader.
+     * @return null if prediction method is not specified in the dataset
      */
-    private PredictionLoader getLoader(String method, Item item) {
+    @Nullable
+    private PredictionLoader getPredictionLoader() {
+        String predictionMethod = attributes.get(PARAM_PREDICTION_METHOD)  // LBS prediction method name specified in the dataset
+
+        if (predictionMethod == null) {
+            return null
+        }
+
         PredictionLoader res
-        switch (method) {
+        switch (predictionMethod) {
             case "fpocket":
                 res = new FPocketLoader()
                 break
@@ -237,23 +269,13 @@ class Dataset implements Parametrized {
                 res = new P2RankLoader()
                 break
             default:
-                res = new FPocketLoader() // TODO: throw exception here, should not be run on prank predict
-                //throw new Exception("Unknown prediction method defined in dataset: $method")
-        }
-
-        if (res!=null) {
-            res.loaderParams.ligandsSeparatedByTER = (attributes.get(PARAM_LIGANDS_SEPARATED_BY_TER) == "true")  // for bench11 dataset
-            res.loaderParams.relevantLigandsDefined = hasExplicitlyDefinedLigands()
-            res.loaderParams.relevantLigandDefinitions = item.getLigandDefinitions()
-            res.loaderParams.load_conservation_paths = (params.extra_features.any{s->s.contains("conservation")} || params.load_conservation)
-            res.loaderParams.load_conservation = params.load_conservation
-            res.loaderParams.conservation_origin = params.conservation_origin
+                throw new PrankException("Unknown prediction method specified in the dataset: $predictionMethod")
         }
 
         return res
     }
 
-    public Dataset randomSubset(int subsetSize, long seed) {
+    private Dataset randomSubset(int subsetSize, long seed) {
         if (subsetSize >= this.size) {
             return this
         }
@@ -264,7 +286,7 @@ class Dataset implements Parametrized {
         return createSubset( shuffledItems.subList(0, subsetSize), this.name + " (random subset of size $subsetSize)" )
     }
 
-    List<Fold> sampleFolds(int k, long seed) {
+    private List<Fold> sampleFolds(int k, long seed) {
         if (size < k)
             throw new PrankException("There is less dataset items than folds! ($k < $size)")
 
@@ -308,7 +330,7 @@ class Dataset implements Parametrized {
      * @param itemContext allows to specify additional columns May be null.
      * @return
      */
-    public static Dataset createSingleFileDataset(String pdbFile, ProcessedItemContext itemContext) {
+    static Dataset createSingleFileDataset(String pdbFile, ProcessedItemContext itemContext) {
         Dataset ds = new Dataset(Futils.shortName(pdbFile), Futils.dir(pdbFile))
 
         Map<String, String> columnValues = new HashMap<>()
@@ -326,14 +348,14 @@ class Dataset implements Parametrized {
      * @param pdbFile corresponds to protein column in the dataset (but with absolute path)
      * @return
      */
-    public static Dataset createSingleFileDataset(String pdbFile) {
+    static Dataset createSingleFileDataset(String pdbFile) {
         createSingleFileDataset(pdbFile, null)
     }
 
     /**
      * @return true if valid ligands are defined explicitly in the dataset (i.e dataset has 'ligands' or 'ligand_codes' column)
      */
-    public boolean hasExplicitlyDefinedLigands() {
+    boolean hasExplicitlyDefinedLigands() {
         return header.contains(COLUMN_LIGANDS) || header.contains(COLUMN_LIGAND_CODES)
     }
 
@@ -540,7 +562,10 @@ class Dataset implements Parametrized {
                 String specifier = partBetween(str, "[", "]").trim()
 
                 if (specifier.contains(":")) {
-                    def (String stype, String svalue) = split(specifier, ":")
+                    def tokens = split(specifier, ":")
+                    String stype = tokens[0]
+                    String svalue = tokens[1]
+                    
                     if (stype == "group_id") {
                         groupId = svalue
                         checkValidGroupId(groupId, str)
@@ -571,7 +596,7 @@ class Dataset implements Parametrized {
         }
 
         @Override
-        public String toString() {
+        String toString() {
             String res = groupName
             if (groupId != null) {
                 res += "[group_id:$groupId]"
@@ -593,10 +618,18 @@ class Dataset implements Parametrized {
          */
         Dataset dataset
         Map<String, String> columnValues
-        String proteinFile  // liganated/unliganated protein for predictions
-        @Nullable String pocketPredictionFile // nullable
+
+        /**
+         * liganated or unliganated protein for predictions
+         */
+        String proteinFile
+        @Nullable String pocketPredictionFile
 
         String label
+
+        /**
+         * Loaded protein with prediction (if available)
+         */
         PredictionPair cachedPair
         @Nullable List<LigandDefinition> ligandDefinitions
 
@@ -608,12 +641,6 @@ class Dataset implements Parametrized {
             this.label = Futils.shortName( pocketPredictionFile ?: proteinFile )
 
             ligandDefinitions = parseLigandsColumn(getLigandsColumnValue())
-        }
-
-        Prediction getPrediction() {
-            // when running 'prank rescore' on a dataset with one column prediction is in proteinFile
-            String file = pocketPredictionFile ?: proteinFile
-            return getLoader(this).loadPredictionWithoutProtein(file)
         }
 
         PredictionPair getPredictionPair() {
@@ -634,7 +661,7 @@ class Dataset implements Parametrized {
         }
 
         PredictionPair loadPredictionPair() {
-            getLoader(this).loadPredictionPair(proteinFile, pocketPredictionFile, getContext())
+            return getLoader(this).loadPredictionPair(proteinFile, pocketPredictionFile, getContext())
         }
 
         @Nullable

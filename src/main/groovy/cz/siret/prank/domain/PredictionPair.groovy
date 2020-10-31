@@ -4,6 +4,8 @@ import cz.siret.prank.prediction.pockets.criteria.PocketCriterium
 import cz.siret.prank.program.routines.results.EvalContext
 import groovy.transform.CompileStatic
 
+import javax.annotation.Nullable
+
 /**
  * Pair of pocket prediction result and liganated structure (with correct ligand/pocket positions)
  */
@@ -17,7 +19,7 @@ class PredictionPair {
      * Either way it should correspond to 'protein' column in the dataset file.
      */
     Protein protein
-    Prediction prediction
+    @Nullable Prediction prediction
     
     // Function<String, File> conservationPathForChain  // unused or used by webapp?
 

@@ -1,0 +1,191 @@
+package cz.siret.prank.domain.loaders
+
+import cz.siret.prank.domain.Dataset
+import cz.siret.prank.domain.Ligand
+import cz.siret.prank.domain.Prediction
+import cz.siret.prank.domain.PredictionPair
+import cz.siret.prank.domain.Protein
+import cz.siret.prank.domain.Residue
+import cz.siret.prank.domain.ResidueChain
+import cz.siret.prank.domain.Residues
+import cz.siret.prank.domain.labeling.BinaryLabeling
+import cz.siret.prank.domain.loaders.pockets.PredictionLoader
+import cz.siret.prank.features.api.ProcessedItemContext
+import cz.siret.prank.features.implementation.conservation.ConservationScore
+import cz.siret.prank.geom.Atoms
+import cz.siret.prank.geom.Struct
+import cz.siret.prank.program.PrankException
+import cz.siret.prank.program.params.Parametrized
+import cz.siret.prank.utils.Futils
+import cz.siret.prank.utils.Sutils
+import cz.siret.prank.utils.Writable
+import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
+import org.biojava.nbio.structure.Atom
+import org.biojava.nbio.structure.Chain
+
+import javax.annotation.Nonnull
+import javax.annotation.Nullable
+import java.nio.file.Path
+import java.nio.file.Paths
+import java.util.function.Function
+
+/**
+ *
+ */
+@Slf4j
+@CompileStatic
+class DatasetItemLoader implements Parametrized, Writable {
+
+    private final LoaderParams loaderParams
+    private final @Nullable PredictionLoader predictionLoader
+
+    DatasetItemLoader(LoaderParams loaderParams, @Nullable PredictionLoader predictionLoader) {
+        this.loaderParams = loaderParams
+        this.predictionLoader = predictionLoader
+    }
+
+
+
+    /**
+     * Loader for dataset row. Loads protein and existing pocket prediction (if provided).
+     *
+     * @param proteinFile path to protein (could be just query pdb file with no ligands when rescoring, or control protein with ligands on evaluation)
+     * @param predictionFile main pocket prediction output file (from the second column in the dataset file)
+     * @return
+     */
+    PredictionPair loadPredictionPair(@Nonnull String proteinFile,
+                                      @Nullable String predictionFile,
+                                      @Nonnull ProcessedItemContext itemContext) {
+        File protf = new File(proteinFile)
+
+        PredictionPair res = new PredictionPair()
+        res.name = protf.name
+
+        if (itemContext.item.hasSpecifiedChaids()) {
+            res.protein = Protein.loadReduced(proteinFile, loaderParams, itemContext.item.getChains())
+        } else {
+            res.protein = Protein.load(proteinFile, loaderParams)
+        }
+
+        if (predictionFile != null) {
+            res.prediction = predictionLoader.loadPrediction(predictionFile, res.protein)
+        } else {
+            res.prediction = new Prediction(res.protein, [])
+        }
+
+        // TODO: move conservation related stuff to feature implementation
+        if (loaderParams.load_conservation_paths) {
+            loadConservationScores(proteinFile, itemContext, res)
+        }
+
+        if (params.identify_peptides_by_labeling) {
+            loadPeptidesFromLabeling(res.protein, itemContext)
+        }
+
+        return res
+    }
+
+    private loadPeptidesFromLabeling(Protein prot, ProcessedItemContext ctx) {
+        log.info 'loading peptides for {}', prot.name
+        if (!ctx.dataset.hasExplicitResidueLabeling()) {
+            throw new PrankException("No labeling provided for identify_peptides_by_labeling!")
+        }
+        BinaryLabeling labeling = ctx.dataset.explicitBinaryResidueLabeler.getBinaryLabeling(prot.residues, prot)
+
+        for (Chain ch in prot.fullStructure.chains) {
+            ResidueChain rc = Struct.toResidueChain(ch)
+            log.info 'checking chain {} (len:{})', rc.authorId, rc.length
+
+            if (rc.authorId in ctx.item.chains) {
+                log.info 'is among selected chains in the dataset, skipping'
+                continue
+            }
+
+            if (isBindingPeptide(ch, prot, labeling, ctx)) {
+                prot.structure.addChain(ch)
+                prot.peptides.add(rc)
+                prot.ligands.add new Ligand(Atoms.allFromChain(ch), prot)
+                log.info 'adding binding peptide {}', rc.authorId
+            } else {
+                log.info 'refused peptide {} as non binding', rc.authorId
+            }
+
+        }
+    }
+
+    boolean isBindingPeptide(Chain chain, Protein toProtein, BinaryLabeling labeling, ProcessedItemContext ctx) {
+        Atoms protAtoms = toProtein.getResidueChain(ctx.item.chains.first()).atoms
+        Residues labeledRes = new Residues(toProtein.residues.findAll { labeling.getLabel((Residue)it) }.asList())
+
+        Atoms chainAtoms = Atoms.allFromChain(chain).withoutHydrogens()
+        Atoms contactChainAtoms = chainAtoms.cutoutShell(protAtoms, 3.5d)
+
+        if (contactChainAtoms.empty) {
+            log.info 'no chain contact atoms'
+            return false
+        }
+        int permissible = 0
+        for (Atom a : contactChainAtoms) {
+            if (labeledRes.atoms.areWithinDistance(a, 3.5d)) {
+                permissible++
+            } else {
+                log.info 'found contact atom not close to contact res'
+            }
+        }
+        int n = contactChainAtoms.count
+        double ratio = ((double)permissible) / n
+        log.info 'permissible_a:{} contact_a:{} ratio:{}', permissible, n, ratio
+
+        return ratio >= 0.5
+    }
+
+
+    @Nullable
+    private File findConservationFile(String proteinFile, String chainId) {
+        
+        // params.conservation_origin is now ignored
+
+        String prefix = Futils.baseName(proteinFile) + chainId   // e.g. 2ed4A
+
+        File res = Futils.findFileInDirs(params.conservation_dirs, {File f ->
+            f.name.startsWith(prefix) && (Futils.realExtension(f.name) == "hom")
+        })
+
+        log.info "Conservation file for [{}] found in [{}]", prefix, res?.absolutePath
+
+        return res
+    }
+
+    private loadConservationScores(String proteinFile, ProcessedItemContext itemContext, PredictionPair pair) {
+        Path parentDir = Paths.get(proteinFile).parent
+
+        if (params.conservation_dirs != null) {
+            String baseDir = itemContext.item.dataset.dir
+            String conservDir = baseDir + "/" + params.conservation_dirs
+            parentDir = Paths.get(conservDir)
+        }
+        log.info "Conservation parent dir: " + parentDir
+
+        String conservColumn = itemContext.datsetColumnValues.get(Dataset.COLUMN_CONSERVATION_FILES_PATTERN)
+
+        Function<String, File> conservationFinder // maps chain ids to files
+        if (conservColumn == null) {
+            log.info("Setting conservation path. Origin: {}", params.conservation_origin)
+
+            conservationFinder = { String chainId -> findConservationFile(proteinFile, chainId) }
+        } else {
+            String pattern = conservColumn
+            conservationFinder = { String chainId ->
+                parentDir.resolve(pattern.replaceAll("%chainID%", chainId)).toFile()
+            }
+        }
+        // TODO use itemContext attribute instead
+        itemContext.auxData.put(ConservationScore.CONSERV_PATH_FUNCTION_KEY, conservationFinder)
+
+        if (loaderParams.load_conservation) {
+            pair.protein.loadConservationScores(itemContext)
+        }
+    }
+
+}

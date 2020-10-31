@@ -128,7 +128,7 @@ class ElectrostaticsTempSasFeature extends SasFeatureCalculator implements Param
         }
 
         private GaussianCube loadCube(ProcessedItemContext context, List<String> electrostatics_dirs) {
-            def pname = Futils.shortNameWo1CExt(context.item.proteinFile)
+            def pname = Futils.baseName(context.item.proteinFile)
 
             GaussianCube cube = null
 

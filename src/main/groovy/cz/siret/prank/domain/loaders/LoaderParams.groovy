@@ -22,7 +22,6 @@ class LoaderParams {
 
     boolean load_conservation_paths
     boolean load_conservation
-    String conservation_origin
 
     int minLigandAtoms = Params.inst.min_ligand_atoms
 

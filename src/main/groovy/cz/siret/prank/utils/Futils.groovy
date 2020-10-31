@@ -16,6 +16,8 @@ import org.tukaani.xz.LZMAOutputStream
 import org.tukaani.xz.XZIOException
 import org.zeroturnaround.zip.ZipUtil
 
+import javax.annotation.Nullable
+import java.util.function.Predicate
 import java.util.zip.Deflater
 import java.util.zip.GZIPInputStream
 import java.util.zip.GZIPOutputStream
@@ -103,6 +105,19 @@ class Futils {
     }
 
     /**
+     *
+     * Real file extension (ignoring last compressed extension).
+     *
+     * file.pdb -> pdb
+     * file.pdb.gz -> pdb
+     * file -> NULL
+     */
+    @Nullable
+    static String realExtension(String path) {
+        return lastExt(removeCompressExt(shortName(path)))
+    }
+
+    /**
      * @return true is file has extension that P2Rank can work with ("gz","zstd",...)
      */
     static boolean isCompressed(String fname) {
@@ -112,10 +127,9 @@ class Futils {
     /**
      * @return non-empty last file extension or null
      */
+    @Nullable
     static String lastExt(String fname) {
-        if (fname == null) {
-            return null
-        }
+        if (fname == null) return null
 
         fname = shortName(fname)
 
@@ -131,7 +145,8 @@ class Futils {
     }
 
     /**
-     * removes one extension including one additional potential compression ext
+     * Base short file name without extension.
+     * I.e. removes one extension including potentially one additional compression ext.
      * Other extensions / dots in filename ale preserved.
      *
      * "/dir/ABCD.pdb" -> "ABCD"
@@ -141,15 +156,26 @@ class Futils {
      * @param path
      * @return
      */
-    static String shortNameWo1CExt(String path) {
+    static String baseName(String path) {
         if (path==null) return null
 
         return removeLastExtension(removeCompressExt(shortName(path)))
     }
 
-    // TODO fix make path safe
+    /**
+     * Removes last file extension suffix from path.
+     * If file has no extension keeps path intact.
+     */
     static String removeLastExtension(String path) {
-        path?.replaceFirst(~/\.[^\.]+$/, '')
+        if (path == null) return null
+
+        String lastExt = lastExt(path)
+
+        if (lastExt == null) {
+            return path
+        } else {
+            return Sutils.removeSuffix(path, '.'+lastExt)
+        }
     }
 
     /**
@@ -160,12 +186,12 @@ class Futils {
     }
 
     /**
-     * Opens and decompresses file (if it has gz or bz2 extension)
+     * Opens buffered decompressing (if needed) file stream.
      */
     static InputStream inputStream(File file) {
         String fname = file.getName()
 
-        InputStream is = bufferedInputStream(file)
+        InputStream is = bufferedFileInputStream(file)
 
         if (fname.endsWith(".gz")) {
             is = new GZIPInputStream(is)
@@ -181,14 +207,13 @@ class Futils {
     }
 
     /**
-     * Returns buffered decompressing file stream.
-     * Opens and decompresses file (if it has gzip extension)
+     * Opens buffered decompressing (if needed) file stream.
      */
     static InputStream inputStream(String fname) {
         return inputStream(new File(fname))
     }
 
-    private static BufferedInputStream bufferedInputStream(File file) {
+    private static BufferedInputStream bufferedFileInputStream(File file) {
         return new BufferedInputStream(new FileInputStream(file), BUFFER_SIZE)
     }
 
@@ -375,8 +400,14 @@ class Futils {
         append(fname, text?.toString() + "\n")
     }
 
-    static List<File> listFiles(String dir, String ext) {
-        return new File(dir).listFiles().findAll { it.name ==~ /.*\.$ext/ }.toList()
+    static List<File> listFilesWithRealExtension(String dir, String realExtension) {
+        return listFiles(dir, {
+            removeLastExtension(it.name) == realExtension
+        }).asList()
+    }
+
+    static List<File> listFiles(String dir, Predicate<File> filter) {
+        return new File(dir).listFiles().findAll{ filter.test(it) }.asList()
     }
 
     static List<File> listFiles(String dir) {
@@ -481,6 +512,24 @@ class Futils {
             String ff = "$dir/$fname"
             if (exists(ff)) {
                 return ff
+            }
+        }
+        return null
+    }
+
+    /**
+     * Returns first file matching filter.
+     */
+    @Nullable
+    static File findFileInDirs(List<String> dirs, Predicate<File> filter) {
+        if (dirs == null) {
+            return null
+        }
+        for (String dir : dirs) {
+            for (File f : listFiles(dir)) {
+                if (filter.test(f)) {
+                    return f
+                }
             }
         }
         return null
