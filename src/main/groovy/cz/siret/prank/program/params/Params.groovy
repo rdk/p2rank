@@ -235,7 +235,7 @@ class Params {
      * If null or empty: look in the same directory as protein file
      */
     @RuntimeParam
-    List<String> conservation_dirs = null
+    List<String> conservation_dirs = []
 
     @RuntimeParam
     List<String> electrostatics_dirs = []
