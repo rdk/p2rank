@@ -31,13 +31,6 @@ class RenderingModel implements Parametrized {
 
     Style style = new Style()
 
-    /**
-     * generate new structure (pdb) file from protein instead of reusing proteinFile
-     */
-    boolean getGenerateProteinFile() {
-        params.vis_generate_proteins
-    }
-
     static class Style {
         //Color defaultProteinColor
 

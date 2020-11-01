@@ -75,8 +75,8 @@ class EvalResiduesRoutine extends EvalRoutine {
 
             synchronized (results) {
                 results.residuePredictionStats.addAll(predictionStats)
-                if (predictor instanceof  ModelBasedResidueLabeler)
-                    results.classifierStats.addAll(predictor.classifierStats) // asa points related stats
+                if (predictor instanceof ModelBasedResidueLabeler)
+                    results.classifierStats.addAll(predictor.classifierStats) // SAS points related stats
             }
 
             if (params.log_cases) {

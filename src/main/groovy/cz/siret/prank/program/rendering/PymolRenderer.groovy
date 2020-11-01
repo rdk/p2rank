@@ -71,11 +71,11 @@ class PymolRenderer implements Parametrized {
             proteinFileAbs = newfAbs
         }
 
-        Futils.writeFile(pmlFile, renderMain(proteinFile))
+        Futils.writeFile(pmlFile, renderMainPmlScript(proteinFile))
     }
 
 
-    private String renderMain(String proteinFile) {
+    private String renderMainPmlScript(String proteinFile) {
 """
 from pymol import cmd,stored
 

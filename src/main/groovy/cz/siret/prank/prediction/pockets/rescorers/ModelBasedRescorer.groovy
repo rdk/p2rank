@@ -64,7 +64,6 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
 
     /**
      * @param prediction
-     * @param ligandedProtein can be null - in not used for evaluating statistics
      */
     @Override
     void rescorePockets(Prediction prediction, ProcessedItemContext context) {

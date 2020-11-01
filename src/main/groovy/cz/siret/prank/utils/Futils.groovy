@@ -33,6 +33,8 @@ import java.util.zip.GZIPOutputStream
 @CompileStatic
 class Futils {
 
+    public static final int GZIP_DEFAULT_LEVEL = Deflater.DEFAULT_COMPRESSION;
+
     public static final int ZIP_BEST_COMPRESSION = 9
 
     private static final int BUFFER_SIZE = 128 * 1024
@@ -273,20 +275,20 @@ class Futils {
     /**
      * Overwrites the file if exists and returns the writer to gzipped output stream
      */
-    static PrintWriter getGzipWriter(String fname) {
+    static PrintWriter getGzipWriter(String fname, int compressionLevel = GZIP_DEFAULT_LEVEL) {
         File file = new File(fname)
         if (file.exists()) {
             file.delete()
         }
         file.createNewFile()
 
-        GZIPOutputStream gos = new GZIPOutputStream(new FileOutputStream(file), BUFFER_SIZE)
+        GZIPOutputStream gos = getGzipOutputStream(fname, compressionLevel)
 
         return new PrintWriter(new BufferedWriter(new OutputStreamWriter(gos), BUFFER_SIZE))
     }
 
 
-    static GZIPOutputStream getGzipOutputStream(String fname, int compressionLevel = Deflater.DEFAULT_COMPRESSION) {
+    static GZIPOutputStream getGzipOutputStream(String fname, int compressionLevel = GZIP_DEFAULT_LEVEL) {
         return new GZIPOutputStream(bufferedOutputStream(fname), BUFFER_SIZE) {
             {
                 this.@def.level = compressionLevel
@@ -318,7 +320,7 @@ class Futils {
     }
 
 
-    static void serializeToGzip(String fname, Object object, int level = Deflater.DEFAULT_COMPRESSION) {
+    static void serializeToGzip(String fname, Object object, int level = GZIP_DEFAULT_LEVEL) {
         serializeTo(fname, object, getGzipOutputStream(fname, level))
     }
 
