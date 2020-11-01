@@ -1,7 +1,9 @@
 package cz.siret.prank.program.routines.optimize
 
+import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.ListParam
 import cz.siret.prank.program.routines.results.EvalResults
+import cz.siret.prank.utils.Cutils
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.rlang.RPlotter
 import groovy.transform.CompileDynamic
@@ -37,7 +39,7 @@ class GridOptimizer extends ParamLooper {
      *
      * TODO: merge with code in Experiments, there is no point in separation with closure
      */
-    public void runGridOptimization(Closure<EvalResults> closure) {
+    void runGridOptimization(Closure<EvalResults> closure) {
         def timer = startTimer()
 
         steps = generateSteps(listParams)
@@ -154,12 +156,18 @@ class GridOptimizer extends ParamLooper {
     }
 
     private List<Step> generateSteps(List<ListParam> lparams) {
+
+        if (Cutils.empty(lparams)) {
+            throw new PrankException("No list params were provided for grid optimization.")
+        }
+
         genStepsRecur(new ArrayList<Step>(), new Step(), lparams)
     }
     
-    private void genStepsRecur(List<Step> steps, Step base, List<ListParam> rparams) {
+    private List<Step> genStepsRecur(List<Step> steps, Step base, List<ListParam> rparams) {
         if (rparams.empty) {
-            steps.add(base); return
+            steps.add(base)
+            return steps
         }
 
         ListParam rparam = rparams.head()
@@ -168,6 +176,7 @@ class GridOptimizer extends ParamLooper {
             genStepsRecur(steps, deeperStep, rparams.tail())
         }
 
+        return steps
     }
 
 }
