@@ -1,25 +1,13 @@
 package cz.siret.prank.domain.loaders.pockets
 
-import cz.siret.prank.domain.*
-import cz.siret.prank.domain.labeling.BinaryLabeling
-import cz.siret.prank.domain.loaders.LoaderParams
-import cz.siret.prank.features.api.ProcessedItemContext
-import cz.siret.prank.features.implementation.conservation.ConservationScore
-import cz.siret.prank.geom.Atoms
-import cz.siret.prank.geom.Struct
-import cz.siret.prank.program.PrankException
+
+import cz.siret.prank.domain.Prediction
+import cz.siret.prank.domain.Protein
 import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-import org.biojava.nbio.structure.Atom
-import org.biojava.nbio.structure.Chain
 
-import javax.annotation.Nonnull
 import javax.annotation.Nullable
-import java.nio.file.Path
-import java.nio.file.Paths
-import java.util.function.Function
 
 /**
  * Base class for prediction loaders (parsers for predictions produced by pocket prediction tools)

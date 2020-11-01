@@ -1,13 +1,6 @@
 package cz.siret.prank.domain.loaders
 
-import cz.siret.prank.domain.Dataset
-import cz.siret.prank.domain.Ligand
-import cz.siret.prank.domain.Prediction
-import cz.siret.prank.domain.PredictionPair
-import cz.siret.prank.domain.Protein
-import cz.siret.prank.domain.Residue
-import cz.siret.prank.domain.ResidueChain
-import cz.siret.prank.domain.Residues
+import cz.siret.prank.domain.*
 import cz.siret.prank.domain.labeling.BinaryLabeling
 import cz.siret.prank.domain.loaders.pockets.PredictionLoader
 import cz.siret.prank.features.api.ProcessedItemContext
@@ -16,8 +9,8 @@ import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Struct
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.Parametrized
+import cz.siret.prank.utils.Cutils
 import cz.siret.prank.utils.Futils
-import cz.siret.prank.utils.Sutils
 import cz.siret.prank.utils.Writable
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
@@ -75,7 +68,7 @@ class DatasetItemLoader implements Parametrized, Writable {
         }
 
         // TODO: move conservation related stuff to feature implementation
-        if (loaderParams.load_conservation_paths) {
+        if (loaderParams.load_conservation) {
             loadConservationScores(proteinFile, itemContext, res)
         }
 
@@ -142,13 +135,15 @@ class DatasetItemLoader implements Parametrized, Writable {
 
 
     @Nullable
-    private File findConservationFile(String proteinFile, String chainId) {
+    private File findConservationFile(List<String> dirs, String proteinFile, String chainId) {
         
         // params.conservation_origin is now ignored
 
+        log.info "Looking for conservation in dirs {}", dirs
+
         String prefix = Futils.baseName(proteinFile) + chainId   // e.g. 2ed4A
 
-        File res = Futils.findFileInDirs(params.conservation_dirs, {File f ->
+        File res = Futils.findFileInDirs(dirs, {File f ->
             f.name.startsWith(prefix) && (Futils.realExtension(f.name) == "hom")
         })
 
@@ -157,24 +152,30 @@ class DatasetItemLoader implements Parametrized, Writable {
         return res
     }
 
-    private loadConservationScores(String proteinFile, ProcessedItemContext itemContext, PredictionPair pair) {
-        Path parentDir = Paths.get(proteinFile).parent
+    private List<String> getConservationLookupDirs(String proteinFile, ProcessedItemContext itemContext) {
 
-        if (params.conservation_dirs != null) {
-            String baseDir = itemContext.item.dataset.dir
-            String conservDir = baseDir + "/" + params.conservation_dirs
-            parentDir = Paths.get(conservDir)
+        if (!Cutils.empty(params.conservation_dirs)) {
+            String datasetDir = itemContext.item.dataset.dir
+            List<String> dirs = params.conservation_dirs.collect {Futils.prependIfNotAbsolute(it, datasetDir) }
+            return dirs
+        } else {
+            String pdbDir = Futils.dir(proteinFile)
+            return [pdbDir]
         }
-        log.info "Conservation parent dir: " + parentDir
+    }
+
+    private loadConservationScores(String proteinFile, ProcessedItemContext itemContext, PredictionPair pair) {
 
         String conservColumn = itemContext.datsetColumnValues.get(Dataset.COLUMN_CONSERVATION_FILES_PATTERN)
 
         Function<String, File> conservationFinder // maps chain ids to files
         if (conservColumn == null) {
-            log.info("Setting conservation path. Origin: {}", params.conservation_origin)
+            List<String> conservDirs = getConservationLookupDirs(proteinFile, itemContext)
+            log.info "Conservation lookup dirs: " + conservDirs
 
-            conservationFinder = { String chainId -> findConservationFile(proteinFile, chainId) }
+            conservationFinder = { String chainId -> findConservationFile(conservDirs, proteinFile, chainId) }
         } else {
+            Path parentDir = Paths.get(proteinFile).parent
             String pattern = conservColumn
             conservationFinder = { String chainId ->
                 parentDir.resolve(pattern.replaceAll("%chainID%", chainId)).toFile()
@@ -183,9 +184,7 @@ class DatasetItemLoader implements Parametrized, Writable {
         // TODO use itemContext attribute instead
         itemContext.auxData.put(ConservationScore.CONSERV_PATH_FUNCTION_KEY, conservationFinder)
 
-        if (loaderParams.load_conservation) {
-            pair.protein.loadConservationScores(itemContext)
-        }
+        pair.protein.loadConservationScores(itemContext)
     }
 
 }

@@ -6,18 +6,14 @@ import cz.siret.prank.domain.Protein
 import cz.siret.prank.domain.Residue
 import cz.siret.prank.domain.labeling.ResidueLabeling
 import cz.siret.prank.geom.Struct
-import cz.siret.prank.program.PrankException
+import cz.siret.prank.program.P2Rank
 import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.program.params.Params
 import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.*
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 
 import java.util.function.Function
-import java.util.stream.Collectors
 
 @Slf4j
 @CompileStatic
@@ -132,21 +128,21 @@ class ConservationScore implements Parametrized {
     }
 
     static ConservationScore fromFiles(Structure structure,
-                                              Function<String, File> scoresFiles)
+                                       Function<String, File> scoresFiles)
             throws FileNotFoundException {
         return fromFiles(structure, scoresFiles, ScoreFormat.JSDFormat);
     }
 
     /**
-     * @param chain       Chain from PDB Structure
+     * @param chain Chain from PDB Structure
      * @param chainScores Parse conservation scores.
-     * @param outResult   Add matched scores to map (residual number -> conservation score)
+     * @param outResult Add matched scores to map (residual number -> conservation score)
      */
     static void matchSequences(List<Group> chain, List<AAScore> chainScores,
-                                      Map<ResidueNumberWrapper, Double> outResult) {
+                               Map<ResidueNumberWrapper, Double> outResult) {
         // Check if the strings match
-        String pdbChain =         chain.collect {ch -> ch.getChemComp().getOne_letter_code().toUpperCase()}.join("")
-        String scoreChain = chainScores.collect {ch -> ch.letter.toUpperCase()}.join("")
+        String pdbChain = chain.collect { ch -> ch.getChemComp().getOne_letter_code().toUpperCase() }.join("")
+        String scoreChain = chainScores.collect { ch -> ch.letter.toUpperCase() }.join("")
 
         if (pdbChain.equals(scoreChain)) {
             for (int i = 0; i < chainScores.size(); i++) {
@@ -202,46 +198,43 @@ class ConservationScore implements Parametrized {
     /**
      * Parses conservation scores created from HSSP database and Jensen-Shannon divergence.
      *
-     * @param structure  Protein BioJava structure
+     * @param structure Protein BioJava structure
      * @param scoreFiles Map from chain ids to files
-     * @param format     Score format (JSD or ConCavity), default: JSD
+     * @param format Score format (JSD or ConCavity), default: JSD
      * @return new instance of ConservationScore (map from residual numbers to conservation scores)
      */
     static ConservationScore fromFiles(Structure structure,
-                                              Function<String, File> scoreFiles,
-                                              ScoreFormat format) throws FileNotFoundException {
-        Map<ResidueNumberWrapper, Double> scores = new HashMap<>();
+                                       Function<String, File> scoreFiles,
+                                       ScoreFormat format) throws FileNotFoundException {
+        Map<ResidueNumberWrapper, Double> scores = new HashMap<>()
+
         for (Chain chain : structure.getChains()) {
             if (chain.getAtomGroups(GroupType.AMINOACID).size() <= 0) {
-                continue;
+                continue
             }
-            String chainId = Struct.getAuthorId(chain); // authorId == chain letter in old PDB model
-            chainId = chainId.trim().isEmpty() ? "A" : chainId;   // TODO review. are there ever chains with no id?
-            List<AAScore> chainScores = null;
+            String chainId = Struct.getAuthorId(chain) // authorId == chain letter in old PDB model
+            chainId = chainId.trim().isEmpty() ? "A" : chainId   // TODO review. are there ever chains with no id?
+            List<AAScore> chainScores = null
             try {
-                File scoreFile = scoreFiles.apply(chainId);
+                File scoreFile = scoreFiles.apply(chainId)
                 log.info "Loading conservation scores from file [{}]", scoreFile
-                if (scoreFile.exists()) {
-                    chainScores = ConservationScore.loadScoreFile(scoreFile, format);
+                if (scoreFile!=null && scoreFile.exists()) {
+                    chainScores = ConservationScore.loadScoreFile(scoreFile, format)
 
                     log.debug "loaded chain scores:\n" +
                             chainScores.collect { "$it.index $it.letter $it.score" }.join("\n")
 
-                    matchSequences(chain.getAtomGroups(GroupType.AMINOACID), chainScores, scores);
+                    matchSequences(chain.getAtomGroups(GroupType.AMINOACID), chainScores, scores)
                 } else {
-                    log.error "Score file doesn't exist [{}]", scoreFile
+                    P2Rank.failStatic("Conservation score file doesn't exist for [protein:$structure.name chain:$chainId] file:[$scoreFile]", log)
+
                 }
 
-            } catch(Exception e) {
-                String msg = "Failed to load conservation file for $structure.name"
-                if (Params.inst.fail_fast) {
-                    throw new PrankException(msg, e)
-                } else {
-                    log.error msg, e
-                }
+            } catch (Exception e) {
+                P2Rank.failStatic("Failed to load conservation file for [protein:$structure.name chain:$chainId]", e, log)
             }
         }
-        return new ConservationScore(scores);
+        return new ConservationScore(scores)
     }
 
 }

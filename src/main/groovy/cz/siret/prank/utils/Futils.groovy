@@ -16,6 +16,7 @@ import org.tukaani.xz.LZMAOutputStream
 import org.tukaani.xz.XZIOException
 import org.zeroturnaround.zip.ZipUtil
 
+import javax.annotation.Nonnull
 import javax.annotation.Nullable
 import java.util.function.Predicate
 import java.util.zip.Deflater
@@ -37,7 +38,7 @@ class Futils {
     private static final int BUFFER_SIZE = 128 * 1024
 
 
-    private static final Set<String> COMPR_EXT = ["gz", "zst", "zip", "bz2"].toSet()
+    private static final Set<String> COMPRESSED_EXTENSIONS = ["gz", "zst", "zip", "bz2"].toSet()
 
 //===========================================================================================================//
 
@@ -47,10 +48,22 @@ class Futils {
         new File(path).toPath().normalize()
     }
 
+    static boolean isAbsolute(String path) {
+        new File(path).isAbsolute()
+    }
+
     static String absPath(String path) {
         if (path==null) return null
 
         normalize(new File(path).absolutePath)
+    }
+
+    static String prependIfNotAbsolute(String path, String dir) {
+        if (isAbsolute(path)) {
+            return path
+        } else {
+            return safe(dir + "/" + path)
+        }
     }
 
     static String absSafePath(String path) {
@@ -62,9 +75,12 @@ class Futils {
     static String safe(String path) {
         if (path==null) return null
 
-        path.replace("\\","/")
+        path.replace("\\","/").replace("//","/")
     }
 
+    /**
+     * parent dir of a file
+     */
     static String dir(String path) {
         new File(path).parent
     }
@@ -121,7 +137,7 @@ class Futils {
      * @return true is file has extension that P2Rank can work with ("gz","zstd",...)
      */
     static boolean isCompressed(String fname) {
-        return COMPR_EXT.contains(lastExt(fname))
+        return COMPRESSED_EXTENSIONS.contains(lastExt(fname))
     }
 
     /**
@@ -410,7 +426,11 @@ class Futils {
         return new File(dir).listFiles().findAll{ filter.test(it) }.asList()
     }
 
+    @Nonnull
     static List<File> listFiles(String dir) {
+        if (!Futils.exists(dir)) {
+            throw new RuntimeException("Directory doesn't exist: " + dir)
+        }
         return new File(dir).listFiles().toList()
     }
 
@@ -500,6 +520,27 @@ class Futils {
         return file.readLines()
     }
 
+//===========================================================================================================//
+
+    /**
+     * Find potentially compressed file.
+     * @param fname
+     * @return
+     */
+    @Nullable
+    static String findCompressed(String fname) {
+        if (exists(fname)) {
+            return fname
+        }
+        for (String ext : COMPRESSED_EXTENSIONS) {
+            String fc = fname + '.' + ext
+            if (exists(fc)) {
+                return fc
+            }
+        }
+        return null
+    }
+
     /**
      * Looks for file in dirs
      * @return null if not found
@@ -518,13 +559,32 @@ class Futils {
     }
 
     /**
+     * Find potentially compressed file.
+     */
+    @Nullable
+    static String findCompressedFileInDirs(String fname, List<String> dirs) {
+        if (fname == null || dirs == null) {
+            return null
+        }
+        for (String dir : dirs) {
+            String ff = findCompressed("$dir/$fname")
+            if (ff != null) {
+                return ff
+            }
+        }
+        return null
+    }
+
+    /**
      * Returns first file matching filter.
+     * Directories don't have to exist.
      */
     @Nullable
     static File findFileInDirs(List<String> dirs, Predicate<File> filter) {
         if (dirs == null) {
             return null
         }
+        dirs = dirs.findAll {exists(it)} //
         for (String dir : dirs) {
             for (File f : listFiles(dir)) {
                 if (filter.test(f)) {

@@ -9,8 +9,8 @@ import cz.siret.prank.features.api.SasFeatureCalculator
 import cz.siret.prank.geom.Box
 import cz.siret.prank.geom.Point
 import cz.siret.prank.geom.Struct
+import cz.siret.prank.program.Failable
 import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.program.params.Params
 import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
@@ -23,7 +23,7 @@ import static cz.siret.prank.features.implementation.electrostatics.Electrostati
  */
 @Slf4j
 @CompileStatic
-class ElectrostaticsTempSasFeature extends SasFeatureCalculator implements Parametrized {
+class ElectrostaticsTempSasFeature extends SasFeatureCalculator implements Parametrized, Failable {
 
     static final String CUBE_ATTR = 'electrostatics_cube'
 
@@ -97,7 +97,7 @@ class ElectrostaticsTempSasFeature extends SasFeatureCalculator implements Param
 
 //===========================================================================================================//
 
-    static class CubePreloader implements Parametrized {
+    static class CubePreloader implements Parametrized, Failable {
 
         static ensureCubeLoaded(Protein protein, ProcessedItemContext context) {
             new CubePreloader().preloadCube(protein, context)
@@ -113,7 +113,7 @@ class ElectrostaticsTempSasFeature extends SasFeatureCalculator implements Param
                 log.info "Loading cube for protein $label"
 
                 try {
-                    cube = loadCube(context, Params.inst.electrostatics_dirs)
+                    cube = loadCube(context, params.electrostatics_dirs)
                 } catch (Exception e) {
                     fail("Error while loading cube for ${protein.name}", e, log)
                 }
@@ -135,8 +135,9 @@ class ElectrostaticsTempSasFeature extends SasFeatureCalculator implements Param
             // try loading serialized version
 
             def sfname = "${pname}/delphi-${pname}.cube.jser"
-            def scubeFile = Futils.findFileInDirs(sfname, electrostatics_dirs)
+            def scubeFile = Futils.findCompressedFileInDirs(sfname, electrostatics_dirs)
             if (scubeFile) {
+                log.info "Cube file found in: [{}]", scubeFile
                 try {
                     cube = Futils.deserializeFromFile(scubeFile)
                 } catch(Exception e) {
@@ -150,15 +151,22 @@ class ElectrostaticsTempSasFeature extends SasFeatureCalculator implements Param
 
             // try loading text version
 
-            def fname = "${pname}/delphi-${pname}.cube.gz" // e.g electrostatics/delphi/3GNA/delphi-3GNA.cube.gz
-            def cubeFile = Futils.findFileInDirs(fname, electrostatics_dirs)
+            def fname = "${pname}/delphi-${pname}.cube" // e.g electrostatics/delphi/3GNA/delphi-3GNA.cube.gz
+            def cubeFile = Futils.findCompressedFileInDirs(fname, electrostatics_dirs)
 
             if (cubeFile) {
+                log.info "Cube file found in: [{}]", cubeFile
+
                 cube =  DelphiCubeLoader.loadFile(cubeFile)
 
                 if (cube) {
-                    def serf = Futils.removeLastExtension(cubeFile)
-                    Futils.serializeToZstd("${serf}.jser.zstd", cube, 2)
+                    def serf = Futils.removeCompressExt(cubeFile)
+                    if (!Futils.exists(serf)) {
+                        log.info "Serializing cube to [{}]", serf
+                        Futils.serializeToZstd("${serf}.jser.zstd", cube, 2)
+                    } else {
+                        log.info "Serialized cube already exists in [{}]", serf
+                    }
                 }
 
                 return cube

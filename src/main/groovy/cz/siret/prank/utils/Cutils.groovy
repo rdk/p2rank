@@ -11,6 +11,10 @@ import javax.annotation.Nullable
 @CompileStatic
 class Cutils {
 
+    static boolean empty(Collection<?> col) {
+        return col == null || col.isEmpty()
+    }
+
     static <T> List<T> head(int n, List<T> list) {
         if (n>=list.size()) return list
         return list.subList(0, n)

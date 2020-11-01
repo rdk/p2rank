@@ -1,5 +1,6 @@
 package cz.siret.prank.program
 
+
 import groovy.transform.CompileStatic
 
 @CompileStatic
