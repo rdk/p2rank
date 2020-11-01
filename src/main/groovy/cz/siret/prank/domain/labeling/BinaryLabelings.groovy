@@ -3,7 +3,7 @@ package cz.siret.prank.domain.labeling
 import cz.siret.prank.prediction.metrics.ClassifierStats
 
 /**
- * Calculations arond binary residua labelings
+ * Calculations related to binary residue labelings
  */
 class BinaryLabelings {
 

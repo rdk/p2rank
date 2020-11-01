@@ -63,7 +63,7 @@ class Protein implements Parametrized {
     /* too small ligands */
     List<Ligand> smallLigands = new ArrayList<>()
 
-    /* usually cofactors and biologcally unrelevant ligands */
+    /* usually cofactors and biologically irrelevant ligands */
     List<Ligand> ignoredLigands = new ArrayList<>()
 
     /* ligands(hetgroups) too distant from protein surface */
@@ -239,7 +239,7 @@ class Protein implements Parametrized {
     }
 
     /**
-     * @return list of residues from main protein chanis
+     * @return list of residues from main protein chains
      */
     Residues getResidues() {
         ensureResiduesCalculated()

@@ -10,7 +10,7 @@ import cz.siret.prank.program.params.Params
     //dataset_base_dir = "../../dna_datasets/"
 
     /**
-     * all output of the prorgam will be stored in subdirectores of this directory
+     * all output of the program will be stored in subdirectories of this directory
      * (set absolute path or path relative to install dir, null defaults to working dir)
      */
 
