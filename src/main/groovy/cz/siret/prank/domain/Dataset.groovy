@@ -114,7 +114,7 @@ class Dataset implements Parametrized {
         boolean checkPrediction = header.contains(COLUMN_PREDICTION)
         boolean checkProtein = header.contains(COLUMN_PROTEIN)
 
-        processItems { Item it ->
+        processItemsQuiet { Item it ->
             if (checkProtein) {
                 if (!Futils.exists(it.proteinFile)) {
                     log.error "protein file doesn't exist: $it.proteinFile"
@@ -136,35 +136,49 @@ class Dataset implements Parametrized {
      * Process all dataset items.
      * Runs in parallel or serially depending on configuration.
      */
-    Result processItems(final Processor processor) {
-        return doProcessItems(params.parallel, processor)
+    Result processItems(final Processor processor, boolean quiet = false) {
+        return doProcessItems(params.parallel, processor, quiet)
     }
 
     /**
      * Process all dataset items.
      * Runs in parallel or serially depending on configuration.
      */
-    Result processItems(final Closure processor) {
+    Result processItems(final Closure processor, boolean quiet) {
         return processItems(new Processor() {
             @Override
             void processItem(Item item) {
                 processor.call(item)
             }
-        })
+        }, quiet)
     }
+
+    Result processItems(final Closure processor) {
+        return processItems(processor, false)
+    }
+
+    Result processItemsQuiet(final Closure processor) {
+        return processItems(processor, true)
+    }
+
 
     /**
      * Process all dataset items with provided processor.
      */
-    private Result doProcessItems(boolean parallel, final Processor processor) {
+    private Result doProcessItems(boolean parallel, final Processor processor, boolean quiet = false) {
 
-        log.trace "ITEMS: " + Sutils.toStr(items)
+        if (log.isTraceEnabled()) {
+            log.trace "ITEMS: {}", Sutils.toStr(items)
+        }
 
         Result result = new Result()
 
         if (parallel) {
             int nt = ThreadPoolFactory.pool.poolSize
-            log.info "processing dataset [$name] using $nt threads"
+
+            if (!quiet) {
+                log.info "processing dataset [$name] using $nt threads"
+            }
 
             ExecutorService executor = Executors.newFixedThreadPool(params.threads)
             List<Callable<Object>> tasks = new ArrayList<>()
@@ -173,7 +187,7 @@ class Dataset implements Parametrized {
                 tasks.add(new Callable() {
                     @Override
                     Object call() throws Exception {
-                        processItem(item, num, processor, result)
+                        processssItem(item, num, processor, result, quiet)
                         return null
                     }
                 })
@@ -182,26 +196,30 @@ class Dataset implements Parametrized {
             executor.shutdownNow()
 
         } else {
-            log.info "processing dataset [$name] using 1 thread"
+            if (!quiet) {
+                log.info "processing dataset [$name] using 1 thread"
+            }
 
             int counter = 1
-            items.each { Item item ->
-                processItem(item, counter++, processor, result)
+            for (Item item : items) {
+                processssItem(item, counter++, processor, result, quiet)
             }
         }
 
         return result
     }
 
-    private void processItem(Item item, int num, Processor processor, Result result) {
+    private void processssItem(Item item, int num, Processor processor, Result result, boolean quiet) {
 
-        String msg = "processing [$item.label] ($num/$size)"
-        log.info (
-           "\n------------------------------------------------------------------------------------------------------------------------"
-         + "\n$msg"
-         + "\n------------------------------------------------------------------------------------------------------------------------"
-        )
-        System.out.println(msg)
+        if (!quiet) {
+            String msg = "processing [$item.label] ($num/$size)"
+            log.info (
+                  "\n------------------------------------------------------------------------------------------------------------------------"
+                + "\n$msg"
+                + "\n------------------------------------------------------------------------------------------------------------------------"
+            )
+            System.out.println(msg)
+        }
 
         try {
 
@@ -274,7 +292,7 @@ class Dataset implements Parametrized {
         return res
     }
 
-    private Dataset randomSubset(int subsetSize, long seed) {
+    Dataset randomSubset(int subsetSize, long seed) {
         if (subsetSize >= this.size) {
             return this
         }
@@ -752,7 +770,7 @@ class Dataset implements Parametrized {
 
 
     @FunctionalInterface
-    interface Processor {
+    static interface Processor {
 
         abstract void processItem(Item item)
 
