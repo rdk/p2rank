@@ -15,12 +15,10 @@ class FeatureSetup {
      * preserves order of features from enabledFeatureNames
      */
     List<Feature> enabledFeatures = new ArrayList<>()
-
     List<Feature> enabledAtomFeatures = new ArrayList<>()
     List<Feature> enabledSasFeatures = new ArrayList<>()
 
     List<String> jointHeader = new ArrayList<>()
-
 
 
     FeatureSetup(List<String> enabledFeatureNames) {
@@ -52,7 +50,6 @@ class FeatureSetup {
             feat.length = header.size()
             start += feat.length
         }
-
     }
 
     static class Feature {
