@@ -78,7 +78,7 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
         featureSetup = new FeatureSetup(params.extra_features)
 
         extraFeaturesHeader = featureSetup.jointHeader
-        atomTableFeatures = params.atom_table_features // ,"apRawInvalids","ap5sasaValids","ap5sasaInvalids"
+        atomTableFeatures = params.atom_table_features // e.g.: "apRawInvalids","ap5sasaValids","ap5sasaInvalids"
         residueTableFeatures = params.residue_table_features
 
         headerAdditionalFeatures = new GenericHeader([
@@ -113,8 +113,6 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
         if (params.deep_surrounding) {
             surfaceLayerAtoms = deepLayer
         } else {
-            // surfaceLayerAtoms = protein.proteinAtoms.cutoutSphere(pocket.surfaceAtoms, 1)  // shallow
-            //surfaceLayerAtoms = protein.exposedAtoms.cutoutShell(pocket.surfaceAtoms, 6) //XXX
             surfaceLayerAtoms = protein.exposedAtoms
         }
 
@@ -164,8 +162,6 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
 
     private void initForPocket() {
         log.debug "extractorFactory initForPocket for pocket $pocket.name"
-
-        //surfaceLayerAtoms = surfaceLayerAtoms.cutoutShell(pocket.surfaceAtoms, 6) //XXX
         log.debug "surfaceLayerAtoms:$surfaceLayerAtoms.count (surfaceAtoms: $pocket.surfaceAtoms.count) "
 
         sampledPoints = pocketPointSampler.samplePointsForPocket(pocket)
@@ -254,28 +250,16 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
     private PrankFeatureVector calcFeatVectorFromVectors(Atom point, Atoms neighbourhoodAtoms, Map<Integer, FeatureVector> fromVectors) {
         PrankFeatureVector res = new PrankFeatureVector(headerAdditionalFeatures)
 
-        //if (fromAtoms.count==0) {
-        //    log.error "!!! can't calc representation from empty list "
-        //    return null
-        //}
-
         if (neighbourhoodAtoms.isEmpty()) {
             throw new PrankException("No neighbourhood atoms. Cannot calculate feature vector. (Isn't neighbourhood_radius too small?)")
         }
 
         int n = neighbourhoodAtoms.count
 
-        //if (n==1) {
-        //    Atom a = fromAtoms.get(0)
-        //    log.warn "calc from only 1 atom: $a.name $a"
-        //}
-
         double weightSum = 0
 
         for (Atom a : neighbourhoodAtoms) {
             PrankFeatureVector props = (PrankFeatureVector) fromVectors.get(a.PDBserial)
-
-            //assert props!=null, "!!! properties not precalculated "
 
             double dist = Struct.dist(point, a)
             double weight = calcWeight(dist)

@@ -45,11 +45,7 @@ class FeatureSetup {
         int start = 0
         for (Feature feat : enabledFeatures) {
             List<String> header = feat.calculator.header
-            //if (header.size() == 1) {
-            //    jointHeader.add(feat.name)
-            //} else {
-            //    jointHeader.addAll(header.collect { feat.name + '.' + it  }) // prefix with "feat_name."
-            //}
+            
             jointHeader.addAll(header.collect { feat.name + '.' + it  }) // prefix with "feat_name."
 
             feat.startIndex = start
