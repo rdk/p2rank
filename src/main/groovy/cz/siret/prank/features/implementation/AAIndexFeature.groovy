@@ -6,11 +6,13 @@ import cz.siret.prank.features.tables.PropertyTable
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.PdbUtils
+import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
 
 /**
  * Features from AA index table
  */
+@CompileStatic
 class AAIndexFeature extends AtomFeatureCalculator implements Parametrized {
     
     static final PropertyTable aaIndex   = PropertyTable.parse(Futils.readResource("/tables/aa-index-full.csv")).reverse()

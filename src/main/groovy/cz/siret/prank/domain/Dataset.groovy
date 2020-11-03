@@ -26,6 +26,7 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicBoolean
 
+import static cz.siret.prank.utils.Cutils.newSynchronizedList
 import static cz.siret.prank.utils.Sutils.*
 import static org.apache.commons.lang3.StringUtils.isBlank
 
@@ -786,7 +787,7 @@ class Dataset implements Parametrized {
      * summary of a dataset processing run
      */
     static class Result {
-        List<Item> errorItems = Collections.synchronizedList(new ArrayList<Item>())
+        List<Item> errorItems = newSynchronizedList()
 
         boolean hasErrors() {
             errorItems.size() > 0

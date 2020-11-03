@@ -22,7 +22,7 @@ class Prediction {
     List<Pocket> pockets
 
     /**
-     * reordered pockets (relevant only when doing rescoring with old PRANK algorihhm)
+     * reordered pockets (relevant only when doing rescoring with old PRANK algorithm)
      */
     List<Pocket> reorderedPockets
 

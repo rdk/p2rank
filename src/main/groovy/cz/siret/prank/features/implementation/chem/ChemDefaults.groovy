@@ -7,6 +7,7 @@ import groovy.transform.CompileStatic
 /**
  * TODO: move to aa-table
  */
+@CompileStatic
 final class ChemDefaults {
 
     static class ToImmutableMixin {
@@ -63,7 +64,7 @@ final class ChemDefaults {
             Trp:-0.9,
             Tyr:-1.3,
             Val:4.2
-    ]
+    ] as Map<String, Double>
     //http://www.sigmaaldrich.com/life-science/metabolomics/learning-center/amino-acid-reference-chart.html#prop
 //        static Map<String, Double> HYDROPHATY_INDEX = (Map<String, Double>)  [
 //            Ala:41,

@@ -13,6 +13,7 @@ import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Cutils
 import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 
@@ -21,6 +22,7 @@ import org.biojava.nbio.structure.Atom
  * judging correct by distance to the closest ligand atom
  */
 @Slf4j
+@CompileStatic
 class LigandabilityPointVectorCollector extends VectorCollector implements Parametrized {
 
     static final PocketCriterium DEFAULT_POCKET_CRITERIUM = new DCA(5)
@@ -61,6 +63,7 @@ class LigandabilityPointVectorCollector extends VectorCollector implements Param
         return result
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     private Result doCollectVectors(PredictionPair pair, FeatureExtractor proteinExtractorPrototype) {
         Result finalRes = new Result()
 

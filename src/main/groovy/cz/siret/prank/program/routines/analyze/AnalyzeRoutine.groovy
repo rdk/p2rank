@@ -14,10 +14,13 @@ import cz.siret.prank.program.rendering.RenderingModel
 import cz.siret.prank.program.routines.Routine
 import cz.siret.prank.utils.BinCounter
 import cz.siret.prank.utils.CmdLineArgs
+import cz.siret.prank.utils.Cutils
 import cz.siret.prank.utils.Futils
+import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
 import static cz.siret.prank.geom.SecondaryStructureUtils.assignSecondaryStructure
+import static cz.siret.prank.utils.Cutils.newSynchronizedList
 import static cz.siret.prank.utils.Formatter.format
 import static cz.siret.prank.utils.Futils.writeFile
 
@@ -25,8 +28,8 @@ import static cz.siret.prank.utils.Futils.writeFile
  * Various tools for analyzing datasets.
  * Routine with sub-commands.
  */
-//@CompileStatic
 @Slf4j
+@CompileStatic
 class AnalyzeRoutine extends Routine {
 
     String subCommand
@@ -265,7 +268,7 @@ class AnalyzeRoutine extends Routine {
     private void cmdAaPropensities() {
         ResidueLabeler<Boolean> labeler = dataset.binaryResidueLabeler
 
-        List<BinCounter<AA>> counters = Collections.synchronizedList(new ArrayList<>())
+        List<BinCounter<AA>> counters = newSynchronizedList()
 
         dataset.processItems { Dataset.Item item ->
             Protein prot = item.protein
@@ -295,7 +298,7 @@ class AnalyzeRoutine extends Routine {
     private void cmdAaSurfSeqDuplets() {
         ResidueLabeler<Boolean> labeler = dataset.binaryResidueLabeler
 
-        List<BinCounter<String>> counters = Collections.synchronizedList(new ArrayList<>())
+        List<BinCounter<String>> counters = newSynchronizedList()
 
         dataset.processItems { Dataset.Item item ->
             Protein prot = item.protein
@@ -325,7 +328,7 @@ class AnalyzeRoutine extends Routine {
     private void cmdAaSurfSeqTriplets() {
         ResidueLabeler<Boolean> labeler = dataset.binaryResidueLabeler
 
-        List<BinCounter<String>> counters = Collections.synchronizedList(new ArrayList<>())
+        List<BinCounter<String>> counters = newSynchronizedList()
 
         dataset.processItems { Dataset.Item item ->
             Protein prot = item.protein

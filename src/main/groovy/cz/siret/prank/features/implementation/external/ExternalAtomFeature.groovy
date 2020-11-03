@@ -17,7 +17,7 @@ import java.nio.charset.StandardCharsets
  */
 @Slf4j
 @CompileStatic
-public class ExternalAtomFeature {
+class ExternalAtomFeature {
 
     private static String PDB_SERIAL_COLUMN = "pdb serial";
 

@@ -41,8 +41,16 @@ abstract class Pocket {
         return "pocket rank:$rank surfaceAtoms:${surfaceAtoms.count}"
     }
 
+    Atom getCentroid() {
+        return centroid
+    }
 
-    // TODO move those classes to FpocketPocket or get rid of them
+    void setCentroid(Atom centroid) {
+        this.centroid = centroid
+    }
+
+    
+// TODO move those classes to FpocketPocket or get rid of them
 
     static class AuxInfo {
         int samplePoints

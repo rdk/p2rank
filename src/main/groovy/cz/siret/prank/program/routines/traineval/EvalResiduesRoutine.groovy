@@ -10,6 +10,7 @@ import cz.siret.prank.program.rendering.PymolRenderer
 import cz.siret.prank.program.rendering.RenderingModel
 import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.utils.Futils
+import groovy.transform.CompileStatic
 
 import static cz.siret.prank.utils.ATimer.startTimer
 import static cz.siret.prank.utils.Formatter.bton
@@ -20,6 +21,7 @@ import static cz.siret.prank.utils.Futils.writeFile
  * Evaluate a model on a dataset.
  * Residue centric (for labeled residues).
  */
+@CompileStatic
 class EvalResiduesRoutine extends EvalRoutine {
 
     private Dataset dataset

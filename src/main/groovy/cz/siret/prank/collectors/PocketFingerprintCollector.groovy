@@ -7,9 +7,12 @@ import cz.siret.prank.features.FeatureVector
 import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.prediction.pockets.criteria.PocketCriterium
 import cz.siret.prank.utils.Cutils
+import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
 @Slf4j
+@CompileStatic
+@Deprecated
 class PocketFingerprintCollector extends VectorCollector  {
 
     FeatureExtractor evalFactory
@@ -37,21 +40,21 @@ class PocketFingerprintCollector extends VectorCollector  {
     }
 
     private processPocket(PredictionPair pair, Pocket pocket, boolean isPositive, Result res ) {
-        try {
-            FeatureExtractor eval = evalFactory.createInstanceForPocket(pair.protein.structure, pocket)
-            FeatureVector prop = eval.calcFingerprint(pocket.vornoiCenters)
-
-            if (isPositive) {
-                res.add( [*prop.vector, 1] )
-                res.positives++
-            } else {
-                res.add( [*prop.vector, 0] )
-                res.negatives++
-            }
-
-        } catch (Exception e) {
-            log.error "skiping extraction from pocket:$pocket.name", e
-        }
+//        try {
+//            FeatureExtractor eval = evalFactory.createInstanceForPocket(pocket)
+//            FeatureVector prop = eval.calcFingerprint(pocket.vornoiCenters)
+//
+//            if (isPositive) {
+//                res.add( [*prop.vector, 1] )
+//                res.positives++
+//            } else {
+//                res.add( [*prop.vector, 0] )
+//                res.negatives++
+//            }
+//
+//        } catch (Exception e) {
+//            log.error "skiping extraction from pocket:$pocket.name", e
+//        }
     }
 
     @Override

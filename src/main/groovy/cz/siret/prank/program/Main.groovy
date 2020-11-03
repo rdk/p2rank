@@ -13,6 +13,7 @@ import cz.siret.prank.program.routines.predict.RescoreRoutine
 import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.program.routines.traineval.*
 import cz.siret.prank.utils.*
+import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.StringUtils
 
@@ -21,6 +22,7 @@ import static cz.siret.prank.utils.Futils.mkdirs
 import static cz.siret.prank.utils.Futils.writeFile
 
 @Slf4j
+@CompileStatic
 class Main implements Parametrized, Writable {
 
     static Properties buildProperties = Futils.loadProperties('/build.properties')
@@ -43,7 +45,7 @@ class Main implements Parametrized, Writable {
         args.get('config','c')
     }
 
-    File findConfigFile(List<String> paths) {
+    private File findConfigFile(List<String> paths) {
         for (String path : paths) {
             log.info "Looking for config in " + Futils.absPath(path)
             if (Futils.exists(path)) {
@@ -53,7 +55,7 @@ class Main implements Parametrized, Writable {
         return null
     }
 
-    File findConfigFile(String configParam) {
+    private File findConfigFile(String configParam) {
         String path = configParam
 
         File configFile = findConfigFile([
@@ -61,7 +63,7 @@ class Main implements Parametrized, Writable {
             "${path}.groovy",
             "$installDir/config/${path}",
             "$installDir/config/${path}.groovy"
-        ])
+        ] as List<String>)
 
         if (configFile == null) {
             throw new PrankException("Config file not found '$configParam'")

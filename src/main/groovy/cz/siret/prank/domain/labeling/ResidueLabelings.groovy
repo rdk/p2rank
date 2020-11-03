@@ -11,6 +11,7 @@ import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.params.Params
 import cz.siret.prank.program.routines.results.Evaluation
+import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
 import javax.annotation.Nullable
@@ -22,6 +23,7 @@ import static cz.siret.prank.utils.Futils.writeFile
  * Logic for calculating residue labelings during P2Rank prediction
  */
 @Slf4j
+@CompileStatic
 class ResidueLabelings implements Parametrized {
 
     Residues residues

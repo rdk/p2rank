@@ -7,12 +7,14 @@ import cz.siret.prank.features.implementation.conservation.ConservationScore
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.prediction.pockets.criteria.*
 import cz.siret.prank.program.params.Parametrized
+import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.StringUtils
 
 import static cz.siret.prank.geom.Atoms.intersection
 import static cz.siret.prank.geom.Atoms.union
 import static cz.siret.prank.utils.Cutils.head
+import static cz.siret.prank.utils.Cutils.newSynchronizedList
 import static cz.siret.prank.utils.Formatter.*
 import static java.util.Collections.emptyList
 
@@ -31,13 +33,13 @@ class Evaluation implements Parametrized {
 
     PocketCriterium standardCriterium = new DCA(4.0)
     List<PocketCriterium> criteria
-    List<ProteinRow> proteinRows = Collections.synchronizedList(new ArrayList<>())
-    List<LigRow> ligandRows = Collections.synchronizedList(new ArrayList<>())
-    List<PocketRow> pocketRows = Collections.synchronizedList(new ArrayList<>())
-    List<ResidueRow> residueRows = Collections.synchronizedList(new ArrayList<>())
+    List<ProteinRow> proteinRows = newSynchronizedList()
+    List<LigRow> ligandRows = newSynchronizedList()
+    List<PocketRow> pocketRows = newSynchronizedList()
+    List<ResidueRow> residueRows = newSynchronizedList()
 
-    List<Double> bindingScores = Collections.synchronizedList(new ArrayList<Double>())
-    List<Double> nonBindingScores = Collections.synchronizedList(new ArrayList<Double>())
+    List<Double> bindingScores = newSynchronizedList()
+    List<Double> nonBindingScores = newSynchronizedList()
 
     int proteinCount
     int pocketCount

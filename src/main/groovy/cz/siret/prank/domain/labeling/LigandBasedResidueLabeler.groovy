@@ -5,11 +5,13 @@ import cz.siret.prank.domain.Protein
 import cz.siret.prank.domain.Residue
 import cz.siret.prank.domain.Residues
 import cz.siret.prank.program.params.Parametrized
+import groovy.transform.CompileStatic
 
 /**
  *
  *
  */
+@CompileStatic
 class LigandBasedResidueLabeler extends ResidueLabeler<Boolean> implements Parametrized {
 
     double DIST_THRESHOLD = params.ligand_protein_contact_distance

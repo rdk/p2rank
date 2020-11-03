@@ -1,5 +1,6 @@
 package cz.siret.prank.program.routines.traineval
 
+import com.google.common.collect.Lists
 import cz.siret.prank.collectors.CollectorFactory
 import cz.siret.prank.collectors.DataPreprocessor
 import cz.siret.prank.collectors.VectorCollector
@@ -11,6 +12,7 @@ import cz.siret.prank.program.routines.Routine
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.PerfUtils
 import cz.siret.prank.utils.WekaUtils
+import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
 import groovy.util.logging.Slf4j
 import weka.core.Instance
@@ -19,8 +21,10 @@ import weka.core.Instances
 import java.util.concurrent.atomic.AtomicInteger
 
 import static cz.siret.prank.utils.ATimer.startTimer
+import static cz.siret.prank.utils.Cutils.newSynchronizedList
 
 @Slf4j
+@CompileStatic
 class CollectVectorsRoutine extends Routine {
 
     Dataset dataset
@@ -62,7 +66,9 @@ class CollectVectorsRoutine extends Routine {
 
         final AtomicInteger pos = new AtomicInteger(0)
         final AtomicInteger neg = new AtomicInteger(0)
-        final List<Instances> instList = Collections.synchronizedList(new ArrayList<>(dataset.size))
+        final List<Instances> instList = newSynchronizedList(dataset.size)
+
+        Lists.newArrayList()
 
         dataset = prepareDataset(dataset)
 

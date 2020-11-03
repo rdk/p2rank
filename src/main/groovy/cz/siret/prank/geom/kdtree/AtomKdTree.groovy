@@ -5,7 +5,7 @@ import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
 
 @CompileStatic
-public class AtomKdTree extends KdTree.SqrEuclid<Atom> {
+class AtomKdTree extends KdTree.SqrEuclid<Atom> {
 
     private static final int DIMENSIONS = 3
 

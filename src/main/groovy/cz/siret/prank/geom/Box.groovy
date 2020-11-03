@@ -1,7 +1,9 @@
 package cz.siret.prank.geom
 
+import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
 
+@CompileStatic
 class Box {
     Atom min = new Point()
     Atom max = new Point()

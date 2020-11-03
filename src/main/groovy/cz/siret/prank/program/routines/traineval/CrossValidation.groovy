@@ -5,6 +5,8 @@ import cz.siret.prank.domain.Dataset
 import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.WekaUtils
+import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode
 import groovy.util.logging.Slf4j
 import groovyx.gpars.GParsPool
 import weka.core.Instances
@@ -12,6 +14,7 @@ import weka.core.Instances
 import static cz.siret.prank.utils.ATimer.startTimer
 
 @Slf4j
+@CompileStatic
 class CrossValidation extends EvalRoutine {
 
     int numFolds
@@ -35,6 +38,8 @@ class CrossValidation extends EvalRoutine {
         Futils.mkdirs(outdir)
     }
 
+
+    @CompileStatic(TypeCheckingMode.SKIP)
     @Override
     EvalResults execute() {
         def timer = startTimer()
@@ -51,7 +56,7 @@ class CrossValidation extends EvalRoutine {
                 iter.trainVectors = fold.trainVectors // pre-collected vectors
 
                 return iter.trainAndEvalModel()
-            }
+            } as List<EvalResults>
         }
 
         resultsList.each { results.addSubResults(it) }

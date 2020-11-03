@@ -3,6 +3,7 @@ package cz.siret.prank.utils
 import com.google.common.base.Function
 import groovy.transform.CompileStatic
 
+import javax.annotation.Nonnull
 import javax.annotation.Nullable
 
 /**
@@ -75,6 +76,21 @@ class Cutils {
         if (list == null) return null
         if (idx < 0 || idx >= list.size()) return null
         return list.get(idx)
+    }
+
+    @Nonnull
+    static <E> List<E> newSynchronizedList() {
+        return Collections.synchronizedList(new ArrayList<E>());
+    }
+
+    @Nonnull
+    static <E> List<E> newSynchronizedList(int initialSize) {
+        return Collections.synchronizedList(new ArrayList<E>(initialSize));
+    }
+
+    @Nonnull
+    static <E> List<E> synchronizedCopy(Collection<E> collection) {
+        return Collections.synchronizedList(new ArrayList<E>(collection));
     }
 
 }

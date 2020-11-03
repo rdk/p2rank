@@ -1,10 +1,12 @@
 package cz.siret.prank.domain.labeling
 
 import cz.siret.prank.prediction.metrics.ClassifierStats
+import groovy.transform.CompileStatic
 
 /**
  * Calculations related to binary residue labelings
  */
+@CompileStatic
 class BinaryLabelings {
 
     static class Stats {

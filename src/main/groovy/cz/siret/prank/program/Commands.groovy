@@ -1,7 +1,11 @@
 package cz.siret.prank.program
+
+import groovy.transform.CompileStatic
+
 /**
  *
  */
+@CompileStatic
 class Commands {
 
     List<Command> commands

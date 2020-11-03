@@ -29,5 +29,4 @@ public class PPred {
         this.score = score;
     }
 
-
 }

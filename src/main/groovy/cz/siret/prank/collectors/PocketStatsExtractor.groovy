@@ -6,6 +6,7 @@ import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.prediction.pockets.criteria.PocketCriterium
 import cz.siret.prank.utils.Cutils
 
+@Deprecated
 class PocketStatsExtractor extends VectorCollector {
 
     PocketCriterium assessor
