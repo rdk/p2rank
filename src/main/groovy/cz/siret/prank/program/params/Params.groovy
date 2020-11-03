@@ -1058,10 +1058,18 @@ class Params {
     int use_kdtree_cutout_sphere_thrashold = 150
 
     /**
-     * Used by csv_file_atom_feature.
+     * Directories where to find csv files for csv_file_atom_feature.
      */
     @RuntimeParam
     List<String> feat_csv_directories = []
+
+    /**
+     * Header of values used by csv_file_atom_feature.
+     * This is temporary. csv_file_atom_feature does not yet respect the this parameter.
+     */
+    @RuntimeParam
+    List<String> feat_csv_header = ["temporary"]
+
 
 //===========================================================================================================//
 

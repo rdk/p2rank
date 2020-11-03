@@ -13,50 +13,59 @@ import org.biojava.nbio.structure.Atom
 @CompileStatic
 class CsvFileFeature extends AtomFeatureCalculator implements Parametrized {
 
-    private static final String DATA_LOADED_KEY = "CSV_FILE_DATA_LOADED";
-
-    private static final String DATA_KEY = "CSV_FILE_DATA";
+    private static final String DATA_LOADED_KEY = "CSV_FILE_DATA_LOADED"
+    private static final String DATA_KEY = "CSV_FILE_DATA"
 
     @Override
-    public String getName() {
-        return "csv_file_feature";
+    String getName() {
+        return "csv_file_feature"
+    }
+
+    /**
+     *
+     * Notes:
+     * Multi value features must return header.
+     * Elements of the header should be alpha-numeric strings without whitespace.
+     * Header must have the same length as results of calculateForAtom().
+     * calculateForAtom() must return array of the same length for every atom and protein.
+     */
+    @Override
+    List<String> getHeader() {
+        // TODO: add implementation so that the method returns static header with sensible sub-feature names, so that either:
+        //  (a) header is based on feat_csv_directories
+        //  (b) this feature returns result based on feat_csv_header
+
+        return params.feat_csv_header // temporary solution!
     }
 
     @Override
-    public void preProcessProtein(
-            Protein protein,
-            ProcessedItemContext context) {
-        super.preProcessProtein(protein, context);
-        ensureCsvFileForProteinIsLoaded(protein);
+    void preProcessProtein(Protein protein, ProcessedItemContext context) {
+        ensureCsvFileForProteinIsLoaded(protein)
     }
 
     private void ensureCsvFileForProteinIsLoaded(Protein protein) {
-        if (protein.getSecondaryData().get(DATA_LOADED_KEY) == Boolean.TRUE) {
-            return;
+        if (protein.secondaryData.get(DATA_LOADED_KEY) == Boolean.TRUE) {
+            return
         }
-        loadCsvFileForProtein(protein);
+        loadCsvFileForProtein(protein)
     }
 
     private void loadCsvFileForProtein(Protein protein) {
-        List<String> directories = getParams().feat_csv_directories;
-        ExternalAtomFeature feature = new ExternalAtomFeature();
-        feature.load(directories, protein.name);
-        Map<String, Object> secondaryData = protein.getSecondaryData();
-        secondaryData.put(DATA_LOADED_KEY, true);
-        secondaryData.put(DATA_KEY, feature);
+        List<String> directories = params.feat_csv_directories
+        ExternalAtomFeature feature = new ExternalAtomFeature()
+        feature.load(directories, protein.name)
+        protein.secondaryData.put(DATA_LOADED_KEY, true)
+        protein.secondaryData.put(DATA_KEY, feature)
     }
 
     @Override
-    public double[] calculateForAtom(
-            Atom proteinSurfaceAtom,
-            AtomFeatureCalculationContext context) {
-        ExternalAtomFeature feature = getFeature(context.protein);
-        return feature.getValue(proteinSurfaceAtom);
+    double[] calculateForAtom(Atom proteinSurfaceAtom, AtomFeatureCalculationContext context) {
+        ExternalAtomFeature feature = getFeature(context.protein)
+        return feature.getValue(proteinSurfaceAtom)
     }
 
-
     private static ExternalAtomFeature getFeature(Protein protein) {
-        return (ExternalAtomFeature) protein.getSecondaryData().get(DATA_KEY);
+        return (ExternalAtomFeature) protein.secondaryData.get(DATA_KEY)
     }
 
 }

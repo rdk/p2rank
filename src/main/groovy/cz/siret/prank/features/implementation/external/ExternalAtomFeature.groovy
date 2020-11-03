@@ -1,6 +1,7 @@
 package cz.siret.prank.features.implementation.external
 
 import cz.siret.prank.program.PrankException
+import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.apache.commons.csv.CSVFormat
@@ -19,180 +20,163 @@ import java.nio.charset.StandardCharsets
 @CompileStatic
 class ExternalAtomFeature {
 
-    private static String PDB_SERIAL_COLUMN = "pdb serial";
-
-    private static String CHAIN_COLUMN = "chain";
-
-    private static String INS_CODE_COLUMN = "ins. code";
-
-    private static String SEQ_CODE_COLUMN = "seq. code";
-
-    private static String IGNORE_COLUMN_PREFIX = "#";
-
-    private static List<String> RESIDUE_HEADER =
-            Arrays.asList(CHAIN_COLUMN, INS_CODE_COLUMN, SEQ_CODE_COLUMN);
-
     private static enum CsvFileType {
         AtomCsv,
         ResidueCsv
     }
 
     private static class FileMetadata {
-
-        public CsvFileType type;
-
-        public List<Integer> valueColumns = new ArrayList<>();
-
+        CsvFileType type
+        List<Integer> valueColumns = new ArrayList<>()
     }
 
-    private Map<String, List<Double>> atomFeatures = new HashMap<>();
+//===========================================================================================================//
 
-    private Map<ResidueNumber, List<Double>> residueFeatures = new HashMap<>();
+    private static final String PDB_SERIAL_COLUMN = "pdb serial"
+    private static final String CHAIN_COLUMN = "chain"
+    private static final String INS_CODE_COLUMN = "ins. code"
+    private static final String SEQ_CODE_COLUMN = "seq. code"
+    private static final String IGNORE_COLUMN_PREFIX = "#"
 
-    private int totalAtomFeatureSize = 0;
+    private static final List<String> RESIDUE_HEADER = [CHAIN_COLUMN, INS_CODE_COLUMN, SEQ_CODE_COLUMN]
 
+    private int totalAtomFeatureSize = 0
     private int totalResidueFeatureSize = 0;
+    private Map<String, FileMetadata> directoryMetadata = new HashMap<>()
+    private Map<String, List<Double>> atomFeatures = new HashMap<>()
+    private Map<ResidueNumber, List<Double>> residueFeatures = new HashMap<>()
 
-    private Map<String, FileMetadata> directoryMetadata = new HashMap<>();
+//===========================================================================================================//
 
-    public void load(List<String> directories, String fileName) {
-        ensureMetadataAreLoaded(directories, fileName);
+    void load(List<String> directories, String proteinName) {
+        ensureMetadataAreLoaded(directories, proteinName)
         for (String dir in directories) {
-            String path = dir + File.separator + fileName + ".csv";
-            loadCsv(new File(path), directoryMetadata.get(dir));
+            String path = dir + File.separator + proteinName + ".csv"
+            loadCsv(new File(path), directoryMetadata.get(dir))
         }
-        validate(directories, fileName);
+        validate(directories, proteinName)
     }
 
-    private void ensureMetadataAreLoaded(
-            List<String> directories, String fileName) {
-        directoryMetadata = new HashMap<>();
+    private void ensureMetadataAreLoaded(List<String> directories, String proteinName) {
+        directoryMetadata = new HashMap<>()
         for (String dir in directories) {
             if (directoryMetadata.containsKey(dir)) {
-                continue;
+                continue
             }
-            File path = new File(dir, fileName + ".csv");
-            FileMetadata metadata = loadCsvMetadata(path);
-            directoryMetadata.put(dir, metadata);
+            File path = new File(dir, proteinName + ".csv")
+            FileMetadata metadata = loadCsvMetadata(path)
+            directoryMetadata.put(dir, metadata)
             switch (metadata.type) {
                 case CsvFileType.AtomCsv:
-                    totalAtomFeatureSize += metadata.valueColumns.size();
-                    break;
+                    totalAtomFeatureSize += metadata.valueColumns.size()
+                    break
                 case CsvFileType.ResidueCsv:
-                    totalResidueFeatureSize += metadata.valueColumns.size();
-                    break;
+                    totalResidueFeatureSize += metadata.valueColumns.size()
+                    break
                 default:
-                    throw new PrankException("Unknown file type.");
+                    throw new PrankException("Unknown file type.")
             }
         }
     }
 
     private static FileMetadata loadCsvMetadata(File file) {
-        FileInputStream stream = new FileInputStream(file);
-        List<String> headers;
+        InputStream stream = Futils.bufferedFileInputStream(file)
+        List<String> headers
         try {
-            InputStreamReader input = new InputStreamReader(
-                    stream, StandardCharsets.UTF_8);
-            CSVParser csvParser =
-                    CSVFormat.RFC4180.withFirstRecordAsHeader().parse(input);
-            headers = csvParser.getHeaderNames();
+            InputStreamReader input = new InputStreamReader(stream, StandardCharsets.UTF_8)
+            CSVParser csvParser = CSVFormat.RFC4180.withFirstRecordAsHeader().parse(input)
+            headers = csvParser.getHeaderNames()
         } finally {
-            stream.close();
+            stream.close()
         }
         if (headers.contains(PDB_SERIAL_COLUMN)) {
-            FileMetadata result = new FileMetadata();
-            result.type = CsvFileType.AtomCsv;
+            FileMetadata result = new FileMetadata()
+            result.type = CsvFileType.AtomCsv
             for (int index = 0; index < headers.size(); ++index) {
-                String colName = headers.get(index);
+                String colName = headers.get(index)
                 if (colName.startsWith(IGNORE_COLUMN_PREFIX)) {
-                    continue;
+                    continue
                 }
                 if (PDB_SERIAL_COLUMN == colName) {
-                    continue;
+                    continue
                 }
-                result.valueColumns.add(index);
+                result.valueColumns.add(index)
             }
-            return result;
+            return result
         } else if (headers.containsAll(RESIDUE_HEADER)) {
-            FileMetadata result = new FileMetadata();
-            result.type = CsvFileType.ResidueCsv;
+            FileMetadata result = new FileMetadata()
+            result.type = CsvFileType.ResidueCsv
             for (int index = 0; index < headers.size(); ++index) {
-                String colName = headers.get(index);
+                String colName = headers.get(index)
                 if (colName.startsWith(IGNORE_COLUMN_PREFIX)) {
-                    continue;
+                    continue
                 }
                 if (RESIDUE_HEADER.contains(colName)) {
-                    continue;
+                    continue
                 }
-                result.valueColumns.add(index);
+                result.valueColumns.add(index)
             }
-            return result;
+            return result
         } else {
-            throw new PrankException(
-                    "Can't recognize CSV header for: " + file)
+            throw new PrankException("Can't recognize CSV header for: " + file)
         }
     }
 
     private void loadCsv(File file, FileMetadata metadata) {
-        FileInputStream stream = new FileInputStream(file);
+        InputStream stream = Futils.bufferedFileInputStream(file)
         try {
-            InputStreamReader input = new InputStreamReader(
-                    stream, StandardCharsets.UTF_8);
-            CSVParser csvParser =
-                    CSVFormat.RFC4180.withFirstRecordAsHeader().parse(input);
+            InputStreamReader input = new InputStreamReader(stream, StandardCharsets.UTF_8)
+            CSVParser csvParser = CSVFormat.RFC4180.withFirstRecordAsHeader().parse(input)
             // Determine type of CSV file using information about header.
             switch (metadata.type) {
                 case CsvFileType.AtomCsv:
-                    loadAtomFeatureCsv(csvParser, metadata.valueColumns);
-                    break;
+                    loadAtomFeatureCsv(csvParser, metadata.valueColumns)
+                    break
                 case CsvFileType.ResidueCsv:
-                    loadResidueFeatureCsv(csvParser, metadata.valueColumns);
-                    break;
+                    loadResidueFeatureCsv(csvParser, metadata.valueColumns)
+                    break
                 default:
-                    throw new PrankException("Unknown file type for: " + file);
+                    throw new PrankException("Unknown file type for: " + file)
             }
 
         } finally {
-            stream.close();
+            stream.close()
         }
     }
 
-    private void loadAtomFeatureCsv(
-            CSVParser csvParser, List<Integer> valueColumns) {
+    private void loadAtomFeatureCsv(CSVParser csvParser, List<Integer> valueColumns) {
         for (CSVRecord record : csvParser) {
-            String key = record.get(PDB_SERIAL_COLUMN);
+            String key = record.get(PDB_SERIAL_COLUMN)
             if (!atomFeatures.containsKey(key)) {
-                atomFeatures.put(key, new ArrayList<>());
+                atomFeatures.put(key, new ArrayList<>())
             }
-            readToList(record, valueColumns, atomFeatures.get(key));
+            readToList(record, valueColumns, atomFeatures.get(key))
         }
     }
 
-    private static void readToList(
-            CSVRecord record, List<Integer> columns, List<Double> target) {
+    private static void readToList(CSVRecord record, List<Integer> columns, List<Double> target) {
         for (int index : columns) {
-            target.add(Double.parseDouble(record.get(index)));
+            target.add(Double.parseDouble(record.get(index)))
         }
     }
 
-    private void loadResidueFeatureCsv(
-            CSVParser csvParser, List<Integer> valueColumns) {
+    private void loadResidueFeatureCsv(CSVParser csvParser, List<Integer> valueColumns) {
         for (CSVRecord record : csvParser) {
-            String chain = record.get(CHAIN_COLUMN);
-            Integer seqCode = Integer.parseInt(record.get(SEQ_CODE_COLUMN));
-            String insCodeStr = record.get(INS_CODE_COLUMN);
-            Character insCode = null;
+            String chain = record.get(CHAIN_COLUMN)
+            Integer seqCode = Integer.parseInt(record.get(SEQ_CODE_COLUMN))
+            String insCodeStr = record.get(INS_CODE_COLUMN)
+            Character insCode = null
             if (!insCodeStr.isAllWhitespace()) {
-                char[] chars = record.get(INS_CODE_COLUMN).getChars();
+                char[] chars = record.get(INS_CODE_COLUMN).getChars()
                 if (chars.length > 0) {
-                    insCode = Character.valueOf(chars[0]);
+                    insCode = Character.valueOf(chars[0])
                 }
             }
-            ResidueNumber key = new ResidueNumber(chain, seqCode, insCode);
+            ResidueNumber key = new ResidueNumber(chain, seqCode, insCode)
             if (!residueFeatures.containsKey(key)) {
-                residueFeatures.put(key, new ArrayList<>());
+                residueFeatures.put(key, new ArrayList<>())
             }
-            readToList(record, valueColumns, residueFeatures.get(key));
+            readToList(record, valueColumns, residueFeatures.get(key))
         }
     }
 
@@ -205,8 +189,7 @@ class ExternalAtomFeature {
                                 "expected ${totalAtomFeatureSize}")
             }
         }
-        for (Map.Entry<ResidueNumber, List<Double>> entry :
-                residueFeatures.entrySet()) {
+        for (Map.Entry<ResidueNumber, List<Double>> entry : residueFeatures.entrySet()) {
             if (entry.value.size() != totalResidueFeatureSize) {
                 throw new PrankException(
                         "Invalid residue feature size for ${entry.key}" +
@@ -216,38 +199,41 @@ class ExternalAtomFeature {
         }
         if (totalResidueFeatureSize + totalAtomFeatureSize == 0) {
             throw new PrankException(
-                    "No features loaded for: ${fileName} from ${directories}");
+                    "No features loaded for: ${fileName} from ${directories}")
         }
     }
 
-    public double[] getValue(Atom atom) {
-        double[] result =
-                new double[totalAtomFeatureSize + totalResidueFeatureSize];
-        int pdbSerial = atom.getPDBserial();
+    /**
+     * @param atom
+     * @return
+     */
+    double[] getValue(Atom atom) {
+        double[] result = new double[totalAtomFeatureSize + totalResidueFeatureSize]
+        int pdbSerial = atom.getPDBserial()
         if (atomFeatures.size() > 0) {
-            double[] atomFeature = atomFeatures.get(pdbSerial);
+            double[] atomFeature = atomFeatures.get(pdbSerial)
             if (atomFeature == null) {
                 throw new PrankException(
-                        "Missing atom feature for: ${pdbSerial}");
+                        "Missing atom feature for: ${pdbSerial}")
             }
-            copyToArray(atomFeature, result, 0);
+            copyToArray(atomFeature, result, 0)
         }
-        ResidueNumber residueNumber = atom.getGroup().getResidueNumber();
+        ResidueNumber residueNumber = atom.getGroup().getResidueNumber()
         if (residueFeatures.size() > 0) {
-            double[] residueFeature = residueFeatures.get(residueNumber);
+            double[] residueFeature = residueFeatures.get(residueNumber)
             if (residueFeature == null) {
-                throw new PrankException(
-                        "Missing residue for: ${residueNumber}")
+                throw new PrankException("Missing residue for: ${residueNumber}")
             }
-            copyToArray(residueFeature, result, totalAtomFeatureSize);
+            copyToArray(residueFeature, result, totalAtomFeatureSize)
         }
-        return result;
+        return result
     }
 
     private static void copyToArray(double[] from, double[] to, int offset) {
-        for (int index = 0; index < from.length; ++index) {
-            to[index + offset] = from[index];
-        }
+        //for (int index = 0; index < from.length; ++index) {
+        //    to[index + offset] = from[index]
+        //}
+        System.arraycopy(from, 0, to, offset, from.length)
     }
 
 }

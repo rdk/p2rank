@@ -231,7 +231,7 @@ class Futils {
         return inputStream(new File(fname))
     }
 
-    private static BufferedInputStream bufferedFileInputStream(File file) {
+    public static BufferedInputStream bufferedFileInputStream(File file) {
         return new BufferedInputStream(new FileInputStream(file), BUFFER_SIZE)
     }
 
