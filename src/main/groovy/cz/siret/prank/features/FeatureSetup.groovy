@@ -45,14 +45,16 @@ class FeatureSetup {
         int start = 0
         for (Feature feat : enabledFeatures) {
             List<String> header = feat.calculator.header
-            if (header.size() == 1) {
-                jointHeader.add(feat.name)
-            } else {
-                jointHeader.addAll(header.collect { feat.name + '.' + it  }) // prefix with "feat_name."
-            }
+            //if (header.size() == 1) {
+            //    jointHeader.add(feat.name)
+            //} else {
+            //    jointHeader.addAll(header.collect { feat.name + '.' + it  }) // prefix with "feat_name."
+            //}
+            jointHeader.addAll(header.collect { feat.name + '.' + it  }) // prefix with "feat_name."
 
             feat.startIndex = start
-            start += header.size()
+            feat.length = header.size()
+            start += feat.length
         }
 
     }
@@ -61,6 +63,7 @@ class FeatureSetup {
         FeatureCalculator calculator
         /** start index in feature vector */
         int startIndex
+        int length
 
         Feature(FeatureCalculator calculator) {
             this.calculator = calculator

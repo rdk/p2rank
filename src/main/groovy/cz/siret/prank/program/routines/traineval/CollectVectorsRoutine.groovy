@@ -125,9 +125,6 @@ class CollectVectorsRoutine extends Routine {
                     double val = inst.value(i)
                     if (val == Double.NaN) {
                         String feat = inst.attribute(i).name()
-                        String msg = "Invalid value for feature $feat: NaN"
-                        System.out.println(msg)
-                        log.error(msg)
                         throw new PrankException("Invalid value for feature $feat: NaN")
                     }
                 }

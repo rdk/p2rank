@@ -54,7 +54,7 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
     Atoms surfaceLayerAtoms
 
     /**
-     * deep layer of atums unter the protein surface
+     * deep layer of atoms under the protein surface
      * serves as cache for speeding up calculation of protrusion and other features
      */
     Atoms deepLayer
@@ -312,11 +312,18 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
         SasFeatureCalculationContext context = new SasFeatureCalculationContext(protein, neighbourhoodAtoms, this)
         for (FeatureSetup.Feature feature : featureSetup.enabledSasFeatures) {
             double[] values = feature.calculator.calculateForSasPoint(point, context)
+
+            if (values.length != feature.@length) {
+                throw new PrankException("Feature $feature.name returned value array of incorrect length: ${values.length}."
+                    + "Should be ${feature.@length} according to the feature header.")
+            }
+
             res.valueVector.setValues(feature.startIndex, values)
         }
 
         return res
     }
+
 
     /**
      *
@@ -373,19 +380,15 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
 
         def vector = calcFeatureVectorFromAtoms(point, DO_SMOOTH_REPRESENTATION, neighbourhood)
 
-//        if (CHECK_VECTORS) {
-//            double[] arr = vector.array
-//            for (int i=0; i!=arr.length; i++) {
-//                if (arr[i] == Double.NaN) {
-//                    String feat = vector.header[i]
-//                    String msg = "Invalid value for feature $feat: NaN"
-//                    System.out.println(msg)
-//                    log.error(msg)
-//                    throw new PrankException("Invalid value for feature $feat: NaN")
-//                }
-//            }
-//
-//        }
+        if (CHECK_VECTORS) {
+            double[] arr = vector.array
+            for (int i=0; i!=arr.length; i++) {
+                if (arr[i] == Double.NaN) {
+                    String feat = vector.header[i]
+                    throw new PrankException("Invalid value for feature $feat: NaN")
+                }
+            }
+        }
 
         return vector
     }
