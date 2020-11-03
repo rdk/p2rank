@@ -93,7 +93,7 @@ class Dataset implements Parametrized {
      * (clears generated surfaces and secondary data calculated by feature implementations)
      */
     void clearSecondaryCaches() {
-        processItems { Item it ->
+        items.each { Item it ->
             if (it.cachedPair != null) {
                 it.cachedPair.prediction.protein.clearSecondaryData()
                 it.cachedPair.protein.clearSecondaryData()
@@ -108,29 +108,7 @@ class Dataset implements Parametrized {
         items.each { it.cachedPair = null }
     }
 
-    boolean checkFilesExist() {
-        AtomicBoolean allOk = new AtomicBoolean(true)
-
-        boolean checkPrediction = header.contains(COLUMN_PREDICTION)
-        boolean checkProtein = header.contains(COLUMN_PROTEIN)
-
-        processItemsQuiet { Item it ->
-            if (checkProtein) {
-                if (!Futils.exists(it.proteinFile)) {
-                    log.error "protein file doesn't exist: $it.proteinFile"
-                    allOk.set(false)
-                }
-            }
-            if (checkPrediction) {
-                if (!Futils.exists(it.pocketPredictionFile)) {
-                    log.error "prediction file doesn't exist: $it.pocketPredictionFile"
-                    allOk.set(false)
-                }
-            }
-        }
-
-        return allOk.get()
-    }
+//===========================================================================================================//
 
     /**
      * Process all dataset items.
@@ -237,6 +215,34 @@ class Dataset implements Parametrized {
 
     }
 
+//===========================================================================================================//
+
+    boolean checkFilesExist() {
+        AtomicBoolean allOk = new AtomicBoolean(true)
+
+        boolean checkPrediction = header.contains(COLUMN_PREDICTION)
+        boolean checkProtein = header.contains(COLUMN_PROTEIN)
+
+        processItemsQuiet { Item it ->
+            if (checkProtein) {
+                if (!Futils.exists(it.proteinFile)) {
+                    log.error "protein file doesn't exist: $it.proteinFile"
+                    allOk.set(false)
+                }
+            }
+            if (checkPrediction) {
+                if (!Futils.exists(it.pocketPredictionFile)) {
+                    log.error "prediction file doesn't exist: $it.pocketPredictionFile"
+                    allOk.set(false)
+                }
+            }
+        }
+
+        return allOk.get()
+    }
+
+//===========================================================================================================//
+
     private DatasetItemLoader getLoader(Item item) {
         new DatasetItemLoader(getLoaderParams(item), getPredictionLoader())
     }
@@ -303,7 +309,7 @@ class Dataset implements Parametrized {
         return createSubset( shuffledItems.subList(0, subsetSize), this.name + " (random subset of size $subsetSize)" )
     }
 
-    private List<Fold> sampleFolds(int k, long seed) {
+    List<Fold> sampleFolds(int k, long seed) {
         if (size < k)
             throw new PrankException("There is less dataset items than folds! ($k < $size)")
 
