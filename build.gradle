@@ -122,19 +122,19 @@ configurations {
 
 dependencies {
 
-    implementation 'org.codehaus.groovy:groovy-all:3.0.4'
+    implementation 'org.codehaus.groovy:groovy-all:3.0.4' // 3.0.5 and 3.0.6 are buggy
 
     implementation 'org.codehaus.gpars:gpars:1.2.1'
     implementation 'org.apache.commons:commons-lang3:3.11'
     implementation 'commons-io:commons-io:2.8.0'
     implementation 'com.google.guava:guava:30.0-jre'
     implementation 'com.google.code.gson:gson:2.8.6'
-    implementation 'org.zeroturnaround:zt-zip:1.14'
     implementation 'com.univocity:univocity-parsers:2.8.4' // csv parser
     implementation 'org.apache.commons:commons-csv:1.8'
+    implementation 'org.zeroturnaround:zt-zip:1.14'
     implementation 'org.apache.commons:commons-compress:1.20'
     implementation group: 'org.tukaani', name: 'xz', version: '1.8'
-    implementation group: 'com.github.luben', name: 'zstd-jni', version: '1.4.5-7'
+    implementation group: 'com.github.luben', name: 'zstd-jni', version: '1.4.5-12'
 
 
     implementation 'org.slf4j:slf4j-api:1.7.30'
@@ -155,7 +155,7 @@ dependencies {
     implementation 'nz.ac.waikato.cms.weka:weka-dev:3.9.4'
     implementation fileTree(dir: 'lib', include: '*.jar')
 
-    testImplementation 'junit:junit:4.13'
+    testImplementation 'junit:junit:4.13.1'
 
 }
 
