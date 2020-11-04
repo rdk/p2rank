@@ -7,7 +7,6 @@ import org.slf4j.Logger
 /**
  * console&log writer
  */
-@Slf4j
 @CompileStatic
 trait Writable {
 

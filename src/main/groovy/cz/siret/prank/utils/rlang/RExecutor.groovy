@@ -4,8 +4,8 @@ import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
-@CompileStatic
 @Slf4j
+@CompileStatic
 class RExecutor {
 
     String rpath = ""

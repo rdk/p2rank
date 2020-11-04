@@ -122,5 +122,4 @@ class LogManager implements Writable {
         config.rootLogger.removeAppender(FILE_APPENDER_NAME)
     }
 
-
 }

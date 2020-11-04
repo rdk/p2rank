@@ -3,6 +3,8 @@ package cz.siret.prank.utils.rlang
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.Sutils
+import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode
 import groovyx.gpars.GParsPool
 
 import static cz.siret.prank.utils.Futils.delete
@@ -10,6 +12,7 @@ import static cz.siret.prank.utils.Futils.delete
 /**
  * produces R code for generating plots
  */
+@CompileStatic
 class RPlotter implements Parametrized {
 
     RExecutor rexec = new RExecutor()
@@ -37,10 +40,11 @@ class RPlotter implements Parametrized {
         plot1DVariables(header, threads)
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     void plot1DVariables(List<String> variables, int threads) {
         GParsPool.withPool(threads) {
             variables.eachParallel {
-                plot1DVariable(it)
+                plot1DVariable(it as String)
             }
         }
 

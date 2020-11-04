@@ -1,5 +1,8 @@
 package cz.siret.prank.utils
 
+import groovy.transform.CompileStatic
+
+@CompileStatic
 class CSV {
 
     String csvString
@@ -54,7 +57,7 @@ class CSV {
             if (line.isEmpty()) return line
             def split = line.split(',')
             int col = 0
-            def fmt = split.collect { "%-${colWidths[col++%colWidths.length]}s " }.join()
+            def fmt = split.collect { "%-${colWidths[col++%colWidths.length]}s " }.join("")
             return System.sprintf(fmt, split)
         }.join('\n')
     }

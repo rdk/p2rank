@@ -1,9 +1,12 @@
 package cz.siret.prank.utils
 
+import groovy.transform.CompileStatic
+
 
 /**
  *
  */
+@CompileStatic
 class BinCounter<K> {
 
     int count = 0
