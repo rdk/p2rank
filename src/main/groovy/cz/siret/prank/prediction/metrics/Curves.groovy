@@ -85,7 +85,7 @@ class Curves {
         double[] cumsum = new double[pred.size()]
         int sum = 0
         for (int i=0; i!=n; ++i) {
-            if (pred[i].@observed == value)
+            if (pred[i].observed == value)
                 sum++
             cumsum[i] = sum
         }

@@ -108,10 +108,10 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
                     observed = (closestLigandDistance <= POSITIVE_POINT_LIGAND_DISTANCE)
                 }
 
-                point.@hist = hist
-                point.@predicted = predicted
-                point.@observed = observed
-                point.@score = predictedScore
+                point.hist = hist
+                point.predicted = predicted
+                point.observed = observed
+                point.score = predictedScore
 
                 if (collectingStatistics) {
                     stats.addPrediction(observed, predicted, predictedScore, hist)

@@ -297,9 +297,9 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
         for (FeatureSetup.Feature feature : featureSetup.enabledSasFeatures) {
             double[] values = feature.calculator.calculateForSasPoint(point, context)
 
-            if (values.length != feature.@length) {
+            if (values.length != feature.length) {
                 throw new PrankException("Feature $feature.name returned value array of incorrect length: ${values.length}."
-                    + "Should be ${feature.@length} according to the feature header.")
+                    + "Should be ${feature.length} according to the feature header.")
             }
 
             res.valueVector.setValues(feature.startIndex, values)

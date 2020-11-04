@@ -20,14 +20,14 @@ class BinaryLabelings {
         Stats s = new Stats()
         s.total = labeling.labeledResidues.size()
 
-        labeling.labeledResidues.each {
-            if (it.label == null) {
-                s.@unlabeled++
+        for (LabeledResidue<Boolean> res : labeling.labeledResidues) {
+            if (res.label == null) {
+                s.unlabeled++
             } else {
-                if (it.label == true) {
-                    s.@positives++
+                if (res.label) {
+                    s.positives++
                 } else {
-                    s.@negatives++
+                    s.negatives++
                 }
             }
         }

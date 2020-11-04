@@ -291,7 +291,7 @@ class Futils {
     static GZIPOutputStream getGzipOutputStream(String fname, int compressionLevel = GZIP_DEFAULT_LEVEL) {
         return new GZIPOutputStream(bufferedOutputStream(fname), BUFFER_SIZE) {
             {
-                this.@def.level = compressionLevel
+                this.def.level = compressionLevel
             }
         }
     }

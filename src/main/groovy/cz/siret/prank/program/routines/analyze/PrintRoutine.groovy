@@ -108,7 +108,6 @@ class PrintRoutine extends Routine {
 
         def newf = modelf+".model2.zst"
         Futils.serializeToZstd(newf, model.classifier, 3)
-//        Futils.serializeToFile(newf, model.classifier)
 
         Model.loadFromFile(newf)
         

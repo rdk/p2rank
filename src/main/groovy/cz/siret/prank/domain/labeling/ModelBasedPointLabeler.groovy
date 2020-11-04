@@ -108,10 +108,10 @@ class ModelBasedPointLabeler extends PointLabeler {
                 observed = observedPoints[i].observed
             }
 
-            point.@hist = hist
-            point.@predicted = predicted
-            point.@observed = observed
-            point.@score = predictedScore
+            point.hist = hist
+            point.predicted = predicted
+            point.observed = observed
+            point.score = predictedScore
 
             if (collectingStats) {
                 classifierStats.addPrediction(observed, predicted, predictedScore, hist)

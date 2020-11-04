@@ -42,9 +42,9 @@ class BinCounter<K> {
         }
 
         if (label) {
-            element.@positives++
+            element.positives++
         } else {
-            element.@negatives++
+            element.negatives++
         }
         count++
     }

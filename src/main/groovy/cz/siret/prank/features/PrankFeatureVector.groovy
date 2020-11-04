@@ -36,7 +36,7 @@ public class PrankFeatureVector extends FeatureVector implements Cloneable {
 
     @Override
     double[] getArray() {
-        return valueVector.@data
+        return valueVector.data
     }
 
     @Override
@@ -67,8 +67,8 @@ public class PrankFeatureVector extends FeatureVector implements Cloneable {
      */
     private void setFromResidueAtom(Atom atom, String residueCode, PrankFeatureExtractor extractor) {
 
-        double ATOM_POW = Params.INSTANCE.@atom_table_feat_pow
-        boolean KEEP_SGN = Params.INSTANCE.@atom_table_feat_keep_sgn
+        double ATOM_POW = Params.INSTANCE.atom_table_feat_pow
+        boolean KEEP_SGN = Params.INSTANCE.atom_table_feat_keep_sgn
 
         for (String property : extractor.atomTableFeatures) {
             double val = getAtomTableValue(atom, property)
