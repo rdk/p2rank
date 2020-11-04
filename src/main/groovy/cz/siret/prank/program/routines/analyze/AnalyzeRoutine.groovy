@@ -5,7 +5,6 @@ import cz.siret.prank.domain.*
 import cz.siret.prank.domain.labeling.*
 import cz.siret.prank.domain.loaders.DatasetCachedLoader
 import cz.siret.prank.domain.loaders.LoaderParams
-import cz.siret.prank.features.implementation.electrostatics.ElectrostaticsTempSasFeature
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.program.Main
 import cz.siret.prank.program.PrankException
@@ -14,7 +13,6 @@ import cz.siret.prank.program.rendering.RenderingModel
 import cz.siret.prank.program.routines.Routine
 import cz.siret.prank.utils.BinCounter
 import cz.siret.prank.utils.CmdLineArgs
-import cz.siret.prank.utils.Cutils
 import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j

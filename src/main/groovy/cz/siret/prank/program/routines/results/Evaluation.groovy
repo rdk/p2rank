@@ -7,7 +7,6 @@ import cz.siret.prank.features.implementation.conservation.ConservationScore
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.prediction.pockets.criteria.*
 import cz.siret.prank.program.params.Parametrized
-import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.StringUtils
 

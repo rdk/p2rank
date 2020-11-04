@@ -3,7 +3,6 @@ package cz.siret.prank.collectors
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.features.FeatureExtractor
-import cz.siret.prank.features.FeatureVector
 import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.prediction.pockets.criteria.PocketCriterium
 import cz.siret.prank.utils.Cutils
