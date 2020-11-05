@@ -18,7 +18,7 @@ import java.util.zip.ZipOutputStream
 
 @Slf4j
 @CompileStatic
-class WekaUtils implements Writable {
+class WekaUtils {
 
     private static final int BUFFER_SIZE = 16 * 1024 * 1024;
 

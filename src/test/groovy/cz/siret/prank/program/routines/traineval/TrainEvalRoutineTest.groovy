@@ -35,13 +35,14 @@ class TrainEvalRoutineTest {
             Params.inst.classifier = "FasterForest"
             Params.inst.rf_trees = 8
             Params.inst.rf_depth = 10
+            Params.inst.fail_fast = true
             LoaderParams.ignoreLigandsSwitch = false
 
             TrainEvalRoutine routine = new TrainEvalRoutine(out_dir, train, eval)
             routine.collectTrainVectors()
             EvalResults res = routine.trainAndEvalModel()
 
-            assertEquals(5 as long, res.stats.PROTEINS as long)
+            assertEquals("Check if processed 5 proteins", 5 as long, res.stats.PROTEINS as long)
             assertTrue("MCC must be > 0.5", res.stats.MCC > 0.5)
 
             double dca_4_0 = Double.parseDouble(res.stats.DCA_4_0 as String)
@@ -80,13 +81,14 @@ class TrainEvalRoutineTest {
             Params.inst.classifier = "FastRandomForest"
             Params.inst.rf_trees = 8
             Params.inst.rf_depth = 10
+            Params.inst.fail_fast = true
             LoaderParams.ignoreLigandsSwitch = false
 
             TrainEvalRoutine routine = new TrainEvalRoutine(out_dir, train, eval)
             routine.collectTrainVectors()
             EvalResults res = routine.trainAndEvalModel()
 
-            assertEquals(5 as long, res.stats.PROTEINS as long)
+            assertEquals("Check if processed 5 proteins", 5 as long, res.stats.PROTEINS as long)
             assertTrue("MCC must be > 0.5", res.stats.MCC > 0.5)
 
             double dca_4_0 = Double.parseDouble(res.stats.DCA_4_0 as String)

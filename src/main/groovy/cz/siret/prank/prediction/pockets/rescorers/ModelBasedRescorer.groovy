@@ -50,16 +50,10 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
     // SAS points with ligandability score for prediction and visualization
     List<LabeledPoint> labeledPoints = new ArrayList<>()
 
-    // auxiliary for weka
-    private Instances auxWekaDataset
-    private double[] alloc
-    private DenseInstance auxInst
 
     ModelBasedRescorer(Model model, FeatureExtractor extractorFactory) {
         this.extractorFactory = extractorFactory
         this.model = model
-
-        auxWekaDataset = WekaUtils.createDatasetWithBinaryClass(extractorFactory.vectorHeader)
     }
 
     /**
@@ -70,13 +64,11 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
 
         FeatureExtractor proteinExtractor = extractorFactory.createPrototypeForProtein(prediction.protein, context)
 
-        alloc = new double[proteinExtractor.vectorHeader.size() + 1] // one additional for stupid weka class
-        auxInst = new DenseInstance( 1, alloc )
-        auxInst.setDataset(auxWekaDataset)
+        InstancePredictor instancePredictor = InstancePredictor.create(model, proteinExtractor)
 
         // PRANK (just rescoring existing pockets)
         if (!params.predictions) {
-            doRescore(prediction, proteinExtractor)
+            doRescore(prediction, proteinExtractor, instancePredictor)
         }
 
         // compute ligandability scores of SAS points for predictions and visualization
@@ -90,12 +82,12 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
             }
 
             // TODO refactor: use ModelBasedPointLabeler instead of this loop
-            for (LabeledPoint point in labeledPoints) {
+            for (LabeledPoint point : labeledPoints) {
 
                 // classification
 
-                FeatureVector props = extractor.calcFeatureVector(point.point)
-                double[] hist = getDistributionForPoint(model, props)
+                FeatureVector vector = extractor.calcFeatureVector(point.point)
+                double[] hist = instancePredictor.getDistributionForPoint(vector)
 
                 // labels and statistics
 
@@ -137,21 +129,21 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
     /**
      * Rescore predictions of other method
      */
-    private void doRescore(Prediction prediction, FeatureExtractor proteinExtractor) {
+    private void doRescore(Prediction prediction, FeatureExtractor proteinExtractor, InstancePredictor instancePredictor) {
 
         proteinExtractor.prepareProteinPrototypeForPockets()
 
-        for (Pocket pocket in prediction.pockets) {
+        for (Pocket pocket : prediction.pockets) {
             FeatureExtractor extractor = proteinExtractor.createInstanceForPocket(pocket)
 
             double sum = 0
             double rawSum = 0
 
-            for (Atom point in extractor.sampledPoints) {
+            for (Atom point : extractor.sampledPoints) {
 
-                FeatureVector props = extractor.calcFeatureVector(point)
+                FeatureVector vector = extractor.calcFeatureVector(point)
 
-                double[] hist = getDistributionForPoint(model, props)
+                double[] hist = instancePredictor.getDistributionForPoint(vector)
                 double predictedScore = predictedScore(hist)   // not all classifiers give histogram that sums up to 1
                 boolean predicted = applyPointScoreThreshold(predictedScore)
                 boolean observed = false
@@ -179,17 +171,8 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
 
     }
 
-    private final double[] getDistributionForPoint(Model model, FeatureVector vect) {
-//        if (classifier instanceof FasterForest) {
-//            return ((FasterForest)classifier).distributionForAttributes(vect.array, 2)
-//        } else {
-            PerfUtils.arrayCopy(vect.array, alloc)
-            return model.classifier.distributionForInstance(auxInst)
-//        }
-
-    }
-
     ClassifierStats getStats() {
         return stats
     }
+    
 }
