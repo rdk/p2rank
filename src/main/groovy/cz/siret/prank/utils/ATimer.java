@@ -84,7 +84,7 @@ public class ATimer {
 
         @Override
         public String toString() {
-            return String.format("%d hours %d minutes %d.%03d seconds", hours, minutes, seconds, millis);  // TODO fix
+            return String.format("%d hours %d minutes %d.%03d seconds", hours, minutes, seconds, millis); 
         }
     }
 
