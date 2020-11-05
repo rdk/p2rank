@@ -39,7 +39,6 @@ class Futils {
 
     private static final int BUFFER_SIZE = 128 * 1024
 
-
     private static final Set<String> COMPRESSED_EXTENSIONS = ["gz", "zst", "zip", "bz2"].toSet()
 
 //===========================================================================================================//
@@ -256,7 +255,6 @@ class Futils {
         return res
     }
 
-
     /**
      * Overwrites the file if exists and returns the writer
      */
@@ -287,7 +285,6 @@ class Futils {
         return new PrintWriter(new BufferedWriter(new OutputStreamWriter(gos), BUFFER_SIZE))
     }
 
-
     static GZIPOutputStream getGzipOutputStream(String fname, int compressionLevel = GZIP_DEFAULT_LEVEL) {
         return new GZIPOutputStream(bufferedOutputStream(fname), BUFFER_SIZE) {
             {
@@ -295,7 +292,6 @@ class Futils {
             }
         }
     }
-
 
     static CBZip2OutputStream getBzip2OutputStream(String fname, int blockSize = CBZip2OutputStream.MAX_BLOCKSIZE) {
         return new CBZip2OutputStream(bufferedOutputStream(fname), blockSize)
@@ -596,6 +592,5 @@ class Futils {
         }
         return null
     }
-
 
 }

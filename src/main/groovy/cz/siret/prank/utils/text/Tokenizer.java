@@ -12,5 +12,4 @@ public interface Tokenizer {
 
     boolean hasNext();
 
-
 }

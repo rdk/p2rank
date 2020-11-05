@@ -11,7 +11,6 @@ import java.nio.file.Paths
 @CompileStatic
 class PathUtils {
 
-
     static Path path(Path path, String... subpaths) {
         Paths.get(path.toString(), subpaths)
     }

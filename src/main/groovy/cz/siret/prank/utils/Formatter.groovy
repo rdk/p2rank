@@ -37,7 +37,6 @@ class Formatter {
         b ? "1" : "0"
     }
 
-
     static String formatPercent(double x) {
         return new DecimalFormat("##.0", formatSymbols).format(x*100)
     }

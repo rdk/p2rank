@@ -31,5 +31,4 @@ class MathUtils {
         newStatSample(sample).stddev
     }
 
-
 }

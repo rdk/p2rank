@@ -20,8 +20,6 @@ class Bench {
         return time
     }
 
-
-
     static long timeitLog(String label, Closure c) {
         return doTmeit(label, c, true)
     }

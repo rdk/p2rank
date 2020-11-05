@@ -27,7 +27,6 @@ public class ConsoleWriter {
         write("\n")
     }
 
-
     public static void writeError(String msg, Throwable t) {
         String stack = t==null ? "" : "\n" + stackTrace(t)
 

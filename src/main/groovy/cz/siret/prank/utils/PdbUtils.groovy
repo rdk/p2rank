@@ -18,8 +18,6 @@ import static cz.siret.prank.geom.Struct.getAuthorId
 @CompileStatic
 class PdbUtils {
 
-    private static final int BUFFER_SIZE = 4*1024*1024;
-
     static final FileParsingParameters PARSING_PARAMS = new FileParsingParameters()
     static {
         PARSING_PARAMS.setAlignSeqRes(false);  // should the ATOM and SEQRES residues be aligned when creating the internal data model?
@@ -148,6 +146,7 @@ class PdbUtils {
             //log.warn "correcting atom {} to element {}", a.name, ele
             a.setElement(ele)
         }
+        
     }
 
     static void correctBioJavaElement(Atom a) {
@@ -163,8 +162,6 @@ class PdbUtils {
             }
         }
     }
-
-
 
     /**
      * The code is based on StructureTools.getReducedStructure(String, String) from BioJava 5.3.0
