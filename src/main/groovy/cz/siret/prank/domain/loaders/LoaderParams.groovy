@@ -12,6 +12,9 @@ import groovy.transform.TupleConstructor
 @TupleConstructor
 class LoaderParams {
 
+    /**
+     * TODO get rid of this global variable
+     */
     public static ignoreLigandsSwitch = false
 
     boolean ignoreLigands = ignoreLigandsSwitch
