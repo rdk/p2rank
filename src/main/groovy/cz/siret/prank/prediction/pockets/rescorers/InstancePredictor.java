@@ -4,9 +4,12 @@ import cz.siret.prank.features.FeatureExtractor;
 import cz.siret.prank.features.FeatureVector;
 import cz.siret.prank.fforest.FasterForest;
 import cz.siret.prank.fforest2.FasterForest2;
+import cz.siret.prank.geom.Atoms;
 import cz.siret.prank.program.ml.Model;
 import cz.siret.prank.utils.PerfUtils;
 import cz.siret.prank.utils.WekaUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import weka.classifiers.Classifier;
 import weka.core.DenseInstance;
 import weka.core.Instances;
@@ -15,6 +18,8 @@ import weka.core.Instances;
  * Encapsulates prediction of distribution by a model
  */
 public interface InstancePredictor {
+
+    static final Logger log = LoggerFactory.getLogger(InstancePredictor.class);
 
     double[] getDistributionForPoint(FeatureVector vect) throws Exception;
 
@@ -36,6 +41,8 @@ public interface InstancePredictor {
             }
 
             if (isV2) {
+                log.info("Creating faster InstancePredictor using distributionForAttributes()");
+
                 res = new InstancePredictor() { // predictor using faster distributionForAttributes()
                     final FasterForest ff = (FasterForest) classifier;
                     @Override
