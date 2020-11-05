@@ -9,6 +9,7 @@ import cz.siret.prank.geom.Struct
 import cz.siret.prank.prediction.transformation.ScoreTransformer
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Cutils
+import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
 /**
@@ -16,6 +17,7 @@ import groovy.util.logging.Slf4j
  * (core of P2RANK algorithm)
  */
 @Slf4j
+@CompileStatic
 class PocketPredictor implements Parametrized {
 
     private final PointScoreCalculator pointScoreCalculator = new PointScoreCalculator()
@@ -69,7 +71,7 @@ class PocketPredictor implements Parametrized {
             if (params.score_pockets_by == "conservation" || params.score_pockets_by == "combi") {
                 if (protein.secondaryData.getOrDefault(ConservationScore.CONSERV_LOADED_KEY,
                         false)) {
-                    ConservationScore conservationScore = protein.secondaryData.get(ConservationScore.CONSERV_SCORE_KEY)
+                    ConservationScore conservationScore = (ConservationScore) protein.secondaryData.get(ConservationScore.CONSERV_SCORE_KEY)
                     double avgConservation = pocketSurfaceAtoms.distinctGroupsSorted.stream()
                             .mapToDouble({
                         group -> conservationScore.getScoreForResidue(group.getResidueNumber())
@@ -87,16 +89,13 @@ class PocketPredictor implements Parametrized {
         return score
     }
 
-
-
-
     /**
      *
      * @param allLabeledPoints list of points with predicted ligandability in hist[]
      * @param protein
      * @return
      */
-    public List<Pocket> predictPockets(List<LabeledPoint> allLabeledPoints, Protein protein) {
+    public List<? extends Pocket> predictPockets(List<LabeledPoint> allLabeledPoints, Protein protein) {
 
         Atoms labeledPoints = new Atoms(allLabeledPoints).withKdTree()
 
@@ -129,7 +128,7 @@ class PocketPredictor implements Parametrized {
 
             Atoms pocketSasPoints = new Atoms( pocketPoints.collect { ((LabeledPoint)it).point }.toList() )  // we want exact objects from protein.accessibleSurface
 
-            PrankPocket p = new PrankPocket(clusterPoints.centerOfMass, score, pocketSasPoints, (List<LabeledPoint>) pocketPoints.toList())
+            PrankPocket p = new PrankPocket(clusterPoints.centerOfMass, score, pocketSasPoints, (List<LabeledPoint>) pocketPoints.list)
             p.surfaceAtoms = pocketSurfaceAtoms
             p.auxInfo.samplePoints = clusterPoints.count
             p.cache.count = clusterPoints.count
@@ -138,7 +137,6 @@ class PocketPredictor implements Parametrized {
                 p.auxInfo.zScoreTP = zscoreTpTransformer.transformScore(score)
             }
             if (probaTpTransformer!=null) {
-                // System.out.println(probaTpTransformer.toString())
                 p.auxInfo.probaTP = probaTpTransformer.transformScore(score)
             }
 

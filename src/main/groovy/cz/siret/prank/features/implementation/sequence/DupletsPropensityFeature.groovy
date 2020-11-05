@@ -68,5 +68,4 @@ class DupletsPropensityFeature extends ResidueFeatureCalculator implements Param
 //        return [product, sum, max] as double[]
     }
 
-
 }

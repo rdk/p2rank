@@ -23,9 +23,6 @@ class ContactResidue1PositionFeature extends SasFeatureCalculator implements Par
 
 //===========================================================================================================//
 
-    ContactResidue1PositionFeature() {
-    }
-
     @Override
     String getName() {
         NAME

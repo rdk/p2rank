@@ -7,9 +7,11 @@ import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Cutils
+import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
 @Slf4j
+@CompileStatic
 abstract class PocketRescorer implements Parametrized {
 
     /** optional - for evaluation statistics */
@@ -78,8 +80,8 @@ abstract class PocketRescorer implements Parametrized {
 
         log.info "reordering first $n of $prediction.pocketCount pockets"
 
-        ArrayList<Pocket> head = Cutils.head(n, prediction.pockets)
-        ArrayList<Pocket> tail = Cutils.tail(n, prediction.pockets)
+        ArrayList<Pocket> head = new ArrayList<>(Cutils.head(n, prediction.pockets))
+        ArrayList<Pocket> tail = new ArrayList<>(Cutils.tail(n, prediction.pockets))
 
         reorder(head)
 

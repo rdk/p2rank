@@ -43,6 +43,5 @@ class VolsiteFeature extends AtomFeatureCalculator {
 
         res
     }
-
     
 }

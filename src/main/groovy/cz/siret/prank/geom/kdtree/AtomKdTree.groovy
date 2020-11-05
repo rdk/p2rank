@@ -77,14 +77,6 @@ class AtomKdTree extends KdTree.SqrEuclid3D<Atom> {
     public List<Entry<Atom>> findNearestNDifferent(Atom a, int count, boolean sorted) {
         List<Entry<Atom>> aaa = nearestNeighbor(a.coords, count, sorted)
 
-        // only java 1.8
-//        aaa.removeIf(new Predicate<Entry<Atom>>() {
-//            @Override
-//            boolean test(Entry<Atom> atomEntry) {
-//                atomEntry == a
-//            }
-//        })
-
         Iterator<Entry<Atom>> it = aaa.iterator();
         while (it.hasNext()) {
             Atom ai = it.next().value

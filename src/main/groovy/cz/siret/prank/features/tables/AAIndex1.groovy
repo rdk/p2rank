@@ -2,10 +2,12 @@ package cz.siret.prank.features.tables
 
 import com.google.common.base.Splitter
 import cz.siret.prank.domain.AA
+import groovy.transform.CompileStatic
 
 /**
  * AAIndex1 table of residue features
  */
+@CompileStatic
 class AAIndex1 {
 
     static class Entry {

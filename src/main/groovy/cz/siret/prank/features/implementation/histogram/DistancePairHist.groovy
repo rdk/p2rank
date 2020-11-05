@@ -75,5 +75,4 @@ class DistancePairHist {
         return res
     }
 
-
 }

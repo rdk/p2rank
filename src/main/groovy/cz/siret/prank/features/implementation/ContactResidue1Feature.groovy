@@ -36,7 +36,6 @@ class ContactResidue1Feature extends SasFeatureCalculator implements Parametrize
     @Override
     double[] calculateForSasPoint(Atom sasPoint, SasFeatureCalculationContext context) {
 
-
         Residue res = context.protein.residues.findNearest(sasPoint)
         AA aa = res?.aa
 

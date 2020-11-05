@@ -39,7 +39,6 @@ class ElectrostaticsTempSasFeature extends SasFeatureCalculator implements Param
 
 //===========================================================================================================//
 
-
     /**
      * for now just discrete voxel matching - no interpolation
      */

@@ -128,12 +128,9 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
                     prediction.residueLabelings = ResidueLabelings.calculate(prediction, model, extractor.sampledPoints, labeledPoints, context)
                 }
             }
-
-
         }
 
         proteinExtractor.finalizeProteinPrototype()
-
     }
 
 

@@ -3,9 +3,7 @@ package cz.siret.prank.features.implementation.volsite
 import groovy.transform.CompileStatic
 
 /**
- * Adopted from VolSite druggability prediction method
- *
- * (experiments showed that contribution to prediction is negligible TODO: revisit)
+ * Adopted from VolSite druggability prediction method.
  */
 @CompileStatic
 class VolSitePharmacophore {

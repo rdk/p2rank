@@ -10,7 +10,7 @@ import org.biojava.nbio.structure.Atom
 import static cz.siret.prank.geom.Struct.dist
 
 /**
- * simple geometric feature based on distances of the point to the centrs of the mass of prot. atoms, sas points ...
+ * simple geometric feature based on distances of the point to the centers of the mass of prot. atoms, sas points ...
  */
 class ProteinMassFeature extends SasFeatureCalculator implements Parametrized {
 

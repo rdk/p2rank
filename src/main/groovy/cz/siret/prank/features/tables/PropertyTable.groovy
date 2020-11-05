@@ -35,7 +35,7 @@ class PropertyTable {
      * lines starting with # are comments
      * first non-comment line is header
      *
-     * Expacts csv file with items in lines and properties in columns.
+     * Expects csv file with items in lines and properties in columns.
      *
      * @param csvText
      */

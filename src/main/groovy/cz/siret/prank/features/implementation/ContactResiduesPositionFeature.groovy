@@ -63,7 +63,7 @@ class ContactResiduesPositionFeature extends SasFeatureCalculator implements Par
 
         log.debug 'contact residues: ' + contactResidues.size()
 
-        // TODO: this can be optmized
+        // TODO: this can be optimized
 
         Multimap<AA, AminoAcid> contactResIndex = ArrayListMultimap.create(20, 3);
         for (AminoAcid res : contactResidues) {

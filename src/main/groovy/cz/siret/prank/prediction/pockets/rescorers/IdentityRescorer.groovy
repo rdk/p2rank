@@ -10,7 +10,6 @@ import cz.siret.prank.features.api.ProcessedItemContext
  */
 class IdentityRescorer extends PocketRescorer {
 
-
     @Override
     void rescorePockets(Prediction prediction, ProcessedItemContext context) {
 
@@ -19,7 +18,6 @@ class IdentityRescorer extends PocketRescorer {
             // some pocket types may not have pocket.score available, so scoring with inverse rank
             pocket.newScore = invrank--
         }
-
     }
 
 }

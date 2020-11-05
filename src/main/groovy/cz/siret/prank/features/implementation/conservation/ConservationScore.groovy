@@ -29,28 +29,6 @@ class ConservationScore implements Parametrized {
         this.scores = scores;
     }
 
-//    /**
-//     *
-//     * @param fileName
-//     * @param chainId
-//     * @param scoreOrigin "hssp" | "seq.fasta"
-//     * @return
-//     */
-//    static String scoreFileForPdbFile(String fileName, String chainId, String scoreOrigin) {
-//        String baseName, extension;
-//        if (fileName.endsWith(".pdb.gz") || fileName.endsWith("ent.gz")) {
-//            baseName = fileName.substring(0, fileName.length() - 7);
-//            extension = fileName.substring(fileName.length() - 7);
-//        } else {
-//            int dotIndex = fileName.lastIndexOf('.');
-//            baseName = fileName.substring(0, dotIndex);
-//
-//            //extension = fileName.substring(dotIndex);
-//            //baseName = baseName.substring(0, 4)   // always use only 4-leter pdb code
-//        }
-//        return baseName + chainId + "." + scoreOrigin + ".hom.gz";
-//    }
-
     private static class AAScore {
         public String letter;
         public double score;
