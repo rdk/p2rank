@@ -55,6 +55,7 @@ public interface InstancePredictor {
         }
 
         if (res == null) {
+            log.info("Creating WekaInstancePredictor");
             res = new WekaInstancePredictor(model.getClassifier(), proteinExtractor);
         }
 
