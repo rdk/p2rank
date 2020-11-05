@@ -142,11 +142,12 @@ class PdbUtils {
             // nothing, biojava just doesnt know the element
         }
 
-        if (ele!=null) {
+        if (ele != null) {
             //log.warn "correcting atom {} to element {}", a.name, ele
             a.setElement(ele)
+            return true
         }
-        
+        return false
     }
 
     static void correctBioJavaElement(Atom a) {
