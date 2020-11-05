@@ -1,23 +1,36 @@
 package cz.siret.prank.geom.kdtree
 
 import cz.siret.prank.geom.Atoms
+import cz.siret.prank.utils.PerfUtils
 import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
 
 @CompileStatic
-class AtomKdTree extends KdTree.SqrEuclid<Atom> {
+class AtomKdTree extends KdTree.SqrEuclid3D<Atom> {
 
-    private static final int DIMENSIONS = 3
-
-    AtomKdTree(int dimensions, Integer sizeLimit) {
-        super(dimensions, sizeLimit)
+    AtomKdTree(Integer sizeLimit) {
+        super(sizeLimit)
     }
 
     public static AtomKdTree build(Atoms atoms) {
-        AtomKdTree res = new AtomKdTree(DIMENSIONS, Integer.MAX_VALUE)
+        AtomKdTree res = new AtomKdTree(Integer.MAX_VALUE)
         res.addAll(atoms)
         return res
     }
+
+//===========================================================================================================//
+
+    @Override
+    protected double pointDist(double[] p1, double[] p2) {
+        return PerfUtils.sqrDist(p1, p2)
+    }
+
+    @Override
+    protected double pointRegionDist(double[] point, double[] min, double[] max) {
+        return 0
+    }
+
+//===========================================================================================================//
 
     public add(Atom a) {
         addPoint(a.coords, a)

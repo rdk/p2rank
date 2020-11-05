@@ -60,7 +60,7 @@ public abstract class KdTree<T> {
      * Construct a KdTree with a given number of dimensions and a limit on
      * maxiumum size (after which it throws away old points)
      */
-    private KdTree(int dimensions, Integer sizeLimit) {
+    protected KdTree(int dimensions, Integer sizeLimit) {
         this.dimensions = dimensions;
 
         // Init as leaf
@@ -742,6 +742,74 @@ public abstract class KdTree<T> {
                 }
 
                 if (!Double.isNaN(diff)) {
+                    d += diff * diff;
+                }
+            }
+
+            return d;
+        }
+    }
+
+    /**
+     * Class for tree with Unweighted Squared Euclidean distancing for 3D space
+     */
+    public static class SqrEuclid3D<T> extends KdTree<T> {
+        public SqrEuclid3D(Integer sizeLimit) {
+            super(3, sizeLimit);
+        }
+
+        protected double pointDist(double[] p1, double[] p2) {
+            double d = 0;
+
+            double diff = p1[0] - p2[0];
+            if (diff == diff)
+                d += diff * diff;   // !Double.isNaN(diff)  === (diff == diff)
+            diff = p1[1] - p2[1];
+            if (diff == diff)
+                d += diff * diff;
+            diff = p1[2] - p2[2];
+            if (diff == diff)
+                d += diff * diff;
+
+            return d;
+        }
+
+        protected double pointRegionDist(double[] point, double[] min, double[] max) {
+            double d = 0;
+            double diff;
+
+            if (point[0] > max[0]) {
+                diff = (point[0] - max[0]);
+                if (diff == diff) {
+                    d += diff * diff;
+                }
+            } else if (point[0] < min[0]) {
+                diff = (point[0] - min[0]);
+                if (diff == diff) {
+                    d += diff * diff;
+                }
+            }
+
+            if (point[1] > max[1]) {
+                diff = (point[1] - max[1]);
+                if (diff == diff) {
+                    d += diff * diff;
+                }
+            } else if (point[1] < min[1]) {
+                diff = (point[1] - min[1]);
+                if (diff == diff) {
+                    d += diff * diff;
+                }
+            }
+
+            if (point[2] > max[2]) {
+                diff = (point[2] - max[2]);
+                if (diff == diff) {
+                    d += diff * diff;
+                }
+            } else if (point[2] < min[2]) {
+                diff = (point[2] - min[2]);
+                if (diff == diff) {
                     d += diff * diff;
                 }
             }
