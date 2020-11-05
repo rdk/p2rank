@@ -56,6 +56,7 @@ class TrainEvalRoutineTest {
             try {
                 Futils.delete(out_dir)
             } catch (Exception e) {
+                println(e)
             }
         }
 
@@ -100,6 +101,7 @@ class TrainEvalRoutineTest {
             try {
                 Futils.delete(out_dir)
             } catch (Exception e) {
+                println(e)
             }
         }
 
