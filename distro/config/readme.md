@@ -1,16 +1,17 @@
 Config Directory
 ================
 
-This is a directory with P2Rank config files.
+This directory contains P2Rank config files.
 
 Initially, P2Rank loads configuration from `default.groovy` (and from `default-rescore.groovy` in case you run `prank rescore ...`).
+
 Parameters can be then overriden in a custom config file (`-c <config.file>`) or directly on the command line.
 
 ## Details
 
 Parameters can be set in 2 ways:
 1. on the command line `-<param_name> <value>`
-2. in config groovy file specified with `-c <config.file>` (see working.groovy for an example... `prank -c working.groovy`). 
+2. in config groovy file specified with `-c <config.file>` (see working.groovy for an example... `prank -c example.groovy`). 
 
 Parameters on the command line override those in the config file, which override defaults.
 
