@@ -63,7 +63,7 @@ public class ATimer {
 
             minutes = minutes % 60;
             seconds = seconds % 60;
-            millis = millis % 60;
+            millis = millis % 1000;
         }
 
         public long getMillis() {
@@ -84,7 +84,7 @@ public class ATimer {
 
         @Override
         public String toString() {
-            return String.format("%d hours %d minutes %d.%d seconds", hours, minutes, seconds, millis);  // TODO fix
+            return String.format("%d hours %d minutes %d.%03d seconds", hours, minutes, seconds, millis);  // TODO fix
         }
     }
 
