@@ -81,9 +81,11 @@ public final class Atoms implements Iterable<Atom> {
     }
 
     public Atoms withIndex() {
-        index = new HashMap<>(list.size());
-        for (Atom a : list) {
-            index.put(a.getPDBserial(), a);
+        if (index == null) {
+            index = new HashMap<>(list.size());
+            for (Atom a : list) {
+                index.put(a.getPDBserial(), a);
+            }
         }
         return this;
     }
