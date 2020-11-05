@@ -20,18 +20,6 @@ class AtomKdTree extends KdTree.SqrEuclid3D<Atom> {
 
 //===========================================================================================================//
 
-    @Override
-    protected double pointDist(double[] p1, double[] p2) {
-        return PerfUtils.sqrDist(p1, p2)
-    }
-
-    @Override
-    protected double pointRegionDist(double[] point, double[] min, double[] max) {
-        return 0
-    }
-
-//===========================================================================================================//
-
     public add(Atom a) {
         addPoint(a.coords, a)
     }
