@@ -3,6 +3,7 @@ package cz.siret.prank.program.params
 import cz.siret.prank.program.Main
 import cz.siret.prank.utils.CmdLineArgs
 import cz.siret.prank.utils.Sutils
+import groovy.transform.AutoClone
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
@@ -18,11 +19,12 @@ import groovy.util.logging.Slf4j
  *                              It is important that those parameters stay the same when training a model and then using it for inference.
  * @ModelParam // training  ... Model params used only in training phase but not during inference.
  */
-@CompileStatic
 @Slf4j
+@AutoClone
+@CompileStatic
 class Params {
 
-    public static final Params INSTANCE = new Params()
+    public static Params INSTANCE = new Params()
 
     public static Params getInst() {
         return INSTANCE
