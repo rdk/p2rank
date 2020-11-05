@@ -24,7 +24,7 @@ import cz.siret.prank.program.params.Params
 
 
     /**
-     * stop processing a datsaset on the first unrecoverable error with a dataset item
+     * stop processing a dataset on the first unrecoverable error with a dataset item
      */
     fail_fast = true
 

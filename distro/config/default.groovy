@@ -149,7 +149,8 @@ import cz.siret.prank.program.params.Params
     solvent_radius = 1.6
 
     /**
-     * SAS Points tessellation (~= density) used in prediction step
+     * SAS tessellation (~density) used in prediction step.
+     * Higher tessellation = higher density (+1 ~~ x4 points)
      */
     tessellation = 2
 
@@ -277,12 +278,12 @@ import cz.siret.prank.program.params.Params
     out_prefix_date = false
 
     /**
-     *
+     * Place all output files in this sub-directory of the output directory
      */
     out_subdir = null
 
     /**
-     * balance Connolly points score weight by density
+     * Balance SAS point score weight by density (points in denser areas will have lower weight)
      */
     balance_density = false
 
@@ -335,7 +336,7 @@ import cz.siret.prank.program.params.Params
     plb_rescorer_atomic = false
 
     /**
-     * stop processing the datsaset on the first unrecoverable error with a dataset item
+     * stop processing the dataset on the first unrecoverable error with a dataset item
      */
     fail_fast = false
 

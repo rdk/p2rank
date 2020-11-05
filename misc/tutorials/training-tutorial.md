@@ -16,7 +16,7 @@ This file should provide introduction for people who want to train and evaluate 
 
 ## Parameters
 
-P2Rank uses global static parameters object. In code it can be accessed with `Params.getInst()` or through `Parametrized` trait. For full list of parameters see `Params.groovy`.
+P2Rank uses global static parameters object. In the code, it can be accessed with `Params.getInst()` or through `Parametrized` trait. For full list of parameters see `Params.groovy`.
 
 Parameters can be set in 2 ways:
 1. on the command line `-<param_name> <value>`

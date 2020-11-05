@@ -136,7 +136,7 @@ import cz.siret.prank.program.params.Params
     point_sampler = "SurfacePointSampler"
 
     /**
-     * multiplier for random posampling
+     * multiplier for random point sub/super-sampling
      */
     sampling_multiplier = 3
 
@@ -146,12 +146,13 @@ import cz.siret.prank.program.params.Params
     solvent_radius = 1.6
 
     /**
-     * Connolly potessellation (~density) used in pradiction step
+     * SAS tessellation (~density) used in prediction step.
+     * Higher tessellation = higher density (+1 ~~ x4 points)
      */
     tessellation = 2
 
     /**
-     * Connolly potessellation (~density) used in training step
+     * SAS tessellation (~density) used in training step
      */
     train_tessellation = 2
 
@@ -224,7 +225,7 @@ import cz.siret.prank.program.params.Params
     vis_copy_proteins = true
 
     /**
-     * use sctrictly inner pocket points or more wider pocket neighbourhood
+     * use strictly inner pocket points or more wider pocket neighbourhood
      */
     strict_inner_points = false
 
@@ -244,7 +245,7 @@ import cz.siret.prank.program.params.Params
     predictions = false
 
     /**
-     * minimum ligandability score for Connolly poto be considered ligandable
+     * minimum ligandability score for SAS point to be considered ligandable
      */
     pred_point_threshold = 0.4
 
@@ -269,12 +270,12 @@ import cz.siret.prank.program.params.Params
     out_prefix_date = false
 
     /**
-     *
+     * Place all output files in this sub-directory of the output directory
      */
     out_subdir = null
 
     /**
-     * balance Connolly poscore weight by density
+     * Balance SAS point score weight by density (points in denser areas will have lower weight)
      */
     balance_density = false
 
@@ -305,12 +306,12 @@ import cz.siret.prank.program.params.Params
     plb_rescorer_atomic = false
 
     /**
-     * stop processing the datsaset on the first unrecoverable error with a dataset item
+     * stop processing the dataset on the first unrecoverable error with a dataset item
      */
     fail_fast = false
 
     /**
-     * don't procuce prediction files for individual proteins (useful for long repetitive experments)
+     * don't produce prediction files for individual proteins (useful for long repetitive experiments)
      */
     output_only_stats = false
 }
