@@ -54,6 +54,16 @@ public interface InstancePredictor {
 
         }
 
+        if (classifier instanceof FasterForest2) {
+            res = new InstancePredictor() { // predictor using faster distributionForAttributes()
+                final FasterForest2 ff = (FasterForest2) classifier;
+                @Override
+                public double[] getDistributionForPoint(FeatureVector vect) {
+                    return ff.distributionForAttributes(vect.getArray(), 2);
+                }
+            };
+        }
+
         if (res == null) {
             log.info("Creating WekaInstancePredictor");
             res = new WekaInstancePredictor(model.getClassifier(), proteinExtractor);
