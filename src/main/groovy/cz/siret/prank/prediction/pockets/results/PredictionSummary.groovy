@@ -22,13 +22,14 @@ class PredictionSummary {
     CSV toCSV() {
         StringBuilder sb = new StringBuilder()
 
-        sb << "name, rank, score, sas_points, surf_atoms, center_x, center_y, center_z, residue_ids, surf_atom_ids   " << '\n'
+        sb << "name, rank, score, probability, sas_points, surf_atoms, center_x, center_y, center_z, residue_ids, surf_atom_ids\n"
 
         for (pp in prediction.reorderedPockets) {
 
             PrankPocket p = (PrankPocket) pp
 
             String fmtScore = formatDouble(p.newScore)
+            String fmtProba = formatDouble(p.auxInfo.probaTP)
 
             def x = formatDouble(p.centroid.x)
             def y = formatDouble(p.centroid.y)
@@ -39,7 +40,7 @@ class PredictionSummary {
             Set resIds = new TreeSet(p.residues.collect { it.key.toString() })
             String strResIds = resIds.join(" ")
 
-            sb << "$p.name,$p.newRank,$fmtScore,${p.sasPoints.count},$p.surfaceAtoms.count,$x,$y,$z,$strResIds,$surfAtomIds\n"
+            sb << "$p.name,$p.newRank,$fmtScore,$fmtProba,${p.sasPoints.count},$p.surfaceAtoms.count,$x,$y,$z,$strResIds,$surfAtomIds\n"
         }
 
         return new CSV(sb.toString())

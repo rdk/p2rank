@@ -50,8 +50,6 @@ abstract class Pocket {
     }
 
     
-// TODO move those classes to FpocketPocket or get rid of them
-
     static class AuxInfo {
         int samplePoints
         double rawNewScore
