@@ -25,8 +25,8 @@ class PredictionSummary {
     static String HEADER = new CsvRow() {{
         add LEFT,   9, "name"
         add RIGHT,  5, "rank"
-        add RIGHT,  9, "score"
-        add RIGHT, 10, "prob_score"
+        add RIGHT,  7, "score"
+        add RIGHT, 11, "probability"
         add RIGHT, 10, "sas_points"
         add RIGHT, 10, "surf_atoms"
         add RIGHT, 10, "center_x"
@@ -61,8 +61,8 @@ class PredictionSummary {
             CsvRow row = new CsvRow()
             row.add LEFT,   9, p.name
             row.add RIGHT,  5, p.newRank.toString()
-            row.add RIGHT,  9, score
-            row.add RIGHT, 10, proba
+            row.add RIGHT,  7, score
+            row.add RIGHT, 11, proba
             row.add RIGHT, 10, p.sasPoints.count.toString()
             row.add RIGHT, 10, p.surfaceAtoms.count.toString()
             row.add RIGHT, 10, x
