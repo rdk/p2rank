@@ -1,7 +1,7 @@
 package cz.siret.prank.prediction.pockets.results
 
 import cz.siret.prank.domain.Prediction
-import cz.siret.prank.utils.CSV
+import cz.siret.prank.utils.csv.CSV
 import cz.siret.prank.utils.PerfUtils
 import groovy.transform.CompileStatic
 

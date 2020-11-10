@@ -4,7 +4,7 @@ import cz.siret.prank.domain.Dataset
 import cz.siret.prank.prediction.metrics.ClassifierStats
 import cz.siret.prank.prediction.metrics.Curves
 import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.utils.CSV
+import cz.siret.prank.utils.csv.CSV
 import cz.siret.prank.utils.Formatter
 import cz.siret.prank.utils.Writable
 import groovy.transform.CompileStatic

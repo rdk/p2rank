@@ -8,18 +8,20 @@ import java.text.DecimalFormatSymbols
 @CompileStatic
 class Formatter {
 
-    static DecimalFormatSymbols formatSymbols;
-
-    static List<DecimalFormat> DECIMAL_FORMATS;
-
-    static {
-        formatSymbols = new DecimalFormatSymbols();
-        formatSymbols.setDecimalSeparator('.' as char);
-        //
-        DECIMAL_FORMATS = (0..6).collect {
-            new DecimalFormat("#."+("#"*it), formatSymbols)
-        }.asList()
+    static final DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols() {
+        {
+            this.setDecimalSeparator('.' as char)
+        }
     }
+
+    static final List<DecimalFormat> DECIMAL_FORMATS = (0..6).collect {
+        new DecimalFormat("#."+("#"*it), formatSymbols)
+    }
+
+
+    static final DecimalFormat SCORE_FORMAT = new DecimalFormat("0.00", formatSymbols)
+    static final DecimalFormat PROB_SCORE_FORMAT = new DecimalFormat("0.000", formatSymbols)
+    static final DecimalFormat COORD_FORMAT = new DecimalFormat("0.0000", formatSymbols)
 
     static String format(double d, int places) {
         DECIMAL_FORMATS[places].format(d)
@@ -54,6 +56,20 @@ class Formatter {
             sprintf "%8.3f", val
         else
             ""+val
+    }
+
+//===========================================================================================================//
+
+    static String formatScore(double score) {
+        SCORE_FORMAT.format(score)
+    }
+
+    static String formatProbScore(double score) {
+        PROB_SCORE_FORMAT.format(score)
+    }
+
+    static String formatCoord(double coord) {
+        COORD_FORMAT.format(coord)
     }
 
 //===========================================================================================================//
