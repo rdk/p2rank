@@ -23,7 +23,6 @@ class LoaderParams {
     boolean relevantLigandsDefined
     List<Dataset.LigandDefinition> relevantLigandDefinitions = new ArrayList<>()
 
-    boolean load_conservation_paths
     boolean load_conservation
 
     int minLigandAtoms = Params.inst.min_ligand_atoms
