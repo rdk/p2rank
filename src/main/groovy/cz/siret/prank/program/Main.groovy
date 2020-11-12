@@ -411,6 +411,10 @@ class Main implements Parametrized, Writable {
 
     static void main(String[] args) {
         ATimer timer = startTimer()
+
+        // force proper decimal formatting (. as separator) in printf
+        Locale.setDefault(new Locale("en", "US"))
+
         CmdLineArgs parsedArgs = CmdLineArgs.parse(args)
 
         if (parsedArgs.hasSwitch("v", "version")) {
