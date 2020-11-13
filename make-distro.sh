@@ -1,6 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-# creates binary distribution package
+#
+# creates binary distribution package for release
+#
 
 set -e
 
