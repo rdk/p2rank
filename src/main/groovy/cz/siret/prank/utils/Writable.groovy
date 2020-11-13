@@ -11,19 +11,19 @@ import org.slf4j.Logger
 @CompileStatic
 trait Writable {
 
-    public static void write(String msg, Logger log) {
+    public void write(String msg, Logger log) {
         ConsoleWriter.write(msg, log)
     }
 
-    public static void write(String msg) {
+    public void write(String msg) {
         ConsoleWriter.write(msg)
     }
 
-    public static void writeError(String msg, Throwable t) {
+    public void writeError(String msg, Throwable t) {
         ConsoleWriter.writeError(msg, t)
     }
 
-    public static void writeError(String msg) {
+    public void writeError(String msg) {
         ConsoleWriter.writeError(msg, null)
     }
 

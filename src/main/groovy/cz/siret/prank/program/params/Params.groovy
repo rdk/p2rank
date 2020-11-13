@@ -835,6 +835,14 @@ class Params {
     boolean log_to_file = true
 
     /**
+     * Timestamp that will be added as a prefix to each message printed to stdout ("" = no timestamp)
+     * Example: "yyyy.MM.dd HHmm:"
+     */
+    @RuntimeParam
+    String stdout_timestamp = ""
+
+
+    /**
      * compress and delete log file at the end (if log_to_file)
      */
     @RuntimeParam

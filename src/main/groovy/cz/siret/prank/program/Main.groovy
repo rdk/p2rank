@@ -17,9 +17,15 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.StringUtils
 
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+
 import static cz.siret.prank.utils.ATimer.startTimer
+
 import static cz.siret.prank.utils.Futils.mkdirs
 import static cz.siret.prank.utils.Futils.writeFile
+import static cz.siret.prank.utils.ConsoleWriter.write
+import static cz.siret.prank.utils.ConsoleWriter.writeError
 
 @Slf4j
 @CompileStatic
@@ -34,6 +40,11 @@ class Main implements Parametrized, Writable {
     LogManager logManager = new LogManager()
 
     boolean error = false
+
+//===========================================================================================================//
+
+    static boolean _do_stdout_timestamp = false
+    static DateFormat _timestamp_format = null
 
 //===========================================================================================================//
 
@@ -98,6 +109,11 @@ class Main implements Parametrized, Writable {
 
         if (params.predict_residues && !params.ligand_derived_point_labeling) { // TODO move
             LoaderParams.ignoreLigandsSwitch = true
+        }
+
+        if (StringUtils.isNotBlank(params.stdout_timestamp)) {
+            _do_stdout_timestamp = true
+            _timestamp_format = new SimpleDateFormat(params.stdout_timestamp)
         }
 
         log.debug "CMD LINE ARGS: " + args
@@ -440,10 +456,10 @@ class Main implements Parametrized, Writable {
             error = true
 
             if (e instanceof PrankException) {
-                writeError e.message
+                writeError e.message, null  // don't print stacktrace to stdout
                 log.error(e.message, e)
             } else {
-                writeError e.getMessage(), e // on unknown exception also print stack trace
+                writeError e.getMessage(), e  // on unknown exception also print stack trace
             }
 
             if (main!=null) {

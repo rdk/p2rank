@@ -14,6 +14,7 @@ import cz.siret.prank.program.ThreadPoolFactory
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.Sutils
+import cz.siret.prank.utils.Writable
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
@@ -38,7 +39,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank
  */
 @Slf4j
 @CompileStatic
-class Dataset implements Parametrized {
+class Dataset implements Parametrized, Writable {
 
     static final Splitter SPLITTER = Splitter.on(CharMatcher.whitespace()).trimResults().omitEmptyStrings()
 
@@ -195,9 +196,9 @@ class Dataset implements Parametrized {
             log.info (
                   "\n------------------------------------------------------------------------------------------------------------------------"
                 + "\n$msg"
-                + "\n------------------------------------------------------------------------------------------------------------------------"
+                + "\n------------------------------------------------------------------------------------------------------------------------\n"
             )
-            System.out.println(msg)
+            write(msg)
         }
 
         try {

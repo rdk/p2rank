@@ -1,15 +1,12 @@
-  uasge:
+  usage:
 
      prank <command> <dataset.ds> [options]
 
   commands:
 
      predict      ... predict pockets (P2RANK)
-
      eval-predict ... evaluate model on a dataset with known ligands
-
      rescore      ... rescore previously detected pockets (PRANK)
-
      eval-rescore ... evaluate rescoring model on a dataset with known ligands
 
   datasets:
@@ -29,7 +26,6 @@
                  in config/default.groovy, path relative to config/ directory
 
      -m <path>   use previously trained classifier file relative to models/ directory
-                 default: models/default.model
 
      -o <path>   specify output directory (relative to working dir)
                  default: test_output/<comamnd>_<dataset>
