@@ -1,7 +1,7 @@
 
-This file collects backwards incompatible changes that have a potential to break code thet uses P2Rank.
+This file collects backwards incompatible changes that have a potential to break code that uses P2Rank.
 
-These incluede:
+These include:
 
 * changes in the command line interface 
 * changes in the input/output format
