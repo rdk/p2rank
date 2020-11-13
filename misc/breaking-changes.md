@@ -1,5 +1,9 @@
 
-This file collects backwards incompatible changes that have a potential to break code that uses P2Rank.
+## Breaking changes
+
+### Introduction
+
+This file collects backwards incompatible changes that have potential to break code that uses P2Rank.
 
 These include:
 
@@ -7,7 +11,9 @@ These include:
 * changes in the input/output format
 * changes in default behaviour
 
+All changes of that type should be rare and should be all listed here.
 
+### List of changes
 
 #### 2.2
 
