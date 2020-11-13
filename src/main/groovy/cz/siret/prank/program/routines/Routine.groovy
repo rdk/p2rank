@@ -36,7 +36,11 @@ class Routine implements Parametrized, Writable  {
 
     void writeParams(String outdir) {
         String v = "version: " + Main.version + "\n"
-        v += "git head: " + getGitHeadId() + "\n"
+
+        String gitHead = getGitHeadId()
+        if (gitHead != null) {
+            v += "git head: " + getGitHeadId() + "\n"
+        }
 
         writeFile("$outdir/params.txt", v + params.toString())
     }
@@ -46,7 +50,7 @@ class Routine implements Parametrized, Writable  {
         try {
             res = 'git rev-parse --short HEAD'.execute().text
         } catch (Exception e) {
-            log.debug 'failed to get git commit version', e
+            log.trace 'failed to get git commit version', e
         }
         return res
     }

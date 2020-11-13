@@ -7,7 +7,7 @@ Ligand-binding site prediction based on machine learning.
     <img src="http://siret.ms.mff.cuni.cz/krivak/p2rank/figures/points2_small.png" width="600">
 </p>
 
-[![version 2.1](https://img.shields.io/badge/version-2.1-green.svg)](/build.gradle)
+[![version 2.2](https://img.shields.io/badge/version-2.2-green.svg)](/build.gradle)
 [![Build Status](https://travis-ci.org/rdk/p2rank.svg?branch=master)](https://travis-ci.org/rdk/p2rank)
 [![License: MIT](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](/LICENSE.txt)
 
@@ -17,14 +17,16 @@ P2Rank is a stand-alone command line program that predicts ligand-binding pocket
 
 ### Requirements
 
-* Java 8 or newer
+* Java 8 to 15
 * PyMOL 1.7 (or newer) for viewing visualizations (optional)
+
+Program is tested on Linux, macOS and Windows. On Windows, using `bash` console is recommended to execute the program instead of `cmd` or `PowerShell`.
 
 ### Setup
 
-P2Rank requires no installation. Binary packages can be downloaded from the project website.
+P2Rank requires no installation. Binary packages are available as GitHub Releases.
 
-* **Download**: http://siret.ms.mff.cuni.cz/p2rank
+* **Download**: https://github.com/rdk/p2rank/releases
 * Source code: https://github.com/rdk/p2rank
 * Datasets: https://github.com/rdk/p2rank-datasets
 
@@ -36,17 +38,13 @@ P2Rank requires no installation. Binary packages can be downloaded from the proj
 
 See more usage examples below...
 
-### Build
-
-This project uses [Gradle](https://gradle.org/) build system via included Gradle wrapper. 
-
-Build with `./make.sh` or `./gradlew assemble`.
-
 ### Algorithm
 
-P2Rank makes predictions by scoring and clustering points on the protein's solvent accessible surface. Ligandability score of individual points is determined by a machine learning based model trained on the dataset of known protein-ligand complexes. For more details see slides and publications.
+P2Rank makes predictions by scoring and clustering points on the protein's solvent accessible surface. 
+Ligandability score of individual points is determined by a machine learning based model trained on the dataset of known protein-ligand complexes. 
+For more details see the slides and publications.
 
-Slides introducing original version of the algotithm: http://bit.ly/p2rank_slides 
+Presentation slides introducing original version of the algotithm: [Slides (pdf)](http://bit.ly/p2rank_slides)  
 
 ### Publications
 
@@ -55,13 +53,29 @@ If you use P2Rank, please cite relevant papers:
 * [Software article](https://doi.org/10.1186/s13321-018-0285-8) in JChem about P2Rank pocket prediction tool  
  Krivak R, Hoksza D. *P2Rank: machine learning based tool for rapid and accurate prediction of ligand binding sites from protein structure.* Journal of Cheminformatics. 2018 Aug.
 * [Web-server article](https://doi.org/10.1093/nar/gkz424) in NAR about the web interface accessible at [prankweb.cz](https://prankweb.cz)  
- Jendele L, Krivak R, Skoda P, Novotny M, Hoksza D. *PrankWeb: a web server for ligand binding site prediction and visualization.* Nucleic Acids Research, Volume 47, Issue W1, 02 July 2019, Pages W345–W349 
+ Jendele L, Krivak R, Skoda P, Novotny M, Hoksza D. *PrankWeb: a web server for ligand binding site prediction and visualization.* Nucleic Acids Research, Volume 47, Issue W1, 02 July 2019, Pages W345-W349 
 * [Conference paper](https://doi.org/10.1007/978-3-319-21233-3_4) inroducing P2Rank prediction algorithm  
  Krivak R, Hoksza D. *P2RANK: Knowledge-Based Ligand Binding Site Prediction Using Aggregated Local Features.* InInternational Conference on Algorithms for Computational Biology 2015 Aug 4 (pp. 41-52). Springer
 * [Research article](https://doi.org/10.1186/s13321-015-0059-5) in JChem about PRANK rescoring algorithm  
  Krivak R, Hoksza D. *Improving protein-ligand binding site prediction accuracy by classification of inner pocket points using local features.* Journal of Cheminformatics. 2015 Dec.
 
+### Build from sources
 
+This project uses [Gradle](https://gradle.org/) build system via included Gradle wrapper. 
+On Windows use `bash` to execute build comands (`bash` is installed as a part of [Git for Windows](https://git-scm.com/download/win)). 
+
+```bash
+git clone https://github.com/rdk/p2rank.git && cd p2rank
+./make.sh       
+
+./unit-tests.sh    # optionally you can run tests to check everything works fine on your machine        
+./tests.sh quick   # runs further tests
+```    
+Now you can run the program via:
+```bash
+distro/prank       # standard mode that logs to distro/log/prank.log
+./prank.sh         # development mode that logs to console
+``` 
 
 Usage Examples
 --------------
@@ -82,10 +96,10 @@ prank predict test.ds                             # run on whole dataset (contai
 prank predict -f test_data/1fbl.pdb               # run on single pdb file
 prank predict -f test_data/1fbl.pdb.gz            # run on single gzipped pdb file
 
-prank predict -threads 8          test.ds         # specify no. of working threads for parallel processing
-prank predict -o output_here      test.ds         # explicitly specify output directory
-prank predict -c predict2.groovy  test.ds         # specify configuration file (predict2.groovy uses 
-                                                    different prediction model and combination of parameters)
+prank predict -threads 8              test.ds     # specify no. of working threads for parallel processing
+prank predict -o output_here          test.ds     # explicitly specify output directory
+prank predict -c conservation.groovy  test.ds     # specify configuration file (conservation.groovy  
+                                                  # uses different prediction model and parameters)
 ~~~
 
 ### Evaluate prediction model
@@ -119,12 +133,17 @@ prank predict -c example.groovy         test.ds
 ~~~
 
 
-It is also possible to override the default params on the command line using their full name. To see complete list of params look into `config/default.groovy`.
+It is also possible to override the default params on the command line using their full name.
 
 ~~~bash
-prank predict                   -seed 151 -threads 8  test.ds
-prank predict -c example.groovy -seed 151 -threads 8  test.ds
-~~~
+prank predict                   -seed 151 -threads 8  test.ds   #  set random seed and number of threads, override defeults
+prank predict -c example.groovy -seed 151 -threads 8  test.ds   #  override defaults as well as values from example.groovy
+~~~     
+
+P2Rank has numerous configurable parameters. 
+To see the list of standard params look into `config/default.groovy` and other example config files in this directory.
+To see the complete commented list of all (including undocumented) 
+params see [Params.groovy](https://github.com/rdk/p2rank/blob/develop/src/main/groovy/cz/siret/prank/program/params/Params.groovy) in the source code.
 
 ### Rescoring (PRANK algorithm)
 
@@ -135,13 +154,8 @@ P2Rank is also able to rescore pockets predicted by other methods
 ~~~bash
 prank rescore test_data/fpocket.ds
 prank rescore fpocket.ds                 # test_data/ is default 'dataset_base_dir'
-prank rescore fpocket.ds -o output_dir   # test_output/ is default 'output_base_dir'
-~~~
-
-### Evaluate rescoring model
-
-~~~
-prank eval-rescore fpocket.ds
+prank rescore fpocket.ds -o output_dir   # test_output/ is default 'output_base_dir'       
+prank eval-rescore fpocket.ds            # evaluate rescoring model
 ~~~
 
 ## Comparison with Fpocket

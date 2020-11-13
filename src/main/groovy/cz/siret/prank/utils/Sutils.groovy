@@ -55,12 +55,9 @@ class Sutils {
         prefix + text.readLines().join("\n"+prefix)
     }
 
-
     static String timeLabel() {
         DATE_LABEL_FORMAT.format(new Date())
     }
-
-
 
     static List<String> split(String str, String splitter) {
         Splitter.on(splitter).omitEmptyStrings().trimResults().split(str).toList()

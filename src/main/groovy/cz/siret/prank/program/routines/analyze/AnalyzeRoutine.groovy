@@ -347,7 +347,7 @@ class AnalyzeRoutine extends Routine {
 
 
 
-    private static void savePropensities(String fname, BinCounter counter) {
+    private void savePropensities(String fname, BinCounter counter) {
         StringBuilder csv = new StringBuilder("key, propensity, propensity^2, count, pos, neg\n")
         counter.table.keySet().toSorted().each {
             def bin = counter.get(it)
