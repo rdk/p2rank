@@ -38,25 +38,11 @@ P2Rank requires no installation. Binary packages are available as GitHub Release
 
 See more usage examples below...
 
-### Build from sources
-
-This project uses [Gradle](https://gradle.org/) build system via included Gradle wrapper. 
-On Windows use `bash` to execute build comands (`bash` is installed as a part of [Git for Windows](https://git-scm.com/download/win)). 
-
-```bash
-git clone https://github.com/rdk/p2rank.git && cd p2rank
-./make.sh
-./unit-tests.sh   # optionally you can run tests to check everything works on your machine
-```    
-Now you can run the program via:
-```bash
-distro/prank       # standard mode that logs to distro/log/prank.log
-./prank.sh         # development mode that logs to console
-``` 
-
 ### Algorithm
 
-P2Rank makes predictions by scoring and clustering points on the protein's solvent accessible surface. Ligandability score of individual points is determined by a machine learning based model trained on the dataset of known protein-ligand complexes. For more details see slides and publications.
+P2Rank makes predictions by scoring and clustering points on the protein's solvent accessible surface. 
+Ligandability score of individual points is determined by a machine learning based model trained on the dataset of known protein-ligand complexes. 
+For more details see the slides and publications.
 
 Presentation slides introducing original version of the algotithm: [Slides (pdf)](http://bit.ly/p2rank_slides)  
 
@@ -67,13 +53,29 @@ If you use P2Rank, please cite relevant papers:
 * [Software article](https://doi.org/10.1186/s13321-018-0285-8) in JChem about P2Rank pocket prediction tool  
  Krivak R, Hoksza D. *P2Rank: machine learning based tool for rapid and accurate prediction of ligand binding sites from protein structure.* Journal of Cheminformatics. 2018 Aug.
 * [Web-server article](https://doi.org/10.1093/nar/gkz424) in NAR about the web interface accessible at [prankweb.cz](https://prankweb.cz)  
- Jendele L, Krivak R, Skoda P, Novotny M, Hoksza D. *PrankWeb: a web server for ligand binding site prediction and visualization.* Nucleic Acids Research, Volume 47, Issue W1, 02 July 2019, Pages W345–W349 
+ Jendele L, Krivak R, Skoda P, Novotny M, Hoksza D. *PrankWeb: a web server for ligand binding site prediction and visualization.* Nucleic Acids Research, Volume 47, Issue W1, 02 July 2019, Pages W345-W349 
 * [Conference paper](https://doi.org/10.1007/978-3-319-21233-3_4) inroducing P2Rank prediction algorithm  
  Krivak R, Hoksza D. *P2RANK: Knowledge-Based Ligand Binding Site Prediction Using Aggregated Local Features.* InInternational Conference on Algorithms for Computational Biology 2015 Aug 4 (pp. 41-52). Springer
 * [Research article](https://doi.org/10.1186/s13321-015-0059-5) in JChem about PRANK rescoring algorithm  
  Krivak R, Hoksza D. *Improving protein-ligand binding site prediction accuracy by classification of inner pocket points using local features.* Journal of Cheminformatics. 2015 Dec.
 
+### Build from sources
 
+This project uses [Gradle](https://gradle.org/) build system via included Gradle wrapper. 
+On Windows use `bash` to execute build comands (`bash` is installed as a part of [Git for Windows](https://git-scm.com/download/win)). 
+
+```bash
+git clone https://github.com/rdk/p2rank.git && cd p2rank
+./make.sh       
+
+./unit-tests.sh    # optionally you can run tests to check everything works fine on your machine        
+./tests.sh quick   # runs further tests
+```    
+Now you can run the program via:
+```bash
+distro/prank       # standard mode that logs to distro/log/prank.log
+./prank.sh         # development mode that logs to console
+``` 
 
 Usage Examples
 --------------
