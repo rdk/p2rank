@@ -25,7 +25,7 @@ interface FeatureCalculator {
     Type getType()
 
     /**
-     * Name serves as a unique key that is then used in Params. Add this key to Params.extra_features to enable this feature.
+     * Name serves as a unique key that is then used in Params. Add this key to Params.features to enable this feature.
      */
     String getName()
 

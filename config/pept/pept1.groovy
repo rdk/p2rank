@@ -41,7 +41,7 @@ import cz.siret.prank.program.params.Params
     atom_table_feat_keep_sgn = true
     residue_table_features = ["RAx"]
     atom_table_features = ["atomicHydrophobicity"]
-    extra_features = ["chem","volsite","bfactor","protrusion","pmass","cr1pos","ss_atomic","ss_sas","ss_cloud","conserv_cloud","conserv_atomic","conserv_sas"]
+    features = ["chem","volsite","bfactor","protrusion","pmass","cr1pos","ss_atomic","ss_sas","ss_cloud","conserv_cloud","conserv_atomic","conserv_sas"]
 
     load_conservation = 1
     conservation_origin = 'pdb.seq.fasta'

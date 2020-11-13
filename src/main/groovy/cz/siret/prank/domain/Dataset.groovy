@@ -253,7 +253,7 @@ class Dataset implements Parametrized {
         lp.ligandsSeparatedByTER = (attributes.get(PARAM_LIGANDS_SEPARATED_BY_TER) == "true")  // for bench11 dataset
         lp.relevantLigandsDefined = hasExplicitlyDefinedLigands()
         lp.relevantLigandDefinitions = item.getLigandDefinitions()
-        lp.load_conservation = (params.load_conservation || params.extra_features.any{s->s.contains("conservation")})
+        lp.load_conservation = (params.load_conservation || params.features.any{ s->s.contains("conservation")})
         return lp
     }
 

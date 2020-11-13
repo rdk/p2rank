@@ -64,7 +64,7 @@ Quick test run:
     -c working                      \      # override default config with working.groovy config file
     -t chen11-fpocket.ds            \      # crossvalidate on chen11 datsest
     -loop 1 -rf_trees 5 -rf_depth 5 \      # make it quick (1 pass, small model)
-    -extra_features '((protrusion.bfactor),(protrusion.bfactor.new_feature))'` 
+    -features '((protrusion.bfactor),(protrusion.bfactor.new_feature))'` 
 ~~~
 
 (Then check `run.log` in n results directory for errors. Check if R plots are generated correctly.)
@@ -74,13 +74,13 @@ Feature set comparisons:
 ./prank.sh ploop -c working             \      
     -t chen11-fpocket.ds                \  # crossvalidate on chen11 datsest    
     -loop 10 -rf_trees 100 -rf_depth 10 \      
-    -extra_features '((protrusion.bfactor),(protrusion.bfactor.new_feature))'` 
+    -features '((protrusion.bfactor),(protrusion.bfactor.new_feature))'` 
 
 ./prank.sh ploop -c working             \      
     -t chen11-fpocket.ds                \  # train on chen11 
     -e joined.ds                        \  # and evaluate on a different dataset
     -loop 10 -rf_trees 100 -rf_depth 10 \      
-    -extra_features '((protrusion.bfactor),(protrusion.bfactor.new_feature))'` 
+    -features '((protrusion.bfactor),(protrusion.bfactor.new_feature))'` 
 ~~~
 
 ## Bayesian optimization (hopt command)

@@ -11,7 +11,7 @@ import groovy.util.logging.Slf4j
 /**
  * Holds all global parameters of the program.
  *
- * This file is also main source of parameter description/documenmtation.
+ * This file is also main source of parameter description/documentation.
  *
  * Parameter annotations:
  * @RuntimeParam            ... Parameters related to program execution.
@@ -101,7 +101,7 @@ class Params {
      * List of general calculated features
      */
     @ModelParam
-    List<String> extra_features = ["protrusion","bfactor"]
+    List<String> features = ["chem", "protrusion", "bfactor", "atom_table", "residue_table"]
 
     /**
      * List of features that come directly from atom type table
@@ -117,7 +117,7 @@ class Params {
     List<String> residue_table_features = []
 
     /**
-     * Exponent applied to all atom table features
+     * Exponent applied to all atom table features // TODO change default to 1
      */
     @ModelParam
     double atom_table_feat_pow = 2

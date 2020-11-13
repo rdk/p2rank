@@ -2,7 +2,7 @@ package cz.siret.prank.features.implementation
 
 import cz.siret.prank.features.api.AtomFeatureCalculationContext
 import cz.siret.prank.features.api.AtomFeatureCalculator
-import cz.siret.prank.features.tables.PropertyTable
+import cz.siret.prank.features.implementation.table.PropertyTable
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.PdbUtils

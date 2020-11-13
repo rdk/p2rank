@@ -1,4 +1,4 @@
-package cz.siret.prank.features.tables
+package cz.siret.prank.features.implementation.table
 
 import com.google.common.base.Splitter
 import cz.siret.prank.domain.AA

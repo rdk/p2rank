@@ -3,7 +3,7 @@ package cz.siret.prank.features.implementation.sequence
 import cz.siret.prank.domain.Residue
 import cz.siret.prank.features.api.ResidueFeatureCalculationContext
 import cz.siret.prank.features.api.ResidueFeatureCalculator
-import cz.siret.prank.features.tables.PropertyTable
+import cz.siret.prank.features.implementation.table.PropertyTable
 import cz.siret.prank.program.params.Parametrized
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j

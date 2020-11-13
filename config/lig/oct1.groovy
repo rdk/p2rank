@@ -96,7 +96,7 @@ import cz.siret.prank.program.params.Params
     avg_weighted = true
     weight_function = "INVPOW2"
 
-    extra_features = ["chem","volsite","protrusion","bfactor", "pmass"]
+    features = ["chem","volsite","protrusion","bfactor", "pmass"]
     rf_trees =	50
     rf_depth	=  12
     rf_features	=  26

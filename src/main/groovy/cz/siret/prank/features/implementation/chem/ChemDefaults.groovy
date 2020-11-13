@@ -21,120 +21,97 @@ final class ChemDefaults {
     }
 
     public static final Map<String, Integer> HYDROPHOBIC = [
-            Phe:1,
-            Ile:1,
-            Trp:1,
-            Gly:1,
-            Leu:1,
-            Val:1,
-            Met:1,
+            PHE:1,
+            ILE:1,
+            TRP:1,
+            GLY:1,
+            LEU:1,
+            VAL:1,
+            MET:1,
 
-            Ala:1,
-            Cys:1,
-            Tyr:1,
+            ALA:1,
+            CYS:1,
+            TYR:1,
 
-            Arg:-1,
-            Asn:-1,
-            Asp:-1,
-            Gln:-1,
-            Glu:-1,
-            Lys:-1,
-            Pro:-1
+            ARG:-1,
+            ASN:-1,
+            ASP:-1,
+            GLN:-1,
+            GLU:-1,
+            LYS:-1,
+            PRO:-1
     ]
 
     //http://www.thinkpeptides.com/aminoacidproperties.html //(Map<String, Double>)
     public static final Map<String, Double> HYDROPHATY_INDEX = [
-            Ala:1.8,
-            Arg:-4.5,
-            Asn:-3.5,
-            Asp:-3.5,
-            Cys:2.5,
-            Glu:-3.5,
-            Gln:-3.5,
-            Gly:-0.4,
-            His:-3.2,
-            Ile:4.5,
-            Leu:3.8,
-            Lys:-3.9,
-            Met:1.9,
-            Phe:2.8,
-            Pro:-1.6,
-            Ser:-0.8,
-            Thr:-0.7,
-            Trp:-0.9,
-            Tyr:-1.3,
-            Val:4.2
+            ALA:1.8,
+            ARG:-4.5,
+            ASN:-3.5,
+            ASP:-3.5,
+            CYS:2.5,
+            GLU:-3.5,
+            GLN:-3.5,
+            GLY:-0.4,
+            HIS:-3.2,
+            ILE:4.5,
+            LEU:3.8,
+            LYS:-3.9,
+            MET:1.9,
+            PHE:2.8,
+            PRO:-1.6,
+            SER:-0.8,
+            THR:-0.7,
+            TRP:-0.9,
+            TYR:-1.3,
+            VAL:4.2
     ] as Map<String, Double>
-    //http://www.sigmaaldrich.com/life-science/metabolomics/learning-center/amino-acid-reference-chart.html#prop
-//        static Map<String, Double> HYDROPHATY_INDEX = (Map<String, Double>)  [
-//            Ala:41,
-//            Arg:-14,
-//            Asn:-28,
-//            Asp:-55,
-//            Cys:49,
-//            Glu:-31,
-//            Gln:-10,
-//            Gly:0,
-//            His:8,
-//            Ile:99,
-//            Leu:97,
-//            Lys:-23,
-//            Met:74,
-//            Phe:100,
-//            Pro:-46,
-//            Ser:-5,
-//            Thr:13,
-//            Trp:97,
-//            Tyr:63,
-//            Val:76
-//        ]
 
-    public static final Map<String, Integer> ALIPHATIC = [Ala:1, Leu:1, Ile:1, Val:1, Gly:1, Pro:1].asImmutable()
-    public static final Map<String, Integer> AROMATIC = [Phe:1, Trp:1, Tyr:1]
-    public static final Map<String, Integer> SULFUR = [Cys:1, Met:1]
-    public static final Map<String, Integer> HYDROXYL = [Ser:1, Thr:1]
-    public static final Map<String, Integer> BASIC = [Arg:3, Lys:2, His:1]
-    public static final Map<String, Integer> ACIDIC = [Asp:1, Glu:1]
-    public static final Map<String, Integer> AMIDE = [Asn:1, Gln:1]
+    public static final Map<String, Integer> ALIPHATIC = [ALA:1, LEU:1, ILE:1, VAL:1, GLY:1, PRO:1].asImmutable()
+    public static final Map<String, Integer> AROMATIC = [PHE:1, TRP:1, TYR:1]
+    public static final Map<String, Integer> SULFUR = [CYS:1, MET:1]
+    public static final Map<String, Integer> HYDROXYL = [SER:1, THR:1]
+    public static final Map<String, Integer> BASIC = [ARG:3, LYS:2, HIS:1]
+    public static final Map<String, Integer> ACIDIC = [ASP:1, GLU:1]
+    public static final Map<String, Integer> AMIDE = [ASN:1, GLN:1]
     public static final Map<String, Integer> CHARGE = [
-            Asp:-1,
-            Glu:-1,
+            ASP:-1,
+            GLU:-1,
 
-            Arg:1,
-            His:1,
-            Lys:1
+            ARG:1,
+            HIS:1,
+            LYS:1
     ]
     public static final Map<String, Integer> POLAR = [
-            Arg:1,
-            Asn:1,
-            Asp:1,
-            Gln:1,
-            Glu:1,
-            His:1,
-            Lys:1,
-            Ser:1,
-            Thr:1,
-            Tyr:1,
-            Cys:1
+            ARG:1,
+            ASN:1,
+            ASP:1,
+            GLN:1,
+            GLU:1,
+            HIS:1,
+            LYS:1,
+            SER:1,
+            THR:1,
+            TYR:1,
+            CYS:1
     ]
     public static final Map<String, Integer> IONIZABLE = [
-            Asp:1,
-            Glu:1,
-            His:1,
-            Lys:1,
-            Arg:1,
-            Cys:1,
-            Tyr:1
+            ASP:1,
+            GLU:1,
+            HIS:1,
+            LYS:1,
+            ARG:1,
+            CYS:1,
+            TYR:1
     ]
-    public static final Map<String, Integer> HB_DONOR = [Arg:1, Lys:1, Try:1]
-    public static final Map<String, Integer> HB_ACCEPTOR = [Asp:1, Glu:1]
-    public static final Map<String, Integer> HB_DONOR_ACCEPTOR = [Asn:1, Gln:1, His:1, Ser:1, Thr:1, Tyr:1]
-    // http://www.imgt.org/IMGTeducation/Aide-memoire/_UK/aminoacids/charge/
+    public static final Map<String, Integer> HB_DONOR = [ARG:1, LYS:1, TRY:1]
+    public static final Map<String, Integer> HB_ACCEPTOR = [ASP:1, GLU:1]
+    public static final Map<String, Integer> HB_DONOR_ACCEPTOR = [ASN:1, GLN:1, HIS:1, SER:1, THR:1, TYR:1]
+    
 
     @CompileStatic
     private static final double mval(String aa, Map map) {
         Number val = (Number) map.get(aa)
-        return val!=null ? val.doubleValue() : 0
+        return val!=null ? val.doubleValue() : 0d
     }
 
     @CompileStatic
@@ -170,8 +147,8 @@ final class ChemDefaults {
     }
 
 
-    public static final Set<String> AACODES = ImmutableSet.copyOf(["Ala","Arg","Asn","Asp","Cys","Glu","Gln","Gly","His","Ile",
-                                                                   "Leu","Lys","Met","Phe","Pro","Ser","Thr","Trp","Tyr","Val",   "Stp"])
+    public static final Set<String> AACODES = ImmutableSet.copyOf(["ALA","ARG","ASN","ASP","CYS","GLU","GLN","GLY","HIS","ILE",
+                                                                   "LEU","LYS","MET","PHE","PRO","SER","THR","TRP","TYR","VAL",   "STP"])
 
     /*
      * mapping AACODE to vector with default values

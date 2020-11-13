@@ -82,7 +82,7 @@ import cz.siret.prank.program.params.Params
 
     residue_table_features = ["RAx"]
     atom_table_features = ["atomicHydrophobicity"]
-    extra_features = ["chem","volsite","bfactor","protrusion"]
+    features = ["chem","volsite","bfactor","protrusion"]
 
     // Feature params
 

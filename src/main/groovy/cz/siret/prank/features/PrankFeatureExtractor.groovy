@@ -6,6 +6,8 @@ import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.features.api.SasFeatureCalculationContext
 import cz.siret.prank.features.generic.GenericHeader
 import cz.siret.prank.features.implementation.chem.ChemFeature
+import cz.siret.prank.features.implementation.table.AtomTableFeature
+import cz.siret.prank.features.implementation.table.ResidueTableFeature
 import cz.siret.prank.features.weight.WeightFun
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Struct
@@ -32,10 +34,8 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
     /** properties calculated from neighbourhood */
     private Map<Integer, FeatureVector> smoothRepresentations = new HashMap<>()
 
-    GenericHeader headerAdditionalFeatures // header of additional generic vector
-    List<String> extraFeaturesHeader
-    List<String> atomTableFeatures
-    List<String> residueTableFeatures
+    GenericHeader featuresHeader // header of additional generic vector
+    List<String> featuresHeaderStrs
 
     // tied to a protein
     private PointSampler pocketPointSampler
@@ -75,18 +75,19 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
     }
 
     private void initHeader() {
-        featureSetup = new FeatureSetup(params.extra_features)
+        List<String> enabledFeatures = new ArrayList<>(params.features)
 
-        extraFeaturesHeader = featureSetup.jointHeader
-        atomTableFeatures = params.atom_table_features // e.g.: "apRawInvalids","ap5sasaValids","ap5sasaInvalids"
-        residueTableFeatures = params.residue_table_features
+        // add implicit table features
+        if (!enabledFeatures.contains(AtomTableFeature.NAME)) {
+            enabledFeatures.add(AtomTableFeature.NAME)
+        }
+        if (!enabledFeatures.contains(ResidueTableFeature.NAME)) {
+            enabledFeatures.add(ResidueTableFeature.NAME)
+        }
 
-        headerAdditionalFeatures = new GenericHeader([
-                *extraFeaturesHeader,
-                *atomTableFeatures,
-                *residueTableFeatures,
-        ] as List<String>)
-
+        featureSetup = new FeatureSetup(enabledFeatures)
+        featuresHeaderStrs = featureSetup.jointHeader
+        featuresHeader = new GenericHeader(featuresHeaderStrs)
     }
 
     @Override
@@ -134,13 +135,11 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
         this.protein = protein
         this.pocket = pocket
 
-        this.headerAdditionalFeatures = proteinPrototype.headerAdditionalFeatures
+        this.featuresHeaderStrs    = proteinPrototype.featuresHeaderStrs
+        this.featuresHeader        = proteinPrototype.featuresHeader
         this.pocketPointSampler    = proteinPrototype.pocketPointSampler
-        this.extraFeaturesHeader   = proteinPrototype.extraFeaturesHeader
-        this.atomTableFeatures     = proteinPrototype.atomTableFeatures
-        this.residueTableFeatures  = proteinPrototype.residueTableFeatures
         this.trainingExtractor     = proteinPrototype.trainingExtractor
-        this.featureSetup     = proteinPrototype.featureSetup
+        this.featureSetup          = proteinPrototype.featureSetup
 
         this.deepLayer = proteinPrototype.deepLayer
         this.surfaceLayerAtoms = proteinPrototype.surfaceLayerAtoms
@@ -248,7 +247,7 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
      * @return
      */
     private PrankFeatureVector calcFeatVectorFromVectors(Atom point, Atoms neighbourhoodAtoms, Map<Integer, FeatureVector> fromVectors) {
-        PrankFeatureVector res = new PrankFeatureVector(headerAdditionalFeatures)
+        PrankFeatureVector res = new PrankFeatureVector(featuresHeader)
 
         if (neighbourhoodAtoms.isEmpty()) {
             throw new PrankException("No neighbourhood atoms. Cannot calculate feature vector. (Isn't neighbourhood_radius too small?)")
@@ -294,13 +293,11 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
 
         // calculate extra SAS features
         SasFeatureCalculationContext context = new SasFeatureCalculationContext(protein, neighbourhoodAtoms, this)
+        
         for (FeatureSetup.Feature feature : featureSetup.enabledSasFeatures) {
             double[] values = feature.calculator.calculateForSasPoint(point, context)
 
-            if (values.length != feature.length) {
-                throw new PrankException("Feature $feature.name returned value array of incorrect length: ${values.length}."
-                    + "Should be ${feature.length} according to the feature header.")
-            }
+            feature.checkCorrectValuesLength(values)
 
             res.valueVector.setValues(feature.startIndex, values)
         }
@@ -377,9 +374,13 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
         return vector
     }
 
+    /**
+     * XX TODO: chenge with feature filter
+     * @return
+     */
     @Override
     public List<String> getVectorHeader() {
-        return new PrankFeatureVector(headerAdditionalFeatures).getHeader()
+        return new PrankFeatureVector(featuresHeader).getHeader()
     }
 
 }

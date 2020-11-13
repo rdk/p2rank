@@ -32,7 +32,7 @@ Analyze dataset with explicitly specified residue labeling.
 ~~~
 ./prank.sh traineval -t test_data/basic.ds -e test_data/basic.ds \
     -loop 1 -delete_vectors 0 -sample_negatives_from_decoys 0 \
-    -extra_features '(chem.volsite.protrusion.bfactor.xyz)'
+    -features '(chem.volsite.protrusion.bfactor.xyz)'
 ~~~
 
 

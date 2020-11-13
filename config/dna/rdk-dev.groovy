@@ -89,7 +89,7 @@ import cz.siret.prank.program.params.Params
 
     residue_table_features = ["RAx", "DnaTrainD40"]
     atom_table_features = ["atomicHydrophobicity"]
-    extra_features = ["chem","volsite","bfactor","protrusion","pmass","cr1pos","ss_atomic","ss_sas","ss_cloud","duplets_sas","triplets_sas"] // "duplets_atomic","triplets_atomic"
+    features = ["chem","volsite","bfactor","protrusion","pmass","cr1pos","ss_atomic","ss_sas","ss_cloud","duplets_sas","triplets_sas"] // "duplets_atomic","triplets_atomic"
 
     // Feature params
 

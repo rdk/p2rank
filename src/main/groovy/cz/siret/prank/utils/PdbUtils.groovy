@@ -117,23 +117,6 @@ class PdbUtils {
         return correctResidueCode(getResidueCode(group))
     }
 
-    /**
-     *
-     * @return  THR -> Thr
-     */
-    static String normAAcode(String aa) {
-        if (aa.isEmpty()) {
-            return aa;
-        }
-        if (aa.length()!=3) {
-            log.warn " Suspicious AA code: " + aa
-        }
-
-        String a = aa.substring(0, 1).toUpperCase()
-        String b = aa.substring(1, aa.length()).toLowerCase()
-        return a + b
-    }
-
     static boolean trySetElement(Atom a, String code) {
         Element ele
         try {

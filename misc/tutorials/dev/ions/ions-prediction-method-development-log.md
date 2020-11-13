@@ -74,7 +74,7 @@ pkill python; sudo pkill mongo
     -clear_prim_caches 0 -clear_sec_caches 0 \
     -hopt_objective '"-DCA_4_0"' \
     -balance_class_weights 1 \
-    -extra_features '(chem.volsite.bfactor.protrusion)' \
+    -features '(chem.volsite.bfactor.protrusion)' \
     -rf_bagsize 55 -rf_depth 10 -rf_trees 40 \
     -target_class_weight_ratio '(0.001,0.2)' \
     -positive_point_ligand_distance '(1,10)' \
@@ -107,7 +107,7 @@ pkill python; sudo pkill mongo; \
     -hopt_objective '"-DCA_4_0"' \
     -balance_class_weights 1 \
     -atom_table_features '(atomicHydrophobicity)' \
-    -extra_features '(chem.volsite.bfactor.protrusion)' \
+    -features '(chem.volsite.bfactor.protrusion)' \
     -rf_bagsize 55 -rf_depth 12 -rf_trees 100 \
     -target_class_weight_ratio '(0.001,0.2)' \
     -positive_point_ligand_distance '(1,10)' \
@@ -150,7 +150,7 @@ See Params.groovy for description of other parameters.
     -clear_prim_caches 0 -clear_sec_caches 0 \
     -hopt_objective '"-DCA_4_0"' \
     -balance_class_weights 1 \
-    -extra_features '(chem.volsite.bfactor.protrusion)' \
+    -features '(chem.volsite.bfactor.protrusion)' \
     -rf_bagsize 55 -rf_depth 10 -rf_trees 40 \
     -target_class_weight_ratio 0.1726 \
     -positive_point_ligand_distance 9.3741 \
@@ -231,7 +231,7 @@ Now we can use new features (after rebuild).
     -balance_class_weights 1 \
     -residue_table_features '(Ions_Mg_Dev200Inv.Ions_Mg_Dev200Inv^2)' \
     -atom_table_features '(atomicHydrophobicity)' \
-    -extra_features '(chem.volsite.bfactor.protrusion.duplets_atomic.duplets_sas.triplets_atomic.triplets_sas)' \
+    -features '(chem.volsite.bfactor.protrusion.duplets_atomic.duplets_sas.triplets_atomic.triplets_sas)' \
     -feat_propensities_set 'Ions_Mg_Dev200Inv' \
     -rf_bagsize 55 -rf_depth 12 -rf_trees 100 \
     -target_class_weight_ratio 0.0684 \

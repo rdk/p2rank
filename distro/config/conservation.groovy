@@ -7,7 +7,7 @@ import cz.siret.prank.program.params.Params
 
     model = "conservation.model"
 
-    extra_features = ["chem","volsite","protrusion","bfactor","conservation"]
+    features = ["chem","volsite","protrusion","bfactor","conservation"]
 
     load_conservation = true
 

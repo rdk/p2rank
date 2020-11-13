@@ -2,6 +2,7 @@ package cz.siret.prank.features
 
 import cz.siret.prank.features.api.FeatureCalculator
 import cz.siret.prank.features.api.FeatureRegistry
+import cz.siret.prank.program.PrankException
 import groovy.transform.CompileStatic
 
 /**
@@ -47,7 +48,6 @@ class FeatureSetup {
             jointHeader.addAll(header.collect { feat.name + '.' + it  }) // prefix with "feat_name."
 
             feat.startIndex = start
-            feat.length = header.size()
             start += feat.length
         }
     }
@@ -60,11 +60,20 @@ class FeatureSetup {
 
         Feature(FeatureCalculator calculator) {
             this.calculator = calculator
+            this.length = calculator.header.size()
         }
 
         String getName() {
             return calculator.name
         }
+
+        void checkCorrectValuesLength(double[] calculatedValues) throws PrankException {
+            if (calculatedValues.length != length) {
+                throw new PrankException("Feature $name returned value array of incorrect length: ${length}."
+                        + "Should be ${length} according to the feature header.")
+            }
+        }
+        
     }
 
 }

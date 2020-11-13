@@ -50,7 +50,7 @@ import cz.siret.prank.program.params.Params
 
     atom_table_features = ["apRawValids","apRawInvalids","atomicHydrophobicity"]
 
-    extra_features = ["chem","volsite","protrusion","bfactor"]
+    features = ["chem","volsite","protrusion","bfactor"]
 
     atom_table_feat_pow = 2
 

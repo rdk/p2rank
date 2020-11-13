@@ -45,9 +45,9 @@ import cz.siret.prank.program.params.Params
 
     //== FAETURES
 
-    extra_features = ["chem","volsite","protrusion","bfactor"]
+    features = ["chem","volsite","protrusion","bfactor"]
 
-    atom_table_features = ["ap5sasaValids","ap5sasaInvalids"] // "apRawValids","apRawInvalids","atomicHydrophobicity"
+    atom_table_features = ["ap5sasaValids","ap5sasaInvalids"]
 
     atom_table_feat_pow = 2
 
@@ -56,7 +56,7 @@ import cz.siret.prank.program.params.Params
      */
     atom_table_feat_keep_sgn = false
 
-    residue_table_features = [] // ['aa5fact1','aa5fact2','aa5fact3','aa5fact4','aa5fact5']
+    residue_table_features = []
 
     protrusion_radius = 10
 

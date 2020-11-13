@@ -3,7 +3,7 @@ package cz.siret.prank.prediction.pockets.rescorers
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Prediction
 import cz.siret.prank.features.api.ProcessedItemContext
-import cz.siret.prank.features.tables.PropertyTable
+import cz.siret.prank.features.implementation.table.PropertyTable
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.PdbUtils
 import cz.siret.prank.utils.Sutils

@@ -9,7 +9,7 @@ import org.biojava.nbio.structure.Atom
  * Values are then projected to SAS points to SAS feature vector by P2RANK.
  *
  * Register implementation in FeatureRegistry.
- * To use feature in experiments add feature name (FeatureCalculator.getName()) to Params.extra_features.
+ * To use feature in experiments add feature name (FeatureCalculator.getName()) to Params.features.
  */
 @CompileStatic
 abstract class AtomFeatureCalculator extends AbstractFeatureCalculator {
