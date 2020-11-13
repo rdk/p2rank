@@ -133,12 +133,17 @@ prank predict -c example.groovy         test.ds
 ~~~
 
 
-It is also possible to override the default params on the command line using their full name. To see complete list of params look into `config/default.groovy`.
+It is also possible to override the default params on the command line using their full name.
 
 ~~~bash
-prank predict                   -seed 151 -threads 8  test.ds
-prank predict -c example.groovy -seed 151 -threads 8  test.ds
-~~~
+prank predict                   -seed 151 -threads 8  test.ds   #  set random seed and number of threads, override defeults
+prank predict -c example.groovy -seed 151 -threads 8  test.ds   #  override defaults as well as values from example.groovy
+~~~     
+
+P2Rank has numerous configurable parameters. 
+To see the list of standard params look into `config/default.groovy` and other example config files in this directory.
+To see the complete commented list of all (including undocumented) 
+params see [Params.groovy](https://github.com/rdk/p2rank/blob/develop/src/main/groovy/cz/siret/prank/program/params/Params.groovy) in the source code.
 
 ### Rescoring (PRANK algorithm)
 
