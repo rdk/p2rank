@@ -23,48 +23,75 @@ import static java.lang.Math.max
 /**
  * Handles the process of calculating prank feature vectors.
  * At first it calculates features for solvent exposed atoms of the protein.
- * Then it projects them onto ASA points and calculates additional features for ASA point vector.
+ * Then it projects them onto SAS points and calculates additional features for SAS point vector.
  */
 @Slf4j
 @CompileStatic
 class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> implements Parametrized {
 
-    /** properties of atom itself */
-    private Map<Integer, FeatureVector> properties = new HashMap<>()
-    /** properties calculated from neighbourhood */
-    private Map<Integer, FeatureVector> smoothRepresentations = new HashMap<>()
+    /**
+     * Setup of enabled and filtered features for given run
+     */
+    FeatureSetup featureSetup
 
-    GenericHeader featuresHeader // header of additional generic vector
-    List<String> featuresHeaderStrs
+    /**
+     * Header of calculated feature vector
+     * (before filtering)
+     */
+    GenericHeader calculatedFeatureVectorHeader
 
-    // tied to a protein
-    private PointSampler pocketPointSampler
 
-    private double NEIGH_CUTOFF_DIST = params.neighbourhood_radius
-    private boolean DO_SMOOTH_REPRESENTATION = params.smooth_representation
-    private double SMOOTHING_CUTOFF_DIST = params.smoothing_radius
-    private final boolean AVERAGE_FEAT_VECTORS = params.average_feat_vectors
-    private final boolean AVG_WEIGHTED = params.avg_weighted
-    private final boolean CHECK_VECTORS = params.check_vectors
+    /**
+     * Header of feature vector hat is returned -- after feature_filters are applied
+     * If there are no feature_filters it is the same as calculatedFeatureVectorHeader.
+     */
+    GenericHeader finalFeatureVectorHeader
 
-    private final WeightFun weightFun = WeightFun.create(params.weight_function)
-
-    // pocket related
-    Pocket pocket
     Atoms surfaceLayerAtoms
 
     /**
+     * Feature vectors that are first calculated for atoms and then (projected to SAS points)
+     */
+    private Map<Integer, FeatureVector> surfaceAtomVectors = new HashMap<>()
+
+
+    /**
      * deep layer of atoms under the protein surface
-     * serves as cache for speeding up calculation of protrusion and other features
+     * serves as cache for speeding up calculation of protrusion and some other features
      */
     Atoms deepLayer
+
+    /**
+     * SAS point for given protein (or pocket in pocket mode) for which we calculate feature vectors
+     */
     Atoms sampledPoints
 
-    FeatureSetup featureSetup
+
+    /**
+     * only used in pocket mode (i.e. sample_negatives_from_decoys=true)  tied to a protein
+     */
+    private PointSampler pocketPointSampler
+
+    /**
+     * only used in pocket mode (i.e. sample_negatives_from_decoys=true)
+     */
+    Pocket pocket
+
+
+    //===================
+    // params
+    //===================
+
+    private double NEIGH_CUTOFF_DIST = params.neighbourhood_radius
+    private final boolean AVERAGE_FEAT_VECTORS = params.average_feat_vectors
+    private final boolean AVG_WEIGHTED = params.avg_weighted
+    private final boolean CHECK_VECTORS = params.check_vectors
+    private final double AVG_POW = params.avg_pow
+    private final WeightFun weightFun = WeightFun.create(params.weight_function)
 
 //===========================================================================================================//
 
-    public PrankFeatureExtractor() {
+    PrankFeatureExtractor() {
         initHeader()
     }
 
@@ -73,6 +100,23 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
 
         initHeader()
     }
+
+//===========================================================================================================//
+
+    /**
+     * header of final feature vector used to train model
+     */
+    @Override
+    List<String> getVectorHeader() {
+        return finalFeatureVectorHeader.colNames
+    }
+
+    @Override
+    Atoms getSampledPoints() {
+        return sampledPoints
+    }
+
+//===========================================================================================================//
 
     private void initHeader() {
         List<String> enabledFeatures = new ArrayList<>(params.features)
@@ -85,9 +129,13 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
             enabledFeatures.add(ResidueTableFeature.NAME)
         }
 
-        featureSetup = new FeatureSetup(enabledFeatures)
-        featuresHeaderStrs = featureSetup.jointHeader
-        featuresHeader = new GenericHeader(featuresHeaderStrs)
+        featureSetup = new FeatureSetup(enabledFeatures, params.feature_filters)
+        calculatedFeatureVectorHeader = new GenericHeader(featureSetup.subFeaturesHeader)
+        finalFeatureVectorHeader = calculatedFeatureVectorHeader
+        if (featureSetup.filteringEnabled) {
+            finalFeatureVectorHeader = new GenericHeader(featureSetup.filteredSubFeaturesHeader)
+        }
+        
     }
 
     @Override
@@ -119,10 +167,7 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
 
         log.debug "surfaceLayerAtoms:$surfaceLayerAtoms.count (surfaceAtoms: ${pocket?.surfaceAtoms?.count}) "
 
-        preEvaluateProperties(surfaceLayerAtoms)
-        if (DO_SMOOTH_REPRESENTATION) {
-            preEvaluateSmoothRepresentations(surfaceLayerAtoms)
-        }
+        calculateVectorsForAtoms(surfaceLayerAtoms)
     }
 
     /**
@@ -135,16 +180,14 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
         this.protein = protein
         this.pocket = pocket
 
-        this.featuresHeaderStrs    = proteinPrototype.featuresHeaderStrs
-        this.featuresHeader        = proteinPrototype.featuresHeader
+        this.calculatedFeatureVectorHeader        = proteinPrototype.calculatedFeatureVectorHeader
         this.pocketPointSampler    = proteinPrototype.pocketPointSampler
         this.trainingExtractor     = proteinPrototype.trainingExtractor
         this.featureSetup          = proteinPrototype.featureSetup
 
         this.deepLayer = proteinPrototype.deepLayer
         this.surfaceLayerAtoms = proteinPrototype.surfaceLayerAtoms
-        this.properties = proteinPrototype.properties
-        this.smoothRepresentations = proteinPrototype.smoothRepresentations
+        this.surfaceAtomVectors = proteinPrototype.properties
     }
 
     @Override
@@ -180,11 +223,8 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
 
         res.surfaceLayerAtoms = protein.exposedAtoms
 
-        res.preEvaluateProperties(res.surfaceLayerAtoms)
-        if (DO_SMOOTH_REPRESENTATION) {
-            res.preEvaluateSmoothRepresentations(surfaceLayerAtoms)
-        }
-        
+        res.calculateVectorsForAtoms(res.surfaceLayerAtoms)
+
         if (sampledPoints == null) {
             sampledPoints = protein.getSurface(trainingExtractor).points
         }
@@ -212,42 +252,24 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
 
 //===========================================================================================================//
 
-    @Override
-    Atoms getSampledPoints() {
-        return sampledPoints
-    }
-
-//===========================================================================================================//
-
-    public void preEvaluateProperties(Atoms atoms) {
+    void calculateVectorsForAtoms(Atoms atoms) {
         for (Atom a : atoms.list) {
-            FeatureVector p = calcAtomProperties(a);
-            // log.trace "prop $a.PDBserial:\t $p"
-            properties.put(a.PDBserial, p);
-        }
-    }
-
-    public void preEvaluateSmoothRepresentations(Atoms atoms) {
-        for (Atom a : atoms.list) {
-            FeatureVector p = calcSmoothRepresentation(a)
-            // log.trace "repr $a.PDBserial:\t $p"
-            smoothRepresentations.put(a.PDBserial, p );
+            FeatureVector p = calcAtomVector(a);
+            surfaceAtomVectors.put(a.PDBserial, p);
         }
     }
 
 //===========================================================================================================//
-
-    double AVG_POW = params.avg_pow
 
     /**
      *
      * @param point SAS point
      * @param neighbourhoodAtoms neighbourhood protein atoms
-     * @param fromVectors  must match atoms
+     * @param fromVectors feature vectors of neighbouring atoms,  must match atoms
      * @return
      */
-    private PrankFeatureVector calcFeatVectorFromVectors(Atom point, Atoms neighbourhoodAtoms, Map<Integer, FeatureVector> fromVectors) {
-        PrankFeatureVector res = new PrankFeatureVector(featuresHeader)
+    private PrankFeatureVector calcSasFeatVectorFromAtomVectors(Atom point, Atoms neighbourhoodAtoms, Map<Integer, FeatureVector> fromVectors) {
+        PrankFeatureVector res = new PrankFeatureVector(calculatedFeatureVectorHeader)
 
         if (neighbourhoodAtoms.isEmpty()) {
             throw new PrankException("No neighbourhood atoms. Cannot calculate feature vector. (Isn't neighbourhood_radius too small?)")
@@ -275,7 +297,7 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
 
             double multip = Math.pow(base, AVG_POW)  // for AVG_POW from <0,1> goes from 'no average, just sum' -> 'full average'
 
-            res.multiply(1d/multip)               // avg
+            res.multiply(1d/multip)                  // avg
 
             // special cases (TODO: move to ChemFeature)
             if (featureSetup.enabledFeatureNames.contains(ChemFeature.NAME)) {
@@ -308,25 +330,22 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
 
     /**
      *
-     * @param point
+     * @param point SAS point
      * @param useSmoothRepresentations or use basic properties for first run
      * @param neighbourhoodAtoms
      * @param store
      * @return
      */
-    private PrankFeatureVector calcFeatureVectorFromAtoms(Atom point, boolean useSmoothRepresentations, Atoms neighbourhoodAtoms) {
+    private PrankFeatureVector calcFeatureVectorFromAtoms(Atom point, Atoms neighbourhoodAtoms) {
         Map<Integer, FeatureVector> fromVectors
-        if (useSmoothRepresentations) {
-            fromVectors = smoothRepresentations
-        } else {
-            fromVectors = properties
-        }
+
+        fromVectors = surfaceAtomVectors
 
         if (fromVectors==null || fromVectors.isEmpty()) {
             log.error "!!! can't calculate representation from no vectors"
         }
 
-        return calcFeatVectorFromVectors(point, neighbourhoodAtoms, fromVectors)
+        return calcSasFeatVectorFromAtomVectors(point, neighbourhoodAtoms, fromVectors)
     }
 
     private double calcWeight(double dist) {
@@ -336,51 +355,58 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
 //===========================================================================================================//
 
     /**
-     * initial atom smoothRepresentations that feature vectors are calculated from
-     */
-    private PrankFeatureVector calcSmoothRepresentation(Atom atom) {
-
-        Atoms neighbourhood = surfaceLayerAtoms.cutoutSphere(atom, SMOOTHING_CUTOFF_DIST)
-
-        return calcFeatureVectorFromAtoms(atom, false, neighbourhood)
-    }
-
-    /**
      * @return feature vector for individual atom
      */
-    private PrankFeatureVector calcAtomProperties(Atom atom) {
+    private PrankFeatureVector calcAtomVector(Atom atom) {
         return PrankFeatureVector.forAtom(atom, this)
     }
 
-//===========================================================================================================//
 
+    /**
+     * @param point SAS point
+     * @return
+     */
     @Override
-    public PrankFeatureVector calcFeatureVector(Atom point) {
+    PrankFeatureVector calcFeatureVector(Atom point) {
 
         Atoms neighbourhood = surfaceLayerAtoms.cutoutSphere(point, NEIGH_CUTOFF_DIST)
 
-        def vector = calcFeatureVectorFromAtoms(point, DO_SMOOTH_REPRESENTATION, neighbourhood)
+        PrankFeatureVector vector = calcFeatureVectorFromAtoms(point, neighbourhood)
+
+
+        if (featureSetup.filteringEnabled) {
+            vector = reduceToFilteredVector(vector)
+        }
 
         if (CHECK_VECTORS) {
-            double[] arr = vector.array
-            for (int i=0; i!=arr.length; i++) {
-                if (arr[i] == Double.NaN) {
-                    String feat = vector.header[i]
-                    throw new PrankException("Invalid value for feature $feat: NaN")
-                }
-            }
+            checkVector(vector)
         }
 
         return vector
     }
 
-    /**
-     * XX TODO: chenge with feature filter
-     * @return
-     */
-    @Override
-    public List<String> getVectorHeader() {
-        return new PrankFeatureVector(featuresHeader).getHeader()
+    private PrankFeatureVector reduceToFilteredVector(PrankFeatureVector vector) {
+        PrankFeatureVector res = new PrankFeatureVector(finalFeatureVectorHeader)
+
+        double[] calculated = vector.array
+        double[] filtered = res.array
+
+        int i = 0
+        for (FeatureSetup.SubFeature subFeature : featureSetup.filteredSubFeatures) {
+            filtered[i++] = calculated[subFeature.oldIdx]
+        }
+
+        return res
+    }
+
+    private checkVector(PrankFeatureVector vector) {
+        double[] arr = vector.array
+        for (int i=0; i!=arr.length; i++) {
+            if (arr[i] == Double.NaN) {
+                String feat = vector.header[i]
+                throw new PrankException("Invalid value for feature $feat: NaN")
+            }
+        }
     }
 
 }

@@ -13,7 +13,7 @@ import org.biojava.nbio.structure.Atom
  */
 @Slf4j
 @CompileStatic
-public class PrankFeatureVector extends FeatureVector implements Cloneable {
+class PrankFeatureVector extends FeatureVector implements Cloneable {
 
     public GenericVector valueVector
 
@@ -42,17 +42,25 @@ public class PrankFeatureVector extends FeatureVector implements Cloneable {
     }
 
 
-    public static PrankFeatureVector forAtom(Atom atom, PrankFeatureExtractor extractor) {
+    /**
+     * todo move to PrankFeatureExtractor
+     * @param atom
+     * @param extractor
+     * @return
+     */
+    static PrankFeatureVector forAtom(Atom atom, PrankFeatureExtractor extractor) {
         String residueCode = PdbUtils.getCorrectedAtomResidueCode(atom)
 
         PrankFeatureVector p = new PrankFeatureVector()
-        p.valueVector = new GenericVector(extractor.featuresHeader)
+        p.valueVector = new GenericVector(extractor.calculatedFeatureVectorHeader)
         p.calculateAtomFeatures(atom, residueCode, extractor)
 
         return p
     }
 
     /**
+     * todo move to PrankFeatureExtractor
+     * 
      * Calculates Atom features (AtomFeatureCalculator) for given atom
      *
      * @param residueCode 3 letter residue code (e.g. "ALA")

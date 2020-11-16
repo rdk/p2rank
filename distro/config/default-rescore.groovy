@@ -181,8 +181,6 @@ import cz.siret.prank.program.params.Params
      */
     smooth_representation = false
 
-    smoothing_radius = 4.5
-
     average_feat_vectors = false
 
     avg_pow = 1

@@ -97,9 +97,9 @@ class Sutils {
         assert liststr.length()>=2 : "invalid list string: '$liststr'"
 
         String splitter = ","
-        if (!liststr.contains(splitter)) {
-            splitter = "."                    // list in ranged param lists (when running prank ploop) have to use oyher splitter
-        }
+        //if (!liststr.contains(splitter)) {
+        //    splitter = "."                    // list in ranged param lists (when running prank ploop) have to use other splitter
+        //}
 
         liststr = liststr.substring(1, liststr.length()-1) // list is in parentheses "(...)"
 

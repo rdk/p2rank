@@ -66,8 +66,8 @@ Memory consumption can be drastically influenced by some parameters.
 
 Random Forest implementations train trees in parallell using number of threads defined in`-rf_threads` variable.
 Ideally, this would be set to number of CPU cores in the machine.
-However, required memory during training grows linearly with number trees trained in paralell (`-rf_threads`) 
-so you mey need to lower number of threads.
+However, required memory during training grows linearly with number trees trained in paralell (`-rf_threads`), 
+so you may need to lower the number of threads.
 
 Parameters that influence memory/time trade-off:
 * `-cache_datasets` determines whether datasets of proteins are kept in memory between runs**. Related parameters: 
@@ -97,7 +97,7 @@ If `sample_negatives_from_decoys = true` only points from decoy pockets (not tru
 For that **you need to supply a training dataset that contains pocket predictions by other method** (i.e. for predictions of Fpocket use `joined-fpocket.ds` instead of `joined.ds`). 
 
 `sample_negatives_from_decoys = true` in combination with Fpocket predictions was historically giving slightly better results. 
-It focuses classifier to learn to distinguish between true and decoy pockets which is in theory harder task than to distinguish between ligandable vs. unligandable protein surface.
+It focuses the classifier to learn to distinguish between true and decoy pockets which is, in theory, a harder task than to distinguish between ligandable vs. unligandable protein surface.
 It also changes the ratio of sampled positives/negatives in favour of positives.
 
 I recent versions it might be possible to achieve better results by training from whole protein surface in combination with class balancing techniques (see the next section).
@@ -114,8 +114,8 @@ Their values may need to be optimized again for case of `sample_negatives_from_d
 
 ### Dealing with class imbalance
 
-When using all of the protein surface for training (`sample_negatives_from_decoys = false`) you may need to deal with class imbalances to achieve good results.
-Typically the ratio of positives vs. negatives will be around (1:30) depending on chosen cutoffs and margins. 
+When using full protein surface for training (`sample_negatives_from_decoys = false`) you may need to deal with class imbalances to achieve good results.
+Typically, the ratio of positives vs. negatives will be around (1:30) depending on chosen cutoffs and margins. 
 
 Ways to deal with class imbalances:
  
@@ -151,10 +151,10 @@ Related parameters:
 
 Location of output directory for any given run is influenced by several parameters. You can organize results of your experiments with their help.
 
-* `-output_base_dir <dir>`: top level default output directory
+* `-output_base_dir <dir>`: top-level default output directory
 * `-out_subdir <dir>`: subdirectory of output_base_dir (optional)
-* `-out_prefix_date <bool>`: prefix generated experiment output directory name with a timestamp
-* `-l <str>` or `-label <str>`: define suffix to generated experiment output directory name
+* `-out_prefix_date <bool>`: add timestamp prefix to output directory name
+* `-l <str>` or `-label <str>`: append a suffix to generated experiment output directory name
 * `-o <dir>`: overrides previous params and places output in specified directory
 
 

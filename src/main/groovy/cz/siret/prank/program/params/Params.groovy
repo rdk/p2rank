@@ -104,17 +104,47 @@ class Params {
     List<String> features = ["chem", "protrusion", "bfactor", "atom_table", "residue_table"]
 
     /**
-     * List of features that come directly from atom type table
+     * List of features that come directly from atom type tables
      * see atomic-properties.csv
      */
     @ModelParam
     List<String> atom_table_features = ["apRawValids","apRawInvalids","atomicHydrophobicity"]
 
     /**
-     * List of features that come directly from residue table
+     * List of features that come directly from residue tables
      */
     @ModelParam
     List<String> residue_table_features = []
+
+    /**
+     * List of feature filters that are applied to individual features (i.e. sub-features).
+     * If empty all individual features are used.
+     * Filters are applied sequentially.
+     *
+     * Examples of individual filters:
+     * <ul>
+     *   <li> "*" - include all
+     *   <li> "chem.*" - include all with prefix "chem."
+     *   <li> "-chem.*" - exclude all with prefix "chem."
+     *   <li> "chem.hydrophobicity" - include particular sub-feature
+     *   <li> "-chem.hydrophobicity" - exclude particular sub-feature
+     * </ul>
+     *
+     * If the first filter in feature_filters starts with "-", include-all filter ("*") is implicitly applied to the front.
+     *
+     * Examples of full feature_filters values:
+     * <ul>
+     *   <li> [] - include all
+     *   <li> ["*"] - include all
+     *   <li> ["*","-chem.*"] - include all except those with prefix "chem."
+     *   <li> ["-chem.*"] - include all except those with prefix "chem."
+     *   <li> ["-chem.*","chem.hydrophobicity"] - include all except those with prefix "chem.", but include "chem.hydrophobicity"
+     *   <li> ["chem.hydrophobicity"] - include only "chem.hydrophobicity"
+     *   <li> ["chem.*","-chem.hydrophobicity","-chem.atoms"] - include only those with prefix "chem.", except "chem.hydrophobicity" and "chem.atoms"
+     * </ul>
+     */
+    @ModelParam
+    List<String> feature_filters = []
 
     /**
      * Exponent applied to all atom table features // TODO change default to 1
@@ -454,12 +484,14 @@ class Params {
     /** calculate feature vectors from smooth atom feature representation
      * (instead of directly from atom properties)
      */
+    @Deprecated
     @ModelParam
     boolean smooth_representation = false
 
     /**
      * related to smooth_representation
      */
+    @Deprecated
     @ModelParam
     double smoothing_radius = 4.5
 
@@ -527,7 +559,7 @@ class Params {
     /**
      * collect vectors only at the beginning of seed loop routine
      * if dataset is sub-sampled (using train_protein_limit param) then dataset is sub-sampled only once
-     * set to false when doing learning curve!
+     * set to false when calculating learning curve!
      * train_protein_limit>0 should be always paired with collect_only_once=false
      */
     @RuntimeParam
@@ -535,6 +567,10 @@ class Params {
 
     /**
      * number of random seed iterations
+     *
+     * Only relevant when training and evaluating new models.
+     * Result metrics are then averaged or calculated for sum of runs (where appropriate, like F1 measure).
+     * Example: using running  traineval with loop=10 will do ten runs with different random seed and calculate averages.
      */
     @RuntimeParam
     int loop = 1

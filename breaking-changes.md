@@ -15,6 +15,10 @@ All changes of that type should be rare and should be all listed here.
 
 ### List of changes
 
+#### 2.3-dev.*
+
+* param `-extra_features` was renamed to `-features` 
+
 #### 2.2
 
 * param `-conservation_dir` (type: `String`) was renamed to `-conservation_dirs` (type: `List<String>`)

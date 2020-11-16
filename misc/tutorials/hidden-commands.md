@@ -19,7 +19,7 @@ Related parameters:
 
 
 ### labeled residues
-Analyze dataset with explicitly specified residue labeling.
+Analyze a dataset with an explicitly specified residue labeling.
 ~~~
 ./prank.sh analyze labeled-residues <dataset.ds>
 ~~~

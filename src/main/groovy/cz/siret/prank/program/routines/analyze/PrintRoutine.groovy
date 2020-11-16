@@ -2,6 +2,8 @@ package cz.siret.prank.program.routines.analyze
 
 import com.google.common.collect.ImmutableMap
 import cz.siret.prank.features.FeatureExtractor
+import cz.siret.prank.features.FeatureSetup
+import cz.siret.prank.features.PrankFeatureExtractor
 import cz.siret.prank.program.Main
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.ml.Model
@@ -60,13 +62,21 @@ class PrintRoutine extends Routine {
 //===========================================================================================================//
 
     void features() {
-        def features = FeatureExtractor.createFactory().vectorHeader
+        PrankFeatureExtractor fe = (PrankFeatureExtractor) FeatureExtractor.createFactory()
+        FeatureSetup featureSetup = fe.featureSetup
+        List<String> subFeatureHeader = fe.vectorHeader
+        List<FeatureSetup.Feature> enabledFeatures = featureSetup.enabledFeatures
+        boolean filtering = featureSetup.filteringEnabled
 
-        write "List of individual features"
+        write "Effectively enabled features" + (filtering?" (after filtering)":"")
         write ""
-        write features.join("\n")
+        write ((enabledFeatures*.name).join("\n"))
         write ""
-        write "n = ${features.size()}"
+        write "Effective feature vector header (i.e. enabled sub-features)"
+        write ""
+        write subFeatureHeader.withIndex().collect { name, i -> sprintf("%2d: %s", i, name) }.join("\n")
+        write ""
+        write "n = ${subFeatureHeader.size()}"
     }
 
 //    void feature_sets() {
