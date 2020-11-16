@@ -52,7 +52,7 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
     /**
      * Feature vectors that are first calculated for atoms and then (projected to SAS points)
      */
-    private Map<Integer, FeatureVector> surfaceAtomVectors = new HashMap<>()
+    private Map<Integer, PrankFeatureVector> surfaceAtomVectors = new HashMap<>()
 
 
     /**
@@ -141,7 +141,7 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
     @Override
     FeatureExtractor createPrototypeForProtein(Protein protein, ProcessedItemContext context) {
         PrankFeatureExtractor res = new PrankFeatureExtractor(protein)
-        res.trainingExtractor = this.trainingExtractor
+        res.forTraining = this.forTraining
 
         protein.calcuateSurfaceAndExposedAtoms()
         double thickness = max(params.protrusion_radius, params.pair_hist_radius)
@@ -157,7 +157,7 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
 
     @Override
     void prepareProteinPrototypeForPockets() {
-        pocketPointSampler = PointSampler.create(protein, trainingExtractor)
+        pocketPointSampler = PointSampler.create(protein, forTraining)
 
         if (params.deep_surrounding) {
             surfaceLayerAtoms = deepLayer
@@ -165,13 +165,13 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
             surfaceLayerAtoms = protein.exposedAtoms
         }
 
-        log.debug "surfaceLayerAtoms:$surfaceLayerAtoms.count (surfaceAtoms: ${pocket?.surfaceAtoms?.count}) "
+        log.debug "surfaceLayerAtoms: $surfaceLayerAtoms.count"
 
-        calculateVectorsForAtoms(surfaceLayerAtoms)
+        preCalculateVectorsForAtoms(surfaceLayerAtoms)
     }
 
     /**
-     *
+     * Create extractor for pocket.
      * @param protein
      * @param pocket nay be null if it is an instance for whole protein
      * @param proteinPrototype
@@ -180,14 +180,14 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
         this.protein = protein
         this.pocket = pocket
 
-        this.calculatedFeatureVectorHeader        = proteinPrototype.calculatedFeatureVectorHeader
-        this.pocketPointSampler    = proteinPrototype.pocketPointSampler
-        this.trainingExtractor     = proteinPrototype.trainingExtractor
-        this.featureSetup          = proteinPrototype.featureSetup
+        this.calculatedFeatureVectorHeader = proteinPrototype.calculatedFeatureVectorHeader
+        this.pocketPointSampler            = proteinPrototype.pocketPointSampler
+        this.forTraining                   = proteinPrototype.forTraining
+        this.featureSetup                  = proteinPrototype.featureSetup
 
-        this.deepLayer = proteinPrototype.deepLayer
-        this.surfaceLayerAtoms = proteinPrototype.surfaceLayerAtoms
-        this.surfaceAtomVectors = proteinPrototype.properties
+        this.deepLayer          = proteinPrototype.deepLayer
+        this.surfaceLayerAtoms  = proteinPrototype.surfaceLayerAtoms
+        this.surfaceAtomVectors = proteinPrototype.surfaceAtomVectors
     }
 
     @Override
@@ -204,7 +204,7 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
 
     private void initForPocket() {
         log.debug "extractorFactory initForPocket for pocket $pocket.name"
-        log.debug "surfaceLayerAtoms:$surfaceLayerAtoms.count (surfaceAtoms: $pocket.surfaceAtoms.count) "
+        log.debug "surfaceLayerAtoms: $surfaceLayerAtoms.count (pocketSurfaceAtoms: $pocket.surfaceAtoms.count) "
 
         sampledPoints = pocketPointSampler.samplePointsForPocket(pocket)
 
@@ -223,14 +223,14 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
 
         res.surfaceLayerAtoms = protein.exposedAtoms
 
-        res.calculateVectorsForAtoms(res.surfaceLayerAtoms)
+        res.preCalculateVectorsForAtoms(res.surfaceLayerAtoms)
 
         if (sampledPoints == null) {
-            sampledPoints = protein.getSurface(trainingExtractor).points
+            sampledPoints = protein.getSurface(forTraining).points
         }
         res.sampledPoints = sampledPoints
 
-        log.info "P2R protein:$protein.proteinAtoms.count  exposedAtoms:$res.surfaceLayerAtoms.count  deepLayer:$res.deepLayer.count sasPoints:$res.sampledPoints.count"
+        log.debug "proteinAtoms:$protein.proteinAtoms.count  exposedAtoms:$res.surfaceLayerAtoms.count  deepLayer:$res.deepLayer.count sasPoints:$res.sampledPoints.count"
 
         return res
     }
@@ -252,11 +252,14 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
 
 //===========================================================================================================//
 
-    void calculateVectorsForAtoms(Atoms atoms) {
+    void preCalculateVectorsForAtoms(Atoms atoms) {
+        log.debug "pre-calculating vectors for {} atoms", atoms.count
+        
         for (Atom a : atoms.list) {
-            FeatureVector p = calcAtomVector(a);
-            surfaceAtomVectors.put(a.PDBserial, p);
+            FeatureVector p = calcAtomVector(a)
+            surfaceAtomVectors.put(a.PDBserial, p)
         }
+
     }
 
 //===========================================================================================================//
@@ -268,7 +271,7 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
      * @param fromVectors feature vectors of neighbouring atoms,  must match atoms
      * @return
      */
-    private PrankFeatureVector calcSasFeatVectorFromAtomVectors(Atom point, Atoms neighbourhoodAtoms, Map<Integer, FeatureVector> fromVectors) {
+    private PrankFeatureVector calcSasFeatVectorFromAtomVectors(Atom point, Atoms neighbourhoodAtoms, Map<Integer, PrankFeatureVector> fromVectors) {
         PrankFeatureVector res = new PrankFeatureVector(calculatedFeatureVectorHeader)
 
         if (neighbourhoodAtoms.isEmpty()) {
@@ -281,6 +284,10 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
 
         for (Atom a : neighbourhoodAtoms) {
             PrankFeatureVector props = (PrankFeatureVector) fromVectors.get(a.PDBserial)
+
+            if (props == null) {
+                throw new PrankException("Feature vector for atom $a.PDBserial was not pre-calculated. This shouldn't happen.")
+            }
 
             double dist = Struct.dist(point, a)
             double weight = calcWeight(dist)
@@ -336,8 +343,8 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
      * @param store
      * @return
      */
-    private PrankFeatureVector calcFeatureVectorFromAtoms(Atom point, Atoms neighbourhoodAtoms) {
-        Map<Integer, FeatureVector> fromVectors
+    private PrankFeatureVector calcFeatureVectorForPoint(Atom point, Atoms neighbourhoodAtoms) {
+        Map<Integer, PrankFeatureVector> fromVectors
 
         fromVectors = surfaceAtomVectors
 
@@ -371,7 +378,7 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
 
         Atoms neighbourhood = surfaceLayerAtoms.cutoutSphere(point, NEIGH_CUTOFF_DIST)
 
-        PrankFeatureVector vector = calcFeatureVectorFromAtoms(point, neighbourhood)
+        PrankFeatureVector vector = calcFeatureVectorForPoint(point, neighbourhood)
 
 
         if (featureSetup.filteringEnabled) {

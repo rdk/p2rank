@@ -14,7 +14,7 @@ import org.biojava.nbio.structure.Atom
 abstract class FeatureExtractor<P extends FeatureVector> {
 
     Protein protein
-    boolean trainingExtractor = false
+    boolean forTraining = false
 
     FeatureExtractor() {}
 

@@ -62,7 +62,7 @@ class CollectVectorsRoutine extends Routine {
         final FeatureExtractor extractor = FeatureExtractor.createFactory()
         final VectorCollector collector = CollectorFactory.createCollector(extractor, dataset)
 
-        extractor.trainingExtractor = true
+        extractor.forTraining = true
 
         final AtomicInteger pos = new AtomicInteger(0)
         final AtomicInteger neg = new AtomicInteger(0)
