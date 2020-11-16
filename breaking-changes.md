@@ -15,11 +15,18 @@ All changes of that type should be rare and should be all listed here.
 
 ### List of changes
 
-#### 2.3-dev.*
+#### 2.3-dev.x
 
-* param `-extra_features` was renamed to `-features` 
+* parameter `-extra_features` was renamed to `-features` 
+* command line format of values of parameters with type `List<String>` and `List<List<String>>` has changed
+    * now only comas `,` are delimeters and inner parentheses are respected 
+    * before `.` was used as an alternative delimeter and delimeter for inner lists, now it is part of element value
+    * Examples: 
+        * `'(a.b.c)'` was interpreted as list of 3 elements, now it defines list of 1 element: `a.b.c`
+        * list of lists value `'((a.b.c),(d.e))'` should be changed to `'((a,b,c),(d,e))'`
+
 
 #### 2.2
 
-* param `-conservation_dir` (type: `String`) was renamed to `-conservation_dirs` (type: `List<String>`)
+* parameter `-conservation_dir` (type: `String`) was renamed to `-conservation_dirs` (type: `List<String>`)
 * column `probability` was added to `*_predictions.csv` output file
