@@ -147,7 +147,8 @@ class RPlotter implements Parametrized {
                           main = "$label",      # heat map title
                           cellnote = mat_data,  # same data set for cell labels
                           notecol="black",      # change font color of cell labels to black
-                          notecex=0.7,          # cell note font size multiplier 
+                          notecex=0.9,          # cell note font size multiplier 
+                          key=FALSE,            # don't render color legend
                           density.info="none",  # turns off density plot inside color legend
                           trace="none",         # turns off trace lines inside the heat map
                           # margins =c(8,8),    # widens margins around plot

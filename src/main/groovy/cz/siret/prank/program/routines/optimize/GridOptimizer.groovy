@@ -147,7 +147,7 @@ class GridOptimizer extends ParamLooper {
         }
 
         StringBuilder sb = new StringBuilder()
-        sb << "# resName \n"
+        //sb << "# resName \n"
         sb << "${paramX.name}/${paramY.name}," + paramY.values.collect { it }.join(",") + "\n"
 
         for (def va : paramX.values) {
