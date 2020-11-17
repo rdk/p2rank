@@ -199,7 +199,7 @@ For datails see [hyperparameter optimization tutorial](hyperparameter-optimizati
 
 Example:
 ```
-./prank ploop -t train.ds -e eval.ds -loop 10 -feature_filters '((-chem.*),(-chem.atoms,-chem.ploar),(protrusion.*,bfactor.*))'
+./prank ploop -t train.ds -e eval.ds -loop 10 -feature_filters '((-chem.*),(-chem.atoms,-chem.polar),(protrusion.*,bfactor.*))'
 ```            
 This command will run train-eval experiments for 3 different feature setups by applying a different list of feature filters. 
 For each feature setup, it will run 10 train-eval cycles (using different random seed) and calculate average results. 

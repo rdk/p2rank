@@ -16,19 +16,20 @@ Some features are more naturally defined for atoms rather than for SAS points an
 
 ## Evaluation
 
+TODO: add note that it is important to consider average results of several runs (by using `-loop 10`) when comparing features.
+
  1. Prepare the environment (see _Preparing the environment_ in `training-tutorial.md`)
 
- 2. Check `working.groovy` config file. It contains configuration ideal for training new models, but you might need to make changes or override some params on the command line. 
+ 2. Check `config/working.groovy` config file. It contains configuration ideal for training new models, but you might need to make changes or override some params on the command line. 
  
  3. Train with the new feature
     * train with the new feature by adding its name to the list of `-features`. i.e.:
         - in the groovy config file: `features = ["protrusion","bfactor","new_feature"]`
-        - on the command line: `-features '(protrusion.bfactor.new_feature)'` (dot is used as separator)
+        - on the command line: `-features '(protrusion,bfactor,new_feature)'` 
     * if the feature has arbitrary parameters, they can be optimized with `prank ploop` or `prank hopt` commands
-        - see hyperparameter-optimization-tutorial.md    
+        - see the [hyperparameter optimization tutorial](hyperparameter-optimization-tutorial.md) 
     * you can even compare different feature sets running `prank ploop ...`. i.e.:
-        - `-features '((protrusion),(new_feature),(protrusion.new_feature))'`
-        
+        - `-features '((protrusion),(new_feature),(protrusion,new_feature))'`
         
 ### Case study        
 
