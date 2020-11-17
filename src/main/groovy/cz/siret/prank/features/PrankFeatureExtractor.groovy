@@ -181,6 +181,7 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
         this.pocket = pocket
 
         this.calculatedFeatureVectorHeader = proteinPrototype.calculatedFeatureVectorHeader
+        this.finalFeatureVectorHeader      = proteinPrototype.finalFeatureVectorHeader
         this.pocketPointSampler            = proteinPrototype.pocketPointSampler
         this.forTraining                   = proteinPrototype.forTraining
         this.featureSetup                  = proteinPrototype.featureSetup
