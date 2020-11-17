@@ -32,6 +32,10 @@ class GridOptimizer extends ParamLooper {
         this.gridVariablesNames = listParams*.name
     }
 
+    private String prepareDirLabel(Step step) {
+        return step.label.replace('*', '_')
+    }
+
     /**
      * Iterate through al steps running closure.
      * Step is a particular assignment of flexible variables, (e.g. "param1=val1 param2=val2")
@@ -46,7 +50,7 @@ class GridOptimizer extends ParamLooper {
         log.info "STEPS: " + steps.toListString().replace("Step","\nStep")
 
         for (Step step in steps) {
-            processStep(step, step.label, closure)
+            processStep(step, prepareDirLabel(step), closure)
 
             if (listParams.size()==2) {
                 make2DTables(step)
