@@ -1,4 +1,4 @@
-# Dataset that explicitely specifies which ligands should be considered in training and evaluation phase.
+# Dataset that explicitly specifies which ligands should be considered in the training and evaluation phase.
 # Ligands are declared as a list of PDB HET group names with optional specifiers.
 
 HEADER: protein ligands

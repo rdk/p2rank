@@ -41,7 +41,7 @@ Analyze a dataset with an explicitly specified residue labeling.
 
 
 ~~~
-# predict using model trained with conservation
+# predict using the model trained with conservation
    
 ./prank.sh eval-predict ../p2rank-datasets/coach420.ds -l conserv -out_subdir CONS \
     -c distro/config/conservation \

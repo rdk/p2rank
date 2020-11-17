@@ -1,7 +1,7 @@
 
 # P2Rank model training and optimization tutorial
 
-This file provides introduction for people who want to train and evaluate their own models or optimize different parameters of the algorithm.
+This file provides an introduction for people who want to train and evaluate their own models or optimize different parameters of the algorithm.
 
 ## Kick-start examples
 
@@ -64,43 +64,43 @@ Related parameters:
 
 Memory consumption can be drastically influenced by some parameters.
 
-Random Forest implementations train trees in parallell using number of threads defined in`-rf_threads` variable.
-Ideally, this would be set to number of CPU cores in the machine.
-However, required memory during training grows linearly with number trees trained in paralell (`-rf_threads`), 
+Random Forest implementations train trees in parallel using the number of threads defined in`-rf_threads` variable.
+Ideally, this would be set to the number of physical CPU cores in the machine.
+However, required memory during training grows linearly with the number trees trained in parallel (`-rf_threads`), 
 so you may need to lower the number of threads.
 
 Parameters that influence memory/time trade-off:
 * `-cache_datasets` determines whether datasets of proteins are kept in memory between runs**. Related parameters: 
     - `-clear_prim_caches` clear primary caches (protein structures) between runs (when iterating params or seed)
     - `-clear_sec_caches` clear secondary caches (protein surfaces etc.) between runs (when iterating params or seed)
-* `-rf_threads` number of trees trained in parallell 
+* `-rf_threads` number of trees trained in parallel 
 * `-rf_trees`, `-fr_depth` influence the size of the model in memory      
 * `-crossval_threads` when running crossvalidation it determines how many models are trained at the same time. Set to `1` if you don't have enough memory.
 
 * `-cache_datasets <bool>`: keep datasets (structures and SAS points) in memory between crossval/traineval iterations. 
-   For single pass training (`-loop 1`) it does not make sense to keep it on.
-   Turn off when evaluating model on huge datasets that won't fit to memory (e.g. whole PDB). 
+   For single-pass training (`-loop 1`) it does not make sense to keep it on.
+   Turn off when evaluating the model on huge datasets that won't fit to memory (e.g. whole PDB). 
    When switched off it will leave more memory for RF at the cost of needing to parse all structure files (PDBs) again.
 
 Additional notes:
-* Subsampling and supersampling influence the size of training vercor dataset and required memory (see _Dealing with class imbalances_).
+* Subsampling and supersampling influence the size of training vector dataset and required memory (see _Dealing with class imbalances_).
 * Memory also grows linearly with "bag size" (`-rf_bagsize`) but this would generally be in range (50%-100%).
 * Keep in mind how JVM deals with compressed OOPs. Basically it doesn't make sense to have heap size between 32G and ~48G.
 
 
 ### Historical note on the dataset format
-(This secton should be moved no historical notes as soon as there will be new default P2Rank model.)
+(This section should be moved to historical notes as soon as there will be a new default P2Rank model.)
 
 Parameter `-sample_negatives_from_decoys` determines how points are sampled from the proteins in a training dataset. 
 If `sample_negatives_from_decoys = false` all of the points from the protein surface are used. 
-If `sample_negatives_from_decoys = true` only points from decoy pockets (not true ligand binding sites found by other method like Fpocket) are used. 
-For that **you need to supply a training dataset that contains pocket predictions by other method** (i.e. for predictions of Fpocket use `joined-fpocket.ds` instead of `joined.ds`). 
+If `sample_negatives_from_decoys = true` only points from decoy pockets (false-positives ligand binding sites found by other methods like Fpocket) are used. 
+For that **you need to supply a training dataset that contains pocket predictions by another method** (i.e. for predictions of Fpocket use `joined-fpocket.ds` instead of `joined.ds`). 
 
 `sample_negatives_from_decoys = true` in combination with Fpocket predictions was historically giving slightly better results. 
 It focuses the classifier to learn to distinguish between true and decoy pockets which is, in theory, a harder task than to distinguish between ligandable vs. unligandable protein surface.
 It also changes the ratio of sampled positives/negatives in favour of positives.
 
-I recent versions it might be possible to achieve better results by training from whole protein surface in combination with class balancing techniques (see the next section).
+I recent versions it might be possible to achieve better results by training from the whole protein surface in combination with class balancing techniques (see the next section).
 Note that default values of other parameters (related to feature extraction and classification results aggregation) were optimized for the case where `sample_negatives_from_decoys = true`.
 
 Here are the most relevant ones (for descriptions see `Params.groovy`):
@@ -110,7 +110,7 @@ Here are the most relevant ones (for descriptions see `Params.groovy`):
 * `-pred_point_threshold`
 * `-pred_min_cluster_size` 
 
-Their values may need to be optimized again for case of `sample_negatives_from_decoys = false`.
+Their values may need to be optimized again for the case when `sample_negatives_from_decoys = false`.
 
 ### Dealing with class imbalance
 
@@ -134,7 +134,7 @@ Ways to deal with class imbalances:
 
 
 ## Crossvalidation
-To run crossvalidation on a single dataset use `prank crossval` command.
+To run crossvalidation on a single dataset use the `prank crossval` command.
 
 Example:
 ~~~sh
@@ -149,7 +149,7 @@ Related parameters:
 
 ## Output directory location
 
-Location of output directory for any given run is influenced by several parameters. You can organize results of your experiments with their help.
+The location of the output directory for any given run is influenced by several parameters. You can organize the results of your experiments with their help.
 
 * `-output_base_dir <dir>`: top-level default output directory
 * `-out_subdir <dir>`: subdirectory of output_base_dir (optional)

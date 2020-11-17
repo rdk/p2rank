@@ -4,8 +4,8 @@ P2Rank has routines for optimizing arbitrary parameters with Grid and Bayesian o
 
 Here by hyper-parameters we mean actual hyper-parameters of the machine learning models (eg. number of trees in RF) but also any arbitrary parameter ot the whole algorithm.
 
-Comprehensive list of all parameters with descriptions is in `Params.groovy`.
-
+To see the complete commented list of all (including undocumented) 
+parameterss see [Params.groovy](https://github.com/rdk/p2rank/blob/develop/src/main/groovy/cz/siret/prank/program/params/Params.groovy) in the source code.
 
 **Grid optimization**: 
 * generates plots for all stats 
@@ -20,9 +20,9 @@ Comprehensive list of all parameters with descriptions is in `Params.groovy`.
 ## Grid optimization (ploop command)
 
 P2Rank allows you to iterate experiments (train/eval and crossvalidation) through lists of different parameter values on the command line.
-For that you need to use `prank ploop` command and list or range expression instead of param value for one or more params. 
+For that, you need to use the `prank ploop` command and list or range expression instead of param value for one or more params. 
 
-Supported parameter types: numerical, boolean, string and 'list of strings' (e.g feature set).
+Supported parameter types: numerical, boolean, string, and 'list of strings' (e.g. value of param `-features` has type 'list of strings').
 
 #### Defining grid
 **List expression**: `(val1,val2,...)` 
@@ -50,7 +50,7 @@ Related parameters:
 ### R plots
 
 In case you optimize exactly 1 or 2 parameters, P2Rank will try to produce plots of various statistics using R language. 
-For that you need to have `Rscript` on the Path. Some libraries in R need to be installed. 
+For that, you need to have `Rscript` on the PATH. Some libraries in R need to be installed first. 
 ~~~sh
 sudo apt install r-base
 sudo R -e "install.packages('ggplot2', dependencies=TRUE, repos='http://cran.us.r-project.org')"
@@ -85,9 +85,9 @@ Feature set comparisons:
 
 ## Bayesian optimization (hopt command)
 
-Hopt command (`p2rank hopt`) implements Bayesian optimization using program Speramint.
-(Other optimization tools might be employed in similar fashion with little additional work. 
-See how integration wihth Spearmint is implemented in HSpearmintOptimizer.groovy).
+Hopt command (`prank hopt`) implements Bayesian optimization using the program *Speramint*.
+(Other optimization tools might be employed in a similar fashion with little additional work. 
+See how integration with *Spearmint* is implemented in HSpearmintOptimizer.groovy).
 
 Supported parameter types: numerical, boolean. 
 

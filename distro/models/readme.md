@@ -1,9 +1,9 @@
 
 Directory with pre-trained models.
 
-Prank looks here for model specified by (`-model`/`-m`) parameter.
+Prank looks here for the model specified by (`-model`/`-m`) parameter.
 
-Model should be always used only in combination with the parameters or config file that was used to train it.
+The model should be always used only in combination with the parameters or config file that was used to train it.
 I.e.: the feature extraction has to be executed with the same parameters.
 
 ## List of models

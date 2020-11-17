@@ -5,13 +5,13 @@ Read this if you want to implement a new feature and evaluate if it contributes 
 ## Implementation
 
 New features can be added by implementing `FeatureCalculator` interface and registering the implementation in `FeatureRegistry`.
-You can implement the feature by extending one of convenience abstract classes `AtomFeatureCalculator` or `SasFeatureCalculator`.
+You can implement the feature by extending one of the convenience abstract classes `AtomFeatureCalculator` or `SasFeatureCalculator`.
 
 You need to decide if the new feature will be associated with protein surface (i.e. solvent exposed) atoms or with SAS (Solvent Accessible Surface) points. 
 P2Rank works by classifying SAS point feature vectors. 
 If you associate the feature with atoms its value will be projected to SAS point feature vectors by P2Rank from neighbouring atoms.
 
-Some features are more easily defined for atoms than SAS points and other way around. See `BfactorFeature` and `ProtrusionFeature` for comparison.
+Some features are more naturally defined for atoms rather than for SAS points and other way around. See `BfactorFeature` and `ProtrusionFeature` for comparison.
 
 
 ## Evaluation

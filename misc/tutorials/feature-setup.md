@@ -9,10 +9,10 @@ P2Rank version: 2.3-dev.1
 ## Introduction
 
 P2Rank is based on predicting scores of SAS points that are described by feature vectors.
-Feature vector is basically an array of real numbers (`double[]`) with a header (i.e. each element has a unique name).
+A feature vector is basically an array of real numbers (`double[]`) with a header (i.e. each element has a unique name).
 
-P2Rank comes with a set of impelmented feature calculators.
-Each calculator has a name and calculates an array of certain length (e.g. for `volsite` n=5, `bfactor` n=1).
+P2Rank comes with a set of implemented feature calculators.
+Each calculator has a name and calculates an array of a certain length (e.g. for `volsite` n=5, `bfactor` n=1).
 
 We will use the term *feature* for feature calculator (e.g. `chem`) and *sub-feature* for an individual element - single scalar number (e.g. `chem.atoms`).
 
@@ -38,7 +38,7 @@ Note that the syntax for list-of-strings parameter value is different on the com
 
 #### Check enabled features
 
-To check which features are enabled for particular configuraion run `print features` command:
+To check which features are enabled for a particular configuration run `print features` command:
 ```bash
 ./prank print features
 ```
@@ -109,28 +109,28 @@ Effective feature vector header (i.e. enabled sub-features):
 
 If you want to add new features that are not implemented in P2Rank you have 3 options:
 * Implement a new feature calculator in Java or Groovy
-    * this is not too difficult and has an advantage that feature will be calculated automatically for new datsets
+    * this is not too difficult and has an advantage that feature will be calculated automatically for new datasets
     * For introduction see [new feature tutorial](new-feature-evaluation-tutorial.md) 
 * Provide custom atom type and residue type tables for `atom_table` and `residue_table` features
-    * allow to define values for residue types and atom types
+    * allow defining values for residue types and atom types
         * residue types are: (ALA,ARG,ASN,...)
         * atom types are: (ALA.C,ALA.CA,ALA.CB,...)
     * useful only if the values are the same for all proteins in the dataset (for example: hydrophobicity index of amino acids).
     * see example tables: `aa-propensities.csv` and `atomic-properties.csv`
     * NOTE: providing custom tables is not implemented yet (planned for 2.3-dev.2)
 * Use `csv` feature
-    * allows to define values for evary protein residue and/or every protein atom (for each protein separately) via external csv files
+    * allows defining values for every protein residue and/or every protein atom (for each protein separately) via external csv files
     * disadvantage: csv files must be manually calculated for each dataset  
     * Configuration:
         * looks for csv files named `{peorein_file_name}.csv` in directories defined in `-feat_csv_directories` parameter
         * enabled value columns from csv files must be declared in `-feat_csv_columns`
-        * `-feat_csv_ignore_missing` allows to ignore missing csv files, columns and rows
+        * `-feat_csv_ignore_missing` allows ignoring missing csv files, columns and rows
     * TODO: add more detailed documentation for csv feature
 
 ## Filtering features
 
 You can selectively enable/disable certain features and sub-features with `-feature_filters` parameter.
-Filters are applied only to features that are first enabled by `-features` prameter.
+Filters are applied only to the features that are first enabled by `-features` parameter.
 If the value of `-feature_filters` is empty, all sub-features are used (i.e no filtering is applied).
 
 Examples of individual filters:
@@ -145,7 +145,7 @@ Filters are applied sequentially.
 
 If the first filter starts with `-`, everything is implicitly enabled. Otherwise, everything is implicitly disabled.
 For example:
-* `-feature_filters '(-chem.atoms)'` - include everything excape `chem.atoms`
+* `-feature_filters '(-chem.atoms)'` - include everything except `chem.atoms`
 * `-feature_filters '(chem.atoms)'` - include only `chem.atoms`
 
 
@@ -201,5 +201,5 @@ Example:
 ```
 ./prank ploop -t train.ds -e eval.ds -loop 10 -feature_filters '((-chem.*),(-chem.atoms,-chem.ploar),(protrusion.*,bfactor.*))'
 ```            
-This command will run train-eval experiments for 3 dfferent feature setups by applying different list of feature filters. 
-For each feature setup it will run 10 train-eval cycles (using different random seed) and calculate average results. 
+This command will run train-eval experiments for 3 dfferent feature setups by applying a different list of feature filters. 
+For each feature setup, it will run 10 train-eval cycles (using different random seed) and calculate average results. 

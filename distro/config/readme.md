@@ -5,7 +5,7 @@ This directory contains P2Rank config files.
 
 Initially, P2Rank loads configuration from `default.groovy` (and from `default-rescore.groovy` in case you run `prank rescore ...`).
 
-Parameters can be then overriden in a custom config file (`-c <config.file>`) or directly on the command line.
+Parameters can be then overridden in a custom config file (`-c <config.file>`) or directly on the command line.
 
 ## Details
 
@@ -22,5 +22,5 @@ Parameter application priority (last wins):
 4. parameters in custom config file `-c <config.file>`
 5. parameters on the command line
 
-To see comprehensive list of all possible params see Params.groovy in the source code:
+To see a comprehensive list of all possible params see Params.groovy in the source code:
 https://github.com/rdk/p2rank/blob/master/src/main/groovy/cz/siret/prank/program/params/Params.groovy
