@@ -113,14 +113,21 @@ abstract class ParamLooper extends Routine {
             (params*.name).join(', ') + ', ' + selectedStats.join(', ')
         }
 
+
+
+        private String getParamsValueColumns() {
+            // param value may contain commas
+            params.collect{'"' + fmt(it.value) + '"' }.join(', ')
+        }
+
         @CompileDynamic
         String toCSV() {
-            params.collect{ fmt(it.value) }.join(', ') + ', ' + results.values().collect{ fmt(it) }.join(', ')
+            paramsValueColumns + ', ' + results.values().collect{ fmt(it) }.join(', ')
         }
 
         @CompileDynamic
         String toCSV(List<String> selectedStats) {
-            params.collect{ fmt(it.value) }.join(', ') + ', ' + selectedStats.collect{ fmt(results.get(it)) }.join(', ')
+            paramsValueColumns + ', ' + selectedStats.collect{ fmt(results.get(it)) }.join(', ')
         }
 
         String toString() {
