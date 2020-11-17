@@ -149,7 +149,6 @@ For example:
 * `-feature_filters '(chem.atoms)'` - include only `chem.atoms`
 
 
-
 Further examples:
 
 * `-feature_filters '()'` - include all
@@ -160,6 +159,38 @@ Further examples:
 * `-feature_filters '(chem.hydrophobicity)'` - include only "chem.hydrophobicity"
 * `-feature_filters '(chem.*,-chem.hydrophobicity,-chem.atoms)` - include only those with prefix "chem.", except "chem.hydrophobicity" and "chem.atoms"
 
+
+<details>
+  <summary>Example: `-feature_filters '(chem.atoms,volsite.*,bfactor.*)'`:  (click to expand)</summary>
+  
+  ```bash
+$ ./prank print features -features '(chem,volsite,bfactor)' -feature_filters '(chem.atoms,volsite.*,bfactor.*)'
+----------------------------------------------------------------------------------------------
+ P2Rank 2.3-dev.1
+----------------------------------------------------------------------------------------------
+
+Effectively enabled features (after filtering):
+
+chem
+volsite
+bfactor
+
+Effective feature vector header (i.e. enabled sub-features):
+
+ 0: chem.atoms
+ 1: volsite.vsAromatic
+ 2: volsite.vsCation
+ 3: volsite.vsAnion
+ 4: volsite.vsHydrophobic
+ 5: volsite.vsAcceptor
+ 6: volsite.vsDonor
+ 7: bfactor.bfactor
+
+----------------------------------------------------------------------------------------------
+ finished successfully in 0 hours 0 minutes 1.043 seconds
+----------------------------------------------------------------------------------------------
+  ```
+</details>
 
 #### Filtering and grid optimization
 
