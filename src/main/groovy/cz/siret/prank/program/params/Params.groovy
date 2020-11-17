@@ -76,6 +76,12 @@ class Params {
     int r_threads = 2
 
     /**
+     * Generate plots for each metric with R when doing grid optimization (ploop command) on 1 or 2 variables
+     */
+    @RuntimeParam
+    boolean r_generate_plots = true
+
+    /**
      * Generate standard deviation plot for each statistic when generating R plots
      */
     @RuntimeParam

@@ -60,7 +60,9 @@ class GridOptimizer extends ParamLooper {
         logTime "param iteration finished in $timer.formatted"
         write "results saved to directory [${Futils.absPath(outdir)}]"
 
-        makePlots()
+        if (params.r_generate_plots) {
+            makePlots()
+        }
 
         if (params.ploop_delete_runs) {
             Futils.delete(runsDir)
