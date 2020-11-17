@@ -86,8 +86,11 @@ quick() {
     test ./prank.sh eval-rescore fpocket.ds                                       -out_subdir TEST/TESTS
     test ./prank.sh eval-rescore concavity.ds                                     -out_subdir TEST/TESTS
 
-    test ./prank.sh traineval -loop 1 -t fpocket.ds -e test.ds       -fail_fast 1 -out_subdir TEST/TESTS
-    test ./prank.sh crossval  -loop 1 fpocket.ds                     -fail_fast 1 -out_subdir TEST/TESTS
+    test ./prank.sh traineval -t fpocket.ds -e test.ds       -loop 1 -fail_fast 1 -out_subdir TEST/TESTS
+    test ./prank.sh crossval  fpocket.ds                     -loop 1 -fail_fast 1 -out_subdir TEST/TESTS
+
+    # test grid optimization
+    test ./prank.sh ploop -t fpocket.ds -e test.ds -loop 1 -fail_fast 1 -r_generate_plots 0 -feature_filters '((-chem.*),(-chem.*,chem.atoms),(protrusion.*,bfactor.*))' -out_subdir TEST/TESTS
 }
 
 quick_train() {
@@ -158,8 +161,9 @@ eval_predict_rest() {
     test ./prank.sh eval-predict chen11.ds       -c config/workdef -log_cases 1   -out_subdir TEST/EVAL
     test ./prank.sh eval-predict fptrain.ds      -c config/workdef -log_cases 1   -out_subdir TEST/EVAL
 
-    test ./prank.sh eval-predict 'joined(mlig).ds'  -c config/workdef -log_cases 1   -out_subdir TEST/EVAL
-    test ./prank.sh eval-predict 'holo4k(mlig).ds'  -c config/workdef -log_cases 1   -out_subdir TEST/EVAL
+    test ./prank.sh eval-predict 'joined(mlig).ds'   -c config/workdef -log_cases 1   -out_subdir TEST/EVAL
+    test ./prank.sh eval-predict 'coach420(mlig).ds' -c config/workdef -log_cases 1   -out_subdir TEST/EVAL
+    test ./prank.sh eval-predict 'holo4k(mlig).ds'   -c config/workdef -log_cases 1   -out_subdir TEST/EVAL
 
     #test ./prank.sh eval-predict mlig-moad-nr.ds -c config/workdef -log_cases 1  -fail_fast 1  -out_subdir TEST/EVAL
     #test ./prank.sh eval-predict moad-nr.ds      -c config/workdef -log_cases 1  -fail_fast 1  -out_subdir TEST/EVAL
@@ -170,13 +174,14 @@ eval_rescore() {
     title EVALUATING RESCORING ON ALL DATASETS
 
     test ./prank.sh eval-rescore joined-fpocket.ds       -c config/workdef -log_cases 1  -out_subdir TEST/EVAL
-    test ./prank.sh eval-rescore holo4k-fpocket.ds       -c config/workdef -log_cases 1  -out_subdir TEST/EVAL
     test ./prank.sh eval-rescore coach420-fpocket.ds     -c config/workdef -log_cases 1  -out_subdir TEST/EVAL
+    test ./prank.sh eval-rescore holo4k-fpocket.ds       -c config/workdef -log_cases 1  -out_subdir TEST/EVAL
 
     test ./prank.sh eval-rescore chen11-fpocket.ds       -c config/workdef -log_cases 1  -out_subdir TEST/EVAL
 
-    test ./prank.sh eval-rescore 'joined(mlig)-fpocket.ds'  -c config/workdef -log_cases 1  -out_subdir TEST/EVAL
-    test ./prank.sh eval-rescore 'holo4k(mlig)-fpocket.ds'  -c config/workdef -log_cases 1  -out_subdir TEST/EVAL
+    test ./prank.sh eval-rescore 'joined(mlig)-fpocket.ds'   -c config/workdef -log_cases 1  -out_subdir TEST/EVAL
+    test ./prank.sh eval-rescore 'coach420(mlig)-fpocket.ds' -c config/workdef -log_cases 1  -out_subdir TEST/EVAL
+    test ./prank.sh eval-rescore 'holo4k(mlig)-fpocket.ds'   -c config/workdef -log_cases 1  -out_subdir TEST/EVAL
 }
 
 # train and evaluate new model/settings on main datasets
@@ -186,7 +191,10 @@ eval_train() {
 
     test ./prank.sh crossval chen11-fpocket.ds                         -c config/working -loop 1                    -out_subdir TEST/EVAL_TRAIN
     test ./prank.sh traineval -t chen11-fpocket.ds -e joined.ds        -c config/working -loop 1                    -out_subdir TEST/EVAL_TRAIN
+    test ./prank.sh traineval -t chen11-fpocket.ds -e coach420.ds      -c config/working -loop 1                    -out_subdir TEST/EVAL_TRAIN
     test ./prank.sh traineval -t chen11-fpocket.ds -e holo4k.ds        -c config/working -loop 1  -cache_datasets 0 -out_subdir TEST/EVAL_TRAIN
+
+
 }
 
 eval_train_rest() {
@@ -197,7 +205,16 @@ eval_train_rest() {
     test ./prank.sh traineval -t chen11-fpocket.ds -e chen11-fpocket.ds   -c config/working -loop 1                     -out_subdir TEST/EVAL_TRAIN
     test ./prank.sh traineval -t chen11-fpocket.ds -e fptrain.ds          -c config/working -loop 1                     -out_subdir TEST/EVAL_TRAIN
     test ./prank.sh traineval -t chen11-fpocket.ds -e 'joined(mlig).ds'   -c config/working -loop 1                     -out_subdir TEST/EVAL_TRAIN
+    test ./prank.sh traineval -t chen11-fpocket.ds -e 'coach420(mlig).ds' -c config/working -loop 1                     -out_subdir TEST/EVAL_TRAIN
     test ./prank.sh traineval -t chen11-fpocket.ds -e 'holo4k(mlig).ds'   -c config/working -loop 1  -cache_datasets 0  -out_subdir TEST/EVAL_TRAIN
+}
+
+eval_ploop() {
+
+    title GRID OPTIMIZATION
+
+    test ./prank.sh ploop -t chen11-fpocket.ds -e coach420.ds -c config/working -loop 1 -fail_fast 1 -r_generate_plots 0 -rf_trees '(20,40,100)' -rf_features '(6,0)' -out_subdir TEST/PLOOP
+    test ./prank.sh ploop -t chen11-fpocket.ds -e speed5.ds   -c config/working -loop 1 -fail_fast 1 -r_generate_plots 0 -rf_trees '[10:30:10]' -feature_filters '((-chem.*),(-chem.*,chem.atoms),(protrusion.*,bfactor.*))' -out_subdir TEST/PLOOP
 }
 
 ###################################################################################################################
@@ -333,6 +350,7 @@ all() {
     eval_predict_all
     eval_rescore
     eval_train_all
+    eval_ploop
     speed
 }
 

@@ -20,7 +20,8 @@ P2Rank is a stand-alone command line program that predicts ligand-binding pocket
 * Java 8 to 15
 * PyMOL 1.7 (or newer) for viewing visualizations (optional)
 
-Program is tested on Linux, macOS and Windows. On Windows, using `bash` console is recommended to execute the program instead of `cmd` or `PowerShell`.
+P2Rank is tested on Linux, macOS, and Windows. 
+On Windows, it is recommended to use the `bash` console to execute the program instead of `cmd` or `PowerShell`.
 
 ### Setup
 
@@ -44,7 +45,7 @@ P2Rank makes predictions by scoring and clustering points on the protein's solve
 Ligandability score of individual points is determined by a machine learning based model trained on the dataset of known protein-ligand complexes. 
 For more details see the slides and publications.
 
-Presentation slides introducing original version of the algotithm: [Slides (pdf)](http://bit.ly/p2rank_slides)  
+Presentation slides introducing the original version of the algorithm: [Slides (pdf)](http://bit.ly/p2rank_slides)  
 
 ### Publications
 
@@ -54,15 +55,15 @@ If you use P2Rank, please cite relevant papers:
  Krivak R, Hoksza D. *P2Rank: machine learning based tool for rapid and accurate prediction of ligand binding sites from protein structure.* Journal of Cheminformatics. 2018 Aug.
 * [Web-server article](https://doi.org/10.1093/nar/gkz424) in NAR about the web interface accessible at [prankweb.cz](https://prankweb.cz)  
  Jendele L, Krivak R, Skoda P, Novotny M, Hoksza D. *PrankWeb: a web server for ligand binding site prediction and visualization.* Nucleic Acids Research, Volume 47, Issue W1, 02 July 2019, Pages W345-W349 
-* [Conference paper](https://doi.org/10.1007/978-3-319-21233-3_4) inroducing P2Rank prediction algorithm  
- Krivak R, Hoksza D. *P2RANK: Knowledge-Based Ligand Binding Site Prediction Using Aggregated Local Features.* InInternational Conference on Algorithms for Computational Biology 2015 Aug 4 (pp. 41-52). Springer
+* [Conference paper](https://doi.org/10.1007/978-3-319-21233-3_4) introducing P2Rank prediction algorithm  
+ Krivak R, Hoksza D. *P2RANK: Knowledge-Based Ligand Binding Site Prediction Using Aggregated Local Features.* International Conference on Algorithms for Computational Biology 2015 Aug 4 (pp. 41-52). Springer
 * [Research article](https://doi.org/10.1186/s13321-015-0059-5) in JChem about PRANK rescoring algorithm  
  Krivak R, Hoksza D. *Improving protein-ligand binding site prediction accuracy by classification of inner pocket points using local features.* Journal of Cheminformatics. 2015 Dec.
 
 ### Build from sources
 
 This project uses [Gradle](https://gradle.org/) build system via included Gradle wrapper. 
-On Windows use `bash` to execute build comands (`bash` is installed as a part of [Git for Windows](https://git-scm.com/download/win)). 
+On Windows use `bash` to execute build commands (`bash` is installed as a part of [Git for Windows](https://git-scm.com/download/win)). 
 
 ```bash
 git clone https://github.com/rdk/p2rank.git && cd p2rank
@@ -91,7 +92,7 @@ prank help
 ### Predict ligand binding sites (P2Rank algorithm)
 
 ~~~bash
-prank predict test.ds                             # run on whole dataset (containing list of pdb files)
+prank predict test.ds                             # run on the whole dataset (containing list of pdb files)
 
 prank predict -f test_data/1fbl.pdb               # run on single pdb file
 prank predict -f test_data/1fbl.pdb.gz            # run on single gzipped pdb file
@@ -121,7 +122,7 @@ prank eval-predict test.ds
 
    If coordinates of SAS points that belong to predicted pockets are needed, they can be found
    in `visualizations/data/<pdb_file_name>_points.pdb`. There "Residue sequence number" (23-26) of HETATM record 
-   corresponds to the rank of corresponding pocket (points with value 0 do not belong to any pocket).
+   corresponds to the rank of the corresponding pocket (points with value 0 do not belong to any pocket).
 
 ### Configuration
 
@@ -136,7 +137,7 @@ prank predict -c example.groovy         test.ds
 It is also possible to override the default params on the command line using their full name.
 
 ~~~bash
-prank predict                   -seed 151 -threads 8  test.ds   #  set random seed and number of threads, override defeults
+prank predict                   -seed 151 -threads 8  test.ds   #  set random seed and number of threads, override defaults
 prank predict -c example.groovy -seed 151 -threads 8  test.ds   #  override defaults as well as values from example.groovy
 ~~~     
 
@@ -160,25 +161,25 @@ prank eval-rescore fpocket.ds            # evaluate rescoring model
 
 ## Comparison with Fpocket
 
-[Fpocket](https://github.com/Discngine/fpocket) is widely used open source ligand binding site prediction program.
+[Fpocket](https://github.com/Discngine/fpocket) is a widely used open source ligand binding site prediction program.
 It is fast, easy to use and well documented. As such, it was a great inspiration for this project.
 Fpocket is written in C, and it is based on a different geometric algorithm.
 
 Some practical differences:
 
 * **Fpocket**
-    - has much smaller memory footprint 
+    - has a much smaller memory footprint 
     - runs faster when executed on a single protein
     - produces a high number of less relevant pockets (and since the default scoring function isn't very effective the most relevant pockets often doesn't get to the top)
     - contains MDpocket algorithm for pocket predictions from molecular trajectories 
     - still better documented
 * **P2Rank** 
     - achieves significantly higher identification success rates when considering top-ranked pockets
-    - produces smaller number of more relevant pockets
+    - produces a smaller number of more relevant pockets
     - speed:
         + slower when running on a single protein (due to JVM startup cost)
         + approximately as fast on average running on a big dataset on a single core
-        + due to parallel implementation potentially much faster on multi core machines
+        + due to parallel implementation potentially much faster on multi-core machines
     - higher memory footprint (~1G but doesn't grow much with more parallel threads)
 
 Both Fpocket and P2Rank have many configurable parameters that influence behaviour of the algorithm and can be tweaked to achieve better results for particular requirements.
