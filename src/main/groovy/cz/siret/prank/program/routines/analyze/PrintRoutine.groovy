@@ -68,15 +68,13 @@ class PrintRoutine extends Routine {
         List<FeatureSetup.Feature> enabledFeatures = featureSetup.enabledFeatures
         boolean filtering = featureSetup.filteringEnabled
 
-        write "Effectively enabled features" + (filtering?" (after filtering)":"")
+        write "Effectively enabled features" + (filtering?" (after filtering)":"") + ":"
         write ""
         write ((enabledFeatures*.name).join("\n"))
         write ""
-        write "Effective feature vector header (i.e. enabled sub-features)"
+        write "Effective feature vector header (i.e. enabled sub-features):"
         write ""
         write subFeatureHeader.withIndex().collect { name, i -> sprintf("%2d: %s", i, name) }.join("\n")
-        write ""
-        write "n = ${subFeatureHeader.size()}"
     }
 
 //    void feature_sets() {

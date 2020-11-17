@@ -34,10 +34,12 @@ All changes of that type should be rare and should be all listed here.
     * introduced parameter `-feat_csv_columns` (type: `List<String>`). 
         Names of enabled value columns from csv files must be listed here. 
         Columns not listed are ignored.
+        * Example: if you were working with one directory of csv files with one value column named `pdbekb_conservation`, 
+        you must now run the program with `-feat_csv_columns (pdbekb_conservation)` 
     * introduced parameter `-feat_csv_ignore_missing` (type: `boolean`, default: `false`). If true, then feature ignores:
         * missing csv files for proteins
         * missing value columns
-        * missing rows for atoms or residues
+        * missing rows for atoms and residues
       
     
 

@@ -57,7 +57,6 @@ class CsvFileFeatureValues {
         Map<ResidueNumber, Double> values = new HashMap<>()
     }
 
-
 //===========================================================================================================//
 
     private static final CSVFormat CSV_FORMAT = CSVFormat.RFC4180.withFirstRecordAsHeader()

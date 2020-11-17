@@ -1,7 +1,7 @@
 
 # P2Rank model training and optimization tutorial
 
-This file should provide introduction for people who want to train and evaluate their own models or optimize different parameters of the algorithm.
+This file provides introduction for people who want to train and evaluate their own models or optimize different parameters of the algorithm.
 
 ## Kick-start examples
 
