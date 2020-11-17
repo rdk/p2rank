@@ -3,6 +3,7 @@ package cz.siret.prank.program.routines.optimize
 import cz.siret.prank.program.params.Params
 import cz.siret.prank.program.routines.Routine
 import cz.siret.prank.program.routines.results.EvalResults
+import cz.siret.prank.utils.Futils
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
@@ -11,6 +12,7 @@ import groovy.util.logging.Slf4j
 import static cz.siret.prank.utils.ATimer.startTimer
 import static cz.siret.prank.utils.Cutils.prefixMapKeys
 import static cz.siret.prank.utils.Futils.*
+import static cz.siret.prank.utils.Futils.delete
 
 /**
  * Base class for hyperparameter optimization routines
@@ -38,9 +40,16 @@ abstract class ParamLooper extends Routine {
     }
 
     ParamLooper init() {
+
+        delete(plotsDir)
+        delete(runsDir)
+        delete(statsTableFile)
+        delete(selectedStatsFile)
+
         mkdirs(outdir)
         mkdirs(runsDir)
         writeParams(outdir)
+
         this
     }
 
@@ -113,21 +122,19 @@ abstract class ParamLooper extends Routine {
             (params*.name).join(', ') + ', ' + selectedStats.join(', ')
         }
 
-
-
-        private String getParamsValueColumns() {
+        private String getParamValueColumns() {
             // param value may contain commas
             params.collect{'"' + fmt(it.value) + '"' }.join(', ')
         }
 
         @CompileDynamic
         String toCSV() {
-            paramsValueColumns + ', ' + results.values().collect{ fmt(it) }.join(', ')
+            paramValueColumns + ', ' + results.values().collect{ fmt(it) }.join(', ')
         }
 
         @CompileDynamic
         String toCSV(List<String> selectedStats) {
-            paramsValueColumns + ', ' + selectedStats.collect{ fmt(results.get(it)) }.join(', ')
+            paramValueColumns + ', ' + selectedStats.collect{ fmt(results.get(it)) }.join(', ')
         }
 
         String toString() {
