@@ -79,13 +79,12 @@ class RPlotter implements Parametrized {
 
             p + geom_bar(stat="identity", position = 'dodge', alpha = 3/4, color="gray20") + scale_fill_gradientn(colours=r) + theme(axis.text.x = element_text(angle = 340, hjust = 0))
 
-            ggsave(file=paste(yy,".png"), dpi=$dpi)
+            fname <- paste(yy,".png", sep="")
+            ggsave(file=fname, dpi=$dpi)
         """
-        //     +  geom_line(size = 1, color="gray40")  + geom_point(shape=18, size=4, color="gray20")
-        // dpi=150
+        // to add line plot: p  +  geom_line(size = 1, color="gray40") + geom_point(shape=18, size=4, color="gray20")
 
         rexec.runCode(rcode, name, outdir)
-
     }
 
     /**
