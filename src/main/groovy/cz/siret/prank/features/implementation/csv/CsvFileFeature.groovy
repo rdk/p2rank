@@ -1,4 +1,4 @@
-package cz.siret.prank.features.implementation.external
+package cz.siret.prank.features.implementation.csv
 
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.features.api.AtomFeatureCalculationContext
@@ -9,6 +9,10 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 
+/**
+ * Loads values from csv files (for each protein separately).
+ * Csv files define values for either individual protein atom or residues.
+ */
 @Slf4j
 @CompileStatic
 class CsvFileFeature extends AtomFeatureCalculator implements Parametrized {
@@ -18,10 +22,11 @@ class CsvFileFeature extends AtomFeatureCalculator implements Parametrized {
 
     @Override
     String getName() {
-        return "csv_file_feature"
+        return "csv"
     }
 
     /**
+     * List of enabled csv value columns.
      *
      * Notes:
      * Multi value features must return header.
@@ -31,11 +36,7 @@ class CsvFileFeature extends AtomFeatureCalculator implements Parametrized {
      */
     @Override
     List<String> getHeader() {
-        // TODO: add implementation so that the method returns static header with sensible sub-feature names, so that either:
-        //  (a) header is based on feat_csv_directories
-        //  (b) this feature returns result based on feat_csv_header
-
-        return params.feat_csv_header // temporary solution!
+        return params.feat_csv_columns
     }
 
     @Override
@@ -47,25 +48,25 @@ class CsvFileFeature extends AtomFeatureCalculator implements Parametrized {
         if (protein.secondaryData.get(DATA_LOADED_KEY) == Boolean.TRUE) {
             return
         }
-        loadCsvFileForProtein(protein)
+        loadCsvFilesForProtein(protein)
     }
 
-    private void loadCsvFileForProtein(Protein protein) {
+    private void loadCsvFilesForProtein(Protein protein) {
         List<String> directories = params.feat_csv_directories
-        ExternalAtomFeature feature = new ExternalAtomFeature()
-        feature.load(directories, protein.name)
+        CsvFileFeatureValues feature = new CsvFileFeatureValues(params.feat_csv_ignore_missing)
+        feature.load(directories, protein.name, header)
         protein.secondaryData.put(DATA_LOADED_KEY, true)
         protein.secondaryData.put(DATA_KEY, feature)
     }
 
     @Override
     double[] calculateForAtom(Atom proteinSurfaceAtom, AtomFeatureCalculationContext context) {
-        ExternalAtomFeature feature = getFeature(context.protein)
-        return feature.getValue(proteinSurfaceAtom)
+        CsvFileFeatureValues feature = getValuesForProtein(context.protein)
+        return feature.getValues(proteinSurfaceAtom, header)
     }
 
-    private static ExternalAtomFeature getFeature(Protein protein) {
-        return (ExternalAtomFeature) protein.secondaryData.get(DATA_KEY)
+    private static CsvFileFeatureValues getValuesForProtein(Protein protein) {
+        return (CsvFileFeatureValues) protein.secondaryData.get(DATA_KEY)
     }
 
 }

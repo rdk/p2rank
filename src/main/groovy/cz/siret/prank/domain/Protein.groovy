@@ -138,7 +138,9 @@ class Protein implements Parametrized {
         return (score==null) ? null : score.toDoubleLabeling(this)
     }
 
-
+    /**
+     * solvent exposed protein atoms (i.e. surface atoms)
+     */
     Atoms getExposedAtoms() {
         calcuateSurfaceAndExposedAtoms()
         exposedAtoms

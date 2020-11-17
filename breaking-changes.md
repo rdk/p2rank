@@ -17,14 +17,29 @@ All changes of that type should be rare and should be all listed here.
 
 #### 2.3-dev.x
 
+##### Prediction
+
+
+##### Training new models
+
 * parameter `-extra_features` was renamed to `-features` 
-* command line format of values of parameters with type `List<String>` and `List<List<String>>` has changed
+* command line format of parameters values with type `List<String>` and `List<List<String>>` has changed
     * now only comas `,` are delimeters and inner parentheses are respected 
     * before `.` was used as an alternative delimeter and delimeter for inner lists, now it is part of element value
     * Examples: 
         * `'(a.b.c)'` was interpreted as list of 3 elements, now it defines list of 1 element: `a.b.c`
         * list of lists value `'((a.b.c),(d.e))'` should be changed to `'((a,b,c),(d,e))'`
-
+* Changes in `csv_file_feature`
+    * renamed to `csv`
+    * introduced parameter `-feat_csv_columns` (type: `List<String>`). 
+        Names of enabled value columns from csv files must be listed here. 
+        Columns not listed are ignored.
+    * introduced parameter `-feat_csv_ignore_missing` (type: `boolean`, default: `false`). If true, then feature ignores:
+        * missing csv files for proteins
+        * missing value columns
+        * missing rows for atoms or residues
+      
+    
 
 #### 2.2
 

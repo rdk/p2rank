@@ -1106,16 +1106,26 @@ class Params {
     /**
      * Directories where to find csv files for csv_file_atom_feature.
      */
-    @RuntimeParam
+    @ModelParam
     List<String> feat_csv_directories = []
 
     /**
-     * Header of values used by csv_file_atom_feature.
-     * This is temporary. csv_file_atom_feature does not yet respect the this parameter.
+     * Names of enabled value columns from csv files used by csv_file feature. Value columns not listed here are ignored.
      */
-    @RuntimeParam
-    List<String> feat_csv_header = ["temporary"]
+    @ModelParam
+    List<String> feat_csv_columns = []
 
+
+    /**
+     * If true then csv_file feature ignores:
+     * <ul>
+     *   <li> missing csv files for proteins
+     *   <li> missing value columns
+     *   <li> missing rows for atoms or residues
+     * <ul>
+     */
+    @ModelParam
+    boolean feat_csv_ignore_missing = false
 
 //===========================================================================================================//
 

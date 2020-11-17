@@ -3,9 +3,9 @@ package cz.siret.prank.features.api
 import cz.siret.prank.features.implementation.*
 import cz.siret.prank.features.implementation.chem.ChemFeature
 import cz.siret.prank.features.implementation.conservation.*
+import cz.siret.prank.features.implementation.csv.CsvFileFeature
 import cz.siret.prank.features.implementation.electrostatics.ElectrostaticsTempAtomFeature
 import cz.siret.prank.features.implementation.electrostatics.ElectrostaticsTempSasFeature
-import cz.siret.prank.features.implementation.external.CsvFileFeature
 import cz.siret.prank.features.implementation.histogram.PairHistogramFeature
 import cz.siret.prank.features.implementation.residue.ContactResiduesRF
 import cz.siret.prank.features.implementation.secstruct.SecStructCloudSF
