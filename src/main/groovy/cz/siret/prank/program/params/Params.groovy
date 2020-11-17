@@ -850,7 +850,7 @@ class Params {
      * delete results of individual ploop/hopt runs
      */
     @RuntimeParam
-    boolean ploop_delete_runs = true
+    boolean ploop_delete_runs = false
 
     /**
      * logging level (TRACE/DEBUG/INFO/WARN/ERROR)
