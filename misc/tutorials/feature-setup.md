@@ -109,7 +109,7 @@ Effective feature vector header (i.e. enabled sub-features):
 
 If you want to add new features that are not implemented in P2Rank you have 3 options:
 * Implement a new feature calculator in Java or Groovy
-    * this is not too difficult and has an advantage that feature will be calculated automatically for new datasets
+    * this is not too difficult and has an advantage that the feature will be calculated automatically for new datasets
     * For introduction see [new feature tutorial](new-feature-evaluation-tutorial.md) 
 * Provide custom atom type and residue type tables for `atom_table` and `residue_table` features
     * allow defining values for residue types and atom types
@@ -131,7 +131,7 @@ If you want to add new features that are not implemented in P2Rank you have 3 op
 
 You can selectively enable/disable certain features and sub-features with `-feature_filters` parameter.
 Filters are applied only to the features that are first enabled by `-features` parameter.
-If the value of `-feature_filters` is empty, all sub-features are used (i.e no filtering is applied).
+If the value of `-feature_filters` is empty, all sub-features are used (i.e. no filtering is applied).
 
 Examples of individual filters:
 
@@ -201,5 +201,5 @@ Example:
 ```
 ./prank ploop -t train.ds -e eval.ds -loop 10 -feature_filters '((-chem.*),(-chem.atoms,-chem.ploar),(protrusion.*,bfactor.*))'
 ```            
-This command will run train-eval experiments for 3 dfferent feature setups by applying a different list of feature filters. 
+This command will run train-eval experiments for 3 different feature setups by applying a different list of feature filters. 
 For each feature setup, it will run 10 train-eval cycles (using different random seed) and calculate average results. 
