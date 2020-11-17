@@ -844,7 +844,7 @@ class Params {
      * compress results of individual ploop runs
      */
     @RuntimeParam
-    boolean ploop_zip_runs = true
+    boolean ploop_zip_runs = false
 
     /**
      * delete results of individual ploop/hopt runs
