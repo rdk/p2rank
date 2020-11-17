@@ -29,11 +29,17 @@ class GenericVector {
     }
 
     void set(String colName, double value) {
-        data[header.getColIndex(colName)] = value
+        Integer idx = header.getColIndex(colName)
+        if (idx != null) {
+            data[idx] = value
+        }
     }
 
     void multiply(String colName, double a) {
-        data[header.getColIndex(colName)] *= a
+        Integer idx = header.getColIndex(colName)
+        if (idx != null) {
+            data[idx] *= a
+        }
     }
 
     void setValues(List<String> valuesHeader, double[] values) {
