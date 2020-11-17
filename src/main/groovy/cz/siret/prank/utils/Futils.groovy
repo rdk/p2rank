@@ -437,9 +437,14 @@ class Futils {
     }
 
 
-    static boolean exists(String name) {
+    static boolean exists(@Nullable String name) {
         if (name==null) return false
         return new File((String)name).exists()
+    }
+
+    static boolean exists(@Nullable File file) {
+        if (file==null) return false
+        return file.exists()
     }
 
     /**

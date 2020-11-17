@@ -87,12 +87,13 @@ class CsvFileFeatureValues {
 
     private void missingError(String msg) throws PrankException {
         if (ignoreMissing) {
-            log.debug msg
+            log.debug "MISSING: " + msg
         } else {
             throw new PrankException(msg)
         }
     }
 
+    @Nullable
     private File getCsvFileForProtein(String proteinName, String dir) {
         return new File(dir, proteinName + ".csv")
     }
@@ -103,7 +104,10 @@ class CsvFileFeatureValues {
 
         for (String dir : directories) {
             File file = getCsvFileForProtein(proteinName, dir)
-            loadCsv(file, directoryMetadata.get(dir))
+            if (Futils.exists(file)) {
+                loadCsv(file, directoryMetadata.get(dir))
+            }
+            // file missing error was processed when loading metadata
         }
     }
 
@@ -141,8 +145,13 @@ class CsvFileFeatureValues {
             }
 
             File file = getCsvFileForProtein(proteinName, dir)
-            FileMetadata metadata = loadCsvMetadata(file)
-            directoryMetadata.put(dir, metadata)
+            if (Futils.exists(file)) {
+                FileMetadata metadata = loadCsvMetadata(file)
+                directoryMetadata.put(dir, metadata)
+            } else {
+                missingError "CSV file for protein '$proteinName' doesn't exist in directory '$dir'"
+            }
+
         }
     }
 
