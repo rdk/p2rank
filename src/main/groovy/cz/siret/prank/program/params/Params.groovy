@@ -1196,7 +1196,7 @@ class Params {
                 String val = args.get(propName)
 
                 boolean skip = false
-                if (filterRanged && ListParam.isIterativeArgValue(val)) {
+                if (filterRanged && ListParam.isIterativeArgValue(propName, val)) {
                     skip = true
                 }
 
