@@ -5,6 +5,7 @@ import cz.siret.prank.utils.Formatter
 import cz.siret.prank.utils.PerfUtils
 import cz.siret.prank.utils.Sutils
 import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode
 
 /**
  * Parameter which represents s list of values (defined explicitly or as range and step)
@@ -21,12 +22,14 @@ class ListParam {
         this.values = values
     }
 
-    static ListParam parse(String name, String svals) {
+    static ListParam parse(String name, String value) {
         ListParam res = new ListParam(name, null)
 
-        def inner = svals.substring(1, svals.length()-1)
+        value = value.trim()
 
-        boolean list = svals.startsWith("(") || svals.contains(",")
+        def inner = value.substring(1, value.length()-1)
+
+        boolean list = value.startsWith("(") || value.contains(",")
 
         if (list) {
 
@@ -105,13 +108,32 @@ class ListParam {
         return str.length()
     }
 
-    static boolean isListArgValue(String value) {
-        ( value.startsWith("[") && value.contains(":") ) || ( value.startsWith("(") && value.contains(",") )
+    /**
+     * TODO improve to use MetaClass info instead of type of current value
+     * @param name
+     * @return
+     */
+    @CompileStatic(TypeCheckingMode.SKIP)
+    static boolean isListParam(String name) {
+        return Params.inst."$name" instanceof List
+    }
+
+    static boolean isIterativeArgValue(String name, String value) {
+        value = value.trim()
+
+        if (value.startsWith("[") && value.contains(":")) return true
+
+        if (isListParam(name)) {  // for list params we want to see list of lists
+            value = value.replace(' ', '')
+            return value.startsWith("((")
+        } else {
+            value.startsWith("(")
+        }
     }
 
     static List<ListParam> parseListArgs(CmdLineArgs args) {
         args.namedArgs
-                .findAll { isListArgValue(it.value) }
+                .findAll { isIterativeArgValue(it.name, it.value) }
                 .collect { parse(it.name, it.value) }
                 .toList()
     }
