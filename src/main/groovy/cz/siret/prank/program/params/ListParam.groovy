@@ -115,7 +115,12 @@ class ListParam {
      */
     @CompileStatic(TypeCheckingMode.SKIP)
     static boolean isListParam(String name) {
-        return Params.inst."$name" instanceof List
+        try {
+            return Params.inst."$name" instanceof List
+        } catch (Exception e) {
+            // skip for cmd line params that are not attributes of Params, like "-t"
+            return false
+        }
     }
 
     static boolean isIterativeArgValue(String name, String value) {
