@@ -215,6 +215,9 @@ eval_ploop() {
 
     test ./prank.sh ploop -t chen11-fpocket.ds -e coach420.ds -c config/working -loop 1 -fail_fast 1 -r_generate_plots 0 -rf_trees '(20,40,100)' -rf_features '(6,0)' -out_subdir TEST/PLOOP
     test ./prank.sh ploop -t chen11-fpocket.ds -e speed5.ds   -c config/working -loop 1 -fail_fast 1 -r_generate_plots 0 -rf_trees '[10:30:10]' -feature_filters '((-chem.*),(-chem.*,chem.atoms),(protrusion.*,bfactor.*))' -out_subdir TEST/PLOOP
+
+    # test ability to separate normal param features (type: list) and iterative feature_filters (type: list)
+    test ./prank.sh ploop -t chen11-fpocket.ds -e speed5.ds   -c config/working -loop 1 -fail_fast 1 -r_generate_plots 0 -features '(volsite,bfactor)' -feature_filters '((-volsite.*),(volsite.*,-volsite.vsCation),(volsite.*,bfactor.*))' -out_subdir TEST/PLOOP
 }
 
 ###################################################################################################################
