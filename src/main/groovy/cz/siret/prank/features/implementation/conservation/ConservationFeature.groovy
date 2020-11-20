@@ -24,7 +24,6 @@ class ConservationFeature extends AtomFeatureCalculator implements Parametrized 
         "conservation"
     }
 
-
     private ConservationScore getConservationScore(Protein protein) {
         (ConservationScore) protein.secondaryData.get(ConservationScore.CONSERV_SCORE_KEY)
     }
@@ -36,11 +35,7 @@ class ConservationFeature extends AtomFeatureCalculator implements Parametrized 
             // Load conservation score.
             protein.loadConservationScores(itemContext)
         }
-//        if (!protein.secondaryData.getOrDefault(ConservationScore.CONSERV_LOADED_KEY, false)
-//                && itemContext.auxData.getOrDefault(ConservationScore.CONSERV_PATH_FUNCTION_KEY, null) != null) {
-//            // Load conservation score.
-//            protein.loadConservationScores(itemContext)
-//        }
+
         if (getConservationScore(protein) == null) {
             String msg = "Failed to load conservation for protein [$protein.name]"
             if (params.fail_fast) {

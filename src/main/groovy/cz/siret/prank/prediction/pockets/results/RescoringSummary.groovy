@@ -1,12 +1,14 @@
 package cz.siret.prank.prediction.pockets.results
 
 import cz.siret.prank.domain.Prediction
-import cz.siret.prank.utils.CSV
+import cz.siret.prank.utils.csv.CSV
 import cz.siret.prank.utils.PerfUtils
+import groovy.transform.CompileStatic
 
 /**
  * Summary of rescoring pockets on one protein.
  */
+@CompileStatic
 class RescoringSummary {
 
     private Prediction prediction
@@ -23,7 +25,7 @@ class RescoringSummary {
 
         String changeVis = ""
         if (change!=0) {
-            int len = Math.round( (absc/n) * MAX )
+            int len = Math.round((float) ((absc/(float)n) * MAX) )
             if (absc < MAX/2) {
                 len = absc
             }

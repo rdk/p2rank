@@ -9,7 +9,7 @@ Params[
   r_threads = 2
   crossval_threads = 1
   ligand_protein_contact_distance = 4.0
-  extra_features = [chem, volsite, protrusion, bfactor]
+  features = [chem, volsite, protrusion, bfactor]
   atom_table_features = [ap5sasaValids, ap5sasaInvalids, apRawValids, apRawInvalids, atomicHydrophobicity]
   atom_table_feat_pow = 2.0
   atom_table_feat_keep_sgn = true

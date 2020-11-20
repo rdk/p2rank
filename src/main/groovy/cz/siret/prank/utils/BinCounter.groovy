@@ -1,9 +1,12 @@
 package cz.siret.prank.utils
 
+import groovy.transform.CompileStatic
+
 
 /**
  *
  */
+@CompileStatic
 class BinCounter<K> {
 
     int count = 0
@@ -42,9 +45,9 @@ class BinCounter<K> {
         }
 
         if (label) {
-            element.@positives++
+            element.positives++
         } else {
-            element.@negatives++
+            element.negatives++
         }
         count++
     }

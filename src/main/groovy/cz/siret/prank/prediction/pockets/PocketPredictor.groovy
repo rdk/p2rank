@@ -2,13 +2,14 @@ package cz.siret.prank.prediction.pockets
 
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Protein
+import cz.siret.prank.domain.labeling.LabeledPoint
 import cz.siret.prank.features.implementation.conservation.ConservationScore
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Struct
-import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.domain.labeling.LabeledPoint
 import cz.siret.prank.prediction.transformation.ScoreTransformer
+import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Cutils
+import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
 /**
@@ -16,6 +17,7 @@ import groovy.util.logging.Slf4j
  * (core of P2RANK algorithm)
  */
 @Slf4j
+@CompileStatic
 class PocketPredictor implements Parametrized {
 
     private final PointScoreCalculator pointScoreCalculator = new PointScoreCalculator()
@@ -69,15 +71,15 @@ class PocketPredictor implements Parametrized {
             if (params.score_pockets_by == "conservation" || params.score_pockets_by == "combi") {
                 if (protein.secondaryData.getOrDefault(ConservationScore.CONSERV_LOADED_KEY,
                         false)) {
-                    ConservationScore conservationScore = protein.secondaryData.get(ConservationScore.CONSERV_SCORE_KEY)
+                    ConservationScore conservationScore = (ConservationScore) protein.secondaryData.get(ConservationScore.CONSERV_SCORE_KEY)
                     double avgConservation = pocketSurfaceAtoms.distinctGroupsSorted.stream()
                             .mapToDouble({
                         group -> conservationScore.getScoreForResidue(group.getResidueNumber())
                     }).average().getAsDouble()
                     if (params.score_pockets_by == "conservation") {
-                        score = avgConservation;
+                        score = avgConservation
                     } else {
-                        score *= avgConservation;
+                        score *= avgConservation
                     }
                 }
             }
@@ -87,16 +89,13 @@ class PocketPredictor implements Parametrized {
         return score
     }
 
-
-
-
     /**
      *
      * @param allLabeledPoints list of points with predicted ligandability in hist[]
      * @param protein
      * @return
      */
-    public List<Pocket> predictPockets(List<LabeledPoint> allLabeledPoints, Protein protein) {
+    public List<? extends Pocket> predictPockets(List<LabeledPoint> allLabeledPoints, Protein protein) {
 
         Atoms labeledPoints = new Atoms(allLabeledPoints).withKdTree()
 
@@ -129,7 +128,7 @@ class PocketPredictor implements Parametrized {
 
             Atoms pocketSasPoints = new Atoms( pocketPoints.collect { ((LabeledPoint)it).point }.toList() )  // we want exact objects from protein.accessibleSurface
 
-            PrankPocket p = new PrankPocket(clusterPoints.centerOfMass, score, pocketSasPoints, (List<LabeledPoint>) pocketPoints.toList())
+            PrankPocket p = new PrankPocket(clusterPoints.centerOfMass, score, pocketSasPoints, (List<LabeledPoint>) pocketPoints.list)
             p.surfaceAtoms = pocketSurfaceAtoms
             p.auxInfo.samplePoints = clusterPoints.count
             p.cache.count = clusterPoints.count
@@ -138,7 +137,6 @@ class PocketPredictor implements Parametrized {
                 p.auxInfo.zScoreTP = zscoreTpTransformer.transformScore(score)
             }
             if (probaTpTransformer!=null) {
-                // System.out.println(probaTpTransformer.toString())
                 p.auxInfo.probaTP = probaTpTransformer.transformScore(score)
             }
 
@@ -155,7 +153,7 @@ class PocketPredictor implements Parametrized {
 
             for (LabeledPoint lp : it.labeledPoints) {
                 if (lp.hist[1] > 0.2) { // TODO XXX this is temporary to fix pymol visualization esthetics
-                    lp.@pocket = i
+                    lp.pocket = i
                 }
             }
 
@@ -168,7 +166,7 @@ class PocketPredictor implements Parametrized {
             log.info sprintf("pocket%2d -  surf_atoms: %3d   points: %3d   score: %6.1f", i, surfAtoms, count, score)
         }
 
-        return pockets;
+        return pockets
     }
 
 }

@@ -12,7 +12,7 @@ public interface PocketCriterium {
     boolean isIdentified(Ligand ligand, Pocket pocket, EvalContext context)
 
     /**
-     * higher score = better identified (eg. closer to ilgand/ better overlap etc.)
+     * higher score = better identified (eg. closer to ligand/ better overlap etc.)
      */
     double score(Ligand ligand, Pocket pocket)
 

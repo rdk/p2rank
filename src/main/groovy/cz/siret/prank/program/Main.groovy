@@ -6,17 +6,29 @@ import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.params.ConfigLoader
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.params.Params
-import cz.siret.prank.program.routines.*
+import cz.siret.prank.program.routines.analyze.AnalyzeRoutine
+import cz.siret.prank.program.routines.analyze.PrintRoutine
+import cz.siret.prank.program.routines.predict.PredictRoutine
+import cz.siret.prank.program.routines.predict.RescoreRoutine
 import cz.siret.prank.program.routines.results.EvalResults
+import cz.siret.prank.program.routines.traineval.*
 import cz.siret.prank.utils.*
+import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.StringUtils
 
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+
 import static cz.siret.prank.utils.ATimer.startTimer
+
 import static cz.siret.prank.utils.Futils.mkdirs
 import static cz.siret.prank.utils.Futils.writeFile
+import static cz.siret.prank.utils.ConsoleWriter.write
+import static cz.siret.prank.utils.ConsoleWriter.writeError
 
 @Slf4j
+@CompileStatic
 class Main implements Parametrized, Writable {
 
     static Properties buildProperties = Futils.loadProperties('/build.properties')
@@ -31,6 +43,11 @@ class Main implements Parametrized, Writable {
 
 //===========================================================================================================//
 
+    static boolean _do_stdout_timestamp = false
+    static DateFormat _timestamp_format = null
+
+//===========================================================================================================//
+
     String getInstallDir() {
         return installDir
     }
@@ -39,7 +56,7 @@ class Main implements Parametrized, Writable {
         args.get('config','c')
     }
 
-    File findConfigFile(List<String> paths) {
+    private File findConfigFile(List<String> paths) {
         for (String path : paths) {
             log.info "Looking for config in " + Futils.absPath(path)
             if (Futils.exists(path)) {
@@ -49,7 +66,7 @@ class Main implements Parametrized, Writable {
         return null
     }
 
-    File findConfigFile(String configParam) {
+    private File findConfigFile(String configParam) {
         String path = configParam
 
         File configFile = findConfigFile([
@@ -57,7 +74,7 @@ class Main implements Parametrized, Writable {
             "${path}.groovy",
             "$installDir/config/${path}",
             "$installDir/config/${path}.groovy"
-        ])
+        ] as List<String>)
 
         if (configFile == null) {
             throw new PrankException("Config file not found '$configParam'")
@@ -90,6 +107,15 @@ class Main implements Parametrized, Writable {
             params.model = mod
         }
 
+        if (params.predict_residues && !params.ligand_derived_point_labeling) { // TODO move
+            LoaderParams.ignoreLigandsSwitch = true
+        }
+
+        if (StringUtils.isNotBlank(params.stdout_timestamp)) {
+            _do_stdout_timestamp = true
+            _timestamp_format = new SimpleDateFormat(params.stdout_timestamp)
+        }
+
         log.debug "CMD LINE ARGS: " + args
     }
 
@@ -107,7 +133,7 @@ class Main implements Parametrized, Writable {
         return dir
     }
 
-    public static String findModel(String installDir, Params params) {
+    static String findModel(String installDir, Params params) {
         String modelName = params.model
 
         String modelf = modelName
@@ -189,8 +215,8 @@ class Main implements Parametrized, Writable {
 
     String findInstallDir() {
 
-        String path = Main.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-        String decodedPath = URLDecoder.decode(path, "UTF-8");
+        String path = Main.class.getProtectionDomain().getCodeSource().getLocation().getPath()
+        String decodedPath = URLDecoder.decode(path, "UTF-8")
 
         return Futils.normalize(Futils.dir(decodedPath) + "/../")
 
@@ -310,6 +336,10 @@ class Main implements Parametrized, Writable {
         new AnalyzeRoutine(args, this).execute()
     }
 
+    private runPrint() {
+        new PrintRoutine(args, this).execute()
+    }
+
     void runHelp() {
         println Futils.readResource('/help.txt')
     }
@@ -341,9 +371,6 @@ class Main implements Parametrized, Writable {
 
         initParams(params, "$installDir/config/default.groovy")
 
-        if (params.predict_residues && !params.ligand_derived_point_labeling) { // TODO move
-            LoaderParams.ignoreLigandsSwitch = true
-        }
 
         switch (command) {
             case 'predict':       runPredict()
@@ -359,6 +386,8 @@ class Main implements Parametrized, Writable {
             case 'eval':          runEval()
                 break
             case 'analyze':       runAnalyze()
+                break
+            case 'print':         runPrint()
                 break
             case 'run':           runExperiment(args.unnamedArgs[0])
                 break
@@ -398,6 +427,10 @@ class Main implements Parametrized, Writable {
 
     static void main(String[] args) {
         ATimer timer = startTimer()
+
+        // force proper decimal formatting (. as separator) in printf
+        Locale.setDefault(new Locale("en", "US"))
+
         CmdLineArgs parsedArgs = CmdLineArgs.parse(args)
 
         if (parsedArgs.hasSwitch("v", "version")) {
@@ -423,10 +456,10 @@ class Main implements Parametrized, Writable {
             error = true
 
             if (e instanceof PrankException) {
-                writeError e.message
+                writeError e.message, null  // don't print stacktrace to stdout
                 log.error(e.message, e)
             } else {
-                writeError e.getMessage(), e // on unknown exception also print stack trace
+                writeError e.getMessage(), e  // on unknown exception also print stack trace
             }
 
             if (main!=null) {

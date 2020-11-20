@@ -1,27 +1,19 @@
 package cz.siret.prank.program.routines.results
 
-import cz.siret.prank.domain.Ligand
-import cz.siret.prank.domain.Pocket
-import cz.siret.prank.domain.PredictionPair
-import cz.siret.prank.domain.Protein
-import cz.siret.prank.domain.Residue
+import cz.siret.prank.domain.*
+import cz.siret.prank.domain.labeling.LabeledPoint
 import cz.siret.prank.domain.labeling.ResidueLabelings
 import cz.siret.prank.features.implementation.conservation.ConservationScore
 import cz.siret.prank.geom.Atoms
+import cz.siret.prank.prediction.pockets.criteria.*
 import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.domain.labeling.LabeledPoint
-import cz.siret.prank.prediction.pockets.criteria.DCA
-import cz.siret.prank.prediction.pockets.criteria.DCC
-import cz.siret.prank.prediction.pockets.criteria.DSO
-import cz.siret.prank.prediction.pockets.criteria.DSWO
-import cz.siret.prank.prediction.pockets.criteria.PocketCriterium
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.StringUtils
-import org.codehaus.groovy.runtime.StackTraceUtils
 
 import static cz.siret.prank.geom.Atoms.intersection
 import static cz.siret.prank.geom.Atoms.union
 import static cz.siret.prank.utils.Cutils.head
+import static cz.siret.prank.utils.Cutils.newSynchronizedList
 import static cz.siret.prank.utils.Formatter.*
 import static java.util.Collections.emptyList
 
@@ -35,20 +27,18 @@ import static java.util.Collections.emptyList
 @Slf4j
 class Evaluation implements Parametrized {
 
-    /** cutoff distance in A around ligand atoms that determins which SAS points cover the ligand */
-    final double LIG_SAS_CUTOFF = params.ligand_induced_volume_cutoff   // TODO consider separate value (e.g. 2)
+    /** cutoff distance in A around ligand atoms that determines which SAS points cover the ligand */
+    final double LIG_SAS_CUTOFF = params.ligand_induced_volume_cutoff  
 
     PocketCriterium standardCriterium = new DCA(4.0)
     List<PocketCriterium> criteria
-    List<ProteinRow> proteinRows = Collections.synchronizedList(new ArrayList<>())
-    List<LigRow> ligandRows = Collections.synchronizedList(new ArrayList<>())
-    List<PocketRow> pocketRows = Collections.synchronizedList(new ArrayList<>())
-    List<ResidueRow> residueRows = Collections.synchronizedList(new ArrayList<>())
+    List<ProteinRow> proteinRows = newSynchronizedList()
+    List<LigRow> ligandRows = newSynchronizedList()
+    List<PocketRow> pocketRows = newSynchronizedList()
+    List<ResidueRow> residueRows = newSynchronizedList()
 
-    List<Double> bindingScores = Collections.synchronizedList(new ArrayList<Double>());
-    List<Double> nonBindingScores = Collections.synchronizedList(new ArrayList<Double>());
-
-    
+    List<Double> bindingScores = newSynchronizedList()
+    List<Double> nonBindingScores = newSynchronizedList()
 
     int proteinCount
     int pocketCount
@@ -69,8 +59,6 @@ class Evaluation implements Parametrized {
     Evaluation() {
         this( getDefaultEvalCrtieria() )
     }
-
-
 
     void sort() {
         proteinRows = proteinRows.sort { it.name }
@@ -249,16 +237,16 @@ class Evaluation implements Parametrized {
             ligSASPointsCoveredCount += n_ligSasPointsCovered
 
             if (!protein.params.log_scores_to_file.isEmpty()) {
-                bindingScores.addAll(bindingScrs);
-                nonBindingScores.addAll(nonBindingScrs);
+                bindingScores.addAll(bindingScrs)
+                nonBindingScores.addAll(nonBindingScrs)
             }
         }
     }
 
     private List calcConservationStats(Protein protein, ProteinRow protRow) {
         ConservationScore score = protein.secondaryData.get(ConservationScore.CONSERV_SCORE_KEY) as ConservationScore
-        List<Double> bindingScrs = new ArrayList<>();
-        List<Double> nonBindingScrs = new ArrayList<>();
+        List<Double> bindingScrs = new ArrayList<>()
+        List<Double> nonBindingScrs = new ArrayList<>()
         if (score != null) {
             protRow.avgConservation = getAvgConservationForAtoms(protein.proteinAtoms, score)
             Atoms bindingAtoms = protein.proteinAtoms.cutoutShell(protein.allLigandAtoms, protein.params.ligand_protein_contact_distance)
@@ -270,7 +258,7 @@ class Evaluation implements Parametrized {
                 bindingScrs = bindingAtoms.distinctGroupsSorted.collect { it ->
                     score.getScoreForResidue(it
                             .getResidueNumber())
-                }.toList();
+                }.toList()
                 nonBindingScrs = nonBindingAtoms.distinctGroupsSorted.collect { it ->
                     score.getScoreForResidue(it.getResidueNumber())
                 }
@@ -330,8 +318,8 @@ class Evaluation implements Parametrized {
         ligSASPointsCount += eval.ligSASPointsCount
         ligSASPointsCoveredCount += eval.ligSASPointsCoveredCount
 
-        bindingScores.addAll(eval.bindingScores);
-        nonBindingScores.addAll(eval.nonBindingScores);
+        bindingScores.addAll(eval.bindingScores)
+        nonBindingScores.addAll(eval.nonBindingScores)
     }
 
     double calcSuccRate(int assesorNum, int tolerance) {
@@ -582,13 +570,13 @@ class Evaluation implements Parametrized {
         // TODO: move this somewhere else (getStats() shouldn't write to disk)
         if (!params.log_scores_to_file.empty) {
             PrintWriter w = new PrintWriter(new BufferedWriter(
-                    new FileWriter(params.log_scores_to_file, true)));
-            w.println("First line of the file");
-            nonBindingScores.forEach({ it -> w.print(it); w.print(' ') });
+                    new FileWriter(params.log_scores_to_file, true)))
+            w.println("First line of the file")
+            nonBindingScores.forEach({ it -> w.print(it); w.print(' ') })
             w.println()
-            bindingScores.forEach({ it -> w.print(it); w.print(' ') });
+            bindingScores.forEach({ it -> w.print(it); w.print(' ') })
             w.println()
-            w.close();
+            w.close()
         }
 
         return m
@@ -628,7 +616,7 @@ class Evaluation implements Parametrized {
 
         StringBuilder str = new StringBuilder()
         str << "tolerances:," + tolerances.collect{"[$it]"}.join(",") + "\n"
-        int i = 0;
+        int i = 0
         criteria.each {
             str << criteria[i].toString() + "," + succRates[i].collect{ formatPercent(it) }.join(",")
             str << "\n"

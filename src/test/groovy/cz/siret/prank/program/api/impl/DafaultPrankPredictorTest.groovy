@@ -53,9 +53,7 @@ class DafaultPrankPredictorTest {
     }
 
     private void doTestPredict(Path protFile) {
-        Prediction prediction = predictor.predict(
-                protFile
-        )
+        Prediction prediction = predictor.predict(protFile)
 
         String fname = protFile.fileName.toString()
         

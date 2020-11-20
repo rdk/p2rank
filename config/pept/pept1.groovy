@@ -14,7 +14,7 @@ import cz.siret.prank.program.params.Params
     dataset_base_dir = "../../p2rank-datasets2/peptides/sprint17"
 
     /**
-     * all output of the prorgam will be stored in subdirectores of this directory
+     * all output of the program will be stored in subdirectories of this directory
      * (set absolute path or path relative to install dir, null defaults to working dir)
      */
     output_base_dir = "../../p2rank-results-pept/${version}"
@@ -41,7 +41,7 @@ import cz.siret.prank.program.params.Params
     atom_table_feat_keep_sgn = true
     residue_table_features = ["RAx"]
     atom_table_features = ["atomicHydrophobicity"]
-    extra_features = ["chem","volsite","bfactor","protrusion","pmass","cr1pos","ss_atomic","ss_sas","ss_cloud","conserv_cloud","conserv_atomic","conserv_sas"]
+    features = ["chem","volsite","bfactor","protrusion","pmass","cr1pos","ss_atomic","ss_sas","ss_cloud","conserv_cloud","conserv_atomic","conserv_sas"]
 
     load_conservation = 1
     conservation_origin = 'pdb.seq.fasta'

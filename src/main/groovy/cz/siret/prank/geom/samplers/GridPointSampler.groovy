@@ -20,7 +20,7 @@ class GridPointSampler extends PointSampler implements Parametrized {
 
     private double CELL_EDGE = params.grid_cell_edge
 
-    public GridPointSampler(Protein protein) {
+    GridPointSampler(Protein protein) {
         super(protein)
     }
 
@@ -31,11 +31,11 @@ class GridPointSampler extends PointSampler implements Parametrized {
     Atoms samplePointsForPocket(Pocket pocket) {
 
         Atoms res = new Atoms()
-        Box box = Box.aroundAtoms(pocket.surfaceAtoms).enlarge(BOX_MARGIN)
+        Box box = Box.aroundAtoms(pocket.surfaceAtoms).withMargin(BOX_MARGIN)
 
         protein.proteinAtoms.withKdTreeConditional()
 
-        Atoms surroundingProteinAtoms = protein.proteinAtoms.cutoutBox(box.enlarge(MIN_DISTFROM_PROTEIN))
+        Atoms surroundingProteinAtoms = protein.proteinAtoms.cutoutBox(box.withMargin(MIN_DISTFROM_PROTEIN))
         Atoms realSurfaceAtoms = surroundingProteinAtoms.cutoutShell(pocket.surfaceAtoms, 1)
 
         if (pocket.surfaceAtoms.count != realSurfaceAtoms.count) {

@@ -5,6 +5,7 @@ import cz.siret.prank.utils.Formatter
 import cz.siret.prank.utils.PerfUtils
 import cz.siret.prank.utils.Sutils
 import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode
 
 /**
  * Parameter which represents s list of values (defined explicitly or as range and step)
@@ -21,16 +22,18 @@ class ListParam {
         this.values = values
     }
 
-    static ListParam parse(String name, String svals) {
+    static ListParam parse(String name, String value) {
         ListParam res = new ListParam(name, null)
 
-        def inner = svals.substring(1, svals.length()-1)
+        value = value.trim()
 
-        boolean list = svals.startsWith("(") || svals.contains(",")
+        def inner = value.substring(1, value.length()-1)
+
+        boolean list = value.startsWith("(") || value.contains(",")
 
         if (list) {
 
-            res.values = Sutils.splitKeepEmpty(inner, ",")
+            res.values = splitRespectInnerPatentheses(inner, ',' as char)
 
         } else { // range
 
@@ -59,13 +62,83 @@ class ListParam {
         return res
     }
 
-    static boolean isListArgValue(String value) {
-        ( value.startsWith("[") && value.contains(":") ) || ( value.startsWith("(") && value.contains(",") )
+    /**
+     * Recursively respects inner parentheses.
+     * Includes empty tokens.
+     *
+     * @param str
+     * @param delimiter
+     * @return
+     */
+    static List<String> splitRespectInnerPatentheses(String str, char delimiter) {
+        List<String> res = new ArrayList<>()
+
+        int i = 0
+        int tokenStart = 0
+        while (i < str.size()) {
+            if (str.charAt(i).equals(delimiter)) {
+                res.add str.substring(tokenStart, i)
+                tokenStart = i + 1
+            }
+            if (str.charAt(i).equals('(' as char)) {
+                i = findClosingParenthese(str, i)
+            }
+            i++
+        }
+        if (tokenStart <= str.size()) {
+            res.add str.substring(tokenStart, str.size())
+        }
+        return res
+    }
+
+    /**
+     * @return index of a closing ')' for opening '(' at start (recursively respects inner parentheses) or str.length if not found
+     */
+    static int findClosingParenthese(String str, int start) {
+        int i = start + 1
+        while (i < str.size()) {
+            if (str.charAt(i).equals(')' as char)) {
+                return i
+            }
+            if (str.charAt(i).equals('(' as char)) {
+                i = findClosingParenthese(str, i)
+            }
+            i++
+        }
+        return str.length()
+    }
+
+    /**
+     * TODO improve to use MetaClass info instead of type of current value
+     * @param name
+     * @return
+     */
+    @CompileStatic(TypeCheckingMode.SKIP)
+    static boolean isListParam(String name) {
+        try {
+            return Params.inst."$name" instanceof List
+        } catch (Exception e) {
+            // skip for cmd line params that are not attributes of Params, like "-t"
+            return false
+        }
+    }
+
+    static boolean isIterativeArgValue(String name, String value) {
+        value = value.trim()
+
+        if (value.startsWith("[") && value.contains(":")) return true
+
+        if (isListParam(name)) {  // for list params we want to see list of lists
+            value = value.replace(' ', '')
+            return value.startsWith("((")
+        } else {
+            value.startsWith("(")
+        }
     }
 
     static List<ListParam> parseListArgs(CmdLineArgs args) {
         args.namedArgs
-                .findAll { isListArgValue(it.value) }
+                .findAll { isIterativeArgValue(it.name, it.value) }
                 .collect { parse(it.name, it.value) }
                 .toList()
     }

@@ -7,7 +7,7 @@ import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
 
 /**
- * Simple single value SAS feature that adds "ptortusion" of protein surface to SAS feature vector.
+ * Simple single value SAS feature that adds "protrusion" of protein surface to SAS feature vector.
  * Protrusion is simply a number of protein atoms in variables.protrusion_radius around SAS point.
  */
 @CompileStatic
@@ -22,7 +22,7 @@ class ProtrusionFeature extends SasFeatureCalculator implements Parametrized {
     double[] calculateForSasPoint(Atom sasPoint, SasFeatureCalculationContext context) {
 
         // brute force ... O(N*M) where N is number of atoms and M number of SAS points
-        // deepLayer conmtains often nearly all of the protein atoms
+        // deepLayer contains often nearly all of the protein atoms
         // and this is one of the most expensive part od the algorithm when making predictions
         // (apart from classification and SAS surface generation)
         // better solution would be to build triangulation over protein atoms or to use KD-tree with range search

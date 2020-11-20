@@ -10,7 +10,7 @@ class DatasetCachedLoader implements Parametrized {
 
     static Map<String, Dataset> cache = new HashMap<>()
 
-    static loadDataset(String datasetFile) {
+    static Dataset loadDataset(String datasetFile) {
 
         Dataset res
 

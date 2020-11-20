@@ -1,7 +1,9 @@
 package cz.siret.prank.geom
 
+import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
 
+@CompileStatic
 class Box {
     Atom min = new Point()
     Atom max = new Point()
@@ -27,6 +29,11 @@ class Box {
         }
     }
 
+    private Box(Atom min, Atom max) {
+        this.min = min
+        this.max = max
+    }
+
     private Box() {}
 
     double getWx() {
@@ -47,17 +54,32 @@ class Box {
         return new Point(x,y,z)
     }
 
-    Box enlarge(double add) {
-        Box res = new Box()
-        for (i in 0..2) {
-            res.max.coords[i] = this.max.coords[i]+add
-            res.min.coords[i] = this.min.coords[i]-add
-        }
-        return res
+    Box copy() {
+        return new Box(Point.copyOf(min), Point.copyOf(max))
     }
 
-    public static Box aroundAtoms(Atoms atoms) {
+    Box withMargin(double margin) {
+        return withMargins(margin, margin, margin)
+    }
+
+    Box withMargins(double mx, double my, double mz) {
+        return boundedBy(
+            Point.of(min.x - mx, min.y - my, min.z - mz),
+            Point.of(max.x + mx, max.y + my, max.z + mz)
+        )
+    }
+
+
+    boolean contains(Atom a) {
+        return Struct.isInBox(a, this)
+    }
+
+    static Box aroundAtoms(Atoms atoms) {
         return new Box(atoms.list)
+    }
+
+    static Box boundedBy(Atom min, Atom max) {
+        return new Box(min, max)
     }
 
     String toString() {

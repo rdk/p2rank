@@ -25,7 +25,7 @@ interface FeatureCalculator {
     Type getType()
 
     /**
-     * Name serves as a unique key that is then used in Params. Add this key to Params.extra_features to enable this feature.
+     * Name serves as a unique key that is then used in Params. Add this key to Params.features to enable this feature.
      */
     String getName()
 
@@ -44,14 +44,22 @@ interface FeatureCalculator {
     void preProcessProtein(Protein protein, ProcessedItemContext context)
 
     /**
+     * (Optionally) perform post processing on the whole protein.
+     * @param protein
+     */
+    void postProcessProtein(Protein protein)
+
+    /**
+     * Must return array of the same length for every atom and protein.
      *
      * @param proteinSurfaceAtom
      * @param protein
-     * @return
+     * @return array of values, length must be the same as length of the header
      */
     double[] calculateForAtom(Atom proteinSurfaceAtom, AtomFeatureCalculationContext context)
 
     /**
+     * Must return array of the same length for every atom and protein.
      *
      * @param sasPoint one of the points on the Protein's SAS (Solvent Accessible Surface)
      * @param context local context for feature calculation that corresponds to the given SAS point
@@ -60,12 +68,13 @@ interface FeatureCalculator {
     double[] calculateForSasPoint(Atom sasPoint, SasFeatureCalculationContext context)
 
 
-    double[] calculateForResidue(Residue residue, ResidueFeatureCalculationContext context)
-
     /**
-     * (Optionally) perform post processing on the whole protein.
-     * @param protein
+     * Must return array of the same length for every atom and protein.
+     *
+     * @param residue
+     * @param context
+     * @return array of values, length must be the same as length of the header
      */
-    void postProcessProtein(Protein protein)
+    double[] calculateForResidue(Residue residue, ResidueFeatureCalculationContext context)
 
 }

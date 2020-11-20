@@ -32,3 +32,4 @@ out/*
 *.stackdump
 
 venv/
+tmp

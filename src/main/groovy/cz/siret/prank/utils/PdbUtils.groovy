@@ -1,12 +1,11 @@
 package cz.siret.prank.utils
 
-
+import cz.siret.prank.program.PrankException
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.*
 import org.biojava.nbio.structure.io.FileParsingParameters
 import org.biojava.nbio.structure.io.PDBFileParser
-import org.biojava.nbio.structure.io.PDBFileReader
 import org.biojava.nbio.structure.io.mmcif.ChemCompGroupFactory
 import org.biojava.nbio.structure.io.mmcif.ReducedChemCompProvider
 
@@ -18,8 +17,6 @@ import static cz.siret.prank.geom.Struct.getAuthorId
 @Slf4j
 @CompileStatic
 class PdbUtils {
-
-    private static final int BUFFER_SIZE = 5*1024*1024;
 
     static final FileParsingParameters PARSING_PARAMS = new FileParsingParameters()
     static {
@@ -50,23 +47,21 @@ class PdbUtils {
 
         log.info "loading file [$file]"
 
-        if (file==null) throw new IllegalArgumentException("file name not provided")
-
-        Structure struct
-        if (file.endsWith(".pdb")) {
-            // load with buffer
-            PDBFileParser pdbpars = new PDBFileParser();
-            pdbpars.setFileParsingParameters(parsingParams);
-            InputStream inStream = new BufferedInputStream(new FileInputStream(file), BUFFER_SIZE)
-            struct = pdbpars.parsePDBFile(inStream)
-        } else {
-            // for tar.gz files
-            PDBFileReader pdbReader = new PDBFileReader()
-            pdbReader.setFileParsingParameters(parsingParams)
-            struct = pdbReader.getStructure(file)
+        if (file==null) {
+            throw new IllegalArgumentException("file name not provided")
         }
 
-        return struct
+        InputStream inputs = Futils.inputStream(file)
+        try {
+            PDBFileParser pdbpars = new PDBFileParser()
+            pdbpars.setFileParsingParameters(parsingParams)
+            return pdbpars.parsePDBFile(inputs)
+        } catch (Exception e) {
+            throw new PrankException("Failed to load structure from '$file'", e)
+        } finally {
+            inputs.close()
+        }
+    
     }
 
     static Structure loadFromString(String pdbText)  {
@@ -122,23 +117,6 @@ class PdbUtils {
         return correctResidueCode(getResidueCode(group))
     }
 
-    /**
-     *
-     * @return  THR -> Thr
-     */
-    static String normAAcode(String aa) {
-        if (aa.isEmpty()) {
-            return aa;
-        }
-        if (aa.length()!=3) {
-            log.warn " Suspicious AA code: " + aa
-        }
-
-        String a = aa.substring(0, 1).toUpperCase()
-        String b = aa.substring(1, aa.length()).toLowerCase()
-        return a + b
-    }
-
     static boolean trySetElement(Atom a, String code) {
         Element ele
         try {
@@ -147,10 +125,12 @@ class PdbUtils {
             // nothing, biojava just doesnt know the element
         }
 
-        if (ele!=null) {
+        if (ele != null) {
             //log.warn "correcting atom {} to element {}", a.name, ele
             a.setElement(ele)
+            return true
         }
+        return false
     }
 
     static void correctBioJavaElement(Atom a) {
@@ -166,8 +146,6 @@ class PdbUtils {
             }
         }
     }
-
-
 
     /**
      * The code is based on StructureTools.getReducedStructure(String, String) from BioJava 5.3.0

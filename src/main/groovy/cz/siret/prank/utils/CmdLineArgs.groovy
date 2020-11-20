@@ -1,6 +1,7 @@
 package cz.siret.prank.utils
 
 import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode
 
 /**
  * Represents parsed command line arguments
@@ -8,18 +9,21 @@ import groovy.transform.CompileStatic
  * prog unnamedArg -switch1 -arg1 val1 -switch2 -arg2 val2
  * </p>
  */
+@CompileStatic
 class CmdLineArgs {
-
-    boolean hasListParams = false
 
     static class NamedArg {
         String name
         String value
 
-        public String toString() {
+        String toString() {
             return name + "=" + value
         }
     }
+
+//===========================================================================================================//
+
+    boolean hasListParams = false
 
     String[] argList
 
@@ -30,11 +34,12 @@ class CmdLineArgs {
     /** arguments with -(dash) prefix but no followup value */
     List<String> switches = new ArrayList<>()
 
-    /** arguments without -(dash) that are not values of any dashed argument */
+    /** arguments without -(dash) prefix that are not values of any dashed argument */
     List<String> unnamedArgs = new ArrayList<>()
 
+//===========================================================================================================//
 
-    public static CmdLineArgs parse(String[] args) {
+    static CmdLineArgs parse(String[] args) {
         return new CmdLineArgs(args)
     }
 
@@ -96,15 +101,16 @@ class CmdLineArgs {
         return false
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     void applyToObject(Object obj) {
-        obj.properties.keySet().each { String propName ->
+        for (String propName : obj.properties.keySet()) {
             if (namedArgMap.containsKey(propName)) {
 
                 if (obj."$propName" instanceof String || obj."$propName" == null) {
                     obj."$propName" = get(propName)
                 } else {
                     Class propClass = obj."$propName".class
-                    obj."$propName" = propClass.valueOf( get(propName) ) // for enums
+                    obj."$propName" = propClass.valueOf(get(propName)) // for enums
                 }
             } else if (switches.contains(propName)) {
                 obj."$propName" = true
@@ -122,4 +128,5 @@ class CmdLineArgs {
     String toString() {
         return Sutils.toStr(this)
     }
+    
 }

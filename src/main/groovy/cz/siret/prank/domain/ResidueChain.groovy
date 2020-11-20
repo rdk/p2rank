@@ -1,11 +1,12 @@
 package cz.siret.prank.domain
 
 import cz.siret.prank.geom.Atoms
-import org.codehaus.groovy.runtime.StringGroovyMethods
+import groovy.transform.CompileStatic
 
 /**
  *
  */
+@CompileStatic
 class ResidueChain {
 
 

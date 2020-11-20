@@ -7,12 +7,14 @@ import cz.siret.prank.program.params.Params
 
     model = "conservation.model"
 
-    extra_features = ["chem","volsite","protrusion","bfactor","conservation"]
+    features = ["chem","volsite","protrusion","bfactor","conservation"]
 
     load_conservation = true
 
     load_conservation_paths = true
 
     conservation_origin = "pdb.seq.fasta"
+
+    classifier = "FasterForest"
     
 }

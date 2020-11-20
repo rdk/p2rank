@@ -19,7 +19,7 @@ class RandomVornoiRescorer extends PocketRescorer implements Parametrized  {
 
         prediction.pockets.each { Pocket pocket ->
 
-            int positiveVC = pocket.vornoiCenters.list.collect { Atom vc ->
+            int positiveVC = pocket.vornoiCenters.items.collect { Atom vc ->
 
                 double closestLigandDistance = ligandAtoms.dist(vc)
 

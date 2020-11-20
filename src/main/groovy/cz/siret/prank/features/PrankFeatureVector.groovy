@@ -3,9 +3,6 @@ package cz.siret.prank.features
 import cz.siret.prank.features.api.AtomFeatureCalculationContext
 import cz.siret.prank.features.generic.GenericHeader
 import cz.siret.prank.features.generic.GenericVector
-import cz.siret.prank.features.tables.PropertyTable
-import cz.siret.prank.program.params.Params
-import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.PdbUtils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
@@ -16,13 +13,7 @@ import org.biojava.nbio.structure.Atom
  */
 @Slf4j
 @CompileStatic
-public class PrankFeatureVector extends FeatureVector implements Cloneable {
-
-    static final PropertyTable aa5FactorsTable   = PropertyTable.parse(Futils.readResource("/tables/aa-5factors.csv"))
-    static final PropertyTable aa5PropensitiesTable   = PropertyTable.parse(Futils.readResource("/tables/aa-propensities.csv"))
-
-    static final PropertyTable aaPropertyTable   = aa5FactorsTable.join(aa5PropensitiesTable)
-    static final PropertyTable atomPropertyTable = PropertyTable.parse(Futils.readResource("/tables/atomic-properties.csv"))
+class PrankFeatureVector extends FeatureVector implements Cloneable {
 
     public GenericVector valueVector
 
@@ -36,7 +27,7 @@ public class PrankFeatureVector extends FeatureVector implements Cloneable {
 
     @Override
     double[] getArray() {
-        return valueVector.@data
+        return valueVector.data
     }
 
     @Override
@@ -51,70 +42,42 @@ public class PrankFeatureVector extends FeatureVector implements Cloneable {
     }
 
 
-    public static PrankFeatureVector forAtom(Atom atom, PrankFeatureExtractor extractor) {
-        String residueCode = PdbUtils.normAAcode(PdbUtils.getCorrectedAtomResidueCode(atom))
+    /**
+     * todo move to PrankFeatureExtractor
+     * @param atom
+     * @param extractor
+     * @return
+     */
+    static PrankFeatureVector forAtom(Atom atom, PrankFeatureExtractor extractor) {
+        String residueCode = PdbUtils.getCorrectedAtomResidueCode(atom)
 
         PrankFeatureVector p = new PrankFeatureVector()
-        p.valueVector = new GenericVector(extractor.headerAdditionalFeatures)
-        p.setFromResidueAtom(atom, residueCode, extractor)
+        p.valueVector = new GenericVector(extractor.calculatedFeatureVectorHeader)
+        p.calculateAtomFeatures(atom, residueCode, extractor)
 
         return p
     }
 
     /**
+     * todo move to PrankFeatureExtractor
+     * 
+     * Calculates Atom features (AtomFeatureCalculator) for given atom
      *
-     * @param residueCode 3 letter residue code (e.g. "Ala")
+     * @param residueCode 3 letter residue code (e.g. "ALA")
      */
-    private void setFromResidueAtom(Atom atom, String residueCode, PrankFeatureExtractor extractor) {
+    private void calculateAtomFeatures(Atom atom, String residueCode, PrankFeatureExtractor extractor) {
 
-        double ATOM_POW = Params.INSTANCE.@atom_table_feat_pow
-        boolean KEEP_SGN = Params.INSTANCE.@atom_table_feat_keep_sgn
-
-        for (String property : extractor.atomTableFeatures) {
-            double val = getAtomTableValue(atom, property)
-
-            double pval = val
-            if (ATOM_POW != 1d) {
-                if (KEEP_SGN) {
-                    pval = Math.signum(val) * Math.abs( Math.pow(val, ATOM_POW) )
-                } else {
-                    pval = Math.pow(val, ATOM_POW)
-                }
-            }
-
-            //log.info "$val^$ATOM_POW = $pval"
-
-            valueVector.set(property, pval)
-        }
-
-        for (String property : extractor.residueTableFeatures) {
-            double val = getResidueTableValue(atom, property)
-
-            valueVector.set(property, val)
-        }
-
-        // Calculate extra atom features
+        // Calculate atom features
 
         AtomFeatureCalculationContext context = new AtomFeatureCalculationContext(extractor.protein, residueCode)
+
         for (FeatureSetup.Feature feature : extractor.featureSetup.enabledAtomFeatures) {
             double[] values = feature.calculator.calculateForAtom(atom, context)
+
+            feature.checkCorrectValuesLength(values)
             valueVector.setValues(feature.startIndex, values)
         }
 
-    }
-
-    private static Double getAtomTableValue(Atom atom, String property) {
-        String atomName = PdbUtils.getCorrectedAtomResidueCode(atom) + "." + atom.name
-        Double val = atomPropertyTable.getValue(atomName, property)
-
-        //log.info "atom table value ${atomName}.$property = $val"
-
-        return val==null ? 0d : val
-    }
-
-    private static Double getResidueTableValue(Atom atom, String property) {
-        Double val = aaPropertyTable.getValue(PdbUtils.getCorrectedAtomResidueCode(atom), property)
-        return val==null ? 0d : val
     }
 
     /**

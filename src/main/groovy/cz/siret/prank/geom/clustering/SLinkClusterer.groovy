@@ -4,7 +4,7 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
 /**
- *  Singe lincake clusterer.
+ *  Singe linkage clusterer.
  *
  *  TOTO: this is O(n^3), implement SLink algorithm
  */
@@ -59,7 +59,7 @@ class SLinkClusterer<E> implements Clusterer<E> {
         if (elements.empty) return Collections.emptyList()
         if (elements.size()==1) return new ArrayList<List<E>>([elements])
 
-        E[] els = (E[]) elements.toArray()
+        E[] els = elements.toArray() as E[]
         int N = els.length
 
         Cluster<E>[] clust = new Cluster[N]
@@ -112,7 +112,7 @@ class SLinkClusterer<E> implements Clusterer<E> {
         log.info "clusters: " + distinctClust.toListString()
         log.info "clusters together: " + distinctClust*.size.sum(0) + " / " + elements.size()
 
-        return (distinctClust*.list).toList()
+        return (distinctClust*.list).toList() as List<List<E>>
     }
 
 }

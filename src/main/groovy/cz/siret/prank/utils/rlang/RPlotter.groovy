@@ -3,6 +3,8 @@ package cz.siret.prank.utils.rlang
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.Sutils
+import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode
 import groovyx.gpars.GParsPool
 
 import static cz.siret.prank.utils.Futils.delete
@@ -10,6 +12,7 @@ import static cz.siret.prank.utils.Futils.delete
 /**
  * produces R code for generating plots
  */
+@CompileStatic
 class RPlotter implements Parametrized {
 
     RExecutor rexec = new RExecutor()
@@ -37,10 +40,11 @@ class RPlotter implements Parametrized {
         plot1DVariables(header, threads)
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     void plot1DVariables(List<String> variables, int threads) {
         GParsPool.withPool(threads) {
             variables.eachParallel {
-                plot1DVariable(it)
+                plot1DVariable(it as String)
             }
         }
 
@@ -75,13 +79,12 @@ class RPlotter implements Parametrized {
 
             p + geom_bar(stat="identity", position = 'dodge', alpha = 3/4, color="gray20") + scale_fill_gradientn(colours=r) + theme(axis.text.x = element_text(angle = 340, hjust = 0))
 
-            ggsave(file=paste(yy,".png"), dpi=$dpi)
+            fname <- paste(yy,".png", sep="")
+            ggsave(file=fname, dpi=$dpi)
         """
-        //     +  geom_line(size = 1, color="gray40")  + geom_point(shape=18, size=4, color="gray20")
-        // dpi=150
+        // to add line plot: p  +  geom_line(size = 1, color="gray40") + geom_point(shape=18, size=4, color="gray20")
 
         rexec.runCode(rcode, name, outdir)
-
     }
 
     /**
@@ -143,7 +146,8 @@ class RPlotter implements Parametrized {
                           main = "$label",      # heat map title
                           cellnote = mat_data,  # same data set for cell labels
                           notecol="black",      # change font color of cell labels to black
-                          notecex=0.7,          # cell note font size multiplier 
+                          notecex=0.9,          # cell note font size multiplier 
+                          key=FALSE,            # don't render color legend
                           density.info="none",  # turns off density plot inside color legend
                           trace="none",         # turns off trace lines inside the heat map
                           # margins =c(8,8),    # widens margins around plot

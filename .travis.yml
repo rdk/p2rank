@@ -1,6 +1,15 @@
 language: groovy
 
-dist: trusty
+arch: amd64    # routes to a full VM
+os: 
+  - linux
+  - osx
+dist: trusty  
+
+jobs:
+  include:
+    - os: osx
+      osx_image: xcode9.3
 
 env:
   global:
@@ -9,22 +18,17 @@ env:
 jdk:
   - oraclejdk8
   - oraclejdk11
-  - oraclejdk12
-  - oraclejdk13
   - oraclejdk14
-  - oraclejdk-ea
   - openjdk8
   - openjdk11
-  - openjdk12
-  - openjdk13
   - openjdk14
   - openjdk15
-  - openjdk-ea
+
   
 matrix:
   allow_failures:
-    - jdk: openjdk-ea
-    - jdk: oraclejdk-ea
+    - os: osx
+
 
 script:
   - java -version

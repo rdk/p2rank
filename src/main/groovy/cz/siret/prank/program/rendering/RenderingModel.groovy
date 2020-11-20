@@ -8,10 +8,11 @@ import cz.siret.prank.program.params.Parametrized
 import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
 
-import java.awt.Color
+import java.awt.*
+import java.util.List
 
 /**
- *
+ * Configuration for rendering single pymol visualization.
  */
 @TupleConstructor
 @CompileStatic
@@ -30,13 +31,6 @@ class RenderingModel implements Parametrized {
 
     Style style = new Style()
 
-    /**
-     * generate new structure (pdb) file from protein instead of reusing proteinFile
-     */
-    boolean getGenerateProteinFile() {
-        params.vis_generate_proteins
-    }
-
     static class Style {
         //Color defaultProteinColor
 
@@ -44,7 +38,7 @@ class RenderingModel implements Parametrized {
         Color negativeResiduesColor = new Color(149,167,224)
 
         Color tpColor = new Color(100, 104, 142)  // blue
-        Color fpColor = new Color(246, 147, 150)    // magenta
+        Color fpColor = new Color(246, 147, 150)  // magenta
         Color fnColor = new Color(109, 186, 192)  // cyan
 
         //Color tpColor = Color.BLUE     

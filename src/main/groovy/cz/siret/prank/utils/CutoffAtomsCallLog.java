@@ -32,8 +32,6 @@ public class CutoffAtomsCallLog {
         times[atomsSize] += time;
 
         returned[atomsSize] += resultSize;
-
-
     }
 
     public void printOut(String fnamePrefix) {
@@ -43,12 +41,10 @@ public class CutoffAtomsCallLog {
         StringBuilder ss = new StringBuilder();
         ss.append("atoms,calls,sum_time,avg_returned\n");
         for (int i = 0; i <= MAX; ++i) {
-            double avgret = (ncalls[i] == 0) ? 0 : returned[i] / ncalls[i];
+            double avgret = (ncalls[i] == 0) ? 0 : ((double)returned[i]) / ncalls[i];
             ss.append("" + (i) + "," + ncalls[i] + "," + times[i] + "," + PerfUtils.formatDouble(avgret) + "\n");
         }
         Futils.writeFile(fnamePrefix + "_stats.csv", ss.toString());
-
     }
-
 
 }

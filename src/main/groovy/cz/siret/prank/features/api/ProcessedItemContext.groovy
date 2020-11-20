@@ -1,10 +1,12 @@
 package cz.siret.prank.features.api
 
 import cz.siret.prank.domain.Dataset
+import groovy.transform.CompileStatic
 
 /**
  *  Context for processing a dataset item
  */
+@CompileStatic
 class ProcessedItemContext {
 
     Dataset.Item item

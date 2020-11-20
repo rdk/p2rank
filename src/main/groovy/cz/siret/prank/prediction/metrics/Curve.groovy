@@ -4,12 +4,6 @@ package cz.siret.prank.prediction.metrics
  */
 class Curve {
 
-//    List<Point> points = new ArrayList<>()
-//
-//    static class Point {
-//        double x, y
-//    }
-
     double[] xx
     double[] yy
 

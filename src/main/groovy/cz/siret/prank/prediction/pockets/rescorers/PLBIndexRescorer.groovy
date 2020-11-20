@@ -3,7 +3,7 @@ package cz.siret.prank.prediction.pockets.rescorers
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Prediction
 import cz.siret.prank.features.api.ProcessedItemContext
-import cz.siret.prank.features.tables.PropertyTable
+import cz.siret.prank.features.implementation.table.PropertyTable
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.PdbUtils
 import cz.siret.prank.utils.Sutils
@@ -13,7 +13,7 @@ import org.biojava.nbio.structure.Atom
 import org.biojava.nbio.structure.Group
 
 /**
- * implemention of PLB index from
+ * implementation of PLB index from
  * Soga et al. 2007 "Use of Amino Acid Composition to Predict Ligand-Binding Sites"
  */
 @Slf4j
@@ -64,7 +64,7 @@ class PLBIndexRescorer extends PocketRescorer {
             double x = p.PLBi - mu
             sig += x*x
         }
-        sig = Math.sqrt(sig/M)
+        sig = Math.sqrt((double)sig/M)
 
         for (ExtPocket p : extPockets) {
             p.ZPLB = (p.PLBi - mu) / sig

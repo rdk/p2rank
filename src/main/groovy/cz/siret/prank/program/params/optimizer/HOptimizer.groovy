@@ -38,7 +38,7 @@ abstract class HOptimizer {
      * Maximize the objective function value
      * @return best step
      */
-    public abstract HStep optimize(HObjectiveFunction function);
+    abstract HStep optimize(HObjectiveFunction function);
 
 
 }

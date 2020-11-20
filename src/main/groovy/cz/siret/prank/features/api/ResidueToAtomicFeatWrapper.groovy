@@ -2,11 +2,13 @@ package cz.siret.prank.features.api
 
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.domain.Residue
+import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
 
 /**
  * Maps a residue features to atom feature
  */
+@CompileStatic
 class ResidueToAtomicFeatWrapper extends AtomFeatureCalculator {
 
     final ResidueFeatureCalculator delegate

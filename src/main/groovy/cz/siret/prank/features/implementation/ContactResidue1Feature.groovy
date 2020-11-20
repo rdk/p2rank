@@ -5,7 +5,6 @@ import cz.siret.prank.domain.Residue
 import cz.siret.prank.features.api.SasFeatureCalculationContext
 import cz.siret.prank.features.api.SasFeatureCalculator
 import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.utils.PdbUtils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
@@ -36,7 +35,6 @@ class ContactResidue1Feature extends SasFeatureCalculator implements Parametrize
 
     @Override
     double[] calculateForSasPoint(Atom sasPoint, SasFeatureCalculationContext context) {
-
 
         Residue res = context.protein.residues.findNearest(sasPoint)
         AA aa = res?.aa

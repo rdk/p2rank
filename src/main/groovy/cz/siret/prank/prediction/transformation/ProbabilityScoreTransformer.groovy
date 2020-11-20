@@ -126,13 +126,13 @@ class ProbabilityScoreTransformer extends ScoreTransformer implements Writable {
 
 
     @Override
-    public String toString() {
+    String toString() {
         return "ProbabilityScoreTransformer{" +
                 "min=" + min +
                 ", max=" + max +
                 ", nbins=" + nbins +
                 ", tp_cumul_hist=" + Arrays.toString(tp_cumul_hist) +
                 ", fp_cumul_hist=" + Arrays.toString(fp_cumul_hist) +
-                '}';
+                '}'
     }
 }

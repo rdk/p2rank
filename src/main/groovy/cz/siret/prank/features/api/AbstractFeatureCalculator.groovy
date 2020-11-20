@@ -13,6 +13,11 @@ abstract class AbstractFeatureCalculator implements FeatureCalculator {
 
     /**
      * Default implementation for single value features. Override for multi-value features.
+     *
+     * Multi value features must return header.
+     * Elements of the header should be alpha-numeric strings without whitespace.
+     * Header must have the same length as results of calculateForAtom().
+     * calculateForAtom() must return array of the same length for every atom and protein.
      */
     @Override
     List<String> getHeader() {

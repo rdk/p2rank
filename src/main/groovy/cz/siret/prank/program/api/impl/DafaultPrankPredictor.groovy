@@ -7,7 +7,7 @@ import cz.siret.prank.program.Main
 import cz.siret.prank.program.api.PrankPredictor
 import cz.siret.prank.program.params.ConfigLoader
 import cz.siret.prank.program.params.Params
-import cz.siret.prank.program.routines.PredictRoutine
+import cz.siret.prank.program.routines.predict.PredictRoutine
 import groovy.transform.CompileStatic
 
 import java.nio.file.Path
@@ -21,18 +21,18 @@ class DafaultPrankPredictor extends PrankPredictor {
     private Params params = Params.INSTANCE
     private Path installDir
 
-    public DafaultPrankPredictor(Path installDir) {
+    DafaultPrankPredictor(Path installDir) {
         this.installDir = installDir
         Params.inst.installDir = installDir // TODO refactor
     }
 
     @Override
-    public Params getParams() {
-        return params;
+    Params getParams() {
+        return params
     }
 
     @Override
-    public void loadConfig(Path configFile) {
+    void loadConfig(Path configFile) {
         ConfigLoader.overrideConfig(params, configFile.toFile())
     }
 
@@ -64,8 +64,8 @@ class DafaultPrankPredictor extends PrankPredictor {
      * @return prediction object containing structure, predicted pockets and labeled points
      */
     @Override
-    public Prediction runPrediction(Path proteinFile, Path outDir, ProcessedItemContext context) {
-        Dataset dataset = Dataset.createSingleFileDataset(proteinFile.toString(), context);
+    Prediction runPrediction(Path proteinFile, Path outDir, ProcessedItemContext context) {
+        Dataset dataset = Dataset.createSingleFileDataset(proteinFile.toString(), context)
 
         dataset.cached = true
         params.fail_fast = true

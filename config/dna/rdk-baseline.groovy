@@ -9,7 +9,7 @@ import cz.siret.prank.program.params.Params
     dataset_base_dir = "../../p2rank-data-dna/"
 
     /**
-     * all output of the program will be stored in subdirectores of this directory
+     * all output of the program will be stored in subdirectories of this directory
      * (set absolute path or path relative to install dir, null defaults to working dir)
      */
     output_base_dir = "../../p2rank-results-dna/"
@@ -87,7 +87,7 @@ import cz.siret.prank.program.params.Params
 
     residue_table_features = ["RAx"]
     atom_table_features = ["atomicHydrophobicity"]
-    extra_features = ["chem","volsite","bfactor","protrusion","pmass","cr1pos","ss_atomic","ss_sas","ss_cloud"]
+    features = ["chem","volsite","bfactor","protrusion","pmass","cr1pos","ss_atomic","ss_sas","ss_cloud"]
 
     // Feature params
 

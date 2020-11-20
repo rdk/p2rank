@@ -3,6 +3,7 @@ package cz.siret.prank.program.params
 import cz.siret.prank.program.Main
 import cz.siret.prank.utils.CmdLineArgs
 import cz.siret.prank.utils.Sutils
+import groovy.transform.AutoClone
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
@@ -10,7 +11,7 @@ import groovy.util.logging.Slf4j
 /**
  * Holds all global parameters of the program.
  *
- * This file is also main source of parameter description/documenmtation.
+ * This file is also main source of parameter description/documentation.
  *
  * Parameter annotations:
  * @RuntimeParam            ... Parameters related to program execution.
@@ -18,11 +19,12 @@ import groovy.util.logging.Slf4j
  *                              It is important that those parameters stay the same when training a model and then using it for inference.
  * @ModelParam // training  ... Model params used only in training phase but not during inference.
  */
-@CompileStatic
 @Slf4j
+@AutoClone
+@CompileStatic
 class Params {
 
-    public static final Params INSTANCE = new Params()
+    public static Params INSTANCE = new Params()
 
     public static Params getInst() {
         return INSTANCE
@@ -74,6 +76,12 @@ class Params {
     int r_threads = 2
 
     /**
+     * Generate plots for each metric with R when doing grid optimization (ploop command) on 1 or 2 variables
+     */
+    @RuntimeParam
+    boolean r_generate_plots = true
+
+    /**
      * Generate standard deviation plot for each statistic when generating R plots
      */
     @RuntimeParam
@@ -99,23 +107,53 @@ class Params {
      * List of general calculated features
      */
     @ModelParam
-    List<String> extra_features = ["protrusion","bfactor"]
+    List<String> features = ["chem", "protrusion", "bfactor", "atom_table", "residue_table"]
 
     /**
-     * List of features that come directly from atom type table
+     * List of features that come directly from atom type tables
      * see atomic-properties.csv
      */
     @ModelParam
     List<String> atom_table_features = ["apRawValids","apRawInvalids","atomicHydrophobicity"]
 
     /**
-     * List of features that come directly from residue table
+     * List of features that come directly from residue tables
      */
     @ModelParam
     List<String> residue_table_features = []
 
     /**
-     * Exponent applied to all atom table features
+     * List of feature filters that are applied to individual features (i.e. sub-features).
+     * If empty all individual features are used.
+     * Filters are applied sequentially.
+     *
+     * Examples of individual filters:
+     * <ul>
+     *   <li> "*" - include all
+     *   <li> "chem.*" - include all with prefix "chem."
+     *   <li> "-chem.*" - exclude all with prefix "chem."
+     *   <li> "chem.hydrophobicity" - include particular sub-feature
+     *   <li> "-chem.hydrophobicity" - exclude particular sub-feature
+     * </ul>
+     *
+     * If the first filter in feature_filters starts with "-", include-all filter ("*") is implicitly applied to the front.
+     *
+     * Examples of full feature_filters values:
+     * <ul>
+     *   <li> [] - include all
+     *   <li> ["*"] - include all
+     *   <li> ["*","-chem.*"] - include all except those with prefix "chem."
+     *   <li> ["-chem.*"] - include all except those with prefix "chem."
+     *   <li> ["-chem.*","chem.hydrophobicity"] - include all except those with prefix "chem.", but include "chem.hydrophobicity"
+     *   <li> ["chem.hydrophobicity"] - include only "chem.hydrophobicity"
+     *   <li> ["chem.*","-chem.hydrophobicity","-chem.atoms"] - include only those with prefix "chem.", except "chem.hydrophobicity" and "chem.atoms"
+     * </ul>
+     */
+    @ModelParam
+    List<String> feature_filters = []
+
+    /**
+     * Exponent applied to all atom table features // TODO change default to 1
      */
     @ModelParam
     double atom_table_feat_pow = 2
@@ -230,15 +268,15 @@ class Params {
     String conservation_origin = "hssp"
 
     /**
-     * Directory in which to look for conservation score files.
+     * Directories in which to look for conservation score files.
      * Path relative to dataset directory.
-     * if null: look in the same directory as protein file
+     * If null or empty: look in the same directory as protein file
      */
     @RuntimeParam
-    String conservation_dir = null
+    List<String> conservation_dirs = []
 
     @RuntimeParam
-    String electrostatics_dir = null
+    List<String> electrostatics_dirs = []
 
 
     /**
@@ -452,12 +490,14 @@ class Params {
     /** calculate feature vectors from smooth atom feature representation
      * (instead of directly from atom properties)
      */
+    @Deprecated
     @ModelParam
     boolean smooth_representation = false
 
     /**
      * related to smooth_representation
      */
+    @Deprecated
     @ModelParam
     double smoothing_radius = 4.5
 
@@ -525,7 +565,7 @@ class Params {
     /**
      * collect vectors only at the beginning of seed loop routine
      * if dataset is sub-sampled (using train_protein_limit param) then dataset is sub-sampled only once
-     * set to false when doing learning curve!
+     * set to false when calculating learning curve!
      * train_protein_limit>0 should be always paired with collect_only_once=false
      */
     @RuntimeParam
@@ -533,6 +573,10 @@ class Params {
 
     /**
      * number of random seed iterations
+     *
+     * Only relevant when training and evaluating new models.
+     * Result metrics are then averaged or calculated for sum of runs (where appropriate, like F1 measure).
+     * Example: using running  traineval with loop=10 will do ten runs with different random seed and calculate averages.
      */
     @RuntimeParam
     int loop = 1
@@ -705,7 +749,7 @@ class Params {
      * output detailed tables for all proteins, ligands and pockets
      */
     @RuntimeParam
-    boolean log_cases = false
+    boolean log_cases = true
 
     /**
      * cutoff for protein exposed atoms calculation (distance from SAS surface is solv.radius. + surf_cutoff)
@@ -806,13 +850,13 @@ class Params {
      * compress results of individual ploop runs
      */
     @RuntimeParam
-    boolean ploop_zip_runs = true
+    boolean ploop_zip_runs = false
 
     /**
      * delete results of individual ploop/hopt runs
      */
     @RuntimeParam
-    boolean ploop_delete_runs = true
+    boolean ploop_delete_runs = false
 
     /**
      * logging level (TRACE/DEBUG/INFO/WARN/ERROR)
@@ -831,6 +875,14 @@ class Params {
      */
     @RuntimeParam
     boolean log_to_file = true
+
+    /**
+     * Timestamp that will be added as a prefix to each message printed to stdout ("" = no timestamp)
+     * Example: "yyyy.MM.dd HHmm:"
+     */
+    @RuntimeParam
+    String stdout_timestamp = ""
+
 
     /**
      * compress and delete log file at the end (if log_to_file)
@@ -870,7 +922,7 @@ class Params {
      * (>1GB for holo4k dataset with tessellation=2)
      */
     @RuntimeParam
-    boolean stats_collect_predictions = false
+    boolean stats_collect_predictions = true
 
     /**
      * produce ROC and PR curve graphs (not fully implemented yet)
@@ -1058,10 +1110,28 @@ class Params {
     int use_kdtree_cutout_sphere_thrashold = 150
 
     /**
-     * Used by csv_file_atom_feature.
+     * Directories where to find csv files for csv_file_atom_feature.
      */
-    @RuntimeParam
-    List<String> feat_csv_directories = [];
+    @ModelParam
+    List<String> feat_csv_directories = []
+
+    /**
+     * Names of enabled value columns from csv files used by csv_file feature. Value columns not listed here are ignored.
+     */
+    @ModelParam
+    List<String> feat_csv_columns = []
+
+
+    /**
+     * If true then csv_file feature ignores:
+     * <ul>
+     *   <li> missing csv files for proteins
+     *   <li> missing value columns
+     *   <li> missing rows for atoms or residues
+     * <ul>
+     */
+    @ModelParam
+    boolean feat_csv_ignore_missing = false
 
 //===========================================================================================================//
 
@@ -1126,7 +1196,7 @@ class Params {
                 String val = args.get(propName)
 
                 boolean skip = false
-                if (filterRanged && ListParam.isListArgValue(val)) {
+                if (filterRanged && ListParam.isIterativeArgValue(propName, val)) {
                     skip = true
                 }
 

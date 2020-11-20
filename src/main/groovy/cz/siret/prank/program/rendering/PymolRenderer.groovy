@@ -10,7 +10,8 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 
-import java.awt.Color
+import java.awt.*
+import java.util.List
 
 
 /**
@@ -70,11 +71,11 @@ class PymolRenderer implements Parametrized {
             proteinFileAbs = newfAbs
         }
 
-        Futils.writeFile(pmlFile, renderMain(proteinFile))
+        Futils.writeFile(pmlFile, renderMainPmlScript(proteinFile))
     }
 
 
-    private String renderMain(String proteinFile) {
+    private String renderMainPmlScript(String proteinFile) {
 """
 from pymol import cmd,stored
 

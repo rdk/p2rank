@@ -5,14 +5,11 @@ import cz.siret.prank.domain.Residue
 import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.features.api.SasFeatureCalculationContext
 import cz.siret.prank.features.api.SasFeatureCalculator
-import cz.siret.prank.features.implementation.secstruct.SsHistogram
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.utils.Cutils
 import cz.siret.prank.utils.StatSample
 import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
-import org.biojava.nbio.structure.secstruc.SecStrucType
 
 /**
  *

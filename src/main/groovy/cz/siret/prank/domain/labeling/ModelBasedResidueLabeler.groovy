@@ -10,7 +10,6 @@ import cz.siret.prank.prediction.pockets.PointScoreCalculator
 import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Cutils
-import cz.siret.prank.utils.Formatter
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 

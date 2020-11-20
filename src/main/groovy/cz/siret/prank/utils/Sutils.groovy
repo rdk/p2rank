@@ -6,7 +6,6 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import groovy.transform.CompileStatic
 import org.apache.commons.lang3.StringUtils
-import org.apache.commons.lang3.SystemUtils
 import org.apache.commons.lang3.builder.ToStringBuilder
 import org.apache.commons.lang3.builder.ToStringStyle
 
@@ -19,8 +18,10 @@ import java.text.SimpleDateFormat
 @CompileStatic
 class Sutils {
 
-//    static DateFormat DATE_LABEL_FORMAT = new SimpleDateFormat("yyyy.MM.dd_HHmm")
-    static final DateFormat DATE_LABEL_FORMAT = new SimpleDateFormat("yyMMdd_HHmm")
+    static DateFormat DATE_LABEL_FORMAT = new SimpleDateFormat("yyyy.MM.dd_HHmm")
+//    static final DateFormat DATE_LABEL_FORMAT = new SimpleDateFormat("yyMMdd_HHmm")
+    
+    static final Splitter WHITESPACE_SPLITTER = Splitter.on(CharMatcher.whitespace()).omitEmptyStrings().trimResults()
 
     static final Gson GSON = new GsonBuilder().setPrettyPrinting().create()
 
@@ -54,12 +55,9 @@ class Sutils {
         prefix + text.readLines().join("\n"+prefix)
     }
 
-
     static String timeLabel() {
         DATE_LABEL_FORMAT.format(new Date())
     }
-
-
 
     static List<String> split(String str, String splitter) {
         Splitter.on(splitter).omitEmptyStrings().trimResults().split(str).toList()
@@ -71,11 +69,20 @@ class Sutils {
 
 
     static List<String> splitOnWhitespace(String str) {
-        Splitter.on(CharMatcher.whitespace()).omitEmptyStrings().trimResults().split(str).toList()
+        WHITESPACE_SPLITTER.split(str).toList()
     }
 
     static List<String> split(String str) {
         split(str, " ")
+    }
+
+    static String removeSuffix(String s, String suffix) {
+        if (s == null || suffix == null) return null
+        if (s.endsWith(suffix)) {
+            return s.substring(0, s.length()-suffix.length())
+        } else {
+            return s
+        }
     }
 
     /**
@@ -90,9 +97,9 @@ class Sutils {
         assert liststr.length()>=2 : "invalid list string: '$liststr'"
 
         String splitter = ","
-        if (!liststr.contains(splitter)) {
-            splitter = "."                    // list in ranged param lists (when running prank ploop) have to use oyher splitter
-        }
+        //if (!liststr.contains(splitter)) {
+        //    splitter = "."                    // list in ranged param lists (when running prank ploop) have to use other splitter
+        //}
 
         liststr = liststr.substring(1, liststr.length()-1) // list is in parentheses "(...)"
 

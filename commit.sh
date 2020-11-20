@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 MSG="$1"
 if [[ -z "$1" ]]; then

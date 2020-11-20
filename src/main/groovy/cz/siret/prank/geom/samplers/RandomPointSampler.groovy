@@ -19,12 +19,12 @@ class RandomPointSampler extends  PointSampler implements Parametrized {
 
     private Random rand = new Random()
 
-    public RandomPointSampler(Protein protein) {
+    RandomPointSampler(Protein protein) {
         super(protein)
     }
 
     Atom randomPoint(Box box) {
-        Atom a = new AtomImpl();
+        Atom a = new AtomImpl()
             a.x = randomFromRange(box.min.x, box.max.x)
             a.y = randomFromRange(box.min.y, box.max.y)
             a.z = randomFromRange(box.min.z, box.max.z)
@@ -45,7 +45,7 @@ class RandomPointSampler extends  PointSampler implements Parametrized {
 
         //log.debug "BOX " + box
 
-        Atoms surroundingProteinAtoms = protein.proteinAtoms.cutoutBox(box.enlarge(MIN_DISTFROM_PROTEIN))
+        Atoms surroundingProteinAtoms = protein.proteinAtoms.cutoutBox(box.withMargin(MIN_DISTFROM_PROTEIN))
         Atoms realSurfaceAtoms = protein.proteinAtoms.cutoutShell(pocket.surfaceAtoms, 1)
 
         int SAMPLING_TRIAL_LIMIT = count*400

@@ -19,7 +19,7 @@ Related parameters:
 
 
 ### labeled residues
-Analyze dataset with explicitly specified residue labeling.
+Analyze a dataset with an explicitly specified residue labeling.
 ~~~
 ./prank.sh analyze labeled-residues <dataset.ds>
 ~~~
@@ -32,7 +32,7 @@ Analyze dataset with explicitly specified residue labeling.
 ~~~
 ./prank.sh traineval -t test_data/basic.ds -e test_data/basic.ds \
     -loop 1 -delete_vectors 0 -sample_negatives_from_decoys 0 \
-    -extra_features '(chem.volsite.protrusion.bfactor.xyz)'
+    -features '(chem.volsite.protrusion.bfactor.xyz)'
 ~~~
 
 
@@ -41,7 +41,7 @@ Analyze dataset with explicitly specified residue labeling.
 
 
 ~~~
-# predict using model trained with conservation
+# predict using the model trained with conservation
    
 ./prank.sh eval-predict ../p2rank-datasets/coach420.ds -l conserv -out_subdir CONS \
     -c distro/config/conservation \

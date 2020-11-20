@@ -8,18 +8,20 @@ import java.text.DecimalFormatSymbols
 @CompileStatic
 class Formatter {
 
-    static DecimalFormatSymbols formatSymbols;
-
-    static List<DecimalFormat> DECIMAL_FORMATS;
-
-    static {
-        formatSymbols = new DecimalFormatSymbols();
-        formatSymbols.setDecimalSeparator('.' as char);
-        //
-        DECIMAL_FORMATS = (0..6).collect {
-            new DecimalFormat("#."+("#"*it), formatSymbols)
-        }.asList()
+    static final DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols() {
+        {
+            this.setDecimalSeparator('.' as char)
+        }
     }
+
+    static final List<DecimalFormat> DECIMAL_FORMATS = (0..6).collect {
+        new DecimalFormat("#."+("#"*it), formatSymbols)
+    }
+
+
+    static final DecimalFormat SCORE_FORMAT = new DecimalFormat("0.00", formatSymbols)
+    static final DecimalFormat PROB_SCORE_FORMAT = new DecimalFormat("0.000", formatSymbols)
+    static final DecimalFormat COORD_FORMAT = new DecimalFormat("0.0000", formatSymbols)
 
     static String format(double d, int places) {
         DECIMAL_FORMATS[places].format(d)
@@ -36,7 +38,6 @@ class Formatter {
     static String bton(boolean b) {
         b ? "1" : "0"
     }
-
 
     static String formatPercent(double x) {
         return new DecimalFormat("##.0", formatSymbols).format(x*100)
@@ -59,8 +60,26 @@ class Formatter {
 
 //===========================================================================================================//
 
+    static String formatScore(double score) {
+        SCORE_FORMAT.format(score)
+    }
+
+    static String formatProbScore(double score) {
+        PROB_SCORE_FORMAT.format(score)
+    }
+
+    static String formatCoord(double coord) {
+        COORD_FORMAT.format(coord)
+    }
+
+//===========================================================================================================//
+
     static String formatTime(long ms) {
         ATimer.formatTime(ms)
+    }
+
+    static String formatSeconds(long ms) {
+        sprintf "%8.3f", ((double)ms) / 1000d
     }
 
 }

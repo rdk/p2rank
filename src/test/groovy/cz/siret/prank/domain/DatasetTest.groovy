@@ -1,5 +1,6 @@
 package cz.siret.prank.domain
 
+import cz.siret.prank.domain.loaders.LoaderParams
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Struct
 import groovy.transform.CompileStatic
@@ -18,6 +19,8 @@ class DatasetTest {
 
     @Test
     void testLigandDefinitionsAndSpecificLigandsLoading() {
+        LoaderParams.ignoreLigandsSwitch = false
+
         Dataset ds = Dataset.loadFromFile('distro/test_data/specified-ligands-2.ds')
 
         assertEquals 3, ds.items[0].protein.ligandCount
@@ -53,6 +56,8 @@ class DatasetTest {
 
     @Test
     void testReducedStructresWithSpecifiedLigands() {
+        LoaderParams.ignoreLigandsSwitch = false
+
         Dataset ds = Dataset.loadFromFile('distro/test_data/specified-chains-and-ligands.ds')
 
         assertEquals 3, ds.items[0].protein.ligandCount

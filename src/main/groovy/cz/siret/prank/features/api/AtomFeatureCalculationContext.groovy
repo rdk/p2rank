@@ -12,7 +12,7 @@ class AtomFeatureCalculationContext {
     Protein protein
 
     /**
-     * 3-letter code of amino acid residue of the atom
+     * 3-letter code of amino acid residue of the atom (all uppercase)
      */
     String residueCode
 
@@ -20,4 +20,5 @@ class AtomFeatureCalculationContext {
         this.protein = protein
         this.residueCode = residueCode
     }
+    
 }

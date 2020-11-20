@@ -12,6 +12,9 @@ import groovy.transform.TupleConstructor
 @TupleConstructor
 class LoaderParams {
 
+    /**
+     * TODO get rid of this global variable
+     */
     public static ignoreLigandsSwitch = false
 
     boolean ignoreLigands = ignoreLigandsSwitch
@@ -20,9 +23,7 @@ class LoaderParams {
     boolean relevantLigandsDefined
     List<Dataset.LigandDefinition> relevantLigandDefinitions = new ArrayList<>()
 
-    boolean load_conservation_paths
     boolean load_conservation
-    String conservation_origin
 
     int minLigandAtoms = Params.inst.min_ligand_atoms
 

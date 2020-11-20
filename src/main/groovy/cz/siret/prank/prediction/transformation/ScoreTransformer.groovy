@@ -1,10 +1,6 @@
 package cz.siret.prank.prediction.transformation
 
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonElement
-import com.google.gson.JsonObject
-import com.google.gson.JsonParser
+import com.google.gson.*
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.Params
 import cz.siret.prank.program.routines.results.Evaluation
@@ -20,7 +16,7 @@ import org.apache.commons.lang3.StringUtils
 @CompileStatic
 abstract class ScoreTransformer {
 
-    static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    static final Gson GSON = new GsonBuilder().setPrettyPrinting().create()
     
     abstract double transformScore(double rawScore)
 
@@ -43,7 +39,7 @@ abstract class ScoreTransformer {
     }
 
     static ScoreTransformer loadFromJson(String json) {
-        JsonObject obj = new JsonParser().parse(json).getAsJsonObject()
+        JsonObject obj = new JsonParser().parseString(json).getAsJsonObject()
         String name = obj.get("name").getAsString()
 
         ScoreTransformer transformer = create(name)

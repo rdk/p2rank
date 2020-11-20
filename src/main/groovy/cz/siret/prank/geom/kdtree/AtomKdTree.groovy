@@ -1,24 +1,24 @@
 package cz.siret.prank.geom.kdtree
 
+import cz.siret.prank.geom.Atoms
+import cz.siret.prank.utils.PerfUtils
 import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
-import cz.siret.prank.geom.Atoms
-import cz.siret.prank.geom.kdtree.KdTree.Entry
 
 @CompileStatic
-public class AtomKdTree extends KdTree.SqrEuclid<Atom> {
+class AtomKdTree extends KdTree.SqrEuclid3D<Atom> {
 
-    private static final int DIMENSIONS = 3
-
-    AtomKdTree(int dimensions, Integer sizeLimit) {
-        super(dimensions, sizeLimit)
+    AtomKdTree(Integer sizeLimit) {
+        super(sizeLimit)
     }
 
     public static AtomKdTree build(Atoms atoms) {
-        AtomKdTree res = new AtomKdTree(DIMENSIONS, Integer.MAX_VALUE)
+        AtomKdTree res = new AtomKdTree(Integer.MAX_VALUE)
         res.addAll(atoms)
         return res
     }
+
+//===========================================================================================================//
 
     public add(Atom a) {
         addPoint(a.coords, a)
@@ -76,14 +76,6 @@ public class AtomKdTree extends KdTree.SqrEuclid<Atom> {
 
     public List<Entry<Atom>> findNearestNDifferent(Atom a, int count, boolean sorted) {
         List<Entry<Atom>> aaa = nearestNeighbor(a.coords, count, sorted)
-
-        // only java 1.8
-//        aaa.removeIf(new Predicate<Entry<Atom>>() {
-//            @Override
-//            boolean test(Entry<Atom> atomEntry) {
-//                atomEntry == a
-//            }
-//        })
 
         Iterator<Entry<Atom>> it = aaa.iterator();
         while (it.hasNext()) {

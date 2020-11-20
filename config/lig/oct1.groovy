@@ -12,7 +12,7 @@ import cz.siret.prank.program.params.Params
     dataset_base_dir = "../../p2rank-datasets"
 
     /**
-     * all output of the prorgam will be stored in subdirectores of this directory
+     * all output of the program will be stored in subdirectories of this directory
      * (set absolute path or path relative to install dir, null defaults to working dir)
      */
     output_base_dir = "../../p2rank-results/${version}"
@@ -96,7 +96,7 @@ import cz.siret.prank.program.params.Params
     avg_weighted = true
     weight_function = "INVPOW2"
 
-    extra_features = ["chem","volsite","protrusion","bfactor", "pmass"]
+    features = ["chem","volsite","protrusion","bfactor", "pmass"]
     rf_trees =	50
     rf_depth	=  12
     rf_features	=  26

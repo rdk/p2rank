@@ -5,6 +5,8 @@ import com.google.common.collect.ImmutableMap
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
+import javax.annotation.Nullable
+
 @Slf4j
 @CompileStatic
 class GenericHeader {
@@ -29,7 +31,8 @@ class GenericHeader {
         this(cols.toList())
     }
 
-    int getColIndex(String colName) {
+    @Nullable
+    Integer getColIndex(String colName) {
         return indexMap.get(colName)
     }
 

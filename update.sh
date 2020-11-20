@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -e  # fail fast
 
@@ -17,7 +17,7 @@ if [ "$HEAD1" != "$HEAD2" ]; then
 	echo
 	echo GRADLE:
 	echo
-	gradle clean assemble
+	./gradlew clean assemble
 
 fi
 

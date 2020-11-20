@@ -1,19 +1,24 @@
 package cz.siret.prank.utils
 
 import com.google.common.base.Function
-import com.google.common.collect.ImmutableMap
-import com.google.errorprone.annotations.CanIgnoreReturnValue
 import groovy.transform.CompileStatic
 
+import javax.annotation.Nonnull
 import javax.annotation.Nullable
-
-import static com.google.common.base.Preconditions.checkNotNull
 
 /**
  * Collection utils
  */
 @CompileStatic
 class Cutils {
+
+    static boolean empty(Collection<?> col) {
+        return col == null || col.isEmpty()
+    }
+
+//    static boolean empty(List col) {
+//        return col == null || col.isEmpty()
+//    }
 
     static <T> List<T> head(int n, List<T> list) {
         if (n>=list.size()) return list
@@ -75,6 +80,21 @@ class Cutils {
         if (list == null) return null
         if (idx < 0 || idx >= list.size()) return null
         return list.get(idx)
+    }
+
+    @Nonnull
+    static <E> List<E> newSynchronizedList() {
+        return Collections.synchronizedList(new ArrayList<E>());
+    }
+
+    @Nonnull
+    static <E> List<E> newSynchronizedList(int initialSize) {
+        return Collections.synchronizedList(new ArrayList<E>(initialSize));
+    }
+
+    @Nonnull
+    static <E> List<E> synchronizedCopy(Collection<E> collection) {
+        return Collections.synchronizedList(new ArrayList<E>(collection));
     }
 
 }

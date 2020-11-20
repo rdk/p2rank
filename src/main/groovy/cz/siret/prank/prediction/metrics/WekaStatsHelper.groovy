@@ -42,28 +42,17 @@ class WekaStatsHelper {
     }
 
     /**
-     *
      * see weka.classifiers.evaluation.Evaluation#areaUnderROC(int)
-     *
-     * @param preds
-     * @return
      */
     double areaUnderROC() {
         return ThresholdCurve.getROCArea(wekaPreds);
     }
 
     /**
-     *
      * see weka.classifiers.evaluation.Evaluation#areaUnderROC(int)
-     *
-     * @param preds
-     * @return
      */
     double areaUnderPRC() {
         return ThresholdCurve.getPRCArea(wekaPreds);
     }
-
-
-
 
 }

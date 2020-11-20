@@ -5,11 +5,12 @@ import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.features.FeatureVector
 import cz.siret.prank.features.PrankFeatureExtractor
 import cz.siret.prank.features.api.ProcessedItemContext
+import cz.siret.prank.fforest.FasterForest
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.prediction.metrics.ClassifierStats
+import cz.siret.prank.prediction.pockets.rescorers.InstancePredictor
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.ml.Model
-import cz.siret.prank.program.params.Params
 import cz.siret.prank.utils.PerfUtils
 import cz.siret.prank.utils.WekaUtils
 import groovy.transform.CompileStatic
@@ -30,11 +31,6 @@ class ModelBasedPointLabeler extends PointLabeler {
     private ProcessedItemContext context
 
     private ClassifierStats classifierStats = new ClassifierStats()
-
-    // auxiliary for weka
-    private Instances auxWekaDataset
-    private double[] alloc
-    private DenseInstance auxInst
 
     private List<LabeledPoint> observedPoints = null
     
@@ -70,10 +66,7 @@ class ModelBasedPointLabeler extends PointLabeler {
         FeatureExtractor extractor = (proteinExtractor as PrankFeatureExtractor).createInstanceForWholeProtein(points)
 
         // init weka
-        alloc = new double[proteinExtractor.vectorHeader.size() + 1] // one additional for stupid weka class
-        auxInst = new DenseInstance( 1, alloc )
-        auxWekaDataset = WekaUtils.createDatasetWithBinaryClass(extractorFactory.vectorHeader)
-        auxInst.setDataset(auxWekaDataset)
+        InstancePredictor instancePredictor = InstancePredictor.create(model, proteinExtractor)
 
         // init result array
         final List<LabeledPoint> labeledPoints = new ArrayList<LabeledPoint>(extractor.sampledPoints.count)
@@ -93,11 +86,10 @@ class ModelBasedPointLabeler extends PointLabeler {
         // label
         int i = 0
         for (LabeledPoint point : labeledPoints) {
-        //labeledPoints.each { LabeledPoint point ->
             // classification
 
             FeatureVector props = extractor.calcFeatureVector(point.point)
-            double[] hist = getDistributionForPoint(model, props)
+            double[] hist = instancePredictor.getDistributionForPoint(props)
 
             // labels and statistics
 
@@ -109,10 +101,10 @@ class ModelBasedPointLabeler extends PointLabeler {
                 observed = observedPoints[i].observed
             }
 
-            point.@hist = hist
-            point.@predicted = predicted
-            point.@observed = observed
-            point.@score = predictedScore
+            point.hist = hist
+            point.predicted = predicted
+            point.observed = observed
+            point.score = predictedScore
 
             if (collectingStats) {
                 classifierStats.addPrediction(observed, predicted, predictedScore, hist)
@@ -128,19 +120,7 @@ class ModelBasedPointLabeler extends PointLabeler {
     }
 
     static boolean binaryLabel(double predictedScore) {
-
-        
         applyPointScoreThreshold(predictedScore)
-    }
-
-    private final double[] getDistributionForPoint(Model model, FeatureVector vect) {
-//        if (classifier instanceof FasterForest) {
-//            return ((FasterForest)classifier).distributionForAttributes(vect.array, 2)
-//        } else {
-        PerfUtils.arrayCopy(vect.array, alloc)
-        return model.classifier.distributionForInstance(auxInst)
-//        }
-
     }
 
 }

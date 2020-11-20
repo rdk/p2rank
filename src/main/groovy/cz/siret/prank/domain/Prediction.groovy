@@ -4,7 +4,6 @@ import cz.siret.prank.domain.labeling.LabeledPoint
 import cz.siret.prank.domain.labeling.ResidueLabelings
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-import groovy.transform.CompileStatic
 
 import javax.annotation.Nullable
 
@@ -23,7 +22,7 @@ class Prediction {
     List<Pocket> pockets
 
     /**
-     * reordered pockets (relevant only when doing rescoring with old PRANK algorihhm)
+     * reordered pockets (relevant only when doing rescoring with old PRANK algorithm)
      */
     List<Pocket> reorderedPockets
 

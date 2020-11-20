@@ -1,6 +1,6 @@
 package cz.siret.prank.domain
 
-import com.google.common.collect.Maps
+
 import cz.siret.prank.domain.labeling.ResidueLabeling
 import cz.siret.prank.domain.loaders.LoaderParams
 import cz.siret.prank.features.api.ProcessedItemContext
@@ -22,9 +22,7 @@ import org.biojava.nbio.structure.secstruc.SecStrucType
 import javax.annotation.Nullable
 import java.util.function.Function
 
-import static cz.siret.prank.features.implementation.conservation.ConservationScore.CONSERV_LOADED_KEY
-import static cz.siret.prank.features.implementation.conservation.ConservationScore.CONSERV_PATH_FUNCTION_KEY
-import static cz.siret.prank.features.implementation.conservation.ConservationScore.CONSERV_SCORE_KEY
+import static cz.siret.prank.features.implementation.conservation.ConservationScore.*
 import static cz.siret.prank.geom.Struct.residueChainsFromStructure
 
 /**
@@ -107,9 +105,9 @@ class Protein implements Parametrized {
 
     void calcuateSurfaceAndExposedAtoms() {
         if (exposedAtoms == null) {
-            if (proteinAtoms.empty) {
-                throw new PrankException("Protein with no chain atoms [$name]!")
-            }
+            //if (proteinAtoms.empty) {
+            //    throw new PrankException("Protein with no chain atoms [$name]!")
+            //}
 
             exposedAtoms = getAccessibleSurface().computeExposedAtoms(proteinAtoms)
 
@@ -148,7 +146,9 @@ class Protein implements Parametrized {
         return (score==null) ? null : score.toDoubleLabeling(this)
     }
 
-
+    /**
+     * solvent exposed protein atoms (i.e. surface atoms)
+     */
     Atoms getExposedAtoms() {
         calcuateSurfaceAndExposedAtoms()
         exposedAtoms
@@ -249,7 +249,7 @@ class Protein implements Parametrized {
     }
 
     /**
-     * @return list of residues from main protein chanis
+     * @return list of residues from main protein chains
      */
     Residues getResidues() {
         ensureResiduesCalculated()
@@ -341,13 +341,13 @@ class Protein implements Parametrized {
         return fileName
     }
 
-    public static Protein load(String pdbFileName, LoaderParams loaderParams = new LoaderParams()) {
+    static Protein load(String pdbFileName, LoaderParams loaderParams = new LoaderParams()) {
         Protein res = new Protein()
         res.loadFile(pdbFileName, loaderParams, null)
         return res
     }
 
-    public static Protein loadReduced(String pdbFileName, LoaderParams loaderParams, List<String> onlyChains) {
+    static Protein loadReduced(String pdbFileName, LoaderParams loaderParams, List<String> onlyChains) {
         Protein res = new Protein()
         res.loadFile(pdbFileName, loaderParams, onlyChains)
         return res
@@ -392,8 +392,11 @@ class Protein implements Parametrized {
         //Struct.getGroups(structure).each { ConsoleWriter.write "group: chid:$it.chainId pdbname:$it.PDBName ishet:" + Struct.isHetGroup(it) }
 
         if (proteinAtoms.empty) {
-            log.error "protein with no chain atoms! [$name]"
-            throw new PrankException("Protein with no chain atoms [$name]!")
+            if (params.fail_fast) {
+                throw new PrankException("Protein with no chain atoms! [$name]")
+            } else {
+                log.error("Protein with no chain atoms! [$name]")
+            }
         }
 
         if (!loaderParams.ignoreLigands) {

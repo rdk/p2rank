@@ -7,12 +7,13 @@ import cz.siret.prank.features.FeatureVector
 import cz.siret.prank.features.PrankFeatureExtractor
 import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.geom.Atoms
-import cz.siret.prank.program.PrankException
-import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.prediction.pockets.criteria.DCA
 import cz.siret.prank.prediction.pockets.criteria.PocketCriterium
+import cz.siret.prank.program.PrankException
+import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Cutils
 import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 
@@ -21,6 +22,7 @@ import org.biojava.nbio.structure.Atom
  * judging correct by distance to the closest ligand atom
  */
 @Slf4j
+@CompileStatic
 class LigandabilityPointVectorCollector extends VectorCollector implements Parametrized {
 
     static final PocketCriterium DEFAULT_POCKET_CRITERIUM = new DCA(5)
@@ -49,12 +51,23 @@ class LigandabilityPointVectorCollector extends VectorCollector implements Param
 
     @Override
     Result collectVectors(PredictionPair pair, ProcessedItemContext context) {
-        Result finalRes = new Result()
-
         FeatureExtractor proteinExtractorPrototype = extractorFactory.createPrototypeForProtein(pair.prediction.protein, context)
 
-        Atoms ligandAtoms = getTrainingRelevantLigandAtoms(pair) //pair.protein.allLigandAtoms.withKdTreeConditional()
+        Result result = null
+        try {
+            result = doCollectVectors(pair, proteinExtractorPrototype)
+        } finally {
+            proteinExtractorPrototype.finalizeProteinPrototype()
+        }
 
+        return result
+    }
+
+    @CompileStatic(TypeCheckingMode.SKIP)
+    private Result doCollectVectors(PredictionPair pair, FeatureExtractor proteinExtractorPrototype) {
+        Result finalRes = new Result()
+
+        Atoms ligandAtoms = getTrainingRelevantLigandAtoms(pair) //pair.protein.allLigandAtoms.withKdTreeConditional()
 
         if (ligandAtoms.empty) {
             log.error "no ligands! [{}]", pair.protein.name
@@ -82,8 +95,6 @@ class LigandabilityPointVectorCollector extends VectorCollector implements Param
                 }
             }
         }
-
-        proteinExtractorPrototype.finalizeProteinPrototype()
 
         return finalRes
     }

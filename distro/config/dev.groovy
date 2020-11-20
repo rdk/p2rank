@@ -12,7 +12,7 @@ import cz.siret.prank.program.params.Params
     dataset_base_dir = "../../pocket-rank-data/datasets"
 
     /**
-     * all output of the prorgam will be stored in subdirectores of this directory
+     * all output of the program will be stored in subdirectories of this directory
      * (set absolute path or path relative to install dir, null defaults to working dir)
      */
     output_base_dir = "../../pocket-rank-results"
@@ -24,7 +24,7 @@ import cz.siret.prank.program.params.Params
 
 
     /**
-     * stop processing a datsaset on the first unrecoverable error with a dataset item
+     * stop processing a dataset on the first unrecoverable error with a dataset item
      */
     fail_fast = true
 

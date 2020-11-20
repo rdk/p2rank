@@ -3,6 +3,7 @@ package cz.siret.prank.geom.samplers;
 import cz.siret.prank.geom.Box;
 import cz.siret.prank.geom.Point;
 
+import javax.annotation.Nonnull;
 import java.util.Iterator;
 
 public class GridGenerator implements Iterable<Point> {
@@ -51,10 +52,11 @@ public class GridGenerator implements Iterable<Point> {
     /**
      * @return points to flyweight Point, to use it further use point.copy()
      */
+    @Nonnull
     public Iterator<Point> iterator() {
         return new Iterator<Point>() {
 
-            private Point resPoint = new Point();
+            private final Point resPoint = new Point();
 
             private int x = 0;
             private int y = 0;
@@ -93,12 +95,12 @@ public class GridGenerator implements Iterable<Point> {
     }
 
     /**
-     * SNAKE PATH: distance between two subsequent ppoints is always exactly equal to one edge
+     * SNAKE PATH: distance between two subsequent points is always exactly equal to one edge
      */
     public Iterator<Point> iteratorSnake() {
         return new Iterator<Point>() {
 
-            private Point resPoint = new Point();
+            private final Point resPoint = new Point();
 
             private int x = 0;
             private int y = 0;

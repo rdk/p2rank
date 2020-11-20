@@ -1,5 +1,6 @@
 package cz.siret.prank.features.implementation.chem
 
+import cz.siret.prank.utils.PdbUtils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
@@ -70,8 +71,9 @@ class ChemVector implements Cloneable {
     }
 
     /**
+     * http://www.imgt.org/IMGTeducation/Aide-memoire/_UK/aminoacids/charge/
      *
-     * @param residueCode 3 letter residue code (e.g. "Ala")
+     * @param residueCode 3 letter residue code (e.g. "ALA")
      */
     private void setFromResidueAtom(Atom atom, String residueCode) {
 
@@ -79,40 +81,40 @@ class ChemVector implements Cloneable {
 
         String an = atom.name // atom name
 
-        if (residueCode == "Ala") {
-        } else if (residueCode == "Arg") {
+        if (residueCode == "ALA") {
+        } else if (residueCode == "ARG") {
             if(["NE","NH1","NH2"].contains(an))
                 hDonorAtoms++
-        } else if (residueCode == "Asn") {
+        } else if (residueCode == "ASN") {
             if(an=="ND2") hDonorAtoms++
             if(an=="OD1") hAcceptorAtoms++
-        } else if (residueCode == "Asp") {
+        } else if (residueCode == "ASP") {
             if(["OD1","OD2"].contains(an)) hAcceptorAtoms++
-        } else if (residueCode == "Cys") {
-        } else if (residueCode == "Gln") {
+        } else if (residueCode == "CYS") {
+        } else if (residueCode == "GLN") {
             if(an=="NE2") hDonorAtoms++
             if(an=="OE1") hAcceptorAtoms++
-        } else if (residueCode == "Glu") {
+        } else if (residueCode == "GLU") {
             if(["OE1","OE2"].contains(an)) hAcceptorAtoms++
-        } else if (residueCode == "Gly") {
-        } else if (residueCode == "His") {
+        } else if (residueCode == "GLY") {
+        } else if (residueCode == "HIS") {
             if(["ND1","NE2"].contains(an)) { hDonorAtoms++; hAcceptorAtoms++ }
-        } else if (residueCode == "Ile") {
-        } else if (residueCode == "Leu") {
-        } else if (residueCode == "Lys") {
+        } else if (residueCode == "ILE") {
+        } else if (residueCode == "LEU") {
+        } else if (residueCode == "LYS") {
             if(an=="NZ") hDonorAtoms++
-        } else if (residueCode == "Met") {
-        } else if (residueCode == "Phe") {
-        } else if (residueCode == "Pro") {
-        } else if (residueCode == "Ser") {
+        } else if (residueCode == "MET") {
+        } else if (residueCode == "PHE") {
+        } else if (residueCode == "PRO") {
+        } else if (residueCode == "SER") {
             if(["OG"].contains(an)) { hDonorAtoms++; hAcceptorAtoms++ }
-        } else if (residueCode == "Thr") {
+        } else if (residueCode == "THR") {
             if(["OG1"].contains(an)) { hDonorAtoms++; hAcceptorAtoms++ }
-        } else if (residueCode == "Trp") {
+        } else if (residueCode == "TRP") {
             if(an=="NE1") hDonorAtoms++
-        } else if (residueCode == "Tyr") {
+        } else if (residueCode == "TYR") {
             if(["OH"].contains(an)) { hDonorAtoms++; hAcceptorAtoms++ }
-        } else if (residueCode == "Val") {
+        } else if (residueCode == "VAL") {
         } else {
             if (!ChemDefaults.AACODES.contains(residueCode) ) {
                 log.debug "!! masking unknown residue code:  $residueCode"
@@ -127,6 +129,12 @@ class ChemVector implements Cloneable {
 
     }
 
+    /**
+     *
+     * @param atom
+     * @param residueCode 3-letter AA code (all upper case)
+     * @return
+     */
     public static ChemVector forAtom(Atom atom, String residueCode) {
 
         ChemVector p

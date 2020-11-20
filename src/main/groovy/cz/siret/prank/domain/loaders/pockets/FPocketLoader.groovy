@@ -8,6 +8,8 @@ import cz.siret.prank.geom.Point
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.PdbUtils
+import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 import org.biojava.nbio.structure.Structure
@@ -19,6 +21,7 @@ import java.util.regex.Pattern
  * Loader for predictions produced by Fpocket (v1.0 and v2.0).
  */
 @Slf4j
+@CompileStatic
 class FPocketLoader extends PredictionLoader implements Parametrized {
 
     public static class FPocketPocket extends Pocket {
@@ -247,6 +250,7 @@ class FPocketLoader extends PredictionLoader implements Parametrized {
      HEADER 13 - Proportion of apolar alpha sphere : 0.8431
 
      */
+    @CompileStatic(value = TypeCheckingMode.SKIP)
     static class FPocketStats extends Pocket.PocketStats {
 
         static final Pattern PATTERN = ~ /HEADER (\d+) [^\:]* :\s* ([-\.\d]*).*/

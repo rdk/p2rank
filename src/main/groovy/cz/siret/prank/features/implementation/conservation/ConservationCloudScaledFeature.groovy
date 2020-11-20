@@ -11,8 +11,6 @@ import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
 
 /**
- * Simple single value SAS feature that adds "conservation" of protein surface to SAS feature
- * vector.
  * Conservation scores from residue from protrusion radius are scaled using 1/L2 metrics
  */
 @CompileStatic

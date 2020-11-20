@@ -36,29 +36,34 @@ abstract class PointVectorCollector extends VectorCollector implements Parametri
         FeatureExtractor proteinExtractorPrototype = extractorFactory.createPrototypeForProtein(pair.prediction.protein, context)
         FeatureExtractor proteinExtractor = (proteinExtractorPrototype as PrankFeatureExtractor).createInstanceForWholeProtein()
 
-        Atoms points = proteinExtractor.sampledPoints
-        List<LabeledPoint> labeledPoints = labelPoints(points, pair, context)
-        Result res = new Result(labeledPoints.size())
+        Result res = null
+        try {
+            Atoms points = proteinExtractor.sampledPoints
+            List<LabeledPoint> labeledPoints = labelPoints(points, pair, context)
+            res = new Result(labeledPoints.size())
 
-        for (LabeledPoint point : labeledPoints) {
-            try {
-                FeatureVector vect = proteinExtractor.calcFeatureVector(point)
+            for (LabeledPoint point : labeledPoints) {
+                try {
+                    FeatureVector vect = proteinExtractor.calcFeatureVector(point)
 
-                boolean positive = point.observed
-                res.addBinary(vect.array, positive)
+                    boolean positive = point.observed
+                    res.addBinary(vect.array, positive)
 
-            } catch (Exception e) {
-                if (params.fail_fast) {
-                    throw new PrankException("Failed extraction for point", e)
-                } else {
-                    log.error("Failed extraction for point. Skipping.", e)
+                } catch (Exception e) {
+                    if (params.fail_fast) {
+                        throw new PrankException("Failed extraction for point", e)
+                    } else {
+                        log.error("Failed extraction for point. Skipping.", e)
+                    }
                 }
             }
+
+            log.info "vectors collected for protein: {}", res
+        } finally {
+            proteinExtractorPrototype.finalizeProteinPrototype()
         }
 
-        log.info "vectors collected for protein: {}", res
 
-        proteinExtractorPrototype.finalizeProteinPrototype()
         return res
     }
 

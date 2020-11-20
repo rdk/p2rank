@@ -5,11 +5,13 @@ import cz.siret.prank.features.api.AtomFeatureCalculationContext
 import cz.siret.prank.features.api.AtomFeatureCalculator
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.PdbUtils
+import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
 
 /**
  * One hot encoding for residue of the atom
  */
+@CompileStatic
 class AtomicResidueFeature extends AtomFeatureCalculator implements Parametrized {
 
     static List<AA> AATYPES = AA.values().toList()

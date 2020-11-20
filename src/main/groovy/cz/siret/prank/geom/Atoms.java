@@ -1,7 +1,6 @@
 package cz.siret.prank.geom;
 
 import com.google.common.collect.Lists;
-import cz.siret.prank.features.api.AtomFeatureCalculator;
 import cz.siret.prank.geom.kdtree.AtomKdTree;
 import cz.siret.prank.program.params.Params;
 import cz.siret.prank.utils.ATimer;
@@ -82,9 +81,11 @@ public final class Atoms implements Iterable<Atom> {
     }
 
     public Atoms withIndex() {
-        index = new HashMap<>(list.size());
-        for (Atom a : list) {
-            index.put(a.getPDBserial(), a);
+        if (index == null) {
+            index = new HashMap<>(list.size());
+            for (Atom a : list) {
+                index.put(a.getPDBserial(), a);
+            }
         }
         return this;
     }

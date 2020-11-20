@@ -106,7 +106,7 @@ class LogManager implements Writable {
         config.addAppender(appender);
 
         AppenderRef ref = AppenderRef.createAppenderRef(FILE_APPENDER_NAME, null, null);
-        AppenderRef[] refs = (AppenderRef[]) [ref].toArray();
+        AppenderRef[] refs =  [ref] as AppenderRef[];
 
         LoggerConfig loggerConfig = config.getLoggerConfig(loggerName)
         loggerConfig.addAppender(appender, level, null);
@@ -121,6 +121,5 @@ class LogManager implements Writable {
         loggerConfig.removeAppender(FILE_APPENDER_NAME)
         config.rootLogger.removeAppender(FILE_APPENDER_NAME)
     }
-
 
 }

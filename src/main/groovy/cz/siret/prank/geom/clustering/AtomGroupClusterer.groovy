@@ -1,10 +1,12 @@
 package cz.siret.prank.geom.clustering
 
 import cz.siret.prank.geom.Atoms
+import groovy.transform.CompileStatic
 
 /**
  *
  */
+@CompileStatic
 class AtomGroupClusterer implements Clusterer<Atoms> {
 
     static final Clusterer.Distance<Atoms> EUCLID_DIST = new EuclidDist()

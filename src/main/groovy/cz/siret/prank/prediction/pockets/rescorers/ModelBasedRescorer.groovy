@@ -2,17 +2,17 @@ package cz.siret.prank.prediction.pockets.rescorers
 
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Prediction
+import cz.siret.prank.domain.labeling.LabeledPoint
 import cz.siret.prank.domain.labeling.ResidueLabelings
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.features.FeatureVector
 import cz.siret.prank.features.PrankFeatureExtractor
 import cz.siret.prank.features.api.ProcessedItemContext
-import cz.siret.prank.program.ml.Model
-import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.domain.labeling.LabeledPoint
 import cz.siret.prank.prediction.metrics.ClassifierStats
 import cz.siret.prank.prediction.pockets.PocketPredictor
 import cz.siret.prank.prediction.pockets.PointScoreCalculator
+import cz.siret.prank.program.ml.Model
+import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.PerfUtils
 import cz.siret.prank.utils.WekaUtils
 import groovy.transform.CompileStatic
@@ -21,15 +21,15 @@ import org.biojava.nbio.structure.Atom
 import weka.core.DenseInstance
 import weka.core.Instances
 
-import static PointScoreCalculator.applyPointScoreThreshold
-import static PointScoreCalculator.predictedScore
+import static cz.siret.prank.prediction.pockets.PointScoreCalculator.applyPointScoreThreshold
+import static cz.siret.prank.prediction.pockets.PointScoreCalculator.predictedScore
 
 /**
  * rescorer and predictor
  * 
  * Not thread safe!
  *
- * This is the main rrescore used by P2RANK to make predictions based on machine learning
+ * This is the main rescore used by P2RANK to make predictions based on machine learning
  *
  */
 @Slf4j
@@ -50,34 +50,25 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
     // SAS points with ligandability score for prediction and visualization
     List<LabeledPoint> labeledPoints = new ArrayList<>()
 
-    // auxiliary for weka
-    private Instances auxWekaDataset
-    private double[] alloc
-    private DenseInstance auxInst
 
     ModelBasedRescorer(Model model, FeatureExtractor extractorFactory) {
         this.extractorFactory = extractorFactory
         this.model = model
-
-        auxWekaDataset = WekaUtils.createDatasetWithBinaryClass(extractorFactory.vectorHeader)
     }
 
     /**
      * @param prediction
-     * @param ligandedProtein can be null - in not used for evaluating statistics
      */
     @Override
     void rescorePockets(Prediction prediction, ProcessedItemContext context) {
 
         FeatureExtractor proteinExtractor = extractorFactory.createPrototypeForProtein(prediction.protein, context)
 
-        alloc = new double[proteinExtractor.vectorHeader.size() + 1] // one additional for stupid weka class
-        auxInst = new DenseInstance( 1, alloc )
-        auxInst.setDataset(auxWekaDataset)
+        InstancePredictor instancePredictor = InstancePredictor.create(model, proteinExtractor)
 
         // PRANK (just rescoring existing pockets)
         if (!params.predictions) {
-            doRescore(prediction, proteinExtractor)
+            doRescore(prediction, proteinExtractor, instancePredictor)
         }
 
         // compute ligandability scores of SAS points for predictions and visualization
@@ -91,12 +82,12 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
             }
 
             // TODO refactor: use ModelBasedPointLabeler instead of this loop
-            for (LabeledPoint point in labeledPoints) {
+            for (LabeledPoint point : labeledPoints) {
 
                 // classification
 
-                FeatureVector props = extractor.calcFeatureVector(point.point)
-                double[] hist = getDistributionForPoint(model, props)
+                FeatureVector vector = extractor.calcFeatureVector(point.point)
+                double[] hist = instancePredictor.getDistributionForPoint(vector)
 
                 // labels and statistics
 
@@ -109,10 +100,10 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
                     observed = (closestLigandDistance <= POSITIVE_POINT_LIGAND_DISTANCE)
                 }
 
-                point.@hist = hist
-                point.@predicted = predicted
-                point.@observed = observed
-                point.@score = predictedScore
+                point.hist = hist
+                point.predicted = predicted
+                point.observed = observed
+                point.score = predictedScore
 
                 if (collectingStatistics) {
                     stats.addPrediction(observed, predicted, predictedScore, hist)
@@ -129,33 +120,30 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
                     prediction.residueLabelings = ResidueLabelings.calculate(prediction, model, extractor.sampledPoints, labeledPoints, context)
                 }
             }
-
-
         }
 
         proteinExtractor.finalizeProteinPrototype()
-
     }
 
 
     /**
      * Rescore predictions of other method
      */
-    private void doRescore(Prediction prediction, FeatureExtractor proteinExtractor) {
+    private void doRescore(Prediction prediction, FeatureExtractor proteinExtractor, InstancePredictor instancePredictor) {
 
         proteinExtractor.prepareProteinPrototypeForPockets()
 
-        for (Pocket pocket in prediction.pockets) {
+        for (Pocket pocket : prediction.pockets) {
             FeatureExtractor extractor = proteinExtractor.createInstanceForPocket(pocket)
 
             double sum = 0
             double rawSum = 0
 
-            for (Atom point in extractor.sampledPoints) {
+            for (Atom point : extractor.sampledPoints) {
 
-                FeatureVector props = extractor.calcFeatureVector(point)
+                FeatureVector vector = extractor.calcFeatureVector(point)
 
-                double[] hist = getDistributionForPoint(model, props)
+                double[] hist = instancePredictor.getDistributionForPoint(vector)
                 double predictedScore = predictedScore(hist)   // not all classifiers give histogram that sums up to 1
                 boolean predicted = applyPointScoreThreshold(predictedScore)
                 boolean observed = false
@@ -183,17 +171,8 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
 
     }
 
-    private final double[] getDistributionForPoint(Model model, FeatureVector vect) {
-//        if (classifier instanceof FasterForest) {
-//            return ((FasterForest)classifier).distributionForAttributes(vect.array, 2)
-//        } else {
-            PerfUtils.arrayCopy(vect.array, alloc)
-            return model.classifier.distributionForInstance(auxInst)
-//        }
-
-    }
-
     ClassifierStats getStats() {
         return stats
     }
+    
 }

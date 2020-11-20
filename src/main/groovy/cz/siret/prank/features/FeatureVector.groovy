@@ -1,6 +1,6 @@
 package cz.siret.prank.features
 
-import cz.siret.prank.utils.CSV
+import cz.siret.prank.utils.csv.CSV
 import groovy.transform.CompileStatic
 
 /**

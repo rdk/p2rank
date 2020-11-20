@@ -50,7 +50,7 @@ import cz.siret.prank.program.params.Params
 
     atom_table_features = ["apRawValids","apRawInvalids","atomicHydrophobicity"]
 
-    extra_features = ["chem","volsite","protrusion","bfactor"]
+    features = ["chem","volsite","protrusion","bfactor"]
 
     atom_table_feat_pow = 2
 
@@ -139,7 +139,7 @@ import cz.siret.prank.program.params.Params
     point_sampler = "SurfacePointSampler"
 
     /**
-     * multiplier for random posampling
+     * multiplier for random sampling
      */
     sampling_multiplier = 3
 
@@ -149,12 +149,13 @@ import cz.siret.prank.program.params.Params
     solvent_radius = 1.6
 
     /**
-     * Connolly potessellation (~density) used in pradiction step
+     * SAS tessellation (~density) used in prediction step.
+     * Higher tessellation = higher density (+1 ~~ x4 points)
      */
     tessellation = 2
 
     /**
-     * Connolly potessellation (~density) used in training step
+     * SAS Points tessellation (~= density) used in training step
      */
     train_tessellation = 2
 
@@ -182,8 +183,6 @@ import cz.siret.prank.program.params.Params
      * (instead of directly from atom properties)
      */
     smooth_representation = false
-
-    smoothing_radius = 4.5
 
     average_feat_vectors = false
 
@@ -247,7 +246,7 @@ import cz.siret.prank.program.params.Params
     predictions = true
 
     /**
-     * minimum ligandability score for Connolly poto be considered ligandable
+     * minimum ligandability score for SAS point be considered ligandable
      */
     pred_point_threshold = 0.35
 
@@ -267,7 +266,7 @@ import cz.siret.prank.program.params.Params
     extended_pocket_cutoff = 3.5
 
     /**
-     * cuttoff distance of protein surface atoms considered as part of the pocket
+     * cutoff distance of protein surface atoms considered as part of the pocket
      */
     pred_protein_surface_cutoff = 3.5
 
@@ -277,12 +276,12 @@ import cz.siret.prank.program.params.Params
     out_prefix_date = false
 
     /**
-     *
+     * Place all output files in this sub-directory of the output directory
      */
     out_subdir = null
 
     /**
-     * balance Connolly points score weight by density
+     * Balance SAS point score weight by density (points in denser areas will have lower weight)
      */
     balance_density = false
 
@@ -291,7 +290,7 @@ import cz.siret.prank.program.params.Params
     /**
      * output detailed tables for all proteins, ligands and pockets
      */
-    log_cases = false
+    log_cases = true
 
     /**
      * cutoff for protein exposed atoms calculation (distance from connolly surface is solv.radius. + surf_cutoff)
@@ -305,8 +304,8 @@ import cz.siret.prank.program.params.Params
     sample_negatives_from_decoys = false
 
     /**
-     * cutoff atound ligand atoms to select negatives, 0=all
-     * valid if training from whole surface (collenct_negatives_from_decoys=false)
+     * cutoff around ligand atoms to select negatives, 0=all
+     * valid if training from whole surface (collect_negatives_from_decoys=false)
      */
     train_lig_cutoff = 0
 
@@ -335,7 +334,7 @@ import cz.siret.prank.program.params.Params
     plb_rescorer_atomic = false
 
     /**
-     * stop processing the datsaset on the first unrecoverable error with a dataset item
+     * stop processing the dataset on the first unrecoverable error with a dataset item
      */
     fail_fast = false
 

@@ -2,10 +2,6 @@ package cz.siret.prank.features.api
 
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.domain.Residue
-import cz.siret.prank.features.api.ResidueFeatureCalculationContext
-import cz.siret.prank.features.api.ResidueFeatureCalculator
-import cz.siret.prank.features.api.SasFeatureCalculationContext
-import cz.siret.prank.features.api.SasFeatureCalculator
 import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
 

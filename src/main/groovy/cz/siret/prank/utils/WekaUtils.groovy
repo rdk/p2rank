@@ -18,9 +18,9 @@ import java.util.zip.ZipOutputStream
 
 @Slf4j
 @CompileStatic
-class WekaUtils implements Writable {
+class WekaUtils {
 
-    private static final int BUFFER_SIZE = 10 * 1024 * 1024;
+    private static final int BUFFER_SIZE = 16 * 1024 * 1024;
 
     static Instances createDatasetWithBinaryClass(List<String> header, int initialCapacity = 10) {
 
@@ -66,19 +66,29 @@ class WekaUtils implements Writable {
     }
 
     static Classifier loadClassifier(String fileName) {
+        InputStream zis = null
         try {
-            ZipInputStream zis = new ZipInputStream(new BufferedInputStream(new FileInputStream(fileName), BUFFER_SIZE))
-
+            zis = new ZipInputStream(new BufferedInputStream(new FileInputStream(fileName), BUFFER_SIZE))
             zis.getNextEntry()
 
-            return (Classifier) SerializationHelper.read(zis)
-        } catch (FileNotFoundException e) {
-            log.error "model file doesn't exist! ($fileName)"
+            return loadClassifier(zis)
+        } catch (Exception e) {
+            throw new PrankException("Failed to load model from file '$fileName'", e)
+        } finally {
+            zis?.close()
+        }
+    }
+
+    static Classifier loadClassifier(InputStream ins) {
+        try {
+            return (Classifier) SerializationHelper.read(ins)
+        } finally {
+            ins.close()
         }
     }
 
     /**
-     * tries to make sure that classifer uses only one thread for each classification (we then parallelize dataset)
+     * tries to make sure that classifier uses only one thread for each classification (we then parallelize dataset)
      * @param classifier
      */
     @CompileDynamic
@@ -115,7 +125,7 @@ class WekaUtils implements Writable {
     // == data ===
 
     static Instances loadData(String fileName) {
-        ConverterUtils.DataSource source = new ConverterUtils.DataSource(fileName)
+        ConverterUtils.DataSource source = new ConverterUtils.DataSource(Futils.inputStream(fileName))
         Instances data = source.getDataSet();
 
         // setting class attribute if the data format does not provide this information
@@ -125,22 +135,15 @@ class WekaUtils implements Writable {
         return data
     }
 
-    static void saveDataArff(String fileName, boolean compressed, Instances data) {
-        File arff = new File(fileName)
 
-        if (arff.exists())
-            arff.delete()
-
-
-        ArffSaver saver = new ArffSaver();
-        saver.setCompressOutput(compressed)
-
-        saver.setDestination(new BufferedOutputStream(new FileOutputStream(arff), BUFFER_SIZE))
-        //saver.setFile(arff);
-
-        saver.setInstances(data);
-        saver.writeBatch();
+    static void saveDataArff(OutputStream outs, Instances data) {
+        ArffSaver saver = new ArffSaver()
+        saver.setCompressOutput(false)
+        saver.setDestination(outs)
+        saver.setInstances(data)
+        saver.writeBatch() // closes outs
     }
+
 
 
     static Instances joinInstances(List<Instances> instList) {
