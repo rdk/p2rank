@@ -278,12 +278,13 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
     private PrankFeatureVector calcSasFeatVectorFromAtomVectors(Atom point, Atoms neighbourhoodAtoms, Map<Integer, PrankFeatureVector> fromVectors) {
         PrankFeatureVector res = new PrankFeatureVector(calculatedFeatureVectorHeader)
 
+        // aggregate vectors from neighbourhood atoms
+
         if (neighbourhoodAtoms.isEmpty()) {
-            throw new PrankException("No neighbourhood atoms. Cannot calculate feature vector. (Isn't neighbourhood_radius too small?)")
+            log.warn ("No neighbourhood atoms. Cannot calculate feature vector. (Isn't neighbourhood_radius too small?)")
         }
 
         int n = neighbourhoodAtoms.count
-
         double weightSum = 0
 
         for (Atom a : neighbourhoodAtoms) {
@@ -324,14 +325,12 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
         }
 
 
-        // calculate extra SAS features
+        // calculate SAS features
+
         SasFeatureCalculationContext context = new SasFeatureCalculationContext(protein, neighbourhoodAtoms, this)
-        
         for (FeatureSetup.Feature feature : featureSetup.enabledSasFeatures) {
             double[] values = feature.calculator.calculateForSasPoint(point, context)
-
             feature.checkCorrectValuesLength(values)
-
             res.valueVector.setValues(feature.startIndex, values)
         }
 

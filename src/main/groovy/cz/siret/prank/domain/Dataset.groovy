@@ -9,6 +9,7 @@ import cz.siret.prank.domain.loaders.DatasetItemLoader
 import cz.siret.prank.domain.loaders.LoaderParams
 import cz.siret.prank.domain.loaders.pockets.*
 import cz.siret.prank.features.api.ProcessedItemContext
+import cz.siret.prank.program.Failable
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.ThreadPoolFactory
 import cz.siret.prank.program.params.Parametrized
@@ -39,7 +40,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank
  */
 @Slf4j
 @CompileStatic
-class Dataset implements Parametrized, Writable {
+class Dataset implements Parametrized, Writable, Failable {
 
     static final Splitter SPLITTER = Splitter.on(CharMatcher.whitespace()).trimResults().omitEmptyStrings()
 
@@ -206,13 +207,9 @@ class Dataset implements Parametrized, Writable {
             processor.processItem(item)
 
         } catch (Exception e) {
-            String emsg = "error processing dataset item [$item.label]"
-            log.error(emsg, e)
             result.errorItems.add(item)
 
-            if (params.fail_fast) {
-                throw new PrankException(emsg, e)
-            }
+            fail("error processing dataset item [$item.label]", e, log)
         }
 
     }
