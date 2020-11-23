@@ -106,14 +106,9 @@ class Protein implements Parametrized {
     }
 
     void calcuateSurfaceAndExposedAtoms() {
+        getAccessibleSurface()
         if (exposedAtoms == null) {
-            //if (proteinAtoms.empty) {
-            //    throw new PrankException("Protein with no chain atoms [$name]!")
-            //}
-
             exposedAtoms = getAccessibleSurface().computeExposedAtoms(proteinAtoms)
-
-            log.info "SAS points: $accessibleSurface.points.count"
             log.info "exposed protein atoms: $exposedAtoms.count of $proteinAtoms.count"
         }
     }
@@ -175,6 +170,7 @@ class Protein implements Parametrized {
     Surface getAccessibleSurface() {
         if (accessibleSurface == null) {
             accessibleSurface = Surface.computeAccessibleSurface(proteinAtoms, params.solvent_radius, params.tessellation)
+            log.info "SAS points: $accessibleSurface.points.count"
         }
         return accessibleSurface
     }

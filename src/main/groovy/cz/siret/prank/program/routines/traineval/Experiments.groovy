@@ -199,12 +199,13 @@ class Experiments extends Routine {
             async { Futils.delete(dir) }
         }
 
+        if (Params.inst.clear_sec_caches) {
+            trainData.clearSecondaryCaches()
+            evalData?.clearSecondaryCaches()
+        }
         if (Params.inst.clear_prim_caches) {
             trainData.clearPrimaryCaches()
             evalData?.clearPrimaryCaches()
-        } else if (Params.inst.clear_sec_caches) {
-            trainData.clearSecondaryCaches()
-            evalData?.clearSecondaryCaches()
         }
 
         return res
