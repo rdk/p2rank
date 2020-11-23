@@ -262,9 +262,10 @@ class Protein implements Parametrized {
     }
 
     void clearResidues() {
-        residues   = null
-        exposedResidues   = null
-        residueChainsByAuthorId  = null
+        residueChains = null
+        residues = null
+        exposedResidues = null
+        residueChainsByAuthorId = null
     }
 
     /**
