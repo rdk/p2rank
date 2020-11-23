@@ -62,11 +62,7 @@ class CollectVectorsRoutine extends Routine {
         final FeatureExtractor extractor = FeatureExtractor.createFactory()
         final VectorCollector collector = CollectorFactory.createCollector(extractor, dataset)
 
-<<<<<<< HEAD:src/main/groovy/cz/siret/prank/program/routines/CollectVectorsRoutine.groovy
-        extractor.isTrainingExtractor = true
-=======
         extractor.forTraining = true
->>>>>>> develop:src/main/groovy/cz/siret/prank/program/routines/traineval/CollectVectorsRoutine.groovy
 
         final AtomicInteger pos = new AtomicInteger(0)
         final AtomicInteger neg = new AtomicInteger(0)

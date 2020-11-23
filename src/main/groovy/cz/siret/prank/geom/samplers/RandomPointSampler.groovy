@@ -10,6 +10,7 @@ import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 import org.biojava.nbio.structure.AtomImpl
 
+@Deprecated
 @Slf4j
 @CompileStatic
 class RandomPointSampler extends  PointSampler implements Parametrized {

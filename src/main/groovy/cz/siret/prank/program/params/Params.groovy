@@ -429,9 +429,18 @@ class Params {
 
     /**
      * SAS tessellation (~density) used in training step
+     * 0 = use value of tessellation
      */
     @ModelParam // training
     int train_tessellation = 2
+
+    /**
+     * SAS tessellation (~density) used in training step to select negatives.
+     * Allows denser positive sampling than negative sampling and thus deal with class imbalance and train faster.
+     * 0 = use value of effective train_tessellation
+     */
+    @ModelParam // training
+    int train_tessellation_negatives = 2
 
     /**
      * for grid and random sampling
@@ -1152,6 +1161,14 @@ class Params {
         !predict_residues || ligand_derived_point_labeling || identify_peptides_by_labeling
     }
 
+    int getEffectiveTrainTessellation() {
+        (train_tessellation == 0) ? tessellation : train_tessellation
+    }
+
+    int getEffectiveTrainTessellationNegatives() {
+        (train_tessellation_negatives == 0) ? getEffectiveTrainTessellation() : train_tessellation_negatives
+    }
+
 //===========================================================================================================//
 
     /**
@@ -1176,13 +1193,20 @@ class Params {
         applyCmdLineArgs(args)
 
         // processing of special params
+        initDependentParams()
+    }
+
+    /**
+     * Some parameters have special values that they inherit or otherwise depend on other parameters.
+     * ans should be re-initialized any time parameters are loaded.
+     */
+    void initDependentParams() {
         if (!parallel) {
             threads = 1
             rf_threads = 1
         } else if (threads==1) {
             parallel = false
         }
-
     }
 
     @CompileDynamic

@@ -25,14 +25,15 @@ import org.biojava.nbio.structure.Atom
 @CompileStatic
 class LigandabilityPointVectorCollector extends VectorCollector implements Parametrized {
 
-    static final PocketCriterium DEFAULT_POCKET_CRITERIUM = new DCA(5)
+    /** Criterion for calling true positive / false positive pockets */
+    static final PocketCriterium DEFAULT_POSITIVE_POCKET_CRITERIUM = new DCA(5)
 
     /** distance from the point to the ligand that identifies positive point */
     final double POSITIVE_VC_LIGAND_DISTANCE = params.positive_point_ligand_distance
     final double NEGATIVES_DIST = params.positive_point_ligand_distance + params.neutral_points_margin
 
-    FeatureExtractor extractorFactory
-    PocketCriterium criterium = DEFAULT_POCKET_CRITERIUM
+    final FeatureExtractor extractorFactory
+    final PocketCriterium positivePocketCriterium = DEFAULT_POSITIVE_POCKET_CRITERIUM
 
     LigandabilityPointVectorCollector(FeatureExtractor extractorFactory) {
         this.extractorFactory = extractorFactory
@@ -53,51 +54,27 @@ class LigandabilityPointVectorCollector extends VectorCollector implements Param
     Result collectVectors(PredictionPair pair, ProcessedItemContext context) {
         FeatureExtractor proteinExtractorPrototype = extractorFactory.createPrototypeForProtein(pair.prediction.protein, context)
 
-        Result result = null
         try {
-            result = doCollectVectors(pair, proteinExtractorPrototype)
+            return doCollectVectors(pair, proteinExtractorPrototype)
         } finally {
             proteinExtractorPrototype.finalizeProteinPrototype()
         }
-
-        return result
     }
 
-    @CompileStatic(TypeCheckingMode.SKIP)
     private Result doCollectVectors(PredictionPair pair, FeatureExtractor proteinExtractorPrototype) {
-        Result finalRes = new Result()
-
-        Atoms ligandAtoms = getTrainingRelevantLigandAtoms(pair) //pair.protein.allLigandAtoms.withKdTreeConditional()
+        Atoms ligandAtoms = getTrainingRelevantLigandAtoms(pair)
 
         if (ligandAtoms.empty) {
-            log.error "no ligands! [{}]", pair.protein.name
+            log.error "Protein has no relevant ligands - all SAS points will be negative [{}]", pair.protein.name
         }
 
-        if (!params.sample_negatives_from_decoys) {
-            finalRes = collectWholeSurface(ligandAtoms, proteinExtractorPrototype)
+        if (params.sample_negatives_from_decoys) {
+            return collectForPockets(ligandAtoms, pair, proteinExtractorPrototype)
         } else {
-            proteinExtractorPrototype.prepareProteinPrototypeForPockets()
-
-            List<Pocket> usePockets = pair.prediction.pockets  // use all pockets
-            if (params.train_pockets>0) {
-                usePockets = [ *pair.getCorrectlyPredictedPockets(criterium) , *Cutils.head(params.train_pockets, pair.getFalsePositivePockets(criterium)) ]
-            }
-
-            for (Pocket pocket in usePockets) {
-                try {
-                    FeatureExtractor pocketExtractor = proteinExtractorPrototype.createInstanceForPocket(pocket)
-                    Result pocketRes = collectForPocket(pocket, pair, ligandAtoms, pocketExtractor)
-                    //synchronized (finalRes) {
-                    finalRes.addAll(pocketRes)
-                    //}
-                } catch (Exception e) {
-                    log.error("skipping extraction from pocket:$pocket.name reason: " + e.getMessage(), e)
-                }
-            }
+            return collectWholeSurface(ligandAtoms, proteinExtractorPrototype)
         }
-
-        return finalRes
     }
+
 
     @CompileStatic
     Result collectWholeSurface(Atoms ligandAtoms, FeatureExtractor proteinExtractorPrototype) {
@@ -144,9 +121,35 @@ class LigandabilityPointVectorCollector extends VectorCollector implements Param
         return res
     }
 
+
+    @CompileStatic(TypeCheckingMode.SKIP)
+    Result collectForPockets(Atoms ligandAtoms, PredictionPair pair, FeatureExtractor proteinExtractorPrototype) {
+        Result result = new Result()
+        proteinExtractorPrototype.prepareProteinPrototypeForPockets()
+
+        List<Pocket> usePockets = pair.prediction.pockets  // use all pockets
+        if (params.train_pockets > 0) {
+            usePockets = [*pair.getCorrectlyPredictedPockets(positivePocketCriterium), *Cutils.head(params.train_pockets, pair.getFalsePositivePockets(positivePocketCriterium)) ]
+        }
+
+        for (Pocket pocket in usePockets) {
+            try {
+                FeatureExtractor pocketExtractor = proteinExtractorPrototype.createInstanceForPocket(pocket)
+                Result pocketRes = collectForPocket(pocket, pair, ligandAtoms, pocketExtractor)
+                //synchronized (result) {
+                result.addAll(pocketRes)
+                //}
+            } catch (Exception e) {
+                log.error("skipping extraction from pocket:$pocket.name reason: " + e.message, e)
+            }
+        }
+
+        return result
+    }
+
     @CompileStatic
     private Result collectForPocket(Pocket pocket, PredictionPair pair, Atoms ligandAtoms, FeatureExtractor pocketExtractor) {
-        boolean ligPocket = pair.isCorrectlyPredictedPocket(pocket, criterium)
+        boolean ligPocket = pair.isCorrectlyPredictedPocket(pocket, positivePocketCriterium)
 
         Result res = new Result()
 
@@ -179,6 +182,14 @@ class LigandabilityPointVectorCollector extends VectorCollector implements Param
 
         return res
     }
+
+//===========================================================================================================//
+
+   // private addVectorsFor
+
+   // TODO
+
+//===========================================================================================================//
 
     @Override
     List<String> getHeader() {

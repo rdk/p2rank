@@ -50,18 +50,20 @@ class Protein implements Parametrized {
     /** solvent exposed atoms */
     Atoms exposedAtoms
 
-    /** solvent accessible surface */
+//===========================================================================================================//
+
+    /** solvent accessible surface - set of SAS points */
     Surface accessibleSurface
 
     /**
-     * surface for sampling training points (different from accessibleSurface only when params.tessellation != params.train_tessellation)
+     * surface for sampling training points (different from accessibleSurface iff params.tessellation != params.train_tessellation)
      */
     Surface trainSurface
 
     /**
-     * surface for sampling negative training points (different from trainSurface only when params.train_tessellation != params.train_negatives_tessellation )
+     * surface for sampling negative training points (different from trainSurface iff params.train_tessellation != params.train_negatives_tessellation )
      */
-    Surface trainSurfaceNagatives
+    Surface trainNegativesSurface
 
 //===========================================================================================================//
 
@@ -116,6 +118,10 @@ class Protein implements Parametrized {
         }
     }
 
+    /**
+     * TODO move to conservation features
+     * @return
+     */
     ConservationScore loadConservationScores(ProcessedItemContext itemContext) {
         log.info "Loading conservation scores for [{}]", itemContext.item.label
 
@@ -127,6 +133,10 @@ class Protein implements Parametrized {
         return score
     }
 
+    /**
+     * TODO move to conservation features
+     * @return
+     */
     void ensureConservationLoaded(ProcessedItemContext itemContext) {
         if (!secondaryData.getOrDefault(CONSERV_LOADED_KEY, false)
                 && itemContext.auxData.getOrDefault(CONSERV_SCORE_KEY,
@@ -171,25 +181,38 @@ class Protein implements Parametrized {
 
     Surface getTrainSurface() {
         if (trainSurface == null) {
-            boolean shouldBeDistinct = params.tessellation != params.train_tessellation
+            boolean shouldBeDistinct = params.tessellation != params.effectiveTrainTessellation
             if (shouldBeDistinct) {
-                trainSurface = Surface.computeAccessibleSurface(proteinAtoms, params.solvent_radius, params.train_tessellation)
-                log.info "train SAS points: $trainSurface.points.count"
+                trainSurface = Surface.computeAccessibleSurface(proteinAtoms, params.solvent_radius, params.effectiveTrainTessellation)
+                log.info "train surface points: $trainSurface.points.count"
             } else {
-                trainSurface = accessibleSurface
+                trainSurface = getAccessibleSurface()
             }
-
         }
         return trainSurface
+    }
+
+    Surface getTrainNegativesSurface() {
+        if (trainNegativesSurface == null) {
+            boolean shouldBeDistinct = params.effectiveTrainTessellationNegatives != params.effectiveTrainTessellation
+            if (shouldBeDistinct) {
+                trainNegativesSurface = Surface.computeAccessibleSurface(proteinAtoms, params.solvent_radius, params.effectiveTrainTessellationNegatives)
+                log.info "train negatives surface points: $trainSurface.points.count"
+            } else {
+                trainNegativesSurface = getTrainSurface()
+            }
+        }
+        return trainNegativesSurface
     }
 
     /**
      * clears generated surfaces and secondary data
      */
     void clearSecondaryData() {
+        exposedAtoms = null
         accessibleSurface = null
         trainSurface = null
-        exposedAtoms = null
+        trainNegativesSurface = null
         secondaryData.clear()
         ligands.each { it.sasPoints = null; it.predictedPocket = null }
         clearResidues()

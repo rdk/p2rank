@@ -236,6 +236,9 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
         return res
     }
 
+    /**
+     * finalize feature calculators and conditionally clear secondary data
+     */
     @Override
     void finalizeProteinPrototype() {
         // finalize features

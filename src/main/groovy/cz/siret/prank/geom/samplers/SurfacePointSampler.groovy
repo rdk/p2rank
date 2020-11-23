@@ -8,6 +8,7 @@ import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.params.Params
 import groovy.transform.CompileStatic
 
+@Deprecated
 @CompileStatic
 class SurfacePointSampler extends PointSampler implements Parametrized {
 
