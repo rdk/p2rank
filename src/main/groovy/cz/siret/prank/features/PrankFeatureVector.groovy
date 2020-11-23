@@ -74,7 +74,7 @@ class PrankFeatureVector extends FeatureVector implements Cloneable {
         for (FeatureSetup.Feature feature : extractor.featureSetup.enabledAtomFeatures) {
             double[] values = feature.calculator.calculateForAtom(atom, context)
 
-            feature.checkCorrectValuesLength(values)
+            feature.checkCorrectLength(values)
             valueVector.setValues(feature.startIndex, values)
         }
 

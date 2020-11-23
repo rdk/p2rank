@@ -200,7 +200,7 @@ class FeatureSetup {
             return calculator.name
         }
 
-        void checkCorrectValuesLength(double[] calculatedValues) throws PrankException {
+        void checkCorrectLength(double[] calculatedValues) throws PrankException {
             if (calculatedValues.length != length) {
                 throw new PrankException("Feature $name returned value array of incorrect length: ${length}."
                         + "Should be ${length} according to the feature header.")
