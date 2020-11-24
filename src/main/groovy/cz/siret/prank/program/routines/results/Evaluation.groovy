@@ -57,7 +57,7 @@ class Evaluation implements Parametrized {
     }
 
     Evaluation() {
-        this( getDefaultEvalCrtieria() )
+        this( getDefaultEvalCriteria() )
     }
 
     void sort() {
@@ -256,9 +256,8 @@ class Evaluation implements Parametrized {
 
             if (!protein.params.log_scores_to_file.isEmpty()) {
                 bindingScrs = bindingAtoms.distinctGroupsSorted.collect { it ->
-                    score.getScoreForResidue(it
-                            .getResidueNumber())
-                }.toList()
+                    score.getScoreForResidue(it.getResidueNumber())
+                }
                 nonBindingScrs = nonBindingAtoms.distinctGroupsSorted.collect { it ->
                     score.getScoreForResidue(it.getResidueNumber())
                 }
@@ -420,9 +419,6 @@ class Evaluation implements Parametrized {
         return avg(ligProts, closure)
     }
 
-
-
-
     double div(double a, double b) {
         if (b==0d)
             return Double.NaN
@@ -544,7 +540,7 @@ class Evaluation implements Parametrized {
         m.DCA_4_0_PC = calcSuccRateProteinCentric(3,0)
         m.DCA_4_2_PC = calcSuccRateProteinCentric(3,2)
 
-        // compare to getDefaultEvalCrtieria()
+        // compare to getDefaultEvalCriteria()
         m.DCC_4_0 = calcSuccRate(18,0)
         m.DCC_4_2 = calcSuccRate(18,2)
         m.DCC_5_0 = calcSuccRate(19,0)
@@ -585,7 +581,7 @@ class Evaluation implements Parametrized {
     /**
      * get list of evaluation criteria used during eval routines
      */
-    static List<PocketCriterium> getDefaultEvalCrtieria() {
+    static List<PocketCriterium> getDefaultEvalCriteria() {
         double REQUIRED_POCKET_COVERAGE = 0.2  //  like in fpocket MOc criterion
         ((1..15).collect { new DCA(it) }) +         // 0-14
         ((1..10).collect { new DCC(it) }) +         // 15-24

@@ -81,9 +81,6 @@ class PredictResults implements Parametrized, Writable {
 
 //===========================================================================================================//
 
-
-
-
     String toMainResultsCsv(String outdir, String label) {
 
         def m = new LinkedHashMap()
@@ -122,7 +119,5 @@ class PredictResults implements Parametrized, Writable {
         }
         collectedf << mainRes.readLines()[1] + "\n"
     }
-
-
 
 }
