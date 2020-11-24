@@ -5,21 +5,16 @@ import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.features.FeatureVector
 import cz.siret.prank.features.PrankFeatureExtractor
 import cz.siret.prank.features.api.ProcessedItemContext
-import cz.siret.prank.fforest.FasterForest
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.prediction.metrics.ClassifierStats
 import cz.siret.prank.prediction.pockets.rescorers.InstancePredictor
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.ml.Model
-import cz.siret.prank.utils.PerfUtils
-import cz.siret.prank.utils.WekaUtils
 import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
-import weka.core.DenseInstance
-import weka.core.Instances
 
 import static cz.siret.prank.prediction.pockets.PointScoreCalculator.applyPointScoreThreshold
-import static cz.siret.prank.prediction.pockets.PointScoreCalculator.predictedScore
+import static cz.siret.prank.prediction.pockets.PointScoreCalculator.normalizedScore
 
 /**
  *
@@ -93,7 +88,7 @@ class ModelBasedPointLabeler extends PointLabeler {
 
             // labels and statistics
 
-            double predictedScore = predictedScore(hist)   // not all classifiers give histogram that sums up to 1
+            double predictedScore = normalizedScore(hist)   // not all classifiers give histogram that sums up to 1
             boolean predicted = binaryLabel(predictedScore)
             boolean observed = false
 

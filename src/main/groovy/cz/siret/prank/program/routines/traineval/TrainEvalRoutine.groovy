@@ -16,7 +16,7 @@ import weka.core.Instance
 import weka.core.Instances
 
 import static cz.siret.prank.prediction.pockets.PointScoreCalculator.applyPointScoreThreshold
-import static cz.siret.prank.prediction.pockets.PointScoreCalculator.predictedScore
+import static cz.siret.prank.prediction.pockets.PointScoreCalculator.normalizedScore
 import static cz.siret.prank.utils.ATimer.startTimer
 import static cz.siret.prank.utils.Formatter.formatTime
 import static cz.siret.prank.utils.Futils.mkdirs
@@ -105,7 +105,7 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
             ClassifierStats trainStats = new ClassifierStats()
             for (Instance inst : trainVectors) {
                 double[] hist = classifier.distributionForInstance(inst)
-                double score = predictedScore(hist)
+                double score = normalizedScore(hist)
                 boolean predicted = applyPointScoreThreshold(score)
                 boolean observed = inst.classValue() > 0
 

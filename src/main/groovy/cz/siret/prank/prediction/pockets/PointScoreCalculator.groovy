@@ -14,11 +14,11 @@ class PointScoreCalculator implements Parametrized {
     private final boolean USE_ONLY_POSITIVE_SCORE = params.use_only_positive_score
 
     /**
-     * calculate raw classification score form binary classification historgram
+     * calculate raw classification score form binary classification histogram
      * @param hist length=2
      * @return
      */
-    static double predictedScore(double[] hist) {
+    static double normalizedScore(double[] hist) {
         hist[1] / (hist[0] + hist[1])
     }
 
@@ -40,7 +40,7 @@ class PointScoreCalculator implements Parametrized {
         if (USE_ONLY_POSITIVE_SCORE) {
             score = hist[1]  
         } else {
-            score = predictedScore(hist)
+            score = normalizedScore(hist)
         }
 
         score = Math.pow(score, POINT_SCORE_EXP)

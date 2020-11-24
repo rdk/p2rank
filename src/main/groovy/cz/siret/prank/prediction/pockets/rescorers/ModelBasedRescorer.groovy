@@ -13,16 +13,12 @@ import cz.siret.prank.prediction.pockets.PocketPredictor
 import cz.siret.prank.prediction.pockets.PointScoreCalculator
 import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.utils.PerfUtils
-import cz.siret.prank.utils.WekaUtils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
-import weka.core.DenseInstance
-import weka.core.Instances
 
 import static cz.siret.prank.prediction.pockets.PointScoreCalculator.applyPointScoreThreshold
-import static cz.siret.prank.prediction.pockets.PointScoreCalculator.predictedScore
+import static cz.siret.prank.prediction.pockets.PointScoreCalculator.normalizedScore
 
 /**
  * rescorer and predictor
@@ -91,7 +87,7 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
 
                 // labels and statistics
 
-                double predictedScore = predictedScore(hist)   // not all classifiers give histogram that sums up to 1
+                double predictedScore = normalizedScore(hist)   // not all classifiers give histogram that sums up to 1
                 boolean predicted = applyPointScoreThreshold(predictedScore)
                 boolean observed = false
 
@@ -144,7 +140,7 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
                 FeatureVector vector = extractor.calcFeatureVector(point)
 
                 double[] hist = instancePredictor.getDistributionForPoint(vector)
-                double predictedScore = predictedScore(hist)   // not all classifiers give histogram that sums up to 1
+                double predictedScore = normalizedScore(hist)   // not all classifiers give histogram that sums up to 1
                 boolean predicted = applyPointScoreThreshold(predictedScore)
                 boolean observed = false
 
@@ -152,7 +148,6 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
                     double closestLigandDistance = ligandAtoms.count > 0 ? ligandAtoms.dist(point) : Double.MAX_VALUE
                     observed = (closestLigandDistance <= POSITIVE_POINT_LIGAND_DISTANCE)
                     stats.addPrediction(observed, predicted, predictedScore, hist)
-
                 }
                 if (collectPoints) {
                     labeledPoints.add(new LabeledPoint(point, hist, observed, predicted))

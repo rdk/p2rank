@@ -17,10 +17,7 @@ import static java.lang.Math.log
 @CompileStatic
 class ClassifierStats implements Parametrized, Writable {
 
-    static final double EPS = 0.01
-    static final int HISTOGRAM_BINS = 100
-
-    String name
+    static final int HISTOGRAM_BINS = 1000
 
     int[][] op    // confusion matrix [observed][predicted]
     int count = 0
@@ -32,7 +29,6 @@ class ClassifierStats implements Parametrized, Writable {
     double sumSE = 0
     double sumSEpos = 0
     double sumSEneg = 0
-    double sumLogLoss = 0
 
     Histograms histograms = new Histograms()
 
@@ -119,13 +115,6 @@ class ClassifierStats implements Parametrized, Writable {
             sumSEneg += se
         }
 
-        double pCorrect = observed ? score : 1d-score
-        if (pCorrect<EPS) {
-            pCorrect = EPS
-        }
-        sumLogLoss -= log(pCorrect)
-//        write("sumLogLoss: " + sumLogLoss)
-
         histograms.score.put(score)
         if (observed) {
             histograms.scorePos.put(score)
@@ -185,8 +174,6 @@ class ClassifierStats implements Parametrized, Writable {
         return formatPercent((double)x/count)
     }
 
-
-    //@CompileStatic
     String toCSV(String classifierLabel) {
 
         Metrics m = metrics

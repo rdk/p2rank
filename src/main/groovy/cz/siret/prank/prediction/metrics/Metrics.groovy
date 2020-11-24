@@ -1,8 +1,12 @@
 package cz.siret.prank.prediction.metrics
 
+import com.google.common.math.StatsAccumulator
 import cz.siret.prank.program.params.Parametrized
+import cz.siret.prank.utils.StatSample
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+
+import javax.annotation.Nonnull
 
 import static java.lang.Double.NaN
 import static java.lang.Math.log
@@ -187,10 +191,6 @@ class Metrics implements Parametrized {
     double getMSEneg()    { div stats.sumSEneg, count      }
     double getMSEbalanced() { (MSEneg + MSEpos) / 2    }
 
-    double getLogLoss() {
-        div stats.sumLogLoss, count
-    }
-
     /** Uncertainty coefficient, aka Proficiency */
     double getUC() {
         try {
@@ -209,13 +209,18 @@ class Metrics implements Parametrized {
     }
 
     double getAUC() {
-        if (advanced==null) advanced = calculateAdvanced()
-        advanced.wekaAUC
+        ensureAdvancedCalculated()
+        advanced.AUC
     }
 
     double getAUPRC() {
-        if (advanced==null) advanced = calculateAdvanced()
-        advanced.wekaAUPRC
+        ensureAdvancedCalculated()
+        advanced.AUPRC
+    }
+
+    double getLogLoss() {
+        ensureAdvancedCalculated()
+        advanced.logLoss
     }
 
 
@@ -251,32 +256,67 @@ class Metrics implements Parametrized {
         return a / b
     }
 
+//===========================================================================================================//
 
-    Advanced calculateAdvanced() {
-        Advanced res = new Advanced()
-
-        if (stats.collecting && stats.predictions!=null) {
-            if (!stats.predictions.empty)  {
-                WekaStatsHelper wekaHelper = new WekaStatsHelper(stats.predictions)
-                res.wekaAUC = wekaHelper.areaUnderROC()
-                res.wekaAUPRC = wekaHelper.areaUnderPRC()
-
-                if (res.wekaAUC==Double.NaN) log.error "Calculated AUC is NaN"
-                if (res.wekaAUPRC==Double.NaN) log.error "Calculated AUPRC is NaN"
-
-                log.debug "AUC: {}", res.wekaAUC
-                log.debug "AUPRC: {}", res.wekaAUPRC
-            } else {
-                log.error "Predictions are empty! Cannot calculate AUC and AUPRC stats."
-            }
-        }
-
-        res
+    static class Advanced {
+        double AUC = Double.NaN
+        double AUPRC = Double.NaN
+        double logLoss = Double.NaN
     }
 
-    class Advanced {
-        double wekaAUC   = Double.NaN
-        double wekaAUPRC = Double.NaN
+    void ensureAdvancedCalculated() {
+        if (advanced == null) {
+            if (stats.collecting && stats.predictions!=null) {
+                if (!stats.predictions.empty)  {
+                    advanced = calculateAdvanced(stats.predictions)
+                } else {
+                    log.error "Predictions are empty! Cannot calculate AUC and AUPRC stats."
+                }
+            }
+        }
+    }
+
+    /**
+     *
+     * @param predictions  non-null non-empty
+     * @return
+     */
+    Advanced calculateAdvanced(@Nonnull ArrayList<PPred> predictions) {
+        Advanced res = new Advanced()
+
+        res.logLoss = calcLogLoss(stats.predictions)
+
+        // AUC, AUPRC
+
+        WekaStatsHelper wekaHelper = new WekaStatsHelper(predictions)
+        res.AUC = wekaHelper.areaUnderROC()
+        res.AUPRC = wekaHelper.areaUnderPRC()
+        if (res.AUC==Double.NaN) log.error "Calculated AUC is NaN"
+        if (res.AUPRC==Double.NaN) log.error "Calculated AUPRC is NaN"
+        log.debug "AUC: {}", res.AUC
+        log.debug "AUPRC: {}", res.AUPRC
+
+
+        // StatSample scores = StatSample.newStatSample(predictions.collect {it.score })
+
+        return res
+    }
+
+    static final double LOG_LOSS_EPSILON = 0.01
+
+    private double calcLogLoss(List<PPred> preds) {
+        int n = preds.size()
+        double sum = 0d
+
+        for (PPred pred : preds) {
+            double pCorrect = pred.observed ? pred.score : 1d-pred.score
+            if (pCorrect < LOG_LOSS_EPSILON) {
+                pCorrect = LOG_LOSS_EPSILON
+            }
+            sum -= log(pCorrect)/n
+        }
+
+        return sum
     }
 
 }
