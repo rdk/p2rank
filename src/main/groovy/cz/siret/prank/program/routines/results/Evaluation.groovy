@@ -7,6 +7,8 @@ import cz.siret.prank.features.implementation.conservation.ConservationScore
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.prediction.pockets.criteria.*
 import cz.siret.prank.program.params.Parametrized
+import cz.siret.prank.utils.Cutils
+import cz.siret.prank.utils.MathUtils
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.StringUtils
 
@@ -50,7 +52,7 @@ class Evaluation implements Parametrized {
 
     int ligSASPointsCount
     int ligSASPointsCoveredCount
-
+    double ligSASPointsScoreSum
 
     Evaluation(List<PocketCriterium> criteria) {
         this.criteria = criteria
@@ -147,8 +149,9 @@ class Evaluation implements Parametrized {
         // overlaps and coverages
         int n_ligSasPoints = calcCoveragesProt(protRow, pair, sasPoints, pockets)
         // ligand coverage by positively predicted points (note: not by pockets!)
-        Atoms ligLabeledPoints = labeledPoints.cutoutShell(protein.allLigandAtoms, LIG_SAS_CUTOFF)
-        int n_ligSasPointsCovered = ligLabeledPoints.toList().findAll { ((LabeledPoint) it).predicted }.toList().size()  // only for P2Rank
+        Atoms allLigLabeledPoints = labeledPoints.cutoutShell(protein.allLigandAtoms, LIG_SAS_CUTOFF)
+        int n_ligSasPointsCovered = allLigLabeledPoints.findAll { ((LabeledPoint) it).predicted }.size()  // only for P2Rank
+        double _ligSasPointsScoreSum = allLigLabeledPoints.collect { LabeledPoint it -> it.score }.sum(0)
         //log.debug "XXXX n_ligSasPoints: $n_ligSasPoints covered: $n_ligSasPointsCovered"
 
         // Conservation stats
@@ -173,6 +176,14 @@ class Evaluation implements Parametrized {
             } else {
                 row.closestPocketDist = Double.NaN
             }
+
+            List<LabeledPoint> ligPoints = allLigLabeledPoints.cutoutShell(lig.atoms, LIG_SAS_CUTOFF).toList() as List<LabeledPoint>
+            ligPoints.sort { -it.score }
+            List<Double> ptScores = ligPoints.collect { it.score }
+            row.avgPointScore = avg ptScores
+            row.maxPointScore = ptScores?[0] ?: 0d
+            row.avgMax3PointScore = avg Cutils.head(3, ptScores)
+            row.avgMaxHalfPointScore = avg Cutils.head(MathUtils.ceilDiv(ptScores, 2), ptScores)
 
             tmpLigRows.add(row)
         }
@@ -235,6 +246,7 @@ class Evaluation implements Parametrized {
             pocketRows.addAll(tmpPockets)
             ligSASPointsCount += n_ligSasPoints
             ligSASPointsCoveredCount += n_ligSasPointsCovered
+            _ligSasPointsScoreSum += _ligSasPointsScoreSum
 
             if (!protein.params.log_scores_to_file.isEmpty()) {
                 bindingScores.addAll(bindingScrs)
@@ -316,6 +328,7 @@ class Evaluation implements Parametrized {
         distantLigandCount += eval.distantLigandCount
         ligSASPointsCount += eval.ligSASPointsCount
         ligSASPointsCoveredCount += eval.ligSASPointsCoveredCount
+        ligSASPointsScoreSum += eval.ligSASPointsScoreSum
 
         bindingScores.addAll(eval.bindingScores)
         nonBindingScores.addAll(eval.nonBindingScores)
@@ -406,9 +419,27 @@ class Evaluation implements Parametrized {
 
 //===========================================================================================================//
 
+    public double avg(List<Double> list) {
+        if (list.size()==0) return Double.NaN
+        list.findAll { it!=Double.NaN }.sum(0) / list.size()
+    }
+    
     public <T> double avg(List<T> list, Closure<T> closure) {
         if (list.size()==0) return Double.NaN
         list.collect { closure(it) }.findAll { it!=Double.NaN }.sum(0) / list.size()
+    }
+
+    public <T> double avgNanTo0(List<T> list, Closure<T> closure) {
+        if (list.size()==0) return Double.NaN
+        list.collect { closure(it) }.collect { nanNullTo0(it) }.sum(0) / list.size()
+    }
+
+    double nanNullTo0(Double d) {
+        if (d == null || d.isNaN()) {
+            return 0d
+        } else {
+            return d
+        }
     }
 
     /**
@@ -477,6 +508,10 @@ class Evaluation implements Parametrized {
         div ligSASPointsCoveredCount, ligSASPointsCount
     }
 
+    double getAvgLigandPointScore() {
+        div ligSASPointsScoreSum, ligSASPointsCount
+    }
+
     double getAvgClosestPocketDist() {
         avg ligandRows, { LigRow row -> row.closestPocketDist }
     }
@@ -511,6 +546,12 @@ class Evaluation implements Parametrized {
         m.AVG_LIGCOV_TOPN0 = avgLigProt proteinRows, { it.ligandCoverageN0   }  // avg by proteins (unlike DCA and others)
         m.AVG_LIGCOV_TOPN2 = avgLigProt proteinRows, { it.ligandCoverageN2   }  // avg by proteins (unlike DCA and others)
         m.AVG_LIGCOV_SUCC  = avgLigProt proteinRows, { it.ligandCoverageSucc }  // avg by proteins (unlike DCA and others)
+
+        m.AVG_LIG_POINT_SCORE = avgLigandPointScore // average of all ligand adjacent points
+        m.AVG_LIG_AVG_POINT_SCORE = avgNanTo0 ligandRows, { it.avgPointScore } // average of ligand averages
+        m.AVG_LIG_MAX_POINT_SCORE = avgNanTo0 ligandRows, { it.maxPointScore }
+        m.AVG_LIG_AVG_MAX3_POINT_SCORE = avgNanTo0 ligandRows, { it.avgMax3PointScore }
+        m.AVG_LIG_AVG_MAXHALF_POINT_SCORE = avgNanTo0 ligandRows, { it.avgMaxHalfPointScore }
 
         m.AVG_POCKETS = avgPockets
         m.AVG_POCKET_SURF_ATOMS = avgPocketSurfAtoms
@@ -718,6 +759,11 @@ class Evaluation implements Parametrized {
         double closestPocketDist 
         double centerToProtDist
         int dca4rank = -1
+
+        double avgPointScore
+        double maxPointScore
+        double avgMax3PointScore
+        double avgMaxHalfPointScore
 
         List<Integer> ranks // of identified pocket for given criterion (-1=not identified)
     }

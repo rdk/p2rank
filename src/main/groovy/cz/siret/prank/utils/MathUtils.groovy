@@ -31,4 +31,8 @@ class MathUtils {
         newStatSample(sample).stddev
     }
 
+    static int ceilDiv(int x, int y){
+        return -Math.floorDiv(-x,y);
+    }
+
 }

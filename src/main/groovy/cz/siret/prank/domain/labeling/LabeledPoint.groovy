@@ -57,7 +57,7 @@ class LabeledPoint implements Atom {
 //===========================================================================================================//
 
     /**
-     * @return predicted lgandability score from interval <0,1> (aggregated from histogram)
+     * @return predicted ligandability score from interval <0,1> (aggregated from histogram)
      */
     double getLigandabilityScore() {
         hist[1] / (hist[0]+hist[1])
