@@ -8,6 +8,7 @@ import groovy.util.logging.Slf4j
 
 import javax.annotation.Nonnull
 
+import static cz.siret.prank.utils.StatSample.newStatSample
 import static java.lang.Double.NaN
 import static java.lang.Math.log
 
@@ -208,26 +209,31 @@ class Metrics implements Parametrized {
         }
     }
 
-    double getAUC() {
-        ensureAdvancedCalculated()
-        advanced.AUC
-    }
-
-    double getAUPRC() {
-        ensureAdvancedCalculated()
-        advanced.AUPRC
-    }
-
-    double getLogLoss() {
-        ensureAdvancedCalculated()
-        advanced.logLoss
-    }
-
-
     private double getFWeighted(double beta) {
         double betaSqr = beta*beta
         div ( (1+betaSqr)*p*r , r + betaSqr*p  )
     }
+
+//===========================================================================================================//
+
+    double getAUC() {
+        getAdvanced().AUC
+    }
+
+    double getAUPRC() {
+        getAdvanced().AUPRC
+    }
+
+    double getScoresAvg() {
+        getAdvanced().scoresAvg
+    }
+
+    double getScoresPosAvg() {
+        getAdvanced().scoresPosAvg
+    }
+
+//===========================================================================================================//
+
 
     Map<String, Double> toMap() {
         Map<String, Double> res = new TreeMap<>() // keep them sorted
@@ -262,10 +268,18 @@ class Metrics implements Parametrized {
         double AUC = Double.NaN
         double AUPRC = Double.NaN
         double logLoss = Double.NaN
+
+        double scoresAvg = Double.NaN
+        double scoresPosAvg = Double.NaN
+    }
+
+    Advanced getAdvanced() {
+        ensureAdvancedCalculated()
+        return advanced
     }
 
     void ensureAdvancedCalculated() {
-        if (advanced == null) {
+        if (this.advanced == null) {
             if (stats.collecting && stats.predictions!=null) {
                 if (!stats.predictions.empty)  {
                     advanced = calculateAdvanced(stats.predictions)
@@ -296,8 +310,10 @@ class Metrics implements Parametrized {
         log.debug "AUC: {}", res.AUC
         log.debug "AUPRC: {}", res.AUPRC
 
-
-        // StatSample scores = StatSample.newStatSample(predictions.collect {it.score })
+        StatSample scores = newStatSample(predictions.collect {it.score })
+        StatSample scoresPos = newStatSample(predictions.findAll {it.observed }.collect {it.score })
+        res.scoresAvg = scores.mean
+        res.scoresPosAvg = scoresPos.mean
 
         return res
     }
