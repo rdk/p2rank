@@ -17,7 +17,7 @@ import static java.lang.Math.log
 @CompileStatic
 class ClassifierStats implements Parametrized, Writable {
 
-    static final int HISTOGRAM_BINS = 1000
+    static final int HISTOGRAM_BINS = 100
 
     int[][] op    // confusion matrix [observed][predicted]
     int count = 0

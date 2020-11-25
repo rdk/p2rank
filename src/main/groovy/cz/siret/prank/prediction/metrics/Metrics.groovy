@@ -224,6 +224,10 @@ class Metrics implements Parametrized {
         getAdvanced().AUPRC
     }
 
+    double getLogLoss() {
+        getAdvanced().logLoss
+    }
+
     double getScoresAvg() {
         getAdvanced().scoresAvg
     }
@@ -311,17 +315,25 @@ class Metrics implements Parametrized {
         log.debug "AUC: {}", res.AUC
         log.debug "AUPRC: {}", res.AUPRC
 
-        StatSample scores = newStatSample(predictions.collect {it.score })
-        StatSample scoresPos = newStatSample(predictions.findAll {it.observed }.collect {it.score })
-        res.scoresAvg = scores.mean
-        res.scoresPosAvg = scoresPos.mean
+        res.scoresAvg = meanScore(predictions)
+        res.scoresPosAvg = meanScore(predictions.findAll {it.observed })
 
         return res
     }
 
-    static final double LOG_LOSS_EPSILON = 0.01
+    private double meanScore(List<PPred> preds) {
+        int n = preds.size()
+        double sum = 0d
+
+        for (PPred pred : preds) {
+            sum += pred.score/n
+        }
+
+        return sum
+    }
 
     private double calcLogLoss(List<PPred> preds) {
+        final double LOG_LOSS_EPSILON = 0.01
         int n = preds.size()
         double sum = 0d
 
