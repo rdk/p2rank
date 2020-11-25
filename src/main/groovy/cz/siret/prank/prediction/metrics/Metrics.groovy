@@ -280,6 +280,7 @@ class Metrics implements Parametrized {
 
     void ensureAdvancedCalculated() {
         if (this.advanced == null) {
+            advanced = new Advanced() // empty
             if (stats.collecting && stats.predictions!=null) {
                 if (!stats.predictions.empty)  {
                     advanced = calculateAdvanced(stats.predictions)
