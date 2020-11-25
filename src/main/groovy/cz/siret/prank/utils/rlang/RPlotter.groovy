@@ -116,6 +116,7 @@ class RPlotter implements Parametrized {
                 rnames <- data[,1]                            # assign labels in column 1 to "rnames"
                 cnames <- colnames(data)
                 cnames <- cnames[2:length(cnames)]
+                cnames <- sub("^X", "", cnames)               # remove X prefix added by colnames
                 mat_data <- data.matrix(data[,2:ncol(data)])  # transform column 2-5 into a matrix
 
                 rownames(mat_data) <- rnames                  # assign row names
@@ -146,13 +147,17 @@ class RPlotter implements Parametrized {
                           main = "$label",      # heat map title
                           cellnote = mat_data,  # same data set for cell labels
                           notecol="black",      # change font color of cell labels to black
-                          notecex=0.9,          # cell note font size multiplier 
+                          notecex=1,            # cell note font size multiplier
+                          cex.lab=1,
+                          cex.axis=1, 
+                          #srtCol=15,           # rotate x captions
                           key=FALSE,            # don't render color legend
                           density.info="none",  # turns off density plot inside color legend
                           trace="none",         # turns off trace lines inside the heat map
-                          # margins =c(8,8),    # widens margins around plot
+                          margins=c(10,10),     # widens margins around plot
+                          lhei=c(0.1,1),
+                          lwid=c(0.1,1),
                           col=my_palette,       # use on color palette defined earlier
-                          #breaks=col_breaks,   # enable color transition at specified limits
                           dendrogram="none",    # only draw a row dendrogram
                           xlab="$xlab",
                           ylab="$ylab",
@@ -164,5 +169,26 @@ class RPlotter implements Parametrized {
 
         rexec.runCode(rcode, label, outdir)
     }
+
+    main = "ACC",      # heat map title
+    cellnote = mat_data,  # same data set for cell labels
+    notecol="black",      # change font color of cell labels to black
+    notecex=1,          # cell note font size multiplier
+    cex.lab=1,
+    cex.axis=1,
+    key=FALSE,            # don't render color legend
+    density.info="none",  # turns off density plot inside color legend
+    trace="none",         # turns off trace lines inside the heat map
+    margins =c(10,10),    # widens margins around plot
+    lhei = c(0.1, 1),
+    lwid = c(0.1, 1),
+    col=my_palette,       # use on color palette defined earlier
+    #breaks=col_breaks,   # enable color transition at specified limits
+    dendrogram="none",    # only draw a row dendrogram
+    xlab="rf_trees",
+    ylab="rf_bagsize",
+    Rowv=FALSE,           # turn off row clustering
+    Colv=FALSE)           # turn off column clustering
+
 
 }
