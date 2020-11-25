@@ -181,9 +181,9 @@ class Evaluation implements Parametrized {
             ligPoints.sort { -it.score }
             List<Double> ptScores = ligPoints.collect { it.score }
             row.avgPointScore = avg ptScores
-            row.maxPointScore = ptScores?[0] ?: 0d
+            row.maxPointScore = ptScores.empty ? 0d : ptScores[0]
             row.avgMax3PointScore = avg Cutils.head(3, ptScores)
-            row.avgMaxHalfPointScore = avg Cutils.head(MathUtils.ceilDiv(ptScores, 2), ptScores)
+            row.avgMaxHalfPointScore = avg Cutils.head(MathUtils.ceilDiv(ptScores.size(), 2), ptScores)
 
             tmpLigRows.add(row)
         }
@@ -246,7 +246,7 @@ class Evaluation implements Parametrized {
             pocketRows.addAll(tmpPockets)
             ligSASPointsCount += n_ligSasPoints
             ligSASPointsCoveredCount += n_ligSasPointsCovered
-            ligSasPointsScoreSum += _ligSasPointsScoreSum
+            ligSASPointsScoreSum += _ligSasPointsScoreSum
 
             if (!protein.params.log_scores_to_file.isEmpty()) {
                 bindingScores.addAll(bindingScrs)
