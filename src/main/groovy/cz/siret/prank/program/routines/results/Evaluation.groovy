@@ -246,7 +246,7 @@ class Evaluation implements Parametrized {
             pocketRows.addAll(tmpPockets)
             ligSASPointsCount += n_ligSasPoints
             ligSASPointsCoveredCount += n_ligSasPointsCovered
-            _ligSasPointsScoreSum += _ligSasPointsScoreSum
+            ligSasPointsScoreSum += _ligSasPointsScoreSum
 
             if (!protein.params.log_scores_to_file.isEmpty()) {
                 bindingScores.addAll(bindingScrs)
@@ -731,8 +731,6 @@ class Evaluation implements Parametrized {
 
         int distantLigands
         String distantLigNames
-
-        int connollyPoints
 
         double avgConservation
         double avgBindingConservation
