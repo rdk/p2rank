@@ -119,9 +119,9 @@ class LigandabilityPointVectorCollector extends VectorCollector implements Param
                 }
             }
         } else {
-            res = new Points(points.sampledPositives.size()/20 as int, points.sampledPositives.size())
+            res = new Points(points.points.size()/20 as int, points.points.size())
 
-            for (Atom point : points.sampledPositives) {
+            for (Atom point : points.points) {
                 PointClass pc = classifier.classify(point)
                 if (pc == PointClass.POSITIVE) {
                     res.positives.add(point)
