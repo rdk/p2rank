@@ -7,6 +7,7 @@ import cz.siret.prank.features.FeatureVector
 import cz.siret.prank.features.PrankFeatureExtractor
 import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.geom.Atoms
+import cz.siret.prank.program.Failable
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.Parametrized
 import groovy.transform.CompileStatic
@@ -17,7 +18,7 @@ import groovy.util.logging.Slf4j
  */
 @Slf4j
 @CompileStatic
-abstract class PointVectorCollector extends VectorCollector implements Parametrized {
+abstract class PointVectorCollector extends VectorCollector implements Parametrized, Failable {
 
     FeatureExtractor extractorFactory
 
@@ -38,7 +39,7 @@ abstract class PointVectorCollector extends VectorCollector implements Parametri
 
         Result res = null
         try {
-            Atoms points = proteinExtractor.sampledPoints
+            Atoms points = proteinExtractor.sampledPoints.sampledPositives   // TODO revisit
             List<LabeledPoint> labeledPoints = labelPoints(points, pair, context)
             res = new Result(labeledPoints.size())
 
@@ -50,11 +51,7 @@ abstract class PointVectorCollector extends VectorCollector implements Parametri
                     res.addBinary(vect.array, positive)
 
                 } catch (Exception e) {
-                    if (params.fail_fast) {
-                        throw new PrankException("Failed extraction for point", e)
-                    } else {
-                        log.error("Failed extraction for point. Skipping.", e)
-                    }
+                    fail("Failed extraction for point", e, log)
                 }
             }
 

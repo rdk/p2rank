@@ -7,8 +7,10 @@ import cz.siret.prank.features.FeatureVector
 import cz.siret.prank.features.PrankFeatureExtractor
 import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.geom.Atoms
+import cz.siret.prank.geom.samplers.SampledPoints
 import cz.siret.prank.prediction.pockets.criteria.DCA
 import cz.siret.prank.prediction.pockets.criteria.PocketCriterium
+import cz.siret.prank.program.Failable
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Cutils
@@ -23,7 +25,7 @@ import org.biojava.nbio.structure.Atom
  */
 @Slf4j
 @CompileStatic
-class LigandabilityPointVectorCollector extends VectorCollector implements Parametrized {
+class LigandabilityPointVectorCollector extends VectorCollector implements Parametrized, Failable {
 
     /** Criterion for calling true positive / false positive pockets */
     static final PocketCriterium DEFAULT_POSITIVE_POCKET_CRITERIUM = new DCA(5)
@@ -75,56 +77,117 @@ class LigandabilityPointVectorCollector extends VectorCollector implements Param
         }
     }
 
+//===========================================================================================================//
+
+    static class Points {
+        Atoms positives
+        Atoms negatives
+
+        Points(Atoms positives, Atoms negatives) {
+            this.positives = positives
+            this.negatives = negatives
+        }
+
+        Points(int positivesCapacity, int negativesCapacity) {
+            this.positives = new Atoms(positivesCapacity)
+            this.negatives = new Atoms(negativesCapacity)
+        }
+    }
+
+    private enum PointClass { POSITIVE, NEGATIVE, IGNORE }
+
+    /**
+     *
+     * @param sampledPositives may be the same object as sampledNegatives
+     * @param sampledNegatives
+     * @param classifier
+     * @return
+     */
+    Points selectPoints(SampledPoints points, PointClassifier classifier) {
+        Points res
+        if (points.posNegDifferent) {
+            res = new Points(points.sampledPositives.size(), points.sampledNegatives.size())
+
+            for (Atom point : points.sampledPositives) {
+                if (classifier.classify(point) == PointClass.POSITIVE) {
+                    res.positives.add(point)
+                }
+            }
+            for (Atom point : points.sampledNegatives) {
+                if (classifier.classify(point) == PointClass.NEGATIVE) {
+                    res.negatives.add(point)
+                }
+            }
+        } else {
+            res = new Points(points.sampledPositives.size()/20 as int, points.sampledPositives.size())
+
+            for (Atom point : points.sampledPositives) {
+                PointClass pc = classifier.classify(point)
+                if (pc == PointClass.POSITIVE) {
+                    res.positives.add(point)
+                } else if (pc == PointClass.NEGATIVE) {
+                    res.negatives.add(point)
+                }
+            }
+        }
+        return res
+    }
+
+    static interface PointClassifier {
+        PointClass classify(Atom point)        
+    }
+
+    void addCalculatedVectors(Result res, boolean positive, Atoms points, FeatureExtractor extractor) {
+        for (Atom point : points) {
+            try {
+                FeatureVector vect = extractor.calcFeatureVector(point)
+                res.addBinary(vect.array, positive)
+            } catch (Exception e) {
+                fail("failed extraction for point", e, log)
+            }
+        }
+    }
+
+    Result collectVectorsForPoints(Points points, FeatureExtractor extractor) {
+        Result res = new Result()
+        addCalculatedVectors(res, true,  points.positives, extractor)
+        addCalculatedVectors(res, false, points.negatives, extractor)
+        return res
+    }
+
+//===========================================================================================================//
 
     @CompileStatic
     Result collectWholeSurface(Atoms ligandAtoms, FeatureExtractor proteinExtractorPrototype) {
 
         FeatureExtractor proteinExtractor = (proteinExtractorPrototype as PrankFeatureExtractor).createInstanceForWholeProtein()
-        Result res = new Result()
-
-        Atoms points = proteinExtractor.sampledPoints
+        SampledPoints points = proteinExtractor.sampledPoints
 
         if (params.train_lig_cutoff > 0) {
             points = points.cutoutShell(ligandAtoms, params.train_lig_cutoff)
         }
 
-        for (Atom point in points) {        // TODO lot of repeated code with next method... refactor!
-
-            try {
+        Points selected = selectPoints(points, new PointClassifier() {
+            @Override
+            PointClass classify(Atom point) {
                 double closestLigandDistance = ligandAtoms.dist(point)
-                boolean ligPoint = (closestLigandDistance <= POSITIVE_VC_LIGAND_DISTANCE)
-                boolean negPoint = (closestLigandDistance > NEGATIVES_DIST)
-                // points in between are left out from training
-
-                if (ligPoint || negPoint) {
-                    double clazz = ligPoint ? 1d : 0d
-
-                    FeatureVector vect = proteinExtractor.calcFeatureVector(point)
-                    res.add(vect.array, clazz)
-
-                    if (ligPoint) {
-                        res.positives++
-                    } else {
-                        res.negatives++
-                    }
-                }
-
-            } catch (Exception e) {
-                if (params.fail_fast) {
-                    throw new PrankException("failed extraction for point", e)
+                if (closestLigandDistance > NEGATIVES_DIST) {
+                    return PointClass.NEGATIVE
+                } else if (closestLigandDistance <= POSITIVE_VC_LIGAND_DISTANCE) {
+                    return PointClass.POSITIVE
                 } else {
-                    log.error("skipping extraction for point", e)
+                    return PointClass.IGNORE
                 }
             }
-        }
+        })
 
-        return res
+        return collectVectorsForPoints(selected, proteinExtractor)
     }
 
 
     @CompileStatic(TypeCheckingMode.SKIP)
     Result collectForPockets(Atoms ligandAtoms, PredictionPair pair, FeatureExtractor proteinExtractorPrototype) {
-        Result result = new Result()
+
         proteinExtractorPrototype.prepareProteinPrototypeForPockets()
 
         List<Pocket> usePockets = pair.prediction.pockets  // use all pockets
@@ -132,6 +195,7 @@ class LigandabilityPointVectorCollector extends VectorCollector implements Param
             usePockets = [*pair.getCorrectlyPredictedPockets(positivePocketCriterium), *Cutils.head(params.train_pockets, pair.getFalsePositivePockets(positivePocketCriterium)) ]
         }
 
+        Result result = new Result()
         for (Pocket pocket in usePockets) {
             try {
                 FeatureExtractor pocketExtractor = proteinExtractorPrototype.createInstanceForPocket(pocket)
@@ -149,45 +213,29 @@ class LigandabilityPointVectorCollector extends VectorCollector implements Param
 
     @CompileStatic
     private Result collectForPocket(Pocket pocket, PredictionPair pair, Atoms ligandAtoms, FeatureExtractor pocketExtractor) {
-        boolean ligPocket = pair.isCorrectlyPredictedPocket(pocket, positivePocketCriterium)
+        final boolean ligPocket = pair.isCorrectlyPredictedPocket(pocket, positivePocketCriterium)
 
-        Result res = new Result()
-
-        for (Atom point in pocketExtractor.sampledPoints) {
-
-            double closestLigandDistance = ligandAtoms.dist(point)
-            if (closestLigandDistance > 100) closestLigandDistance = 100
-
-            boolean ligPoint = (closestLigandDistance <= POSITIVE_VC_LIGAND_DISTANCE)
-
-            boolean includePoint = false
-            double clazz = ligPoint ? 1d : 0d
-
-            if (ligPoint) {
-                res.positives++
-                includePoint = true
-            //} else {
-            } else if (!ligPocket && !ligPoint && closestLigandDistance > NEGATIVES_DIST) {  // GAP ... helps
-                // so we are skipping points in gap and negative points in positive pockets
-                res.negatives++
-                includePoint = true
+        Points selected = selectPoints(pocketExtractor.sampledPoints, new PointClassifier() {
+            @Override
+            PointClass classify(Atom point) {
+                double closestLigandDistance = ligandAtoms.dist(point)
+                if (closestLigandDistance > 100) {
+                    closestLigandDistance = 100
+                }
+                
+                if (closestLigandDistance <= POSITIVE_VC_LIGAND_DISTANCE) {
+                    return PointClass.POSITIVE
+                } else if (!ligPocket && closestLigandDistance > NEGATIVES_DIST) {  // GAP ... helps
+                    // so we are skipping points in gap and negative points in positive pockets
+                    return PointClass.NEGATIVE
+                } else {
+                    return PointClass.IGNORE
+                }
             }
+        })
 
-            if (includePoint) {
-                FeatureVector vect = pocketExtractor.calcFeatureVector(point)
-                res.add(vect.array, clazz)
-                //log.trace "TRAIN VECT: " + vect
-            }
-        }
-
-        return res
+        return collectVectorsForPoints(selected, pocketExtractor)
     }
-
-//===========================================================================================================//
-
-   // private addVectorsFor
-
-   // TODO
 
 //===========================================================================================================//
 

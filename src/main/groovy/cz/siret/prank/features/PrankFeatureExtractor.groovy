@@ -12,6 +12,7 @@ import cz.siret.prank.features.weight.WeightFun
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Struct
 import cz.siret.prank.geom.samplers.PointSampler
+import cz.siret.prank.geom.samplers.SampledPoints
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.Parametrized
 import groovy.transform.CompileStatic
@@ -64,8 +65,7 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
     /**
      * SAS point for given protein (or pocket in pocket mode) for which we calculate feature vectors
      */
-    Atoms sampledPoints
-
+    SampledPoints sampledPoints
 
     /**
      * only used in pocket mode (i.e. sample_negatives_from_decoys=true)  tied to a protein
@@ -112,10 +112,10 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
     }
 
     @Override
-    Atoms getSampledPoints() {
+    SampledPoints getSampledPoints() {
         return sampledPoints
     }
-
+    
 //===========================================================================================================//
 
     private void initHeader() {
@@ -209,11 +209,12 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
 
         sampledPoints = pocketPointSampler.samplePointsForPocket(pocket)
 
-        log.debug "$pocket.name - points sampled: $sampledPoints.count"
+        log.debug "$pocket.name - points sampled - pos:$sampledPoints.sampledPositives.count neg:$sampledPoints.sampledNegatives.count"
     }
 
     /**
      * Used for predictions (P2RANK)
+     * @param sampledPoints optionally provided points, otherwise calculated from protein
      * @return
      */
     FeatureExtractor createInstanceForWholeProtein(Atoms sampledPoints = null) {
@@ -221,17 +222,16 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
 
         // init for whole protein
         protein.calcuateSurfaceAndExposedAtoms()
-
         res.surfaceLayerAtoms = protein.exposedAtoms
-
         res.preCalculateVectorsForAtoms(res.surfaceLayerAtoms)
 
         if (sampledPoints == null) {
-            sampledPoints = protein.getSurface(forTraining).points
+            res.sampledPoints = SampledPoints.fromProteinSurface(protein, forTraining)
+        } else {
+            res.sampledPoints = new SampledPoints(sampledPoints)
         }
-        res.sampledPoints = sampledPoints
 
-        log.debug "proteinAtoms:$protein.proteinAtoms.count  exposedAtoms:$res.surfaceLayerAtoms.count  deepLayer:$res.deepLayer.count sasPoints:$res.sampledPoints.count"
+        log.debug "proteinAtoms:$protein.proteinAtoms.count  exposedAtoms:$res.surfaceLayerAtoms.count  deepLayer:$res.deepLayer.count sasPoints:$res.sampledPoints.points.count"
 
         return res
     }

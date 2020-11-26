@@ -4,6 +4,7 @@ import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.geom.Atoms
 
+@Deprecated
 class AtomsPointSampler extends PointSampler {
 
     AtomsPointSampler(Protein protein) {
@@ -11,14 +12,14 @@ class AtomsPointSampler extends PointSampler {
     }
 
     @Override
-    Atoms samplePointsForPocket(Pocket pocket) {
+    SampledPoints samplePointsForPocket(Pocket pocket) {
 
         if (pocket.surfaceAtoms.isEmpty())
-            return new Atoms()
+            return new SampledPoints(new Atoms())
 
         Atoms realExposedAtoms = protein.exposedAtoms.cutoutShell(pocket.surfaceAtoms, 1.5d)
 
-        return realExposedAtoms
+        return new SampledPoints(realExposedAtoms)
     }
 
 }

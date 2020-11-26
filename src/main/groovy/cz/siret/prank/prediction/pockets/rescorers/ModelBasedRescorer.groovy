@@ -72,8 +72,8 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
 
             FeatureExtractor extractor = (proteinExtractor as PrankFeatureExtractor).createInstanceForWholeProtein()
 
-            labeledPoints = new ArrayList<>(extractor.sampledPoints.count)
-            for (Atom point : extractor.sampledPoints) {
+            labeledPoints = new ArrayList<>(extractor.sampledPoints.points.count)
+            for (Atom point : extractor.sampledPoints.points) {
                 labeledPoints.add(new LabeledPoint(point))
             }
 
@@ -113,7 +113,7 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
                 prediction.labeledPoints = labeledPoints
 
                 if (params.label_residues) {
-                    prediction.residueLabelings = ResidueLabelings.calculate(prediction, model, extractor.sampledPoints, labeledPoints, context)
+                    prediction.residueLabelings = ResidueLabelings.calculate(prediction, model, extractor.sampledPoints.points, labeledPoints, context)
                 }
             }
         }
@@ -135,7 +135,7 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
             double sum = 0
             double rawSum = 0
 
-            for (Atom point : extractor.sampledPoints) {
+            for (Atom point : extractor.sampledPoints.points) {
 
                 FeatureVector vector = extractor.calcFeatureVector(point)
 
@@ -160,8 +160,8 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
 
             double score = sum
             pocket.newScore = score
-            pocket.auxInfo.rawNewScore = rawSum / extractor.sampledPoints.count // ratio of predicted ligandable points
-            pocket.auxInfo.samplePoints = extractor.sampledPoints.count
+            pocket.auxInfo.rawNewScore = rawSum / extractor.sampledPoints.points.count // ratio of predicted ligandable points
+            pocket.auxInfo.samplePoints = extractor.sampledPoints.points.count
         }
 
     }

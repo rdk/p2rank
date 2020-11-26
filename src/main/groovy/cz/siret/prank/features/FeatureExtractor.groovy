@@ -4,6 +4,7 @@ import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.geom.Atoms
+import cz.siret.prank.geom.samplers.SampledPoints
 import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
 
@@ -29,7 +30,10 @@ abstract class FeatureExtractor<P extends FeatureVector> {
      */
     abstract P calcFeatureVector(Atom point)
 
-    abstract Atoms getSampledPoints()
+    /**
+     * SAS point for given protein (or pocket in pocket mode) for which we calculate feature vectors
+     */
+    abstract SampledPoints getSampledPoints()
 
     abstract List<String> getVectorHeader();
 

@@ -35,7 +35,7 @@ class RandomPointSampler extends  PointSampler implements Parametrized {
     /**
      * sample randomFromRange inner points from pocket
      */
-    Atoms samplePointsForPocket(Pocket pocket) {
+    SampledPoints samplePointsForPocket(Pocket pocket) {
 
         int count = pocket.surfaceAtoms.count * params.sampling_multiplier
 
@@ -66,7 +66,7 @@ class RandomPointSampler extends  PointSampler implements Parametrized {
 
         log.debug "Sampled $res.count/$count points from $i trials"
 
-        return res
+        return new SampledPoints(res)
     }
 
     double randomFromRange(double min, double max) {

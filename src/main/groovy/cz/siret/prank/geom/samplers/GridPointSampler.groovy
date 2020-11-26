@@ -28,7 +28,7 @@ class GridPointSampler extends PointSampler implements Parametrized {
      * get grid inner points from pocket
      */
     @Override
-    Atoms samplePointsForPocket(Pocket pocket) {
+    SampledPoints samplePointsForPocket(Pocket pocket) {
 
         Atoms res = new Atoms()
         Box box = Box.aroundAtoms(pocket.surfaceAtoms).withMargin(BOX_MARGIN)
@@ -64,7 +64,7 @@ class GridPointSampler extends PointSampler implements Parametrized {
 
         log.debug "Sampled $res.count out of $grid.count grid points"
 
-        return res
+        return new SampledPoints(res)
     }
 
 }

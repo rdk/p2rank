@@ -10,20 +10,20 @@ import groovy.transform.CompileStatic
 abstract class PointSampler {
 
     Protein protein
-    boolean train = false
+    boolean forTraining = false
 
     PointSampler(Protein protein) {
         this.protein = protein
     }
 
-    abstract Atoms samplePointsForPocket(Pocket pocket)
+    abstract SampledPoints samplePointsForPocket(Pocket pocket)
 
-    static PointSampler create(Protein protein, boolean train) {
+    static PointSampler create(Protein protein, boolean forTraining) {
 
         Class clazz = Class.forName(PointSampler.class.package.name + "." + Params.inst.point_sampler)
         PointSampler res = (PointSampler) clazz.getConstructor(Protein.class).newInstance(protein)
 
-        res.train = true
+        res.forTraining = forTraining
 
         return res
     }
