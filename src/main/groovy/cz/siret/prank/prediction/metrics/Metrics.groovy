@@ -310,13 +310,14 @@ class Metrics implements Parametrized {
         WekaStatsHelper wekaHelper = new WekaStatsHelper(predictions)
         res.AUC = wekaHelper.areaUnderROC()
         res.AUPRC = wekaHelper.areaUnderPRC()
+        wekaHelper = null // allow gc
         if (res.AUC==Double.NaN) log.error "Calculated AUC is NaN"
         if (res.AUPRC==Double.NaN) log.error "Calculated AUPRC is NaN"
         log.debug "AUC: {}", res.AUC
         log.debug "AUPRC: {}", res.AUPRC
 
         res.scoresAvg = meanScore(predictions)
-        res.scoresPosAvg = meanScore(predictions.findAll {it.observed })
+        res.scoresPosAvg = meanScoreObserved(predictions)
 
         return res
     }
@@ -330,6 +331,20 @@ class Metrics implements Parametrized {
         }
 
         return sum
+    }
+
+    private double meanScoreObserved(List<PPred> preds) {
+        int n = 0
+        double sum = 0d
+
+        for (PPred pred : preds) {
+            if (pred.observed) {
+                sum += pred.score
+                n++
+            }
+        }
+
+        return (double)sum / (double)n
     }
 
     private double calcLogLoss(List<PPred> preds) {
