@@ -9,6 +9,7 @@ import cz.siret.prank.prediction.pockets.criteria.*
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Cutils
 import cz.siret.prank.utils.MathUtils
+import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.StringUtils
 
@@ -516,6 +517,9 @@ class Evaluation implements Parametrized {
         avg ligandRows, { LigRow row -> row.closestPocketDist }
     }
 
+    /**
+     * Todo optimize closures
+     */
     Map getStats() {
         def m = new LinkedHashMap() // keep insertion order
 

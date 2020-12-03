@@ -412,7 +412,7 @@ public abstract class KdTree<T> {
         cursor.status = Status.NONE;
         double range = radius; // Double.POSITIVE_INFINITY;
 //        PriorityQueue<Entry<T>> resultHeap = new PriorityQueue<>((o1, o2) -> Double.compare(o1.distance, o2.distance));
-        ArrayList<Entry<T>> resultHeap = new ArrayList<>();
+        ArrayList<Entry<T>> resultHeap = new ArrayList<>(64);
 
 
         do {
