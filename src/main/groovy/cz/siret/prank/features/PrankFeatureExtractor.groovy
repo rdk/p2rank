@@ -412,7 +412,7 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
     private checkVector(PrankFeatureVector vector) {
         double[] arr = vector.array
         for (int i=0; i!=arr.length; i++) {
-            if (arr[i] == Double.NaN) {
+            if (Double.isNaN(arr[i])) {
                 String feat = vector.header[i]
                 throw new PrankException("Invalid value for feature $feat: NaN")
             }
