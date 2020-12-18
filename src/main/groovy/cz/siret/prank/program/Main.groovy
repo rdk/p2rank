@@ -6,13 +6,16 @@ import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.params.ConfigLoader
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.params.Params
+import cz.siret.prank.program.routines.Routine
 import cz.siret.prank.program.routines.analyze.AnalyzeRoutine
 import cz.siret.prank.program.routines.analyze.PrintRoutine
+import cz.siret.prank.program.routines.predict.PredictResiduesRoutine
 import cz.siret.prank.program.routines.predict.PredictRoutine
 import cz.siret.prank.program.routines.predict.RescoreRoutine
 import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.program.routines.traineval.*
 import cz.siret.prank.utils.*
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.StringUtils
@@ -228,6 +231,12 @@ class Main implements Parametrized, Writable {
 
 //===========================================================================================================//
 
+    /**
+     * TODO refactor predict routines
+     * @param label
+     * @param evalPredict
+     */
+    @CompileDynamic
     void doRunPredict(String label, boolean evalPredict) {
 
         Dataset dataset = loadDatasetOrFile()
@@ -235,10 +244,14 @@ class Main implements Parametrized, Writable {
 
         configureLoggers(outdir)
 
-        PredictRoutine predictRoutine = new PredictRoutine(
-                dataset,
-                findModel(),
-                outdir)
+        Routine predictRoutine
+
+        if (params.predict_residues) {
+            predictRoutine = new PredictResiduesRoutine(dataset, findModel(), outdir)
+        } else {
+            predictRoutine = new PredictRoutine(dataset, findModel(), outdir)
+        }
+
 
         if (evalPredict) {
             predictRoutine.collectStats = true
