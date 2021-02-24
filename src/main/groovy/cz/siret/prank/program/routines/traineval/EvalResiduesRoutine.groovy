@@ -69,11 +69,14 @@ class EvalResiduesRoutine extends EvalRoutine {
                 predictor = StaticResidueLabeler.createForDatasetItem(item)
             } else { // predict with model
                 predictor = new ModelBasedResidueLabeler(model, sasPoints, item.context).withObserved(observedPoints)
-                predictedPoints = predictor.labeledPoints
             }
 
             BinaryLabeling predicted = predictor.getBinaryLabeling(protein.residues, protein)
             ClassifierStats predictionStats = BinaryLabelings.eval(observed, predicted, predictor.doubleLabeling)
+
+            if (predictor instanceof ModelBasedResidueLabeler) {
+                predictedPoints = predictor.labeledPoints
+            }
 
             synchronized (results) {
                 results.residuePredictionStats.addAll(predictionStats)
