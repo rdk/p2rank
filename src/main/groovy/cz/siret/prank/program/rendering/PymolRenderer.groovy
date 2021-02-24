@@ -13,6 +13,8 @@ import org.biojava.nbio.structure.Atom
 import java.awt.*
 import java.util.List
 
+import static java.lang.Double.NaN
+
 
 /**
  * Generates PyMol visualization of RenderingModel.
@@ -102,10 +104,16 @@ remove solvent
 
 color white, elem c
 color bluewhite, protein
-show surface, protein
 
-show sticks, ligands
-set stick_color, magenta
+#show surface, protein
+show wire, protein
+
+#show sticks, ligands
+#set stick_color, magenta
+#show spheres, ligands
+#set sphere_color, gray60
+
+${renderLigands()} 
 
 ${renderLabaledPoints()} 
 
@@ -117,6 +125,19 @@ orient
 """
     }
 
+    private String renderLigands() {
+
+        List<String> ligandAtomIds = model.protein.allLigandAtoms.collect {it.PDBserial.toString() }
+        String idsOrList = ligandAtomIds.collect {"id $it" }.join(" or ")
+
+        if (ligandAtomIds.empty) return
+
+"""                      
+select ligand_atoms, $idsOrList
+show spheres, ligand_atoms
+set sphere_color, red
+"""
+    }
 
     private String renderResidueColoring() {
         if (model.observedLabeling != null) {
@@ -195,7 +216,7 @@ cmd.spectrum("b", "rainbow", selection="protein", minimum=0, maximum=1)
     }
 
     private String renderLabaledPoints() {
-        if (model.labeledPoints == null) return ""
+        if (model.labeledPoints == null) return "# labeled points not rendered"
 
         String pointsfAbs = "$dataDir/${label}_points.pdb.gz"
         String pointsfRel = "data/" + Futils.shortName(pointsfAbs)
@@ -246,6 +267,5 @@ cmd.set("sphere_scale","0.3","rest")
     static String pyColor(Color c) {
         sprintf "[%5.3f,%5.3f,%5.3f]", c.red/255, c.green/255, c.blue/255
     }
-
     
 }

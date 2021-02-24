@@ -39,7 +39,11 @@ class RenderingModel implements Parametrized {
 
         Color tpColor = new Color(100, 104, 142)  // blue
         Color fpColor = new Color(246, 147, 150)  // magenta
-        Color fnColor = new Color(109, 186, 192)  // cyan
+        Color fnColor = new Color(242, 199, 0)    // yellow [0.95 , 0.78 , 0.00]
+
+        //Color fnColor = new Color(109, 186, 192)  // cyan
+
+
 
         //Color tpColor = Color.BLUE     
         //Color fpColor = Color.MAGENTA

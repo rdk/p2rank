@@ -755,7 +755,7 @@ class Params {
     double balance_density_radius = 2
 
     /**
-     * output detailed tables for all proteins, ligands and pockets
+     * output detailed tables for all proteins, ligands and pockets or residues
      */
     @RuntimeParam
     boolean log_cases = true
