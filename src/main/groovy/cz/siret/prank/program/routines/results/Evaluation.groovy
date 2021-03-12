@@ -164,12 +164,18 @@ class Evaluation implements Parametrized {
             row.protName = pair.name
             row.ligName = lig.name
             row.ligCode = lig.code
+            row.chainCode = lig.chain
 
             row.ligCount = pair.ligandCount
             row.ranks = criteria.collect { criterium -> pair.rankOfIdentifiedPocket(lig, pockets, criterium, context) }
             row.dca4rank = pair.rankOfIdentifiedPocket(lig, pockets, standardCriterium, context)
             row.atoms = lig.atoms.count
             row.centerToProtDist = lig.centerToProteinDist
+            row.proteinDist = lig.contactDistance
+            row.sasDist = protein.accessibleSurface.points.dist(lig.atoms)
+            row.contactAtoms = protein.proteinAtoms.cutoutShell(lig.atoms, params.ligand_protein_contact_distance).count
+            row.atomIds = (lig.atoms*.PDBserial).toSorted()
+
 
             Pocket closestPocket = closestPocket(lig, pockets)
             if (closestPocket!=null) {
@@ -669,9 +675,26 @@ class Evaluation implements Parametrized {
 
     String toLigandsCSV() {
         StringBuilder csv = new StringBuilder()
-        csv <<  "file, #ligands, ligand, ligCode, atoms, dca4rank, closestPocketDist, centerToProteinDist \n"
+        csv <<  "file, #ligands, ligand, chain, ligCode, #atoms, dca4rank, closestPocketDist, proteinDist, centerToProteinDist, sasDist, #contactProteinAtoms, atomIds \n"
         ligandRows.each { r ->
-            csv << "$r.protName, $r.ligCount, $r.ligName, $r.ligCode, $r.atoms, $r.dca4rank, ${fmt r.closestPocketDist}, ${fmt r.centerToProtDist},   \n"
+            List<String> rec = new ArrayList()
+
+            rec.add r.protName
+            rec.add r.ligCount
+            rec.add r.ligName
+            rec.add r.chainCode
+            rec.add r.ligCode
+            rec.add r.atoms
+            rec.add r.dca4rank
+
+            rec.add fmt(r.closestPocketDist)
+            rec.add fmt(r.proteinDist)
+            rec.add fmt(r.centerToProtDist)
+            rec.add fmt(r.sasDist)
+            rec.add r.contactAtoms
+            rec.add r.atomIds.join(" ")
+            
+            csv << rec.join(", ") << "\n"
         }
         return csv.toString()
     }
@@ -756,10 +779,14 @@ class Evaluation implements Parametrized {
         String protName
         String ligName
         String ligCode
+        String chainCode
         int ligCount
         int atoms = 0
+        int contactAtoms = 0
         double closestPocketDist 
         double centerToProtDist
+        double proteinDist
+        double sasDist
         int dca4rank = -1
 
         double avgPointScore
@@ -767,6 +794,7 @@ class Evaluation implements Parametrized {
         double avgMax3PointScore
         double avgMaxHalfPointScore
 
+        List<Integer> atomIds
         List<Integer> ranks // of identified pocket for given criterion (-1=not identified)
     }
 

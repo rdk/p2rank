@@ -21,9 +21,15 @@ class Ligand implements Parametrized {
     String name
 
     /**
-     * group id (resCode in pdb)
+     * group id(s) (resCode in pdb)
      */
     String code
+
+    /**
+     * chain code(s)
+     */
+    String chain
+
     Atoms atoms
     Protein protein
     double contactDistance
@@ -46,6 +52,7 @@ class Ligand implements Parametrized {
         Set<String> uniqueNames = (groups*.PDBName).toSet()
         this.name = uniqueNames.join("&")
         this.code = (groups*.residueNumber).join("&")
+        this.chain = (groups*.chainId).toSet().toSorted().join("&")
 
         for (Atom a : atoms) {
             PdbUtils.correctBioJavaElement(a)
