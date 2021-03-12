@@ -673,6 +673,15 @@ class Evaluation implements Parametrized {
         return str.toString()
     }
 
+    /**
+     * chain - pdb chain code(s) which ligand belongs to
+     * proteinDist - distance to the closest protein atom
+     * sasDist - distance to the closest SAS point (can be used as a proxy for how deep is the ligand buried) 
+     * #contactProteinAtoms - number of protein atoms within a close distance around ligand atoms (threshold is given by a parameter ligand_protein_contact_distance) 
+     * atomIds - list of PDBSerial numbers of all ligand atoms (sorted and separated by a space)
+     *
+     * @return
+     */
     String toLigandsCSV() {
         StringBuilder csv = new StringBuilder()
         csv <<  "file, #ligands, ligand, chain, ligCode, #atoms, dca4rank, closestPocketDist, proteinDist, centerToProteinDist, sasDist, #contactProteinAtoms, atomIds \n"
