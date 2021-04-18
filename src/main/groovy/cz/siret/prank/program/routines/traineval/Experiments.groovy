@@ -183,7 +183,7 @@ class Experiments extends Routine {
     }
 
     /**
-     * run trineval or crossvalidation with current parameter assignment
+     * run traineval or crossvalidation with current parameter assignment
      */
     private static EvalResults runExperimentStep(String dir, Dataset trainData, Dataset evalData, boolean doCrossValidation) {
         EvalResults res

@@ -13,6 +13,7 @@ import groovyx.gpars.GParsPool
 
 import static cz.siret.prank.utils.ATimer.startTimer
 import static cz.siret.prank.utils.Futils.mkdirs
+import static cz.siret.prank.utils.Futils.sanitizeFilename
 
 /**
  * Routine for grid optimization (prank ploop).
@@ -33,7 +34,7 @@ class GridOptimizer extends ParamLooper {
     }
 
     private String prepareDirLabel(Step step) {
-        return step.label.replace('*', '_')
+        return sanitizeFilename(step.label)
     }
 
     /**

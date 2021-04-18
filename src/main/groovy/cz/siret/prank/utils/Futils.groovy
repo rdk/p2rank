@@ -79,6 +79,10 @@ class Futils {
         path.replace("\\","/").replace("//","/")
     }
 
+    static String  sanitizeFilename(String inputName) {
+        return inputName.replaceAll("[^a-zA-Z0-9_\\-\\.]", "_");
+    }
+
     /**
      * parent dir of a file
      */
