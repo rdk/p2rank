@@ -65,10 +65,14 @@ class GridOptimizer extends ParamLooper {
             makePlots()
         }
 
-        if (params.ploop_delete_runs) {
-            Futils.delete(runsDir)
-        } else if (params.ploop_zip_runs) {
-            Futils.zipAndDelete(runsDir, Futils.ZIP_BEST_COMPRESSION)
+        try {
+            if (params.ploop_delete_runs) {
+                Futils.delete(runsDir)
+            } else if (params.ploop_zip_runs) {
+                Futils.zipAndDelete(runsDir, Futils.ZIP_BEST_COMPRESSION)
+            }
+        } catch (Exception e) {
+            log.error("failed to delete directory", e)
         }
 
         logTime "ploop routine finished in $timer.formatted"
