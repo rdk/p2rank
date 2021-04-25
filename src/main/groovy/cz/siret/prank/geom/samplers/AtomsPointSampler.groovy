@@ -3,8 +3,10 @@ package cz.siret.prank.geom.samplers
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.geom.Atoms
+import groovy.transform.CompileStatic
 
 @Deprecated
+@CompileStatic
 class AtomsPointSampler extends PointSampler {
 
     AtomsPointSampler(Protein protein) {

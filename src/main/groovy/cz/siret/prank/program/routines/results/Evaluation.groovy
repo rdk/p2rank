@@ -9,6 +9,7 @@ import cz.siret.prank.prediction.pockets.criteria.*
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Cutils
 import cz.siret.prank.utils.MathUtils
+import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.StringUtils
 
@@ -32,7 +33,7 @@ class Evaluation implements Parametrized {
     /** cutoff distance in A around ligand atoms that determines which SAS points cover the ligand */
     final double LIG_SAS_CUTOFF = params.ligand_induced_volume_cutoff  
 
-    PocketCriterium standardCriterium = new DCA(4.0)
+    PocketCriterium standardCriterium = new DCA(4.0d)
     List<PocketCriterium> criteria
     List<ProteinRow> proteinRows = newSynchronizedList()
     List<LigRow> ligandRows = newSynchronizedList()

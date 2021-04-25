@@ -1,11 +1,13 @@
 package cz.siret.prank.geom
 
+import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Structure
 import org.biojava.nbio.structure.secstruc.SecStrucCalc
 
 /**
  * @see https://github.com/biojava/biojava-tutorial/blob/master/structure/secstruc.md
  */
+@CompileStatic
 class SecondaryStructureUtils {
 
     /**

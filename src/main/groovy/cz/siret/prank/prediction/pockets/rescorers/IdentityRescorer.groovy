@@ -1,13 +1,14 @@
 package cz.siret.prank.prediction.pockets.rescorers
 
-
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Prediction
 import cz.siret.prank.features.api.ProcessedItemContext
+import groovy.transform.CompileStatic
 
 /**
  * keeps the original order (useful for analysis of results of methods)
  */
+@CompileStatic
 class IdentityRescorer extends PocketRescorer {
 
     @Override

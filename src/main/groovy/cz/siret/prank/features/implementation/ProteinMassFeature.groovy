@@ -5,6 +5,7 @@ import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.features.api.SasFeatureCalculationContext
 import cz.siret.prank.features.api.SasFeatureCalculator
 import cz.siret.prank.program.params.Parametrized
+import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
 
 import static cz.siret.prank.geom.Struct.dist
@@ -12,6 +13,7 @@ import static cz.siret.prank.geom.Struct.dist
 /**
  * simple geometric feature based on distances of the point to the centers of the mass of prot. atoms, sas points ...
  */
+@CompileStatic
 class ProteinMassFeature extends SasFeatureCalculator implements Parametrized {
 
     static final String NAME = 'pmass'
