@@ -59,7 +59,11 @@ class MultiRunStats {
 
     static String fmt(Object x) {
         if (x==null) return ""
-        sprintf "%13.5f", x
+        try {
+            sprintf "%13.5f", x
+        } catch (Exception e) {
+            fs x.toString()
+        }
     }
     
     static String fs(String s) {
