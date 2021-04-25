@@ -17,18 +17,9 @@ allprojects {
 }
 
 repositories {
-
     jcenter()
     mavenCentral()
     mavenLocal()
-
-	maven {
-		url = "http://www.biojava.org/download/maven/"
-	}
-    maven {
-		url = "https://maven.ch.cam.ac.uk/"
-	}
-
     flatDir(dirs: 'lib')
 }
 
@@ -54,7 +45,8 @@ task(console, dependsOn: 'classes', type: JavaExec) {
 
 task copyDependenciesToDist( type: Copy ) {
     into "$buildDir/../distro/bin/lib"
-    from configurations.runtime
+    from configurations.runtimeClasspath
+
 }
 
 task copyBinaryToDist( type: Copy ) {
@@ -118,7 +110,7 @@ test {
 }
 
 configurations {
-    runtime.extendsFrom implementation
+    runtimeClasspath.extendsFrom implementation
 }
 
 dependencies {
