@@ -19,15 +19,18 @@ jdk:
   - oraclejdk8
   - oraclejdk11
   - oraclejdk14
+  - oraclejdk15
   - openjdk8
   - openjdk11
   - openjdk14
   - openjdk15
+  - openjdk16
 
   
 matrix:
   allow_failures:
     - os: osx
+    - jdk: openjdk16
 
 
 script:
