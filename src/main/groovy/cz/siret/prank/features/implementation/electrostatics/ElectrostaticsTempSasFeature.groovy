@@ -11,6 +11,7 @@ import cz.siret.prank.geom.Point
 import cz.siret.prank.geom.Struct
 import cz.siret.prank.program.Failable
 import cz.siret.prank.program.params.Parametrized
+import cz.siret.prank.program.params.Params
 import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
@@ -96,6 +97,7 @@ class ElectrostaticsTempSasFeature extends SasFeatureCalculator implements Param
 
 //===========================================================================================================//
 
+    @CompileStatic
     static class CubePreloader implements Parametrized, Failable {
 
         static ensureCubeLoaded(Protein protein, ProcessedItemContext context) {
@@ -112,7 +114,7 @@ class ElectrostaticsTempSasFeature extends SasFeatureCalculator implements Param
                 log.info "Loading cube for protein $label"
 
                 try {
-                    cube = loadCube(context, params.electrostatics_dirs)
+                    cube = loadCube(context, Params.inst.electrostatics_dirs)
                 } catch (Exception e) {
                     fail("Error while loading cube for ${protein.name}", e, log)
                 }
