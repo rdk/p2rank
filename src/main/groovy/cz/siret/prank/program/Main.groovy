@@ -24,11 +24,10 @@ import java.text.DateFormat
 import java.text.SimpleDateFormat
 
 import static cz.siret.prank.utils.ATimer.startTimer
-
-import static cz.siret.prank.utils.Futils.mkdirs
-import static cz.siret.prank.utils.Futils.writeFile
 import static cz.siret.prank.utils.ConsoleWriter.write
 import static cz.siret.prank.utils.ConsoleWriter.writeError
+import static cz.siret.prank.utils.Futils.mkdirs
+import static cz.siret.prank.utils.Futils.writeFile
 
 @Slf4j
 @CompileStatic

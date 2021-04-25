@@ -4,9 +4,7 @@ import cz.siret.prank.features.api.AtomFeatureCalculationContext;
 import cz.siret.prank.features.generic.GenericHeader;
 import cz.siret.prank.features.generic.GenericVector;
 import cz.siret.prank.utils.PdbUtils;
-import groovy.util.logging.Slf4j;
 import org.biojava.nbio.structure.Atom;
-import org.codehaus.groovy.runtime.DefaultGroovyMethods;
 
 import java.util.List;
 

@@ -8,7 +8,6 @@ import groovy.util.logging.Slf4j
 import java.text.DecimalFormat
 
 import static cz.siret.prank.utils.Formatter.formatPercent
-import static java.lang.Math.log
 
 /**
  * Binary classifier statistics collector and calculator

@@ -1,6 +1,6 @@
 package cz.siret.prank.features.implementation.chem
 
-import cz.siret.prank.utils.PdbUtils
+
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom

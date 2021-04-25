@@ -4,7 +4,6 @@ import cz.siret.prank.features.FeatureExtractor;
 import cz.siret.prank.features.FeatureVector;
 import cz.siret.prank.fforest.FasterForest;
 import cz.siret.prank.fforest2.FasterForest2;
-import cz.siret.prank.geom.Atoms;
 import cz.siret.prank.program.ml.Model;
 import cz.siret.prank.utils.PerfUtils;
 import cz.siret.prank.utils.WekaUtils;

@@ -11,7 +11,6 @@ import cz.siret.prank.geom.samplers.SampledPoints
 import cz.siret.prank.prediction.pockets.criteria.DCA
 import cz.siret.prank.prediction.pockets.criteria.PocketCriterium
 import cz.siret.prank.program.Failable
-import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Cutils
 import groovy.transform.CompileStatic

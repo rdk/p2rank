@@ -3,7 +3,6 @@ package cz.siret.prank.program.routines.optimize
 import cz.siret.prank.program.params.Params
 import cz.siret.prank.program.routines.Routine
 import cz.siret.prank.program.routines.results.EvalResults
-import cz.siret.prank.utils.Futils
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
@@ -12,7 +11,6 @@ import groovy.util.logging.Slf4j
 import static cz.siret.prank.utils.ATimer.startTimer
 import static cz.siret.prank.utils.Cutils.prefixMapKeys
 import static cz.siret.prank.utils.Futils.*
-import static cz.siret.prank.utils.Futils.delete
 
 /**
  * Base class for hyperparameter optimization routines

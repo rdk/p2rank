@@ -3,7 +3,6 @@ package cz.siret.prank.features
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.features.api.ProcessedItemContext
-import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.samplers.SampledPoints
 import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom

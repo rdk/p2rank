@@ -13,9 +13,6 @@ import org.biojava.nbio.structure.Atom
 import java.awt.*
 import java.util.List
 
-import static java.lang.Double.NaN
-
-
 /**
  * Generates PyMol visualization of RenderingModel.
  *

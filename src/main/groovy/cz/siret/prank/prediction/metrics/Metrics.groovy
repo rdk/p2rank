@@ -1,14 +1,12 @@
 package cz.siret.prank.prediction.metrics
 
-import com.google.common.math.StatsAccumulator
+
 import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.utils.StatSample
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
 import javax.annotation.Nonnull
 
-import static cz.siret.prank.utils.StatSample.newStatSample
 import static java.lang.Double.NaN
 import static java.lang.Math.log
 
