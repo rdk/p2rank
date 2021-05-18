@@ -67,14 +67,14 @@ class AnalyzeRoutine extends Routine {
  //===========================================================================================================//
 
     static final Map<String, Closure> commandRegister = ImmutableMap.copyOf([
-        "binding-residues" : this.&cmdBindingResidues,
-        "labeled-residues" : this.&cmdLabeledResidues,
-        "aa-propensities" : this.&cmdAaPropensities,
-        "aa-surf-seq-duplets" : this.&cmdAaSurfSeqDuplets,
-        "aa-surf-seq-triplets" : this.&cmdAaSurfSeqTriplets,
-        "conservation" : this.&cmdConservation,
-        "chains" : this.&cmdChains,
-        "peptides" : this.&cmdPeptides
+        "binding-residues" : { cmdBindingResidues() },
+        "labeled-residues" : { cmdLabeledResidues() },
+        "aa-propensities" : { cmdAaPropensities() },
+        "aa-surf-seq-duplets" : { cmdAaSurfSeqDuplets() },
+        "aa-surf-seq-triplets" : { cmdAaSurfSeqTriplets() },
+        "conservation" : { cmdConservation() },
+        "chains" : { cmdChains() },
+        "peptides" : { cmdPeptides() }
     ])
 
 //===========================================================================================================//
