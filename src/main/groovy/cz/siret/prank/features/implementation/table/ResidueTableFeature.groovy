@@ -9,6 +9,8 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 
+import static cz.siret.prank.utils.Futils.readResource
+
 /**
  *
  */
@@ -32,9 +34,9 @@ class ResidueTableFeature extends AtomFeatureCalculator implements Parametrized 
 
 //===========================================================================================================//
 
-    static final PropertyTable aa5FactorsTable   = PropertyTable.parse(Futils.readResource("/tables/aa-5factors.csv"))
-    static final PropertyTable aa5PropensitiesTable   = PropertyTable.parse(Futils.readResource("/tables/aa-propensities.csv"))
-    static final PropertyTable aaPropertyTable   = aa5FactorsTable.join(aa5PropensitiesTable)
+    static final PropertyTable aa5FactorsTable      = PropertyTable.parse(readResource("/tables/aa-5factors.csv"))
+    static final PropertyTable aa5PropensitiesTable = PropertyTable.parse(readResource("/tables/aa-propensities.csv"))
+    static final PropertyTable aaPropertyTable      = aa5FactorsTable.join(aa5PropensitiesTable)
 
     
     private static Double getResidueTableValue(String residueCode, String property) {
@@ -50,7 +52,6 @@ class ResidueTableFeature extends AtomFeatureCalculator implements Parametrized 
         if (header.size() == 0) {
             return EMPTY
         }
-
 
         String residueCode = PdbUtils.getCorrectedAtomResidueCode(proteinSurfaceAtom)
 

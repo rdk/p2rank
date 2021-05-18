@@ -21,6 +21,8 @@ aa-propensities.csv
 
 RAx: amino acid ligand binding propensities 
 
+ZNppuAt: ZN ions from ZN_ppu_all_Atrain.ds
+
 PP864: peptide binding propensity calculated from train964 dataset
 PP_ST1070: peptide binding propensity calculated from full Sprint train set (n=1070)
 PP_SA870: peptide binding propensity calculated from split A Sprint train set (n=870)
