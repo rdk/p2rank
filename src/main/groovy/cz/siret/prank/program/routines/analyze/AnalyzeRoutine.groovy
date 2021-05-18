@@ -66,7 +66,7 @@ class AnalyzeRoutine extends Routine {
  // Sub-Commands
  //===========================================================================================================//
 
-    static final Map<String, Closure> commandRegister = ImmutableMap.copyOf([
+    final Map<String, Closure> commandRegister = ImmutableMap.copyOf([
         "binding-residues" : { cmdBindingResidues() },
         "labeled-residues" : { cmdLabeledResidues() },
         "aa-propensities" : { cmdAaPropensities() },
