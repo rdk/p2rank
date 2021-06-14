@@ -216,7 +216,6 @@ class Main implements Parametrized, Writable {
     }
 
     String findInstallDir() {
-
         String path = Main.class.getProtectionDomain().getCodeSource().getLocation().getPath()
         String decodedPath = URLDecoder.decode(path, "UTF-8")
 
@@ -237,10 +236,8 @@ class Main implements Parametrized, Writable {
      */
     @CompileDynamic
     void doRunPredict(String label, boolean evalPredict) {
-
         Dataset dataset = loadDatasetOrFile()
         String outdir = findOutdir("${label}_$dataset.label")
-
         configureLoggers(outdir)
 
         Routine predictRoutine
@@ -250,7 +247,6 @@ class Main implements Parametrized, Writable {
         } else {
             predictRoutine = new PredictRoutine(dataset, findModel(), outdir)
         }
-
 
         if (evalPredict) {
             predictRoutine.collectStats = true
@@ -282,12 +278,9 @@ class Main implements Parametrized, Writable {
     }
 
     void runRescore() {
-
         initRescoreDefaultParams()
-
         Dataset dataset = loadDatasetOrFile()
         String outdir = findOutdir("rescore_$dataset.label")
-
         configureLoggers(outdir)
 
         Dataset.Result result = new RescoreRoutine(
@@ -299,12 +292,9 @@ class Main implements Parametrized, Writable {
     }
 
     void runEvalRescore() {
-
         initRescoreDefaultParams()
-
         Dataset dataset = loadDataset()
         String outdir = findOutdir("eval_rescore_$dataset.label")
-
         configureLoggers(outdir)
 
         new EvalPocketsRoutine(
@@ -323,15 +313,9 @@ class Main implements Parametrized, Writable {
         model.disableParalelism()
 
         EvalRoutine evalRoutine = EvalRoutine.create(params.predict_residues, dataset, model, outdir)
-
         EvalResults res = evalRoutine.execute()
 
         finalizeDatasetResult(res.datasetResult)
-    }
-
-    private runExperiment(String routineName) {
-
-        new Experiments(args, this, routineName).execute()
     }
 
     private runCrossvalidation() {
@@ -342,6 +326,10 @@ class Main implements Parametrized, Writable {
 
         CrossValidation routine = new CrossValidation(outdir, dataset)
         new SeedLoop(routine, outdir).execute()
+    }
+
+    private runExperiment(String routineName) {
+        new Experiments(args, this, routineName).execute()
     }
 
     private runAnalyze() {
@@ -355,7 +343,6 @@ class Main implements Parametrized, Writable {
     void runHelp() {
         println Futils.readResource('/help.txt')
     }
-
 
     void initRescoreDefaultParams() {
         initParams(params, "$installDir/config/default-rescore.groovy")

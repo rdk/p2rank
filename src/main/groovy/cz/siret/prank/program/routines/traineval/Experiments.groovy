@@ -1,5 +1,6 @@
 package cz.siret.prank.program.routines.traineval
 
+import com.google.common.collect.ImmutableMap
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.domain.loaders.DatasetCachedLoader
 import cz.siret.prank.domain.loaders.electrostatics.DelphiCubeLoader
@@ -51,16 +52,50 @@ class Experiments extends Routine {
         this.command = command
         this.main = main
 
+        if (!commandRegister.containsKey(command)) {
+            //write "Invalid command '$command'!"
+            throw new PrankException("Invalid command: " + command)
+        }
+
         if (command in ['traineval', 'ploop', 'hopt']) {
             prepareDatasets(main)
         }
     }
 
+//===========================================================================================================//
+// Sub-Commands
+//===========================================================================================================//
+
+    final Map<String, Closure> commandRegister = ImmutableMap.copyOf([
+        "traineval" : { traineval() },
+        "ploop" :     { ploop() },
+        "hopt" :      { hopt() },
+        "params" :    { params() },
+    ])
+
+//===========================================================================================================//
+
+    @CompileStatic(value = TypeCheckingMode.SKIP)
+    void execute() {
+        log.info "executing $command()"
+
+        commandRegister.get(command).call()
+        //this."$command"()  // dynamic exec method
+
+        if (outdir != null) {
+            writeFile "$outdir/status.done", "done"
+            log.info "results saved to directory [${Futils.absPath(outdir)}]"
+        }
+    }
+
+
+//===========================================================================================================//
+
     void prepareDatasets(Main main) {
 
         String trainSetArg =  cmdLineArgs.get('train', 't')
         if (trainSetArg == null) {
-            throw new PrankException("Training dataset is not specified (-t/--train)")
+            throw new PrankException("Training dataset is not specified (-t/-train)")
         }
         trainDataset = prepareDataset(trainSetArg)
 
@@ -101,18 +136,6 @@ class Experiments extends Routine {
             return DatasetCachedLoader.loadDataset(file)
         } catch (Exception e) {
             throw new PrankException("Failed to load dataset '${datasetArg}'", e)
-        }
-    }
-
-    @CompileStatic(value = TypeCheckingMode.SKIP)
-    void execute() {
-        log.info "executing $command()"
-
-        this."$command"()  // dynamic exec method
-
-        if (outdir != null) {
-            writeFile "$outdir/status.done", "done"
-            log.info "results saved to directory [${Futils.absPath(outdir)}]"
         }
     }
 
@@ -236,6 +259,8 @@ class Experiments extends Routine {
 
 
 //===========================================================================================================//
+
+    // TODO move
 
     /**
      * for jvm profiler
