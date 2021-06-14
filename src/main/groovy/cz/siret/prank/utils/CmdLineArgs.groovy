@@ -29,12 +29,14 @@ class CmdLineArgs {
 
     /** "-count 7" .... maps to count->7 */
     Map<String,String> namedArgMap = new TreeMap<>()
+
+    /** arguments with '-' or '--' prefix */
     List<NamedArg> namedArgs = new ArrayList<>()
 
-    /** arguments with -(dash) prefix but no followup value */
+    /** arguments with '-' or '--' prefix but no followup value */
     List<String> switches = new ArrayList<>()
 
-    /** arguments without -(dash) prefix that are not values of any dashed argument */
+    /** arguments without '-' or '--' prefix that are not values of any dashed argument */
     List<String> unnamedArgs = new ArrayList<>()
 
 //===========================================================================================================//
@@ -92,6 +94,13 @@ class CmdLineArgs {
             }
         }
         return null
+    }
+
+    /**
+     * @return basically all arg names that are prefixed with '-' or '--' (without the prefix)
+     */
+    List<String> getNamedArgsAndSwitches() {
+        return getSwitches() + (getNamedArgs()*.name as List<String>)
     }
 
     boolean hasSwitch(String... vals) {

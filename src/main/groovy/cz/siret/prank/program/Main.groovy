@@ -208,7 +208,7 @@ class Main implements Parametrized, Writable {
 
     Dataset loadDatasetOrFile() {
         String fparam = args.namedArgMap.get("f")  // single file param -f
-        if (fparam!=null) {
+        if (fparam != null) {
             return Dataset.createSingleFileDataset(fparam)
         } else {
             return loadDataset()
@@ -353,17 +353,21 @@ class Main implements Parametrized, Writable {
      */
     boolean run() {
 
-        command = args.unnamedArgs.size()>0 ? args.unnamedArgs.first() : "help"
+        if (args.unnamedArgs.empty) {
+            throw new PrankException("No command specified. See the usage information by running 'prank help'")
+        }
+
+        command = args.unnamedArgs.first()
         args.shiftUnnamedArgs()
 
         installDir = findInstallDir()
         params.installDir = installDir // TODO refactor
 
-        if (command in ["ploop","hopt"]) {
+        if (command in ["ploop", "hopt"]) {
             args.hasListParams = true
         }
 
-        if (command=='help' || args.hasSwitch('h','help')) {
+        if (command=='help' || args.hasSwitch('h', 'help')) {
             runHelp()
             return true
         }

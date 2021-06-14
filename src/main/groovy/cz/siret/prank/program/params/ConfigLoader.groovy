@@ -16,7 +16,7 @@ class ConfigLoader {
         assert paramsGroovyFile.exists(), "config file not found! ($paramsGroovyFile.path)"
 
         def imports = new ImportCustomizer()
-        imports.addImport(Params.class.simpleName, Params.class.name )
+        imports.addImport(Params.class.simpleName, Params.class.name)
 
         def customizer = new CompilerConfiguration()
         customizer.addCompilationCustomizers(imports)
@@ -30,7 +30,7 @@ class ConfigLoader {
         try {
             shell.evaluate(paramsGroovyFile)
         } catch (Exception e) {
-            log.error("Error in config file [$paramsGroovyFile.path]", e)
+            log.error("Error in the config file [$paramsGroovyFile.path]: " + e.message, e)
             return false
         }
 

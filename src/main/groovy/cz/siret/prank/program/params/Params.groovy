@@ -1,7 +1,11 @@
 package cz.siret.prank.program.params
 
+import com.google.common.collect.ImmutableList
+import com.google.common.collect.ImmutableMap
 import cz.siret.prank.program.Main
+import cz.siret.prank.program.PrankException
 import cz.siret.prank.utils.CmdLineArgs
+import cz.siret.prank.utils.Cutils
 import cz.siret.prank.utils.Sutils
 import groovy.transform.AutoClone
 import groovy.transform.CompileDynamic
@@ -1185,15 +1189,37 @@ class Params {
 
 //===========================================================================================================//
 
+    // TODO move to better invalid param checking logic
+    static final List<String> ARG_ALIASES = ImmutableList.of('f', 'c', 'm', 't', 'e', 'l', 'h', 'o')
+
     /**
      * Apply parameter values from the command line
      */
     public updateFromCommandLine(CmdLineArgs args) {
 
+        checkForInvalidArgs(args)
         applyCmdLineArgs(args)
 
         // processing of special params
         initDependentParams()
+    }
+
+    boolean isVaidParamName(String pname) {
+        this.metaClass.getMetaProperty(pname) != null
+    }
+
+    boolean isVaidParamNameOrAlias(String pname) {
+        ARG_ALIASES.contains(pname) || isVaidParamName(pname)
+    }
+
+    private checkForInvalidArgs(CmdLineArgs args) throws PrankException {
+        List<String> argNames = args.namedArgsAndSwitches
+
+        for (String argName : argNames) {
+            if (!isVaidParamNameOrAlias(argName)) {
+                throw new PrankException("Invalid parameter name: " + argName)
+            }
+        }
     }
 
     /**
