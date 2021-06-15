@@ -499,7 +499,7 @@ public abstract class KdTree<T> {
 
         ArrayList<Entry<T>> results = resultHeap;
 
-        //ConsoleWriter.write("heap: " + resultHeap.size() + " results: " + results.size() );
+        //Console.write("heap: " + resultHeap.size() + " results: " + results.size() );
 
         if (sequentialSorting) {
             results.sort(Comparator.comparing(e -> e.distance));

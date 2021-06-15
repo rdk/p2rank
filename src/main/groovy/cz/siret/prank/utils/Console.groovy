@@ -6,9 +6,12 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.slf4j.Logger
 
+/**
+ * Console Writer: methods to write to stdout & log
+ */
 @Slf4j
 @CompileStatic
-public class ConsoleWriter {
+public class Console {
 
     public static void write(String msg, Logger log) {
         System.out.println applyTimestamp(msg)

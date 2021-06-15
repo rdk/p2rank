@@ -24,8 +24,8 @@ import java.text.DateFormat
 import java.text.SimpleDateFormat
 
 import static cz.siret.prank.utils.ATimer.startTimer
-import static cz.siret.prank.utils.ConsoleWriter.write
-import static cz.siret.prank.utils.ConsoleWriter.writeError
+import static cz.siret.prank.utils.Console.write
+import static cz.siret.prank.utils.Console.writeError
 import static cz.siret.prank.utils.Futils.mkdirs
 import static cz.siret.prank.utils.Futils.writeFile
 
@@ -87,14 +87,14 @@ class Main implements Parametrized, Writable {
     void initParams(Params params, String defaultConfigFile) {
 
         File fdefault = new File(defaultConfigFile)
-        log.info "loading default config from [$fdefault.absolutePath}]"
+        log.info "loading default config from [$fdefault.absolutePath]"
         ConfigLoader.overrideConfig(params, fdefault)
 
         String configParam = configFileParam
         if (configParam != null) {
             // TODO allow multiple -c variables override default+dev+working
             File fcustom = findConfigFile(configParam)
-            log.info "overriding default config with [$fcustom.absolutePath}]"
+            log.info "overriding default config with [$fcustom.absolutePath]"
             ConfigLoader.overrideConfig(params, fcustom)
         }
 

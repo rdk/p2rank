@@ -3,7 +3,7 @@ package cz.siret.prank.program.ml
 import cz.siret.prank.fforest.FasterForest
 import cz.siret.prank.fforest2.FasterForest2
 import cz.siret.prank.program.params.Params
-import cz.siret.prank.utils.ConsoleWriter
+import cz.siret.prank.utils.Console
 import cz.siret.prank.utils.Cutils
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.WekaUtils
@@ -51,7 +51,7 @@ class Model {
 
     void saveToFile(String fname) {
         WekaUtils.saveClassifier((Classifier)classifier, fname)
-        ConsoleWriter.write "model saved to file $fname (${Futils.sizeMBFormatted(fname)} MB)"
+        Console.write "model saved to file $fname (${Futils.sizeMBFormatted(fname)} MB)"
     }
 
     static Model loadFromFile(String fname) {

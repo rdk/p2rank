@@ -1,11 +1,10 @@
 package cz.siret.prank.program.params
 
 import com.google.common.collect.ImmutableList
-import com.google.common.collect.ImmutableMap
+import com.google.common.collect.ImmutableSet
 import cz.siret.prank.program.Main
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.utils.CmdLineArgs
-import cz.siret.prank.utils.Cutils
 import cz.siret.prank.utils.Sutils
 import groovy.transform.AutoClone
 import groovy.transform.CompileDynamic
@@ -1189,8 +1188,19 @@ class Params {
 
 //===========================================================================================================//
 
-    // TODO move to better invalid param checking logic
-    static final List<String> ARG_ALIASES = ImmutableList.of('f', 'c', 'm', 't', 'e', 'l', 'h', 'o')
+    /**
+     * parameter names and aliases that are not fields in Params class
+     * TODO move to better invalid param checking logic
+     */
+    static final Set<String> EXTRA_PARAMS_AND_ALIASES = ImmutableSet.of(
+            'f', 'o',
+            'help', 'h',
+            'model', 'm',
+            'config', 'c',
+            'train','t',
+            'eval', 'e',
+            'label', 'l'
+    )
 
     /**
      * Apply parameter values from the command line
@@ -1209,7 +1219,7 @@ class Params {
     }
 
     boolean isVaidParamNameOrAlias(String pname) {
-        ARG_ALIASES.contains(pname) || isVaidParamName(pname)
+        EXTRA_PARAMS_AND_ALIASES.contains(pname) || isVaidParamName(pname)
     }
 
     private checkForInvalidArgs(CmdLineArgs args) throws PrankException {

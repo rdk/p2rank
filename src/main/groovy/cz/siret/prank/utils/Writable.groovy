@@ -12,19 +12,19 @@ import org.slf4j.Logger
 trait Writable {
 
     public void write(String msg, Logger log) {
-        ConsoleWriter.write(msg, log)
+        Console.write(msg, log)
     }
 
     public void write(String msg) {
-        ConsoleWriter.write(msg)
+        Console.write(msg)
     }
 
     public void writeError(String msg, Throwable t) {
-        ConsoleWriter.writeError(msg, t)
+        Console.writeError(msg, t)
     }
 
     public void writeError(String msg) {
-        ConsoleWriter.writeError(msg, null)
+        Console.writeError(msg, null)
     }
 
 }
