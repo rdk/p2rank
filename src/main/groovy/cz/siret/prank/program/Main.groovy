@@ -167,34 +167,35 @@ class Main implements Parametrized, Writable {
     }
 
     /**
-     * -o makes outdir in working path
-     * -l makes outdir in output_base_dir
+     * -o ... explicit output directory parameter, overrides all
+     * -l/-label ... label that is added as suffix to the output directory created in output_base_dir
+     *
      * @param defaultName of dir created in output_base_dir
      */
     String findOutdir(String defaultName) {
         String outdir = null
-        String label = args.get('label','l')
 
-        String prefixdate = ""
-        if (params.out_prefix_date) {
-            prefixdate = Sutils.timeLabel() + "_"
-        }
-
-        if (label==null) {
-            label = args.get('model','m')  // use model name as label
-        }
-
-        String base = params.output_base_dir
-        if (StringUtils.isNotEmpty(params.out_subdir)) {
-            base += "/" + params.out_subdir
-        }
-
-        if (label!=null) {
-            outdir = "${base}/${prefixdate}${defaultName}_$label"
+        String explicitOutdir = args.get('o')
+        if (explicitOutdir != null) {
+            log.debug("Explicit output directory specified: {}", explicitOutdir)
+            outdir = explicitOutdir
         } else {
-            outdir = args.get('o')
-            if (outdir==null) {
-                outdir = "${base}/${prefixdate}$defaultName"
+            String label = args.get('label','l')
+            if (label == null) {
+                label = args.get('model','m')
+                log.debug("Label not specified. Using model name from cmd line as label: {}", label)
+            }
+
+            String prefixdate = (params.out_prefix_date) ? Sutils.timeLabel() + "_" :  ""
+            String base = params.output_base_dir
+            if (StringUtils.isNotEmpty(params.out_subdir)) {
+                base += "/" + params.out_subdir
+            }
+
+            if (label != null) {
+                outdir = "${base}/${prefixdate}${defaultName}_$label"
+            } else {
+                outdir = "${base}/${prefixdate}${defaultName}"
             }
         }
 
