@@ -405,10 +405,10 @@ printf "\nDONE in $ftime\n" | tee -a $SUMMARY_LOG
 print_env >> $SUMMARY_LOG
 
 echo
-echo ERRORS:
+echo "ERRORS (from stdout and summary):"
 echo
 cat $RUN_LOG | grep --color=always ERROR
-cat $DEBUG_LOG | grep --color=always ERROR
+cat $SUMMARY_LOG | grep --color=always ERROR
 
 echo "summary saved to [$SUMMARY_LOG]"
 echo "stdout went to [$RUN_LOG]"
