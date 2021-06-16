@@ -10,6 +10,7 @@ import cz.siret.prank.domain.loaders.LoaderParams
 import cz.siret.prank.domain.loaders.pockets.*
 import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.program.Failable
+import cz.siret.prank.program.P2Rank
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.ThreadPoolFactory
 import cz.siret.prank.program.params.Parametrized
@@ -168,6 +169,11 @@ class Dataset implements Parametrized, Writable, Failable {
                 tasks.add(new Callable() {
                     @Override
                     Object call() throws Exception {
+                        if (P2Rank.isShuttingDown()) {
+                            // stop processing other items in parallel if P2Rank already failed (see fail_fast)
+                            return null
+                        }
+
                         processssItem(item, num, processor, result, quiet)
                         return null
                     }
