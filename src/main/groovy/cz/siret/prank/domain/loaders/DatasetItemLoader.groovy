@@ -152,6 +152,14 @@ class DatasetItemLoader implements Parametrized, Writable {
         return res
     }
 
+    private checkConservationDirsExist(List<String> dirs) {
+        for (String dir : dirs) {
+            if (!Futils.exists(dir)) {
+                throw new PrankException("Directory defined in 'conservation_dirs' param doesn't exist: " + dir)
+            }
+        }
+    }
+
     private List<String> getConservationLookupDirs(String proteinFile, ProcessedItemContext itemContext) {
 
         if (!Cutils.empty(params.conservation_dirs)) {
@@ -172,6 +180,7 @@ class DatasetItemLoader implements Parametrized, Writable {
         if (conservColumn == null) {
             List<String> conservDirs = getConservationLookupDirs(proteinFile, itemContext)
             log.info "Conservation lookup dirs: " + conservDirs
+            checkConservationDirsExist(conservDirs)
 
             conservationFinder = { String chainId -> findConservationFile(conservDirs, proteinFile, chainId) }
         } else {

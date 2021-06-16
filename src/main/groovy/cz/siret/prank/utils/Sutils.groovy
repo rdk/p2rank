@@ -85,25 +85,32 @@ class Sutils {
         }
     }
 
+    static String removePrefix(String s, String prefix) {
+        if (s == null || prefix == null) return null
+        if (s.startsWith(prefix)) {
+            return s.substring(prefix.length())
+        } else {
+            return s
+        }
+    }
+
     /**
      *
-     * @param liststr format: [a, b,c]
+     * @param liststr format: "(a, b,c)"
      * @return
      */
     static List<String> parseList(String liststr) {
         if (StringUtils.isBlank(liststr) || liststr=='()' || liststr=='[]' ) {
             return Collections.emptyList()
         }
-        assert liststr.length()>=2 : "invalid list string: '$liststr'"
 
-        String splitter = ","
-        //if (!liststr.contains(splitter)) {
-        //    splitter = "."                    // list in ranged param lists (when running prank ploop) have to use other splitter
-        //}
+        liststr = liststr.trim()
 
-        liststr = liststr.substring(1, liststr.length()-1) // list is in parentheses "(...)"
+        if (liststr.startsWith("(") && liststr.endsWith(")")) {
+            liststr = liststr.substring(1, liststr.length()-1) // list is in parentheses "(...)"
+        }
 
-        return split(liststr, splitter)
+        return split(liststr, ",")
     }
 
     static String partBefore(String str, String sub) {

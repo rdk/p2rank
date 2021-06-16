@@ -272,7 +272,7 @@ class Params {
 
     /**
      * Directories in which to look for conservation score files.
-     * Path relative to dataset directory.
+     * Path is absolute or relative to the dataset directory.
      * If null or empty: look in the same directory as protein file
      */
     @RuntimeParam
@@ -1261,7 +1261,7 @@ class Params {
                 }
 
                 if (!skip) {
-                    setParam(propName, val)
+                    trySetParam(propName, val)
                 }
             } else if (args.switches.contains(propName)) {
                 me."$propName" = true
@@ -1270,9 +1270,18 @@ class Params {
     }
 
     @CompileDynamic
+    public trySetParam(String propertyName, Object value) {
+        try {
+            setParam(propertyName, value)
+        } catch (Exception e) {
+            throw new PrankException("Failed to set parameter value. Name: $propertyName, value: '$value'. Reason:" + e.message, e)
+        }
+    }
+
+    @CompileDynamic
     public setParam(String propertyName, Object value) {
 
-        log.debug "Setting '$propertyName' to '$value'"
+        log.debug "Setting parameter '$propertyName' to '$value'"
 
         String pname = propertyName
         Object me = this

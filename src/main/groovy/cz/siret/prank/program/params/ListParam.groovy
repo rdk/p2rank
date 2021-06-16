@@ -123,6 +123,9 @@ class ListParam {
         }
     }
 
+    /**
+     * True if parameter value is in iterative/list format. I.e. represents multiple values for grid optimiation.
+     */
     static boolean isIterativeArgValue(String name, String value) {
         value = value.trim()
 
