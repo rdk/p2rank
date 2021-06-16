@@ -1274,7 +1274,7 @@ class Params {
         try {
             setParam(propertyName, value)
         } catch (Exception e) {
-            throw new PrankException("Failed to set parameter value. Name: $propertyName, value: '$value'. Reason:" + e.message, e)
+            throw new PrankException("Failed to set parameter value. Name: $propertyName, value: '$value'. Reason: " + e.message, e)
         }
     }
 
@@ -1309,13 +1309,7 @@ class Params {
                     me."$pname" = Sutils.parseList(value)
                 }
             } else if (pv instanceof Boolean) {
-                if ("0"==value) value=false
-                if ("0.0"==value) value=false
-                if (0d==value) value=false
-                if ("1"==value) value=true
-                if ("1.0"==value) value=true
-                if (1d==value) value=true
-                me."$pname" = Boolean.valueOf( value )
+                me."$pname" = parseBoolean( value )
             } else if (pv instanceof Integer) {
                 me."$pname" = new Double(""+value).intValue()
             } else {
@@ -1325,6 +1319,22 @@ class Params {
         }
 
         log.debug "Property value: '$propertyName' = '${me."$pname"}'"
+    }
+
+    private boolean parseBoolean(Object value) {
+        if ("false"==value) return false
+        if ("0"==value)     return false
+        if ("0.0"==value)   return false
+        if (0d==value)      return false
+        if (0i==value)      return false
+
+        if ("true"==value) return true
+        if ("1"==value)    return true
+        if ("1.0"==value)  return true
+        if (1d==value)     return true
+        if (1i==value)     return true
+
+        throw new IllegalArgumentException("Invalid boolean value '$value'")
     }
 
     @Override
