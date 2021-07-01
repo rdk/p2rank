@@ -226,10 +226,10 @@ analyze() {
 
     title PRINT/ANALYZE COMMANDS
 
-    test ./prank.sh print features     -c config/workin  -out_subdir TEST/ANALYZE
-    test ./prank.sh print model-info   -c config/workin  -out_subdir TEST/ANALYZE
+    test ./prank.sh print features     -c config/working  -out_subdir TEST/ANALYZE
+    test ./prank.sh print model-info   -c config/working  -out_subdir TEST/ANALYZE
 
-    test ./prank.sh analyze fasta-masked -f distro/test_data/liganated/1aaxa.pdb -c config/workin  -out_subdir TEST/ANALYZE
+    test ./prank.sh analyze fasta-masked -f distro/test_data/liganated/1aaxa.pdb -c config/working  -out_subdir TEST/ANALYZE
 
     test ./prank.sh analyze fasta-masked chen11.ds        -c config/working                   -out_subdir TEST/ANALYZE
     test ./prank.sh analyze fasta-masked joined.ds        -c config/working                   -out_subdir TEST/ANALYZE
