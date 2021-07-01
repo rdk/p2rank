@@ -5,6 +5,7 @@ import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.optimizer.HObjectiveFunction
 import cz.siret.prank.program.params.optimizer.HOptimizer
 import cz.siret.prank.program.params.optimizer.HStep
+import cz.siret.prank.program.params.optimizer.HVariable
 import cz.siret.prank.utils.Formatter
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.ProcessRunner
@@ -192,13 +193,13 @@ class HSpearmintOptimizer extends HOptimizer implements Writable {
 
     }
 
-    private String genVariable(HVariable var) {
+    private String genVariable(HVariable v) {
         """
-                "$var.name" : {
-                    "type" : "$var.type",
+                "$v.name" : {
+                    "type" : "$v.type",
                     "size" : 1,
-                    "min"  : $var.min,
-                    "max"  : $var.max
+                    "min"  : $v.min,
+                    "max"  : $v.max
                 }
         """
     }
