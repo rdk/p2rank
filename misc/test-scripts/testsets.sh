@@ -222,6 +222,30 @@ eval_ploop() {
     test ./prank.sh ploop -t chen11-fpocket.ds -e speed5.ds   -c config/working -loop 1 -fail_fast 1 -r_generate_plots 0 -features '(volsite,bfactor)' -feature_filters '((-volsite.*),(volsite.*,-volsite.vsCation),(volsite.*,bfactor.*))' -out_subdir TEST/PLOOP
 }
 
+analyze() {
+
+    title PRINT/ANALYZE COMMANDS
+
+    test ./prank.sh print features     -c config/workin  -out_subdir TEST/ANALYZE
+    test ./prank.sh print model-info   -c config/workin  -out_subdir TEST/ANALYZE
+
+    test ./prank.sh analyze fasta-masked -f distro/test_data/liganated/1aaxa.pdb -c config/workin  -out_subdir TEST/ANALYZE
+
+    test ./prank.sh analyze fasta-masked chen11.ds        -c config/working                   -out_subdir TEST/ANALYZE
+    test ./prank.sh analyze fasta-masked joined.ds        -c config/working                   -out_subdir TEST/ANALYZE
+    test ./prank.sh analyze fasta-masked coach420.ds      -c config/working                   -out_subdir TEST/ANALYZE
+    test ./prank.sh analyze fasta-masked holo4k.ds        -c config/working -cache_datasets 0 -out_subdir TEST/ANALYZE
+
+    test ./prank.sh analyze binding-residues      joined.ds        -c config/working                   -out_subdir TEST/ANALYZE
+    test ./prank.sh analyze chains                joined.ds        -c config/working                   -out_subdir TEST/ANALYZE
+    test ./prank.sh analyze chains-residues       joined.ds        -c config/working                   -out_subdir TEST/ANALYZE
+    test ./prank.sh analyze aa-propensities       joined.ds        -c config/working                   -out_subdir TEST/ANALYZE
+    test ./prank.sh analyze aa-surf-seq-duplets   joined.ds        -c config/working                   -out_subdir TEST/ANALYZE
+    test ./prank.sh analyze aa-surf-seq-triplets  joined.ds        -c config/working                   -out_subdir TEST/ANALYZE
+    test ./prank.sh analyze fasta-raw             joined.ds        -c config/working                   -out_subdir TEST/ANALYZE
+
+}
+
 ###################################################################################################################
 
 

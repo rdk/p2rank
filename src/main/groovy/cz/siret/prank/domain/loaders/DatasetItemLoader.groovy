@@ -136,20 +136,28 @@ class DatasetItemLoader implements Parametrized, Writable {
 
     @Nullable
     private File findConservationFile(List<String> dirs, String proteinFile, String chainId) {
-        
-        // params.conservation_origin is now ignored
-
+        // note: params.conservation_origin is now ignored
         log.info "Looking for conservation in dirs {}", dirs
 
-        String prefix = Futils.baseName(proteinFile) + chainId   // e.g. 2ed4A
+        String baseName = Futils.baseName(proteinFile)
 
-        File res = Futils.findFileInDirs(dirs, {File f ->
-            f.name.startsWith(prefix) && (Futils.realExtension(f.name) == "hom")
-        })
+        String prefix = baseName + '_' + chainId + '.'  // e.g. "2ed4_A."
+        File res = findConservFilePrefixed(dirs, prefix)
+
+        if (res == null) { // try old format prefix
+            prefix = baseName + chainId + '.'  // e.g. "2ed4A."
+            res = findConservFilePrefixed(dirs, prefix)
+        }
 
         log.info "Conservation file for [{}] found in [{}]", prefix, res?.absolutePath
 
         return res
+    }
+
+    private File findConservFilePrefixed(List<String> dirs, String prefix) {
+        return Futils.findFileInDirs(dirs, {File f ->
+            f.name.startsWith(prefix) && (Futils.realExtension(f.name) == "hom")
+        })
     }
 
     private checkConservationDirsExist(List<String> dirs) {

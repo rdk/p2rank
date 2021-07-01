@@ -208,7 +208,7 @@ class Main implements Parametrized, Writable {
     }
 
     Dataset loadDatasetOrFile() {
-        String fparam = args.namedArgMap.get("f")  // single file param -f
+        String fparam = args.get('f')  // single file param -f
         if (fparam != null) {
             return Dataset.createSingleFileDataset(fparam)
         } else {

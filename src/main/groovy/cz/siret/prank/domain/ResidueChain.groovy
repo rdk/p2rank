@@ -2,13 +2,13 @@ package cz.siret.prank.domain
 
 import cz.siret.prank.geom.Atoms
 import groovy.transform.CompileStatic
+import org.biojava.nbio.structure.Structure
 
 /**
  *
  */
 @CompileStatic
 class ResidueChain {
-
 
     /**
      * ID in an old PDB model.
@@ -68,5 +68,7 @@ class ResidueChain {
     String getLabelWithLength() {
         getLabel() + "(${residues.size()})"
     }
+
+
     
 }

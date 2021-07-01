@@ -5,6 +5,7 @@ import cz.siret.prank.domain.*
 import cz.siret.prank.domain.labeling.*
 import cz.siret.prank.domain.loaders.DatasetCachedLoader
 import cz.siret.prank.domain.loaders.LoaderParams
+import cz.siret.prank.export.FastaExporter
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.program.Main
 import cz.siret.prank.program.PrankException
@@ -16,6 +17,7 @@ import cz.siret.prank.utils.CmdLineArgs
 import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+import org.biojava.nbio.structure.ResidueNumber
 
 import static cz.siret.prank.geom.SecondaryStructureUtils.assignSecondaryStructure
 import static cz.siret.prank.utils.Cutils.newSynchronizedList
@@ -32,22 +34,18 @@ class AnalyzeRoutine extends Routine {
 
     String subCommand
     String label
-    String datasetFile
     Dataset dataset
 
     AnalyzeRoutine(CmdLineArgs args, Main main) {
         super(null)
 
-        subCommand = args.unnamedArgs[0]
+        subCommand = args.popFirstUnnamedArg() // next if present should be dataset
         if (!commandRegister.containsKey(subCommand)) {
-            write "Invalid analyze sub-command '$subCommand'! Available commands: "+commandRegister.keySet()
+            write "Invalid analyze sub-command '$subCommand'! Available commands: " + commandRegister.keySet()
             throw new PrankException("Invalid command.")
         }
 
-        String datasetParam = args.unnamedArgs[1]
-
-        datasetFile = Main.findDataset(datasetParam)
-        dataset = DatasetCachedLoader.loadDataset(datasetFile)
+        dataset = main.loadDatasetOrFile()
 
         label = "analyze_" + subCommand + "_" + dataset.label
         outdir = main.findOutdir(label)
@@ -74,6 +72,9 @@ class AnalyzeRoutine extends Routine {
         "aa-surf-seq-triplets" : { cmdAaSurfSeqTriplets() },
         "conservation" : { cmdConservation() },
         "chains" : { cmdChains() },
+        "chains-residues" : { cmdChainsResidues() },
+        "fasta-raw" : { cmdFastaRaw() },
+        "fasta-masked" : { cmdFastaMasked() },
         "peptides" : { cmdPeptides() }
     ])
 
@@ -125,7 +126,7 @@ class AnalyzeRoutine extends Routine {
     void cmdChains() {
         LoaderParams.ignoreLigandsSwitch = true
         
-        StringBuffer csv = new StringBuffer("protein, n_chains, chain_id, n_residues, residue_string\n")
+        StringBuffer csv = new StringBuffer("protein, n_chains, chain_id, mmcif_id, n_residues, residue_string\n")
         dataset.processItems { Dataset.Item item ->
             Protein p = item.protein
 
@@ -133,13 +134,83 @@ class AnalyzeRoutine extends Routine {
             String rows = ""
             p.residueChains.each {
                 String chainId = it.authorId
+                String mmcifId = it.authorId
                 int nres = it.length
                 String chars = it.codeCharString
-                rows += "${item.label}, $nchains, $chainId, $nres, $chars \n"
+                rows += "${item.label}, $nchains, $chainId, $mmcifId, $nres, $chars \n"
             }
             csv << rows
         }
         writeFile "$outdir/chains.csv", csv
+    }
+
+    /**
+     * Chain statistics
+     */
+    void cmdChainsResidues() {
+        cmdChains()
+
+        dataset.processItems { Dataset.Item item ->
+            Protein p = item.protein
+
+            int idx = 1
+            for (ResidueChain chain : p.residueChains) {
+
+                StringBuffer csv = new StringBuffer("chain_name, seq_num, ins_code, key, chain_mmcif_id, atoms, sec_struct_type\n")
+                for (Residue res : chain.residues) {
+                    ResidueNumber rn = res.residueNumber
+                    csv << "$rn.chainName, $rn.seqNum, $rn.insCode, $res.key, $res.chainMmcifId, $res.atoms.count, $res.secStruct \n"
+                }
+
+                String strIdx = String.format("%02d", idx++)
+                writeFile "$outdir/${item.label}_${strIdx}_${chain.authorId}_${chain.mmcifId}_residues.csv", csv
+            }
+        }
+    }
+
+    /**
+     * Export chains to fasta in raw chain format (as P2Rank sees it).
+     * Considers only protein AA residue chains.
+     */
+    void cmdFastaRaw() {
+        doCmdFasta(false)
+    }
+
+    /**
+     * Export chains to fasta where some residue codes are transformed:
+     * 
+     * 1. non-letter characters -> X
+     *
+     * Considers only protein AA residue chains.
+     */
+    void cmdFastaMasked() {
+        doCmdFasta(true)
+    }
+
+    private doCmdFasta(boolean masked) {
+        FastaExporter exporter = FastaExporter.getInstance()
+
+        write "exporting fasta (masked: $masked)"
+
+        dataset.processItems { Dataset.Item item ->
+            Protein p = item.protein
+
+            for (ResidueChain chain : p.residueChains) {
+                String chainCode = chain.authorId
+                String protFileBaseName = Futils.baseName(item.proteinFile)
+                String fname = "${protFileBaseName}_${chainCode}.fasta"
+
+                String header = exporter.makeFastaHeader(chain, p.structure)
+                String codes = exporter.getFastaChain(chain, masked)
+                String fasta = exporter.formatFastaFile(header, codes)
+
+                fname = "$outdir/$fname"
+                
+                write "$p.name: exporting chain $chain.authorId to $fname"
+
+                writeFile(fname, fasta)
+            }
+        }
     }
 
     /**

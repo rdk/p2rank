@@ -3,6 +3,8 @@ package cz.siret.prank.utils
 import groovy.transform.CompileStatic
 import groovy.transform.TypeCheckingMode
 
+import javax.annotation.Nullable
+
 /**
  * Represents parsed command line arguments
  * <p>
@@ -131,6 +133,21 @@ class CmdLineArgs {
         if (!unnamedArgs.isEmpty()) {
             unnamedArgs = unnamedArgs.tail()
         }
+    }
+
+    @Nullable
+    String getFirstUnnamedArg() {
+        if (!unnamedArgs.isEmpty()) {
+            return unnamedArgs[0]
+        }
+        return null
+    }
+
+    @Nullable
+    String popFirstUnnamedArg() {
+        String res = getFirstUnnamedArg()
+        shiftUnnamedArgs()
+        return res
     }
 
     @Override
