@@ -455,6 +455,10 @@ class Main implements Parametrized, Writable {
             main = new Main(parsedArgs)
             error = main.run()
 
+            if (P2Rank.isShuttingDown()) {
+                error = true
+            }
+
         } catch (Throwable e) {
 
             error = true
