@@ -25,9 +25,7 @@ Analyze a dataset with an explicitly specified residue labeling.
 ~~~
 
 
-
-
-## Exporting feature vectors for further analysis
+## Export feature vectors for further analysis
 
 ~~~
 ./prank.sh traineval -t test_data/basic.ds -e test_data/basic.ds \
@@ -35,6 +33,23 @@ Analyze a dataset with an explicitly specified residue labeling.
     -features '(chem.volsite.protrusion.bfactor.xyz)'
 ~~~
 
+
+## Export chains to FASTA
+                           
+`fasta-raw` exports residue codes as P2Rank sees them.
+`fasta-mask` will transform any possible non-letter code (such as `_` or `?`) to `X`.
+
+~~~
+# run in P2Rank root directory (distro in repo)
+
+./prank analyze fasta-raw test_data/basic.ds         # dataset
+./prank analyze fasta-raw -f test_data/2W83.pdb      # single file
+./prank analyze fasta-raw test_data/basic.ds 
+
+./prank analyze fasta-masked test_data/basic.ds      # dataset
+./prank analyze fasta-masked -f test_data/2W83.pdb   # single file
+./prank analyze fasta-masked test_data/basic.ds -o out_dir  # specify output directory
+~~~
 
 
 ## More prediction examples
