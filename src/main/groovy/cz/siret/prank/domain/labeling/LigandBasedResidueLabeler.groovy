@@ -7,22 +7,25 @@ import cz.siret.prank.domain.Residues
 import cz.siret.prank.program.params.Parametrized
 import groovy.transform.CompileStatic
 
+import javax.annotation.concurrent.NotThreadSafe
+
 /**
  *
- *
+ * keeps internal state, should be used per-protein
  */
+@NotThreadSafe
 @CompileStatic
 class LigandBasedResidueLabeler extends ResidueLabeler<Boolean> implements Parametrized {
 
     double DIST_THRESHOLD = params.ligand_protein_contact_distance
 
-    ResidueLabeling<Double> ligandDistanceLabelng
+    ResidueLabeling<Double> lastLigandDistanceLabeling
 
 
     @Override
     ResidueLabeling<Boolean> labelResidues(Residues residues, Protein protein) {
 
-        ligandDistanceLabelng = new ResidueLabeling<>(residues.count)
+        ResidueLabeling<Double> ligandDistanceLabelng = new ResidueLabeling<>(residues.count)
         for (Residue res : residues) {
             double dist = protein.allLigandAtoms.dist(res.atoms)
             ligandDistanceLabelng.add(res, dist)
@@ -34,6 +37,8 @@ class LigandBasedResidueLabeler extends ResidueLabeler<Boolean> implements Param
             resLabels.add(it.residue, positive)
         }
 
+        this.lastLigandDistanceLabeling = ligandDistanceLabelng
+
         return resLabels
     }
 
@@ -44,7 +49,7 @@ class LigandBasedResidueLabeler extends ResidueLabeler<Boolean> implements Param
 
     @Override
     ResidueLabeling<Double> getDoubleLabeling() {
-        return ligandDistanceLabelng
+        return lastLigandDistanceLabeling
     }
 
 }

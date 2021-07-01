@@ -13,6 +13,8 @@ import cz.siret.prank.utils.Cutils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
+import javax.annotation.concurrent.NotThreadSafe
+
 import static cz.siret.prank.utils.Formatter.format
 import static cz.siret.prank.utils.Formatter.formatNumbers
 
@@ -20,6 +22,7 @@ import static cz.siret.prank.utils.Formatter.formatNumbers
  * (not intended to be reused with mode proteins)
  */
 @Slf4j
+@NotThreadSafe
 @CompileStatic
 class ModelBasedResidueLabeler extends ResidueLabeler<Boolean> implements Parametrized {
 

@@ -334,12 +334,11 @@ class AnalyzeRoutine extends Routine {
      * which is either explicitly defined by dataset or derived from ligands
      */
     private void cmdAaPropensities() {
-        ResidueLabeler<Boolean> labeler = dataset.binaryResidueLabeler
-
         List<BinCounter<AA>> counters = newSynchronizedList()
 
         dataset.processItems { Dataset.Item item ->
             Protein prot = item.protein
+            ResidueLabeler<Boolean> labeler = dataset.binaryResidueLabeler
             BinaryLabeling labeling = labeler.getBinaryLabeling(prot.exposedResidues, prot)
 
             def counter = new BinCounter<AA>()
@@ -364,12 +363,11 @@ class AnalyzeRoutine extends Routine {
      * ordering dependent sequence duplets (only starting from exposed residues)
      */
     private void cmdAaSurfSeqDuplets() {
-        ResidueLabeler<Boolean> labeler = dataset.binaryResidueLabeler
-
         List<BinCounter<String>> counters = newSynchronizedList()
 
         dataset.processItems { Dataset.Item item ->
             Protein prot = item.protein
+            ResidueLabeler<Boolean> labeler = dataset.binaryResidueLabeler
             BinaryLabeling labeling = labeler.getBinaryLabeling(prot.exposedResidues, prot)
 
             def counter = new BinCounter<String>()
@@ -394,12 +392,11 @@ class AnalyzeRoutine extends Routine {
      * sequence triplets (only from exposed residues)
      */
     private void cmdAaSurfSeqTriplets() {
-        ResidueLabeler<Boolean> labeler = dataset.binaryResidueLabeler
-
         List<BinCounter<String>> counters = newSynchronizedList()
 
         dataset.processItems { Dataset.Item item ->
             Protein prot = item.protein
+            ResidueLabeler<Boolean> labeler = dataset.binaryResidueLabeler
             BinaryLabeling labeling = labeler.getBinaryLabeling(prot.exposedResidues, prot)
 
             def counter = new BinCounter<String>()
