@@ -1,8 +1,8 @@
 package cz.siret.prank.program.api.impl
 
-import cz.siret.prank.domain.loaders.LoaderParams
 import cz.siret.prank.domain.Prediction
 import cz.siret.prank.domain.Protein
+import cz.siret.prank.domain.loaders.LoaderParams
 import cz.siret.prank.program.api.PrankFacade
 import cz.siret.prank.program.api.PrankPredictor
 import cz.siret.prank.utils.Futils

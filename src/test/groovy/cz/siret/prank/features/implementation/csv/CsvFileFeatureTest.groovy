@@ -2,10 +2,10 @@ package cz.siret.prank.features.implementation.csv
 
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.program.params.Params
-import org.biojava.nbio.structure.Atom;
+import org.biojava.nbio.structure.Atom
 import org.junit.Test
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertEquals
 
 /**
  *

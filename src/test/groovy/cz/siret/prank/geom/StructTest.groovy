@@ -5,7 +5,7 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.junit.Test
 
-import static org.junit.Assert.*
+import static org.junit.Assert.assertEquals
 
 /**
  *

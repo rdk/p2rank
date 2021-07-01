@@ -1,6 +1,6 @@
 package cz.siret.prank.program.params
 
-import com.google.common.collect.ImmutableList
+
 import com.google.common.collect.ImmutableSet
 import cz.siret.prank.program.Main
 import cz.siret.prank.program.PrankException

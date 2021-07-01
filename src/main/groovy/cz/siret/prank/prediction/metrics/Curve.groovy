@@ -1,7 +1,4 @@
 package cz.siret.prank.prediction.metrics
-
-import groovy.transform.CompileStatic
-
 /**
  * Arbitrary 2D curve
  */

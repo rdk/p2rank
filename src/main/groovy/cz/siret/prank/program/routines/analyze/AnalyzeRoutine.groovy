@@ -3,7 +3,6 @@ package cz.siret.prank.program.routines.analyze
 import com.google.common.collect.ImmutableMap
 import cz.siret.prank.domain.*
 import cz.siret.prank.domain.labeling.*
-import cz.siret.prank.domain.loaders.DatasetCachedLoader
 import cz.siret.prank.domain.loaders.LoaderParams
 import cz.siret.prank.export.FastaExporter
 import cz.siret.prank.geom.Atoms

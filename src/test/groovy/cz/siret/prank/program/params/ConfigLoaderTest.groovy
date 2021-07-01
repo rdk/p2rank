@@ -1,6 +1,6 @@
 package cz.siret.prank.program.params
 
-import groovy.transform.CompileStatic;
+import groovy.transform.CompileStatic
 import org.junit.Test
 
 @CompileStatic

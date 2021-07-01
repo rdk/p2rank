@@ -1,6 +1,6 @@
 package cz.siret.prank.export
 
-import com.google.common.base.CharMatcher
+
 import cz.siret.prank.domain.ResidueChain
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j

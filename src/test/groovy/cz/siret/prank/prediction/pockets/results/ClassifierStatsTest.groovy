@@ -1,6 +1,6 @@
 package cz.siret.prank.prediction.pockets.results
 
-import cz.siret.prank.prediction.metrics.ClassifierStats
+
 import cz.siret.prank.prediction.metrics.Metrics
 import groovy.transform.CompileStatic
 import org.junit.Test

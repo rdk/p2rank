@@ -3,7 +3,6 @@ package cz.siret.prank.features.implementation.table
 import cz.siret.prank.features.api.AtomFeatureCalculationContext
 import cz.siret.prank.features.api.AtomFeatureCalculator
 import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.PdbUtils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j

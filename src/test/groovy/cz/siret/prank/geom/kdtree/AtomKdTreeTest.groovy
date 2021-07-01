@@ -1,13 +1,13 @@
-package cz.siret.prank.geom.kdtree;
+package cz.siret.prank.geom.kdtree
 
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.utils.Writable
 import groovy.transform.CompileStatic
-import org.biojava.nbio.structure.Atom;
-import org.junit.Test;
+import org.biojava.nbio.structure.Atom
+import org.junit.Test
 
-import static org.junit.Assert.*
+import static org.junit.Assert.assertEquals
 
 /**
  *
