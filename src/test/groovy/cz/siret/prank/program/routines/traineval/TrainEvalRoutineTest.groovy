@@ -33,8 +33,8 @@ class TrainEvalRoutineTest {
             Params.inst.sample_negatives_from_decoys = true
             Params.inst.loop = 1
             Params.inst.classifier = "FasterForest"
-            Params.inst.rf_trees = 8
-            Params.inst.rf_depth = 10
+            Params.inst.rf_trees = 4
+            Params.inst.rf_depth = 9
             Params.inst.fail_fast = true
             LoaderParams.ignoreLigandsSwitch = false
 
