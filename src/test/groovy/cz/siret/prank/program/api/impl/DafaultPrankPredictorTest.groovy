@@ -7,6 +7,7 @@ import cz.siret.prank.program.api.PrankFacade
 import cz.siret.prank.program.api.PrankPredictor
 import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
+import groovyx.gpars.GParsPool
 import org.biojava.nbio.structure.Atom
 import org.junit.Test
 
@@ -43,12 +44,7 @@ class DafaultPrankPredictorTest {
     PrankPredictor predictor = PrankFacade.createPredictor(installDir);
 
     @Test
-    public void predict() throws Exception {
-//        GParsPool.withPool {
-//            testFiles.eachParallel {
-//                doTestPredict(it)
-//            }
-//        }
+    void predict() throws Exception {
         testFiles.each { doTestPredict(it) }
     }
 
@@ -74,7 +70,7 @@ class DafaultPrankPredictorTest {
     }
 
     @Test
-    public void runPrediction() throws Exception {
+    void runPrediction() throws Exception {
 
         Futils.delete(outDir.toString())
 
