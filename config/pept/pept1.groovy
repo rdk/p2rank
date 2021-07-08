@@ -44,7 +44,6 @@ import cz.siret.prank.program.params.Params
     features = ["chem","volsite","bfactor","protrusion","pmass","cr1pos","ss_atomic","ss_sas","ss_cloud","conserv_cloud","conserv_atomic","conserv_sas"]
 
     load_conservation = 1
-    conservation_origin = 'pdb.seq.fasta'
     conservation_dir = 'conservation/train_test/e5i1'
     conserv_cloud_radius = 13
     conservation_exponent = 1

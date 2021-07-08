@@ -15,7 +15,18 @@ All changes of that type should be rare and should be all listed here.
 
 ### List of changes
 
-#### 2.3-dev.x
+
+#### 2.4-dev.x
+
+##### Prediction
+
+none
+
+##### Training new models
+
+* Removed deprecated parameters `-conservation_origin` and `-load_conservation_paths` 
+
+#### 2.3
 
 ##### Prediction
 

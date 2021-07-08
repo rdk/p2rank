@@ -264,13 +264,6 @@ class Params {
     double ss_cloud_radius = 10
 
     /**
-     * Conservation file with this pattern is loaded:
-     * baseName + chainId + "." + origin + ".hom.gz"
-     */
-    @RuntimeParam
-    String conservation_origin = "hssp"
-
-    /**
      * Directories in which to look for conservation score files.
      * Path is absolute or relative to the dataset directory.
      * If null or empty: look in the same directory as protein file
