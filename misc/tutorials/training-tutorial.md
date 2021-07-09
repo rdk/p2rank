@@ -163,14 +163,13 @@ The location of the output directory for any given run is influenced by several 
 P2Rank can use different ML algorithms by changing value of `-classifter` parameter (e.g. `-classifter FasterForest`).              
 
 Random Forests implementations:
-* `RandomForest`: Original implementation from Weka. Slow and memory consuming but can have marginally better predictive permormance.  
-* `FastRandomForest`: New faster implementation by Dan Supek.
-* `FasterForest`: Streamlined implementation of `FastRandomForest`. It s faster and uses leess memory, should have the same predictive preformance. 
-* `FasterForest2`: Even faster version. Can have slightly lower predictive performnce. 
+* `RandomForest`: Original implementation from Weka. Slow and memory consuming but can have marginally better predictive permormance. Uses entropy. 
+* `FastRandomForest`: New faster implementation by Dan Supek. Uses entropy.
+* `FasterForest`: Streamlined implementation of `FastRandomForest`. It s faster and uses leess memory, should have the same predictive preformance. Uses entropy.
+* `FasterForest2`: Even faster version. Can have slightly lower predictive performnce. Uses GINI. 
 
 Note: the differences in predictive performance are low, but the difference in consumed time and memory are high (0.5-10x).        
                             
-
 For developers: see `ClassifierFactory`.
 
 ## Feature importances
