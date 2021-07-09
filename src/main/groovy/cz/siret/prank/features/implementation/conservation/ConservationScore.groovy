@@ -48,7 +48,7 @@ class ConservationScore implements Parametrized {
     }
 
     double getScoreForResidue(ResidueNumberWrapper residueNum) {
-        Double res = scores.get(residueNum);
+        Double res = this.scores.get(residueNum);
         if (res == null) {
             return 0;
         } else {
@@ -65,7 +65,7 @@ class ConservationScore implements Parametrized {
     }
 
     Map<ResidueNumberWrapper, Double> getScoreMap() {
-        return scores;
+        return this.scores;
     }
 
     int size() {
@@ -113,43 +113,58 @@ class ConservationScore implements Parametrized {
         return fromFiles(structure, scoresFiles, ScoreFormat.JSDFormat);
     }
 
+
+    /**
+     * Similar to FastaExporter.maskFastaChain() but we want to keep '-' in place.
+     */
+    private static maskScoreChain(String scoreChain) {
+        return scoreChain.collect { Character it ->
+            if (it == '-') {
+                return it
+            } else {
+                return FastaExporter.maskResidueCode(it)
+            }
+        }.join("")
+    }
+
     /**
      * @param chain Chain from PDB Structure
-     * @param chainScores Parse conservation scores.
+     * @param scores Parsed conservation scores.
      * @param outResult Add matched scores to map (residual number -> conservation score)
-     *
-     *
-     * TODO: review matching based on residue code masking in FastaExporter
      */
-    static void matchSequences(List<Group> chain, List<AAScore> chainScores,
+    static void matchSequences(List<Group> chain, List<AAScore> scores,
                                Map<ResidueNumberWrapper, Double> outResult) {
+        log.info "Matching pdb chain (n={}) with score chain (n={})", chain.size(), scores.size()
+
         // Check if the strings match
         String pdbChain = chain.collect { group -> group.getChemComp().getOne_letter_code().toUpperCase() }.join("")
-        String scoreChain = chainScores.collect { ch -> ch.letter.toUpperCase() }.join("")
+        String scoreChain = scores.collect { ch -> ch.letter.toUpperCase() }.join("")
 
-        pdbChain = FastaExporter.maskFastaChain(pdbChain)
+        pdbChain = maskScoreChain(pdbChain)
         scoreChain = FastaExporter.maskFastaChain(scoreChain)
+
+        log.debug "pdbChain: {}", pdbChain
+        log.debug "scoreChain: {}", scoreChain
+
 
         if (pdbChain.equals(scoreChain)) {  // exact match
             log.info("Exact score sequence match")
-            for (int i = 0; i < chainScores.size(); i++) {
-                outResult.put(new ResidueNumberWrapper(chain.get(i).getResidueNumber()), chainScores.get(i).score)
+            for (int i = 0; i < scores.size(); i++) {
+                outResult.put(new ResidueNumberWrapper(chain.get(i).getResidueNumber()), scores.get(i).score)
             }
-            return;
+            return
         }
 
         log.info("Matching chains using LCS")
-        int[][] lcs = calcLongestCommonSubSequence(chain, chainScores);
+        int[][] lcs = calcLongestCommonSubSequence(pdbChain, scoreChain);
 
+        Map<ResidueNumberWrapper, Double> result = new HashMap<>()
         // Backtrack the actual sequence.
-        int i = chain.size(), j = chainScores.size();
+        int i = chain.size(), j = scores.size();
         while (i > 0 && j > 0) {
-            // Letters are equal.
-            Group group = chain.get(i - 1)
-            if (group.getChemComp().getOne_letter_code().toUpperCase().equals(
-                    chainScores.get(j - 1).letter.toUpperCase())) {
-                outResult.put(new ResidueNumberWrapper(chain.get(i - 1).getResidueNumber()),
-                        chainScores.get(j - 1).score);
+            if (pdbChain.charAt(i - 1) == scoreChain.charAt(j - 1)) {  // Letters are equal.
+                result.put(new ResidueNumberWrapper(chain.get(i - 1).getResidueNumber()),
+                        scores.get(j - 1).score)
                 i--;
                 j--;
             } else {
@@ -160,19 +175,22 @@ class ConservationScore implements Parametrized {
                 }
             }
         }
+
+        log.info("Score matched for {} residues", result.size())
+
+        outResult.putAll(result)
     }
 
-    static int[][] calcLongestCommonSubSequence(List<Group> chain, List<AAScore> chainScores) {
+    static int[][] calcLongestCommonSubSequence(String pdbChain, String scoreChian) {
         // Implementation of Longest Common SubSequence
         // https://en.wikipedia.org/wiki/Longest_common_subsequence_problem
-        int[][] lcs = new int[chain.size() + 1][chainScores.size() + 1];
-        for (int i = 0; i <= chain.size(); i++) lcs[i][0] = 0;
-        for (int j = 0; j <= chainScores.size(); j++) lcs[0][j] = 0;
-        for (int i = 1; i <= chain.size(); i++) {
-            for (int j = 1; j <= chainScores.size(); j++) {
+        int[][] lcs = new int[pdbChain.size() + 1][scoreChian.size() + 1];
+        for (int i = 0; i <= pdbChain.size(); i++) lcs[i][0] = 0;
+        for (int j = 0; j <= scoreChian.size(); j++) lcs[0][j] = 0;
+        for (int i = 1; i <= pdbChain.size(); i++) {
+            for (int j = 1; j <= scoreChian.size(); j++) {
                 // Letters are equal.
-                if (chain.get(i - 1).getChemComp().getOne_letter_code().toUpperCase().equals(
-                        chainScores.get(j - 1).letter.toUpperCase())) {
+                if (pdbChain.charAt(i - 1) == scoreChian.charAt(j - 1)) {
                     lcs[i][j] = lcs[i - 1][j - 1] + 1;
                 } else {
                     lcs[i][j] = Math.max(lcs[i - 1][j], lcs[i][j - 1]);
@@ -196,10 +214,11 @@ class ConservationScore implements Parametrized {
         Map<ResidueNumberWrapper, Double> scores = new HashMap<>()
 
         for (Chain chain : structure.getChains()) {
-            if (chain.getAtomGroups(GroupType.AMINOACID).size() <= 0) {
-                continue
-            }
             String chainId = Struct.getAuthorId(chain) // authorId == chain letter in old PDB model
+            if (chain.getAtomGroups(GroupType.AMINOACID).size() <= 0) {
+                log.debug "Skipping chain '{}': no amino acids", chainId
+                continue // skip non-amino acid chains
+            }
             chainId = PdbUtils.maskEmptyChainCode(chainId)
 
             List<AAScore> chainScores = null
@@ -215,9 +234,7 @@ class ConservationScore implements Parametrized {
                     matchSequences(chain.getAtomGroups(GroupType.AMINOACID), chainScores, scores)
                 } else {
                     P2Rank.failStatic("Conservation score file doesn't exist for [protein:$structure.name chain:$chainId] file:[$scoreFile]", log)
-
                 }
-
             } catch (Exception e) {
                 P2Rank.failStatic("Failed to load conservation file for [protein:$structure.name chain:$chainId]", e, log)
             }

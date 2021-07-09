@@ -57,7 +57,7 @@ class FastaExporter {
         return chain.getChars().collect { maskResidueCode(it as char) }.join("")
     }
 
-    private static char maskResidueCode(char code) {
+    public static char maskResidueCode(char code) {
         if (!code.isLetter()) {
             code = 'X' as char
         }
