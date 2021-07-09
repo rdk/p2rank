@@ -43,7 +43,7 @@ class TrainEvalRoutineTest {
             EvalResults res = routine.trainAndEvalModel()
 
             assertEquals("Check if processed 5 proteins", 5 as long, res.stats.PROTEINS as long)
-            assertTrue("MCC must be > 0.5", res.stats.MCC > 0.5)
+            assertTrue("MCC must be > 0.5, actual: ${res.stats.MCC}", res.stats.MCC > 0.5)
 
             double dca_4_0 = Double.parseDouble(res.stats.DCA_4_0 as String)
 
