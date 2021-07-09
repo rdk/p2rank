@@ -6,8 +6,7 @@ FastRandomForest is an Random Forests implementation by Fran Supek
 https://code.google.com/archive/p/fast-random-forest/
 
 
-biojava-*-rdk1 is fork of biojava library (fixed problem with reading pdb) 
-
+https://github.com/rdk/FasterForest
 
 
 
