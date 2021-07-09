@@ -156,10 +156,33 @@ The location of the output directory for any given run is influenced by several 
 * `-out_prefix_date <bool>`: add timestamp prefix to output directory name
 * `-l <str>` or `-label <str>`: append a suffix to generated experiment output directory name
 * `-o <dir>`: overrides previous params and places output in specified directory
+                  
 
+## Classifiers / Machine learning algorithms
 
+P2Rank can use different ML algorithms by changing value of `-classifter` parameter (e.g. `-classifter FasterForest`).              
 
-    
+Random Forests implementations:
+* `RandomForest`: Original implementation from Weka. Slow and memory consuming but can have marginally better predictive permormance.  
+* `FastRandomForest`: New faster implementation by Dan Supek.
+* `FasterForest`: Streamlined implementation of `FastRandomForest`. It s faster and uses leess memory, should have the same predictive preformance. 
+* `FasterForest2`: Even faster version. Can have slightly lower predictive performnce. 
+
+Note: the differences in predictive performance are low, but the difference in consumed time and memory are high (0.5-10x).        
+                            
+
+For developers: see `ClassifierFactory`.
+
+## Feature importances
+     
+Some classifiers can calculate feature importences during training using `-feature_importances 1` parameter.
+Output will be saved to `feature_importances(_sorted).csv` or `feature_importances.txt` (in case of `RandomForest`).
+Training time will be impacted.
+
+Supported by classifiers:    
+* `RandomForest`: using mean impurity decrease method. Uses entropy.
+* `FastRandomForest`: increase in out-of-bag error (as % misclassified instances) after feature permuted. Uses entropy.
+* `FasterForest`: same as `FastRandomForest` 
 
 
 

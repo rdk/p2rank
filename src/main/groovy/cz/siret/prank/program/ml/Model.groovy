@@ -33,7 +33,9 @@ class Model {
     }
 
     boolean hasFeatureImportances() {
-        return (classifier instanceof FastRandomForest) || (classifier instanceof FasterForest)
+        return (classifier instanceof FastRandomForest)
+                || (classifier instanceof FasterForest)
+                || (classifier instanceof FasterForest2)
     }
 
     @Nullable
@@ -44,6 +46,9 @@ class Model {
             res = Cutils.head(res.size()-1, res)                 // random forest returns column for class
         } else if (classifier instanceof FasterForest) {
             res = (classifier as FasterForest).featureImportances.toList()
+            res = Cutils.head(res.size()-1, res)
+        }  else if (classifier instanceof FasterForest2) {
+            res = (classifier as FasterForest2).featureDropoutImportance.toList()
             res = Cutils.head(res.size()-1, res)
         }
         return res

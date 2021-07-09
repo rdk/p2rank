@@ -30,7 +30,8 @@ TODO: add note that it is important to consider average results of several runs 
         - see the [hyperparameter optimization tutorial](hyperparameter-optimization-tutorial.md) 
     * you can even compare different feature sets running `prank ploop ...`. i.e.:
         - `-features '((protrusion),(new_feature),(protrusion,new_feature))'`
-        
-### Case study        
+   
 
-TODO
+## Feature importances
+
+See 'Feature importances' section in [training tutorial](training-tutorial.md).  

@@ -246,6 +246,27 @@ analyze() {
 
 }
 
+classifiers() {
+
+    title TRAIN/EVAL USING DIFFERENT CLASSIFIERS
+
+    test ./prank.sh traineval -t chen11.ds -e joined.ds -c config/working -loop 1 -classifier RandomForest     -label RF    -out_subdir TEST/CLASSIFIETS
+    test ./prank.sh traineval -t chen11.ds -e joined.ds -c config/working -loop 1 -classifier FastRandomForest -label FRF   -out_subdir TEST/CLASSIFIETS
+    test ./prank.sh traineval -t chen11.ds -e joined.ds -c config/working -loop 1 -classifier FasterForest     -label FF    -out_subdir TEST/CLASSIFIETS
+    test ./prank.sh traineval -t chen11.ds -e joined.ds -c config/working -loop 1 -classifier FasterForest2    -label FF2   -out_subdir TEST/CLASSIFIETS
+
+}
+
+feature_importances() {
+
+    title CALCULATING FEATURE IMPORTANCES
+
+    test ./prank.sh traineval -t chen11.ds -e joined.ds -c config/working -loop 1 -feature_importances 1 -classifier RandomForest     -label RF    -out_subdir TEST/IMPORTANCES
+    test ./prank.sh traineval -t chen11.ds -e joined.ds -c config/working -loop 1 -feature_importances 1 -classifier FastRandomForest -label FRF   -out_subdir TEST/IMPORTANCES
+    test ./prank.sh traineval -t chen11.ds -e joined.ds -c config/working -loop 1 -feature_importances 1 -classifier FasterForest     -label FF    -out_subdir TEST/IMPORTANCES
+    test ./prank.sh traineval -t chen11.ds -e joined.ds -c config/working -loop 1 -feature_importances 1 -classifier FasterForest2    -label FF2   -out_subdir TEST/IMPORTANCES
+}
+
 ###################################################################################################################
 
 
@@ -379,6 +400,8 @@ all() {
     eval_predict_all
     eval_rescore
     eval_train_all
+    classifiers
+    feature_importances
     eval_ploop
     speed
 }

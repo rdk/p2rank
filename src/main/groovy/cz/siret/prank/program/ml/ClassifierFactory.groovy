@@ -49,6 +49,7 @@ class ClassifierFactory implements Parametrized, Writable {
             seed = params.seed
             bagSizePercent = params.rf_bagsize
             numExecutionSlots = getRfThreads()
+            computeAttributeImportance = params.feature_importances
         }
         return cs
     }
@@ -92,7 +93,7 @@ class ClassifierFactory implements Parametrized, Writable {
             numThreads = getRfThreads()
             computeImportances = params.feature_importances
             calcOutOfBag =  params.feature_importances
-            // TODO try importancesNew
+            computeDropoutImportance = params.feature_importances
         }
         return cs
     }

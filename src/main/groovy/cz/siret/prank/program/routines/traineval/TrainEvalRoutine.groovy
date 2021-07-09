@@ -12,6 +12,7 @@ import cz.siret.prank.utils.WekaUtils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import weka.classifiers.Classifier
+import weka.classifiers.trees.RandomForest
 import weka.core.Instance
 import weka.core.Instances
 
@@ -194,17 +195,27 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
 
     private List<Double> calcFeatureImportances(Model model) {
         List<Double> featureImportances = null
-        if (params.feature_importances && model.hasFeatureImportances()) {
-            featureImportances = model.getFeatureImportances()
-            if (featureImportances != null) {
-                def namedImportances = FeatureImportances.from(featureImportances)
 
-                def rowCsv =  namedImportances.names.join(',') + '\n' + namedImportances.values.collect {FeatureImportances.fmt_fi(it) }.join(',') + '\n'
-                writeFile"$outdir/feature_importances.csv", rowCsv
+        if (params.feature_importances) {
+            if (model.hasFeatureImportances()) {
+                featureImportances = model.getFeatureImportances()
+                if (featureImportances != null) {
+                    def namedImportances = FeatureImportances.from(featureImportances)
+                    def rowCsv =  namedImportances.names.join(',') + '\n' + namedImportances.values.collect {FeatureImportances.fmt_fi(it) }.join(',') + '\n'
 
-                writeFile"$outdir/feature_importances_sorted.csv", namedImportances.sorted().toCsv()
+                    def fname = "$outdir/feature_importances.csv"
+                    write "Saving feature importances to file [$fname]"
+                    writeFile fname, rowCsv
+                    writeFile"$outdir/feature_importances_sorted.csv", namedImportances.sorted().toCsv()
+                }
+            } else if (model.classifier instanceof RandomForest) {
+                // spacial case: weka RandomForest provides importances only in toString()
+                def fname = "$outdir/feature_importances.txt"
+                write "Saving feature importances to file [$fname]"
+                writeFile fname, model.classifier.toString()
             }
         }
+
         featureImportances
     }
 
