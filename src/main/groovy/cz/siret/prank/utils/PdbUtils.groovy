@@ -3,6 +3,7 @@ package cz.siret.prank.utils
 import cz.siret.prank.program.PrankException
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+import org.apache.commons.lang3.StringUtils
 import org.biojava.nbio.structure.*
 import org.biojava.nbio.structure.io.FileParsingParameters
 import org.biojava.nbio.structure.io.PDBFileParser
@@ -245,6 +246,18 @@ class PdbUtils {
 
 
         return newS;
+    }
+
+
+    static String maskEmptyChainCode(String chainAuthorId) {
+        // Note: masking empty chainId with "A"
+        // Doesn't happen in files from PDB but can be seen in some custom PDB files: e.g. in bu48 dataset
+        log.warn("Protein has a chain with empty name (authorID): '$chainAuthorId'. Masking with 'A'")
+
+        if (chainAuthorId?.isBlank())  {
+            return "A"
+        }
+        return chainAuthorId
     }
 
 }

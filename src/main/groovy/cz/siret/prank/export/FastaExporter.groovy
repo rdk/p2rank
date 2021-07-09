@@ -32,7 +32,7 @@ class FastaExporter {
     }
 
     String getFastaChainMasked(ResidueChain chain) {
-        return getFastaChainRaw(chain).getChars().collect { maskResidueCode(it as char) }.join("")
+        return maskFastaChain(getFastaChainRaw(chain))
     }
 
     String getFastaChain(ResidueChain chain, boolean masked) {
@@ -47,7 +47,17 @@ class FastaExporter {
         return header + "\n" + chain
     }
 
-    private char maskResidueCode(char code) {
+//===========================================================================================================//
+
+    /**
+     * Mask single letter residue code chain.
+     * Non letters are replaced by 'X'.
+     */
+    public static String maskFastaChain(String chain) {
+        return chain.getChars().collect { maskResidueCode(it as char) }.join("")
+    }
+
+    private static char maskResidueCode(char code) {
         if (!code.isLetter()) {
             code = 'X' as char
         }

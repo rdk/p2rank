@@ -144,12 +144,17 @@ class DatasetItemLoader implements Parametrized, Writable {
         String prefix = baseName + '_' + chainId + '.'  // e.g. "2ed4_A."
         File res = findConservFilePrefixed(dirs, prefix)
 
-        if (res == null) { // try old format prefix
-            prefix = baseName + chainId + '.'  // e.g. "2ed4A."
+        if (res == null) { // try old prefix format without '_'
+            prefix = baseName + chainId + '.'           // e.g. "2ed4A."
             res = findConservFilePrefixed(dirs, prefix)
         }
 
-        log.info "Conservation file for [{}] found in [{}]", prefix, res?.absolutePath
+        if (res != null) {
+            log.info "Conservation file for [{}] found: [{}]", prefix, res?.absolutePath
+        } else {
+            log.info "Conservation file for [{}] not found", prefix, res?.absolutePath
+        }
+
 
         return res
     }

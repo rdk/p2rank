@@ -5,10 +5,12 @@ import com.univocity.parsers.tsv.TsvParserSettings
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.domain.Residue
 import cz.siret.prank.domain.labeling.ResidueLabeling
+import cz.siret.prank.export.FastaExporter
 import cz.siret.prank.geom.Struct
 import cz.siret.prank.program.P2Rank
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Futils
+import cz.siret.prank.utils.PdbUtils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.*
@@ -115,17 +117,23 @@ class ConservationScore implements Parametrized {
      * @param chain Chain from PDB Structure
      * @param chainScores Parse conservation scores.
      * @param outResult Add matched scores to map (residual number -> conservation score)
+     *
+     *
+     * TODO: review matching based on residue code masking in FastaExporter
      */
     static void matchSequences(List<Group> chain, List<AAScore> chainScores,
                                Map<ResidueNumberWrapper, Double> outResult) {
         // Check if the strings match
-        String pdbChain = chain.collect { ch -> ch.getChemComp().getOne_letter_code().toUpperCase() }.join("")
+        String pdbChain = chain.collect { group -> group.getChemComp().getOne_letter_code().toUpperCase() }.join("")
         String scoreChain = chainScores.collect { ch -> ch.letter.toUpperCase() }.join("")
 
-        if (pdbChain.equals(scoreChain)) {
+        pdbChain = FastaExporter.maskFastaChain(pdbChain)
+        scoreChain = FastaExporter.maskFastaChain(scoreChain)
+
+        if (pdbChain.equals(scoreChain)) {  // exact match
+            log.info("Exact score sequence match")
             for (int i = 0; i < chainScores.size(); i++) {
-                outResult.put(new ResidueNumberWrapper(chain.get(i).getResidueNumber()),
-                        chainScores.get(i).score);
+                outResult.put(new ResidueNumberWrapper(chain.get(i).getResidueNumber()), chainScores.get(i).score)
             }
             return;
         }
@@ -137,7 +145,8 @@ class ConservationScore implements Parametrized {
         int i = chain.size(), j = chainScores.size();
         while (i > 0 && j > 0) {
             // Letters are equal.
-            if (chain.get(i - 1).getChemComp().getOne_letter_code().toUpperCase().equals(
+            Group group = chain.get(i - 1)
+            if (group.getChemComp().getOne_letter_code().toUpperCase().equals(
                     chainScores.get(j - 1).letter.toUpperCase())) {
                 outResult.put(new ResidueNumberWrapper(chain.get(i - 1).getResidueNumber()),
                         chainScores.get(j - 1).score);
@@ -191,7 +200,8 @@ class ConservationScore implements Parametrized {
                 continue
             }
             String chainId = Struct.getAuthorId(chain) // authorId == chain letter in old PDB model
-            chainId = chainId.trim().isEmpty() ? "A" : chainId   // TODO review. are there ever chains with no id?
+            chainId = PdbUtils.maskEmptyChainCode(chainId)
+
             List<AAScore> chainScores = null
             try {
                 File scoreFile = scoreFiles.apply(chainId)
@@ -199,7 +209,7 @@ class ConservationScore implements Parametrized {
                 if (scoreFile!=null && scoreFile.exists()) {
                     chainScores = ConservationScore.loadScoreFile(scoreFile, format)
 
-                    log.debug "loaded chain scores:\n" +
+                    log.trace "loaded chain scores:\n" +
                             chainScores.collect { "$it.index $it.letter $it.score" }.join("\n")
 
                     matchSequences(chain.getAtomGroups(GroupType.AMINOACID), chainScores, scores)
