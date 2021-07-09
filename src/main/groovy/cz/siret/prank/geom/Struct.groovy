@@ -292,6 +292,17 @@ class Struct {
         return chain?.id
     }
 
+    static String maskEmptyChainId(String chainId) {
+        // Note: masking empty chainId with "A"
+        // Doesn't happen in files from PDB but can be seen in some custom PDB files: e.g. in bu48 dataset
+        log.warn("Protein has a chain with empty code (authorID): '$chainId'. Masking with 'A'")
+
+        if (chainId?.isBlank())  {
+            return "A"
+        }
+        return chainId
+    }
+
     static List<Residue> getResiduesFromChain(Chain chain) {
 
         List<Group> groups = getResidueGroupsFromChain(chain)

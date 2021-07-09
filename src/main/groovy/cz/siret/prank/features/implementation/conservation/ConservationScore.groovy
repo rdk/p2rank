@@ -216,10 +216,10 @@ class ConservationScore implements Parametrized {
         for (Chain chain : structure.getChains()) {
             String chainId = Struct.getAuthorId(chain) // authorId == chain letter in old PDB model
             if (chain.getAtomGroups(GroupType.AMINOACID).size() <= 0) {
-                log.debug "Skipping chain '{}': no amino acids", chainId
+                log.debug "Skip chain '{}': no amino acids", chainId
                 continue // skip non-amino acid chains
             }
-            chainId = PdbUtils.maskEmptyChainCode(chainId)
+            chainId = Struct.maskEmptyChainId(chainId)
 
             List<AAScore> chainScores = null
             try {

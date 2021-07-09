@@ -6,6 +6,7 @@ import cz.siret.prank.domain.labeling.*
 import cz.siret.prank.domain.loaders.LoaderParams
 import cz.siret.prank.export.FastaExporter
 import cz.siret.prank.geom.Atoms
+import cz.siret.prank.geom.Struct
 import cz.siret.prank.program.Main
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.rendering.PymolRenderer
@@ -14,7 +15,6 @@ import cz.siret.prank.program.routines.Routine
 import cz.siret.prank.utils.BinCounter
 import cz.siret.prank.utils.CmdLineArgs
 import cz.siret.prank.utils.Futils
-import cz.siret.prank.utils.PdbUtils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.ResidueNumber
@@ -196,7 +196,7 @@ class AnalyzeRoutine extends Routine {
             Protein p = item.protein
 
             for (ResidueChain chain : p.residueChains) {
-                String chainCode = PdbUtils.maskEmptyChainCode( chain.authorId )
+                String chainCode = Struct.maskEmptyChainId(chain.authorId)
                 String protFileBaseName = Futils.baseName(item.proteinFile)
                 String fname = "${protFileBaseName}_${chainCode}.fasta"
 
