@@ -24,8 +24,6 @@ import cz.siret.prank.program.params.Params
     fail_fast = true
     threads = Runtime.getRuntime().availableProcessors() / 2;
 
-    load_only_specified_chains = true
-
     vis_generate_proteins = false
 
     log_to_file = true

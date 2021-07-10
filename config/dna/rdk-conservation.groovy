@@ -23,8 +23,6 @@ import cz.siret.prank.program.params.Params
     fail_fast = true
     //threads = Runtime.getRuntime().availableProcessors() + 1;
 
-    load_only_specified_chains = true
-
 
     log_level = "WARN"
     log_to_file = true

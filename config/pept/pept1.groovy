@@ -26,8 +26,6 @@ import cz.siret.prank.program.params.Params
 
     fail_fast = true
 
-    load_only_specified_chains = true
-
     vis_generate_proteins = true
 
     log_to_file = false
