@@ -13,7 +13,7 @@ Smaller subsets created from original training datasets:
 * dev200-inverse.ds (n=2149)
 * train200.ds (n=200, subset of dev200-inverse.ds) 
 
-See also `config/ions-rdk.groovy` which will be used as a base config file.
+See also `config/ions/ions-rdk.groovy` which will be used as a base config file.
 
 
 ### Development log
@@ -65,7 +65,7 @@ This is terrible. P2Rank's LBS prediction model achieves ~70% even on similarly 
 First we try to do some preliminary optimization of class balancing parameters using Bayesian optimization (hyperparameter-optimization-tutorial.md).
 ~~~sh
 pkill python; sudo pkill mongo
-./prank.sh hopt -c config/ions-rdk -out_subdir HOPT -label balancing-01 \
+./prank.sh hopt -c config/ions/ions-rdk -out_subdir HOPT -label balancing-01 \
     -t 2020-01/mg/train200.ds \
     -e 2020-01/mg/dev100.ds \
     -loop 1 -log_to_console 0 -log_to_file 1 -log_level ERROR  \
@@ -98,7 +98,7 @@ More comprehensive optimization on larger evaluation dataset dev200.ds with more
 Clearing caches (`-clear_prim_caches 1 -clear_sec_caches 1)`) since we are optimizing solvent radius. 
 ~~~sh
 pkill python; sudo pkill mongo; \
-./prank.sh hopt -c config/ions-rdk -out_subdir HOPT -label balancing-06 \
+./prank.sh hopt -c config/ions/ions-rdk -out_subdir HOPT -label balancing-06 \
     -t 2020-01/mg/train200.ds \
     -e 2020-01/mg/dev200.ds \
     -loop 1 -log_to_console 0 -log_to_file 1 -log_level ERROR  \
@@ -142,7 +142,7 @@ As an example of grid optimization we try to run it on `neutral_points_margin` p
 See Params.groovy for description of other parameters.
 
 ~~~sh
-./prank.sh ploop -c config/ions-rdk -out_subdir HOPT -label balancing-01-ploop-1 \
+./prank.sh ploop -c config/ions/ions-rdk -out_subdir HOPT -label balancing-01-ploop-1 \
     -t 2020-01/mg/train200.ds \
     -e 2020-01/mg/dev100.ds \
     -loop 1 -log_to_console 0 -log_to_file 1 -log_level ERROR  \
@@ -171,18 +171,18 @@ Now let's move the results of previous optimizations to checkpoint config file `
 and run further tests to confirm the results (avg. of 10 iterations with `-loop 10`) and produce visualizations. 
 
 ~~~sh
-./prank.sh traineval -c config/ions-rdk-c1 -out_subdir HOPT -label balancing-06-test-1 \
+./prank.sh traineval -c config/ions/ions-rdk-c1 -out_subdir HOPT -label balancing-06-test-1 \
     -t 2020-01/mg/train200.ds \
     -e 2020-01/mg/dev200.ds \
     -loop 10
 
-./prank.sh traineval -c config/ions-rdk-c1 -out_subdir HOPT -label balancing-06-test-1-visualizations \
+./prank.sh traineval -c config/ions/ions-rdk-c1 -out_subdir HOPT -label balancing-06-test-1-visualizations \
     -t 2020-01/mg/train200.ds \
     -e 2020-01/mg/dev200.ds \
     -loop 1 \
     -visualizations 1 \
     -stats_curves 1 \       # produce data for plotting ROC curve
-    -log_cases 1            # produce overview of all lgands / pockets / proteins
+    -log_cases 1            # produce overview stats of all ligands / pockets / proteins
 ~~~
 Results (loop 10):
 ~~~           
@@ -216,7 +216,7 @@ Results need to be moved in to the codebase:
 * Move `duplets.csv` and `triplets.csv` to `src/main/resources/tables/propensities/Ions_Mg_Dev200Inv`.
 * From `aa-propensities.csv` take columns `(pos_ratio, pos_ratio^2)` and add to `src/main/resources/tables/aa-propensities.csv` as `(Ions_Mg_Dev200Inv, Ions_Mg_Dev200Inv^2)`.
 
-Note: these propensity features were added ad hoc during peptide binding site prediction and the whole prosess should be redesigned.
+Note: these propensity features were added ad hoc during peptide binding site prediction, and the whole prosess should be redesigned.
 
 Now we can use new features (after rebuild).
 ~~~
