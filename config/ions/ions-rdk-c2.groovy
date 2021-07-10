@@ -26,7 +26,7 @@ import cz.siret.prank.program.params.Params
     visualizations = false
     vis_generate_proteins = false
 
-    fail_fast = true
+    fail_fast = false
     threads = Runtime.getRuntime().availableProcessors() + 1;
 
 
