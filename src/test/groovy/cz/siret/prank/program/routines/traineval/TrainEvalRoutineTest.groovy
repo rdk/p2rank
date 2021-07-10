@@ -42,6 +42,8 @@ class TrainEvalRoutineTest {
             routine.collectTrainVectors()
             EvalResults res = routine.trainAndEvalModel()
 
+            System.out.println("MCC: " + res.stats.MCC)
+
             assertEquals("Check if processed 5 proteins", 5 as long, res.stats.PROTEINS as long)
             assertTrue("MCC must be > 0.5, actual: ${res.stats.MCC}", res.stats.MCC > 0.5)
 
