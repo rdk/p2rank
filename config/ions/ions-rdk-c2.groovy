@@ -86,7 +86,7 @@ import cz.siret.prank.program.params.Params
 
     // Features
 
-    features = ["chem","volsite","bfactor","protrusion","ss_atomic","duplets_sas","triplets_sas","conserv_atomic"]
+    features = ["chem","volsite","bfactor","protrusion","conserv_atomic","ss_atomic","duplets_sas","triplets_sas"]
     residue_table_features = ["ZNppuAt"]
     atom_table_features = ["atomicHydrophobicity"]
     feat_propensity_tables = "ZNppuAt"
