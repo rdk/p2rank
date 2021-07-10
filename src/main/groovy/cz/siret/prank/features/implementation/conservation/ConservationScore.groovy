@@ -115,19 +115,6 @@ class ConservationScore implements Parametrized {
 
 
     /**
-     * Similar to FastaExporter.maskFastaChain() but we want to keep '-' in place.
-     */
-    private static maskScoreChain(String scoreChain) {
-        return scoreChain.collect { Character it ->
-            if (it == '-') {
-                return it
-            } else {
-                return FastaExporter.maskResidueCode(it)
-            }
-        }.join("")
-    }
-
-    /**
      * @param chain Chain from PDB Structure
      * @param scores Parsed conservation scores.
      * @param outResult Add matched scores to map (residual number -> conservation score)
@@ -140,8 +127,8 @@ class ConservationScore implements Parametrized {
         String pdbChain = chain.collect { group -> group.getChemComp().getOne_letter_code().toUpperCase() }.join("")
         String scoreChain = scores.collect { ch -> ch.letter.toUpperCase() }.join("")
 
-        pdbChain = maskScoreChain(pdbChain)
-        scoreChain = FastaExporter.maskFastaChain(scoreChain)
+        pdbChain = FastaExporter.maskFastaChain(pdbChain)
+        scoreChain = FastaExporter.maskFastaChain(scoreChain) // note '-' are ignored when loading scoreChain
 
         log.debug "pdbChain: {}", pdbChain
         log.debug "scoreChain: {}", scoreChain
