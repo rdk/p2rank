@@ -47,14 +47,16 @@ class TrainEvalRoutineTest {
             log.error("MCC: " + res.stats.MCC)
 
             assertEquals("Check if processed 5 proteins", 5 as long, res.stats.PROTEINS as long)
+            assertTrue(res.stats.POCKETS > 5)
+            assertTrue(res.stats.TRAIN_POSITIVES > 10)
+            assertTrue(res.stats.TRAIN_NEGATIVES > 10)
+
             assertTrue("MCC must be > 0.4, actual: ${res.stats.MCC}", res.stats.MCC > 0.4)
 
             double dca_4_0 = Double.parseDouble(res.stats.DCA_4_0 as String)
 
             assertTrue("DCA_4_0 must be >= 0.5, actual: $dca_4_0", dca_4_0 >= 0.5)
-            assertTrue(res.stats.POCKETS > 5)
-            assertTrue(res.stats.TRAIN_POSITIVES > 10)
-            assertTrue(res.stats.TRAIN_NEGATIVES > 10)
+
 
         } finally {
             Params.INSTANCE = originalParams
@@ -93,14 +95,17 @@ class TrainEvalRoutineTest {
             EvalResults res = routine.trainAndEvalModel()
 
             assertEquals("Check if processed 5 proteins", 5 as long, res.stats.PROTEINS as long)
+
+            assertTrue(res.stats.POCKETS > 5)
+            assertTrue(res.stats.TRAIN_POSITIVES > 10)
+            assertTrue(res.stats.TRAIN_NEGATIVES > 10)
+
             assertTrue("MCC must be > 0.5", res.stats.MCC > 0.5)
 
             double dca_4_0 = Double.parseDouble(res.stats.DCA_4_0 as String)
 
             assertTrue("DCA_4_0 must be >= 0.5, actual: $dca_4_0", dca_4_0 >= 0.5)
-            assertTrue(res.stats.POCKETS > 5)
-            assertTrue(res.stats.TRAIN_POSITIVES > 10)
-            assertTrue(res.stats.TRAIN_NEGATIVES > 10)
+
 
         } finally {
             Params.INSTANCE = originalParams

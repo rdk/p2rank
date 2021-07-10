@@ -101,6 +101,8 @@ test {
         logger.lifecycle("Running test: " + descriptor)
     }
 
+    testLogging.showStandardStreams = true
+
     // listen to standard out and standard error of the test JVM(s)
     //    onOutput { descriptor, event ->
     //        logger.lifecycle("Test: " + descriptor + " produced standard out/err: " + event.message )
