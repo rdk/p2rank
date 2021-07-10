@@ -125,7 +125,7 @@ If you want to add new features that are not implemented in P2Rank you have 3 op
         * looks for csv files named `{peorein_file_name}.csv` in directories defined in `-feat_csv_directories` parameter
         * enabled value columns from csv files must be declared in `-feat_csv_columns`
         * `-feat_csv_ignore_missing` allows ignoring missing csv files, columns and rows
-    * TODO: add more detailed documentation for csv feature
+    * _TODO_: add more detailed documentation for csv feature
 
 ## Filtering features
 

@@ -56,7 +56,7 @@ Analyze a dataset with an explicitly specified residue labeling.
 
 ### Print a list of features
 
-Print a list of features employed by particyulat config.
+Check which features are enabled for a particular configuration.
 
 ~~~
 ./prank print features                          # for default config
@@ -65,7 +65,7 @@ Print a list of features employed by particyulat config.
 
 ### Print model info
 
-Print information of trained model.
+Print information about trained model (`*.model` file).
 
 ~~~
 ./prank print model-info                     # for default model

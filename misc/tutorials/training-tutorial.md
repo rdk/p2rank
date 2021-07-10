@@ -79,8 +79,8 @@ Parameters that influence memory/time trade-off:
 
 * `-cache_datasets <bool>`: keep datasets (structures and SAS points) in memory between crossval/traineval iterations. 
    For single-pass training (`-loop 1`) it does not make sense to keep it on.
-   Turn off when evaluating the model on huge datasets that won't fit to memory (e.g. whole PDB). 
-   When switched off it will leave more memory for RF at the cost of needing to parse all structure files (PDBs) again.
+   Turn off when evaluating the model on huge datasets that won't fit to memory (e.g. the whole PDB). 
+   When switched off, it will leave more memory for RF at the cost of needing to parse all pdb files again.
 
 Additional notes:
 * Subsampling and supersampling influence the size of training vector dataset and required memory (see _Dealing with class imbalances_).
@@ -100,7 +100,7 @@ For that **you need to supply a training dataset that contains pocket prediction
 It focuses the classifier to learn to distinguish between true and decoy pockets which is, in theory, a harder task than to distinguish between ligandable vs. unligandable protein surface.
 It also changes the ratio of sampled positives/negatives in favour of positives.
 
-I recent versions it might be possible to achieve better results by training from the whole protein surface in combination with class balancing techniques (see the next section).
+In recent P2Rank versions it might be possible to achieve better results by training from the whole protein surface in combination with class balancing techniques (see the next section).
 Note that default values of other parameters (related to feature extraction and classification results aggregation) were optimized for the case where `sample_negatives_from_decoys = true`.
 
 Here are the most relevant ones (for descriptions see `Params.groovy`):

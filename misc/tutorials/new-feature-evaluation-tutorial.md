@@ -23,12 +23,12 @@ TODO: add note that it is important to consider average results of several runs 
  2. Check `config/working.groovy` config file. It contains configuration ideal for training new models, but you might need to make changes or override some params on the command line. 
  
  3. Train with the new feature
-    * train with the new feature by adding its name to the list of `-features`. i.e.:
+    * train with the new feature by adding its name to the list of `-features`. e.g.:
         - in the groovy config file: `features = ["protrusion","bfactor","new_feature"]`
         - on the command line: `-features '(protrusion,bfactor,new_feature)'` 
     * if the feature has arbitrary parameters, they can be optimized with `prank ploop` or `prank hopt` commands
         - see the [hyperparameter optimization tutorial](hyperparameter-optimization-tutorial.md) 
-    * you can even compare different feature sets running `prank ploop ...`. i.e.:
+    * you can even compare different feature sets running `prank ploop ...`. e.g.:
         - `-features '((protrusion),(new_feature),(protrusion,new_feature))'`
    
 
