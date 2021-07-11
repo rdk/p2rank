@@ -35,4 +35,13 @@ class MathUtils {
         return -Math.floorDiv(-x,y);
     }
 
+//===========================================================================================================//
+
+    /**
+     * transforms <0,inf) to <0,1)
+     */
+    static double sigmoid01(double x) {
+        return ( 2d / (Math.exp(-x)+1d) ) - 1d
+    }
+
 }

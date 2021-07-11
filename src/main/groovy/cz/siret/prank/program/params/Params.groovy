@@ -697,6 +697,15 @@ class Params {
     double residue_score_extra_dist = 0d
 
     /**
+     * residue score transform function
+     * 
+     * NONE: identity .. score will be in range <0,inf)
+     * SIGMOID: score will be transformed to range <0,1)
+     */
+    @ModelParam
+    String residue_score_transform = "NONE"
+
+    /**
      * minimum ligandability score for SAS point to be considered ligandable
      */
     @ModelParam

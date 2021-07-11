@@ -10,10 +10,12 @@ import cz.siret.prank.prediction.pockets.PointScoreCalculator
 import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Cutils
+import cz.siret.prank.utils.MathUtils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
 import javax.annotation.concurrent.NotThreadSafe
+import java.util.function.Function
 
 import static cz.siret.prank.utils.Formatter.format
 import static cz.siret.prank.utils.Formatter.formatNumbers
@@ -42,11 +44,24 @@ class ModelBasedResidueLabeler extends ResidueLabeler<Boolean> implements Parame
     private double RADIUS = params.getSasCutoffDist() + params.residue_score_extra_dist
     private double SUM_TO_AVG_POW = params.residue_score_sum_to_avg
 
+    private Function<Double, Double> residueScoreTransform
 
     ModelBasedResidueLabeler(Model model, Atoms sasPoints, ProcessedItemContext context) {
         this.model = model
         this.sasPoints = sasPoints
         this.context = context
+
+        if (params.residue_score_transform == "SIGMOID") {
+            residueScoreTransform = new Function<Double, Double>() {
+                @Override
+                Double apply(Double x) {
+                    return MathUtils.sigmoid01(x)
+                }
+            }
+        } else {
+            residueScoreTransform = Function.identity()
+        }
+
     }
 
     ModelBasedResidueLabeler withObserved(List<LabeledPoint> observedPoints) {
@@ -106,6 +121,7 @@ class ModelBasedResidueLabeler extends ResidueLabeler<Boolean> implements Parame
                 pscores = points.cutoutShell(res.atoms, RADIUS).collect { (it as LabeledPoint).score }.asList()
             }
             double score = aggregateScore(pscores)
+            score = transformScore(score)
 
             if (log.traceEnabled) {
                 log.trace "RES[{}] (score={}) pscores(n={}): {}", res, format(score, 2), pscores.size(), formatNumbers(pscores, 2)
@@ -148,6 +164,10 @@ class ModelBasedResidueLabeler extends ResidueLabeler<Boolean> implements Parame
         //log.warn "AGG:{} from {}", score, scores // XXX
 
         return score
+    }
+
+    private double transformScore(double score) {
+        return residueScoreTransform.apply(score)
     }
 
     @Override
