@@ -172,6 +172,21 @@ Notes:
 * `FastRandomForest` and `FasterForest` use basically the same algorithm, `FasterForest` is just more optimized.
 * the differences in predictive performance are low, but the difference in consumed time and memory are high (0.5-4x).        
 * (for developers) to integrate new algotithms start in `ClassifierFactory.groovy`.
+       
+
+#### Comparing training time
+              
+For illustration here is a comparison of training times on one particular dataset.
+Value in cells is training time in minutes.     
+
+| classifier / rf_trees | 100  | 200  | 400  | 
+|-----------------------|------|------|------| 
+| RandomForest          | 14.6 | 28.4 | 56.8 | 
+| FastRandomForest      |  9.3 | 18.2 | 34.4 | 
+| FasterForest          |  5.7 | 10.8 | 23.1 | 
+| FasterForest2         |  4.4 |  8.7 | 16.0 | 
+
+(Produced with dataset of 6800k data points on 12 core machine.)
 
 ## Feature importances
      
