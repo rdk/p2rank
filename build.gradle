@@ -37,10 +37,6 @@ processResources {
     ]
 }
 
-task(console, dependsOn: 'classes', type: JavaExec) {
-    main = 'groovy.ui.Console'
-    classpath = sourceSets.test.runtimeClasspath
-}
 
 task copyDependenciesToDist( type: Copy ) {
     into "$buildDir/../distro/bin/lib"
