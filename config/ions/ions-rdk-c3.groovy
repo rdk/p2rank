@@ -88,7 +88,7 @@ import cz.siret.prank.program.params.Params
 
     // Classifier
 
-    classifier="FasterForest2"
+    classifier="FasterForest"
     rf_trees = 200
     rf_bagsize = 55
     rf_depth = 12
