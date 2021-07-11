@@ -44,6 +44,7 @@ import cz.siret.prank.program.params.Params
     selected_stats = ['_blank',
                       'DCA_4_0',
                       'DCA_4_2',
+                      'DCA_4_10',
                       'DCA_4_99',
                       'MCC',
                       'F1',
@@ -66,9 +67,9 @@ import cz.siret.prank.program.params.Params
     neutral_points_margin = 3
     balance_class_weights = true
     target_class_weight_ratio = 0.0719
-    tesallation = 3
-    train_tessellation = 3
-    train_tessellation_negatives = 1
+    tesallation = 3                      // used during prediction
+    train_tessellation = 3               // used during training for positive points around the ligand
+    train_tessellation_negatives = 1     // used during training for negative points
 
     // Prediction
 

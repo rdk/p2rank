@@ -9,6 +9,7 @@ import cz.siret.prank.prediction.pockets.criteria.*
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Cutils
 import cz.siret.prank.utils.MathUtils
+import cz.siret.prank.utils.Sutils
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.StringUtils
 
@@ -585,6 +586,7 @@ class Evaluation implements Parametrized {
         m.DCA_4_1 = calcDefaultCriteriumSuccessRate(1)
         m.DCA_4_2 = calcDefaultCriteriumSuccessRate(2)
         m.DCA_4_4 = calcDefaultCriteriumSuccessRate(4)
+        m.DCA_4_10 = calcDefaultCriteriumSuccessRate(10)
         m.DCA_4_99 = calcDefaultCriteriumSuccessRate(99)
 
         m.DCA_4_0_PC = calcSuccRateProteinCentric(3,0)
@@ -614,7 +616,7 @@ class Evaluation implements Parametrized {
         m.DCA_4_0_NOMINAL = m.DCA_4_0 * m.LIGANDS
 
         // TODO: move this somewhere else (getStats() shouldn't write to disk)
-        if (!params.log_scores_to_file.empty) {
+        if (StringUtils.isNotBlank(params.log_scores_to_file)) {
             PrintWriter w = new PrintWriter(new BufferedWriter(
                     new FileWriter(params.log_scores_to_file, true)))
             w.println("First line of the file")

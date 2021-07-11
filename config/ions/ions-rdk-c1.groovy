@@ -40,6 +40,7 @@ import cz.siret.prank.program.params.Params
     selected_stats = ['_blank',
                       'DCA_4_0',
                       'DCA_4_2',
+                      'DCA_4_10',
                       'DCA_4_99',
                       'MCC',
                       'F1',
