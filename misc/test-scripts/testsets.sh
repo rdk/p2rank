@@ -419,7 +419,7 @@ print_env() {
     echo
     echo
     echo ENVIRONMENT: ============================================================================================
-    printcmd ./distro/prank.sh -version
+    printcmd ./distro/prank -version
     printcmd date
     printcmd hostname
     printcmd uname -a
@@ -440,6 +440,8 @@ rm $SUMMARY_LOG
 
 xstart=`date +%s`
 
+print_env >> $SUMMARY_LOG
+
 # colors are stripped from stream that goes to the file
 #run > >( tee >( sed -u 's/\x1B\[[0-9;]*[JKmsu]//g' >> $SUMMARY_LOG ) )
 run $@ > >( tee >( sed -u 's/\x1B\[[0-9;]*[JKmsu]//g' >> $SUMMARY_LOG ) )
@@ -449,12 +451,14 @@ runtime=$((xend-xstart))
 ftime=`format_time runtime`
 
 printf "\nDONE in $ftime\n" | tee -a $SUMMARY_LOG
-print_env >> $SUMMARY_LOG
 
 echo
-echo "ERRORS (from stdout and summary):"
+echo "ERRORS (from stdout):"
 echo
 cat $RUN_LOG | grep --color=always ERROR
+echo
+echo "ERRORS (from summary):"
+echo
 cat $SUMMARY_LOG | grep --color=always ERROR
 
 echo "summary saved to [$SUMMARY_LOG]"
