@@ -8,9 +8,9 @@ on:
 
 
 jobs:
-  build: ${{ matrix.os }}
+  build: 
 
-    runs-on: windows-latest
+    runs-on: ${{ matrix.os }}
 
     strategy:
       matrix:
