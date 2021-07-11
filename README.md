@@ -8,7 +8,7 @@ Ligand-binding site prediction based on machine learning.
 </p>
 
 [![version 2.3](https://img.shields.io/badge/version-2.3-green.svg)](/build.gradle)
-[![Build Status](https://travis-ci.org/rdk/p2rank.svg?branch=master)](https://travis-ci.org/rdk/p2rank)
+[![Build Status](https://github.com/rdk/p2rank/actions/workflows/ubuntu_java11.yml/badge.svg)](https://github.com/rdk/p2rank/actions/workflows/ubuntu_java11.yml)
 [![License: MIT](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](/LICENSE.txt)
 
 ### Description
@@ -189,6 +189,7 @@ Both Fpocket and P2Rank have many configurable parameters that influence behavio
 
 This program builds upon software written by other people, either through library dependencies or through code included in its source tree (where no library builds were available). Notably:
 * FastRandomForest by Fran Supek (https://code.google.com/archive/p/fast-random-forest/)
+* FastRandomForest 2.0 (https://github.com/GenomeDataScience/FastRandomForest)
 * KDTree by Rednaxela (http://robowiki.net/wiki/User:Rednaxela/kD-Tree)
 * BioJava (https://github.com/biojava)
 * Chemistry Development Kit (https://github.com/cdk)
