@@ -14,8 +14,12 @@ class Formatter {
         }
     }
 
-    static final List<DecimalFormat> DECIMAL_FORMATS = (0..6).collect {
-        new DecimalFormat("#."+("#"*it), formatSymbols)
+    static final List<DecimalFormat> DECIMAL_FORMATS = (0..10).collect {
+        new DecimalFormat("0."+("#"*it), formatSymbols)
+    }
+
+    static final List<DecimalFormat> DECIMAL_FORMATS_0 = (0..10).collect {
+        new DecimalFormat("0."+("0"*it), formatSymbols)
     }
 
 
@@ -25,6 +29,10 @@ class Formatter {
 
     static String format(double d, int places) {
         DECIMAL_FORMATS[places].format(d)
+    }
+
+    static String format0(double d, int places) {
+        DECIMAL_FORMATS_0[places].format(d)
     }
 
     static String formatd(Double d, int places) {

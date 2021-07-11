@@ -1,6 +1,10 @@
 package cz.siret.prank.prediction.metrics
 
+import cz.siret.prank.utils.Formatter
 import groovy.transform.CompileStatic
+
+import static cz.siret.prank.utils.Formatter.format
+import static cz.siret.prank.utils.Formatter.format0
 
 /**
  *
@@ -82,10 +86,11 @@ class Histogram {
 
         double[] rbins = getRelativeBins()
 
-        sb << "BIN_MAX, I, N, RATIO \n"
+        sb << "BIN_MIN, BIN_MAX, I, N, RATIO \n"
         for (int i=0; i!=nbins; ++i) {
+            double binMin = min + (i)*step
             double binMax = min + (i + 1)*step
-            sb << "$binMax, $i, ${bins[i]}, ${rbins[i]} \n"
+            sb << "${format0(binMin,3)}, ${format0(binMax,3)}, $i, ${bins[i]}, ${format(rbins[i],7)} \n"
         }
 
         sb.toString()
