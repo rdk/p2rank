@@ -107,4 +107,24 @@ class TrainEvalRoutineTest {
 
     }
 
+    @Test
+    void testTrainEvalResidueMode() {
+
+        doTestTrainEval("$data_dir/fpocket.ds", "$data_dir/test.ds", {
+            it.classifier = "FasterForest"
+            it.predict_residues = true
+        })
+
+    }
+
+    @Test
+    void testTrainEvalFeatureImportances() {
+
+        doTestTrainEval("$data_dir/fpocket.ds", "$data_dir/test.ds", {
+            it.classifier = "FasterForest"
+            it.feature_importances = true
+        })
+
+    }
+
 }
