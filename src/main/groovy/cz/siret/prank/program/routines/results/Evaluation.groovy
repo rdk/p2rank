@@ -611,7 +611,7 @@ class Evaluation implements Parametrized {
 //        m.DSA_3_2 = calcSuccRate(33,2)
         
         m.OPT1 = 100*m.DCA_4_0 + 100*m.DCA_4_2 + 50*m.DCA_4_4 + 10*m.AVG_LIGCOV_SUCC + 5*m.AVG_DSO_SUCC
-        m.OPT2 = 100*(1-m.DCA_4_0_PC) + 50*(1-m.DCA_4_2_PC) + 5*m.AVG_LIGCOV_SUCC + 3*m.AVG_DSO_SUCC
+        m.OPT2 = 100*m.DCA_4_0_PC + 50*m.DCA_4_2_PC + 5*m.AVG_LIGCOV_SUCC + 3*m.AVG_DSO_SUCC
 
         m.DCA_4_0_NOMINAL = m.DCA_4_0 * m.LIGANDS
 
