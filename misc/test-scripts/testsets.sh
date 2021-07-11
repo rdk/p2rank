@@ -444,7 +444,8 @@ print_env >> $SUMMARY_LOG
 
 # colors are stripped from stream that goes to the file
 #run > >( tee >( sed -u 's/\x1B\[[0-9;]*[JKmsu]//g' >> $SUMMARY_LOG ) )
-run $@ > >( tee >( sed -u 's/\x1B\[[0-9;]*[JKmsu]//g' >> $SUMMARY_LOG ) )
+#run $@ > >( tee >( sed -u 's/\x1B\[[0-9;]*[JKmsu]//g' >> $SUMMARY_LOG ) )
+run $@ > >( tee >( sed -u 's/\x1B\[[0-9;]\{1,\}[A-Za-z]//g' >> $SUMMARY_LOG ) )
 
 xend=`date +%s`
 runtime=$((xend-xstart))
