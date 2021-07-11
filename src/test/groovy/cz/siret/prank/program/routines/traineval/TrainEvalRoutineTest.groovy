@@ -70,6 +70,48 @@ class TrainEvalRoutineTest {
 
     }
 
+    /**
+     * TODO refactor test: merge with doTestTrainEval()
+     */
+    private void doTestTrainEvalForResidues(String trainDs, String evalDs, Consumer<Params> paramsSetter) {
+        Params originalParams = (Params) Params.inst.clone()
+
+        try {
+            Dataset train = Dataset.loadFromFile(trainDs)
+            Dataset eval = Dataset.loadFromFile(evalDs)
+
+            Params.inst.installDir = "distro" // necessary, P2Rank must know where to find score transformer data
+            Params.inst.sample_negatives_from_decoys = true
+            Params.inst.loop = 1
+            Params.inst.classifier = "FasterForest"
+            Params.inst.rf_trees = 4
+            Params.inst.rf_depth = 9
+            Params.inst.fail_fast = true
+            LoaderParams.ignoreLigandsSwitch = false
+
+            paramsSetter.accept(Params.inst)
+
+            TrainEvalRoutine routine = new TrainEvalRoutine(out_dir, train, eval)
+            routine.collectTrainVectors()
+            EvalResults res = routine.trainAndEvalModel()
+
+            // TODO add sensible tests
+
+            assertTrue("MCC must be > 0.1, actual: ${res.stats.MCC}", res.stats.MCC > 0.1)
+
+        } finally {
+            Params.INSTANCE = originalParams
+            try {
+                Futils.delete(out_dir)
+            } catch (Exception e) {
+                println(e)
+            }
+        }
+
+    }
+
+//===========================================================================================================//
+
 
     @Test
     void testTrainEvalFF() {
@@ -110,13 +152,13 @@ class TrainEvalRoutineTest {
     @Test
     void testTrainEvalResidueMode() {
 
-        doTestTrainEval("$data_dir/fpocket.ds", "$data_dir/test.ds", {
+        doTestTrainEvalForResidues("$data_dir/fpocket.ds", "$data_dir/test.ds", {
             it.classifier = "FasterForest"
             it.predict_residues = true
         })
 
     }
-
+    
     @Test
     void testTrainEvalFeatureImportances() {
 
