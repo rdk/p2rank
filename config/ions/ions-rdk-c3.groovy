@@ -81,9 +81,9 @@ import cz.siret.prank.program.params.Params
     // Residue Prediction
 
     predict_residues = false             // residue mode is off by default
-    residue_score_sum_to_avg = 0
-    residue_score_threshold = 0.4
-    residue_score_extra_dist = 2 
+    residue_score_sum_to_avg = 0.1552
+    residue_score_threshold = 0.6278
+    residue_score_extra_dist = 0
     residue_score_transform = "SIGMOID"
 
     // Classifier
