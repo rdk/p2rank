@@ -33,7 +33,7 @@ import cz.siret.prank.program.params.Params
     stats_collect_predictions = true
     log_cases = false
 
-    cache_datasets = true
+    cache_datasets = false
     clear_sec_caches = false
     clear_prim_caches = false
 
