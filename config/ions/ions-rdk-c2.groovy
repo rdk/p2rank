@@ -3,7 +3,7 @@ import cz.siret.prank.program.params.Params
 /**
  * Config for ion binding site prediction: checkpoint 2
  *
- * Optimized maximizzing DCA_4_2 on datasets:
+ * Optimized maximizing DCA_4_2 on datasets:
  * Train: ZN/ZN_ppu_all_Atrain.ds
  * Test: ZN/ZN_ppu_exposed_Atest.ds
  */
