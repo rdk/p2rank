@@ -308,7 +308,10 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
             }
 
             double multip = Math.pow(base, AVG_POW)  // for AVG_POW from <0,1> goes from 'no average, just sum' -> 'full average'
-
+            if (Double.isNaN(multip) || Double.isInfinite(multip)) {
+                multip = 1.0
+            }
+            
             res.multiply(1d/multip)                  // avg
 
             // special cases (TODO: move to ChemFeature)
