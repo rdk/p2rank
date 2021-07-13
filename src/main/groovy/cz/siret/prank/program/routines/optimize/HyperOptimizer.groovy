@@ -27,6 +27,8 @@ class HyperOptimizer extends ParamLooper {
 
     static final String HOPT_OBJECTIVE = "HOPT_OBJECTIVE"
 
+    final String objectiveParam = params.hopt_objective
+
     List<ListParam> listParams
 
     HyperOptimizer(String outdir, List<ListParam> listParams) {
@@ -78,7 +80,7 @@ class HyperOptimizer extends ParamLooper {
                 try {
                     Closure<EvalResults> calcObjectiveWrapper = { String stepDir ->
                         EvalResults res = evalClosure.call(stepDir)
-                        double objective = HyperOptimizer.getObjectiveValue(res, Params.inst)
+                        double objective = HyperOptimizer.getObjectiveValue(res, objectiveParam)
                         // we want to calc objective before calling processStep
                         // that will save it to selected_stats table
                         res.additionalStats.put((String)HOPT_OBJECTIVE, objective)
@@ -102,8 +104,8 @@ class HyperOptimizer extends ParamLooper {
         })
     }
 
-    static double getObjectiveValue(EvalResults res, Params params) {
-        String name = params.hopt_objective
+    static double getObjectiveValue(EvalResults res, String objectiveParam) {
+        String name = objectiveParam
         double sign = 1
         if (name.startsWith("-")) {
             name = name.substring(1)
@@ -111,8 +113,8 @@ class HyperOptimizer extends ParamLooper {
         }
         
         Double val = (Double) res.stats.get(name)
-        if (val==null) {
-            throw new PrankException("Invalid hopt_objective. Metric with name '$params.hopt_objective' not found.")
+        if (val == null) {
+            throw new PrankException("Invalid hopt_objective. Metric with name '$name' not found.")
         }
         
         return sign * (double)res.stats.get(name)

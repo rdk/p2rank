@@ -31,7 +31,7 @@ abstract class HOptimizer {
     HStep getBestStep() {
         assert !steps.isEmpty()
 
-        steps.min { it.functionValue }
+        return steps.max {it.functionValue }
     }
 
     /**

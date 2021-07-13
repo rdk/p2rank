@@ -2,6 +2,7 @@ package cz.siret.prank.program.params.optimizer.spearmint
 
 import com.google.gson.Gson
 import cz.siret.prank.program.PrankException
+import cz.siret.prank.program.params.Params
 import cz.siret.prank.program.params.optimizer.HObjectiveFunction
 import cz.siret.prank.program.params.optimizer.HOptimizer
 import cz.siret.prank.program.params.optimizer.HStep
@@ -12,6 +13,7 @@ import cz.siret.prank.utils.ProcessRunner
 import cz.siret.prank.utils.Writable
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+import org.junit.experimental.theories.ParameterSignature
 
 import java.nio.file.Path
 
@@ -158,7 +160,8 @@ class HSpearmintOptimizer extends HOptimizer implements Writable {
     }
 
     String printBestStep(HStep step, List<String> varNames) {
-        varNames.collect { it + ",\t\t" + fmt(step.variableValues.get(it)) }.join("\n") + "\nvalue,\t\t" + fmt(step.functionValue) + "\n"
+        String objectiveLabel = Params.inst.hopt_objective
+        varNames.collect { it + ",\t\t" + fmt(step.variableValues.get(it)) }.join("\n") + "\nvalue ($objectiveLabel),\t\t" + fmt(step.functionValue) + "\n"
     }
 
     String formatValue(double v) {
