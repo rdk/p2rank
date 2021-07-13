@@ -78,6 +78,14 @@ import cz.siret.prank.program.params.Params
     pred_min_cluster_size = 1
     extended_pocket_cutoff = 1.6778
 
+    // Residue Prediction
+
+    predict_residues = false             // residue mode is off by default
+    residue_score_sum_to_avg = 0.7508
+    residue_score_threshold = 0.0180
+    residue_score_extra_dist = 0.3622
+    residue_score_transform = "SIGMOID"
+
     // Classifier
 
     classifier="FasterForest"
