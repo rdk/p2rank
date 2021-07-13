@@ -1,3 +1,16 @@
+buildscript {  // for "com.github.ben-manes.versions" plugin
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "com.github.ben-manes:gradle-versions-plugin:0.39.0"
+    }
+}
+
+apply plugin: "com.github.ben-manes.versions"   //  ./gradlew dependencyUpdates
+
 apply plugin: 'groovy'
 apply plugin: 'java'
 apply plugin: 'idea'
@@ -137,15 +150,15 @@ dependencies {
     implementation 'com.univocity:univocity-parsers:2.9.1' // csv parser
     implementation 'org.apache.commons:commons-csv:1.8'
     implementation 'org.zeroturnaround:zt-zip:1.14'
-    implementation 'org.apache.commons:commons-compress:1.20'
+    implementation 'org.apache.commons:commons-compress:1.21'
     implementation group: 'org.tukaani', name: 'xz', version: '1.9'
     implementation group: 'com.github.luben', name: 'zstd-jni', version: '1.5.0-2'
 
 
-    implementation 'org.slf4j:slf4j-api:1.7.30'
-    implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.14.0'
-    implementation 'org.apache.logging.log4j:log4j-core:2.14.0'
-    implementation 'org.slf4j:jul-to-slf4j:1.7.30'         // for netlib logging messages
+    implementation 'org.slf4j:slf4j-api:1.7.31'
+    implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.14.1'
+    implementation 'org.apache.logging.log4j:log4j-core:2.14.1'
+    implementation 'org.slf4j:jul-to-slf4j:1.7.31'         // for netlib logging messages
 
     implementation 'org.biojava:biojava-core:5.4.0'
     implementation 'org.biojava:biojava-alignment:5.4.0'
