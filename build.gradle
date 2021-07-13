@@ -1,3 +1,6 @@
+//file:noinspection SpellCheckingInspection
+//file:noinspection GroovyAssignabilityCheck
+
 buildscript {  // for "com.github.ben-manes.versions" plugin
     repositories {
         maven {
