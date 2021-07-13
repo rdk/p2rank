@@ -123,9 +123,9 @@ class CollectVectorsRoutine extends Routine {
             for (Instance inst : data) {
                 for (int i=0; i!=inst.numAttributes(); i++) {
                     double val = inst.value(i)
-                    if (val == Double.NaN) {
+                    if (Double.isNaN(val)) {
                         String feat = inst.attribute(i).name()
-                        throw new PrankException("Invalid value for feature $feat: NaN")
+                        throw new PrankException("Invalid value for feature '$feat': NaN")
                     }
                 }
             }
