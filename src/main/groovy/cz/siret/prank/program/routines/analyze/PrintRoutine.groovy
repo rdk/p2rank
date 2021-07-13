@@ -127,6 +127,7 @@ class PrintRoutine extends Routine {
      *  print parameters and exit
      */
     public params() {
+        write args.toString()
         write params.toString()
     }
 
