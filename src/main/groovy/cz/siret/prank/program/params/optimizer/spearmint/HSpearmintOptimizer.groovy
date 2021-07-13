@@ -131,7 +131,8 @@ class HSpearmintOptimizer extends HOptimizer implements Writable {
             // eval objective function
             double val = objective.eval(vars, stepNumber)
             log.info "value: {}", val
-            writeFile "$evalDir/$jobId", formatValue(val)
+            // -val because Spearmint is minimizing and we want to maximize
+            writeFile "$evalDir/$jobId", formatValue(-val)
 
             HStep step = new HStep(stepNumber, vars, val)
             steps.add(step)
