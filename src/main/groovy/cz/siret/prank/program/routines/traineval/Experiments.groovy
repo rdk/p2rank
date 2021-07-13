@@ -70,7 +70,6 @@ class Experiments extends Routine {
         "traineval" : { traineval() },
         "ploop" :     { ploop() },
         "hopt" :      { hopt() },
-        "params" :    { params() },
     ])
 
 //===========================================================================================================//
@@ -250,16 +249,6 @@ class Experiments extends Routine {
 
 //===========================================================================================================//
 
-    /**
-     *  print parameters and exit
-     */
-    public params() {
-        write params.toString()
-    }
-
-
-//===========================================================================================================//
-
     // TODO move
 
     /**
@@ -318,7 +307,6 @@ class Experiments extends Routine {
             model = Model.loadFromFile(modelf)
         }
     }
-
 
 }
 

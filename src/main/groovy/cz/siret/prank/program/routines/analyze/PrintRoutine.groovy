@@ -56,6 +56,7 @@ class PrintRoutine extends Routine {
             "features" : { features() },
             //"feature-sets" : this.&feature_sets,
             "model-info" : { model_info() },
+            "params" :    { params() },
             "transform-model" : { transform_model() }     // temporary
     ])
 
@@ -121,5 +122,12 @@ class PrintRoutine extends Routine {
         
         write "Transformed model saved to file ${Futils.absPath(newf)}"
     }
-    
+
+    /**
+     *  print parameters and exit
+     */
+    public params() {
+        write params.toString()
+    }
+
 }
