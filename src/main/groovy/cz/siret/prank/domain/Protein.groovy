@@ -214,16 +214,33 @@ class Protein implements Parametrized {
         clearResidues()
     }
 
+//===========================================================================================================//
+
+    List<Ligand> getRelevantLigands() {
+        return ligands
+    }
+
+    /**
+     * @return ignoredLigands + smallLigands + distantLigands
+     */
+    List<Ligand> getAllIgnoredLigands() {
+        return ignoredLigands + smallLigands + distantLigands
+    }
+
     /**
      * @return all atoms from relevant ligands
      */
     Atoms getAllLigandAtoms() {
-        Atoms res = new Atoms()
-        for (lig in ligands) {
-            res.addAll(lig.atoms)
-        }
-        return res
+        return Atoms.join(relevantLigands*.atoms)
     }
+
+    /**
+     * @return all atoms from relevant ligands
+     */
+    Atoms getAllIgnoredLigandAtoms() {
+        Atoms.join(allIgnoredLigands*.atoms)
+    }
+
 
 //===========================================================================================================//
 

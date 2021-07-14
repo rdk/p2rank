@@ -1,10 +1,12 @@
 package cz.siret.prank.program.rendering
 
 import cz.siret.prank.domain.Dataset
+import cz.siret.prank.domain.Ligand
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.domain.labeling.LabeledPoint
+import cz.siret.prank.geom.Atoms
 import cz.siret.prank.prediction.pockets.rescorers.ModelBasedRescorer
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.ColorUtils
@@ -97,65 +99,69 @@ class OldPymolRenderer implements Parametrized {
 
     private String renderMainPmlScript(String proteinFile, String pointsFileRelative, PredictionPair pair) {
 // language=python
-"""from pymol import cmd,stored
-
-set depth_cue, 1
-set fog_start, 0.4
-
-set_color b_col, [36,36,85]
-set_color t_col, [10,10,10]
-set bg_rgb_bottom, b_col
-set bg_rgb_top, t_col      
-set bg_gradient
-
-set  spec_power  =  200
-set  spec_refl   =  0
-
-load "$proteinFile", protein
-create ligands, protein and organic
-select xlig, protein and organic
-delete xlig
-
-hide everything, all
-
-color white, elem c
-color bluewhite, protein
-#show_as cartoon, protein
-show surface, protein
-#set transparency, 0.15
-
-show sticks, ligands
-set stick_color, magenta
-
-load "$pointsFileRelative", points
-hide nonbonded, points
-show nb_spheres, points
-set sphere_scale, 0.2, points
-cmd.spectrum("b", "green_red", selection="points", minimum=0, maximum=0.7)
-
-
-stored.list=[]
-cmd.iterate("(resn STP)","stored.list.append(resi)")    # read info about residues STP
-lastSTP=stored.list[-1] # get the index of the last residue
-hide lines, resn STP
-
-cmd.select("rest", "resn STP and resi 0")
-
-for my_index in range(1,int(lastSTP)+1): cmd.select("pocket"+str(my_index), "resn STP and resi "+str(my_index))
-for my_index in range(1,int(lastSTP)+1): cmd.show("spheres","pocket"+str(my_index))
-for my_index in range(1,int(lastSTP)+1): cmd.set("sphere_scale","0.4","pocket"+str(my_index))
-for my_index in range(1,int(lastSTP)+1): cmd.set("sphere_transparency","0.1","pocket"+str(my_index))
-
-${colorExposedAtoms(pair)}
-
-${colorPocketSurfaces(pair)}   
-
-${renderLigands(pair.protein)}
-
-deselect
-
-orient
-"""
+        """
+        from pymol import cmd,stored
+        
+        set depth_cue, 1
+        set fog_start, 0.4
+        
+        set_color b_col, [36,36,85]
+        set_color t_col, [10,10,10]
+        set bg_rgb_bottom, b_col
+        set bg_rgb_top, t_col      
+        set bg_gradient
+        
+        set  spec_power  =  200
+        set  spec_refl   =  0
+        
+        load "$proteinFile", protein
+        create ligands, protein and organic
+        select xlig, protein and organic
+        delete xlig
+        
+        hide everything, all
+        
+        color white, elem c
+        color bluewhite, protein
+        #show_as cartoon, protein
+        show surface, protein
+        #set transparency, 0.15
+        
+        show sticks, ligands
+        set stick_color, magenta
+        
+        
+        ${renderLigands(pair.protein)}
+        
+        # SAS points
+ 
+        load "$pointsFileRelative", points
+        hide nonbonded, points
+        show nb_spheres, points
+        set sphere_scale, 0.2, points
+        cmd.spectrum("b", "green_red", selection="points", minimum=0, maximum=0.7)
+        
+        
+        stored.list=[]
+        cmd.iterate("(resn STP)","stored.list.append(resi)")    # read info about residues STP
+        lastSTP=stored.list[-1] # get the index of the last residue
+        hide lines, resn STP
+        
+        cmd.select("rest", "resn STP and resi 0")
+        
+        for my_index in range(1,int(lastSTP)+1): cmd.select("pocket"+str(my_index), "resn STP and resi "+str(my_index))
+        for my_index in range(1,int(lastSTP)+1): cmd.show("spheres","pocket"+str(my_index))
+        for my_index in range(1,int(lastSTP)+1): cmd.set("sphere_scale","0.4","pocket"+str(my_index))
+        for my_index in range(1,int(lastSTP)+1): cmd.set("sphere_transparency","0.1","pocket"+str(my_index))
+        
+        ${colorExposedAtoms(pair)}
+        
+        ${colorPocketSurfaces(pair)}   
+        
+        deselect
+        
+        orient
+        """.stripIndent()
     }
 
 
@@ -195,19 +201,30 @@ orient
 
         // or highlight them: render as red balls
 
-        List<String> ligandAtomIds = protein.allLigandAtoms.collect {it.PDBserial.toString() }
+        """  
+        # relevant ligands
+        ${renderLigands("ligands_relevant", "magenta", protein.relevantLigands)}
+                          
+        # ignored ligands
+        ${renderLigands("ligands_ignored", "yellow", protein.allIgnoredLigands)}
+        """
+    }
+
+    private String renderLigands(String label, String color, List<Ligand> ligands) {
+
+        Atoms ligandAtoms = Atoms.join(ligands*.atoms)
+
+        List<String> ligandAtomIds = ligandAtoms.collect {it.PDBserial.toString() }
         String idsOrList = ligandAtomIds.collect {"id $it" }.join(" or ")
 
         if (ligandAtomIds.empty) return
 
-"""
-select ligand_atoms, $idsOrList
-show spheres, ligand_atoms
-set sphere_color, red
-"""
+        """
+        select $label, $idsOrList
+        show spheres, $label
+        color $color, $label
+        """
     }
-
-
 
 /* random notes:
 
