@@ -203,10 +203,10 @@ class OldPymolRenderer implements Parametrized {
 
         """  
         # relevant ligands
-        ${renderLigands("ligands_relevant", "magenta", protein.relevantLigands)}
+        ${renderLigands("ligands_relevant", "violet", protein.relevantLigands)}
                           
         # ignored ligands
-        ${renderLigands("ligands_ignored", "yellow", protein.allIgnoredLigands)}
+        ${renderLigands("ligands_ignored", "lightorange", protein.allIgnoredLigands)}
         """
     }
 
