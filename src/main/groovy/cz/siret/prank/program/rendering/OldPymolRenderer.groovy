@@ -3,6 +3,7 @@ package cz.siret.prank.program.rendering
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.PredictionPair
+import cz.siret.prank.domain.Protein
 import cz.siret.prank.domain.labeling.LabeledPoint
 import cz.siret.prank.prediction.pockets.rescorers.ModelBasedRescorer
 import cz.siret.prank.program.params.Parametrized
@@ -16,6 +17,8 @@ import org.zeroturnaround.zip.ZipUtil
 
 import java.awt.*
 import java.util.List
+
+import static cz.siret.prank.utils.Futils.writeFile
 
 /**
  * Generates PyMol visualizations.
@@ -35,6 +38,126 @@ class OldPymolRenderer implements Parametrized {
     static String pyColor(Color c) {
         sprintf "[%5.3f,%5.3f,%5.3f]", c.red/255, c.green/255, c.blue/255
     }
+
+
+    void render(Dataset.Item item, ModelBasedRescorer rescorer, PredictionPair pair) {
+
+        String label = item.label
+
+        String pmlf = "$outdir/${label}.pml"
+        String pointsDir = "$outdir/data"
+
+        Futils.mkdirs(pointsDir)
+
+        String pointsf = "$pointsDir/${label}_points.pdb.gz"
+        String pointsfRelName = "data/${label}_points.pdb.gz"
+
+        String proteinf = Futils.absPath(item.proteinFile)
+        String proteinfabs = proteinf
+        if (params.vis_copy_proteins) {
+            String name = Futils.shortName(proteinf)
+            String newf = "$pointsDir/$name"
+            String newfrel = "data/$name"
+
+            log.info "copying [$proteinf] to [$newf]"
+            Futils.copy(proteinf, newf)
+
+            proteinf = newfrel
+            proteinfabs = newf
+        }
+
+        writeFile(pmlf, renderMainPmlScript(proteinf, pointsfRelName, pair))
+
+        Writer pdb = Futils.getGzipWriter(pointsf)
+        int i = 0
+        for (LabeledPoint lp : rescorer.labeledPoints) {
+            double beta = lp.hist[1]
+            Atom p = lp.point
+            def lab = "STP"
+
+            pdb.printf "HETATM%5d H    %3s 1  %2d    %8.3f%8.3f%8.3f  0.50%6.3f\n", i, lab, lp.pocket, p.x, p.y, p.z, beta
+            i++
+        }
+        pdb.close()
+
+
+        if (params.zip_visualizations) {
+            List<File> fileList = [new File(pmlf), new File(pointsf)]
+            if (params.vis_copy_proteins) {
+                fileList.add(new File(proteinfabs))
+            }
+            File zipFile = new File("$outdir/${label}_visualization.zip")
+            NameMapper mapper = { String fileName ->
+                return fileName.endsWith(".pml") ? fileName : "data/".concat(fileName)
+            }
+            ZipUtil.packEntries(fileList.toArray(new File[0]) as File[], zipFile, mapper)
+            fileList.forEach({ File f -> f.delete() })
+        }
+    }
+
+    private String renderMainPmlScript(String proteinFile, String pointsFileRelative, PredictionPair pair) {
+// language=python
+"""from pymol import cmd,stored
+
+set depth_cue, 1
+set fog_start, 0.4
+
+set_color b_col, [36,36,85]
+set_color t_col, [10,10,10]
+set bg_rgb_bottom, b_col
+set bg_rgb_top, t_col      
+set bg_gradient
+
+set  spec_power  =  200
+set  spec_refl   =  0
+
+load "$proteinFile", protein
+create ligands, protein and organic
+select xlig, protein and organic
+delete xlig
+
+hide everything, all
+
+color white, elem c
+color bluewhite, protein
+#show_as cartoon, protein
+show surface, protein
+#set transparency, 0.15
+
+show sticks, ligands
+set stick_color, magenta
+
+load "$pointsFileRelative", points
+hide nonbonded, points
+show nb_spheres, points
+set sphere_scale, 0.2, points
+cmd.spectrum("b", "green_red", selection="points", minimum=0, maximum=0.7)
+
+
+stored.list=[]
+cmd.iterate("(resn STP)","stored.list.append(resi)")    # read info about residues STP
+lastSTP=stored.list[-1] # get the index of the last residue
+hide lines, resn STP
+
+cmd.select("rest", "resn STP and resi 0")
+
+for my_index in range(1,int(lastSTP)+1): cmd.select("pocket"+str(my_index), "resn STP and resi "+str(my_index))
+for my_index in range(1,int(lastSTP)+1): cmd.show("spheres","pocket"+str(my_index))
+for my_index in range(1,int(lastSTP)+1): cmd.set("sphere_scale","0.4","pocket"+str(my_index))
+for my_index in range(1,int(lastSTP)+1): cmd.set("sphere_transparency","0.1","pocket"+str(my_index))
+
+${colorExposedAtoms(pair)}
+
+${colorPocketSurfaces(pair)}   
+
+${renderLigands(pair.protein)}
+
+deselect
+
+orient
+"""
+    }
+
 
     private String colorPocketSurfaces(PredictionPair pair) {
         StringBuilder res = new StringBuilder()
@@ -58,152 +181,31 @@ class OldPymolRenderer implements Parametrized {
         return res.toString()
     }
 
-    void visualizeHistograms(Dataset.Item item, ModelBasedRescorer rescorer, PredictionPair pair) {
+    private String colorExposedAtoms(PredictionPair pair) {
+        // return pair.prediction.protein.exposedAtoms.list.collect { "set surface_color, grey30, id $it.PDBserial \n set sphere_color, grey30, id $it.PDBserial" }.join("\n")
 
-        String label = item.label
+        return ""
+    }
 
-        String pmlf = "$outdir/${label}.pml"
-        String pointsDir = "$outdir/data"
+    private String renderLigands(Protein protein) {
 
-        Futils.mkdirs(pointsDir)
-
-        String pointsf = "$pointsDir/${label}_points.pdb.gz"
-        String pointsfRelName = "data/${label}_points.pdb.gz"
-        String pointsf0 = "$pointsDir/${label}_points0.pdb"
-        String pointsf0RelName = "data/${label}_points0.pdb"
-
-        String proteinf = Futils.absPath(item.proteinFile)
-        String proteinfabs = proteinf
-        if (params.vis_copy_proteins) {
-            String name = Futils.shortName(proteinf)
-            String newf = "$pointsDir/$name"
-            String newfrel = "data/$name"
-
-            log.info "copying [$proteinf] to [$newf]"
-            Futils.copy(proteinf, newf)
-
-            proteinf = newfrel
-            proteinfabs = newf
-        }
-
-        String colorPocketSurfaces = colorPocketSurfaces(pair)
-
-        String colorExposedAtoms = ""
-        // XXX
-        //colorExposedAtoms = pair.prediction.protein.exposedAtoms.list.collect { "set surface_color, grey30, id $it.PDBserial \n set sphere_color, grey30, id $it.PDBserial" }.join("\n")
-
-
-        Futils.writeFile(pmlf,
-"""from pymol import cmd,stored
-
-set depth_cue, 1
-set fog_start, 0.4
-
-set_color b_col, [36,36,85]
-set_color t_col, [10,10,10]
-set bg_rgb_bottom, b_col
-set bg_rgb_top, t_col      
-set bg_gradient
-
-set  spec_power  =  200
-set  spec_refl   =  0
-
-load "$proteinf", protein
-create ligands, protein and organic
-select xlig, protein and organic
-delete xlig
-
-hide everything, all
-
-color white, elem c
-color bluewhite, protein
-#show_as cartoon, protein
-show surface, protein
-#set transparency, 0.15
-
-show sticks, ligands
-set stick_color, magenta
-
-load "$pointsfRelName", points
-hide nonbonded, points
-show nb_spheres, points
-set sphere_scale, 0.2, points
-cmd.spectrum("b", "green_red", selection="points", minimum=0, maximum=0.7)
-
-
-stored.list=[]
-cmd.iterate("(resn STP)","stored.list.append(resi)")    # read info about residues STP
-lastSTP=stored.list[-1] # get the index of the last residue
-hide lines, resn STP
-
-cmd.select("rest", "resn STP and resi 0")
-
-for my_index in range(1,int(lastSTP)+1): cmd.select("pocket"+str(my_index), "resn STP and resi "+str(my_index))
-for my_index in range(1,int(lastSTP)+1): cmd.show("spheres","pocket"+str(my_index))
-for my_index in range(1,int(lastSTP)+1): cmd.set("sphere_scale","0.4","pocket"+str(my_index))
-for my_index in range(1,int(lastSTP)+1): cmd.set("sphere_transparency","0.1","pocket"+str(my_index))
-
-$colorExposedAtoms
-
-$colorPocketSurfaces
-
-deselect
-
-orient
-""")
-         // predefined gradients:  http://kpwu.wordpress.com/2007/11/27/pymol-example-coloring-surface-by-b-factor/
-        // http://cupnet.net/pdb_format/
-        // http://www.pymolwiki.org/index.php/Colorama
-
-        Writer pdb = Futils.getGzipWriter(pointsf)
-        int i = 0
-        for (LabeledPoint lp : rescorer.labeledPoints) {
-            double beta = lp.hist[1]
-            Atom p = lp.point
-                      //HETATM   73 H    POC 1   0      13.842  20.130  -4.420  0.50  0.50
-   //         pdb.printf "HETATM%5d H    POC 1   0    %8.3f%8.3f%8.3f  0.50%6.3f\n", i, p.x, p.y, p.z, beta
-            def lab = "STP"
-//            if (lp.pocket!=0)
-//                lab = "POC"
-
-            pdb.printf "HETATM%5d H    %3s 1  %2d    %8.3f%8.3f%8.3f  0.50%6.3f\n", i, lab, lp.pocket, p.x, p.y, p.z, beta
-            i++
-        }
-        pdb.close()
-
-//        double q = -0.03
+//        List<String> ligandAtomIds = protein.allLigandAtoms.collect {it.PDBserial.toString() }
+//        String idsOrList = ligandAtomIds.collect {"id $it" }.join(" or ")
 //
-//        pdb = FileUtils.getWriter(pointsf0)
-//        i = 0
-//        for (LabeledPoint lp : rescorer.labeledPoints) {
-//            double beta = lp.hist[0]
-//            Atom p = lp.point
+//        if (ligandAtomIds.empty) return
 //
-//            log.info "POINT:  ${lp.hist[0]}   ${lp.hist[1]}   ${lp.hist[0]+lp.hist[1]}"
-//
-//            //HETATM   73 H    POC 1   0      13.842  20.130  -4.420  0.50  0.50
-//            pdb.printf "HETATM%5d H    POC 1   0    %8.3f%8.3f%8.3f  0.50%6.3f\n", i, p.x+q, p.y+q, p.z+q, beta
-//            i++
-//        }
-//        pdb.close()
-
-
-        if (params.zip_visualizations) {
-            List<File> fileList = [new File(pmlf), new File(pointsf)]
-            if (params.vis_copy_proteins) {
-                fileList.add(new File(proteinfabs))
-            }
-            File zipFile = new File("$outdir/${label}_visualization.zip")
-            NameMapper mapper = { String fileName ->
-                return fileName.endsWith(".pml") ? fileName : "data/".concat(fileName)
-            }
-            ZipUtil.packEntries(fileList.toArray(new File[0]) as File[], zipFile, mapper)
-            fileList.forEach({File f->f.delete()})
-        }
+//"""
+//select ligand_atoms, $idsOrList
+//show spheres, ligand_atoms
+//set sphere_color, red
+//"""
+        return ""
     }
 
 
-    /*
+
+/* random notes:
+
 #set ray_shadow, 0
 #set depth_cue, 0
 #set ray_trace_fog, 0
@@ -239,5 +241,10 @@ set bg_rgb_bottom, [36,36,85]
 #cmd.spectrum("b", "yellow_blue", selection="points0", minimum=0.3, maximum=1)
 
 #set ray_trace_mode, 1
- */
+
+// predefined gradients:  http://kpwu.wordpress.com/2007/11/27/pymol-example-coloring-surface-by-b-factor/
+// http://cupnet.net/pdb_format/
+// http://www.pymolwiki.org/index.php/Colorama
+*/
+
 }

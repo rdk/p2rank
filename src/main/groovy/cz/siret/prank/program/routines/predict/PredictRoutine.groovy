@@ -93,7 +93,7 @@ class PredictRoutine extends Routine {
             rescorer.reorderPockets(pair.prediction, item.getContext()) // in this context reorderPockets() makes predictions
 
             if (produceVisualizations) {
-                new OldPymolRenderer(visDir).visualizeHistograms(item, rescorer, pair)
+                new OldPymolRenderer(visDir).render(item, rescorer, pair)
             }
 
             if (outputPredictionFiles) {

@@ -90,7 +90,7 @@ class EvalPocketsRoutine extends EvalRoutine {
             rescorer.reorderPockets(pair.prediction, item.context)
 
             if (params.visualizations) {
-                new OldPymolRenderer(visDir).visualizeHistograms(item, (ModelBasedRescorer)rescorer, pair)
+                new OldPymolRenderer(visDir).render(item, (ModelBasedRescorer)rescorer, pair)
             }
 
             if (params.predictions) {
