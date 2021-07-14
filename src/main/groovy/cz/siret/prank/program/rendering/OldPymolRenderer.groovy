@@ -189,17 +189,22 @@ orient
 
     private String renderLigands(Protein protein) {
 
-//        List<String> ligandAtomIds = protein.allLigandAtoms.collect {it.PDBserial.toString() }
-//        String idsOrList = ligandAtomIds.collect {"id $it" }.join(" or ")
-//
-//        if (ligandAtomIds.empty) return
-//
-//"""
-//select ligand_atoms, $idsOrList
-//show spheres, ligand_atoms
-//set sphere_color, red
-//"""
-        return ""
+        if (!params.vis_highlight_ligands) {
+            return "" // keep ligands rendered as purple sticks
+        }
+
+        // or highlight them: render as red balls
+
+        List<String> ligandAtomIds = protein.allLigandAtoms.collect {it.PDBserial.toString() }
+        String idsOrList = ligandAtomIds.collect {"id $it" }.join(" or ")
+
+        if (ligandAtomIds.empty) return
+
+"""
+select ligand_atoms, $idsOrList
+show spheres, ligand_atoms
+set sphere_color, red
+"""
     }
 
 

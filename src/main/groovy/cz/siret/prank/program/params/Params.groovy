@@ -625,6 +625,14 @@ class Params {
     boolean vis_generate_proteins = true
 
     /**
+     * Highlight ligands by rendering them as enlarged balls (instead of sticks).
+     * Necessary to see 1 atom ligands like ions.
+     * Affects rendering only in pocket mode.
+     */
+    @RuntimeParam
+    boolean vis_highlight_ligands = false
+
+    /**
      * zip PyMol visualizations to save space
      */
     @RuntimeParam
