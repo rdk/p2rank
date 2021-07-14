@@ -28,7 +28,7 @@ class CrossValidation extends EvalRoutine {
 
     CrossValidation(String outdir, Dataset dataset) {
         super(outdir)
-        this.dataset = dataset
+        this.dataset = Objects.requireNonNull(dataset, "Dataset for cross-validation was not provided.")
     }
 
     void init() {
