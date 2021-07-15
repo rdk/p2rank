@@ -10,8 +10,8 @@ import cz.siret.prank.utils.Writable
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
-import org.biojava.nbio.structure.StructureTools
-import org.biojava.nbio.structure.asa.AsaCalculator
+
+import static cz.siret.prank.features.implementation.AsaFeature.*
 
 /**
  * Local protein solvent accessible surface area feature
@@ -30,23 +30,6 @@ class Asa2Feature extends SasFeatureCalculator implements Parametrized, Writable
         return ["asa2.1", "asa2.2"]
     }
 
-    ProtAsa calcProtAsa(Protein protein, double probeRadius) {
-        int nSpherePoints = AsaCalculator.DEFAULT_N_SPHERE_POINTS
-        int threads = 1
-        boolean hetAtoms = false
-
-        Atom[] protAtoms = StructureTools.getAllNonHAtomArray(protein.structure, hetAtoms)
-        AsaCalculator asaCalculator = new AsaCalculator(protein.structure, probeRadius, nSpherePoints, threads, hetAtoms)
-        double[] atomAsas = asaCalculator.calculateAsas()
-        protAtoms[0].getPDBserial()
-
-        Map<Integer, Double> asaByAtom = new HashMap<>()
-        for (int i=0; i!= protAtoms.length; ++i) {
-            asaByAtom.put protAtoms[i].PDBserial, atomAsas[i]
-        }
-
-        return new ProtAsa(protein, asaByAtom)
-    }
 
     @Override
     void preProcessProtein(Protein protein, ProcessedItemContext context) {
@@ -69,17 +52,6 @@ class Asa2Feature extends SasFeatureCalculator implements Parametrized, Writable
         double localAsa2 = (double) localAtoms.collect { Atom a -> protAsa2.asaByAtom.get(a.PDBserial) ?: 0 }.sum(0)
 
         return [localAsa, localAsa2] as double[]
-    }
-
-
-    static class ProtAsa {
-        Protein protein
-        Map<Integer, Double> asaByAtom
-
-        ProtAsa(Protein protein, Map<Integer, Double> asaByAtom) {
-            this.protein = protein
-            this.asaByAtom = asaByAtom
-        }
     }
 
 }

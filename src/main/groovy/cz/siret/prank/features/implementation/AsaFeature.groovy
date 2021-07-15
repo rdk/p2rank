@@ -27,11 +27,23 @@ class AsaFeature extends SasFeatureCalculator implements Parametrized, Writable 
 
     @Override
     void preProcessProtein(Protein protein, ProcessedItemContext context) {
-        if (protein.secondaryData.containsKey("prot_atom_asa")) {
-            return
+        if (!protein.secondaryData.containsKey("prot_atom_asa")) {
+            protein.secondaryData.put "prot_atom_asa", calcProtAsa(protein, params.feat_asa_probe_radius)
         }
+    }
 
-        double probeRadius = params.feat_asa_probe_radius
+    @Override
+    double[] calculateForSasPoint(Atom sasPoint, SasFeatureCalculationContext context) {
+        Atoms localAtoms = context.protein.exposedAtoms.cutoutSphere(sasPoint, params.feat_asa_neigh_radius)
+        ProtAsa protAsa = (ProtAsa) context.protein.secondaryData.get("prot_atom_asa")
+        double localAsa = (double) localAtoms.collect { Atom a -> protAsa.asaByAtom.get(a.PDBserial) ?: 0 }.sum(0)
+
+        return [localAsa] as double[]
+    }
+
+//===========================================================================================================//
+
+    static ProtAsa calcProtAsa(Protein protein, double probeRadius) {
         int nSpherePoints = AsaCalculator.DEFAULT_N_SPHERE_POINTS
         int threads = 1
         boolean hetAtoms = false
@@ -46,18 +58,8 @@ class AsaFeature extends SasFeatureCalculator implements Parametrized, Writable 
             asaByAtom.put protAtoms[i].PDBserial, atomAsas[i]
         }
 
-        protein.secondaryData.put "prot_atom_asa", new ProtAsa(protein, asaByAtom)
+        return new ProtAsa(protein, asaByAtom)
     }
-
-    @Override
-    double[] calculateForSasPoint(Atom sasPoint, SasFeatureCalculationContext context) {
-        Atoms localAtoms = context.protein.exposedAtoms.cutoutSphere(sasPoint, params.feat_asa_neigh_radius)
-        ProtAsa protAsa = (ProtAsa) context.protein.secondaryData.get("prot_atom_asa")
-        double localAsa = (double) localAtoms.collect { Atom a -> protAsa.asaByAtom.get(a.PDBserial) ?: 0 }.sum(0)
-
-        return [localAsa] as double[]
-    }
-
 
     static class ProtAsa {
         Protein protein
