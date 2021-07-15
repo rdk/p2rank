@@ -1,6 +1,6 @@
 package cz.siret.prank.program.params
 
-
+import com.google.common.annotations.Beta
 import com.google.common.collect.ImmutableSet
 import cz.siret.prank.program.Main
 import cz.siret.prank.program.PrankException
@@ -403,6 +403,10 @@ class Params {
      */
     @ModelParam
     String point_sampler = "SurfacePointSampler"
+
+
+    @Beta
+    String point_sampling_strategy = "surface"
 
     /**
      * multiplier for random point sampling

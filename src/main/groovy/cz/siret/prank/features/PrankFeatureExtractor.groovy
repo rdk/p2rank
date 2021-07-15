@@ -226,7 +226,7 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
         res.preCalculateVectorsForAtoms(res.surfaceLayerAtoms)
 
         if (sampledPoints == null) {
-            res.sampledPoints = SampledPoints.fromProteinSurface(protein, forTraining)
+            res.sampledPoints = SampledPoints.fromProtein(protein, forTraining)
         } else {
             res.sampledPoints = new SampledPoints(sampledPoints)
         }

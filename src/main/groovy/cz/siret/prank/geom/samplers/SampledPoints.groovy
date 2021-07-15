@@ -2,6 +2,7 @@ package cz.siret.prank.geom.samplers
 
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.geom.Atoms
+import cz.siret.prank.program.params.Params
 import groovy.transform.CompileStatic
 
 /**
@@ -27,6 +28,18 @@ class SampledPoints {
     }
 
 
+
+
+    static SampledPoints fromProtein(Protein protein, boolean forTraining) {
+        if (Params.inst.point_sampling_strategy == "atoms") {
+            return new SampledPoints(protein.proteinAtoms)
+        } else {
+            return fromProteinSurface(protein, forTraining)
+        }
+    }
+
+
+
     static SampledPoints fromProteinSurface(Protein protein, boolean forTraining) {
         if (forTraining) {
             return new SampledPoints(protein.trainSurface.points, protein.trainNegativesSurface.points)
@@ -34,6 +47,7 @@ class SampledPoints {
             return new SampledPoints(protein.accessibleSurface.points)
         }
     }
+
 
     Atoms getPoints() {
         return sampledPositives
