@@ -7,6 +7,7 @@ shift
 RUN_LOG=local-run.log
 DEBUG_LOG=local-debug.log
 SUMMARY_LOG=local-summary.log
+ERRORS_LOG=local-errors.log
 
 ###################################################################################################################
 
@@ -446,9 +447,10 @@ run() {
     $ROUTINE $@
 }
 
-rm $RUN_LOG
-rm $DEBUG_LOG
-rm $SUMMARY_LOG
+rm -f $RUN_LOG
+rm -f $DEBUG_LOG
+rm -f $SUMMARY_LOG
+rm -f $ERRORS_LOG
 
 xstart=`date +%s`
 
@@ -463,17 +465,19 @@ xend=`date +%s`
 runtime=$((xend-xstart))
 ftime=`format_time runtime`
 
-printf "\nDONE in $ftime\n" | tee -a $SUMMARY_LOG
-
 echo
-echo "ERRORS (from stdout):"
+echo "ERRORS (from stdout -> see $ERRORS_LOG):"
 echo
-cat $RUN_LOG | grep --color=always ERROR
+cat $RUN_LOG | grep --color=always ERROR | tee $ERRORS_LOG | wc -l
 echo
 echo "ERRORS (from summary):"
+echo
+cat $SUMMARY_LOG | grep --color=always ERROR | wc -l
 echo
 cat $SUMMARY_LOG | grep --color=always ERROR
 
 echo "summary saved to [$SUMMARY_LOG]"
 echo "stdout went to [$RUN_LOG]"
 echo "stderr went to [$DEBUG_LOG]"
+
+printf "\nDONE in $ftime\n" | tee -a $SUMMARY_LOG
