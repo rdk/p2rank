@@ -23,7 +23,6 @@ class P2Rank {
         return failedFlag
     }
 
-
     /**
      * Fail conditionally.
      * Throw exception with msg or just log error depending on params.fail_fast

@@ -28,4 +28,5 @@ class ChemFeature extends AtomFeatureCalculator {
 
         cv.toArray()
     }
+    
 }

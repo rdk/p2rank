@@ -49,7 +49,6 @@ class Curves {
         return Curve.create(fpr, tpr)
     }
 
-
     static List<Integer> distinctValueIndices(double[] sortedVals) {
         assert sortedVals.length > 0
 
@@ -66,7 +65,6 @@ class Curves {
 
         idxs
     }
-
 
     static double[] select(double[] from, List<Integer> indices) {
         indices.collect { from[it] }.toArray() as double[]

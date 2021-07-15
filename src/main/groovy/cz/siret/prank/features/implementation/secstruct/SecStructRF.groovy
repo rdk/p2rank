@@ -8,7 +8,7 @@ import cz.siret.prank.features.api.ResidueFeatureCalculator
 import groovy.transform.CompileStatic
 
 /**
- *
+ * Secondary structure Residue Feature
  */
 @CompileStatic
 class SecStructRF extends ResidueFeatureCalculator {

@@ -5,6 +5,7 @@ import org.biojava.nbio.structure.Atom
 
 @CompileStatic
 class Box {
+    
     Atom min = new Point()
     Atom max = new Point()
 
@@ -68,7 +69,6 @@ class Box {
             Point.of(max.x + mx, max.y + my, max.z + mz)
         )
     }
-
 
     boolean contains(Atom a) {
         return Struct.isInBox(a, this)

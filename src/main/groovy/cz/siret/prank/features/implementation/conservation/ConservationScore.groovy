@@ -10,7 +10,6 @@ import cz.siret.prank.geom.Struct
 import cz.siret.prank.program.P2Rank
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Futils
-import cz.siret.prank.utils.PdbUtils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.*

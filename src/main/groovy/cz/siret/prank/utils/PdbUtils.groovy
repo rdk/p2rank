@@ -3,7 +3,6 @@ package cz.siret.prank.utils
 import cz.siret.prank.program.PrankException
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-import org.apache.commons.lang3.StringUtils
 import org.biojava.nbio.structure.*
 import org.biojava.nbio.structure.io.FileParsingParameters
 import org.biojava.nbio.structure.io.PDBFileParser

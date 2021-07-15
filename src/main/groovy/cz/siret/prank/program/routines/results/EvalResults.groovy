@@ -193,7 +193,6 @@ class EvalResults implements Parametrized, Writable  {
         return m
     }
 
-
     MultiRunStats getMultiStats() {
         assert !subResults.isEmpty()
 
@@ -202,7 +201,6 @@ class EvalResults implements Parametrized, Writable  {
 
         new MultiRunStats(statNames, subStats)
     }
-
 
     /**
      * Calculates sample standard deviation for all stats.
@@ -289,7 +287,6 @@ class EvalResults implements Parametrized, Writable  {
                 succ_rates_diff = eval.diffSuccRatesCSV(tolerances, origEval)
             }
 
-
             writeFile "$outdir/success_rates.csv", succ_rates
             if (rescoring) {
                 writeFile "$outdir/success_rates_original.csv", succ_rates_original
@@ -311,7 +308,6 @@ class EvalResults implements Parametrized, Writable  {
                 }
             }
 
-            //log.info "\n" + CSV.tabulate(classifier_stats) + "\n\n"
             if (rescoring) {
                 log.info "\nSuccess Rates - Original:\n" + CSV.tabulate(succ_rates_original) + "\n"
             }
@@ -326,6 +322,5 @@ class EvalResults implements Parametrized, Writable  {
         }
 
     }
-
 
 }

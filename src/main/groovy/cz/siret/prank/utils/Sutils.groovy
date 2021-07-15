@@ -19,7 +19,6 @@ import java.text.SimpleDateFormat
 class Sutils {
 
     static DateFormat DATE_LABEL_FORMAT = new SimpleDateFormat("yyyy.MM.dd_HHmm")
-//    static final DateFormat DATE_LABEL_FORMAT = new SimpleDateFormat("yyMMdd_HHmm")
     
     static final Splitter WHITESPACE_SPLITTER = Splitter.on(CharMatcher.whitespace()).omitEmptyStrings().trimResults()
 

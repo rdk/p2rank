@@ -99,7 +99,6 @@ class MetaPocket2Loader extends PredictionLoader {
 
     static class MetaPocket2Pocket extends Pocket {
 
-
     }
 
 }

@@ -12,7 +12,7 @@ import org.biojava.nbio.structure.Atom
 import org.biojava.nbio.structure.secstruc.SecStrucType
 
 /**
- *
+ * Secondary structure cloud SAS Feature
  */
 @CompileStatic
 class SecStructCloudSF extends SasFeatureCalculator implements Parametrized {
@@ -45,4 +45,5 @@ class SecStructCloudSF extends SasFeatureCalculator implements Parametrized {
 
         return SsHistogram.average(types)
     }
+    
 }

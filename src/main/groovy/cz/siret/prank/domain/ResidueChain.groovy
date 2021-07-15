@@ -67,7 +67,5 @@ class ResidueChain {
     String getLabelWithLength() {
         getLabel() + "(${residues.size()})"
     }
-
-
     
 }

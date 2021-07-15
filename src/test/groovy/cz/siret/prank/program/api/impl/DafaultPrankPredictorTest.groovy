@@ -7,7 +7,6 @@ import cz.siret.prank.program.api.PrankFacade
 import cz.siret.prank.program.api.PrankPredictor
 import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
-import groovyx.gpars.GParsPool
 import org.biojava.nbio.structure.Atom
 import org.junit.Test
 

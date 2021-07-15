@@ -53,7 +53,6 @@ class Experiments extends Routine {
         this.main = main
 
         if (!commandRegister.containsKey(command)) {
-            //write "Invalid command '$command'!"
             throw new PrankException("Invalid command: " + command)
         }
 
@@ -79,7 +78,6 @@ class Experiments extends Routine {
         log.info "executing $command()"
 
         commandRegister.get(command).call()
-        //this."$command"()  // dynamic exec method
 
         if (outdir != null) {
             writeFile "$outdir/status.done", "done"
@@ -180,12 +178,10 @@ class Experiments extends Routine {
         doTrainEval(outdir, trainDataset, evalDataset)
     }
 
-
     /**
      *  iterative parameter optimization
      */
     public ploop() {
-
         gridOptimize(ListParam.parseListArgs(cmdLineArgs))
     }
 

@@ -25,9 +25,7 @@ class AtomClusterer implements Clusterer<Atom> {
     }
 
     List<Atoms> clusterAtoms(Atoms atoms, double minDist) {
-
         double sqrDist = minDist*minDist
-
         return cluster(atoms.list, sqrDist, SQR_EUCLID).collect {new Atoms(it)}.toList()
     }
 

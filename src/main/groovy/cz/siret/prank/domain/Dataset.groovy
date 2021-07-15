@@ -143,7 +143,6 @@ class Dataset implements Parametrized, Writable, Failable {
         return processItems(processor, true)
     }
 
-
     /**
      * Process all dataset items with provided processor.
      */
@@ -516,7 +515,6 @@ class Dataset implements Parametrized, Writable, Failable {
         SPLITTER.splitToList(line).tail()
     }
 
-
     static Dataset createJoined(List<Dataset> datasets) {
         assert datasets!=null && !datasets.empty
         
@@ -778,7 +776,6 @@ class Dataset implements Parametrized, Writable, Failable {
             this.evalset = evalset
         }
     }
-
 
     @FunctionalInterface
     static interface Processor {

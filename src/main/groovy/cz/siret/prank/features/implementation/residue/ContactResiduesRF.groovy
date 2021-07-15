@@ -7,7 +7,7 @@ import cz.siret.prank.geom.Atoms
 import groovy.transform.CompileStatic
 
 /**
- *
+ * Contact Residues Residue Feature
  */
 @CompileStatic
 class ContactResiduesRF extends ResidueFeatureCalculator {

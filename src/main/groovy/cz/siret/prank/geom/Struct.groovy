@@ -167,7 +167,6 @@ class Struct {
         return getGroups(struc).findAll{ isHetGroup(it) }.asList()
     }
 
-
     /**
      * single linkage clustering
      * @param clusters
@@ -181,7 +180,6 @@ class Struct {
     static List<Atoms> clusterAtomGroups(List<Atoms> atomGroups, double clusterDist ) {
         return new AtomGroupClusterer(new SLinkClusterer()).clusterGroups(atomGroups, clusterDist)
     }
-
 
     static List<Group> sortedGroups(Iterable<Group> groups) {
 

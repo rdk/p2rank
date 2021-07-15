@@ -241,7 +241,6 @@ class Protein implements Parametrized {
         Atoms.join(allIgnoredLigands*.atoms)
     }
 
-
 //===========================================================================================================//
 
     /**
@@ -360,7 +359,6 @@ class Protein implements Parametrized {
         }
     }
 
-
 //===========================================================================================================//
 
     /**
@@ -451,6 +449,5 @@ class Protein implements Parametrized {
         }
 
     }
-
 
 }

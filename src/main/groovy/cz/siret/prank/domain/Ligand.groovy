@@ -67,9 +67,9 @@ class Ligand implements Parametrized {
         log.info this.toString()
     }
 
-//    Atoms calcContactAtoms(Atoms proteinAtoms) {
-//        return proteinAtoms.cutoutShell(atoms, params.ligand_protein_contact_distance)
-//    }
+    Atoms calcContactAtoms(Atoms proteinAtoms) {
+        return proteinAtoms.cutoutShell(atoms, params.ligand_protein_contact_distance)
+    }
 
     Atoms getSasPoints() {
         if (sasPoints==null) {

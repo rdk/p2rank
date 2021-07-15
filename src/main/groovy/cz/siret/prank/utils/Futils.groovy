@@ -27,7 +27,6 @@ import java.util.zip.GZIPOutputStream
  * Safe file utility methods
  *
  * needed also to avoid problems with File(String/URI) ambiguous constructor
- *
  */
 @Slf4j
 @CompileStatic
@@ -318,7 +317,6 @@ class Futils {
     private static OutputStream getCompressedOuts(String fname, String format) {
         return new CompressorStreamFactory().createCompressorOutputStream(format, bufferedOutputStream(fname))
     }
-
 
     static void serializeToGzip(String fname, Object object, int level = GZIP_DEFAULT_LEVEL) {
         serializeTo(fname, object, getGzipOutputStream(fname, level))

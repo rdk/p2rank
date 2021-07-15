@@ -126,7 +126,6 @@ class ChemVector implements Cloneable {
             }
         }
 
-
     }
 
     /**

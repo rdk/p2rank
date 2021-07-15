@@ -74,4 +74,5 @@ class ContactResidue1PositionFeature extends SasFeatureCalculator implements Par
 
         return [dca, dcb, dcenter, dclosest, CAmCB, CAdClosest, CAdCenter] as double[]
     }
+    
 }

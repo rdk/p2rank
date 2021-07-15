@@ -26,7 +26,6 @@ class AtomGroupClusterer implements Clusterer<Atoms> {
         cluster(elements, minDist, EUCLID_DIST).collect { list -> Atoms.join(list) }.toList()
     }
 
-
 //===========================================================================================================//
 
     static class EuclidDist implements Clusterer.Distance<Atoms> {

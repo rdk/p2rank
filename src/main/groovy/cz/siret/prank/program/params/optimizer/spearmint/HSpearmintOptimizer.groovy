@@ -13,7 +13,6 @@ import cz.siret.prank.utils.ProcessRunner
 import cz.siret.prank.utils.Writable
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-import org.junit.experimental.theories.ParameterSignature
 
 import java.nio.file.Path
 
@@ -125,7 +124,6 @@ class HSpearmintOptimizer extends HOptimizer implements Writable {
             String varf = "$varsDir/$jobId"
             waitForFile(varf)
 
-            
             // parse variable assignment
             Map<String, Object> vars = new Gson().fromJson(readFile(varf), Map.class)
             log.info "vars: {}", vars

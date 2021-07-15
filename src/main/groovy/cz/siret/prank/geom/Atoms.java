@@ -67,7 +67,6 @@ public final class Atoms implements Iterable<Atom> {
         return copyPoints(this.list.toArray(new Atom[0]));
     }
 
-
     public List<Integer> getIndexes() {
         return list.stream().map(Atom::getPDBserial).collect(Collectors.toList());
     }

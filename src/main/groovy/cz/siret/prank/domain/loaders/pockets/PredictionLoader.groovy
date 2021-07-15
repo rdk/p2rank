@@ -24,13 +24,4 @@ abstract class PredictionLoader implements Parametrized {
     abstract Prediction loadPrediction(String predictionOutputFile,
                                        @Nullable Protein liganatedProtein)
 
-//    /**
-//     * used when running 'prank rescore' on a dataset with one column 'predictionOutputFile'
-//     * @param predictionOutputFile
-//     * @return
-//     */
-//    Prediction loadPredictionWithoutProtein(String predictionOutputFile) {
-//        loadPrediction(predictionOutputFile, null)
-//    }
-
 }

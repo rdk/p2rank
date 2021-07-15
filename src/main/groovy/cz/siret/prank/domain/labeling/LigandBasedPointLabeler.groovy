@@ -14,10 +14,6 @@ import org.biojava.nbio.structure.Atom
 @CompileStatic
 class LigandBasedPointLabeler extends PointLabeler implements Parametrized {
 
-
-    LigandBasedPointLabeler() {
-    }
-    
     /**
      * labeled points with __observed__ value set
      */

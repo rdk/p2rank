@@ -40,5 +40,4 @@ abstract class HOptimizer {
      */
     abstract HStep optimize(HObjectiveFunction function);
 
-
 }

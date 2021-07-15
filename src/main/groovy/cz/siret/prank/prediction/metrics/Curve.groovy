@@ -19,4 +19,5 @@ class Curve {
     String toCSV() {
         [xx, yy].transpose().collect { '' + it[0] + ', ' + it[1] }.join('\n')
     }
+    
 }

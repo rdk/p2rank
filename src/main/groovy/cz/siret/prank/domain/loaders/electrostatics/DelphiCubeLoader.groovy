@@ -33,7 +33,6 @@ class DelphiCubeLoader {
         return loadFromStream(Futils.inputStream(fname))
     }
 
-
     GaussianCube loadFromStream(InputStream is) {
         Reader reader = new BufferedReader(new InputStreamReader(is), 1024*1024)
 

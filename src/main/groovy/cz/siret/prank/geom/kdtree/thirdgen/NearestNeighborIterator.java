@@ -11,6 +11,7 @@ import java.util.Iterator;
  *
  */
 public class NearestNeighborIterator<T> implements Iterator<T>, Iterable<T> {
+    
     private DistanceFunction distanceFunction;
     private double[] searchPoint;
     private MinHeap<KdNode<T>> pendingPaths;

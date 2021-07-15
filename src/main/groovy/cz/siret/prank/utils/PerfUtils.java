@@ -86,7 +86,7 @@ public class PerfUtils {
 
         double[] toCoords = distanceTo.getCoords();
 
-        for (Atom a : atoms.list) {     // this line was causes slow casting in groovy
+        for (Atom a : atoms.list) {     // this line was causing slow casting in groovy
                                         // at org.codehaus.groovy.runtime.ScriptBytecodeAdapter.castToType(ScriptBytecodeAdapter.java:599)
                                         // at rdk.pockets.geom.Atoms.cutoffAroundAtom(Atoms.groovy:219)
 

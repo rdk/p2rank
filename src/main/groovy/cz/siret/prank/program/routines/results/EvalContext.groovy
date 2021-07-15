@@ -10,6 +10,5 @@ import groovy.transform.CompileStatic
 class EvalContext {
 
     Map<String, Object> cache = new HashMap<>()
-    
 
 }

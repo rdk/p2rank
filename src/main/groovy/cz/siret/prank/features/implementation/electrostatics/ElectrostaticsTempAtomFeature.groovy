@@ -33,7 +33,6 @@ class ElectrostaticsTempAtomFeature extends AtomFeatureCalculator implements Par
     @Override
     double[] calculateForAtom(Atom proteinSurfaceAtom, AtomFeatureCalculationContext context) {
 
-
         return [cubeValueForPoint(proteinSurfaceAtom, context.protein)] as double[]
     }
 

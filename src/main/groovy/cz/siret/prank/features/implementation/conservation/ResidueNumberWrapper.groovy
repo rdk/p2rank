@@ -41,4 +41,5 @@ public class ResidueNumberWrapper {
     public String toString() {
         return resNum != null ? resNum.toString() : "null";
     }
+    
 }

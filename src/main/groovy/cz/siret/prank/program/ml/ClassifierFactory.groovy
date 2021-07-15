@@ -179,5 +179,4 @@ class ClassifierFactory implements Parametrized, Writable {
         new ClassifierFactory(params).createClassifier(params.classifier)
     }
 
-
 }

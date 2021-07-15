@@ -22,6 +22,5 @@ class SecondaryStructureUtils {
         ssp.calculate(structure, true) //true assigns the SS to the Structure
         return  ssp
     }
-
     
 }

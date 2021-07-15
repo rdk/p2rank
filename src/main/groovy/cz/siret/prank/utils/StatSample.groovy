@@ -64,5 +64,4 @@ class StatSample {
         Collections.max(sample)
     }
 
-
 }

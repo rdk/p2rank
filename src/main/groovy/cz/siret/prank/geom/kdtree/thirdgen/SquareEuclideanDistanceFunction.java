@@ -4,6 +4,7 @@ package cz.siret.prank.geom.kdtree.thirdgen;
  *
  */
 public class SquareEuclideanDistanceFunction implements DistanceFunction {
+    
     @Override
     public double distance(double[] p1, double[] p2) {
         double d = 0;

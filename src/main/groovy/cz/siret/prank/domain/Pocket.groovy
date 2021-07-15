@@ -49,7 +49,6 @@ abstract class Pocket {
         this.centroid = centroid
     }
 
-    
     static class AuxInfo {
         int samplePoints
         double rawNewScore
@@ -58,10 +57,8 @@ abstract class Pocket {
     }
 
     static class PocketStats {
-
         double pocketScore
         double realVolumeApprox
-
     }
 
 }

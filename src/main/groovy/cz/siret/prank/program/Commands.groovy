@@ -3,16 +3,13 @@ package cz.siret.prank.program
 import groovy.transform.CompileStatic
 
 /**
- *
+ * not used yet
  */
 @CompileStatic
 class Commands {
 
     List<Command> commands
     Map<String, Command> index
-
-
-
 
     static class Command {
         String name

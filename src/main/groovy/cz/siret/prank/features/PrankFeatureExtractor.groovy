@@ -41,7 +41,6 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
      */
     GenericHeader calculatedFeatureVectorHeader
 
-
     /**
      * Header of feature vector hat is returned -- after feature_filters are applied
      * If there are no feature_filters it is the same as calculatedFeatureVectorHeader.
@@ -54,7 +53,6 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
      * Feature vectors that are first calculated for atoms and then (projected to SAS points)
      */
     private Map<Integer, PrankFeatureVector> surfaceAtomVectors = new HashMap<>()
-
 
     /**
      * deep layer of atoms under the protein surface
@@ -76,7 +74,6 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
      * only used in pocket mode (i.e. sample_negatives_from_decoys=true)
      */
     Pocket pocket
-
 
     //===================
     // params
@@ -268,7 +265,6 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
             FeatureVector p = calcAtomVector(a)
             surfaceAtomVectors.put(a.PDBserial, p)
         }
-
     }
 
 //===========================================================================================================//
@@ -332,7 +328,6 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
             res.valueVector.set('chem.atoms', n)
         }
 
-
         // calculate SAS features
 
         SasFeatureCalculationContext context = new SasFeatureCalculationContext(protein, neighbourhoodAtoms, this)
@@ -344,7 +339,6 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
 
         return res
     }
-
 
     /**
      *
@@ -379,7 +373,6 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
         return PrankFeatureVector.forAtom(atom, this)
     }
 
-
     /**
      * @param point SAS point
      * @return
@@ -390,7 +383,6 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
         Atoms neighbourhood = surfaceLayerAtoms.cutoutSphere(point, NEIGH_CUTOFF_DIST)
 
         PrankFeatureVector vector = calcFeatureVectorForPoint(point, neighbourhood)
-
 
         if (featureSetup.filteringEnabled) {
             vector = reduceToFilteredVector(vector)

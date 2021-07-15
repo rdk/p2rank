@@ -38,8 +38,6 @@ class DatasetItemLoader implements Parametrized, Writable {
         this.predictionLoader = predictionLoader
     }
 
-
-
     /**
      * Loader for dataset row. Loads protein and existing pocket prediction (if provided).
      *
@@ -133,10 +131,8 @@ class DatasetItemLoader implements Parametrized, Writable {
         return ratio >= 0.5
     }
 
-
     @Nullable
     private File findConservationFile(List<String> dirs, String proteinFile, String chainId) {
-        // note: params.conservation_origin is now ignored
         log.info "Looking for conservation in dirs {}", dirs
 
         String baseName = Futils.baseName(proteinFile)
@@ -154,7 +150,6 @@ class DatasetItemLoader implements Parametrized, Writable {
         } else {
             log.info "Conservation file for [{}] not found", prefix, res?.absolutePath
         }
-
 
         return res
     }

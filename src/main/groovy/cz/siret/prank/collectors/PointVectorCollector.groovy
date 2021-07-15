@@ -59,7 +59,6 @@ abstract class PointVectorCollector extends VectorCollector implements Parametri
             proteinExtractorPrototype.finalizeProteinPrototype()
         }
 
-
         return res
     }
 

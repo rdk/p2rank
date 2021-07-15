@@ -127,5 +127,4 @@ class EvalResiduesRoutine extends EvalRoutine {
         writeFile "$cdir/${protein.name}_residues.csv", csv
     }
 
-
 }

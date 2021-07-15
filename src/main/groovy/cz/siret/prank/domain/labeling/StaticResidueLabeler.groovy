@@ -22,7 +22,6 @@ import org.apache.commons.lang3.StringUtils
 @CompileStatic
 abstract class StaticResidueLabeler extends ResidueLabeler<Boolean> implements Writable {
 
-
     static StaticResidueLabeler createForDatasetItem(Dataset.Item item) {
         String method = item.dataset.attributes.get(Dataset.PARAM_PREDICTION_METHOD)
 
@@ -109,6 +108,7 @@ abstract class StaticResidueLabeler extends ResidueLabeler<Boolean> implements W
         ResidueLabeling<Double> getDoubleLabeling() {
             return doubleLabeling
         }
+        
     }
 
 }

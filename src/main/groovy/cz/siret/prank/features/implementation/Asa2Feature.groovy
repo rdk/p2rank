@@ -11,7 +11,8 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 
-import static cz.siret.prank.features.implementation.AsaFeature.*
+import static cz.siret.prank.features.implementation.AsaFeature.ProtAsa
+import static cz.siret.prank.features.implementation.AsaFeature.calcProtAsa
 
 /**
  * Local protein solvent accessible surface area feature

@@ -216,7 +216,6 @@ class CsvFileFeatureValues {
         }
     }
 
-
     private static Double readValue(CSVRecord record, int colIndex) {
         return Double.parseDouble(record.get(colIndex))
     }
@@ -264,7 +263,6 @@ class CsvFileFeatureValues {
             }
         }
     }
-
 
     @Nullable
     private Double getColumnValue(Atom atom, String columnName) {

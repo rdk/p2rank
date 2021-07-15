@@ -183,7 +183,6 @@ class LigandabilityPointVectorCollector extends VectorCollector implements Param
         return collectVectorsForPoints(selected, proteinExtractor)
     }
 
-
     @CompileStatic(TypeCheckingMode.SKIP)
     Result collectForPockets(Atoms ligandAtoms, PredictionPair pair, FeatureExtractor proteinExtractorPrototype) {
 

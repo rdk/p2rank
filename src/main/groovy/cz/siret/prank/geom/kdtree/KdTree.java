@@ -625,8 +625,6 @@ public abstract class KdTree<T> {
         return new Entry<T>(resDist, (T)result);
     }
 
-
-
     // Override in subclasses
     protected abstract double pointDist(double[] p1, double[] p2);
 

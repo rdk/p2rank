@@ -1,10 +1,6 @@
 package cz.siret.prank.program.rendering
 
-import cz.siret.prank.domain.Dataset
-import cz.siret.prank.domain.Ligand
-import cz.siret.prank.domain.Pocket
-import cz.siret.prank.domain.PredictionPair
-import cz.siret.prank.domain.Protein
+import cz.siret.prank.domain.*
 import cz.siret.prank.domain.labeling.LabeledPoint
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.prediction.pockets.rescorers.ModelBasedRescorer
@@ -40,7 +36,6 @@ class OldPymolRenderer implements Parametrized {
     static String pyColor(Color c) {
         sprintf "[%5.3f,%5.3f,%5.3f]", c.red/255, c.green/255, c.blue/255
     }
-
 
     void render(Dataset.Item item, ModelBasedRescorer rescorer, PredictionPair pair) {
 
@@ -164,7 +159,6 @@ class OldPymolRenderer implements Parametrized {
         """.stripIndent()
     }
 
-
     private String colorPocketSurfaces(PredictionPair pair) {
         StringBuilder res = new StringBuilder()
 
@@ -214,10 +208,10 @@ class OldPymolRenderer implements Parametrized {
 
         Atoms ligandAtoms = Atoms.join(ligands*.atoms)
 
+        if (ligandAtoms.empty) return ""
+
         List<String> ligandAtomIds = ligandAtoms.collect {it.PDBserial.toString() }
         String idsOrList = ligandAtomIds.collect {"id $it" }.join(" or ")
-
-        if (ligandAtomIds.empty) return
 
         """
         select $label, $idsOrList

@@ -64,5 +64,4 @@ class FastaExporter {
         return code
     }
 
-
 }

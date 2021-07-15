@@ -135,7 +135,6 @@ class WekaUtils {
         return data
     }
 
-
     static void saveDataArff(OutputStream outs, Instances data) {
         ArffSaver saver = new ArffSaver()
         saver.setCompressOutput(false)
@@ -143,8 +142,6 @@ class WekaUtils {
         saver.setInstances(data)
         saver.writeBatch() // closes outs
     }
-
-
 
     static Instances joinInstances(List<Instances> instList) {
         assert !instList.empty
@@ -273,10 +270,11 @@ class WekaUtils {
             this.count = positives + negatives
         }
 
-
         @Override
         String toString() {
             return "(count:$count, positives:$positives, negatives:$negatives)"
         }
+
     }
+    
 }

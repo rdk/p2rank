@@ -8,7 +8,6 @@ import groovy.transform.CompileStatic
  * Represents data loaded from Gaussian cube format (*.cube)
  *
  * Based on DelPhi output.
- *
  */
 @CompileStatic
 class GaussianCube implements Serializable {
@@ -58,6 +57,5 @@ class GaussianCube implements Serializable {
         }
         return boundingBox
     }
-
 
 }

@@ -174,8 +174,6 @@ class Residue {
         sectStructInfo?.type
     }
 
-
-
 //===========================================================================================================//
 
     static String safe1Code(Residue res) {
@@ -271,7 +269,7 @@ class Residue {
         }
 
         /**
-         * relative postion from <0,1>
+         * relative position from <0,1>
          */
         double getRelativePosInSection() {
             int n = section.length - 1
@@ -302,6 +300,5 @@ class Residue {
             this.length = length
         }
     }
-
 
 }

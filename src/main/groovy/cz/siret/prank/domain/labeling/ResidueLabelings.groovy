@@ -143,7 +143,6 @@ class ResidueLabelings implements Parametrized {
         }
     }
 
-
     static class NamedLabeling {
         String name
         ResidueLabeling labeling

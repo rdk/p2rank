@@ -10,8 +10,7 @@ import groovy.transform.CompileStatic
 class LabeledResidue<L> {
 
     private Residue residue
-//   private L label  // TODo make private agsain
-    L label
+    private L label
 
     LabeledResidue(Residue residue, L label) {
         this.residue = residue

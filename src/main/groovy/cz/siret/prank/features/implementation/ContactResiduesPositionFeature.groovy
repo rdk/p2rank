@@ -105,4 +105,5 @@ class ContactResiduesPositionFeature extends SasFeatureCalculator implements Par
 
         return vect
     }
+    
 }

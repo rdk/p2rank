@@ -83,7 +83,6 @@ class Model {
         return new Model(label, classifier)
     }
 
-
     Info getInfo() {
 
         Info info = new Info()

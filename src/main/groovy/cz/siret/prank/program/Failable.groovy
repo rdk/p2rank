@@ -10,7 +10,6 @@ import org.slf4j.Logger
 @CompileStatic
 trait Failable {
 
-
     /**
      * Fail conditionally.
      * Throw exception with msg or just log error depending on params.fail_fast
@@ -26,6 +25,5 @@ trait Failable {
     void fail(String msg, Logger log) throws PrankException {
         P2Rank.failStatic(msg, log)
     }
-    
 
 }

@@ -75,4 +75,5 @@ class ProtrusionHistogramFeature extends SasFeatureCalculator implements Paramet
 
         return bins
     }
+    
 }

@@ -168,7 +168,6 @@ class Metrics implements Parametrized {
         p + NPV - 1
     }
 
-
     /** Discriminant Power ... <1 = poor, >3 = good, fair otherwise */
     double getDPOW() {
         if (r==1 || SPC==1)

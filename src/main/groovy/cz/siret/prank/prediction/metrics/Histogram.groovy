@@ -1,6 +1,6 @@
 package cz.siret.prank.prediction.metrics
 
-import cz.siret.prank.utils.Formatter
+
 import groovy.transform.CompileStatic
 
 import static cz.siret.prank.utils.Formatter.format

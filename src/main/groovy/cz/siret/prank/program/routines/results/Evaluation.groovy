@@ -9,7 +9,6 @@ import cz.siret.prank.prediction.pockets.criteria.*
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Cutils
 import cz.siret.prank.utils.MathUtils
-import cz.siret.prank.utils.Sutils
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.StringUtils
 

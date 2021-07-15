@@ -413,8 +413,6 @@ class AnalyzeRoutine extends Routine {
         savePropensities("$outdir/triplets.csv", BinCounter.join(counters))
     }
 
-
-
     private void savePropensities(String fname, BinCounter counter) {
         StringBuilder csv = new StringBuilder("key, propensity, propensity^2, count, pos, neg\n")
         counter.table.keySet().toSorted().each {
@@ -425,6 +423,5 @@ class AnalyzeRoutine extends Routine {
         writeFile fname, csv
         write "Calculated propensities saved to [$fname]"
     }
-
 
 }
