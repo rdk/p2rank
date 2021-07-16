@@ -27,7 +27,7 @@ class SurfacePointSampler extends PointSampler implements Parametrized {
             return (SampledPoints) pocket.cache.get(cacheKey)
         }
 
-        SampledPoints protSurf = SampledPoints.fromProtein(protein, forTraining)
+        SampledPoints protSurf = SampledPoints.fromProtein(protein, forTraining, params)
 
 
         SampledPoints res

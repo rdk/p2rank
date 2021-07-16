@@ -404,7 +404,9 @@ class Params {
     @ModelParam
     String point_sampler = "SurfacePointSampler"
 
-
+    /**
+     * surface | atoms | grid
+     */
     @Beta
     String point_sampling_strategy = "surface"
 

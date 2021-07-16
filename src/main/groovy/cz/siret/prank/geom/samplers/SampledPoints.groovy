@@ -27,18 +27,24 @@ class SampledPoints {
         this.posNegDifferent = false
     }
 
+ //===========================================================================================================//
 
-
-
-    static SampledPoints fromProtein(Protein protein, boolean forTraining) {
-        if (Params.inst.point_sampling_strategy == "atoms") {
-            return new SampledPoints(protein.proteinAtoms)
-        } else {
-            return fromProteinSurface(protein, forTraining)
-        }
+    static SampledPoints of(Atoms sampledPoints) {
+        return new SampledPoints(sampledPoints)
     }
 
+    private static Atoms sampleGridAround(Atoms atoms, Params params) {
+        GridGenerator.sampleGridPointsAroundAtoms(atoms, params.grid_cell_edge, params.sasCutoffDist)
+    }
 
+    static SampledPoints fromProtein(Protein protein, boolean forTraining, Params params) {
+        switch (params.point_sampling_strategy) {
+            case "atoms":   return of(protein.proteinAtoms)
+            case "grid" :   return of(sampleGridAround(protein.proteinAtoms, params))
+            case "surface": return fromProteinSurface(protein, forTraining)
+            default:        return fromProteinSurface(protein, forTraining)
+        }
+    }
 
     static SampledPoints fromProteinSurface(Protein protein, boolean forTraining) {
         if (forTraining) {
@@ -47,7 +53,6 @@ class SampledPoints {
             return new SampledPoints(protein.accessibleSurface.points)
         }
     }
-
 
     Atoms getPoints() {
         return sampledPositives

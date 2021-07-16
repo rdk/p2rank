@@ -1,7 +1,9 @@
 package cz.siret.prank.geom.samplers;
 
+import cz.siret.prank.geom.Atoms;
 import cz.siret.prank.geom.Box;
 import cz.siret.prank.geom.Point;
+import uk.ac.ebi.beam.Atom;
 
 import javax.annotation.Nonnull;
 import java.util.Iterator;
@@ -32,6 +34,8 @@ public class GridGenerator implements Iterable<Point> {
         return min + Math.IEEEremainder(max - min, edge);
     }
 
+//===============================================================================================//
+
     public GridGenerator(Box box, double edge) {
         this.edge = edge;
 
@@ -44,10 +48,15 @@ public class GridGenerator implements Iterable<Point> {
         nz = (int) (box.getWz() / edge);
     }
 
+    public static GridGenerator forBox(Box box, double edge) {
+        return new GridGenerator(box, edge);
+    }
+
+//===============================================================================================//
+
     public int getCount() {
         return nx * ny * nz;
     }
-
 
     /**
      * @return points to flyweight Point, to use it further use point.copy()
@@ -142,6 +151,25 @@ public class GridGenerator implements Iterable<Point> {
             }
 
         };
+    }
+
+//===============================================================================================//
+
+    static Atoms sampleGridPointsAroundAtoms(Atoms atoms, double edge, double radius) {
+        atoms.withKdTreeConditional();
+
+        Box box = Box.aroundAtoms(atoms).withMargin(radius);
+        GridGenerator grid = GridGenerator.forBox(box, edge);
+
+        double sqrRadius = radius*radius;
+        Atoms res = new Atoms(grid.getCount() / 2);
+        for (Point p : grid) {
+            if (atoms.sqrDist(p) <= sqrRadius) {
+                res.add(p.copy()); // copy flyweight
+            }
+        }
+
+        return res;
     }
 
 }
