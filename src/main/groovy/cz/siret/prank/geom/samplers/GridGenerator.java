@@ -3,7 +3,6 @@ package cz.siret.prank.geom.samplers;
 import cz.siret.prank.geom.Atoms;
 import cz.siret.prank.geom.Box;
 import cz.siret.prank.geom.Point;
-import uk.ac.ebi.beam.Atom;
 
 import javax.annotation.Nonnull;
 import java.util.Iterator;

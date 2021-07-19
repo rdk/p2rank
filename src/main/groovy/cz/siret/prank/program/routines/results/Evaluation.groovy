@@ -557,7 +557,7 @@ class Evaluation implements Parametrized {
         m.AVG_LIGCOV_SUCC  = avgLigProt proteinRows, { it.ligandCoverageSucc }  // avg by proteins (unlike DCA and others)
 
         m.AVG_LIG_POINT_SCORE = avgLigandPointScore // average of all ligand adjacent points
-        m.AVG_LIG_AVG_POINT_SCORE = avgNanTo0 ligandRows, { it.getAvgScore } // average of ligand averages
+        m.AVG_LIG_AVG_POINT_SCORE = avgNanTo0 ligandRows, { it.avgPointScore } // average of ligand averages
         m.AVG_LIG_MAX_POINT_SCORE = avgNanTo0 ligandRows, { it.maxPointScore }
         m.AVG_LIG_AVG_MAX3_POINT_SCORE = avgNanTo0 ligandRows, { it.avgMax3PointScore }
         m.AVG_LIG_AVG_MAXHALF_POINT_SCORE = avgNanTo0 ligandRows, { it.avgMaxHalfPointScore }

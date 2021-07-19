@@ -4,7 +4,6 @@ import com.google.common.base.CaseFormat
 import cz.siret.prank.program.params.Parametrized
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics
 import org.apache.commons.math3.stat.descriptive.moment.Kurtosis
 import org.apache.commons.math3.stat.descriptive.moment.Skewness
 import org.apache.commons.math3.stat.descriptive.moment.Variance
@@ -229,11 +228,23 @@ class Metrics implements Parametrized {
         getAdvanced().logLoss
     }
 
-    double getAvgScore() {
+    double getScoreAvg() {
         getAdvanced().scoreAvg
     }
 
-    double getAvgPositiveScore() {
+    double getScoreVariance() {
+        getAdvanced().scoreVariance
+    }
+
+    double getscoreSkewness() {
+        getAdvanced().scoreSkewness
+    }
+
+    double getscoreKurtosis() {
+        getAdvanced().scoreKurtosis
+    }
+
+    double getPositiveScoreAvg() {
         getAdvanced().positiveScoreAvg
     }
 
@@ -254,7 +265,12 @@ class Metrics implements Parametrized {
 
     private String formatMetricName(String propertyName) {
         try {
+            if (propertyName.charAt(0).isUpperCase()) {
+                return propertyName
+            }
+            
             return CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, propertyName)
+
         } catch (Exception e) {
             log.debug "failed to format metric name '{}': {}", propertyName, e.message
             return propertyName
