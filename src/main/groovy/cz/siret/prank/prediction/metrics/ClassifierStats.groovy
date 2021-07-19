@@ -1,12 +1,14 @@
 package cz.siret.prank.prediction.metrics
 
 import cz.siret.prank.program.params.Parametrized
+import cz.siret.prank.utils.Cutils
 import cz.siret.prank.utils.Writable
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
 import java.text.DecimalFormat
 
+import static cz.siret.prank.utils.Cutils.prefixMapKeys
 import static cz.siret.prank.utils.Formatter.formatPercent
 
 /**
@@ -161,6 +163,10 @@ class ClassifierStats implements Parametrized, Writable {
 
     Map<String, Double> getMetricsMap() {
         metrics.toMap()
+    }
+
+    Map<String, Double> getMetricsMap(String prefix) {
+        return prefixMapKeys(getMetricsMap(), prefix)
     }
 
     //===========================================================================================================//

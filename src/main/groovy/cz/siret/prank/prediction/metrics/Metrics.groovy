@@ -1,9 +1,13 @@
 package cz.siret.prank.prediction.metrics
 
-
+import com.google.common.base.CaseFormat
 import cz.siret.prank.program.params.Parametrized
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics
+import org.apache.commons.math3.stat.descriptive.moment.Kurtosis
+import org.apache.commons.math3.stat.descriptive.moment.Skewness
+import org.apache.commons.math3.stat.descriptive.moment.Variance
 
 import javax.annotation.Nonnull
 
@@ -225,23 +229,36 @@ class Metrics implements Parametrized {
         getAdvanced().logLoss
     }
 
-    double getScoresAvg() {
-        getAdvanced().scoresAvg
+    double getAvgScore() {
+        getAdvanced().scoreAvg
     }
 
-    double getScoresPosAvg() {
-        getAdvanced().scoresPosAvg
+    double getAvgPositiveScore() {
+        getAdvanced().positiveScoreAvg
     }
 
 //===========================================================================================================//
 
-
-    Map<String, Double> toMap() {
-        Map<String, Double> res = new TreeMap<>() // keep them sorted
+    /**
+     * All object properties of type double/Double are included
+     */
+    SortedMap<String, Double> toMap() {
+        SortedMap<String, Double> res = new TreeMap<>() 
         this.properties.findAll { it.value instanceof Double }.each {
-            res.put( ((String)it.key).toUpperCase(), (Double)it.value )
+            String propertyName = (String)it.key
+            String metricName = formatMetricName(propertyName)
+            res.put(metricName, (Double)it.value)
         }
         return res
+    }
+
+    private String formatMetricName(String propertyName) {
+        try {
+            return CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, propertyName)
+        } catch (Exception e) {
+            log.debug "failed to format metric name '{}': {}", propertyName, e.message
+            return propertyName
+        }
     }
 
 //===========================================================================================================//
@@ -270,8 +287,12 @@ class Metrics implements Parametrized {
         double AUPRC = Double.NaN
         double logLoss = Double.NaN
 
-        double scoresAvg = Double.NaN
-        double scoresPosAvg = Double.NaN
+        double scoreAvg = Double.NaN
+        double positiveScoreAvg = Double.NaN
+
+        double scoreVariance = Double.NaN
+        double scoreSkewness = Double.NaN
+        double scoreKurtosis = Double.NaN
     }
 
     Advanced getAdvanced() {
@@ -313,14 +334,40 @@ class Metrics implements Parametrized {
         log.debug "AUC: {}", res.AUC
         log.debug "AUPRC: {}", res.AUPRC
 
-        res.scoresAvg = meanScore(predictions)
-        res.scoresPosAvg = meanScoreObserved(predictions)
+        res.scoreAvg = meanScore(predictions)
+        res.positiveScoreAvg = meanScoreObserved(predictions)
+
+        calcScoreStatMoments(res)
 
         return res
     }
 
+    /**
+     * TODO optimize
+     */
+    private calcScoreStatMoments(Advanced res) {
+        try {
+            Variance variance = new Variance()
+            Skewness skewness = new Skewness()
+            Kurtosis kurtosis = new Kurtosis()
+
+            for (PPred pred : stats.predictions) {
+                double score = pred.score
+                variance.increment(score)
+                skewness.increment(score)
+                kurtosis.increment(score)
+            }
+
+            res.scoreVariance = variance.getResult()
+            res.scoreSkewness = skewness.getResult()
+            res.scoreKurtosis = kurtosis.getResult()
+        } catch(Exception e) {
+            log.warn("Failed to calculate statistical moments for scores", e)
+        }
+    }
+
     private double meanScore(List<PPred> preds) {
-        int n = preds.size()
+        double n = preds.size()
         double sum = 0d
 
         for (PPred pred : preds) {
@@ -346,7 +393,7 @@ class Metrics implements Parametrized {
 
     private double calcLogLoss(List<PPred> preds) {
         final double LOG_LOSS_EPSILON = 0.01
-        int n = preds.size()
+        double n = preds.size()
         double sum = 0d
 
         for (PPred pred : preds) {

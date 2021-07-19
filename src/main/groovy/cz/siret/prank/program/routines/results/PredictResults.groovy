@@ -29,7 +29,7 @@ class PredictResults implements Parametrized, Writable {
 
     Map getStats() {
         Map m = evaluation.stats
-        m.putAll( classStats.metricsMap )
+        m.putAll( classStats.getMetricsMap("point_") )
 
         return m
     }
