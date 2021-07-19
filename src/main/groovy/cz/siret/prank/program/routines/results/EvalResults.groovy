@@ -11,6 +11,7 @@ import cz.siret.prank.utils.csv.CSV
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
+import static cz.siret.prank.utils.Cutils.prefixMapKeys
 import static cz.siret.prank.utils.Futils.mkdirs
 import static cz.siret.prank.utils.Futils.writeFile
 import static cz.siret.prank.utils.MathUtils.stddev
@@ -169,15 +170,15 @@ class EvalResults implements Parametrized, Writable  {
         m.TRAIN_POS_RATIO = trainPositivesRatio
 
         if (mode_pockets) {
-            m.putAll classifierStats.getMetricsMap()
+            m.putAll classifierStats.getMetricsMap("point_")
             if (params.classifier_train_stats && classifierTrainStats!=null) {
-                m.putAll classifierTrainStats.getMetricsMap("train_")
+                m.putAll classifierTrainStats.getMetricsMap("train_point_")
             }
         }
 
         if (mode_residues) {
             m.putAll residuePredictionStats.getMetricsMap("residue_")
-            m.putAll classifierStats.getMetricsMap()
+            m.putAll classifierStats.getMetricsMap("point_")
         }
 
         if (params.feature_importances && featureImportances!=null) {
