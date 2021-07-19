@@ -30,14 +30,12 @@ import cz.siret.prank.program.params.Params
     /**
      * stop processing a dataset on the first unrecoverable error with a dataset item
      */
-    fail_fast = true
+    fail_fast = false
 
-    classifier="FasterForest"
+    classifier="FastRandomForest"
 
     seed = 42
-    loop = 10
-
-
+    loop = 1
 
     out_prefix_date = false
 
@@ -81,4 +79,20 @@ import cz.siret.prank.program.params.Params
     sample_negatives_from_decoys = true
 
 
+    /**
+     * Dummy param to preserve behaviour of older versions.
+     * Should be set to true for training new models.
+     *
+     * If true sign of value is reapplied after transformation by atom_table_feat_pow
+     */
+    atom_table_feat_keep_sgn = true
+
+//===========================================================================================================//
+
+    features = ["chem","volsite","protrusion","bfactor","conservation"]
+
+    load_conservation = true
+
+    classifier = "FasterForest"
+    
 }

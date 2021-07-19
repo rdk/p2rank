@@ -55,7 +55,10 @@ import cz.siret.prank.program.params.Params
     atom_table_feat_pow = 2
 
     /**
-     * dummy param to preserve behaviour of older versions
+     * Dummy param to preserve behaviour of older versions.
+     * Should be set to true for training new models.
+     *
+     * If true sign of value is reapplied after transformation by atom_table_feat_pow
      */
     atom_table_feat_keep_sgn = false
 

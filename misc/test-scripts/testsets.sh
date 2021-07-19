@@ -104,14 +104,14 @@ basic() {
 
     title RUNNING BASIC TESTS
 
-    test ./prank.sh eval-predict chen11.ds                              -c config/working                        -out_subdir TEST/TESTS
-    test ./prank.sh eval-predict 'joined(mlig).ds'                      -c config/working                        -out_subdir TEST/TESTS
-    test ./prank.sh traineval -t chen11-fpocket.ds -e chen11-fpocket.ds -c config/working  -loop 1  -fail_fast 1 -out_subdir TEST/TESTS
-    test ./prank.sh traineval -t chen11-fpocket.ds -e 'joined(mlig).ds' -c config/working  -loop 1  -fail_fast 1 -out_subdir TEST/TESTS
-    test ./prank.sh crossval chen11-fpocket.ds                          -c config/working  -loop 1  -fail_fast 1 -out_subdir TEST/TESTS
+    test ./prank.sh eval-predict chen11.ds                              -c config/train-new-default                        -out_subdir TEST/TESTS
+    test ./prank.sh eval-predict 'joined(mlig).ds'                      -c config/train-new-default                        -out_subdir TEST/TESTS
+    test ./prank.sh traineval -t chen11-fpocket.ds -e chen11-fpocket.ds -c config/train-new-default  -loop 1  -fail_fast 1 -out_subdir TEST/TESTS
+    test ./prank.sh traineval -t chen11-fpocket.ds -e 'joined(mlig).ds' -c config/train-new-default  -loop 1  -fail_fast 1 -out_subdir TEST/TESTS
+    test ./prank.sh crossval chen11-fpocket.ds                          -c config/train-new-default  -loop 1  -fail_fast 1 -out_subdir TEST/TESTS
 
-    #test ./prank.sh eval-predict mlig-joined.ds   -c config/working -visualizations 1 -tessellation 3 -l VISUALIZATIONS_TES3 -c config/working -out_subdir TEST/TESTS
-    #test ./prank.sh eval-predict mlig-joined.ds   -c config/working -visualizations 1  -l VISUALIZATIONS                     -c config/working -out_subdir TEST/TESTS
+    #test ./prank.sh eval-predict mlig-joined.ds   -c config/train-new-default -visualizations 1 -tessellation 3 -l VISUALIZATIONS_TES3 -c config/train-new-default -out_subdir TEST/TESTS
+    #test ./prank.sh eval-predict mlig-joined.ds   -c config/train-new-default -visualizations 1  -l VISUALIZATIONS                     -c config/train-new-default -out_subdir TEST/TESTS
 }
 
 # test prediction on all datasets
@@ -204,10 +204,10 @@ eval_train() {
 
     title TRAIN/EVAL ON MAIN DATASETS
 
-    test ./prank.sh crossval chen11-fpocket.ds                         -c config/working -loop 1                    -out_subdir TEST/EVAL_TRAIN
-    test ./prank.sh traineval -t chen11-fpocket.ds -e joined.ds        -c config/working -loop 1                    -out_subdir TEST/EVAL_TRAIN
-    test ./prank.sh traineval -t chen11-fpocket.ds -e coach420.ds      -c config/working -loop 1                    -out_subdir TEST/EVAL_TRAIN
-    test ./prank.sh traineval -t chen11-fpocket.ds -e holo4k.ds        -c config/working -loop 1  -cache_datasets 0 -out_subdir TEST/EVAL_TRAIN
+    test ./prank.sh crossval chen11-fpocket.ds                         -c config/train-new-default -loop 1                    -out_subdir TEST/EVAL_TRAIN
+    test ./prank.sh traineval -t chen11-fpocket.ds -e joined.ds        -c config/train-new-default -loop 1                    -out_subdir TEST/EVAL_TRAIN
+    test ./prank.sh traineval -t chen11-fpocket.ds -e coach420.ds      -c config/train-new-default -loop 1                    -out_subdir TEST/EVAL_TRAIN
+    test ./prank.sh traineval -t chen11-fpocket.ds -e holo4k.ds        -c config/train-new-default -loop 1  -cache_datasets 0 -out_subdir TEST/EVAL_TRAIN
 
 
 }
@@ -217,45 +217,45 @@ eval_train_rest() {
     title TRAIN/EVAL ON OTHER DATASETS
 
     # train=test for the reference
-    test ./prank.sh traineval -t chen11-fpocket.ds -e chen11-fpocket.ds   -c config/working -loop 1                     -out_subdir TEST/EVAL_TRAIN
-    test ./prank.sh traineval -t chen11-fpocket.ds -e fptrain.ds          -c config/working -loop 1                     -out_subdir TEST/EVAL_TRAIN
-    test ./prank.sh traineval -t chen11-fpocket.ds -e 'joined(mlig).ds'   -c config/working -loop 1                     -out_subdir TEST/EVAL_TRAIN
-    test ./prank.sh traineval -t chen11-fpocket.ds -e 'coach420(mlig).ds' -c config/working -loop 1                     -out_subdir TEST/EVAL_TRAIN
-    test ./prank.sh traineval -t chen11-fpocket.ds -e 'holo4k(mlig).ds'   -c config/working -loop 1  -cache_datasets 0  -out_subdir TEST/EVAL_TRAIN
+    test ./prank.sh traineval -t chen11-fpocket.ds -e chen11-fpocket.ds   -c config/train-new-default -loop 1                     -out_subdir TEST/EVAL_TRAIN
+    test ./prank.sh traineval -t chen11-fpocket.ds -e fptrain.ds          -c config/train-new-default -loop 1                     -out_subdir TEST/EVAL_TRAIN
+    test ./prank.sh traineval -t chen11-fpocket.ds -e 'joined(mlig).ds'   -c config/train-new-default -loop 1                     -out_subdir TEST/EVAL_TRAIN
+    test ./prank.sh traineval -t chen11-fpocket.ds -e 'coach420(mlig).ds' -c config/train-new-default -loop 1                     -out_subdir TEST/EVAL_TRAIN
+    test ./prank.sh traineval -t chen11-fpocket.ds -e 'holo4k(mlig).ds'   -c config/train-new-default -loop 1  -cache_datasets 0  -out_subdir TEST/EVAL_TRAIN
 }
 
 eval_ploop() {
 
     title GRID OPTIMIZATION
 
-    test ./prank.sh ploop -t chen11-fpocket.ds -e coach420.ds -c config/working -loop 1 -fail_fast 1 -r_generate_plots 0 -rf_trees '(20,40,100)' -rf_features '(6,0)' -out_subdir TEST/PLOOP
-    test ./prank.sh ploop -t chen11-fpocket.ds -e speed5.ds   -c config/working -loop 1 -fail_fast 1 -r_generate_plots 0 -rf_trees '[10:30:10]' -feature_filters '((-chem.*),(-chem.*,chem.atoms),(protrusion.*,bfactor.*))' -out_subdir TEST/PLOOP
+    test ./prank.sh ploop -t chen11-fpocket.ds -e coach420.ds -c config/train-new-default -loop 1 -fail_fast 1 -r_generate_plots 0 -rf_trees '(20,40,100)' -rf_features '(6,0)' -out_subdir TEST/PLOOP
+    test ./prank.sh ploop -t chen11-fpocket.ds -e speed5.ds   -c config/train-new-default -loop 1 -fail_fast 1 -r_generate_plots 0 -rf_trees '[10:30:10]' -feature_filters '((-chem.*),(-chem.*,chem.atoms),(protrusion.*,bfactor.*))' -out_subdir TEST/PLOOP
 
     # test ability to separate normal param features (type: list) and iterative feature_filters (type: list)
-    test ./prank.sh ploop -t chen11-fpocket.ds -e speed5.ds   -c config/working -loop 1 -fail_fast 1 -r_generate_plots 0 -features '(volsite,bfactor)' -feature_filters '((-volsite.*),(volsite.*,-volsite.vsCation),(volsite.*,bfactor.*))' -out_subdir TEST/PLOOP
+    test ./prank.sh ploop -t chen11-fpocket.ds -e speed5.ds   -c config/train-new-default -loop 1 -fail_fast 1 -r_generate_plots 0 -features '(volsite,bfactor)' -feature_filters '((-volsite.*),(volsite.*,-volsite.vsCation),(volsite.*,bfactor.*))' -out_subdir TEST/PLOOP
 }
 
 analyze() {
 
     title PRINT/ANALYZE COMMANDS
 
-    test ./prank.sh print features     -c config/working  -out_subdir TEST/ANALYZE
-    test ./prank.sh print model-info   -c config/working  -out_subdir TEST/ANALYZE
+    test ./prank.sh print features     -c config/train-new-default  -out_subdir TEST/ANALYZE
+    test ./prank.sh print model-info   -c config/train-new-default  -out_subdir TEST/ANALYZE
 
-    test ./prank.sh analyze fasta-masked -f distro/test_data/liganated/1aaxa.pdb -c config/working  -out_subdir TEST/ANALYZE
+    test ./prank.sh analyze fasta-masked -f distro/test_data/liganated/1aaxa.pdb -c config/train-new-default  -out_subdir TEST/ANALYZE
 
-    test ./prank.sh analyze fasta-masked chen11.ds        -c config/working                   -out_subdir TEST/ANALYZE
-    test ./prank.sh analyze fasta-masked joined.ds        -c config/working                   -out_subdir TEST/ANALYZE
-    test ./prank.sh analyze fasta-masked coach420.ds      -c config/working                   -out_subdir TEST/ANALYZE
-    test ./prank.sh analyze fasta-masked holo4k.ds        -c config/working -cache_datasets 0 -out_subdir TEST/ANALYZE
+    test ./prank.sh analyze fasta-masked chen11.ds        -c config/train-new-default                   -out_subdir TEST/ANALYZE
+    test ./prank.sh analyze fasta-masked joined.ds        -c config/train-new-default                   -out_subdir TEST/ANALYZE
+    test ./prank.sh analyze fasta-masked coach420.ds      -c config/train-new-default                   -out_subdir TEST/ANALYZE
+    test ./prank.sh analyze fasta-masked holo4k.ds        -c config/train-new-default -cache_datasets 0 -out_subdir TEST/ANALYZE
 
-    test ./prank.sh analyze binding-residues      joined.ds        -c config/working                   -out_subdir TEST/ANALYZE
-    test ./prank.sh analyze chains                joined.ds        -c config/working                   -out_subdir TEST/ANALYZE
-    test ./prank.sh analyze chains-residues       joined.ds        -c config/working                   -out_subdir TEST/ANALYZE
-    test ./prank.sh analyze aa-propensities       joined.ds        -c config/working                   -out_subdir TEST/ANALYZE
-    test ./prank.sh analyze aa-surf-seq-duplets   joined.ds        -c config/working                   -out_subdir TEST/ANALYZE
-    test ./prank.sh analyze aa-surf-seq-triplets  joined.ds        -c config/working                   -out_subdir TEST/ANALYZE
-    test ./prank.sh analyze fasta-raw             joined.ds        -c config/working                   -out_subdir TEST/ANALYZE
+    test ./prank.sh analyze binding-residues      joined.ds        -c config/train-new-default                   -out_subdir TEST/ANALYZE
+    test ./prank.sh analyze chains                joined.ds        -c config/train-new-default                   -out_subdir TEST/ANALYZE
+    test ./prank.sh analyze chains-residues       joined.ds        -c config/train-new-default                   -out_subdir TEST/ANALYZE
+    test ./prank.sh analyze aa-propensities       joined.ds        -c config/train-new-default                   -out_subdir TEST/ANALYZE
+    test ./prank.sh analyze aa-surf-seq-duplets   joined.ds        -c config/train-new-default                   -out_subdir TEST/ANALYZE
+    test ./prank.sh analyze aa-surf-seq-triplets  joined.ds        -c config/train-new-default                   -out_subdir TEST/ANALYZE
+    test ./prank.sh analyze fasta-raw             joined.ds        -c config/train-new-default                   -out_subdir TEST/ANALYZE
 
 }
 
@@ -263,10 +263,10 @@ classifiers() {
 
     title TRAIN/EVAL USING DIFFERENT CLASSIFIERS
 
-    test ./prank.sh traineval -t chen11-fpocket.ds -e joined.ds -c config/working -loop 1 -classifier RandomForest     -label RF    -out_subdir TEST/CLASSIFIETS
-    test ./prank.sh traineval -t chen11-fpocket.ds -e joined.ds -c config/working -loop 1 -classifier FastRandomForest -label FRF   -out_subdir TEST/CLASSIFIETS
-    test ./prank.sh traineval -t chen11-fpocket.ds -e joined.ds -c config/working -loop 1 -classifier FasterForest     -label FF    -out_subdir TEST/CLASSIFIETS
-    test ./prank.sh traineval -t chen11-fpocket.ds -e joined.ds -c config/working -loop 1 -classifier FasterForest2    -label FF2   -out_subdir TEST/CLASSIFIETS
+    test ./prank.sh traineval -t chen11-fpocket.ds -e joined.ds -c config/train-new-default -loop 1 -classifier RandomForest     -label RF    -out_subdir TEST/CLASSIFIETS
+    test ./prank.sh traineval -t chen11-fpocket.ds -e joined.ds -c config/train-new-default -loop 1 -classifier FastRandomForest -label FRF   -out_subdir TEST/CLASSIFIETS
+    test ./prank.sh traineval -t chen11-fpocket.ds -e joined.ds -c config/train-new-default -loop 1 -classifier FasterForest     -label FF    -out_subdir TEST/CLASSIFIETS
+    test ./prank.sh traineval -t chen11-fpocket.ds -e joined.ds -c config/train-new-default -loop 1 -classifier FasterForest2    -label FF2   -out_subdir TEST/CLASSIFIETS
 
 }
 
@@ -274,10 +274,10 @@ feature_importances() {
 
     title CALCULATING FEATURE IMPORTANCES
 
-    test ./prank.sh traineval -t chen11-fpocket.ds -e joined.ds -c config/working -loop 1 -feature_importances 1 -classifier RandomForest     -label RF    -out_subdir TEST/IMPORTANCES
-    test ./prank.sh traineval -t chen11-fpocket.ds -e joined.ds -c config/working -loop 1 -feature_importances 1 -classifier FastRandomForest -label FRF   -out_subdir TEST/IMPORTANCES
-    test ./prank.sh traineval -t chen11-fpocket.ds -e joined.ds -c config/working -loop 1 -feature_importances 1 -classifier FasterForest     -label FF    -out_subdir TEST/IMPORTANCES
-    test ./prank.sh traineval -t chen11-fpocket.ds -e joined.ds -c config/working -loop 1 -feature_importances 1 -classifier FasterForest2    -label FF2   -out_subdir TEST/IMPORTANCES
+    test ./prank.sh traineval -t chen11-fpocket.ds -e joined.ds -c config/train-new-default -loop 1 -feature_importances 1 -classifier RandomForest     -label RF    -out_subdir TEST/IMPORTANCES
+    test ./prank.sh traineval -t chen11-fpocket.ds -e joined.ds -c config/train-new-default -loop 1 -feature_importances 1 -classifier FastRandomForest -label FRF   -out_subdir TEST/IMPORTANCES
+    test ./prank.sh traineval -t chen11-fpocket.ds -e joined.ds -c config/train-new-default -loop 1 -feature_importances 1 -classifier FasterForest     -label FF    -out_subdir TEST/IMPORTANCES
+    test ./prank.sh traineval -t chen11-fpocket.ds -e joined.ds -c config/train-new-default -loop 1 -feature_importances 1 -classifier FasterForest2    -label FF2   -out_subdir TEST/IMPORTANCES
 }
 
 ###################################################################################################################
@@ -332,23 +332,23 @@ speed_basic() {
     title SPEED TESTS
 
     misc/test-scripts/benchmark.sh 3  "PREDICT"   "1 8"        "./prank.sh predict fptrain.ds -c config/workdef -out_subdir TEST/SPEED"
-    misc/test-scripts/benchmark.sh 3  "TRAINEVAL" "1 8"        "./prank.sh traineval -t chen11-fpocket.ds -e joined.ds -c config/working -loop 1 -out_subdir TEST/SPEED"
-    misc/test-scripts/benchmark.sh 3  "TRAINEVAL" "1 8"        "./prank.sh traineval -t chen11-fpocket.ds -e joined.ds -c config/working -loop 3 -out_subdir TEST/SPEED"
+    misc/test-scripts/benchmark.sh 3  "TRAINEVAL" "1 8"        "./prank.sh traineval -t chen11-fpocket.ds -e joined.ds -c config/train-new-default -loop 1 -out_subdir TEST/SPEED"
+    misc/test-scripts/benchmark.sh 3  "TRAINEVAL" "1 8"        "./prank.sh traineval -t chen11-fpocket.ds -e joined.ds -c config/train-new-default -loop 3 -out_subdir TEST/SPEED"
 }
 
 speed_ff() {
 
     title SPEED TESTS - FASTER FOREST
 
-    misc/test-scripts/benchmark.sh 3  "TRAINEVAL" "1 8"        "./prank.sh traineval -t chen11-fpocket.ds -e joined.ds -c config/working -classifier FasterForest -loop 1 -out_subdir TEST/SPEED"
-    misc/test-scripts/benchmark.sh 3  "TRAINEVAL" "1 8"        "./prank.sh traineval -t chen11-fpocket.ds -e joined.ds -c config/working -classifier FasterForest -loop 3 -out_subdir TEST/SPEED"
+    misc/test-scripts/benchmark.sh 3  "TRAINEVAL" "1 8"        "./prank.sh traineval -t chen11-fpocket.ds -e joined.ds -c config/train-new-default -classifier FasterForest -loop 1 -out_subdir TEST/SPEED"
+    misc/test-scripts/benchmark.sh 3  "TRAINEVAL" "1 8"        "./prank.sh traineval -t chen11-fpocket.ds -e joined.ds -c config/train-new-default -classifier FasterForest -loop 3 -out_subdir TEST/SPEED"
 }
 
 speed_ff_quick() {
 
     title SPEED TESTS - FASTER FOREST
 
-    misc/test-scripts/benchmark.sh 3  "TRAINEVAL" "1 8"        "./prank.sh traineval -t chen11-fpocket.ds -e joined.ds -c config/working -classifier FasterForest -loop 1 -out_subdir TEST/SPEED"
+    misc/test-scripts/benchmark.sh 3  "TRAINEVAL" "1 8"        "./prank.sh traineval -t chen11-fpocket.ds -e joined.ds -c config/train-new-default -classifier FasterForest -loop 1 -out_subdir TEST/SPEED"
 }
 
 speed_quick() {
