@@ -86,16 +86,16 @@ import cz.siret.prank.program.params.Params
     log_level = "WARN"
 
     selected_stats = ['_blank',
-                      'MCC',
-                      'F1',
-                      'AUC',
-                      'AUPRC',
-                      'TPX',
                       'point_MCC',
                       'point_F1',
-                      'point_TPX',
                       'point_AUC',
                       'point_AUPRC',
+                      'point_TPX',
+                      'residue_MCC',
+                      'residue_F1',
+                      'residue_TPX',
+                      'residue_AUC',
+                      'residue_AUPRC',
                       'TIME_MINUTES']
 
 
