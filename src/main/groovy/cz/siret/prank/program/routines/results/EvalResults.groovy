@@ -169,15 +169,15 @@ class EvalResults implements Parametrized, Writable  {
         m.TRAIN_POS_RATIO = trainPositivesRatio
 
         if (mode_pockets) {
-            m.putAll classifierStats.getMetricsMap("point_")
+            m.putAll classifierStats.getMetricsMap()
             if (params.classifier_train_stats && classifierTrainStats!=null) {
-                m.putAll classifierTrainStats.getMetricsMap("train_point_")
+                m.putAll classifierTrainStats.getMetricsMap("train_")
             }
         }
 
         if (mode_residues) {
             m.putAll residuePredictionStats.getMetricsMap("residue_")
-            m.putAll classifierStats.getMetricsMap("point_")
+            m.putAll classifierStats.getMetricsMap()
         }
 
         if (params.feature_importances && featureImportances!=null) {

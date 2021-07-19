@@ -52,7 +52,7 @@ class TrainEvalRoutineTest {
             assertTrue(res.stats.TRAIN_POSITIVES > 10)
             assertTrue(res.stats.TRAIN_NEGATIVES > 10)
 
-            assertTrue("point_MCC must be > 0.4, actual: ${res.stats.point_MCC}", res.stats.point_MCC > 0.4)
+            assertTrue("MCC must be > 0.4, actual: ${res.stats.MCC}", res.stats.MCC > 0.4)
 
             double dca_4_0 = Double.parseDouble(res.stats.DCA_4_0 as String)
 
@@ -97,7 +97,7 @@ class TrainEvalRoutineTest {
 
             // TODO add sensible tests
 
-            assertTrue("point_MCC must be > 0.1, actual: ${res.stats.point_MCC}", res.stats.point_MCC > 0.1)
+            assertTrue("MCC must be > 0.1, actual: ${res.stats.MCC}", res.stats.MCC > 0.1)
 
         } finally {
             Params.INSTANCE = originalParams
