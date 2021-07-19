@@ -26,6 +26,8 @@ import java.text.SimpleDateFormat
 import static cz.siret.prank.utils.ATimer.startTimer
 import static cz.siret.prank.utils.Console.write
 import static cz.siret.prank.utils.Console.writeError
+import static cz.siret.prank.utils.Console.writeError
+import static cz.siret.prank.utils.Console.writeError
 import static cz.siret.prank.utils.Futils.mkdirs
 import static cz.siret.prank.utils.Futils.writeFile
 
@@ -464,10 +466,11 @@ class Main implements Parametrized, Writable {
             error = true
 
             if (e instanceof PrankException) {
-                writeError e.message, null  // don't print stacktrace to stdout
                 log.error(e.message, e)
+                writeError e.message, null  // don't print stacktrace to stdout
             } else {
-                writeError e.getMessage(), e  // on unknown exception also print stack trace
+                writeError e.message, e       // on unknown exception also print stack trace
+                writeError e.message, null // print just error message again at the end for readability
             }
 
             if (main!=null) {
