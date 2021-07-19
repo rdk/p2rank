@@ -588,6 +588,12 @@ class Evaluation implements Parametrized {
         m.DCA_4_10 = calcDefaultCriteriumSuccessRate(10)
         m.DCA_4_99 = calcDefaultCriteriumSuccessRate(99)
 
+        m.DCA_4_0_NOMINAL = m.DCA_4_0 * m.LIGANDS
+        m.DCA_4_1_NOMINAL = m.DCA_4_1 * m.LIGANDS
+        m.DCA_4_2_NOMINAL = m.DCA_4_2 * m.LIGANDS
+        m.DCA_4_4_NOMINAL = m.DCA_4_4 * m.LIGANDS
+        m.DCA_4_10_NOMINAL = m.DCA_4_10 * m.LIGANDS
+
         m.DCA_4_0_PC = calcSuccRateProteinCentric(3,0)
         m.DCA_4_2_PC = calcSuccRateProteinCentric(3,2)
 
@@ -612,7 +618,7 @@ class Evaluation implements Parametrized {
         m.OPT1 = 100*m.DCA_4_0 + 100*m.DCA_4_2 + 50*m.DCA_4_4 + 10*m.AVG_LIGCOV_SUCC + 5*m.AVG_DSO_SUCC
         m.OPT2 = 100*m.DCA_4_0_PC + 50*m.DCA_4_2_PC + 5*m.AVG_LIGCOV_SUCC + 3*m.AVG_DSO_SUCC
 
-        m.DCA_4_0_NOMINAL = m.DCA_4_0 * m.LIGANDS
+
 
         // TODO: move this somewhere else (getStats() shouldn't write to disk)
         if (StringUtils.isNotBlank(params.log_scores_to_file)) {
