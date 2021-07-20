@@ -186,7 +186,7 @@ Value in cells is training time in minutes.
 | FasterForest          |  5.7 | 10.8 | 23.1 | 
 | FasterForest2         |  4.4 |  8.7 | 16.0 | 
 
-(Produced with dataset of 6800k data points on 12 core machine.)
+(Produced with dataset of 6.8M data points on 12 core machine.)
 
 ## Feature importances
      
@@ -201,6 +201,9 @@ Supported by classifiers:
 * `FasterForest2`: uses new experimental method
 
 From the experience it seems that most useful are the methods used by `FastRandomForest` and `FasterForest`.
+
+When running more train/eval iterations (using `-loop 10` param), average importances will be calculated.
+Using more trees leads to more stable results (`-rf_trees 200`).
 
 
 

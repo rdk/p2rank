@@ -10,6 +10,7 @@ abstract class HOptimizer {
 
     List<HVariable> variables
     int maxIterations = 100
+    String objectiveLabel
 
     protected List<HStep> steps = new ArrayList<>()
 
@@ -24,6 +25,11 @@ abstract class HOptimizer {
         this
     }
 
+    HOptimizer withObjectiveLabel(String objectiveLabel) {
+        this.objectiveLabel = objectiveLabel
+        this
+    }
+
     List<HStep> getSteps() {
         return steps
     }
@@ -31,7 +37,7 @@ abstract class HOptimizer {
     HStep getBestStep() {
         assert !steps.isEmpty()
 
-        return steps.max {it.functionValue }
+        return steps.max {it.objectiveValue }
     }
 
     /**

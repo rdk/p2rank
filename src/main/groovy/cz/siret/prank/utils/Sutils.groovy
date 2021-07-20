@@ -2,6 +2,7 @@ package cz.siret.prank.utils
 
 import com.google.common.base.CharMatcher
 import com.google.common.base.Splitter
+import com.google.common.collect.Lists
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import groovy.transform.CompileStatic
@@ -135,6 +136,17 @@ class Sutils {
         if (ri<0) ri=str.length()
         
         return str.substring(li+left.length(), ri)
+    }
+
+    static String replaceEach(String template, Map<String, Object> params) {
+        List<String> search = Lists.newArrayList()
+        List<String> repl = Lists.newArrayList()
+        params.each {
+            search.add(it.key)
+            repl.add(""+it.value)
+        }
+
+        return StringUtils.replaceEachRepeatedly(template, search as String[], repl as String[])
     }
 
 }

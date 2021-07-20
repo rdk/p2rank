@@ -3,7 +3,7 @@ package cz.siret.prank.program.params.optimizer
 import groovy.transform.CompileStatic
 
 /**
- *
+ * Definition of variable and constraints to be optimized.
  */
 @CompileStatic
 class HVariable {

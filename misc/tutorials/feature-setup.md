@@ -4,7 +4,7 @@
 This file describes feature vector configuration and provides introduction to adding new features.
 Useful only for training and evaluating new models.
 
-P2Rank version: 2.3-dev.1
+P2Rank version: 2.4-dev.1
 
 ## Introduction
 

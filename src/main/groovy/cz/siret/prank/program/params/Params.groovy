@@ -1009,10 +1009,16 @@ class Params {
     List<String> feat_aa_properties = []
 
     /**
-     * Hyperparameter optimizer implementation (so far only "spearmint")
+     * Hyperparameter optimizer implementation ("spearmint" / "pygpgo")
      */
     @RuntimeParam // training
     String hopt_optimizer = "spearmint"
+
+    /**
+     * Python command used to run optimization child processes
+     */
+    @RuntimeParam // training
+    String hopt_python_command = "python"
 
     /**
      * Spearmint home directory (containing main.py)
@@ -1021,11 +1027,11 @@ class Params {
     String hopt_spearmint_dir = ""
 
     /**
-     * Metric to minimize in hyperparameter optimization
-     * (minus sign allowed)
+     * Metric to maximize in hyperparameter optimization.
+     * To minimize certain metric use minus sigh prefix, e.g.: "-point_LOG_LOSS"
      */
     @RuntimeParam // training
-    String hopt_objective = "-DCA_4_0"
+    String hopt_objective = "DCA_4_0"
 
     /**
      * max number of iterations in hyperparameter optimization

@@ -10,11 +10,11 @@ class HStep {
 
     int number
     Map<String, Object> variableValues
-    double functionValue
+    double objectiveValue
 
-    HStep(int number, Map<String, Object> variableValues, double functionValue) {
+    HStep(int number, Map<String, Object> variableValues, double objectiveValue) {
         this.number = number
         this.variableValues = variableValues
-        this.functionValue = functionValue
+        this.objectiveValue = objectiveValue
     }
 }

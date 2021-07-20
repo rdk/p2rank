@@ -20,7 +20,7 @@ TODO: add note that it is important to consider average results of several runs 
 
  1. Prepare the environment (see _Preparing the environment_ in `training-tutorial.md`)
 
- 2. Check `config/working.groovy` config file. It contains configuration ideal for training new models, but you might need to make changes or override some params on the command line. 
+ 2. Check `config/train-new-default.groovy` config file. It contains configuration ideal for training new models, but you might need to make changes or override some params on the command line. 
  
  3. Train with the new feature
     * train with the new feature by adding its name to the list of `-features`. e.g.:

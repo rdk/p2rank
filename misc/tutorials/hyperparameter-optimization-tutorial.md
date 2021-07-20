@@ -29,11 +29,11 @@ Supported parameter types: numerical, boolean, string, and 'list of strings' (e.
 
 Examples:
 * list of numbers: `'(1,2,3,4)'`
-* list of strings: `'(RandomForest,FasterForest)'`
+* list of strings: `'(RandomForest,FasterForest,FasterForest2)'`
 * list of lists: `'((protrusion,bfactor,volsite),(protrusion,bfactor),(protrusion),())'`
 
 **Range expression**: `[min:max:step]` example: `[-1:1.5:0.5]`
-(Valid only for numerical parameters)
+Valid only for numerical parameters.
 
 Examples:
 ~~~sh
@@ -61,7 +61,7 @@ sudo R -e "install.packages('ggplot2', dependencies=TRUE, repos='http://cran.us.
 Quick test run:
 ~~~sh   
 ./prank.sh ploop 
-    -c working                      \      # override default config with working.groovy config file
+    -c config/train-new-default     \      # override default config with config/train-new-default.groovy config file
     -t chen11-fpocket.ds            \      # crossvalidate on chen11 datsest
     -loop 1 -rf_trees 5 -rf_depth 5 \      # make it quick (1 pass, small model)
     -features '((protrusion,bfactor),(protrusion,bfactor,new_feature))'` 
@@ -71,12 +71,12 @@ Quick test run:
 
 Feature set comparisons:
 ~~~sh
-./prank.sh ploop -c working             \      
+./prank.sh ploop -c config/train-new-default \      
     -t chen11-fpocket.ds                \  # crossvalidate on chen11 datsest    
     -loop 10 -rf_trees 100 -rf_depth 10 \      
     -features '((protrusion,bfactor),(protrusion,bfactor,new_feature))'` 
 
-./prank.sh ploop -c working             \      
+./prank.sh ploop -c config/train-new-default \      
     -t chen11-fpocket.ds                \  # train on chen11 
     -e joined.ds                        \  # and evaluate on a different dataset
     -loop 10 -rf_trees 100 -rf_depth 10 \      
@@ -85,15 +85,76 @@ Feature set comparisons:
 
 ## Bayesian optimization (hopt command)
 
-Hopt command (`prank hopt`) implements Bayesian optimization using the program *Speramint*.
-(Other optimization tools might be employed in a similar fashion with little additional work. 
-See how integration with *Spearmint* is implemented in HSpearmintOptimizer.groovy).
-
-Supported parameter types: numerical, boolean. 
-
-## Install Spearmint (on ubuntu)
 ```sh
-# Spearmint uses Python 2.7 and MongoDB       
+./prank.sh hopt -t <dataset>               -<param1> '(<min>,<max>)'     # crossvalidation
+./prank.sh hopt -t <dataset> -e <dataset>  -<param1> '(<min>,<max>)'
+```
+
+Hopt command (`prank hopt`) implements Bayesian optimization using one of the integrated optimizers.
+
+Integrated optimizers (values of `-hopt_optimizer` parameter):
+* `pygpgo` : __pyGPGO__  (https://github.com/josejimenezluna/pyGPGO)
+* `spearmint` : __Speramint__  (https://github.com/HIPS/Spearmint.git)
+
+(Other optimization tools might be integrated with little work. See how integration with *pyGPGO* is implemented in `HPyGpgoOptimizer.groovy`).
+                             
+By default, optimization goal is to maximize value of a metric in `-hopt_objective` parameter (e.g. `-hopt_objective DCA_4_0)`).
+For minimization, prefix metric name with minus sign: `-hopt_objective "'-point_LOG_LOSS'"`.
+
+Supported parameter types: `double`, `int`, `boolean`. 
+
+## Optimization with pyGPGO
+
+### Install pyGPGO
+
+Requirements: Python >3.5.
+
+```sh
+pip install pyGPGO
+```
+
+## Run optimization
+
+Examples:
+```sh
+./prank.sh hopt -c config/train-new-default -out_subdir HOPT -label TREES  \
+    -t chen11-fpocket.ds \
+    -e joined.ds \
+    -hopt_optimizer 'pygpgo' \
+    -hopt_python_command 'python' \
+    -hopt_objective 'DCA_4_0' \
+    -classifier 'FasterForest' \
+    -loop 3 \
+    -ploop_delete_runs 0 \
+    -rf_trees '(10,200)' \
+    -rf_depth '(2,14)' \
+    -rf_features '(2,30)'  
+    
+# Optimizing parameters that are not involved in training new classifier,
+# but rather in aggregating results into pockets.
+# We can allow to train only one RF model in the beginning (-hopt_train_only_once 1).
+# Note: this is not really ideal because of overwriting to one particular RF model.    
+./prank.sh hopt -c config/train-new-default -out_subdir HOPT -label TREES  \
+    -t chen11-fpocket.ds \
+    -e joined.ds \
+    -hopt_optimizer 'pygpgo' \
+    -hopt_python_command 'python' \
+    -hopt_objective 'DCA_4_0' \
+    -classifier 'FasterForest' \
+    -loop 1 \
+    -hopt_train_only_once 1 \
+    -pred_point_threshold '(0.2,0.6)' \
+    -point_score_pow '(1,5)'
+```
+
+
+## Optimization with Spearmint
+
+### Install Spearmint (on ubuntu)
+
+Requirements: Python 2.7 and MongoDB.
+
+```sh
 sudo apt install -y mongodb python python-pip
 sudo pip install --upgrade pip
 sudo pip install numpy scipy pymongo weave
@@ -102,22 +163,25 @@ git clone https://github.com/rdk/Spearmint.git     # fork fixing scipy.weave pro
 sudo pip install -e Spearmint
 ```
 
-## Run optimization experiment
-
-```sh
-./prank.sh hopt -t <dataset>               -<param1> '(<min>,<max>)'     # crossvalidation
-./prank.sh hopt -t <dataset> -e <dataset>  -<param1> '(<min>,<max>)'
-```
+## Run optimization 
 
 Example:
 ```sh
-pkill python; sudo pkill mongo; \  # prepare clean slate (careful, your other python programs might die too)
-./prank.sh hopt -c working -l TREES_w -out_subdir HOPT \
-    -t chen11-fpocket.ds -e joined.ds \
-    -loop 1 -log_level DEBUG -log_to_console 1 \
+pkill python; sudo pkill mongo;   # prepare clean slate (careful, your other python programs might die too)
+
+./prank.sh hopt -c config/train-new-default -out_subdir HOPT -label TREES  \
+    -t chen11-fpocket.ds \
+    -e joined.ds \
+    -hopt_optimizer 'spearmint' \
+    -hopt_python_command 'python' \
+    -hopt_spearmint_dir '../Spearmint/spearmint' \
+    -hopt_objective 'DCA_4_0' \
+    -classifier 'FasterForest' \
+    -loop 3 \
     -ploop_delete_runs 0 \
-    -hopt_spearmint_dir '/home/rdk/proj/OTHERS/Spearmint/spearmint' \
-    -rf_trees '(10,200)' -rf_depth '(2,14)' -rf_features '(2,30)'   
+    -rf_trees '(10,200)' \
+    -rf_depth '(2,14)' \
+    -rf_features '(2,30)'   
 ```
 
 

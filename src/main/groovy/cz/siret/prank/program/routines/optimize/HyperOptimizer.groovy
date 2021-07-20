@@ -6,17 +6,17 @@ import cz.siret.prank.program.params.Params
 import cz.siret.prank.program.params.optimizer.HObjectiveFunction
 import cz.siret.prank.program.params.optimizer.HOptimizer
 import cz.siret.prank.program.params.optimizer.HVariable
+import cz.siret.prank.program.params.optimizer.spearmint.HPyGpgoOptimizer
 import cz.siret.prank.program.params.optimizer.spearmint.HSpearmintOptimizer
 import cz.siret.prank.program.routines.optimize.ParamLooper.ParamVal
 import cz.siret.prank.program.routines.optimize.ParamLooper.Step
 import cz.siret.prank.program.routines.results.EvalResults
-import cz.siret.prank.utils.Futils
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
-import java.nio.file.Path
-import java.nio.file.Paths
+
+import static cz.siret.prank.utils.Futils.absSafePath
 
 /**
  * Hyperparameter optimizer routine
@@ -124,13 +124,24 @@ class HyperOptimizer extends ParamLooper {
 
         // possible create other optimizers than Spearmint here
 
-        Path spearmintDir = Paths.get( Futils.absSafePath(params.hopt_spearmint_dir) )
-        Path expeimentDir = Paths.get( Futils.absSafePath("$outdir/hopt") )
+        HOptimizer opt;
+        String hoptDir = absSafePath("$outdir/hopt")
 
-        HOptimizer optimizer = new HSpearmintOptimizer(spearmintDir, expeimentDir)
-        optimizer.withMaxIterations(params.hopt_max_iterations)
-        optimizer.withVariables(variables)
-        return optimizer
+        String optName = params.hopt_optimizer
+
+        if ("spearmint" == optName) {
+            opt = new HSpearmintOptimizer(hoptDir, absSafePath(params.hopt_spearmint_dir))
+        } else if ("pygpgo" == optName) {
+            opt = new HPyGpgoOptimizer(hoptDir)
+        } else {
+            throw new PrankException("Invalid value of hopt_optimizer parameter: '$optName'")
+        }
+
+        opt.withObjectiveLabel(params.hopt_objective)
+        opt.withMaxIterations(params.hopt_max_iterations)
+        opt.withVariables(variables)
+        
+        return opt
     }
 
 }
