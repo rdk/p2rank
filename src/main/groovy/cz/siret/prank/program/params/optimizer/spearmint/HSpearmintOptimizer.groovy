@@ -11,7 +11,7 @@ import static cz.siret.prank.utils.Futils.*
 import static cz.siret.prank.utils.ProcessRunner.process
 
 /**
- * optimizer based on https://github.com/HIPS/Spearmint
+ * Optimizer based on https://github.com/HIPS/Spearmint
  */
 @Slf4j
 @CompileStatic

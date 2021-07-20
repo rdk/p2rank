@@ -61,7 +61,7 @@ abstract class HExternalOptimizerBase extends HOptimizer implements Parametrized
 
             List<String> varNames = (variables*.name).toList()
             String stepsf = "$dir/steps.csv"
-            writeFile stepsf, "[num], [job_id], " + varNames.join(", ") + ", [value], [best_so_far] \n"
+            writeFile stepsf, "[num], [job_id], [value], [best_so_far], [time_s], " + varNames.join(", ") + "\n"
 
             double sumTime = 0
 
@@ -72,26 +72,32 @@ abstract class HExternalOptimizerBase extends HOptimizer implements Parametrized
                 waitForFile(varf)
 
                 // parse variable assignment
+
                 Map<String, Object> vars = new Gson().fromJson(readFile(varf), Map.class)
                 log.info "vars: {}", vars
 
                 // eval objective function
-                double val = objective.eval(vars, stepNumber)
-                log.info "value: {}", val
-                // -val because optimizers are by default minimizing and we want to maximize
-                writeFile "$evalDir/$jobId", formatValue(-val)
 
-                HStep step = new HStep(stepNumber, vars, val)
+                double objVal = objective.eval(vars, stepNumber)
+                log.info "value: {}", objVal
+                // -val because optimizers are by default minimizing and we want to maximize
+                writeFile "$evalDir/$jobId", formatValue(-objVal)
+
+                // log result and best
+
+                HStep step = new HStep(stepNumber, vars, objVal)
                 steps.add(step)
                 HStep bestStep = getBestStep()
 
-                append stepsf, "$stepNumber, $jobId, " + varNames.collect { fmt vars.get(it) }.join(", ") + ", ${fmt val}, ${fmt bestStep.objectiveValue} \n"
+                long time = timer.timeSec
+
+                append(stepsf, "$stepNumber, $jobId, ${fmt objVal}, ${fmt bestStep.objectiveValue}, $time, "
+                    + varNames.collect { fmt vars.get(it) }.join(", ") + " \n")
                 String bestCsv = printBestStepCsv(bestStep, varNames)
                 writeFile "$dir/best.csv", bestCsv
                 write "BEST STEP:\n" + bestCsv
                 write "For results see " + stepsf
 
-                long time = timer.timeSec
                 sumTime += time
                 long avgTime = (long)(sumTime / (stepNumber+1))
                 write "Step $stepNumber finished in ${time}s (avg: ${avgTime}s)"
@@ -100,7 +106,7 @@ abstract class HExternalOptimizerBase extends HOptimizer implements Parametrized
                 jobId++
             }
         } catch (Exception e) {
-            throw new PrankException("Hyperparameter optimiation failed.", e)
+            throw new PrankException("Hyperparameter optimization failed.", e)
         } finally {
             finalizeAndCleanup()
         }
@@ -128,6 +134,5 @@ abstract class HExternalOptimizerBase extends HOptimizer implements Parametrized
             sleep(sleepInterval)
         }
     }
-
     
 }

@@ -13,15 +13,16 @@ from pyGPGO.GPGO import GPGO
 #import pymc3 as pm
 
 
-# store vars as json to vars/{job_id}.json
+# store vars as json to vars/{job_id}
 def store_vars(job_id, vars):
     print("vars: ", str(vars))
     vars_json = json.dumps(vars)
     print("vars_json: ", vars_json)
+    varf = "vars/" + str(job_id)
+    print("saving vars to file: ", varf)
 
     if not os.path.exists("vars"):
         os.makedirs("vars")
-    varf = "vars/" + str(job_id)
     with open(varf, "w") as file:
         file.write(str(json.dumps(vars)) + "\n")
 
@@ -29,6 +30,7 @@ def store_vars(job_id, vars):
 # wait and read objective value from file eval/{job_id}
 def read_eval(job_id):
     valf = "eval/" + str(job_id)
+    print("reading eval from file: ", valf)
 
     # wait until value file exists
     while not os.path.exists(valf):
@@ -69,9 +71,3 @@ job_id = 0
 np.random.seed(param_seed)
 gpgo = GPGO(model, acq, objective, param_constraints)
 gpgo.run(max_iter=param_max_iters)
-
-
-
-
-
-

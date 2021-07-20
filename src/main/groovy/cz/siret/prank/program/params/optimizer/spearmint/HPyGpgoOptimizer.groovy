@@ -12,7 +12,7 @@ import static cz.siret.prank.utils.Futils.writeFile
 import static cz.siret.prank.utils.ProcessRunner.process
 
 /**
- * optimizer based on https://github.com/josejimenezluna/pyGPGO
+ * Optimizer based on https://github.com/josejimenezluna/pyGPGO
  */
 @Slf4j
 @CompileStatic
