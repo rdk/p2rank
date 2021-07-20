@@ -138,7 +138,7 @@ Examples:
     -t chen11-fpocket.ds \
     -e joined.ds \
     -hopt_optimizer 'pygpgo' \
-    -hopt_python_command 'python' \
+    -hopt_python_command 'python3' \
     -hopt_objective 'DCA_4_0' \
     -classifier 'FasterForest' \
     -loop 1 \

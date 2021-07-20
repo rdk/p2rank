@@ -9,8 +9,8 @@ from pyGPGO.covfunc import matern32
 from pyGPGO.acquisition import Acquisition
 from pyGPGO.surrogates.GaussianProcess import GaussianProcess
 from pyGPGO.GPGO import GPGO
-from pyGPGO.surrogates.GaussianProcessMCMC import GaussianProcessMCMC
-import pymc3 as pm
+#from pyGPGO.surrogates.GaussianProcessMCMC import GaussianProcessMCMC
+#import pymc3 as pm
 
 
 # store vars as json to vars/{job_id}.json
