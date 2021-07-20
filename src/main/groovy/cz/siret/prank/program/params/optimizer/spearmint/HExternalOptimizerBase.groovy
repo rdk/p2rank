@@ -61,7 +61,7 @@ abstract class HExternalOptimizerBase extends HOptimizer implements Parametrized
 
             List<String> varNames = (variables*.name).toList()
             String stepsf = "$dir/steps.csv"
-            writeFile stepsf, "[num], [job_id], " + varNames.join(", ") + ", [value] \n"
+            writeFile stepsf, "[num], [job_id], " + varNames.join(", ") + ", [value], [best_so_far] \n"
 
             double sumTime = 0
 
@@ -83,10 +83,12 @@ abstract class HExternalOptimizerBase extends HOptimizer implements Parametrized
 
                 HStep step = new HStep(stepNumber, vars, val)
                 steps.add(step)
-                append stepsf, "$stepNumber, $jobId, " + varNames.collect { fmt vars.get(it) }.join(", ") + ", ${fmt val} \n"
-                String bests = printBestStep(bestStep, varNames)
-                writeFile "$dir/best.csv", bests
-                write "BEST STEP:\n" + bests
+                HStep bestStep = getBestStep()
+
+                append stepsf, "$stepNumber, $jobId, " + varNames.collect { fmt vars.get(it) }.join(", ") + ", ${fmt val}, ${fmt bestStep.objectiveValue} \n"
+                String bestCsv = printBestStepCsv(bestStep, varNames)
+                writeFile "$dir/best.csv", bestCsv
+                write "BEST STEP:\n" + bestCsv
                 write "For results see " + stepsf
 
                 long time = timer.timeSec
@@ -106,7 +108,7 @@ abstract class HExternalOptimizerBase extends HOptimizer implements Parametrized
         return getBestStep()
     }
 
-    String printBestStep(HStep step, List<String> varNames) {
+    String printBestStepCsv(HStep step, List<String> varNames) {
         varNames.collect { it + ",\t\t" + fmt(step.variableValues.get(it)) }.join("\n") + "\nvalue ($objectiveLabel),\t\t" + fmt(step.objectiveValue) + "\n"
     }
 
