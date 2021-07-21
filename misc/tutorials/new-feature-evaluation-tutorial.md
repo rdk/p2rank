@@ -97,7 +97,7 @@ in the [paper](https://doi.org/10.1186/s13321-018-0285-8).
     -t chen11-fpocket.ds -e joined.ds \
     -loop 10 
 
-./prank.sh traineval -c config/train-conservation -out_subdir CASE -l CONS \
+./prank.sh traineval -c config/train-conservation -out_subdir CASE -label CONS \
     -t chen11-fpocket.ds -e joined.ds \
     -conservation_dirs '(chen11/conservation/e5i1/scores,joined/conservation/e5i1/scores)' \
     -loop 10 

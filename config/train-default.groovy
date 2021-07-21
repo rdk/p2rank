@@ -1,22 +1,15 @@
 import cz.siret.prank.program.params.Params
 
 /**
- * This config file is setting technical parameters ideal for training and evaluating new models.
+ * Allows to re-train default model.
  *
- * In other parameters of the algorithm should stay as close as possible do default config.
+ * Mainly sets some technical parameters ideal for training and evaluating new models.
+ * The other parameters of the algorithm should stay as close as possible to the default config.
  */
 (params as Params).with {
 
-    /**
-     * define this if you want dataset program parameters to be evaluated relative to this directory
-     * (set absolute path or path relative to install dir, null defaults to working dir)
-     */
     dataset_base_dir = "../../p2rank-datasets"
 
-    /**
-     * all output of the program will be stored in subdirectories of this directory
-     * (set absolute path or path relative to install dir, null defaults to working dir)
-     */
     output_base_dir = "../../p2rank-results/${version}"
 
     visualizations = false
@@ -32,8 +25,6 @@ import cz.siret.prank.program.params.Params
      */
     fail_fast = false
 
-    classifier="FastRandomForest"
-
     seed = 42
     loop = 1
 
@@ -46,7 +37,6 @@ import cz.siret.prank.program.params.Params
     clear_prim_caches = false
 
     clear_sec_caches = false
-
 
     /**
      * calculate feature importance
@@ -86,5 +76,13 @@ import cz.siret.prank.program.params.Params
      * If true sign of value is reapplied after transformation by atom_table_feat_pow
      */
     atom_table_feat_keep_sgn = true
+
+//===========================================================================================================//
+
+    /**
+     * Note: FastRandomForest was used originally to train the default model
+     * Setting FasterForest to allow fair comparison with train-conservation config.
+     */
+    classifier="FasterForest"
     
 }

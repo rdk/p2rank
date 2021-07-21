@@ -291,9 +291,10 @@ import cz.siret.prank.program.params.Params
     balance_density_radius = 2
 
     /**
-     * output detailed tables for all proteins, ligands and pockets
+     * output detailed tables for all proteins, ligands and pockets or residues
      */
     log_cases = true
+
 
     /**
      * cutoff for protein exposed atoms calculation (distance from connolly surface is solv.radius. + surf_cutoff)
