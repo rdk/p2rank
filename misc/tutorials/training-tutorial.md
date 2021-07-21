@@ -187,6 +187,7 @@ Value in cells is training time in minutes.
 | FasterForest2         |  4.4 |  8.7 | 16.0 | 
 
 (Produced with dataset of 6.8M data points on 12 core machine.)
+         
 
 ## Feature importances
      

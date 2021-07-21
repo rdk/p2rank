@@ -19,7 +19,9 @@ Related parameters:
 
 
 ### labeled residues
+
 Analyze a dataset with an explicitly specified residue labeling.
+
 ~~~
 ./prank.sh analyze labeled-residues <dataset.ds>
 ~~~
@@ -27,10 +29,13 @@ Analyze a dataset with an explicitly specified residue labeling.
 
 ## Export feature vectors for further analysis
 
+`-delete_vectors 0`           
+`xyz` is a dummy feature that stores 3D coordinates of give SAS point.   
+
 ~~~
 ./prank.sh traineval -t test_data/basic.ds -e test_data/basic.ds \
     -loop 1 -delete_vectors 0 -sample_negatives_from_decoys 0 \
-    -features '(chem.volsite.protrusion.bfactor.xyz)'
+    -features '(chem,volsite,protrusion,bfactor,xyz)'
 ~~~
 
 
