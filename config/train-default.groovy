@@ -26,6 +26,7 @@ import cz.siret.prank.program.params.Params
     fail_fast = false
 
     seed = 42
+    
     loop = 1
 
     out_prefix_date = false
@@ -38,10 +39,6 @@ import cz.siret.prank.program.params.Params
 
     clear_sec_caches = false
 
-    /**
-     * calculate feature importance
-     * available only for some classifiers
-     */
     feature_importances = false
 
     output_only_stats = true
@@ -60,22 +57,22 @@ import cz.siret.prank.program.params.Params
 
     zip_log_file = true
 
+//===========================================================================================================//
+
     /**
      * collect negatives just from decoy pockets found by other method
      * (alternatively take negative points from all of the protein's surface)
      *
-     * here set to true for backwards compatibility for training on *-fpocket.ds datasets in misc/test-scripts/testsets.sh script
+     * Default model was trained with value = true
      */
     sample_negatives_from_decoys = true
 
 
     /**
-     * Dummy param to preserve behaviour of older versions.
+     * Dummy param to preserve behaviour(=bug) of older versions.
      * Should be set to true for training new models.
-     *
-     * If true sign of value is reapplied after transformation by atom_table_feat_pow
      */
-    atom_table_feat_keep_sgn = true
+    atom_table_feat_keep_sgn = false
 
 //===========================================================================================================//
 

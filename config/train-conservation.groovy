@@ -21,13 +21,14 @@ import cz.siret.prank.program.params.Params
     max_train_instances = 0
 
     /**
-     * stop processing a dataset on the first unrecoverable error with a dataset item
+     * stop processing a dataset on the first error with a dataset item
      */
     fail_fast = false
 
     classifier="FasterForest"
 
     seed = 42
+    
     loop = 1
 
     out_prefix_date = false
@@ -40,10 +41,6 @@ import cz.siret.prank.program.params.Params
 
     clear_sec_caches = false
 
-    /**
-     * calculate feature importance
-     * available only for some classifiers
-     */
     feature_importances = false
 
     output_only_stats = true
@@ -62,22 +59,22 @@ import cz.siret.prank.program.params.Params
 
     zip_log_file = true
 
+//===========================================================================================================//
+
     /**
      * collect negatives just from decoy pockets found by other method
      * (alternatively take negative points from all of the protein's surface)
      *
-     * here set to true for backwards compatibility for training on *-fpocket.ds datasets in misc/test-scripts/testsets.sh script
+     * Default conservation model was trained with value = false
      */
-    sample_negatives_from_decoys = true
+    sample_negatives_from_decoys = false
 
 
     /**
-     * Dummy param to preserve behaviour of older versions.
+     * Dummy param to preserve behaviour(=bug) of older versions.
      * Should be set to true for training new models.
-     *
-     * If true sign of value is reapplied after transformation by atom_table_feat_pow
      */
-    atom_table_feat_keep_sgn = true
+    atom_table_feat_keep_sgn = false
 
 //===========================================================================================================//
 
