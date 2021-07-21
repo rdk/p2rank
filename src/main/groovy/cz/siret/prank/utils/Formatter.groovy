@@ -61,7 +61,7 @@ class Formatter {
         else if (val instanceof Integer || val instanceof Long)
             sprintf "%8d", val
         else if (val instanceof Number)
-            sprintf "%8.3f", val
+            sprintf "%8.4f", val
         else
             ""+val
     }
