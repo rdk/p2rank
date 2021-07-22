@@ -178,7 +178,7 @@ We run `ploop` comand to try different dombination of parameter values and produ
 ~~~
 
 Notes:
-* `-hopt_train_only_once 1` causes that only one RF model is trained in the beggiging ant then is simpl evaluated
+* `-hopt_train_only_once 1` causes that only one RF model is trained in the beggining and then is simply evaluated for evry point (parameter values).
 * Ideally, it should be executed with `-hopt_train_only_once 0 -loop 10` but it would be computationally very expensive.
 * Now the results capure peculiarties of one trained RF model, but for illustration might be sufficient.
 
