@@ -62,12 +62,12 @@ Details and a case study follows.
 
 * pocket prediction metrics
     - `DCA_4_0` - (considering top n+0 pockets)
-    - `DCA_4_2`   (considering top n+2 pockets)
+    - `DCA_4_2` - (considering top n+2 pockets)
     - `DSWO_05_0`- discretized surface weighted overlap: pocket is considered correctly predicted iff
       at least 0.5 (50%) of the ligand is covered by the pocket and
       at least 0.2 (20%) of the pocket is covered by the ligand
       (considering top n+0 pockets). Discretized because it is not based on a real volume but on the count of SAS points as proxy of the volume.
-    - `LIGAND_COVERAGE` - what % of ligands (in terms of volume) is covered by positively predicted SAS points. 
+    - `LIGAND_COVERAGE` - what % of ligands (in terms of volume) is covered by positively predicted SAS points. Discretized as `DSWO_05_0`.
 * point metrics 
     - `point_AUPRC`
     - `point_AUC`
