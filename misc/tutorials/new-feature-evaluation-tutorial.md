@@ -179,10 +179,10 @@ Notes:
 
 Results:
 
-Without conservation (`DCA_4_0`):  
+Without conservation (heatmap of `DCA_4_0`, x: `point_score_pow` y: `pred_point_threshold`):  
 ![DCA_4_0 default](img/feature-tutorial/DCA_4_0_default.png)
 
-With conservation (`DCA_4_0`):    
+With conservation (heatmap of `DCA_4_0`, x: `point_score_pow` y: `pred_point_threshold`):    
 ![DCA_4_0 Conservation](img/feature-tutorial/DCA_4_0_cons.png)
 
 Conclusions: 
