@@ -147,7 +147,7 @@ Conclusions:
 * `point_SCORE_*` metrics show that predicted SAS point scores have somewhat different distributions.
 * `point_AUPRC` and `point_AUC` suggest that conservation helps to train better classifier
 * however, `DCA` metrics for conservation are slightly worse (although, for `DCA_4_0` only by 1 pocket)
-* `LIGAND_COVERAGE` furthermode sugest that conservation helps to make better predictions (pockets better covering the ligands)
+* `LIGAND_COVERAGE` furthermore sugest that conservation helps to make better predictions (pockets better covering the ligands)
 
 
 #### Next, we take a look how 2 parameters influence `DCA` metrics.
