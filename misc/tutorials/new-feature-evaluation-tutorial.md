@@ -201,7 +201,7 @@ This time we can afford to properly evaluate result of 5 runs with different ran
 
 
 ~~~bash
-./prank.sh ploop -t chen11-fpocket.ds -e joined.ds -c config/train-default -out_subdir CASE -label BOPT_DEFA \
+./prank.sh hopt -t chen11-fpocket.ds -e joined.ds -c config/train-default -out_subdir CASE -label BOPT_DEFA \
     -sample_negatives_from_decoys 1 \
     -hopt_optimizer 'pygpgo' \
     -hopt_python_command 'python3' \
@@ -210,7 +210,7 @@ This time we can afford to properly evaluate result of 5 runs with different ran
     -pred_point_threshold '(0.2,0.6)' \
     -point_score_pow '(1,5)'
 
-./prank.sh ploop -t chen11-fpocket.ds -e joined.ds -c config/train-conservation -out_subdir CASE -label BOPT_CONS \
+./prank.sh hopt -t chen11-fpocket.ds -e joined.ds -c config/train-conservation -out_subdir CASE -label BOPT_CONS \
     -conservation_dirs '(chen11/conservation/e5i1/scores,joined/conservation/e5i1/scores)' \
     -sample_negatives_from_decoys 1 \
     -hopt_optimizer 'pygpgo' \
