@@ -171,6 +171,7 @@ We run `ploop` comand to try different dombination of parameter values and produ
     -point_score_pow '[0.5:5:0.5]'
 
 ./prank.sh ploop -t chen11-fpocket.ds -e joined.ds -c config/train-conservation -out_subdir CASE -label GRID_CONS \
+    -conservation_dirs '(chen11/conservation/e5i1/scores,joined/conservation/e5i1/scores)' \
     -sample_negatives_from_decoys 1 \
     -hopt_train_only_once 1 \
     -pred_point_threshold '[0.3:0.7:0.025]' \
@@ -212,6 +213,7 @@ This time we can afford to properly evaluate result of 5 runs with different ran
     -point_score_pow '(1,5)'
 
 ./prank.sh ploop -t chen11-fpocket.ds -e joined.ds -c config/train-conservation -out_subdir CASE -label BOPT_CONS \
+    -conservation_dirs '(chen11/conservation/e5i1/scores,joined/conservation/e5i1/scores)' \
     -sample_negatives_from_decoys 1 \
     -hopt_optimizer 'pygpgo' \
     -hopt_python_command 'python3' \
