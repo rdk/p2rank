@@ -49,7 +49,7 @@ This question is more complicated that it may seem.
                                    
 * Short answer: If it improves `point_AUPRC`, it is discriminative, and it has a potential to help P2Rank to make better predictions.
 * Slightly longer answer: Better way to compare models is using DCA metrics (`DCA_4_0`,`DCA_4_2`...) in combination with some metric 
-  that takes into account pocket shapes, like `LIGAND_COVERAGE` metric. 
+  that takes into account pocket shapes, like `LIGAND_COVERAGE` or `DSWO_05_0` metric. 
 * More complete answer: Even if `point_AUPRC` is improved, DCA and other pocket matrics may stay roughly the same, or even get worse. 
   The reason is that adding new feature can substantially change the distribution of predicted SAS point scores.
   DCA and other pocket metrics then depend on some parameters that were optimized on a diffrent score distribution.
@@ -61,8 +61,12 @@ Details and a case study follows.
 ### Introduction to metrics
 
 * pocket prediction metrics
-    - `DCA_4_0`
-    - `DCA_4_2`
+    - `DCA_4_0` - (considering top n+0 pockets)
+    - `DCA_4_2`   (considering top n+2 pockets)
+    - `DSWO_05_0`- discretized surface weighted overlap: pocket is considered correctly predicted iff
+      at least 0.5 (50%) of the ligand is covered by the pocket and
+      at least 0.2 (20%) of the pocket is covered by the ligand
+      (considering top n+0 pockets). Discretized because it is not based on a real volume but on the count of SAS points as proxy of the volume.
     - `LIGAND_COVERAGE` - what % of ligands (in terms of volume) is covered by positively predicted SAS points. 
 * point metrics 
     - `point_AUPRC`
