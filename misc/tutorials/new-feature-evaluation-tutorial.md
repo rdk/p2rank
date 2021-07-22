@@ -96,7 +96,7 @@ Default P2Rank models are not optimized for residue metrics.
 
 ### Case study - conservation feature
 
-##### First, we run training and evaluation for models with and without conservaion to illustrate mentioned poits.
+#### First, we run training and evaluation for models with and without conservaion to illustrate mentioned poits.
                                      
 Notes: 
 * The default model was trained with `-sample_negatives_from_decoys 1` and the default conservation model with `-sample_negatives_from_decoys 0`.
@@ -152,7 +152,7 @@ Conclusions:
 * `LIGAND_COVERAGE` furthermode sugest that conservation helps to make better predictions (pockets better covering the ligands)
 
 
-##### Next, we take a look how 2 parameters influence `DCA` metrics.
+#### Next, we take a look how 2 parameters influence `DCA` metrics.
 
 Parameters:
 * `pred_point_threshold`:  if predicted score of SAS point is >= `pred_point_threshold`, 
@@ -161,7 +161,7 @@ Parameters:
   Values higher than 1 give unlinearly higher "weight" to points whit higher predicted scores. Helps to give higher pocket
   score to a smaller pockets which are predicted with higer "certainty".
         
-We run `ploop` comand to try ifferent dombination of parameter values and produce 2D heatmap charts.
+We run `ploop` comand to try different dombination of parameter values and produce 2D heatmap charts.
 
 ~~~bash
 ./prank.sh ploop -t chen11-fpocket.ds -e joined.ds -c config/train-default -out_subdir CASE -label GRID_DEFA \
@@ -194,7 +194,7 @@ Conclusions:
 * Model with conservation might achieve better `DCA` results (as expected) when parameters are properly optimized.
 
 
-##### Runing bayessian optimization
+#### Runing bayessian optimization
                                                                                          
 We can try to optimize those 2 parameters with bayessian optimization. For installation see [optimization tutorial](hyperparameter-optimization-tutorial.md).
 
