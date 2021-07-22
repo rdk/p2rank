@@ -106,9 +106,8 @@ Notes:
 * `-loop 10` does 10 runs with different random seed and averages results.
 
 ~~~bash
-./prank.sh traineval -c config/train-default -out_subdir CASE -label DEFA \
+./prank.sh traineval -t chen11-fpocket.ds -e joined.ds -c config/train-default -out_subdir CASE -label DEFA \
     -sample_negatives_from_decoys 1 \
-    -t chen11-fpocket.ds -e joined.ds \
     -loop 10 
     
     # point_SCORE_AVG,        0.0571
@@ -124,10 +123,9 @@ Notes:
     # LIGAND_COVERAGE:  0.5571
     # DSWO_05_0:   0.7150
 
-./prank.sh traineval -c config/train-conservation -out_subdir CASE -label CONS \
-    -t chen11-fpocket.ds -e joined.ds \
-    -sample_negatives_from_decoys 1 \
+./prank.sh traineval -t chen11-fpocket.ds -e joined.ds -c config/train-conservation -out_subdir CASE -label CONS \
     -conservation_dirs '(chen11/conservation/e5i1/scores,joined/conservation/e5i1/scores)' \
+    -sample_negatives_from_decoys 1 \
     -loop 10 
     
     # point_SCORE_AVG:        0.0580
