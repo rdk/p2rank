@@ -7,9 +7,9 @@ Read this if you want to implement a new feature and evaluate if it contributes 
 New features can be added by implementing `FeatureCalculator` interface and registering the implementation in `FeatureRegistry`.
 You can implement the feature by extending one of the convenience abstract classes `AtomFeatureCalculator` or `SasFeatureCalculator`.
 
-You need to decide if the new feature will be associated with protein surface (i.e. solvent exposed) atoms or with SAS (Solvent Accessible Surface) points. 
+You need to decide if the new feature will be associated with protein surface (i.e. solvent exposed) atoms or with SAS points (SAS=Solvent Accessible Surface). 
 P2Rank works by classifying SAS point feature vectors. 
-If you associate the feature with atoms its value will be projected to SAS point feature vectors by P2Rank from neighbouring atoms.
+If you associate the feature with atoms, its value will be projected to SAS point feature vectors by P2Rank from neighbouring atoms.
 
 Some features are more naturally defined for atoms rather than for SAS points and other way around. See `BfactorFeature` and `ProtrusionFeature` for comparison.
 
@@ -18,7 +18,7 @@ Some features are more naturally defined for atoms rather than for SAS points an
 
  1. Prepare the environment (see _Preparing the environment_ in `training-tutorial.md`)
 
- 2. Check `config/train-new-default.groovy` config file. It contains configuration ideal for training new models, but you might need to make changes or override some params on the command line. 
+ 2. Check `config/train-default.groovy` config file. It contains configuration ideal for training new models, but you might need to make changes or override some params on the command line. 
  
  3. Train with the new feature
     * train with the new feature by adding its name to the list of `-features`. e.g.:
@@ -48,12 +48,12 @@ Is it helping to predict more binding sites, and/or more precisely predict their
 This question is more complicated that it may seem. 
                                    
 * Short answer: If it improves `point_AUPRC`, it is discriminative, and it has a potential to help P2Rank to make better predictions.
-* Slightly longer answer: Better way to compare models is using DCA metrics (`DCA_4_0`,`DCA_4_2`...) in combination with some metric 
+* Slightly longer answer: Better way to compare models is using `DCA` metrics (`DCA_4_0`,`DCA_4_2`...) in combination with some metric 
   that takes into account pocket shapes, like `LIGAND_COVERAGE` or `DSWO_05_0` metric. 
 * More complete answer: Even if `point_AUPRC` is improved, DCA and other pocket matrics may stay roughly the same, or even get worse. 
   The reason is that adding new feature can substantially change the distribution of predicted SAS point scores.
-  DCA and other pocket metrics then depend on some parameters that were optimized on a diffrent score distribution.
-  To get a meaningful comparison of DCA metrics, it is necessary to perform oprimization of at least some basic parameters (`pred_point_threshold`, `point_score_pow`).
+  `DCA` and other pocket metrics then depend on some parameters that were optimized on a diffrent score distribution.
+  To get a meaningful comparison of `DCA` metrics, it is necessary to perform oprimization of at least some basic parameters (`pred_point_threshold`, `point_score_pow`).
              
       
 Details and a case study follows.           
@@ -87,7 +87,7 @@ We are mainly focused on 1., while considering 3. just a poor way of looking at 
 (It was used mainly for algorithms that predict just from sequence because it is the most natural -- or rather, the easiest.)
 Considering 2. can give a useful hints while training and optimizing new model to be better at 1.
 
-Why are residue metrics inadequate? See the discussion on 'Residue-centric versus pocket-centric perspective'
+Why are the residue metrics inadequate? See the discussion on 'Residue-centric versus pocket-centric perspective'
 in the [paper](https://doi.org/10.1186/s13321-018-0285-8).       
 
 Note: residue metrics are available only when P2Rank is executed in residue mode (`-predict_residues 1`). 
@@ -144,9 +144,9 @@ Notes:
 ~~~
    
 Conclusions: 
-* `point_SCORE_*` metris show that predicted SAS point scores have somewhat different distributions.
+* `point_SCORE_*` metrics show that predicted SAS point scores have somewhat different distributions.
 * `point_AUPRC` and `point_AUC` suggest that conservation helps to train better classifier
-* however `DCA` metrics for conservation are slightly worse (although, for `DCA_4_0` only by 1 pocket)
+* however, `DCA` metrics for conservation are slightly worse (although, for `DCA_4_0` only by 1 pocket)
 * `LIGAND_COVERAGE` furthermode sugest that conservation helps to make better predictions (pockets better covering the ligands)
 
 
