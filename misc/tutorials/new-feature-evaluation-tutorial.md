@@ -53,7 +53,7 @@ This question is more complicated that it may seem.
 * More complete answer: Even if `point_AUPRC` is improved, DCA and other pocket matrics may stay roughly the same, or even get worse. 
   The reason is that adding new feature can substantially change the distribution of predicted SAS point scores.
   `DCA` and other pocket metrics then depend on some parameters that were optimized on a diffrent score distribution.
-  To get a meaningful comparison of `DCA` metrics, it is necessary to perform oprimization of at least some basic parameters (`pred_point_threshold`, `point_score_pow`).
+  To get a meaningful comparison of `DCA` metrics, it is necessary to perform optimization of at least some basic parameters (`pred_point_threshold`, `point_score_pow`).
              
       
 Details and a case study follows.           
