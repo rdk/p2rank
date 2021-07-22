@@ -179,10 +179,10 @@ Notes:
 
 Results:
 
-Without conservation:  img/feature-turotial/DCA_4_0_cons.png
+Without conservation (`DCA_4_0`):  
 ![DCA_4_0 default](img/feature-tutorial/DCA_4_0_default.png)
 
-With conservation:      img/feature-turotial/DCA_4_0_cons.png
+With conservation (`DCA_4_0`):    
 ![DCA_4_0 Conservation](img/feature-tutorial/DCA_4_0_cons.png)
 
 Conclusions: 
