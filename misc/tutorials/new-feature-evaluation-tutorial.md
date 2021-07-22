@@ -87,18 +87,19 @@ We are mainly focused on 1., while considering 3. just a poor way of looking at 
 (It was used mainly for algorithms that predict just from sequence because it is the most natural -- or rather, the easiest.)
 Considering 2. can give a useful hints while training and optimizing new model to be better at 1.
 
+Why are residue metrics inadequate? See the discussion on 'Residue-centric versus pocket-centric perspective'
+in the [paper](https://doi.org/10.1186/s13321-018-0285-8).       
+
 Note: residue metrics are available only when P2Rank is executed in residue mode (`-predict_residues 1`). 
 Default P2Rank models are not optimized for residue metrics.
 
-Why are residue metrics inadequate? See the discussion on 'Residue-centric versus pocket-centric perspective' 
-in the [paper](https://doi.org/10.1186/s13321-018-0285-8).
 
 ### Case study - conservation feature
 
 ##### First, we run training and evaluation for models with and without conservaion to illustrate mentioned poits.
                                      
 Notes: 
-* The default model was trained with `-sample_negatives_from_decoys 1` and conservation with `-sample_negatives_from_decoys 0`.
+* The default model was trained with `-sample_negatives_from_decoys 1` and the default conservation model with `-sample_negatives_from_decoys 0`.
   Here we need to use the same value: otherwise the distribution of positve and negative instances (SAS points) would be different 
   and `point_AUPRC` and `point_AUC` would be uncomparable.
 * Training on `chen11-fpocket.ds` because we are using `sample_negatives_from_decoys 1`.                   
