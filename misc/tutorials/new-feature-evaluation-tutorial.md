@@ -156,10 +156,10 @@ Parameters:
 * `pred_point_threshold`:  if predicted score of SAS point is >= `pred_point_threshold`, 
   the point is classified as positive (=ligand binding) and such points are clustered to form pockets.  
 * `point_score_pow`: exponent applied to the point score before it is included in the cumulative score of the pocket. 
-  Values higher than 1 give unlinearly higher "weight" to points whit higher predicted scores. Helps to give higher pocket
-  score to a smaller pockets which are predicted with higer "certainty".
+  Values higher than 1 give unlinearly higher "weight" to the points whith a higher predicted scores. Helps to give higher pocket
+  score to a smaller pockets which are predicted with higher "certainty".
         
-We run `ploop` comand to try different dombination of parameter values and produce 2D heatmap charts.
+We run `ploop` comand to try different combination of parameter values and to produce 2D heatmap charts.
 
 ~~~bash
 ./prank.sh ploop -t chen11-fpocket.ds -e joined.ds -c config/train-default -out_subdir CASE -label GRID_DEFA \
@@ -177,9 +177,9 @@ We run `ploop` comand to try different dombination of parameter values and produ
 ~~~
 
 Notes:
-* `-hopt_train_only_once 1` causes that only one RF model is trained in the beggining and then is simply evaluated for evry point (parameter values).
-* Ideally, it should be executed with `-hopt_train_only_once 0 -loop 10` but it would be computationally very expensive.
-* Now the results capure peculiarties of one trained RF model, but for illustration might be sufficient.
+* `-hopt_train_only_once 1` causes that only one RF model is trained in the beginning and then it is simply evaluated for every point (parameter values).
+* Ideally, it should be executed with `-hopt_train_only_once 0 -loop 10` but that would be computationally very expensive.
+* Now, the results also capure peculiarties of the one particular trained RF model, but for illustration it is hopefully sufficient.
 
 Results:
 
@@ -193,11 +193,11 @@ Conclusions:
 * Model with conservation might achieve better `DCA` results (as expected) when parameters are properly optimized.
 
 
-#### Runing bayessian optimization
+#### Running bayesian optimization
                                                                                          
-We can try to optimize those 2 parameters with bayessian optimization. For installation see [optimization tutorial](hyperparameter-optimization-tutorial.md).
+We can try to optimize those 2 parameters with bayesian optimization. For the instructions how to set it up see [optimization tutorial](hyperparameter-optimization-tutorial.md).
 
-This time we can afford to properly evaluate result of 5 runs with different random seed for each ponint. 
+This time, we can afford to properly evaluate the average results of 5 runs with different random seed for each ponint. 
 
 
 ~~~bash
