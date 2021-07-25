@@ -146,9 +146,16 @@ class Experiments extends Routine {
 
         TrainEvalRoutine iter = new TrainEvalRoutine(outdir, trainData, evalData)
 
-        if (Params.inst.collect_only_once) {
-            iter.collectTrainVectors()
-            if (Params.inst.collect_eval_vectors) {
+        if (params.collect_only_once) {
+            if (!context.trainVectorsCollected) {
+                iter.collectTrainVectors()
+                context.trainVectorsCollected = true
+                context.trainVectors = iter.trainVectors
+            } else {
+                iter.trainVectors = context.trainVectors
+            }
+
+            if (params.collect_eval_vectors) {
                 iter.collectEvalVectors() // collect and save to disk for further inspection
             }
         }
@@ -160,7 +167,7 @@ class Experiments extends Routine {
         EvalRoutine trainEvalRoutine = new EvalRoutine(outdir) {
             @Override
             EvalResults execute() {
-                if (!Params.inst.collect_only_once) { // ensures that if subsampling is turned on it is done before each training
+                if (!params.collect_only_once) { // ensures that if subsampling is turned on it is done before each training
                     iter.collectTrainVectors()
                 }
 
@@ -229,15 +236,15 @@ class Experiments extends Routine {
             res = doTrainEval(dir, trainData, evalData, context)
         }
 
-        if (Params.inst.ploop_delete_runs) {
+        if (params.ploop_delete_runs) {
             async { Futils.delete(dir) }
         }
 
-        if (Params.inst.clear_sec_caches) {
+        if (params.clear_sec_caches) {
             trainData.clearSecondaryCaches()
             evalData?.clearSecondaryCaches()
         }
-        if (Params.inst.clear_prim_caches) {
+        if (params.clear_prim_caches) {
             trainData.clearPrimaryCaches()
             evalData?.clearPrimaryCaches()
         }

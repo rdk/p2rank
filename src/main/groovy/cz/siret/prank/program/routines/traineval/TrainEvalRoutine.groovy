@@ -2,6 +2,7 @@ package cz.siret.prank.program.routines.traineval
 
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.prediction.metrics.ClassifierStats
+import cz.siret.prank.program.ml.FeatureVectors
 import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.routines.results.EvalResults
@@ -33,13 +34,7 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
     Dataset trainDataSet
     Dataset evalDataSet
 
-    boolean deleteModel = params.delete_models
-    boolean deleteVectors = params.delete_vectors
-
-    Instances trainVectors
-
-    int train_positives
-    int train_negatives
+    FeatureVectors trainVectors
 
     // may be same between iterations
     private String trainVectorFile
@@ -68,7 +63,7 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
         collectTrainVectors()
         EvalResults res = trainAndEvalModel()
 
-        if (deleteVectors)
+        if (params.delete_vectors)
             deleteVectorFiles()
 
         return res
@@ -91,21 +86,18 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
         doCollectVectors(evalDataSet, vectf)
     }
 
-    private Instances doCollectVectors(Dataset dataSet, String vectFileName) {
+    private FeatureVectors doCollectVectors(Dataset dataSet, String vectFileName) {
         ATimer timer = startTimer()
 
         mkdirs(outdir)
 
         CollectVectorsRoutine collector = new CollectVectorsRoutine(dataSet, outdir, vectFileName)
 
-        def res = collector.collectVectors()
-        Instances inst = res.instances
-        train_positives = res.positives
-        train_negatives = res.negatives
+        FeatureVectors res = collector.collectVectors()
 
         logTime "vectors collected in " + timer.formatted
 
-        return inst
+        return res
     }
 
     void deleteVectorFiles() {
@@ -113,10 +105,10 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
         Futils.delete(evalVectorFile)
     }
 
-    ClassifierStats calculateTrainStats(Classifier classifier, Instances trainVectors) {
+    ClassifierStats calculateTrainStats(Classifier classifier, FeatureVectors trainVectors) {
         if (params.classifier_train_stats) {
             ClassifierStats trainStats = new ClassifierStats()
-            for (Instance inst : trainVectors) {
+            for (Instance inst : trainVectors.instances) {
                 double[] hist = classifier.distributionForInstance(inst)
                 double score = normalizedScore(hist)
                 boolean predicted = applyPointScoreThreshold(score)
@@ -161,11 +153,7 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
             model = Model.createNewFromParams(params)
             modelf = "$outdir/${model.label}.model"
 
-            if (trainVectors == null) {
-                trainVectors = WekaUtils.loadData(trainVectorFile)
-            }
-
-            write "training classifier ${model.classifier.getClass().name} on dataset with ${trainVectors.size()} instances"
+            write "training classifier ${model.classifier.getClass().name} on dataset with ${trainVectors.count} instances"
 
             def trainTimer = startTimer()
             WekaUtils.trainClassifier(model.classifier, trainVectors)
@@ -194,14 +182,14 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
 
         EvalResults res = evalRoutine.execute()
         res.totalTrainingTime = trainTime
-        res.train_positives = train_positives
-        res.train_negatives = train_negatives
+        res.train_positives = trainVectors.positives
+        res.train_negatives = trainVectors.negatives
         res.featureImportances = featureImportances
         res.classifierTrainStats = trainStats
 
         logTime "evaluation routine on dataset [$evalDataSet.name] finished in " + timer.formatted
 
-        if (deleteModel)
+        if (params.delete_models)
             Futils.delete(modelf)
 
         return res

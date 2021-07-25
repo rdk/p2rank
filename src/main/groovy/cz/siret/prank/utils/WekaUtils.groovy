@@ -1,6 +1,7 @@
 package cz.siret.prank.utils
 
 import cz.siret.prank.program.PrankException
+import cz.siret.prank.program.ml.FeatureVectors
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
@@ -107,9 +108,9 @@ class WekaUtils {
         return (Classifier) SerializationHelper.read(path.class.getResourceAsStream(path));
     }
 
-    static void trainClassifier(Classifier classifier, Instances data) {
-        validateDataset(data)
-        classifier.buildClassifier(data)
+    static void trainClassifier(Classifier classifier, FeatureVectors data) {
+        validateDataset(data.instances)
+        classifier.buildClassifier(data.instances)
     }
 
     static void validateDataset(Instances data) {

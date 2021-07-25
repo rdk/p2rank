@@ -2,6 +2,7 @@ package cz.siret.prank.program.routines.traineval
 
 import cz.siret.prank.collectors.DataPreprocessor
 import cz.siret.prank.domain.Dataset
+import cz.siret.prank.program.ml.FeatureVectors
 import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.WekaUtils
@@ -56,7 +57,7 @@ class CrossValidation extends EvalRoutine {
 
                 String label = "fold.${numFolds}.${fold.num}"
                 TrainEvalRoutine iter = new TrainEvalRoutine("$outdir/$label", fold.data.trainset, fold.data.evalset)
-                iter.trainVectors = fold.trainVectors // pre-collected vectors
+                iter.trainVectors = FeatureVectors.fromInstances(fold.trainVectors) // pre-collected vectors
 
                 return iter.trainAndEvalModel()
             } as List<EvalResults>

@@ -8,6 +8,7 @@ import cz.siret.prank.domain.Dataset
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.features.FeatureVector
 import cz.siret.prank.program.PrankException
+import cz.siret.prank.program.ml.FeatureVectors
 import cz.siret.prank.program.routines.Routine
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.PerfUtils
@@ -51,7 +52,7 @@ class CollectVectorsRoutine extends Routine {
     /**
      * collects 
      */
-    Result collectVectors() {
+    FeatureVectors collectVectors() {
         def timer = startTimer()
 
         write "collecting vectors from dataset [$dataset.name]"
@@ -97,13 +98,10 @@ class CollectVectorsRoutine extends Routine {
 
         write "preparing instance dataset...."
         Instances data = prepareDataForWeka(instList, vectf)
-        positives = WekaUtils.countPositives(data)
-        negatives = WekaUtils.countNegatives(data)
-        count = positives + negatives
 
         logTime "collecting vectors finished in $timer.formatted"
 
-        return new Result(instances: data, count: count, positives: positives, negatives: negatives)
+        return FeatureVectors.fromInstances(data)
     }
 
 
@@ -132,14 +130,6 @@ class CollectVectorsRoutine extends Routine {
         }
 
         return data
-    }
-
-    @TupleConstructor
-    static class Result {
-        Instances instances
-        int count
-        int positives
-        int negatives
     }
 
 }
