@@ -142,7 +142,7 @@ class Experiments extends Routine {
      * train/eval on different datasets for different seeds
      * collecting train vectors only once and training+evaluating many times
      */
-    private static EvalResults doTrainEval(String outdir, Dataset trainData, Dataset evalData) {
+    private EvalResults doTrainEval(String outdir, Dataset trainData, Dataset evalData, TrainEvalContext context) {
 
         TrainEvalRoutine iter = new TrainEvalRoutine(outdir, trainData, evalData)
 
@@ -153,7 +153,11 @@ class Experiments extends Routine {
             }
         }
 
-        EvalRoutine trainRoutine = new EvalRoutine(outdir) {
+        if (context.cacheModels) {
+            iter.withModelCache(context.modelCache)
+        }
+
+        EvalRoutine trainEvalRoutine = new EvalRoutine(outdir) {
             @Override
             EvalResults execute() {
                 if (!Params.inst.collect_only_once) { // ensures that if subsampling is turned on it is done before each training
@@ -166,7 +170,7 @@ class Experiments extends Routine {
             }
         }
 
-        return new SeedLoop(trainRoutine, outdir).execute()
+        return new SeedLoop(trainEvalRoutine, outdir).execute()
     }
 
 //===========================================================================================================//
@@ -175,7 +179,8 @@ class Experiments extends Routine {
      * implements command: 'prank traineval...  '
      */
     public EvalResults traineval() {
-        doTrainEval(outdir, trainDataset, evalDataset)
+        TrainEvalContext context = new TrainEvalContext()
+        doTrainEval(outdir, trainDataset, evalDataset, context)
     }
 
     /**
@@ -193,24 +198,35 @@ class Experiments extends Routine {
 
         String topOutdir = outdir
 
+        TrainEvalContext context = createOptimizationContext()
+
         GridOptimizer go = new GridOptimizer(topOutdir, rparams)
         go.init()
         go.runGridOptimization { String iterDir ->
-            return runExperimentStep(iterDir, trainDataset, evalDataset, doCrossValidation)
+            return runExperimentStep(iterDir, trainDataset, evalDataset, context, doCrossValidation)
         }
+    }
+
+    private TrainEvalContext createOptimizationContext() {
+        TrainEvalContext context = TrainEvalContext.create()
+        if (params.hopt_train_only_once && params.loop > 1) {
+            context.cacheModels = true
+            context.modelCache = ModelCache.create()
+        }
+        return context
     }
 
     /**
      * run traineval or crossvalidation with current parameter assignment
      */
-    private static EvalResults runExperimentStep(String dir, Dataset trainData, Dataset evalData, boolean doCrossValidation) {
+    private EvalResults runExperimentStep(String dir, Dataset trainData, Dataset evalData, TrainEvalContext context, boolean doCrossValidation) {
         EvalResults res
 
         if (doCrossValidation) {
             EvalRoutine routine = new CrossValidation(dir, trainData)
             res = new SeedLoop(routine, dir).execute()
         } else {
-            res = doTrainEval(dir, trainData, evalData)
+            res = doTrainEval(dir, trainData, evalData, context)
         }
 
         if (Params.inst.ploop_delete_runs) {
@@ -238,8 +254,10 @@ class Experiments extends Routine {
         HyperOptimizer ho = new HyperOptimizer(outdir, ListParam.parseListArgs(cmdLineArgs))
         ho.init()
 
-        ho.optimizeParameters {  String stepDir ->
-            return runExperimentStep(stepDir, trainDataset, evalDataset, doCrossValidation)
+        TrainEvalContext context = createOptimizationContext()
+
+        ho.optimizeParameters { String stepDir ->
+            return runExperimentStep(stepDir, trainDataset, evalDataset, context, doCrossValidation)
         }
     }
 

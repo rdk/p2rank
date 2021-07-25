@@ -57,7 +57,7 @@ class SeedLoop extends EvalRoutine {
         } else {
             logSummaryResults("--", "evaluation", results)
         }
-        params.seed = origSeed // set seed back for other experiments
+        params.seed = origSeed // set seed back to original value for other experiments
 
         write "avg training time: " + Formatter.formatTime(results.avgTrainingTime)
         write "first evaluation time: " + Formatter.formatTime(results.firstEvalTime)

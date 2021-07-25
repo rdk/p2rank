@@ -600,6 +600,7 @@ class Params {
     @RuntimeParam
     boolean cache_datasets = false
 
+
     /**
      * calculate feature importances
      * available only for some classifiers
@@ -1114,11 +1115,26 @@ class Params {
 
 
     /**
-     * In hyper-parameter optimization (ploop and hopt commands) train model only once in the beginning
-     * (makes sense if optimized hyper-parameters don't influence training and feature extraction)
+     * Train model(s) only once in the beginning.
+     *
+     * Respects value of loop parameter.
+     * That is: if loop=10, then 10 models will be trained in the beginning
+     * and then average results will be calculated for every step of ploop or hopt run.
+     *
+     * Relevant only for hyper-parameter optimization (ploop and hopt commands).
+     * Makes sense only if optimized hyper-parameters don't influence training and feature extraction.
      */
     @RuntimeParam
     boolean hopt_train_only_once = false
+
+    /**
+     * Predict SAS poiont scores in the eval dataset only once.
+     * Relevant only for hyper-parameter optimization (ploop and hopt commands).
+     * Makes sense only in combination with hopt_train_only_once=true).
+     */
+    @RuntimeParam
+    boolean hopt_cache_labeled_points = false
+
 
     /**
      * Identifies set of pre-calculated propensity tables for duplets/triplets features.

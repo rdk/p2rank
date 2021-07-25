@@ -39,6 +39,9 @@ class CrossValidation extends EvalRoutine {
     }
 
 
+    /**
+     * TODO make crossvalidation work with hopt_train_only_once
+     */
     @CompileStatic(TypeCheckingMode.SKIP)
     @Override
     EvalResults execute() {

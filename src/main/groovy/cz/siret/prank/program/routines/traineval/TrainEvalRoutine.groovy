@@ -16,6 +16,9 @@ import weka.classifiers.trees.RandomForest
 import weka.core.Instance
 import weka.core.Instances
 
+import javax.annotation.Nonnull
+import javax.annotation.Nullable
+
 import static cz.siret.prank.prediction.pockets.PointScoreCalculator.applyPointScoreThreshold
 import static cz.siret.prank.prediction.pockets.PointScoreCalculator.normalizedScore
 import static cz.siret.prank.utils.ATimer.startTimer
@@ -43,12 +46,21 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
     private String evalVectorFile
 
     EvalRoutine evalRoutine
-    static Model staticModel = null
+
+    boolean cacheModels = false
+    @Nullable
+    ModelCache modelCache
 
     TrainEvalRoutine(String outdir, Dataset trainData, Dataset evalData) {
         super(outdir)
         this.trainDataSet = Objects.requireNonNull(trainData, "Training dataset was not provided. Run with '-t {train_dataset}.ds'")
         this.evalDataSet = Objects.requireNonNull(evalData, "Evaluation dataset was not provided. Run with '-e {eval_dataset}.ds'")
+    }
+
+    TrainEvalRoutine withModelCache(@Nonnull ModelCache modelCache) {
+        this.modelCache = modelCache
+        this.cacheModels = true
+        return this
     }
 
     EvalResults execute() {
@@ -118,11 +130,13 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
         }
     }
 
-    private static boolean ALTERADY_TRAINED = false
+    private String getModelCacheKey() {
+        return params.seed.toString()
+    }
 
-    boolean shouldTrainModel() {
-        if (params.hopt_train_only_once) {
-            return !ALTERADY_TRAINED
+    private boolean shouldTrainModel() {
+        if (cacheModels) {
+            return !modelCache.contains(modelCacheKey)
         } else {
             true
         }
@@ -147,7 +161,7 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
             model = Model.createNewFromParams(params)
             modelf = "$outdir/${model.label}.model"
 
-            if (trainVectors==null) {
+            if (trainVectors == null) {
                 trainVectors = WekaUtils.loadData(trainVectorFile)
             }
 
@@ -164,12 +178,13 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
             trainStats = calculateTrainStats(model.classifier, trainVectors)
             featureImportances = calcFeatureImportances(model)
 
-            if (params.hopt_train_only_once) {
-                ALTERADY_TRAINED = true
-                staticModel = model
+            if (cacheModels) {
+                write "storing model to cache (key: $modelCacheKey)"
+                modelCache.put(modelCacheKey, model)
             }
         } else {
-            model = staticModel
+            write "loading model from cache (key: $modelCacheKey)"
+            model = modelCache.get(modelCacheKey)
         }
 
         logTime "model prepared in " + timer.formatted
@@ -183,7 +198,6 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
         res.train_negatives = train_negatives
         res.featureImportances = featureImportances
         res.classifierTrainStats = trainStats
-
 
         logTime "evaluation routine on dataset [$evalDataSet.name] finished in " + timer.formatted
 
@@ -218,6 +232,5 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
 
         featureImportances
     }
-
 
 }
