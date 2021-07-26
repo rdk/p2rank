@@ -53,7 +53,8 @@ In case you optimize exactly 1 or 2 parameters, P2Rank will try to produce plots
 For that, you need to have `Rscript` on the PATH. Some libraries in R need to be installed first. 
 ~~~sh
 sudo apt install r-base
-sudo R -e "install.packages('ggplot2', dependencies=TRUE, repos='http://cran.us.r-project.org')"
+sudo R -e "install.packages(c('ggplot2','gplots','RColorBrewer'), dependencies=TRUE, repos='http://cran.us.r-project.org')"
+sudo R -e "update.packages(repos='http://cran.us.r-project.org', ask = FALSE)"  # possible fix for dependency conflicts
 ~~~
 
 #### Real examples
