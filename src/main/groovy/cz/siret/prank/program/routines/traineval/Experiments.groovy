@@ -9,7 +9,6 @@ import cz.siret.prank.program.Main
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.params.ListParam
-import cz.siret.prank.program.params.Params
 import cz.siret.prank.program.routines.Routine
 import cz.siret.prank.program.routines.optimize.GridOptimizer
 import cz.siret.prank.program.routines.optimize.HyperOptimizer
@@ -142,22 +141,25 @@ class Experiments extends Routine {
      * train/eval on different datasets for different seeds
      * collecting train vectors only once and training+evaluating many times
      */
-    private EvalResults doTrainEval(String outdir, Dataset trainData, Dataset evalData, TrainEvalContext context) {
+    private EvalResults doTrainEvalSeedloop(String outdir, Dataset trainData, Dataset evalData, TrainEvalContext context) {
 
         TrainEvalRoutine iter = new TrainEvalRoutine(outdir, trainData, evalData)
 
         if (params.collect_only_once) {
-            if (!context.trainVectorsCollected) {
+            if (params.hopt_train_only_once && context.trainVectorsCollected) {
+                // use pre-collected vectors from the context
+                // basically just for stats // TODO: remove need to keep all vectors in memory, stats are enough
+                iter.trainVectors = context.trainVectors
+            } else {
+                // collect new vectors at the beginning of the seedloop and put to cache
                 iter.collectTrainVectors()
                 context.trainVectorsCollected = true
                 context.trainVectors = iter.trainVectors
-            } else {
-                iter.trainVectors = context.trainVectors
             }
+        }
 
-            if (params.collect_eval_vectors) {
-                iter.collectEvalVectors() // collect and save to disk for further inspection
-            }
+        if (params.collect_eval_vectors) {
+            iter.collectEvalVectors() // collect and save to disk for further inspection
         }
 
         if (context.cacheModels) {
@@ -187,7 +189,7 @@ class Experiments extends Routine {
      */
     public EvalResults traineval() {
         TrainEvalContext context = new TrainEvalContext()
-        doTrainEval(outdir, trainDataset, evalDataset, context)
+        doTrainEvalSeedloop(outdir, trainDataset, evalDataset, context)
     }
 
     /**
@@ -233,7 +235,7 @@ class Experiments extends Routine {
             EvalRoutine routine = new CrossValidation(dir, trainData)
             res = new SeedLoop(routine, dir).execute()
         } else {
-            res = doTrainEval(dir, trainData, evalData, context)
+            res = doTrainEvalSeedloop(dir, trainData, evalData, context)
         }
 
         if (params.ploop_delete_runs) {
