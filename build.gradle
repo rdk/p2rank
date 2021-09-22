@@ -20,7 +20,7 @@ apply plugin: 'idea'
 
 
 group = 'cz.siret'
-version = '2.4-dev.3'
+version = '2.3.1'
 
 
 description = 'Ligand binding site prediction based on machine learning.'
@@ -52,7 +52,6 @@ processResources {
             "project_version": project.version
     ]
 }
-
 
 task copyDependenciesToDist( type: Copy ) {
     into "$buildDir/../distro/bin/lib"
@@ -179,4 +178,3 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
 
 }
-

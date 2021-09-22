@@ -12,6 +12,8 @@ import cz.siret.prank.utils.MathUtils
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.StringUtils
 
+import javax.annotation.concurrent.ThreadSafe
+
 import static cz.siret.prank.geom.Atoms.intersection
 import static cz.siret.prank.geom.Atoms.union
 import static cz.siret.prank.utils.Cutils.head
@@ -23,9 +25,8 @@ import static java.util.Collections.emptyList
  * Represents evaluation of pocket prediction on a dataset of proteins
  *
  * Allows to collect results for a set of different pocket identification success criteria simultaneously.
- *
- * Threadsafe.
  */
+@ThreadSafe
 @Slf4j
 class Evaluation implements Parametrized {
 
