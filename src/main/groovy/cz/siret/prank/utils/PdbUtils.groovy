@@ -6,8 +6,8 @@ import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.*
 import org.biojava.nbio.structure.io.FileParsingParameters
 import org.biojava.nbio.structure.io.PDBFileParser
-import org.biojava.nbio.structure.io.mmcif.ChemCompGroupFactory
-import org.biojava.nbio.structure.io.mmcif.ReducedChemCompProvider
+//import org.biojava.nbio.structure.io.mmcif.ChemCompGroupFactory
+//import org.biojava.nbio.structure.io.mmcif.ReducedChemCompProvider
 
 import static cz.siret.prank.geom.Struct.getAuthorId
 
@@ -35,7 +35,8 @@ class PdbUtils {
      * Tries to disable BioJava fetching external information since it leads to inconsistent protein parsing.
      */
     private static void disableBiojavaFetching() {
-        ChemCompGroupFactory.setChemCompProvider(new ReducedChemCompProvider()) 
+        // TODO Biojava6: find out if there is a new way to disable fetching
+//        ChemCompGroupFactory.setChemCompProvider(new ReducedChemCompProvider())
     }
 
     private static FileParsingParameters getParsingParams() {

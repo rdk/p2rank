@@ -123,7 +123,7 @@ class ConservationScore implements Parametrized {
         log.info "Matching pdb chain (n={}) with score chain (n={})", chain.size(), scores.size()
 
         // Check if the strings match
-        String pdbChain = chain.collect { group -> group.getChemComp().getOne_letter_code().toUpperCase() }.join("")
+        String pdbChain = chain.collect { group -> group.getChemComp().getOneLetterCode().toUpperCase() }.join("")
         String scoreChain = scores.collect { ch -> ch.letter.toUpperCase() }.join("")
 
         pdbChain = FastaExporter.maskFastaChain(pdbChain)
