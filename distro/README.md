@@ -4,7 +4,7 @@ P2Rank
 Ligand-binding site prediction based on machine learning.
 
 <p align="center">
-    <img src="http://siret.ms.mff.cuni.cz/krivak/p2rank/figures/points2_small.png" width="600">
+    <img src="https://github.com/rdk/p2rank/blob/develop/misc/img/p2rank_sas_points.png?raw=true" width="600">
 </p>
 
 [![version 2.3](https://img.shields.io/badge/version-2.3-green.svg)](/build.gradle)
