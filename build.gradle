@@ -149,7 +149,7 @@ dependencies {
     implementation 'org.apache.commons:commons-lang3:3.12.0'
     implementation 'commons-io:commons-io:2.11.0'
     implementation 'com.google.guava:guava:31.0.1-jre'
-    implementation 'com.google.code.gson:gson:2.8.8'
+    implementation 'com.google.code.gson:gson:2.8.9'
     implementation 'com.univocity:univocity-parsers:2.9.1' // csv parser
     implementation 'org.apache.commons:commons-csv:1.9.0'
     implementation 'org.zeroturnaround:zt-zip:1.14'
@@ -163,9 +163,9 @@ dependencies {
     implementation 'org.apache.logging.log4j:log4j-core:2.14.1'
     implementation 'org.slf4j:jul-to-slf4j:1.7.32'         // for netlib logging messages
 
-    implementation 'org.biojava:biojava-core:6.0.0-alpha8'
-    implementation 'org.biojava:biojava-alignment:6.0.0-alpha8'
-    implementation 'org.biojava:biojava-structure:6.0.0-alpha8'
+    implementation 'org.biojava:biojava-core:6.0.0'
+    implementation 'org.biojava:biojava-alignment:6.0.0'
+    implementation 'org.biojava:biojava-structure:6.0.0'
 //    implementation 'org.biojava.thirdparty:forester:1.039' // required by biojava 6
 //    implementation 'openchart:openchart:1.4.2'
 //    implementation 'javax.xml.bind:jaxb-api:2.3.1'      // extra dependencies of biojava for java 11
