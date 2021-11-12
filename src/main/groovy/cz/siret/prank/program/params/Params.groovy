@@ -1128,7 +1128,7 @@ class Params {
     boolean hopt_train_only_once = false
 
     /**
-     * Predict SAS poiont scores in the eval dataset only once.
+     * Predict SAS point scores in the eval dataset only once.
      * Relevant only for hyper-parameter optimization (ploop and hopt commands).
      * Makes sense only in combination with hopt_train_only_once=true).
      */

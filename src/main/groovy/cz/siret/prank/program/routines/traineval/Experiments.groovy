@@ -218,7 +218,7 @@ class Experiments extends Routine {
 
     private TrainEvalContext createOptimizationContext() {
         TrainEvalContext context = TrainEvalContext.create()
-        if (params.hopt_train_only_once && params.loop > 1) {
+        if (params.hopt_train_only_once) {
             context.cacheModels = true
             context.modelCache = ModelCache.create()
         }
