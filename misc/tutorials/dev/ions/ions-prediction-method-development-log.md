@@ -74,7 +74,7 @@ pkill python; sudo pkill mongo
     -clear_prim_caches 0 -clear_sec_caches 0 \
     -hopt_objective '"-DCA_4_0"' \
     -balance_class_weights 1 \
-    -features '(chem.volsite.bfactor.protrusion)' \
+    -features '(chem,volsite,bfactor,protrusion)' \
     -rf_bagsize 55 -rf_depth 10 -rf_trees 40 \
     -target_class_weight_ratio '(0.001,0.2)' \
     -positive_point_ligand_distance '(1,10)' \
@@ -107,7 +107,7 @@ pkill python; sudo pkill mongo; \
     -hopt_objective '"-DCA_4_0"' \
     -balance_class_weights 1 \
     -atom_table_features '(atomicHydrophobicity)' \
-    -features '(chem.volsite.bfactor.protrusion)' \
+    -features '(chem,volsite,bfactor,protrusion)' \
     -rf_bagsize 55 -rf_depth 12 -rf_trees 100 \
     -target_class_weight_ratio '(0.001,0.2)' \
     -positive_point_ligand_distance '(1,10)' \
@@ -150,7 +150,7 @@ See Params.groovy for description of other parameters.
     -clear_prim_caches 0 -clear_sec_caches 0 \
     -hopt_objective '"-DCA_4_0"' \
     -balance_class_weights 1 \
-    -features '(chem.volsite.bfactor.protrusion)' \
+    -features '(chem,volsite,bfactor,protrusion)' \
     -rf_bagsize 55 -rf_depth 10 -rf_trees 40 \
     -target_class_weight_ratio 0.1726 \
     -positive_point_ligand_distance 9.3741 \
@@ -213,7 +213,7 @@ the same proteins they were calculated from.
 ~~~
 
 Results need to be moved in to the codebase:
-* Move `duplets.csv` and `triplets.csv` to `src/main/resources/tables/propensities/Ions_Mg_Dev200Inv`.
+* Move `duplets.csv` and `triplets.csv` to `src/main/resources/tables/propensities/ions/Mg_Dev200Inv`.
 * From `aa-propensities.csv` take columns `(pos_ratio, pos_ratio^2)` and add to `src/main/resources/tables/aa-propensities.csv` as `(Ions_Mg_Dev200Inv, Ions_Mg_Dev200Inv^2)`.
 
 Note: these propensity features were added ad hoc during peptide binding site prediction, and the whole prosess should be redesigned.
@@ -229,10 +229,10 @@ Now we can use new features (after rebuild).
     -clear_prim_caches 1 -clear_sec_caches 1 \
     -hopt_objective '"-DCA_4_0"' \
     -balance_class_weights 1 \
-    -residue_table_features '(Ions_Mg_Dev200Inv.Ions_Mg_Dev200Inv^2)' \
+    -residue_table_features '(Ions_Mg_Dev200Inv,Ions_Mg_Dev200Inv^2)' \
     -atom_table_features '(atomicHydrophobicity)' \
-    -features '(chem.volsite.bfactor.protrusion.duplets_atomic.duplets_sas.triplets_atomic.triplets_sas)' \
-    -feat_propensities_set 'Ions_Mg_Dev200Inv' \
+    -features '(chem,volsite,bfactor,protrusion,duplets_atomic,duplets_sas,triplets_atomic,triplets_sas)' \
+    -feat_propensity_tables 'ions/Mg_Dev200Inv' \
     -rf_bagsize 55 -rf_depth 12 -rf_trees 100 \
     -target_class_weight_ratio 0.0684 \
     -positive_point_ligand_distance 5.1286 \
