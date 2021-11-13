@@ -401,7 +401,7 @@ class Params {
     /**
      * Point sampler for extracting instances for training.
      * P2Rank and PRANK use SurfacePointSampler that produces SAS points.
-     * Others like GridPointSampler are experimental.
+     * Others like GridPointSampler are experimental, and also deprecated. see point_sampling_strategy
      */
     @ModelParam
     String point_sampler = "SurfacePointSampler"
@@ -712,6 +712,14 @@ class Params {
      */
     @ModelParam
     double residue_score_extra_dist = 0d
+
+    /**
+     * Calculate residue scores only for exposed residues (inner will have score 0)
+     * => only exposed residues can be predicted as positive.
+     * Makes sense only in combination with point_sampling_strategy=surface.
+     */
+    @ModelParam
+    boolean residue_score_only_exposed = false
 
     /**
      * residue score transform function

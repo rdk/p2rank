@@ -40,9 +40,10 @@ class ModelBasedResidueLabeler extends ResidueLabeler<Boolean> implements Parame
 
 
     private final PointScoreCalculator pointScoreCalculator = new PointScoreCalculator()
-    private double SCORE_THRESHOLD = params.residue_score_threshold
-    private double RADIUS = params.getSasCutoffDist() + params.residue_score_extra_dist
-    private double SUM_TO_AVG_POW = params.residue_score_sum_to_avg
+    private final double SCORE_THRESHOLD = params.residue_score_threshold
+    private final double RADIUS = params.getSasCutoffDist() + params.residue_score_extra_dist
+    private final double SUM_TO_AVG_POW = params.residue_score_sum_to_avg
+    private final boolean ONLY_EXPOSED = params.residue_score_only_exposed
 
     private Function<Double, Double> residueScoreTransform
 
@@ -61,7 +62,6 @@ class ModelBasedResidueLabeler extends ResidueLabeler<Boolean> implements Parame
         } else {
             residueScoreTransform = Function.identity()
         }
-
     }
 
     ModelBasedResidueLabeler withObserved(List<LabeledPoint> observedPoints) {
@@ -88,12 +88,8 @@ class ModelBasedResidueLabeler extends ResidueLabeler<Boolean> implements Parame
 
         // avoid repetitive training and optimization when optimized params do not influence it
         if (params.hopt_cache_labeled_points) {
-            if (protein.secondaryData.containsKey('saved_labeled_points')) {
-                labeledPoints = (List<LabeledPoint>) protein.secondaryData.get('saved_labeled_points')
-            } else {
-                labeledPoints = predictor.labelPoints(sampledPoints, protein)
-                protein.secondaryData.put('saved_labeled_points', labeledPoints)
-            }
+            protein.secondaryData.computeIfAbsent('saved_labeled_points', { k -> predictor.labelPoints(sampledPoints, protein) })
+            labeledPoints = (List<LabeledPoint>) protein.secondaryData.get('saved_labeled_points')
         } else {
             labeledPoints = predictor.labelPoints(sampledPoints, protein)
         }
@@ -109,7 +105,6 @@ class ModelBasedResidueLabeler extends ResidueLabeler<Boolean> implements Parame
     BinaryLabeling calculateLabeling(Residues residues, List<LabeledPoint> labeledPoints, Protein protein) {
 
         Atoms points = new Atoms(labeledPoints)
-        Residues exposed = protein.getExposedResidues()
 
         // calculate binary labels by sum and threshold
 
@@ -117,9 +112,10 @@ class ModelBasedResidueLabeler extends ResidueLabeler<Boolean> implements Parame
 
         for (Residue res : residues) {
             List<Double> pscores = Collections.emptyList()
-            if (exposed.contains(res)) { // calculate only for exposed
+            if (!ONLY_EXPOSED || protein.exposedResidues.contains(res)) {
                 pscores = points.cutoutShell(res.atoms, RADIUS).collect { (it as LabeledPoint).score }.asList()
             }
+            
             double score = aggregateScore(pscores)
             score = transformScore(score)
 
