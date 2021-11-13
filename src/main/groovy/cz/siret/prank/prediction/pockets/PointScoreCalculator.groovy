@@ -24,7 +24,8 @@ class PointScoreCalculator implements Parametrized {
         double res = hist[1] / (hist[0] + hist[1])
 
         if (res < 0d) {
-            log.warn("normalizedScore={} hist={}", res, hist)
+            res = 0
+            //log.warn("normalizedScore={} hist={}", res, hist)
         }
         
         return res
@@ -35,7 +36,7 @@ class PointScoreCalculator implements Parametrized {
     }
     
     /**
-     * calculates ligandability score of the point form binary classification historgram
+     * calculates ligandability score of the point form binary classification histogram
      *
      * @param hist
      * @return
