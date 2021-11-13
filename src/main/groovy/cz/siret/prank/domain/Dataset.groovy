@@ -148,9 +148,9 @@ class Dataset implements Parametrized, Writable, Failable {
      */
     private Result doProcessItems(boolean parallel, final Processor processor, boolean quiet = false) {
 
-        if (log.isTraceEnabled()) {
-            log.trace "ITEMS: {}", Sutils.toStr(items)
-        }
+        //if (log.isTraceEnabled()) {
+        //    log.trace "ITEMS: {}", Sutils.toStr(items) // doesn't work with java 17
+        //}
 
         Result result = new Result()
 
