@@ -4,6 +4,8 @@ import cz.siret.prank.domain.Dataset
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.domain.labeling.*
 import cz.siret.prank.geom.Atoms
+import cz.siret.prank.geom.samplers.PointSampler
+import cz.siret.prank.geom.samplers.SampledPoints
 import cz.siret.prank.prediction.metrics.ClassifierStats
 import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.rendering.PymolRenderer
@@ -51,15 +53,15 @@ class EvalResiduesRoutine extends EvalRoutine {
 
         results.datasetResult = dataset.processItems { Dataset.Item item ->
             Protein protein = item.protein
-            Atoms sasPoints = protein.getAccessibleSurface().points
+            Atoms sampledPoints = SampledPoints.fromProtein(protein, false, params).points // grid or sas points
 
             BinaryLabeling observed = item.binaryLabeling
 
             List<LabeledPoint> observedPoints
             if (params.derivePointLabelingFromLigands()) {
-                observedPoints = new LigandBasedPointLabeler().labelPoints(sasPoints, protein)
+                observedPoints = new LigandBasedPointLabeler().labelPoints(sampledPoints, protein)
             } else {
-                observedPoints = new ResidueBasedPointLabeler(observed).labelPoints(sasPoints, protein)
+                observedPoints = new ResidueBasedPointLabeler(observed).labelPoints(sampledPoints, protein)
             }
 
             ResidueLabeler predictor
@@ -68,7 +70,7 @@ class EvalResiduesRoutine extends EvalRoutine {
             if (dataset.hasPredictedResidueLabeling()) {   // load static labeling
                 predictor = StaticResidueLabeler.createForDatasetItem(item)
             } else { // predict with model
-                predictor = new ModelBasedResidueLabeler(model, sasPoints, item.context).withObserved(observedPoints)
+                predictor = new ModelBasedResidueLabeler(model, sampledPoints, item.context).withObserved(observedPoints)
             }
 
             BinaryLabeling predicted = predictor.getBinaryLabeling(protein.residues, protein)

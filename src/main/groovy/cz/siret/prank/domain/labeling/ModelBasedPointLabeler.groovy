@@ -108,6 +108,7 @@ class ModelBasedPointLabeler extends PointLabeler {
             i++
         }
 
+        // TODO don't finalize when doing repeated experiments
         // finalize
         proteinExtractor.finalizeProteinPrototype()
 
