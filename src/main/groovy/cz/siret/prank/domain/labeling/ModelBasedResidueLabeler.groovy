@@ -117,7 +117,12 @@ class ModelBasedResidueLabeler extends ResidueLabeler<Boolean> implements Parame
             }
             
             double score = aggregateScore(pscores)
+
+            log.trace "aggregated_score = {}", score
+
             score = transformScore(score)
+
+            log.trace "transformed_score = {}", score
 
             if (log.traceEnabled) {
                 log.trace "RES[{}] (score={}) pscores(n={}): {}", res, format(score, 2), pscores.size(), formatNumbers(pscores, 2)
@@ -153,8 +158,13 @@ class ModelBasedResidueLabeler extends ResidueLabeler<Boolean> implements Parame
         List<Double> transformedScores = scores.collect { pointScoreCalculator.transformScore(it) }.asList()
         double sum = Cutils.sum(transformedScores)
 
+        log.trace "sum_score = {}", sum
+
         double base = scores.size()
         base = Math.pow(base, SUM_TO_AVG_POW) // exp. of <0,1> goes from 'no average, just sum' -> 'full average'
+
+        log.trace "base = {}", base
+
         double score = sum / base
 
         //log.warn "AGG:{} from {}", score, scores // XXX
