@@ -83,7 +83,7 @@ public interface InstancePredictor {
             this.classifier = classifier;
 
             alloc = new double[proteinExtractor.getVectorHeader().size() + 1]; // one additional for stupid weka class
-            auxInst = new DenseInstance( 1, alloc );
+            auxInst = new DenseInstance(1, alloc);
             Instances auxWekaDataset = WekaUtils.createDatasetWithBinaryClass(proteinExtractor.getVectorHeader());
             auxInst.setDataset(auxWekaDataset);
 

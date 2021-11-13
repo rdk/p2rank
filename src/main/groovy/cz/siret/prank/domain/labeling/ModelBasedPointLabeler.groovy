@@ -64,7 +64,7 @@ class ModelBasedPointLabeler extends PointLabeler {
         InstancePredictor instancePredictor = InstancePredictor.create(model, proteinExtractor)
 
         // init result array
-        final List<LabeledPoint> labeledPoints = new ArrayList<LabeledPoint>(extractor.sampledPoints.points.count)
+        final List<LabeledPoint> labeledPoints = new ArrayList<LabeledPoint>(points.count)
         for (Atom point : points) {
             labeledPoints.add(new LabeledPoint(point))
         }

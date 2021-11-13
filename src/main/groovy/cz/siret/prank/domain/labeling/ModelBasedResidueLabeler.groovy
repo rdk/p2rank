@@ -29,7 +29,7 @@ import static cz.siret.prank.utils.Formatter.formatNumbers
 class ModelBasedResidueLabeler extends ResidueLabeler<Boolean> implements Parametrized {
 
     private Model model
-    private Atoms sasPoints
+    private Atoms sampledPoints
     private ProcessedItemContext context
 
     private List<LabeledPoint> labeledPoints
@@ -46,9 +46,9 @@ class ModelBasedResidueLabeler extends ResidueLabeler<Boolean> implements Parame
 
     private Function<Double, Double> residueScoreTransform
 
-    ModelBasedResidueLabeler(Model model, Atoms sasPoints, ProcessedItemContext context) {
+    ModelBasedResidueLabeler(Model model, Atoms sampledPoints, ProcessedItemContext context) {
         this.model = model
-        this.sasPoints = sasPoints
+        this.sampledPoints = sampledPoints
         this.context = context
 
         if (params.residue_score_transform == "SIGMOID") {
@@ -91,11 +91,11 @@ class ModelBasedResidueLabeler extends ResidueLabeler<Boolean> implements Parame
             if (protein.secondaryData.containsKey('saved_labeled_points')) {
                 labeledPoints = (List<LabeledPoint>) protein.secondaryData.get('saved_labeled_points')
             } else {
-                labeledPoints = predictor.labelPoints(sasPoints, protein)
+                labeledPoints = predictor.labelPoints(sampledPoints, protein)
                 protein.secondaryData.put('saved_labeled_points', labeledPoints)
             }
         } else {
-            labeledPoints = predictor.labelPoints(sasPoints, protein)
+            labeledPoints = predictor.labelPoints(sampledPoints, protein)
         }
 
         classifierStats = predictor.classifierStats
