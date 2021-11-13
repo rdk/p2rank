@@ -156,6 +156,11 @@ class ModelBasedResidueLabeler extends ResidueLabeler<Boolean> implements Parame
         }
 
         List<Double> transformedScores = scores.collect { pointScoreCalculator.transformScore(it) }.asList()
+
+        if (log.traceEnabled) {
+            log.trace "transformed_scores(n={}): {}", transformedScores.size(), formatNumbers(transformedScores, 2)
+        }
+
         double sum = Cutils.sum(transformedScores)
 
         log.trace "sum_score = {}", sum
