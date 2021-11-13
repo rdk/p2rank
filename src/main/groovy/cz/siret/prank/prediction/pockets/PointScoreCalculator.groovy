@@ -3,10 +3,12 @@ package cz.siret.prank.prediction.pockets
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.params.Params
 import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
 
 /**
  *
  */
+@Slf4j
 @CompileStatic
 class PointScoreCalculator implements Parametrized {
 
@@ -19,14 +21,19 @@ class PointScoreCalculator implements Parametrized {
      * @return
      */
     static double normalizedScore(double[] hist) {
-        hist[1] / (hist[0] + hist[1])
+        double res = hist[1] / (hist[0] + hist[1])
+
+        if (res < 0d) {
+            log.warn("normalizedScore={} hist={}", res, hist)
+        }
+        
+        return res
     }
 
     static boolean applyPointScoreThreshold(double predictedScore) {
         predictedScore >= Params.inst.pred_point_threshold
     }
     
-
     /**
      * calculates ligandability score of the point form binary classification historgram
      *
@@ -43,13 +50,13 @@ class PointScoreCalculator implements Parametrized {
             score = normalizedScore(hist)
         }
 
-        score = Math.pow(score, POINT_SCORE_EXP)
-        
-        return score
+        return transformScore(score)
     }
 
     double transformScore(double score) {
-
+        if (score < 0d) {
+            score = 0d
+        }
         score = Math.pow(score, POINT_SCORE_EXP)
         return score
     }
