@@ -5,6 +5,7 @@ import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.Params
 import cz.siret.prank.program.routines.results.Evaluation
 import cz.siret.prank.utils.Futils
+import cz.siret.prank.utils.Sutils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.StringUtils
@@ -16,8 +17,6 @@ import org.apache.commons.lang3.StringUtils
 @CompileStatic
 abstract class ScoreTransformer {
 
-    static final Gson GSON = new GsonBuilder().setPrettyPrinting().create()
-    
     abstract double transformScore(double rawScore)
 
     abstract void trainForPockets(Evaluation evaluation)
@@ -56,7 +55,7 @@ abstract class ScoreTransformer {
         obj.addProperty("name", transformer.class.simpleName)
         obj.add("params", transformer.toJson())
 
-        GSON.toJson(obj)
+        Sutils.GSON.toJson(obj)
     }
 
     /**

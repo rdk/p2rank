@@ -5,11 +5,14 @@ import com.google.common.base.Splitter
 import com.google.common.collect.Lists
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.google.gson.JsonSyntaxException
+import com.google.gson.internal.Primitives
 import groovy.transform.CompileStatic
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.builder.ToStringBuilder
 import org.apache.commons.lang3.builder.ToStringStyle
 
+import java.lang.reflect.Type
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 
@@ -49,6 +52,10 @@ class Sutils {
 
     static String toJson(Object obj) {
         GSON.toJson(obj)
+    }
+
+    static <T> T parseJson(String json, Class<T> classOfT) throws JsonSyntaxException {
+        return GSON.fromJson(json, classOfT)
     }
 
     static prefixLines(String prefix, String text) {

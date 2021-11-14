@@ -10,8 +10,8 @@ import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.params.ListParam
 import cz.siret.prank.program.routines.Routine
-import cz.siret.prank.program.routines.optimize.GridOptimizer
-import cz.siret.prank.program.routines.optimize.HyperOptimizer
+import cz.siret.prank.program.routines.optimize.GridOptimizerRoutine
+import cz.siret.prank.program.routines.optimize.HyperOptimizerRoutine
 import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.utils.CmdLineArgs
 import cz.siret.prank.utils.Futils
@@ -209,7 +209,7 @@ class Experiments extends Routine {
 
         TrainEvalContext context = createOptimizationContext()
 
-        GridOptimizer go = new GridOptimizer(topOutdir, rparams)
+        GridOptimizerRoutine go = new GridOptimizerRoutine(topOutdir, rparams)
         go.init()
         go.runGridOptimization { String iterDir ->
             return runExperimentStep(iterDir, trainDataset, evalDataset, context, doCrossValidation)
@@ -260,7 +260,7 @@ class Experiments extends Routine {
      *  hyperparameter optimization
      */
     public hopt() {
-        HyperOptimizer ho = new HyperOptimizer(outdir, ListParam.parseListArgs(cmdLineArgs))
+        HyperOptimizerRoutine ho = new HyperOptimizerRoutine(outdir, ListParam.parseListArgs(cmdLineArgs))
         ho.init()
 
         TrainEvalContext context = createOptimizationContext()

@@ -21,13 +21,13 @@ import static cz.siret.prank.utils.Futils.sanitizeFilename
  */
 @Slf4j
 @CompileStatic
-class GridOptimizer extends ParamLooper {
+class GridOptimizerRoutine extends ParamLooper {
 
     List<ListParam> listParams
     List<String> gridVariablesNames
 
 
-    GridOptimizer(String outdir, List<ListParam> listParams) {
+    GridOptimizerRoutine(String outdir, List<ListParam> listParams) {
         super(outdir)
         this.listParams = listParams
         this.gridVariablesNames = listParams*.name

@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.google.gson.JsonElement
 import cz.siret.prank.program.routines.results.Evaluation
 import cz.siret.prank.utils.StatSample
+import cz.siret.prank.utils.Sutils
 import cz.siret.prank.utils.Writable
 import groovy.transform.CompileStatic
 
@@ -116,12 +117,12 @@ class ProbabilityScoreTransformer extends ScoreTransformer implements Writable {
 
     @Override
     JsonElement toJson() {
-        new Gson().toJsonTree(this)
+        Sutils.GSON.toJsonTree(this)
     }
 
     @Override
     ScoreTransformer loadFromJson(JsonElement json) {
-        new Gson().fromJson(json, ProbabilityScoreTransformer.class)
+        Sutils.GSON.fromJson(json, ProbabilityScoreTransformer.class)
     }
 
 

@@ -6,8 +6,8 @@ import cz.siret.prank.program.params.Params
 import cz.siret.prank.program.params.optimizer.HObjectiveFunction
 import cz.siret.prank.program.params.optimizer.HOptimizer
 import cz.siret.prank.program.params.optimizer.HVariable
-import cz.siret.prank.program.params.optimizer.spearmint.HPyGpgoOptimizer
-import cz.siret.prank.program.params.optimizer.spearmint.HSpearmintOptimizer
+import cz.siret.prank.program.params.optimizer.bayesian.HPyGpgoOptimizer
+import cz.siret.prank.program.params.optimizer.bayesian.HSpearmintOptimizer
 import cz.siret.prank.program.routines.optimize.ParamLooper.ParamVal
 import cz.siret.prank.program.routines.optimize.ParamLooper.Step
 import cz.siret.prank.program.routines.results.EvalResults
@@ -23,7 +23,7 @@ import static cz.siret.prank.utils.Futils.absSafePath
  */
 @Slf4j
 @CompileStatic
-class HyperOptimizer extends ParamLooper {
+class HyperOptimizerRoutine extends ParamLooper {
 
     static final String HOPT_OBJECTIVE = "HOPT_OBJECTIVE"
 
@@ -31,7 +31,7 @@ class HyperOptimizer extends ParamLooper {
 
     List<ListParam> listParams
 
-    HyperOptimizer(String outdir, List<ListParam> listParams) {
+    HyperOptimizerRoutine(String outdir, List<ListParam> listParams) {
         super(outdir)
         this.listParams = listParams
     }
@@ -80,7 +80,7 @@ class HyperOptimizer extends ParamLooper {
                 try {
                     Closure<EvalResults> calcObjectiveWrapper = { String stepDir ->
                         EvalResults res = evalClosure.call(stepDir)
-                        double objective = HyperOptimizer.getObjectiveValue(res, objectiveParam)
+                        double objective = getObjectiveValue(res, objectiveParam)
                         // we want to calc objective before calling processStep
                         // that will save it to selected_stats table
                         res.additionalStats.put((String)HOPT_OBJECTIVE, objective)
@@ -95,7 +95,7 @@ class HyperOptimizer extends ParamLooper {
                     //TODO: write selected stats file sorted by hopt_objective
 
                 } catch (Exception e) {
-                    log.error("Couldn't process grid optimization step $stepNumber", e)
+                    log.error("Couldn't process hyperparameter optimization step $stepNumber", e)
                     val = Double.NaN
                 }
 

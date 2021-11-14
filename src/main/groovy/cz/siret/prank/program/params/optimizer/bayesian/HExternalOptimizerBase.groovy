@@ -1,16 +1,20 @@
-package cz.siret.prank.program.params.optimizer.spearmint
+package cz.siret.prank.program.params.optimizer.bayesian
 
 import com.google.gson.Gson
+import cz.siret.prank.geom.clustering.AtomClusterer
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.params.optimizer.HObjectiveFunction
 import cz.siret.prank.program.params.optimizer.HOptimizer
 import cz.siret.prank.program.params.optimizer.HStep
+import cz.siret.prank.utils.ATimer
 import cz.siret.prank.utils.Formatter
+import cz.siret.prank.utils.Sutils
 import cz.siret.prank.utils.Writable
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
+import static cz.siret.prank.utils.ATimer.startTimer
 import static cz.siret.prank.utils.ATimer.startTimer
 import static cz.siret.prank.utils.Futils.*
 
@@ -64,16 +68,18 @@ abstract class HExternalOptimizerBase extends HOptimizer implements Parametrized
             writeFile stepsf, "[num], [job_id], [value], [best_so_far], [time_s], " + varNames.join(", ") + "\n"
 
             double sumTime = 0
+            long lastoptimizerWaitingTimeSec = 0
 
             while (stepNumber < maxIterations) {
                 def timer = startTimer()
                 log.info "job id: {}", jobId
                 String varf = "$varsDir/$jobId"
-                waitForFile(varf)
+                write "Waiting for the optimizer to produce new variable assignment (last iteration: ${lastoptimizerWaitingTimeSec}s)."
+                lastoptimizerWaitingTimeSec = waitForFile(varf) 
 
                 // parse variable assignment
 
-                Map<String, Object> vars = new Gson().fromJson(readFile(varf), Map.class)
+                Map<String, Object> vars = Sutils.parseJson(readFile(varf), Map.class)
                 log.info "vars: {}", vars
 
                 // eval objective function
@@ -127,12 +133,18 @@ abstract class HExternalOptimizerBase extends HOptimizer implements Parametrized
         sprintf "%8.4f", x
     }
 
-    void waitForFile(String fname) {
+    /**
+     * Wait fot file to be created.
+     * @return waiting time in seconds
+     */
+    long waitForFile(String fname) {
+        def timer = startTimer()
         log.info "waiting for file '$fname'"
         while (!exists(fname)) {
             log.debug "waiting..."
             sleep(sleepInterval)
         }
+        timer.timeSec
     }
     
 }

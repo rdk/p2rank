@@ -1,4 +1,4 @@
-package cz.siret.prank.program.params.optimizer.spearmint
+package cz.siret.prank.program.params.optimizer.bayesian
 
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.optimizer.HVariable

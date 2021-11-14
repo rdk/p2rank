@@ -3,7 +3,7 @@ package cz.siret.prank.program.params.optimizer
 import groovy.transform.CompileStatic
 
 /**
- *
+ * Base class for hyperparameter optimizers
  */
 @CompileStatic
 abstract class HOptimizer {

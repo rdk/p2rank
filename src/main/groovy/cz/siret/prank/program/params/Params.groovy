@@ -1194,9 +1194,10 @@ class Params {
     boolean feat_csv_ignore_missing = false
 
 //===========================================================================================================//
+// Derived parameters
+//===========================================================================================================//
 
     /**
-     * Derived parameter.
      * Should be (slightly above) the distance of solvent exposed atoms to SAS points.
      */
     double getSasCutoffDist() {
@@ -1299,7 +1300,7 @@ class Params {
         boolean filterRanged = args.hasListParams
 
         Params me = this
-        me.properties.keySet().each { String propName ->
+        for (String propName : me.properties.keySet()) {
             if (args.namedArgMap.containsKey(propName)) {
                 String val = args.get(propName)
 
