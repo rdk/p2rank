@@ -215,6 +215,10 @@ public final class Atoms implements Iterable<Atom> {
         return Struct.areDistantAtLeast(a, this.list, dist);
     }
 
+    public Atom findNearest(Atom point) {
+        return withKdTree().kdTree.findNearest(point);
+    }
+
     public Atom getCenterOfMass() {
         if (list.isEmpty()) {
             return null;

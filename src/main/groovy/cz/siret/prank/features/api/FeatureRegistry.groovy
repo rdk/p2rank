@@ -46,12 +46,17 @@ class FeatureRegistry {
     static {
 
         register new ChemFeature()
+        register new AtomicToSasFeatWrapper(new ChemFeature())
         register new VolsiteFeature()
-        register new ProtrusionFeature()
+        register new AtomicToSasFeatWrapper(new VolsiteFeature())   // maps closest atom to SAS point
         register new BfactorFeature()
+        register new AtomicToSasFeatWrapper(new BfactorFeature())
         register new AtomTableFeature()
+        register new AtomicToSasFeatWrapper(new AtomTableFeature())
         register new ResidueTableFeature()
-        
+        register new AtomicToSasFeatWrapper(new ResidueTableFeature())
+        register new ProtrusionFeature()
+
         register new SurfaceProtrusionFeature()
         register new ProtrusionHistogramFeature()
         register new AtomicResidueFeature()

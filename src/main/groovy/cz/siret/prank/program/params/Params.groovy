@@ -1115,7 +1115,7 @@ class Params {
     List<String> train_score_transformers = [] 
 
     /**
-     * Train residue score transformers on a dataset during predict-eval.
+     * Train residue score transformers on a dataset during eval-predict.
      * Transformers are tied to the output distribution of the model (and its parametrization) so new transformers should be trained for every released model.
      */
     @RuntimeParam
