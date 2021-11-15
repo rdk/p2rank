@@ -114,4 +114,8 @@ import cz.siret.prank.program.params.Params
     load_conservation = true
     conservation_dirs = ["conservation/uref50"]
 
+    // Pre-trained model
+
+    model="../p2rank-dev-models/ions/ions-rdk-c4-grid-mg.model"
+
 }
