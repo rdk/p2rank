@@ -25,8 +25,8 @@ class AsaResiduesFeature extends SasFeatureCalculator implements Parametrized {
     @Override
     String getName() { NAME }
 
-    @Override
-    void preProcessProtein(Protein protein, ProcessedItemContext context) {
+    
+    ProtGroupAsa calculateProtGroupAsa(Protein protein) {
         double probeRadius = params.feat_asa_probe_radius
         int nSpherePoints = AsaCalculator.DEFAULT_N_SPHERE_POINTS
         int threads = 1
@@ -36,7 +36,12 @@ class AsaResiduesFeature extends SasFeatureCalculator implements Parametrized {
 
         List<GroupAsa> asas = asaCalculator.groupAsas.toList()
 
-        protein.secondaryData.put "prot_group_asa", new ProtGroupAsa(protein, asas)
+        return new ProtGroupAsa(protein, asas)
+    }
+
+    @Override
+    void preProcessProtein(Protein protein, ProcessedItemContext context) {
+        protein.secondaryData.computeIfAbsent "prot_group_asa", { k -> calculateProtGroupAsa(protein) }
     }
 
     @Override

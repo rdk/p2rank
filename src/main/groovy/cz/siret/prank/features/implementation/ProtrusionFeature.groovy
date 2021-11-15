@@ -28,7 +28,7 @@ class ProtrusionFeature extends SasFeatureCalculator implements Parametrized {
         // better solution would be to build triangulation over protein atoms or to use KD-tree with range search
         // or at least some space compartmentalization
 
-        // optimization? - we need ~250 for protrusion=10 and in this case it is sower
+        // optimization? - we need ~250 for protrusion=10 and in this case it is slower
         //int MAX_PROTRUSION_ATOMS = 250
         //Atoms deepLayer = this.deepLayer.withKdTree().kdTree.findNearestNAtoms(point, MAX_PROTRUSION_ATOMS, false)
 
