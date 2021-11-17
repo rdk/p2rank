@@ -113,6 +113,13 @@ class Params {
     List<String> features = ["chem", "protrusion", "bfactor", "atom_table", "residue_table"]
 
     /**
+     * List that is added to the features list on runtime.
+     * Useful in grid optimization mode for comparing different new features.
+     */
+    @ModelParam
+    List<String> extra_features = []
+
+    /**
      * List of features that come directly from atom type tables
      * see atomic-properties.csv
      */
@@ -1219,6 +1226,10 @@ class Params {
 
     int getEffectiveTrainTessellationNegatives() {
         (train_tessellation_negatives == 0) ? getEffectiveTrainTessellation() : train_tessellation_negatives
+    }
+
+    List<String> getSelectedFeatures() {
+        return (features + extra_features).unique()
     }
 
 //===========================================================================================================//

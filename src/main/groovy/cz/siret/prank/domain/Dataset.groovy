@@ -256,7 +256,7 @@ class Dataset implements Parametrized, Writable, Failable {
         lp.ligandsSeparatedByTER = (attributes.get(PARAM_LIGANDS_SEPARATED_BY_TER) == "true")  // for bench11 dataset
         lp.relevantLigandsDefined = hasExplicitlyDefinedLigands()
         lp.relevantLigandDefinitions = item.getLigandDefinitions()
-        lp.load_conservation = (params.load_conservation || params.features.any{ s->s.contains("conservation")})
+        lp.load_conservation = (params.load_conservation || params.selectedFeatures.any{ s->s.contains("conserv")})
         return lp
     }
 

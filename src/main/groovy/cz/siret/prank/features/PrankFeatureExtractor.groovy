@@ -116,7 +116,7 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
 //===========================================================================================================//
 
     private void initHeader() {
-        List<String> enabledFeatures = new ArrayList<>(params.features)
+        List<String> enabledFeatures = new ArrayList<>(params.selectedFeatures)
 
         // add implicit table features
         if (!enabledFeatures.contains(AtomTableFeature.NAME)) {
