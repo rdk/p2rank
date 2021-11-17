@@ -1,13 +1,14 @@
 
-P2Rank 
-======
+<p align="left">
+    <img src="https://github.com/rdk/p2rank/blob/develop/misc/img/p2rank_logo.svg?raw=true" width="250" alt="P2Rank" title="logo">
+</p>
 Ligand-binding site prediction based on machine learning.
 
 <p align="center">
-    <img src="https://github.com/rdk/p2rank/blob/develop/misc/img/p2rank_sas_points.png?raw=true" width="600">
+    <img src="https://github.com/rdk/p2rank/blob/develop/misc/img/p2rank_sas_points.png?raw=true" width="600" alt="P2Rank illustration">
 </p>
 
-[![version 2.3](https://img.shields.io/badge/version-2.3-green.svg)](/build.gradle)
+[![version 2.3.1](https://img.shields.io/badge/version-2.3.1-green.svg)](/build.gradle)
 [![Build Status](https://github.com/rdk/p2rank/actions/workflows/develop.yml/badge.svg)](https://github.com/rdk/p2rank/actions/workflows/develop.yml)
 [![License: MIT](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](/LICENSE.txt)
 
@@ -17,7 +18,7 @@ P2Rank is a stand-alone command line program that predicts ligand-binding pocket
 
 ### Requirements
 
-* Java 8 to 16
+* Java 8 to 17
 * PyMOL 1.7 (or newer) for viewing visualizations (optional)
 
 P2Rank is tested on Linux, macOS, and Windows. 
