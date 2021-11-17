@@ -1,6 +1,6 @@
 
 <p align="left">
-    <img src="https://github.com/rdk/p2rank/blob/develop/misc/img/p2rank_logo.svg?raw=true" width="600" alt="P2Rank logo">
+    <img src="https://github.com/rdk/p2rank/blob/develop/misc/img/p2rank_logo.svg?raw=true" width="250" alt="P2Rank" title="logo">
 </p>
 Ligand-binding site prediction based on machine learning.
 
