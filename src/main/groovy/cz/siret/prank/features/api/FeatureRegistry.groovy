@@ -94,6 +94,10 @@ class FeatureRegistry {
         register new ElectrostaticsTempSasFeature()
         register new ElectrostaticsTempAtomFeature()
 
+        register new IsExposedAtomFeature()
+        register new AtomicToSasFeatWrapper(new IsExposedAtomFeature())
+        register new NearestExposedDistSasFeature()
+
         // Register new feature implementations here
 
     }
