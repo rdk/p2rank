@@ -66,11 +66,11 @@ class FeatureRegistry {
         register new AsaFeature()
         register new Asa2Feature()
         register new AsaResiduesFeature()
-        register new XyzDummyFeature()
         register new PairHistogramFeature()
         register new PyramidFeature()
         register new ProteinMassFeature()
         register new AAIndexFeature()
+        register new XyzDummyFeature()
 
         register new ResidueToSasFeatWrapper(new DupletsPropensityFeature())
         register new ResidueToAtomicFeatWrapper(new DupletsPropensityFeature())
