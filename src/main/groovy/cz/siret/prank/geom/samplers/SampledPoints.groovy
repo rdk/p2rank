@@ -34,7 +34,7 @@ class SampledPoints {
     }
 
     private static Atoms sampleGridAround(Atoms atoms, Params params) {
-        GridGenerator.sampleGridPointsAroundAtoms(atoms, params.grid_cell_edge, params.sasCutoffDist)
+        GridGenerator.sampleGridPointsAroundAtoms(atoms, params.grid_cell_edge, params.grid_cutoff_radius)
     }
 
     static SampledPoints fromProtein(Protein protein, boolean forTraining, Params params) {

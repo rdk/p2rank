@@ -466,10 +466,16 @@ class Params {
     double point_max_distfrom_pocket = 4.5
 
     /**
-     * grid cell size for GridPointSampler
+     * grid cell size for grid sampling strategy (and old GridPointSampler)
      */
     @ModelParam
     double grid_cell_edge = 2
+
+    /**
+     * Cutoff radius around protein atoms. Grid points with higher distance to closest protein atom are discarded.
+     */
+    @ModelParam
+    double grid_cutoff_radius = 3.4
 
     /**
      * Restrict training set size, 0=unlimited

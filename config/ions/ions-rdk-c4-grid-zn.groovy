@@ -62,6 +62,7 @@ import cz.siret.prank.program.params.Params
     solvent_radius = 0.5
 
     point_sampling_strategy = "grid"
+    grid_cutoff_radius = 3
 
     // Training
 
