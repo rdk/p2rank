@@ -1,4 +1,4 @@
-package cz.siret.prank.features.implementation
+package cz.siret.prank.features.implementation.contactres
 
 import cz.siret.prank.domain.AA
 import cz.siret.prank.domain.Residue

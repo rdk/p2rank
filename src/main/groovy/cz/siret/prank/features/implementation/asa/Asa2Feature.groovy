@@ -1,4 +1,4 @@
-package cz.siret.prank.features.implementation
+package cz.siret.prank.features.implementation.asa
 
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.features.api.ProcessedItemContext
@@ -11,8 +11,8 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 
-import static cz.siret.prank.features.implementation.AsaFeature.ProtAsa
-import static cz.siret.prank.features.implementation.AsaFeature.calcProtAsa
+import static AsaFeature.ProtAsa
+import static AsaFeature.calcProtAsa
 
 /**
  * Local protein solvent accessible surface area feature

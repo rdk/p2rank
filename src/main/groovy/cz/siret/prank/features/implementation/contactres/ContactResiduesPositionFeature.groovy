@@ -1,4 +1,4 @@
-package cz.siret.prank.features.implementation
+package cz.siret.prank.features.implementation.contactres
 
 import com.google.common.collect.ArrayListMultimap
 import com.google.common.collect.Multimap

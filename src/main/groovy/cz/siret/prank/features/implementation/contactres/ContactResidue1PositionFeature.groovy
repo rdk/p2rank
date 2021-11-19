@@ -1,4 +1,4 @@
-package cz.siret.prank.features.implementation
+package cz.siret.prank.features.implementation.contactres
 
 import cz.siret.prank.domain.Residue
 import cz.siret.prank.features.api.SasFeatureCalculationContext

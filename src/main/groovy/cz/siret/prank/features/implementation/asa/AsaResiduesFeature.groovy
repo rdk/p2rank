@@ -1,4 +1,4 @@
-package cz.siret.prank.features.implementation
+package cz.siret.prank.features.implementation.asa
 
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.features.api.ProcessedItemContext

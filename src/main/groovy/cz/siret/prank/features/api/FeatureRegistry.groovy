@@ -1,13 +1,19 @@
 package cz.siret.prank.features.api
 
 import cz.siret.prank.features.implementation.*
+import cz.siret.prank.features.implementation.asa.Asa2Feature
+import cz.siret.prank.features.implementation.asa.AsaFeature
+import cz.siret.prank.features.implementation.asa.AsaResiduesFeature
 import cz.siret.prank.features.implementation.chem.ChemFeature
 import cz.siret.prank.features.implementation.conservation.*
+import cz.siret.prank.features.implementation.contactres.ContactResidue1Feature
+import cz.siret.prank.features.implementation.contactres.ContactResidue1PositionFeature
+import cz.siret.prank.features.implementation.contactres.ContactResiduesPositionFeature
 import cz.siret.prank.features.implementation.csv.CsvFileFeature
 import cz.siret.prank.features.implementation.electrostatics.ElectrostaticsTempAtomFeature
 import cz.siret.prank.features.implementation.electrostatics.ElectrostaticsTempSasFeature
 import cz.siret.prank.features.implementation.histogram.PairHistogramFeature
-import cz.siret.prank.features.implementation.residue.ContactResiduesRF
+import cz.siret.prank.features.implementation.contactres.ContactResiduesRF
 import cz.siret.prank.features.implementation.secstruct.SecStructCloudSF
 import cz.siret.prank.features.implementation.secstruct.SecStructRF
 import cz.siret.prank.features.implementation.sequence.DupletsPropensityFeature
