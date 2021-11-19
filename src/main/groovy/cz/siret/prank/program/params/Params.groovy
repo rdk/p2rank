@@ -557,6 +557,13 @@ class Params {
     double point_score_pow = 2
 
     /**
+     * exponent of point ligandability score (before adding it to residue score in residue prediction mode)
+     * value less than 0 refers to the value of point_score_pow
+     */
+    @ModelParam
+    double residue_point_score_pow = -1
+
+    /**
      * Binary classifiers produces histogram of scores for class0 and class1
      * if true only score for class1 is considered
      * makes a difference only if histogram produced by classifier doesn't sum up to 1
@@ -1236,6 +1243,14 @@ class Params {
 
     List<String> getSelectedFeatures() {
         return (features + extra_features).unique()
+    }
+
+    double getPointScorePow() {
+        if (predict_residues) {
+            return (residue_point_score_pow > 0) ? residue_point_score_pow : point_score_pow
+        } else {
+            return point_score_pow 
+        }
     }
 
 //===========================================================================================================//

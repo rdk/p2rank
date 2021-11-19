@@ -12,7 +12,7 @@ import groovy.util.logging.Slf4j
 @CompileStatic
 class PointScoreCalculator implements Parametrized {
 
-    private final double POINT_SCORE_EXP = params.point_score_pow
+    private final double POINT_SCORE_EXP = params.pointScorePow
     private final boolean USE_ONLY_POSITIVE_SCORE = params.use_only_positive_score
 
     /**
