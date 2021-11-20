@@ -23,12 +23,12 @@ import static cz.siret.prank.utils.Futils.writeFile
  */
 @Slf4j
 @CompileStatic
-class RescoreRoutine extends Routine {
+class RescorePocketsRoutine extends Routine {
 
     Dataset dataset
     String modelf
 
-    RescoreRoutine(Dataset dataSet, String modelf, String outdir) {
+    RescorePocketsRoutine(Dataset dataSet, String modelf, String outdir) {
         super(outdir)
         this.dataset = dataSet
         this.modelf = modelf

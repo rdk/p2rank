@@ -10,8 +10,8 @@ import cz.siret.prank.program.routines.Routine
 import cz.siret.prank.program.routines.analyze.AnalyzeRoutine
 import cz.siret.prank.program.routines.analyze.PrintRoutine
 import cz.siret.prank.program.routines.predict.PredictResiduesRoutine
-import cz.siret.prank.program.routines.predict.PredictRoutine
-import cz.siret.prank.program.routines.predict.RescoreRoutine
+import cz.siret.prank.program.routines.predict.PredictPocketsRoutine
+import cz.siret.prank.program.routines.predict.RescorePocketsRoutine
 import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.program.routines.traineval.*
 import cz.siret.prank.utils.*
@@ -25,8 +25,6 @@ import java.text.SimpleDateFormat
 
 import static cz.siret.prank.utils.ATimer.startTimer
 import static cz.siret.prank.utils.Console.write
-import static cz.siret.prank.utils.Console.writeError
-import static cz.siret.prank.utils.Console.writeError
 import static cz.siret.prank.utils.Console.writeError
 import static cz.siret.prank.utils.Futils.mkdirs
 import static cz.siret.prank.utils.Futils.writeFile
@@ -169,6 +167,8 @@ class Main implements Parametrized, Writable {
     }
 
     /**
+     * Generate name of the output directory.
+     *
      * -o ... explicit output directory parameter, overrides all
      * -l/-label ... label that is added as suffix to the output directory created in output_base_dir
      *
@@ -248,7 +248,7 @@ class Main implements Parametrized, Writable {
         if (params.predict_residues) {
             predictRoutine = new PredictResiduesRoutine(dataset, findModel(), outdir)
         } else {
-            predictRoutine = new PredictRoutine(dataset, findModel(), outdir)
+            predictRoutine = new PredictPocketsRoutine(dataset, findModel(), outdir)
         }
 
         if (evalPredict) {
@@ -286,7 +286,7 @@ class Main implements Parametrized, Writable {
         String outdir = findOutdir("rescore_$dataset.label")
         configureLoggers(outdir)
 
-        Dataset.Result result = new RescoreRoutine(
+        Dataset.Result result = new RescorePocketsRoutine(
                 dataset,
                 findModel(),
                 outdir).execute()

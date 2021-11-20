@@ -82,7 +82,6 @@ class ResidueLabelings implements Parametrized {
         writeFile(fname, ScoreTransformer.saveToJson(zt))
         log.info "Trained score transformer 'ZscoreTpTransformer' written to: $fname"
 
-
         def posScores = evaluation.residueRows.findAll { it.observed }*.score as List<Double>
         def negScores = evaluation.residueRows.findAll { !it.observed }*.score as List<Double>
 

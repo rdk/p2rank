@@ -7,7 +7,7 @@ import cz.siret.prank.program.Main
 import cz.siret.prank.program.api.PrankPredictor
 import cz.siret.prank.program.params.ConfigLoader
 import cz.siret.prank.program.params.Params
-import cz.siret.prank.program.routines.predict.PredictRoutine
+import cz.siret.prank.program.routines.predict.PredictPocketsRoutine
 import groovy.transform.CompileStatic
 
 import java.nio.file.Path
@@ -84,7 +84,7 @@ class DafaultPrankPredictor extends PrankPredictor {
      */
     protected Dataset.Result runPrediction(Dataset dataset, Path outDir) {
 
-        PredictRoutine predictRoutine = new PredictRoutine(
+        PredictPocketsRoutine predictRoutine = new PredictPocketsRoutine(
                 dataset,
                 Main.findModel(installDir.toString(), params),
                 outDir.toString())
@@ -100,7 +100,7 @@ class DafaultPrankPredictor extends PrankPredictor {
      * @return
      */
     protected Dataset.Result predict(Dataset dataset) {
-        PredictRoutine predictRoutine = PredictRoutine.createForInternalUse(dataset, Main.findModel(installDir.toString(), params))
+        PredictPocketsRoutine predictRoutine = PredictPocketsRoutine.createForInternalUse(dataset, Main.findModel(installDir.toString(), params))
         return predictRoutine.execute()
     }
 

@@ -8,6 +8,7 @@ import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.features.FeatureVector
 import cz.siret.prank.features.PrankFeatureExtractor
 import cz.siret.prank.features.api.ProcessedItemContext
+import cz.siret.prank.geom.Atoms
 import cz.siret.prank.prediction.metrics.ClassifierStats
 import cz.siret.prank.prediction.pockets.PocketPredictor
 import cz.siret.prank.prediction.pockets.PointScoreCalculator
@@ -89,12 +90,7 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
 
                 double predictedScore = normalizedScore(hist)   // not all classifiers give histogram that sums up to 1
                 boolean predicted = applyPointScoreThreshold(predictedScore)
-                boolean observed = false
-
-                if (ligandAtoms!=null) {
-                    double closestLigandDistance = ligandAtoms.count > 0 ? ligandAtoms.dist(point.point) : Double.MAX_VALUE
-                    observed = (closestLigandDistance <= POSITIVE_POINT_LIGAND_DISTANCE)
-                }
+                boolean observed = isPositivePoint(point.point, ligandAtoms)
 
                 point.hist = hist
                 point.predicted = predicted
@@ -121,6 +117,12 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
         proteinExtractor.finalizeProteinPrototype()
     }
 
+    boolean isPositivePoint(Atom point, Atoms ligandAtoms) {
+        if (ligandAtoms == null || ligandAtoms.empty) {
+            return false
+        }
+        return ligandAtoms.dist(point) <= POSITIVE_POINT_LIGAND_DISTANCE
+    }
 
     /**
      * Rescore predictions of other method
@@ -145,8 +147,7 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
                 boolean observed = false
 
                 if (collectingStatistics) {
-                    double closestLigandDistance = ligandAtoms.count > 0 ? ligandAtoms.dist(point) : Double.MAX_VALUE
-                    observed = (closestLigandDistance <= POSITIVE_POINT_LIGAND_DISTANCE)
+                    observed = isPositivePoint(point, ligandAtoms)
                     stats.addPrediction(observed, predicted, predictedScore, hist)
                 }
                 if (collectPoints) {

@@ -19,6 +19,7 @@ import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
+import static cz.siret.prank.domain.labeling.ResidueLabelings.trainResidueScoreTransformers
 import static cz.siret.prank.utils.ATimer.startTimer
 import static cz.siret.prank.utils.Futils.mkdirs
 import static cz.siret.prank.utils.Futils.writeFile
@@ -30,7 +31,7 @@ import static cz.siret.prank.utils.Futils.writeFile
  */
 @Slf4j
 @CompileStatic
-class PredictRoutine extends Routine {
+class PredictPocketsRoutine extends Routine {
 
     Dataset dataset
     String modelf
@@ -39,14 +40,14 @@ class PredictRoutine extends Routine {
     boolean produceVisualizations = params.visualizations
     boolean produceFilesystemOutput = true
 
-    PredictRoutine(Dataset dataset, String modelf, String outdir) {
+    PredictPocketsRoutine(Dataset dataset, String modelf, String outdir) {
         super(outdir)
         this.dataset = dataset
         this.modelf = modelf
     }
 
-    static PredictRoutine createForInternalUse(Dataset dataset, String modelf) {
-        PredictRoutine routine = new PredictRoutine(dataset, modelf, null)
+    static PredictPocketsRoutine createForInternalUse(Dataset dataset, String modelf) {
+        PredictPocketsRoutine routine = new PredictPocketsRoutine(dataset, modelf, null)
         routine.produceFilesystemOutput = false
         routine.produceVisualizations = false
         return routine
@@ -90,7 +91,7 @@ class PredictRoutine extends Routine {
 
             PredictionPair pair = item.predictionPair
             PocketRescorer rescorer = new ModelBasedRescorer(model, extractor)
-            rescorer.reorderPockets(pair.prediction, item.getContext()) // in this context reorderPockets() makes predictions
+            rescorer.reorderPockets(pair.prediction, item.context) // in this context reorderPockets() makes predictions
 
             if (produceVisualizations) {
                 new OldPymolRenderer(visDir).render(item, rescorer, pair)
@@ -107,8 +108,7 @@ class PredictRoutine extends Routine {
                 }
             }
 
-            // do eval
-            if (collectStats) {  // expects dataset with liganated proteins
+            if (collectStats) {  // do eval, expects dataset with liganated proteins
 
                 // add observed binary labeling for residues (only in eval-predict)
                 if (params.label_residues && pair.prediction.residueLabelings!=null) {
@@ -133,35 +133,37 @@ class PredictRoutine extends Routine {
             stats.logAndStore(outdir, modelLabel)
             stats.logMainResults(outdir, modelLabel)
 
-            // train score transformers
             if (params.train_score_transformers != null) {
-                String scoreDir = "$outdir/score"
-                mkdirs(scoreDir)
-                for (String name : params.train_score_transformers) {
-                    try {
-                        ScoreTransformer transformer = ScoreTransformer.create(name)
-                        transformer.trainForPockets(stats.evaluation)
-                        String fname = "$scoreDir/${name}.json"
-                        writeFile(fname, ScoreTransformer.saveToJson(transformer))
-                        write "Trained score transformer '$name' written to: $fname"
-                    } catch (Exception e) {
-                        log.error("Failed to train score transformer '$name'", e)
-                    }
-                }
+                trainPocketScoreTransformers(stats)
             }
-
             if (params.label_residues && params.train_score_transformers_for_residues) {
-                ResidueLabelings.trainResidueScoreTransformers(outdir, stats.evaluation)
+                trainResidueScoreTransformers(outdir, stats.evaluation)
             }
         }
 
         write "predicting pockets finished in $timer.formatted"
-
         if (produceFilesystemOutput) {
             write "results saved to directory [${Futils.absPath(outdir)}]"
         }
 
         return result
     }
+
+    private trainPocketScoreTransformers(PredictResults stats) {
+        String scoreDir = "$outdir/score"
+        mkdirs(scoreDir)
+        for (String name : params.train_score_transformers) {
+            try {
+                ScoreTransformer transformer = ScoreTransformer.create(name)
+                transformer.trainForPockets(stats.evaluation)
+                String fname = "$scoreDir/${name}.json"
+                writeFile(fname, ScoreTransformer.saveToJson(transformer))
+                write "Trained score transformer '$name' written to: $fname"
+            } catch (Exception e) {
+                log.error("Failed to train score transformer '$name'", e)
+            }
+        }
+    }
+
 
 }
