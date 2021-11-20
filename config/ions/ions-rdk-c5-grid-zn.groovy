@@ -123,6 +123,6 @@ import cz.siret.prank.program.params.Params
 
     // Pre-trained model
 
-    model="../p2rank-dev-models/ions/ions-rdk-c5-grid-mg.model"
+    model="../p2rank-dev-models/ions/ions-rdk-c5-grid-zn.model"
 
 }
