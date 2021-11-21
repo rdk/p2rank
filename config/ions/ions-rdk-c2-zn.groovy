@@ -1,13 +1,11 @@
 import cz.siret.prank.program.params.Params
 
 /**
- * Config for ion binding site prediction: checkpoint 3
+ * Config for ion binding site prediction: checkpoint 2
  *
- * Optimized maximizing DCA_4_0 on datasets:
+ * Optimized maximizing DCA_4_2 on datasets:
  * Train: ZN/ZN_ppu_all_Atrain.ds
  * Test: ZN/ZN_ppu_exposed_Atest.ds
- *
- * Config that uses bug in surface calculation ... solvent_radius = 0.5 gives inner points
  */
 (params as Params).with {
 
@@ -62,11 +60,11 @@ import cz.siret.prank.program.params.Params
     average_feat_vectors = true
     avg_weighted = true
     atom_table_feat_keep_sgn = true
-    solvent_radius = 0.5
+    solvent_radius = 1.2781
 
     // Training
 
-    positive_point_ligand_distance = 1.3
+    positive_point_ligand_distance = 1.4271
     neutral_points_margin = 3
     balance_class_weights = true
     target_class_weight_ratio = 0.0719
@@ -84,9 +82,9 @@ import cz.siret.prank.program.params.Params
     // Residue Prediction
 
     predict_residues = false             // residue mode is off by default
-    residue_score_sum_to_avg = 0.1552
-    residue_score_threshold = 0.6278
-    residue_score_extra_dist = 0
+    residue_score_sum_to_avg = 0.7508
+    residue_score_threshold = 0.0180
+    residue_score_extra_dist = 0.3622
     residue_score_transform = "SIGMOID"
 
     // Classifier

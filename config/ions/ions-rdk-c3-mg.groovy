@@ -6,6 +6,8 @@ import cz.siret.prank.program.params.Params
  * Optimized maximizing DCA_4_0 on datasets:
  * Train: ZN/ZN_ppu_all_Atrain.ds
  * Test: ZN/ZN_ppu_exposed_Atest.ds
+ *
+ * Config that uses bug in surface calculation ... solvent_radius = 0.5 gives inner points
  */
 (params as Params).with {
 
