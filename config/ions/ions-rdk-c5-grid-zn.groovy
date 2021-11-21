@@ -3,8 +3,6 @@ import cz.siret.prank.program.params.Params
 /**
  * Config for ion binding site prediction: checkpoint 4 using full 3D grid
  *
- *
- * TODO: optimize residue mode params
  */
 (params as Params).with {
 

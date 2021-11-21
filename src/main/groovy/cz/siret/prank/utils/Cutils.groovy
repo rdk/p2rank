@@ -5,6 +5,7 @@ import groovy.transform.CompileStatic
 
 import javax.annotation.Nonnull
 import javax.annotation.Nullable
+import java.util.function.Predicate
 
 /**
  * Collection utils
@@ -91,6 +92,42 @@ class Cutils {
     @Nonnull
     static <E> List<E> synchronizedCopy(Collection<E> collection) {
         return Collections.synchronizedList(new ArrayList<E>(collection));
+    }
+
+//===========================================================================================================//
+
+    @Nonnull
+    static <E> PredicateSplit<E> splitByPredicate(Collection<E> collection, Predicate<E> predicate) {
+        List<E> positives = new ArrayList<>()
+        List<E> negatives = new ArrayList<>()
+        for(E e : collection) {
+            if (predicate.test(e)) {
+                positives.add(e)
+            } else {
+                negatives.add(e)
+            }
+        }
+        return new PredicateSplit<E>(positives, negatives)
+    }
+
+    static class PredicateSplit<E>  {
+        private final List<E> positives
+        private final List<E> negatives
+
+        PredicateSplit(List<E> positives, List<E> negatives) {
+            this.positives = positives
+            this.negatives = negatives
+        }
+
+        @Nonnull
+        List<E> getPositives() {
+            return positives
+        }
+
+        @Nonnull
+        List<E> getNegatives() {
+            return negatives
+        }
     }
 
 }

@@ -14,6 +14,7 @@ import cz.siret.prank.program.rendering.RenderingModel
 import cz.siret.prank.program.routines.Routine
 import cz.siret.prank.utils.BinCounter
 import cz.siret.prank.utils.CmdLineArgs
+import cz.siret.prank.utils.Cutils
 import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
@@ -75,7 +76,8 @@ class AnalyzeRoutine extends Routine {
         "chains-residues" : { cmdChainsResidues() },
         "fasta-raw" : { cmdFastaRaw() },
         "fasta-masked" : { cmdFastaMasked() },
-        "peptides" : { cmdPeptides() }
+        "peptides" : { cmdPeptides() },
+        "convert-dataset-to-atomid" : { cmdConvertContactresDataset() }
     ])
 
 //===========================================================================================================//
@@ -422,6 +424,55 @@ class AnalyzeRoutine extends Routine {
         }
         writeFile fname, csv
         write "Calculated propensities saved to [$fname]"
+    }
+
+    /**
+     * Convert dataset with ligand definitions based on contact residue ids to
+     * one with definitions based on ligand atom_id.
+     */
+    private void cmdConvertContactresDataset() {
+        String headerLine = "HEADER: " + dataset.header.join(" ")
+
+        List<String> newItems = Cutils.newSynchronizedList(dataset.size)
+        List<String> nonMatchingItems = Cutils.newSynchronizedList(dataset.size)
+
+
+        dataset.processItems { Dataset.Item item ->
+            Protein prot = item.protein
+
+            List<String> ligDefs = new ArrayList<>()
+            for (Ligand lig : prot.relevantLigands) {
+                String name = lig.groups[0].PDBName
+                int atomId = lig.atoms[0].PDBserial
+                String ligDef = name + "[atom_id:" + atomId + "]"
+                ligDefs.add(ligDef)
+            }
+
+            String newLigDefsStr = ligDefs.toSorted().join(",")
+            Map<String, String> newColVals = new HashMap<>(item.columnValues)
+            newColVals.put(Dataset.COLUMN_LIGANDS, newLigDefsStr)
+            String newLine = dataset.header.collect {newColVals.get(it) }.join("  ")
+
+            if (item.ligandDefinitions.size() == ligDefs.size()) {
+                newItems.add(newLine)
+            } else {
+                String oldLine = dataset.header.collect {item.columnValues.get(it) }.join("  ")
+                String ne = "${item.ligandDefinitions.size()} != ${ligDefs.size()}"
+                nonMatchingItems.add(ne + "  |OLD:|  " + oldLine + "  |NEW:|  " + newLigDefsStr)
+            }
+        }
+
+        newItems = newItems.toSorted()
+
+        String newDsText = headerLine + "\n" + newItems.join("\n") + "\n"
+        String nonMatchingText = nonMatchingItems.join("\n") + "\n"
+
+        log.info("Matching items: {}", newItems.size())
+        log.info("Non matching items: {}", nonMatchingItems.size())
+        log.info("Non matching items were ignored.")
+
+        writeFile "$outdir/${dataset.label}_converted.ds", newDsText
+        writeFile "$outdir/non_matching_items.txt", nonMatchingText
     }
 
 }

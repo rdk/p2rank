@@ -3,7 +3,10 @@ package cz.siret.prank.domain
 import cz.siret.prank.domain.loaders.LoaderParams
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Struct
+import cz.siret.prank.program.Failable
+import cz.siret.prank.program.P2Rank
 import cz.siret.prank.program.params.Parametrized
+import cz.siret.prank.utils.Cutils
 import cz.siret.prank.utils.Writable
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
@@ -15,7 +18,7 @@ import org.biojava.nbio.structure.Group
  */
 @Slf4j
 @CompileStatic
-class Ligands implements Parametrized, Writable {
+class Ligands implements Parametrized, Writable, Failable {
 
     /* ligands that are considered during training and evaluation, other ligands are ignored */
     List<Ligand> relevantLigands = new ArrayList<>()
@@ -47,8 +50,13 @@ class Ligands implements Parametrized, Writable {
                 log.info "Relevant ligands are explicitly defined in the dataset: " + loaderParams.relevantLigandDefinitions
             }
 
-            List<Group> relevantGroups = ligandGroups.findAll { isRelevantLigGroup(it, loaderParams) }
-            List<Group> ignoredGroups = ligandGroups.findAll { ! isRelevantLigGroup(it, loaderParams) }
+            def split = Cutils.splitByPredicate(ligandGroups, {isRelevantLigandGroup(it, protein, loaderParams) })
+            List<Group> relevantGroups = split.positives
+            List<Group> ignoredGroups = split.negatives
+
+            if (loaderParams.relevantLigandsDefined) {
+                checkLigandMatches(loaderParams, pdbFileName)
+            }
 
             List<Atoms> relevantAtomGroups = relevantGroups.collect { Atoms.allFromGroup(it) }
             List<Atoms> ignoredAtomGroups = ignoredGroups.collect { Atoms.allFromGroup(it) }
@@ -74,10 +82,20 @@ class Ligands implements Parametrized, Writable {
         return this
     }
 
-    private static boolean isRelevantLigGroup(Group group, LoaderParams loaderParams) {
+    private void checkLigandMatches(LoaderParams loaderParams, String pdbFileName) {
+        for (Dataset.LigandDefinition ligDef : loaderParams.relevantLigandDefinitions) {
+            int maches = ligDef.matchesGroupIds.size()
+            log.debug("Ligand definition '{}' matches {} ligand groups: {}", ligDef.originalString, maches, ligDef.matchesGroupIds)
+            if (maches == 0) {
+                fail("Ligand definition '$ligDef.originalString' in protein '$pdbFileName' matches no ligands.", log)
+            }
+        }
+    }
+
+    private static boolean isRelevantLigandGroup(Group group, Protein protein, LoaderParams loaderParams) {
         if (loaderParams.relevantLigandsDefined) {
             for (Dataset.LigandDefinition ligDef : loaderParams.relevantLigandDefinitions) {
-                if (ligDef.matchesGroup(group)) {
+                if (ligDef.matchesGroup(group, protein)) {
                     return true
                 }
             }

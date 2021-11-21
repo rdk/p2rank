@@ -6,9 +6,11 @@ import cz.siret.prank.domain.labeling.BinaryLabeling
 import cz.siret.prank.domain.labeling.LigandBasedResidueLabeler
 import cz.siret.prank.domain.labeling.ResidueLabeler
 import cz.siret.prank.domain.loaders.DatasetItemLoader
+import cz.siret.prank.domain.loaders.ExtendedResidueId
 import cz.siret.prank.domain.loaders.LoaderParams
 import cz.siret.prank.domain.loaders.pockets.*
 import cz.siret.prank.features.api.ProcessedItemContext
+import cz.siret.prank.geom.Atoms
 import cz.siret.prank.program.Failable
 import cz.siret.prank.program.P2Rank
 import cz.siret.prank.program.PrankException
@@ -543,45 +545,93 @@ class Dataset implements Parametrized, Writable, Failable {
      * "MG[atom_id:1234]"      ... matches ligand group named MG that has atom with PDB id = 1234
      * "MG[group_id:C_120A]"   ... matches ligand group named MG that is in chain C and has PDB sequence number = 120A
      * "MG[C_120A]"            ... same as previous, group_id specifier is default
+     * "MG[contact_res_ids:A_D246,A_D257,A_T259,A_E423]" ... specifies contact residues of given ligand
      */
     static class LigandDefinition {
+        @Nonnull String originalString
         @Nonnull String groupName
         @Nullable String groupId
         @Nullable Integer atomId
+        @Nullable List<String> contactResidueIds
+        @Nonnull List<String> matchesGroupIds = new ArrayList<>()
 
-        private LigandDefinition(String groupName, String groupId, Integer atomId) {
+        LigandDefinition(String originalString, String groupName, String groupId, Integer atomId, List<String> contactResidueIds) {
+            this.originalString = originalString
             this.groupName = groupName
             this.groupId = groupId
             this.atomId = atomId
+            this.contactResidueIds = contactResidueIds
         }
 
-        boolean matchesGroup(@Nonnull Group group) {
+        boolean matchesGroup(@Nonnull Group group, @Nonnull Protein protein) {
+
+            boolean matches = false
 
             if (groupName == group.getPDBName()) {
-                if (groupId==null && atomId==null) {
-                    return true
+                if (groupId == null && atomId == null && contactResidueIds == null) {
+                    matches = true
                 }
-                if (groupId!=null) {
+                if (groupId != null) {
                     if (groupId == group.getResidueNumber()?.printFull()) {
-                        return true
+                        matches = true
                     }
                 }
-                if (atomId!=null) {
+                if (atomId != null) {
                     for (Atom a : group.atoms) {
                         if (atomId == a.getPDBserial()) {
-                            return true
+                            matches = true
                         }
                     }
                 }
+                if (contactResidueIds != null) {
+                    matches = matchesGroupWithContactResidues(group, protein, contactResidueIds)
+                }
             }
 
-            return false
+            if (matches) {
+                matchesGroupIds.add(group.getResidueNumber()?.printFull())
+            }
+
+            return matches
+        }
+
+        private matchesGroupWithContactResidues(@Nonnull Group group, @Nonnull Protein protein, @Nonnull List<String> contactResidueIds) {
+            List<ExtendedResidueId> conactResIds = contactResidueIds.collect { ExtendedResidueId.parse(it) }
+            Atoms ligAtoms = Atoms.allFromGroup(group)
+            Atoms surroundingProtAtoms = protein.proteinAtoms.cutoutShell(ligAtoms, 7)
+            Residues surroundingResidues = Residues.of(protein.residues.getDistinctForAtoms(surroundingProtAtoms))
+            Residues closestResidues = Residues.of(surroundingResidues.findNNearestToAtoms(conactResIds.size(), ligAtoms))
+
+            int matched = 0
+            for (ExtendedResidueId resId : conactResIds) {
+                Residue res = closestResidues.getResidue(Residue.Key.of(resId.toResidueNumber()))
+                boolean resMatches = false
+                if (res != null) {
+                    // check if aa code matches
+                    if (resId.aaCode == null) {
+                        resMatches = true
+                    } else {
+                        AA aa = res.aa
+                        if (aa == null) { // non standard AA -> assume match
+                            resMatches = true
+                        } else {
+                            resMatches = aa.codeChar == resId.aaCode
+                        }
+                    }
+                }
+                if (resMatches) {
+                    matched++
+                }
+            }
+
+            return matched == contactResidueIds.size()
         }
 
         static LigandDefinition parse(String str) {
             String groupName = null
             String groupId = null
             Integer atomId = null
+            List<String> contactResidueIds = null
 
             if (str.contains("[")) { // has specifier
                 groupName = partBefore(str, "[").trim()
@@ -601,18 +651,26 @@ class Dataset implements Parametrized, Writable, Failable {
                         } catch (Exception e) {
                             throw new PrankException("Invalid ligand definition in the dataset file: '$str'. Invalid atom_id '$svalue'.")
                         }
+                    } else if (stype == "contact_res_ids") {
+                        contactResidueIds = split(svalue, ",")
+                        if (contactResidueIds.empty) {
+                            throw new PrankException("No contact residue ids specified for ligand: '$str'. At least one is required.")
+                        }
+                        for (String cres : contactResidueIds) {
+                            checkValidGroupId(cres, str)
+                        }
                     } else {
-                        throw new PrankException("Invalid ligand definition in the dataset file: '$str'. Invalid specifier type '$stype'. Valid options are: [atom_id, group_id]")
+                        throw new PrankException("Invalid ligand definition in the dataset file: '$str'. Invalid specifier type '$stype'. Valid options are: [atom_id, group_id, contact_res_ids]")
                     }
-                } else {
+                } else { // specifier is ligand groupId by default
                     groupId = specifier
                     checkValidGroupId(groupId, str)
                 }
             } else {
-                groupName = str
+                groupName = str.trim()
             }
 
-            return new LigandDefinition(groupName, groupId, atomId)
+            return new LigandDefinition(str, groupName, groupId, atomId, contactResidueIds)
         }
 
         private static checkValidGroupId(String groupId, String ligDef) {
@@ -628,6 +686,8 @@ class Dataset implements Parametrized, Writable, Failable {
                 res += "[group_id:$groupId]"
             } else if (atomId != null) {
                 res += "[atom_id:$atomId]"
+            } else if (contactResidueIds != null) {
+                res += "[contact_res_ids:${contactResidueIds.join(',')}]"
             }
             return res
         }
@@ -666,7 +726,7 @@ class Dataset implements Parametrized, Writable, Failable {
             this.pocketPredictionFile = predictionFile
             this.label = Futils.shortName( pocketPredictionFile ?: proteinFile )
 
-            ligandDefinitions = parseLigandsColumn(getLigandsColumnValue())
+            this.ligandDefinitions = parseLigandsColumn(getLigandsColumnValue())
         }
 
         PredictionPair getPredictionPair() {
@@ -692,8 +752,9 @@ class Dataset implements Parametrized, Writable, Failable {
 
         @Nullable
         private List<LigandDefinition> parseLigandsColumn(String columnValue) {
-            if (columnValue==null) return null
-            return split(columnValue, ",").collect { LigandDefinition.parse(it) }.toList()
+            if (columnValue == null) return null
+            List<String> ligDefs = Sutils.splitRespectInnerParentheses(columnValue, ',' as char, '[' as char, ']' as char)
+            return ligDefs.collect { LigandDefinition.parse(it) }
         }
 
         @Nullable

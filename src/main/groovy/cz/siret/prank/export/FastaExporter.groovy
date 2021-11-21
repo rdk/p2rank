@@ -28,6 +28,7 @@ class FastaExporter {
     }
 
     String getFastaChainRaw(ResidueChain chain) {
+        // TODO using codeCharString via AA.codeChar is flawed, ignores unknown residues and does not give _ or ? codes expected in raw fasta
         return chain.codeCharString
     }
 

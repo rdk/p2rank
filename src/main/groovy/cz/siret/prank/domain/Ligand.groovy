@@ -35,6 +35,9 @@ class Ligand implements Parametrized {
     double contactDistance
     double centerToProteinDist
 
+    /** distinct atom groups */
+    List<Group> groups
+
     /**
      * SAS points induced by the ligand
      */
@@ -48,7 +51,7 @@ class Ligand implements Parametrized {
 
         atoms = new Atoms(ligAtoms)
         this.protein = protein
-        List<Group> groups = atoms.getDistinctGroupsSorted()
+        this.groups = atoms.getDistinctGroupsSorted()
         Set<String> uniqueNames = (groups*.PDBName).toSet()
         this.name = uniqueNames.join("&")
         this.code = (groups*.residueNumber).join("&")

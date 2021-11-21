@@ -235,6 +235,10 @@ class Residue {
             return residueNumber.hashCode()
         }
 
+        static Key of(ResidueNumber residueNumber) {
+            return new Key(residueNumber)
+        }
+
         static forAtom(Atom atom) {
             ResidueNumber rn = atom?.group?.residueNumber
             if (rn != null) {

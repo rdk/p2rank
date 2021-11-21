@@ -33,7 +33,7 @@ class ListParam {
 
         if (list) {
 
-            res.values = splitRespectInnerPatentheses(inner, ',' as char)
+            res.values = Sutils.splitRespectInnerParentheses(inner, ',' as char)
 
         } else { // range
 
@@ -62,51 +62,7 @@ class ListParam {
         return res
     }
 
-    /**
-     * Recursively respects inner parentheses.
-     * Includes empty tokens.
-     *
-     * @param str
-     * @param delimiter
-     * @return
-     */
-    static List<String> splitRespectInnerPatentheses(String str, char delimiter) {
-        List<String> res = new ArrayList<>()
 
-        int i = 0
-        int tokenStart = 0
-        while (i < str.size()) {
-            if (str.charAt(i).equals(delimiter)) {
-                res.add str.substring(tokenStart, i)
-                tokenStart = i + 1
-            }
-            if (str.charAt(i).equals('(' as char)) {
-                i = findClosingParenthese(str, i)
-            }
-            i++
-        }
-        if (tokenStart <= str.size()) {
-            res.add str.substring(tokenStart, str.size())
-        }
-        return res
-    }
-
-    /**
-     * @return index of a closing ')' for opening '(' at start (recursively respects inner parentheses) or str.length if not found
-     */
-    static int findClosingParenthese(String str, int start) {
-        int i = start + 1
-        while (i < str.size()) {
-            if (str.charAt(i).equals(')' as char)) {
-                return i
-            }
-            if (str.charAt(i).equals('(' as char)) {
-                i = findClosingParenthese(str, i)
-            }
-            i++
-        }
-        return str.length()
-    }
 
     /**
      * TODO improve to use MetaClass info instead of type of current value

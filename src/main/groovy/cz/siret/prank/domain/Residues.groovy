@@ -29,6 +29,10 @@ class Residues implements Iterable<Residue> {
         }
     }
 
+    static Residues of(List<Residue> list) {
+        return new Residues(list)
+    }
+
     List<Residue> getList() {
         return list
     }
@@ -70,6 +74,15 @@ class Residues implements Iterable<Residue> {
     Residue findNearest(Atom point) {
         Atom nearestAtom = getAtoms().withKdTree().kdTree.findNearest(point)
         return getResidueForAtom(nearestAtom)
+    }
+
+    List<Residue> findNNearestToAtoms(int n, Atoms toAtoms) {
+        List<Tuple2<Residue,Double>> resWithDist = list.collect { Tuple.tuple(it, it.atoms.dist(toAtoms)) }
+        resWithDist.sort { it.v2 }
+
+        resWithDist = Cutils.head(n, resWithDist)
+
+        return resWithDist.collect { it.v1 }
     }
 
     @Override

@@ -102,6 +102,20 @@ class Sutils {
     }
 
     /**
+     * @returns prefix made out of digits
+     */
+    static String digitsPrefix(String s) {
+        if (s == null) return null
+        if (s.empty) return s
+        int end = 0
+        while (end < s.size() && Character.isDigit(s.charAt(end))) {
+            end++
+        }
+        if (end == 0) return ""
+        return s.substring(0, end)
+    }
+
+    /**
      *
      * @param liststr format: "(a, b,c)"
      * @return
@@ -154,6 +168,58 @@ class Sutils {
         }
 
         return StringUtils.replaceEachRepeatedly(template, search as String[], repl as String[])
+    }
+
+//===========================================================================================================//
+
+    static List<String> splitRespectInnerParentheses(String str, char delimiter) {
+        return splitRespectInnerParentheses(str, delimiter, '(' as char, ')' as char)
+    }
+
+    /**
+     * Recursively respects inner parentheses.
+     * Includes empty tokens.
+     *
+     * @param str
+     * @param delimiter
+     * @return
+     */
+    static List<String> splitRespectInnerParentheses(String str, char delimiter, char leftParenthese, char rightParenthese) {
+        List<String> res = new ArrayList<>()
+
+        int i = 0
+        int tokenStart = 0
+        while (i < str.size()) {
+            if (str.charAt(i).equals(delimiter)) {
+                res.add str.substring(tokenStart, i)
+                tokenStart = i + 1
+            }
+            if (str.charAt(i).equals(leftParenthese)) {
+                i = findClosingParenthese(str, i, leftParenthese, rightParenthese)
+            }
+            i++
+        }
+        if (tokenStart <= str.size()) {
+            res.add str.substring(tokenStart, str.size())
+        }
+        return res
+    }
+
+    /**
+     * @return index of a closing ')' for opening '(' at start (recursively respects inner parentheses) or str.length if not found
+     */
+    static int findClosingParenthese(String str, int start, char leftParenthese, char rightParenthese) {
+        int i = start + 1
+        while (i < str.size()) {
+            if (str.charAt(i).equals(rightParenthese)) {
+                return i
+            }
+            if (str.charAt(i).equals(leftParenthese)) {
+                i = findClosingParenthese(str, i, leftParenthese, rightParenthese)
+            }
+            i++
+        }
+        return str.length()
     }
 
 }
