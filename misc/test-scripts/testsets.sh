@@ -178,9 +178,12 @@ eval_predict_rest() {
     test ./prank.sh eval-predict chen11.ds           -c config/test-default   -out_subdir TEST/EVAL
     test ./prank.sh eval-predict fptrain.ds          -c config/test-default   -out_subdir TEST/EVAL
 
-    test ./prank.sh eval-predict 'joined(mlig).ds'   -c config/test-default   -out_subdir TEST/EVAL
-    test ./prank.sh eval-predict 'coach420(mlig).ds' -c config/test-default   -out_subdir TEST/EVAL
-    test ./prank.sh eval-predict 'holo4k(mlig).ds'   -c config/test-default   -out_subdir TEST/EVAL
+    # -fail_fast 0 because of missing ligands
+    test ./prank.sh eval-predict 'joined(mlig).ds'   -c config/test-default  -fail_fast 0  -out_subdir TEST/EVAL
+    test ./prank.sh eval-predict 'coach420(mlig).ds' -c config/test-default  -fail_fast 0  -out_subdir TEST/EVAL
+    test ./prank.sh eval-predict 'holo4k(mlig).ds'   -c config/test-default  -fail_fast 0  -out_subdir TEST/EVAL
+
+
 
     #test ./prank.sh eval-predict mlig-moad-nr.ds -c config/test-default -log_cases 1  -fail_fast 1  -out_subdir TEST/EVAL
     #test ./prank.sh eval-predict moad-nr.ds      -c config/test-default -log_cases 1  -fail_fast 1  -out_subdir TEST/EVAL
@@ -196,9 +199,10 @@ eval_rescore() {
                                                              
     test ./prank.sh eval-rescore chen11-fpocket.ds           -c config/test-default  -out_subdir TEST/EVAL
 
-    test ./prank.sh eval-rescore 'joined(mlig)-fpocket.ds'   -c config/test-default  -out_subdir TEST/EVAL
-    test ./prank.sh eval-rescore 'coach420(mlig)-fpocket.ds' -c config/test-default  -out_subdir TEST/EVAL
-    test ./prank.sh eval-rescore 'holo4k(mlig)-fpocket.ds'   -c config/test-default  -out_subdir TEST/EVAL
+    # -fail_fast 0 because of missing ligands
+    test ./prank.sh eval-rescore 'joined(mlig)-fpocket.ds'   -c config/test-default  -fail_fast 0  -out_subdir TEST/EVAL
+    test ./prank.sh eval-rescore 'coach420(mlig)-fpocket.ds' -c config/test-default  -fail_fast 0  -out_subdir TEST/EVAL
+    test ./prank.sh eval-rescore 'holo4k(mlig)-fpocket.ds'   -c config/test-default  -fail_fast 0  -out_subdir TEST/EVAL
 }
 
 # train and evaluate new model/settings on main datasets
