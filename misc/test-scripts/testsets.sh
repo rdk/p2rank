@@ -106,10 +106,11 @@ basic() {
 
     title RUNNING BASIC TESTS
 
+    # -fail_fast 0 because of missing ligands
     test ./prank.sh eval-predict chen11.ds                              -c config/train-default                        -out_subdir TEST/TESTS
     test ./prank.sh eval-predict 'joined(mlig).ds'                      -c config/train-default                        -out_subdir TEST/TESTS
     test ./prank.sh traineval -t chen11-fpocket.ds -e chen11-fpocket.ds -c config/train-default  -loop 1  -fail_fast 1 -out_subdir TEST/TESTS
-    test ./prank.sh traineval -t chen11-fpocket.ds -e 'joined(mlig).ds' -c config/train-default  -loop 1  -fail_fast 1 -out_subdir TEST/TESTS
+    test ./prank.sh traineval -t chen11-fpocket.ds -e 'joined(mlig).ds' -c config/train-default  -loop 1  -fail_fast 0 -out_subdir TEST/TESTS
     test ./prank.sh crossval chen11-fpocket.ds                          -c config/train-default  -loop 1  -fail_fast 1 -out_subdir TEST/TESTS
 
     #test ./prank.sh eval-predict mlig-joined.ds   -c config/train-default -visualizations 1 -tessellation 3 -l VISUALIZATIONS_TES3 -c config/train-default -out_subdir TEST/TESTS
