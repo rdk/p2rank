@@ -54,7 +54,7 @@ class PrintRoutine extends Routine {
 
     final Map<String, Closure> commandRegister = ImmutableMap.copyOf([
             "features" : { features() },
-            "feature-sets" : { this.&feature_sets },
+            "feature-sets" : { feature_sets() },
             "model-info" : { model_info() },
             "params" :    { params() },
             "transform-model" : { transform_model() }     // temporary
