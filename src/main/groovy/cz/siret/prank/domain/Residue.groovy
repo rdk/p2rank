@@ -226,7 +226,7 @@ class Residue {
 
             Key key = (Key) o
 
-            if (residueNumber != key.residueNumber) return false
+            if (!residueNumber.equals(key.residueNumber)) return false
 
             return true
         }

@@ -147,9 +147,9 @@ class ChemVector implements Cloneable {
 
         p.setFromResidueAtom(atom, residueCode)
 
-        if (atom.element == Element.C) { p.atomC=1 }
-        else if (atom.element == Element.O) { p.atomO=1 }
-        else if (atom.element == Element.N) { p.atomN=1 }
+        if (atom.element === Element.C) { p.atomC=1 }
+        else if (atom.element === Element.O) { p.atomO=1 }
+        else if (atom.element === Element.N) { p.atomN=1 }
         else {
             if (atom.name.startsWith("C")) { p.atomC=1 }
             else if (atom.name.startsWith("O")) { p.atomO=1 }

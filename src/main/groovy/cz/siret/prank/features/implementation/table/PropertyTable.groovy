@@ -14,7 +14,7 @@ class PropertyTable {
     Set<String> itemNames = new HashSet<>()
     Set<String> propertyNames = new HashSet<>()
 
-    private Map<Key, Double> values = new HashMap<>()
+    private Map<PropertyTableKey, Double> values = new HashMap<>()
 
 //===========================================================================================================//
 
@@ -26,7 +26,9 @@ class PropertyTable {
         res.itemNames = propertyNames
         res.propertyNames = itemNames
 
-        values.each { res.values.put(new Key(it.key.propertyName, it.key.itemName), it.value) }
+        for (def it : values) {
+            res.values.put(it.key.reversed(), it.value)
+        }
         
         return res
     }
@@ -58,7 +60,6 @@ class PropertyTable {
                 propNames = fields.subList(1, fields.size())
                 header = false
             } else {
-
                 String itemName = fields.get(0)
 
                 int i = 0
@@ -75,7 +76,6 @@ class PropertyTable {
 
                     i++
                 }
-
             }
         }
 
@@ -94,7 +94,7 @@ class PropertyTable {
     private void addValue(String itemName, String propertyName, Double value) {
         itemNames.add(itemName)
         propertyNames.add(propertyName)
-        values.put(new Key(itemName, propertyName), value);
+        values.put(new PropertyTableKey(itemName, propertyName), value);
     }
 
     PropertyTable join(PropertyTable with) {
@@ -118,9 +118,9 @@ class PropertyTable {
         res.propertyNames = this.itemNames
         res.itemNames = this.propertyNames
 
-        res.values = this.values.collectEntries { Key k, Double v ->
+        res.values = this.values.collectEntries { PropertyTableKey k, Double v ->
             [k.reversed(), v]
-        } as Map<Key, Double>
+        } as Map<PropertyTableKey, Double>
 
 
         return res.immutabilize()
@@ -129,11 +129,11 @@ class PropertyTable {
 //===========================================================================================================//
 
     Double getValue(String itemName, String propertyName) {
-        return values.get(new Key(itemName, propertyName))
+        return values.get(new PropertyTableKey(itemName, propertyName))
     }
 
     double getValueOrDefault(String itemName, String propertyName, double defaultVal) {
-        return values.get(new Key(itemName, propertyName)) ?: defaultVal
+        return values.get(new PropertyTableKey(itemName, propertyName)) ?: defaultVal
     }
 
     public String toCSV() {
@@ -150,39 +150,6 @@ class PropertyTable {
             sb << "\n"
         }
         return sb.toString()
-    }
-
-    private static class Key {
-        String itemName
-        String propertyName
-
-        Key(String itemName, String propertyName) {
-            this.itemName = itemName
-            this.propertyName = propertyName
-        }
-
-        Key reversed() {
-            return new Key(propertyName, itemName)
-        }
-
-        boolean equals(o) {
-            if (this.is(o)) return true
-            if (getClass() != o.class) return false
-
-            Key key = (Key) o
-
-            if (itemName != key.itemName) return false
-            if (propertyName != key.propertyName) return false
-
-            return true
-        }
-
-        int hashCode() {
-            int result
-            result = (itemName != null ? itemName.hashCode() : 0)
-            result = 31 * result + (propertyName != null ? propertyName.hashCode() : 0)
-            return result
-        }
     }
 
 }

@@ -24,15 +24,13 @@ class AtomKdTree extends KdTree.SqrEuclid3D<Atom> {
     }
 
     public addAll(Atoms atoms) {
-        for (Atom a in atoms) {
+        for (Atom a : atoms) {
             add(a)
         }
     }
 
     public Atom findNearest(Atom a) {
-        def entry = singleNearestNeighbor(a.coords)
-
-        return entry ? entry.value : null
+        return singleNearestNeighbor(a.coords)?.value
     }
 
     public double nearestDist(Atom a) {

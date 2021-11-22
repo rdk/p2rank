@@ -77,10 +77,11 @@ class PdbUtils {
     static String correctResidueCode(String residueCode) {
         //MSE is only found as a molecular replacement for MET
         //'non-standard', genetically encoded
-        if (residueCode=="MSE")
+        if ("MSE".equals(residueCode)) {
             residueCode = "MET"
-        else if (residueCode=="MEN")  // N-METHYL ASPARAGINE
+        } else if ("MEN".equals(residueCode)) {  // N-METHYL ASPARAGINE
             residueCode = "ASP"
+        }
 
         return residueCode
     }
