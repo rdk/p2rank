@@ -81,42 +81,60 @@ class ChemVector implements Cloneable {
 
         String an = atom.name // atom name
 
-        if (residueCode == "ALA") {
-        } else if (residueCode == "ARG") {
-            if(["NE","NH1","NH2"].contains(an))
+        if ("ARG".equals(residueCode)) {
+            if ("NE".equals(an) || "NH1".equals(an) || "NH2".equals(an)) {
                 hDonorAtoms++
-        } else if (residueCode == "ASN") {
-            if(an=="ND2") hDonorAtoms++
-            if(an=="OD1") hAcceptorAtoms++
-        } else if (residueCode == "ASP") {
-            if(["OD1","OD2"].contains(an)) hAcceptorAtoms++
-        } else if (residueCode == "CYS") {
-        } else if (residueCode == "GLN") {
-            if(an=="NE2") hDonorAtoms++
-            if(an=="OE1") hAcceptorAtoms++
-        } else if (residueCode == "GLU") {
-            if(["OE1","OE2"].contains(an)) hAcceptorAtoms++
-        } else if (residueCode == "GLY") {
-        } else if (residueCode == "HIS") {
-            if(["ND1","NE2"].contains(an)) { hDonorAtoms++; hAcceptorAtoms++ }
-        } else if (residueCode == "ILE") {
-        } else if (residueCode == "LEU") {
-        } else if (residueCode == "LYS") {
-            if(an=="NZ") hDonorAtoms++
-        } else if (residueCode == "MET") {
-        } else if (residueCode == "PHE") {
-        } else if (residueCode == "PRO") {
-        } else if (residueCode == "SER") {
-            if(["OG"].contains(an)) { hDonorAtoms++; hAcceptorAtoms++ }
-        } else if (residueCode == "THR") {
-            if(["OG1"].contains(an)) { hDonorAtoms++; hAcceptorAtoms++ }
-        } else if (residueCode == "TRP") {
-            if(an=="NE1") hDonorAtoms++
-        } else if (residueCode == "TYR") {
-            if(["OH"].contains(an)) { hDonorAtoms++; hAcceptorAtoms++ }
-        } else if (residueCode == "VAL") {
+            }
+        } else if ("ASN".equals(residueCode)) {
+            if ("ND2".equals(an)) {
+                hDonorAtoms++
+            } else if ("OD1".equals(an)) {
+                hAcceptorAtoms++
+            }
+        } else if ("ASP".equals(residueCode)) {
+            if ("OD1".equals(an) || "OD2".equals(an)) {
+                hAcceptorAtoms++
+            }
+        } else if ("GLN".equals(residueCode)) {
+            if ("NE2".equals(an)) {
+                hDonorAtoms++
+            } else if ("OE1".equals(an)) {
+                hAcceptorAtoms++
+            }
+        } else if ("GLU".equals(residueCode)) {
+            if ("OE1".equals(an) || "OE2".equals(an)) {
+                hAcceptorAtoms++
+            }
+        } else if ("HIS".equals(residueCode)) {
+            if ("ND1".equals(an) || "NE2".equals(an)) {
+                hDonorAtoms++
+                hAcceptorAtoms++
+            }
+        } else if ("LYS".equals(residueCode)) {
+            if ("NZ".equals(an)) {
+                hDonorAtoms++
+            }
+        } else if ("SER".equals(residueCode)) {
+            if ("OG".equals(an)) {
+                hDonorAtoms++
+                hAcceptorAtoms++
+            }
+        } else if ("THR".equals(residueCode)) {
+            if ("OG1".equals(an)) {
+                hDonorAtoms++
+                hAcceptorAtoms++
+            }
+        } else if ("TRP".equals(residueCode)) {
+            if ("NE1".equals(an)) {
+                hDonorAtoms++
+            }
+        } else if ("TYR".equals(residueCode)) {
+            if ("OH".equals(an)) {
+                hDonorAtoms++
+                hAcceptorAtoms++
+            }
         } else {
-            if (!ChemDefaults.AACODES.contains(residueCode) ) {
+            if (!ChemDefaults.AACODES.contains(residueCode)) {
                 log.debug "!! masking unknown residue code:  $residueCode"
                 //if (params.mask_unknown_residues) {
                 //    log.debug "!!! masking unknown residue code:  $residueCode"
