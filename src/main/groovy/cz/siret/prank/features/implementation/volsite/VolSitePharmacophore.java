@@ -1,25 +1,21 @@
-package cz.siret.prank.features.implementation.volsite
-
-import groovy.transform.CompileStatic
+package cz.siret.prank.features.implementation.volsite;
 
 /**
  * Adopted from VolSite druggability prediction method.
  */
-@CompileStatic
-class VolSitePharmacophore {
+public class VolSitePharmacophore {
 
-    @CompileStatic
     static class AtomProps {
-        public boolean aromatic
-        public boolean cation
-        public boolean anion
-        public boolean hydrophobic
-        public boolean acceptor
-        public boolean donor
+        public boolean aromatic;
+        public boolean cation;
+        public boolean anion;
+        public boolean hydrophobic;
+        public boolean acceptor;
+        public boolean donor;
     }
     
     private static boolean appartient(String a, String list) {
-        return (list.contains(a))    
+        return list.contains(a);
     }
 
     /**
@@ -27,22 +23,20 @@ class VolSitePharmacophore {
      *
      * @param atomCode CD1, ND2, ...
      * @param residueCode PHE, Trp, TYR...
-     * @return
      */
     static AtomProps getAtomProperties(String atomCode, String residueCode) {
-        if (residueCode==null) residueCode=""
-        if (atomCode==null) atomCode=""
-        
+        if (residueCode==null) residueCode="";
+        if (atomCode==null) atomCode="";
 
-        String name = atomCode.toUpperCase()
-        String resname = residueCode.toUpperCase()
+        String name = atomCode.toUpperCase();
+        String resname = residueCode.toUpperCase();
         
-        AtomProps atm = new AtomProps()
+        AtomProps atm = new AtomProps();
 
         if (name.equals("C")) {
             atm.hydrophobic = true; return atm;
         }
-        if (appartient(name, "CA, CB") && resname != "CA") {
+        if (appartient(name, "CA, CB") && !resname.equals("CA")) {
             atm.hydrophobic = true; return atm;
         }
         if (name.equals("CD") && appartient(resname, "ARG, GLN, GLU, LYS, PRO")) {
@@ -161,7 +155,7 @@ class VolSitePharmacophore {
             atm.cation = true; return atm;
         }
 
-        return atm
+        return atm;
     }
 
 }
