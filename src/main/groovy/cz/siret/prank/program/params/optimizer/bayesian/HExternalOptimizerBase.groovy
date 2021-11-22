@@ -1,20 +1,17 @@
 package cz.siret.prank.program.params.optimizer.bayesian
 
-import com.google.gson.Gson
-import cz.siret.prank.geom.clustering.AtomClusterer
+
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.params.optimizer.HObjectiveFunction
 import cz.siret.prank.program.params.optimizer.HOptimizer
 import cz.siret.prank.program.params.optimizer.HStep
-import cz.siret.prank.utils.ATimer
 import cz.siret.prank.utils.Formatter
 import cz.siret.prank.utils.Sutils
 import cz.siret.prank.utils.Writable
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
-import static cz.siret.prank.utils.ATimer.startTimer
 import static cz.siret.prank.utils.ATimer.startTimer
 import static cz.siret.prank.utils.Futils.*
 

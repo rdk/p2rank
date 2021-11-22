@@ -1,6 +1,6 @@
 package cz.siret.prank.prediction.transformation
 
-import com.google.gson.Gson
+
 import com.google.gson.JsonElement
 import cz.siret.prank.program.routines.results.Evaluation
 import cz.siret.prank.utils.StatSample

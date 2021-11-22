@@ -11,7 +11,6 @@ import cz.siret.prank.utils.csv.CSV
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
-import static cz.siret.prank.utils.Cutils.prefixMapKeys
 import static cz.siret.prank.utils.Futils.mkdirs
 import static cz.siret.prank.utils.Futils.writeFile
 import static cz.siret.prank.utils.MathUtils.stddev

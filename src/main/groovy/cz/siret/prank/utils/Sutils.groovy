@@ -6,13 +6,11 @@ import com.google.common.collect.Lists
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonSyntaxException
-import com.google.gson.internal.Primitives
 import groovy.transform.CompileStatic
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.builder.ToStringBuilder
 import org.apache.commons.lang3.builder.ToStringStyle
 
-import java.lang.reflect.Type
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 

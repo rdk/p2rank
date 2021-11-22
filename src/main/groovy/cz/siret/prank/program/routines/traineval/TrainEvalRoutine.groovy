@@ -15,7 +15,6 @@ import groovy.util.logging.Slf4j
 import weka.classifiers.Classifier
 import weka.classifiers.trees.RandomForest
 import weka.core.Instance
-import weka.core.Instances
 
 import javax.annotation.Nonnull
 import javax.annotation.Nullable

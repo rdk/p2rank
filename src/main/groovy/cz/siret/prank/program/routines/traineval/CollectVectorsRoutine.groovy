@@ -14,7 +14,6 @@ import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.PerfUtils
 import cz.siret.prank.utils.WekaUtils
 import groovy.transform.CompileStatic
-import groovy.transform.TupleConstructor
 import groovy.util.logging.Slf4j
 import weka.core.Instance
 import weka.core.Instances

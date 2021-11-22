@@ -4,7 +4,6 @@ import cz.siret.prank.domain.Dataset
 import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.domain.labeling.BinaryLabeling
 import cz.siret.prank.domain.labeling.LigandBasedResidueLabeler
-import cz.siret.prank.domain.labeling.ResidueLabelings
 import cz.siret.prank.domain.loaders.LoaderParams
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.prediction.pockets.rescorers.ModelBasedRescorer

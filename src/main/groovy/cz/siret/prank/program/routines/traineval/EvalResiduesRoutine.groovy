@@ -4,7 +4,6 @@ import cz.siret.prank.domain.Dataset
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.domain.labeling.*
 import cz.siret.prank.geom.Atoms
-import cz.siret.prank.geom.samplers.PointSampler
 import cz.siret.prank.geom.samplers.SampledPoints
 import cz.siret.prank.prediction.metrics.ClassifierStats
 import cz.siret.prank.program.ml.Model

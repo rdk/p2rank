@@ -9,8 +9,8 @@ import cz.siret.prank.program.params.Params
 import cz.siret.prank.program.routines.Routine
 import cz.siret.prank.program.routines.analyze.AnalyzeRoutine
 import cz.siret.prank.program.routines.analyze.PrintRoutine
-import cz.siret.prank.program.routines.predict.PredictResiduesRoutine
 import cz.siret.prank.program.routines.predict.PredictPocketsRoutine
+import cz.siret.prank.program.routines.predict.PredictResiduesRoutine
 import cz.siret.prank.program.routines.predict.RescorePocketsRoutine
 import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.program.routines.traineval.*

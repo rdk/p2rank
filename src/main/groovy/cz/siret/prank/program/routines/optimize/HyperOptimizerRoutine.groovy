@@ -15,7 +15,6 @@ import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
-
 import static cz.siret.prank.utils.Futils.absSafePath
 
 /**

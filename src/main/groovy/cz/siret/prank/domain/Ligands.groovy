@@ -4,7 +4,6 @@ import cz.siret.prank.domain.loaders.LoaderParams
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Struct
 import cz.siret.prank.program.Failable
-import cz.siret.prank.program.P2Rank
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Cutils
 import cz.siret.prank.utils.Writable
