@@ -54,7 +54,7 @@ class PrintRoutine extends Routine {
 
     final Map<String, Closure> commandRegister = ImmutableMap.copyOf([
             "features" : { features() },
-            //"feature-sets" : this.&feature_sets,
+            "feature-sets" : { this.&feature_sets },
             "model-info" : { model_info() },
             "params" :    { params() },
             "transform-model" : { transform_model() }     // temporary
@@ -78,13 +78,18 @@ class PrintRoutine extends Routine {
         write subFeatureHeader.withIndex().collect { name, i -> sprintf("%2d: %s", i, name) }.join("\n")
     }
 
-//    void feature_sets() {
-//        def features = FeatureExtractor.createFactory().extraFeaturesHeader
-//
-//        write features.join("\n")
-//        write ""
-//        write "n = ${features.size()}"
-//    }
+    void feature_sets() {
+        PrankFeatureExtractor fe = (PrankFeatureExtractor) FeatureExtractor.createFactory()
+        FeatureSetup featureSetup = fe.featureSetup
+        List<FeatureSetup.Feature> enabledFeatures = featureSetup.enabledFeatures
+        boolean filtering = featureSetup.filteringEnabled
+
+        write "Effectively enabled features" + (filtering?" (after filtering)":"") + ":"
+        write ""
+        write ((enabledFeatures*.name).join("\n"))
+
+        write "n = ${enabledFeatures.size()}"
+    }
 
     void model_info() {
         String modelf = main.findModel()
