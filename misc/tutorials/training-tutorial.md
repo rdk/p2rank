@@ -6,7 +6,7 @@ This file provides an introduction for people who want to train and evaluate the
 ## Kick-start examples
 
 ~~~sh
-./prank.sh traineval -t <training_dataset> -e <evaluation_dataset>  # train and evaluate model (execute n run with difefrent random seed, see -loop and -seed params)
+./prank.sh traineval -t <training_dataset> -e <evaluation_dataset>  # train and evaluate model (execute n run with different random seed, see -loop and -seed params)
 ./prank.sh crossval <dataset>                                       # run crossvalidation on a single dataset (see -folds param)
 
 ./prank.sh ploop -t <training_dataset> -e <evaluation_dataset> -paramA '[min:max:step]'  # iterate through param values

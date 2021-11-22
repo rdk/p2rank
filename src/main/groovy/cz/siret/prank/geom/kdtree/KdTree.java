@@ -58,7 +58,7 @@ public abstract class KdTree<T> {
 
     /**
      * Construct a KdTree with a given number of dimensions and a limit on
-     * maxiumum size (after which it throws away old points)
+     * maximum size (after which it throws away old points)
      */
     protected KdTree(int dimensions, Integer sizeLimit) {
         this.dimensions = dimensions;

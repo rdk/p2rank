@@ -2,7 +2,7 @@
 
 P2Rank has routines for optimizing arbitrary parameters with Grid and Bayesian optimization. 
 
-Here by hyper-parameters we mean actual hyper-parameters of the machine learning models (eg. number of trees in RF) but also any arbitrary parameter ot the whole algorithm.
+Here by hyper-parameters we mean actual hyper-parameters of the machine learning models (e.g. number of trees in RF) but also any arbitrary parameter ot the whole algorithm.
 
 To see the complete commented list of all (including undocumented) 
 parameterss see [Params.groovy](https://github.com/rdk/p2rank/blob/develop/src/main/groovy/cz/siret/prank/program/params/Params.groovy) in the source code.
@@ -73,7 +73,7 @@ Quick test run:
 Feature set comparisons:
 ~~~sh
 ./prank.sh ploop -c config/train-new-default \      
-    -t chen11-fpocket.ds                \  # crossvalidate on chen11 datsest    
+    -t chen11-fpocket.ds                \  # crossvalidate on chen11 dataset    
     -loop 10 -rf_trees 100 -rf_depth 10 \      
     -features '((protrusion,bfactor),(protrusion,bfactor,new_feature))'` 
 
@@ -134,7 +134,7 @@ Examples:
 # Optimizing parameters that are not involved in training new classifier,
 # but rather in aggregating results into pockets.
 # We can allow to train only one RF model in the beginning (-hopt_train_only_once 1).
-# Note: this is not really ideal because of overwriting to one particular RF model.    
+# Note: this is not really ideal because of overfitting to a one particular RF model.    
 ./prank.sh hopt -c config/train-new-default -out_subdir HOPT -label TREES  \
     -t chen11-fpocket.ds \
     -e joined.ds \
