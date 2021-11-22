@@ -59,12 +59,12 @@ class Residues implements Iterable<Residue> {
 
     @Nullable
     Residue getResidueForAtom(Atom a) {
-        getResidue(Residue.Key.forAtom(a) as Residue.Key)
+        getResidue(Residue.Key.forAtom(a))
     }
 
     @Nullable
     Residue getResidueForGroup(Group g) {
-        getResidue(Residue.Key.forAtom(g?.atoms?.first()) as Residue.Key)
+        getResidue(Residue.Key.forAtom(g?.atoms?.first()))
     }
 
     List<Residue> getDistinctForAtoms(Atoms atoms) {

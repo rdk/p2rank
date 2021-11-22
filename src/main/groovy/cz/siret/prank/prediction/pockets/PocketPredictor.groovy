@@ -128,7 +128,7 @@ class PocketPredictor implements Parametrized {
 
             Atoms pocketSasPoints = new Atoms( pocketPoints.collect { ((LabeledPoint)it).point }.toList() )  // we want exact objects from protein.accessibleSurface
 
-            PrankPocket p = new PrankPocket(clusterPoints.centerOfMass, score, pocketSasPoints, (List<LabeledPoint>) pocketPoints.list)
+            PrankPocket p = new PrankPocket(clusterPoints.centroid, score, pocketSasPoints, (List<LabeledPoint>) pocketPoints.list)
             p.surfaceAtoms = pocketSurfaceAtoms
             p.auxInfo.samplePoints = clusterPoints.count
             p.cache.count = clusterPoints.count

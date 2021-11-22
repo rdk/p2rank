@@ -91,7 +91,7 @@ class ContactResiduesPositionFeature extends SasFeatureCalculator implements Par
 
                 count = residues.size()
                 distclosest = ratoms.dist(sasPoint)
-                distcenter = Struct.dist ratoms.centerOfMass, sasPoint
+                distcenter = Struct.dist ratoms.centroid, sasPoint
                 distca = (closestResOfType.CA==null) ? distcenter : Struct.dist(closestResOfType.CA, sasPoint)
             }
 

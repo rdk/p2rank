@@ -79,7 +79,7 @@ class PyramidFeature extends SasFeatureCalculator implements Parametrized {
         }
 
         Atom getCentroid() {
-            Atoms.copyPoints(a, b, c, d).centerOfMass
+            Atoms.calculateCentroid([a, b, c, d])
         }
 
         double getSurface() {

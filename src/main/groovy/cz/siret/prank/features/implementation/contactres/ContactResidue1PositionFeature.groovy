@@ -39,7 +39,7 @@ class ContactResidue1PositionFeature extends SasFeatureCalculator implements Par
         Residue res = context.protein.residues.findNearest(sasPoint)
         AminoAcid aa = res.aminoAcid
 
-        Atom center = res.atoms.centerOfMass
+        Atom center = res.atoms.centroid
         Atom ca = center
         Atom cb = center
         if (aa!=null) {

@@ -36,7 +36,7 @@ class ProteinMassFeature extends SasFeatureCalculator implements Parametrized {
     @Override
     double[] calculateForSasPoint(Atom point, SasFeatureCalculationContext ctx) {
 
-        Atom center1 = ctx.protein.proteinAtoms.cutoutSphere(point, params.feat_pmass_radius).centerOfMass ?: point
+        Atom center1 = ctx.protein.proteinAtoms.cutoutSphere(point, params.feat_pmass_radius).centroid ?: point
 //        Atom center2 = ctx.neighbourhoodAtoms.centerOfMass ?: point
 
         double protp = dist(point, center1)

@@ -28,6 +28,7 @@ public final class Atoms implements Iterable<Atom> {
 
     private Map<Integer, Atom> index;
     private AtomKdTree kdTree;
+    private Atom centroid;
     private Atom centerOfMass;
 
     public Atoms() {
@@ -229,6 +230,36 @@ public final class Atoms implements Iterable<Atom> {
             centerOfMass = Calc.centerOfMass(aa);
         }
         return centerOfMass;
+    }
+
+    public Atom getCentroid() {
+        if (centroid==null) {
+            centroid = calculateCentroid(list);
+        }
+        return centroid;
+    }
+
+    public static Atom calculateCentroid(Collection<Atom> atoms) {
+        if (atoms.isEmpty()) {
+            return null;
+        }
+
+        double x = 0d;
+        double y = 0d;
+        double z = 0d;
+
+        for (Atom a : atoms) {
+            x += a.getX();
+            y += a.getY();
+            z += a.getZ();
+        }
+
+        int n = atoms.size();
+        x = x / n;
+        y = y / n;
+        z = z / n;
+
+        return new Point(x, y, z);
     }
 
     public List<Group> getDistinctGroupsSorted() {

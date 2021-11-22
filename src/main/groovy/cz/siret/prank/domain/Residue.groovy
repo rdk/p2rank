@@ -211,9 +211,10 @@ class Residue {
     /**
      * Unique identifier of the residue in particular Protein
      */
+    @CompileStatic
     static final class Key {
 
-        private ResidueNumber residueNumber
+        private final ResidueNumber residueNumber
 
         Key(ResidueNumber residueNumber) {
             Objects.requireNonNull(residueNumber)
@@ -239,7 +240,7 @@ class Residue {
             return new Key(residueNumber)
         }
 
-        static forAtom(Atom atom) {
+        static Key forAtom(Atom atom) {
             ResidueNumber rn = atom?.group?.residueNumber
             if (rn != null) {
                 new Key(rn)
@@ -260,8 +261,8 @@ class Residue {
      * Secondary structure section with position
      */
     static class SsInfo {
-        SsSection section
-        int posInSection
+        final SsSection section
+        final int posInSection
 
         SsInfo(SsSection section, int posInSection) {
             this.section = section
@@ -294,9 +295,9 @@ class Residue {
      * Secondary structure section (the longest extent of the same SS type)
      */
     static class SsSection {
-        SecStrucType type
-        int startPos // inclusive
-        int length
+        final SecStrucType type
+        final int startPos // inclusive
+        final int length
 
         SsSection(SecStrucType type, int startPos, int length) {
             this.type = type
