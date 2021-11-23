@@ -285,6 +285,7 @@ class Protein implements Parametrized {
         residues = null
         exposedResidues = null
         residueChainsByAuthorId = null
+        ssAssigned = false
     }
 
     /**

@@ -39,7 +39,7 @@ class SecStructSimpleMotifRF extends ResidueFeatureCalculator {
     Residue.SsSection findPreviousDifferentSimpleSection(Residue residue) {
         SimpleSecStructType type = SimpleSecStructType.from(residue.ss.type)
         Residue.SsSection current = residue.ss.section.previous
-        while (SimpleSecStructType.from(current.type) == type) {
+        while (current != null && SimpleSecStructType.from(current.type) == type) {
             current = current.previous
         }
         return current
@@ -48,7 +48,7 @@ class SecStructSimpleMotifRF extends ResidueFeatureCalculator {
     Residue.SsSection findNextDifferentSimpleSection(Residue residue) {
         SimpleSecStructType type = SimpleSecStructType.from(residue.ss.type)
         Residue.SsSection current = residue.ss.section.next
-        while (SimpleSecStructType.from(current.type) == type) {
+        while (current != null && SimpleSecStructType.from(current.type) == type) {
             current = current.next
         }
         return current

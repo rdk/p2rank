@@ -332,9 +332,13 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
 
         SasFeatureCalculationContext context = new SasFeatureCalculationContext(protein, neighbourhoodAtoms, this)
         for (FeatureSetup.Feature feature : featureSetup.enabledSasFeatures) {
-            double[] values = feature.calculator.calculateForSasPoint(point, context)
-            feature.checkCorrectLength(values)
-            res.valueVector.setValues(feature.startIndex, values)
+            try {
+                double[] values = feature.calculator.calculateForSasPoint(point, context)
+                feature.checkCorrectLength(values)
+                res.valueVector.setValues(feature.startIndex, values)
+            } catch (Exception e) {
+                throw new PrankException("Failed to calculate feature " + feature.name, e)
+            }
         }
 
         return res
