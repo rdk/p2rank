@@ -88,7 +88,7 @@ class PrintRoutine extends Routine {
         write ""
         write ((enabledFeatures*.name).join("\n"))
 
-        write "n = ${enabledFeatures.size()}"
+        write "\nn = ${enabledFeatures.size()}"
     }
 
     void model_info() {
