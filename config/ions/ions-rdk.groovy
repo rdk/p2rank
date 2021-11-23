@@ -38,11 +38,13 @@ import cz.siret.prank.program.params.Params
     selected_stats = ['_blank',
                       'DCA_4_0',
                       'DCA_4_2',
-                      'MCC',
-                      'F1',
-                      'AUC',
-                      'AUPRC',
-                      'TPX',
+                      'DCA_4_10',
+                      'DCA_4_99',
+                      'point_AUPRC',
+                      'point_AUC',
+                      'point_MCC',
+                      'point_F1',
+                      'point_TPX',
                       'TIME_MINUTES']
 
 

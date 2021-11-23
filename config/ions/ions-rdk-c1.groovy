@@ -43,11 +43,11 @@ import cz.siret.prank.program.params.Params
                       'DCA_4_2',
                       'DCA_4_10',
                       'DCA_4_99',
-                      'MCC',
-                      'F1',
-                      'AUC',
-                      'AUPRC',
-                      'TPX',
+                      'point_AUPRC',
+                      'point_AUC',
+                      'point_MCC',
+                      'point_F1',
+                      'point_TPX',
                       'TIME_MINUTES']
 
 
