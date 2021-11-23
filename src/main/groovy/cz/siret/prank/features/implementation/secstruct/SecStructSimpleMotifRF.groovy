@@ -23,7 +23,7 @@ class SecStructSimpleMotifRF extends ResidueFeatureCalculator {
 
     @Override
     String getName() {
-        return 'sss_motif' + (directional ? 'direct' : '')
+        return 'sss_motif' + (directional ? '_direct' : '')
     }
 
     @Override
