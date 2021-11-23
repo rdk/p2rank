@@ -17,6 +17,9 @@ import org.biojava.nbio.structure.*
 
 import javax.annotation.Nullable
 
+import static cz.siret.prank.utils.Cutils.nextInList
+import static cz.siret.prank.utils.Cutils.previousInList
+
 @Slf4j
 @CompileStatic
 class Struct {
@@ -313,12 +316,8 @@ class Struct {
 
         int len = residues.size()
         for (int i=0; i!=len; i++) {
-            if (i > 0) {
-                residues[i].previousInChain = residues[i-1]
-            }
-            if (i < len-1) {
-                residues[i].nextInChain = residues[i+1]
-            }
+            residues[i].previousInChain = previousInList(i, residues)
+            residues[i].nextInChain = nextInList(i, residues)
         }
 
         return residues

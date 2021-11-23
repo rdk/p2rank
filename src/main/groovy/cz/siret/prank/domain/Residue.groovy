@@ -299,6 +299,9 @@ class Residue {
         final int startPos // inclusive
         final int length
 
+        @Nullable SsSection previous
+        @Nullable SsSection next
+
         SsSection(SecStrucType type, int startPos, int length) {
             this.type = type
             this.startPos = startPos

@@ -16,6 +16,8 @@ import cz.siret.prank.features.implementation.electrostatics.ElectrostaticsTempS
 import cz.siret.prank.features.implementation.histogram.PairHistogramFeature
 import cz.siret.prank.features.implementation.secstruct.SecStructCloudSF
 import cz.siret.prank.features.implementation.secstruct.SecStructRF
+import cz.siret.prank.features.implementation.secstruct.SecStructSimpleMotifRF
+import cz.siret.prank.features.implementation.secstruct.SecStructSimpleRF
 import cz.siret.prank.features.implementation.sequence.DupletsPropensityFeature
 import cz.siret.prank.features.implementation.sequence.TripletsPropensityFeature
 import cz.siret.prank.features.implementation.table.AtomTableFeature
@@ -86,6 +88,14 @@ class FeatureRegistry {
         register new ResidueToSasFeatWrapper(new SecStructRF())
         register new ResidueToAtomicFeatWrapper(new SecStructRF())
         register new SecStructCloudSF()
+        register new ResidueToSasFeatWrapper(new SecStructSimpleRF())
+        register new ResidueToAtomicFeatWrapper(new SecStructSimpleRF())
+        // ss motifs
+        register new ResidueToSasFeatWrapper(new SecStructSimpleMotifRF(true))
+        register new ResidueToAtomicFeatWrapper(new SecStructSimpleMotifRF(true))
+        register new ResidueToSasFeatWrapper(new SecStructSimpleMotifRF(false))
+        register new ResidueToAtomicFeatWrapper(new SecStructSimpleMotifRF(false))
+
         register new ResidueToSasFeatWrapper(new ContactResiduesRF())
 
         register new ConservationFeature()

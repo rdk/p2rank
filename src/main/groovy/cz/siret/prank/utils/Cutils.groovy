@@ -26,6 +26,19 @@ class Cutils {
         return head(n, list.reverse())
     }
 
+    static <T> T previousInList(int i, List<T> list) {
+        if (i > 0) {
+            return list[i-1]
+        }
+        return null
+    }
+
+    static <T> T nextInList(int i, List<T> list) {
+        if (i < list.size()-1) {
+            return list[i+1]
+        }
+        return null
+    }
 
     static <K, E> Map<K, E> transformKeys(Map<K, E> map, Closure<K> closure) {
         Map<K, E> res = new HashMap<>(map.size())

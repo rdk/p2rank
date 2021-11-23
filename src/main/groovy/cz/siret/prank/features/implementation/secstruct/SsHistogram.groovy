@@ -9,8 +9,9 @@ import org.biojava.nbio.structure.secstruc.SecStrucType
 @CompileStatic
 class SsHistogram {
 
-    private static List<String> HEADER = SecStrucType.values().collect {
-        SecStrucType it -> it.name() }.toList()
+    private static final List<String> HEADER = SecStrucType.values().collect {
+        SecStrucType it -> it.name()
+    }.toList()
 
     static List<String> getHeader() {
         HEADER

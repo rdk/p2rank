@@ -60,6 +60,10 @@ class Sutils {
         prefix + text.readLines().join("\n"+prefix)
     }
 
+    static List<String> prefixEach(String prefix, List<String> list) {
+        list.collect { prefix + it }
+    }
+
     static String timeLabel() {
         DATE_LABEL_FORMAT.format(new Date())
     }

@@ -26,6 +26,8 @@ class ResidueChain {
 
     Atoms atoms
 
+    List<Residue.SsSection> secStructSections
+
     ResidueChain(String authorId, String mmcifId,  List<Residue> residues) {
         this.authorId = authorId
         this.mmcifId = mmcifId

@@ -11,6 +11,7 @@ import cz.siret.prank.geom.Struct
 import cz.siret.prank.geom.Surface
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.Parametrized
+import cz.siret.prank.utils.Cutils
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.PdbUtils
 import groovy.transform.CompileStatic
@@ -24,6 +25,8 @@ import java.util.function.Function
 
 import static cz.siret.prank.features.implementation.conservation.ConservationScore.*
 import static cz.siret.prank.geom.Struct.residueChainsFromStructure
+import static cz.siret.prank.utils.Cutils.nextInList
+import static cz.siret.prank.utils.Cutils.previousInList
 
 /**
  * Encapsulates protein structure with ligands.
@@ -333,15 +336,21 @@ class Protein implements Parametrized {
 
 //===========================================================================================================//
 
-    void assignSecondaryStructure() {
-        SecondaryStructureUtils.assignSecondaryStructure(structure)
+    private boolean ssAssigned = false
 
+    void assignSecondaryStructure() {
+        if (ssAssigned) {
+            return
+        }
+
+        SecondaryStructureUtils.assignSecondaryStructure(structure)
         ensureResiduesCalculated()
 
         for (ResidueChain chain : residueChains) {
+            List<Residue.SsSection> sections = new ArrayList<>()
+
             for (int pos=0; pos!=chain.length; pos++) {
                 Residue res = chain.residues[pos]
-                if (res.ss != null) continue
 
                 SecStrucType type = res.secStruct
                 int pos2 = pos + 1
@@ -355,8 +364,19 @@ class Protein implements Parametrized {
                 for (int i=0; i!=secLength; i++) {
                     chain.residues[pos+i].ss = new Residue.SsInfo(section, i)
                 }
+
+                sections.add(section)
             }
+
+            for (int i=0; i!=sections.size(); i++) {
+                sections[i].previous = previousInList(i, sections)
+                sections[i].next = nextInList(i, sections)
+            }
+
+            chain.secStructSections = sections
         }
+
+        ssAssigned = true
     }
 
 //===========================================================================================================//
