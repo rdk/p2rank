@@ -5,7 +5,8 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.junit.Test
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertNotNull;
 
 /**
  *
@@ -69,6 +70,20 @@ class DatasetTest {
         assertEquals 1, ds.items[8].protein.ligandCount
         assertEquals 2, ds.items[9].protein.ligandCount
         assertEquals 3, ds.items[10].protein.ligandCount
+
+    }
+
+    @Test
+    void secondaryStructureAssignment() {
+        Dataset ds1 = Dataset.loadFromFile('distro/test_data/specified-chains.ds')
+        Dataset ds2 = Dataset.loadFromFile('distro/test_data/specified-chains-and-ligands.ds')
+
+        [ds1, ds2].each {
+            it.processItems { Dataset.Item item ->
+                item.protein.assignSecondaryStructure()
+                item.protein.residueChains.each {assertNotNull it.secStructSections }
+            }
+        }
 
     }
 
