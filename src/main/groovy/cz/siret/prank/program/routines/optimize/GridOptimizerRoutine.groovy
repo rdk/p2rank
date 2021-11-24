@@ -153,17 +153,22 @@ class GridOptimizerRoutine extends ParamLooper {
 
         StringBuilder sb = new StringBuilder()
         //sb << "# resName \n"
-        sb << "${paramX.name}/${paramY.name}," + paramY.values.collect { it }.join(",") + "\n"
+        sb << "${paramX.name}/${paramY.name}," + paramY.values.collect { quote(it) }.join(",") + "\n"  // header
 
-        for (def va : paramX.values) {
-            def row = paramY.values.collect { vb -> valueMap.get([va,vb]) }.collect { fmt it }.join(",")
+        for (def varX : paramX.values) {
+            def row = paramY.values.collect { varY -> valueMap.get([varX, varY]) }.collect { fmt it }.join(",")
 
-            sb << "" + va + "," + row + "\n"
+            sb << "" + quote(varX) + "," + row + "\n"
         }
 
         String fname = "$tablesDir/${statName}.csv"
         tables2D.put(statName, fname)
         Futils.writeFile fname, sb.toString()
+    }
+
+    private String quote(Object s) {
+        if (s == null) return null
+        return "\"$s\""
     }
 
     private List<Step> generateSteps(List<ListParam> lparams) {
