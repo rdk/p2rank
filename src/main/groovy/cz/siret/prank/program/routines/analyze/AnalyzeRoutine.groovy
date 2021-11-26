@@ -342,7 +342,7 @@ class AnalyzeRoutine extends Routine {
         dataset.processItems { Dataset.Item item ->
             Protein prot = item.protein
             ResidueLabeler<Boolean> labeler = dataset.binaryResidueLabeler
-            BinaryLabeling labeling = labeler.getBinaryLabeling(prot.exposedResidues, prot)
+            BinaryLabeling labeling = labeler.getBinaryLabeling(prot.exposedResidues, prot)   // TODO not always only exposed!
 
             def counter = new BinCounter<AA>()
 
@@ -371,7 +371,7 @@ class AnalyzeRoutine extends Routine {
         dataset.processItems { Dataset.Item item ->
             Protein prot = item.protein
             ResidueLabeler<Boolean> labeler = dataset.binaryResidueLabeler
-            BinaryLabeling labeling = labeler.getBinaryLabeling(prot.exposedResidues, prot)
+            BinaryLabeling labeling = labeler.getBinaryLabeling(prot.exposedResidues, prot)    // TODO not always only exposed!
 
             def counter = new BinCounter<String>()
 
@@ -400,7 +400,7 @@ class AnalyzeRoutine extends Routine {
         dataset.processItems { Dataset.Item item ->
             Protein prot = item.protein
             ResidueLabeler<Boolean> labeler = dataset.binaryResidueLabeler
-            BinaryLabeling labeling = labeler.getBinaryLabeling(prot.exposedResidues, prot)
+            BinaryLabeling labeling = labeler.getBinaryLabeling(prot.exposedResidues, prot)       // TODO not always only exposed!
 
             def counter = new BinCounter<String>()
 

@@ -208,11 +208,11 @@ class Struct {
     }
 
     static boolean isPolyChain(Chain chain) {
-        return chain.entityInfo.type == EntityType.POLYMER
+        return chain.entityInfo?.type == EntityType.POLYMER
     }
 
     static boolean isTerminalResidue(Group group) {
-        group.getAtom("OXT") != null
+        group?.getAtom("OXT") != null
     }
 
     static List<Group> getResidueGroupsFromChain(Chain chain) {
