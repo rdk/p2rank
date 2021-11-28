@@ -7,6 +7,9 @@ import cz.siret.prank.utils.Sutils
 import groovy.transform.CompileStatic
 import groovy.transform.TypeCheckingMode
 
+import static cz.siret.prank.utils.Sutils.splitRespectInnerParentheses
+import static cz.siret.prank.utils.Sutils.trimEach
+
 /**
  * Parameter which represents s list of values (defined explicitly or as range and step)
  * Used in grid optimization with 'prank ploop'
@@ -33,7 +36,7 @@ class ListParam {
 
         if (list) {
 
-            res.values = Sutils.splitRespectInnerParentheses(inner, ',' as char)
+            res.values = trimEach(splitRespectInnerParentheses(inner, ',' as char))
 
         } else { // range
 

@@ -172,6 +172,10 @@ class Sutils {
         return StringUtils.replaceEachRepeatedly(template, search as String[], repl as String[])
     }
 
+    static List<String> trimEach(List<String> list) {
+        return list.collect { (it==null) ? null : it.trim()}
+    }
+
 //===========================================================================================================//
 
     static List<String> splitRespectInnerParentheses(String str, char delimiter) {
@@ -204,6 +208,7 @@ class Sutils {
         if (tokenStart <= str.size()) {
             res.add str.substring(tokenStart, str.size())
         }
+
         return res
     }
 
