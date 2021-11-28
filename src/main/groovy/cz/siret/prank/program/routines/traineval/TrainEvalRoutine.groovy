@@ -7,7 +7,6 @@ import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.ml.FeatureVectors
 import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.program.params.Params
 import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.program.routines.results.FeatureImportances
 import cz.siret.prank.utils.ATimer
@@ -153,7 +152,6 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
 
         if (shouldTrainModel()) {
             model = Model.createNewFromParams(params)
-            modelf = "$outdir/${model.label}.model"
 
             write "training classifier ${model.classifier.getClass().name} on dataset with ${trainVectors.count} instances"
 
@@ -162,6 +160,7 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
             trainTime = trainTimer.time
             logTime "model trained in " + formatTime(trainTime)
 
+            modelf = "$outdir/${model.label}.model"
             if (!params.delete_models) {
                 model.saveToFile(modelf)
             }
