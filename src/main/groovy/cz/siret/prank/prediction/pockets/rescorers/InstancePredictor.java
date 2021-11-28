@@ -3,6 +3,7 @@ package cz.siret.prank.prediction.pockets.rescorers;
 import cz.siret.prank.features.FeatureExtractor;
 import cz.siret.prank.features.FeatureVector;
 import cz.siret.prank.fforest.FasterForest;
+import cz.siret.prank.fforest.api.FlatBinaryForest;
 import cz.siret.prank.fforest2.FasterForest2;
 import cz.siret.prank.program.ml.Model;
 import cz.siret.prank.utils.PerfUtils;
@@ -51,14 +52,24 @@ public interface InstancePredictor {
                 };
             }
 
-        }
-
-        if (classifier instanceof FasterForest2) {
+        } else if (classifier instanceof FasterForest2) {
             res = new InstancePredictor() { // predictor using faster distributionForAttributes()
                 final FasterForest2 ff = (FasterForest2) classifier;
                 @Override
                 public double[] getDistributionForPoint(FeatureVector vect) {
                     return ff.distributionForAttributes(vect.getArray(), 2);
+                }
+            };
+        } else if (classifier instanceof FlatBinaryForest) {
+            res = new InstancePredictor() { // predictor using faster distributionForAttributes()
+                final FlatBinaryForest ff = (FlatBinaryForest) classifier;
+                @Override
+                public double[] getDistributionForPoint(FeatureVector vect) {
+                    double[] hist = new double[2];
+                    double score = ff.predict(vect.getArray());
+                    hist[0] = 1d - score;
+                    hist[1] = score;
+                    return hist;
                 }
             };
         }

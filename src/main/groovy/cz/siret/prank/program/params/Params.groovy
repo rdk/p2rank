@@ -356,6 +356,12 @@ class Params {
     int rf_bagsize = 100
 
     /**
+     * TODO
+     */
+    @ModelParam // training
+    boolean rf_flatten = false
+
+    /**
      * cutoff for joining ligand atom groups into one ligand
      */
     @ModelParam // training

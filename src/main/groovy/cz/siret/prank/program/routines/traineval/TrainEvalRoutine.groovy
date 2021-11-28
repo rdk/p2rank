@@ -1,10 +1,13 @@
 package cz.siret.prank.program.routines.traineval
 
 import cz.siret.prank.domain.Dataset
+import cz.siret.prank.fforest.api.FlattableForest
 import cz.siret.prank.prediction.metrics.ClassifierStats
+import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.ml.FeatureVectors
 import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.params.Parametrized
+import cz.siret.prank.program.params.Params
 import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.program.routines.results.FeatureImportances
 import cz.siret.prank.utils.ATimer
@@ -155,7 +158,7 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
             write "training classifier ${model.classifier.getClass().name} on dataset with ${trainVectors.count} instances"
 
             def trainTimer = startTimer()
-            WekaUtils.trainClassifier(model.classifier, trainVectors)
+            trainModel(model, trainVectors)
             trainTime = trainTimer.time
             logTime "model trained in " + formatTime(trainTime)
 
@@ -192,6 +195,23 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
             Futils.delete(modelf)
 
         return res
+    }
+
+
+    void trainModel(Model model, FeatureVectors data) {
+        WekaUtils.trainClassifier(model.classifier, data)
+
+        if (params.rf_flatten) {
+            if (!(model.classifier instanceof FlattableForest)) {
+                throw new PrankException("Trying to flatten invalid classifier: " + model.classifier.class.simpleName)
+            }
+
+            def timer = startTimer()
+            model.classifier = ((FlattableForest)model.classifier).toFlatBinaryForest()
+            logTime "model flattened in " + timer.formatted
+
+            model.label = model.label + "_flat"
+        }
     }
 
     private List<Double> calcFeatureImportances(Model model) {
