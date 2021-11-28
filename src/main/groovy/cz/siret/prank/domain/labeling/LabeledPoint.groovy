@@ -16,11 +16,6 @@ class LabeledPoint implements Atom {
 
     Atom point //@Delegate
 
-    /**
-     * ligandability score histogram - direct output of classifier (hist[0]=unligandable,hist[1]=ligandable)
-     * always length=2
-     */
-    double[] hist  // length=2
     double score = Double.NaN
 
     boolean predicted
@@ -33,34 +28,22 @@ class LabeledPoint implements Atom {
     int pocket = 0
 
 
-    LabeledPoint(Atom point, double[] hist, boolean observed, boolean predicted) {
+    LabeledPoint(Atom point, boolean observed, boolean predicted) {
         this.point = point
-        this.hist = hist
         this.predicted = predicted
         this.observed = observed
     }
 
     LabeledPoint(Atom point) {
         this.point = point
-        this.hist = new double[2]
         this.predicted = false
         this.observed = false
     }
 
     LabeledPoint(Atom point, boolean observed) {
         this.point = point
-        this.hist = new double[2]
         this.predicted = false
         this.observed = observed
-    }
-
-//===========================================================================================================//
-
-    /**
-     * @return predicted ligandability score from interval <0,1> (aggregated from histogram)
-     */
-    double getLigandabilityScore() {
-        hist[1] / (hist[0]+hist[1])
     }
 
 //===========================================================================================================//

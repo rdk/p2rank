@@ -1,10 +1,8 @@
 package cz.siret.prank.utils
 
-import cz.siret.prank.fforest.api.FlattableForest
+
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.ml.FeatureVectors
-import cz.siret.prank.program.ml.Model
-import cz.siret.prank.program.params.Params
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j

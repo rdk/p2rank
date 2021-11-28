@@ -70,26 +70,10 @@ class ClassifierStats implements Parametrized, Writable {
         }
     }
 
-    private static final double[] HIST_0 = [1, 0] as double[]
-    private static final double[] HIST_1 = [0, 1] as double[]
 
     void addPrediction(boolean observed, boolean predicted) {
-        double score = predicted ? 1 : 0
-        double[] hist = predicted ? HIST_1 : HIST_0
-        addPrediction(observed, predicted, score, hist)
-    }
-
-    /**
-     *
-     * @param observed
-     * @param predicted
-     * @param score  must be from <0,1>
-     */
-    void addPrediction(boolean observed, boolean predicted, double score) {
-        if (score < 0d) score = 0d
-
-        double[] hist = [1d-score, score] as double[]
-        addPrediction(observed, predicted, score, hist)
+        double score = predicted ? 1d : 0d
+        addPrediction(observed, predicted, score)
     }
 
     /**
@@ -98,7 +82,7 @@ class ClassifierStats implements Parametrized, Writable {
      * @param predicted   predicted class == 1
      * @param score predicted score from interval <0,1>
      */
-    void addPrediction(boolean observed, boolean predicted, double score, double[] hist) {
+    void addPrediction(boolean observed, boolean predicted, double score) {
 
         double obsv = observed ? 1d : 0d
         double e = Math.abs(obsv - score)
@@ -121,8 +105,6 @@ class ClassifierStats implements Parametrized, Writable {
         } else {
             histograms.scoreNeg.put(score)
         }
-        histograms.score0.put(hist[0])
-        histograms.score1.put(hist[1])
 
         if (collecting) {
             predictions.add(new PPred(observed, score))
@@ -144,17 +126,10 @@ class ClassifierStats implements Parametrized, Writable {
         /** scores for observed positives */
         Histogram scorePos  = new Histogram(0, 1, HISTOGRAM_BINS)
 
-        /** predicted hist[0] for all */
-        Histogram score0 = new Histogram(0, 1, HISTOGRAM_BINS)
-        /** predicted hist[1] for all */
-        Histogram score1 = new Histogram(0, 1, HISTOGRAM_BINS)
-
         void add(Histograms others) {
             score.add(others.score)
             scoreNeg.add(others.scoreNeg)
             scorePos.add(others.scorePos)
-            score0.add(others.score0)
-            score1.add(others.score1)
         }
     }
 

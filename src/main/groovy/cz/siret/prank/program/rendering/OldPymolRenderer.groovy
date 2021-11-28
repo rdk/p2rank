@@ -68,7 +68,7 @@ class OldPymolRenderer implements Parametrized {
         Writer pdb = Futils.getGzipWriter(pointsf)
         int i = 0
         for (LabeledPoint lp : rescorer.labeledPoints) {
-            double beta = lp.hist[1]
+            double beta = lp.score
             Atom p = lp.point
             def lab = "STP"
 

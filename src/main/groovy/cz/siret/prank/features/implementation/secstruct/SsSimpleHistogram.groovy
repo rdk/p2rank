@@ -1,7 +1,6 @@
 package cz.siret.prank.features.implementation.secstruct
 
 import groovy.transform.CompileStatic
-import org.biojava.nbio.structure.secstruc.SecStrucType
 
 /**
  *

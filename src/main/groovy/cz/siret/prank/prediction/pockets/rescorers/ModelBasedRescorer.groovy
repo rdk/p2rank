@@ -19,7 +19,6 @@ import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 
 import static cz.siret.prank.prediction.pockets.PointScoreCalculator.applyPointScoreThreshold
-import static cz.siret.prank.prediction.pockets.PointScoreCalculator.normalizedScore
 
 /**
  * rescorer and predictor
@@ -84,21 +83,19 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
                 // classification
 
                 FeatureVector vector = extractor.calcFeatureVector(point.point)
-                double[] hist = instancePredictor.getDistributionForPoint(vector)
 
                 // labels and statistics
 
-                double predictedScore = normalizedScore(hist)   // not all classifiers give histogram that sums up to 1
+                double predictedScore = instancePredictor.predictPositive(vector)
                 boolean predicted = applyPointScoreThreshold(predictedScore)
                 boolean observed = isPositivePoint(point.point, ligandAtoms)
 
-                point.hist = hist
                 point.predicted = predicted
                 point.observed = observed
                 point.score = predictedScore
 
                 if (collectingStatistics) {
-                    stats.addPrediction(observed, predicted, predictedScore, hist)
+                    stats.addPrediction(observed, predicted, predictedScore)
                 }
             }
 
@@ -141,20 +138,20 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
 
                 FeatureVector vector = extractor.calcFeatureVector(point)
 
-                double[] hist = instancePredictor.getDistributionForPoint(vector)
-                double predictedScore = normalizedScore(hist)   // not all classifiers give histogram that sums up to 1
+                // not all classifiers give histogram that sums up to 1
+                double predictedScore = instancePredictor.predictPositive(vector)
                 boolean predicted = applyPointScoreThreshold(predictedScore)
                 boolean observed = false
 
                 if (collectingStatistics) {
                     observed = isPositivePoint(point, ligandAtoms)
-                    stats.addPrediction(observed, predicted, predictedScore, hist)
+                    stats.addPrediction(observed, predicted, predictedScore)
                 }
                 if (collectPoints) {
-                    labeledPoints.add(new LabeledPoint(point, hist, observed, predicted))
+                    labeledPoints.add(new LabeledPoint(point, observed, predicted))
                 }
 
-                sum += pointScoreCalculator.transformedPointScore(hist)
+                sum += pointScoreCalculator.transformScore(predictedScore)
 
                 rawSum += predictedScore // ~ P(ligandable)
             }

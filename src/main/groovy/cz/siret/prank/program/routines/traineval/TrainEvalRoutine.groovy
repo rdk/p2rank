@@ -115,7 +115,7 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
                 boolean predicted = applyPointScoreThreshold(score)
                 boolean observed = inst.classValue() > 0
 
-                trainStats.addPrediction(observed, predicted, score, hist)
+                trainStats.addPrediction(observed, predicted, score)
             }
             return trainStats
         } else {

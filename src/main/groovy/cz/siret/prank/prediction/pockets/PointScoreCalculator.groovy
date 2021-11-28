@@ -21,10 +21,14 @@ class PointScoreCalculator implements Parametrized {
      * @return
      */
     static double normalizedScore(double[] hist) {
+        if (Params.inst.use_only_positive_score) {
+            return hist[1]
+        } 
+
         double res = hist[1] / (hist[0] + hist[1])
 
         if (res < 0d) {
-            res = 0
+            res = 0d
             //log.warn("normalizedScore={} hist={}", res, hist)
         }
         
@@ -41,6 +45,7 @@ class PointScoreCalculator implements Parametrized {
      * @param hist
      * @return
      */
+    @Deprecated
     double transformedPointScore(double[] hist) {
 
         double score

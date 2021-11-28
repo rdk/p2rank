@@ -33,7 +33,7 @@ class PocketPredictor implements Parametrized {
 
     private double scorePoint(LabeledPoint point, Atoms surfacePoints) {
 
-        double score = pointScoreCalculator.transformedPointScore(point.hist)
+        double score = pointScoreCalculator.transformScore(point.score)
 
         if (BALANCE_POINT_DENSITY) {
             int pts = surfacePoints.cutoutSphere(point, BALANCE_RADIUS).count
@@ -152,7 +152,7 @@ class PocketPredictor implements Parametrized {
             i++
 
             for (LabeledPoint lp : it.labeledPoints) {
-                if (lp.hist[1] > 0.2) { // TODO XXX this is temporary to fix pymol visualization esthetics
+                if (lp.score > 0.2) { // TODO XXX this is temporary to fix pymol visualization esthetics
                     lp.pocket = i
                 }
             }

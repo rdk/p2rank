@@ -14,7 +14,6 @@ import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
 
 import static cz.siret.prank.prediction.pockets.PointScoreCalculator.applyPointScoreThreshold
-import static cz.siret.prank.prediction.pockets.PointScoreCalculator.normalizedScore
 
 /**
  *
@@ -84,11 +83,10 @@ class ModelBasedPointLabeler extends PointLabeler {
             // classification
 
             FeatureVector props = extractor.calcFeatureVector(point.point)
-            double[] hist = instancePredictor.getDistributionForPoint(props)
+            double predictedScore = instancePredictor.predictPositive(props)
 
             // labels and statistics
 
-            double predictedScore = normalizedScore(hist)   // not all classifiers give histogram that sums up to 1
             boolean predicted = binaryLabel(predictedScore)
             boolean observed = false
 
@@ -96,13 +94,12 @@ class ModelBasedPointLabeler extends PointLabeler {
                 observed = observedPoints[i].observed
             }
 
-            point.hist = hist
             point.predicted = predicted
             point.observed = observed
             point.score = predictedScore
 
             if (collectingStats) {
-                classifierStats.addPrediction(observed, predicted, predictedScore, hist)
+                classifierStats.addPrediction(observed, predicted, predictedScore)
             }
 
             i++

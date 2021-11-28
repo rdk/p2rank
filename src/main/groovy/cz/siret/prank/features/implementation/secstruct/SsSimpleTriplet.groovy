@@ -1,7 +1,6 @@
 package cz.siret.prank.features.implementation.secstruct
 
 import cz.siret.prank.domain.Residue
-import cz.siret.prank.utils.Sutils
 import groovy.transform.CompileStatic
 
 import javax.annotation.Nonnull
