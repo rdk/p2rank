@@ -1,6 +1,6 @@
 package cz.siret.prank.program.routines.analyze
 
-import com.google.common.collect.ImmutableMap
+
 import cz.siret.prank.domain.*
 import cz.siret.prank.domain.labeling.*
 import cz.siret.prank.domain.loaders.LoaderParams
@@ -24,6 +24,7 @@ import static cz.siret.prank.geom.SecondaryStructureUtils.assignSecondaryStructu
 import static cz.siret.prank.utils.Cutils.newSynchronizedList
 import static cz.siret.prank.utils.Formatter.format
 import static cz.siret.prank.utils.Futils.writeFile
+import static java.util.Collections.unmodifiableMap
 
 /**
  * Various tools for analyzing datasets.
@@ -65,7 +66,7 @@ class AnalyzeRoutine extends Routine {
  // Sub-Commands
  //===========================================================================================================//
 
-    final Map<String, Closure> commandRegister = ImmutableMap.copyOf([
+    final Map<String, Closure> commandRegister = unmodifiableMap([
         "binding-residues" : { cmdBindingResidues() },
         "labeled-residues" : { cmdLabeledResidues() },
         "aa-propensities" : { cmdAaPropensities() },

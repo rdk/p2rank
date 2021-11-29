@@ -1,6 +1,6 @@
 package cz.siret.prank.program.routines.analyze
 
-import com.google.common.collect.ImmutableMap
+
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.features.FeatureSetup
 import cz.siret.prank.features.PrankFeatureExtractor
@@ -15,6 +15,7 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
 import static cz.siret.prank.utils.Bench.timeit
+import static java.util.Collections.unmodifiableMap
 
 /**
  * Various tools that print some information to stdout.
@@ -52,7 +53,7 @@ class PrintRoutine extends Routine {
 // Sub-Commands
 //===========================================================================================================//
 
-    final Map<String, Closure> commandRegister = ImmutableMap.copyOf([
+    final Map<String, Closure> commandRegister = unmodifiableMap([
             "features" : { features() },
             "feature-sets" : { feature_sets() },
             "model-info" : { model_info() },

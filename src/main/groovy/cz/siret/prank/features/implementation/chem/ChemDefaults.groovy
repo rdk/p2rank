@@ -1,8 +1,10 @@
 package cz.siret.prank.features.implementation.chem
 
-import com.google.common.collect.ImmutableMap
-import com.google.common.collect.ImmutableSet
+
 import groovy.transform.CompileStatic
+
+import static java.util.Collections.unmodifiableMap
+import static java.util.Collections.unmodifiableSet
 
 /**
  * TODO: move to aa-table
@@ -11,8 +13,8 @@ import groovy.transform.CompileStatic
 final class ChemDefaults {
 
     static class ToImmutableMixin {
-        static def toImmutable(Map m) {
-            ImmutableMap.copyOf(m)
+        static Map toImmutable(Map m) {
+            return unmodifiableMap(m)
         }
     }
 
@@ -147,8 +149,10 @@ final class ChemDefaults {
     }
 
 
-    public static final Set<String> AACODES = ImmutableSet.copyOf(["ALA","ARG","ASN","ASP","CYS","GLU","GLN","GLY","HIS","ILE",
-                                                                   "LEU","LYS","MET","PHE","PRO","SER","THR","TRP","TYR","VAL",   "STP"])
+    public static final Set<String> AACODES = unmodifiableSet([
+            "ALA","ARG","ASN","ASP","CYS","GLU","GLN","GLY","HIS","ILE",
+            "LEU","LYS","MET","PHE","PRO","SER","THR","TRP","TYR","VAL",
+            "STP"].toSet())
 
     /*
      * mapping AACODE to vector with default values
@@ -160,7 +164,7 @@ final class ChemDefaults {
             setAAProperties(p, code)
             AA_DEFAULTS.put(code, p)
         }
-        AA_DEFAULTS = ImmutableMap.copyOf(AA_DEFAULTS)
+        AA_DEFAULTS = unmodifiableMap(AA_DEFAULTS)
     }
 
 }

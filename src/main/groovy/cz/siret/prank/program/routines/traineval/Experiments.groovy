@@ -1,6 +1,6 @@
 package cz.siret.prank.program.routines.traineval
 
-import com.google.common.collect.ImmutableMap
+
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.domain.loaders.DatasetCachedLoader
 import cz.siret.prank.domain.loaders.electrostatics.DelphiCubeLoader
@@ -23,6 +23,7 @@ import groovy.util.logging.Slf4j
 import static cz.siret.prank.utils.Bench.timeitLog
 import static cz.siret.prank.utils.Futils.*
 import static cz.siret.prank.utils.ThreadUtils.async
+import static java.util.Collections.unmodifiableMap
 
 /**
  * ploop, hopt and traineval routines for optimization experiments
@@ -64,7 +65,7 @@ class Experiments extends Routine {
 // Sub-Commands
 //===========================================================================================================//
 
-    final Map<String, Closure> commandRegister = ImmutableMap.copyOf([
+    final Map<String, Closure> commandRegister = unmodifiableMap([
         "traineval" : { traineval() },
         "ploop" :     { ploop() },
         "hopt" :      { hopt() },

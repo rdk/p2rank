@@ -1,7 +1,6 @@
 package cz.siret.prank.features.generic
 
-import com.google.common.collect.ImmutableList
-import com.google.common.collect.ImmutableMap
+
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
@@ -13,18 +12,18 @@ class GenericHeader {
 
     public static final GenericHeader EMPTY = new GenericHeader(Collections.<String>emptyList())
 
-    private final ImmutableList<String> colNames
-    private final ImmutableMap<String, Integer> indexMap
+    private final List<String> colNames
+    private final Map<String, Integer> indexMap
 
     private int size
 
     GenericHeader(List<String> cols) {
-        colNames = ImmutableList.copyOf(cols)
+        colNames = Collections.unmodifiableList(cols)
 
         size = cols.size()
 
         int i = 0
-        indexMap = ImmutableMap.copyOf(  colNames.collectEntries { [it,i++] } )
+        indexMap = Collections.unmodifiableMap( colNames.collectEntries { [it,i++] } )
     }
 
     GenericHeader(String... cols) {
@@ -40,7 +39,7 @@ class GenericHeader {
         return size
     }
 
-    ImmutableList<String> getColNames() {
+    List<String> getColNames() {
         return colNames
     }
 

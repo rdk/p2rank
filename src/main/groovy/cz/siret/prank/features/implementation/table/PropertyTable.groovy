@@ -1,11 +1,12 @@
 package cz.siret.prank.features.implementation.table
 
 import com.google.common.base.Splitter
-import com.google.common.collect.ImmutableMap
-import com.google.common.collect.ImmutableSet
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.StringUtils
+
+import static java.util.Collections.unmodifiableMap
+import static java.util.Collections.unmodifiableSet
 
 @Slf4j
 @CompileStatic
@@ -85,9 +86,9 @@ class PropertyTable {
     }
 
     private PropertyTable immutabilize() {
-        itemNames = ImmutableSet.copyOf(itemNames)
-        propertyNames = ImmutableSet.copyOf(propertyNames)
-        values = ImmutableMap.copyOf(values)
+        itemNames = unmodifiableSet(itemNames)
+        propertyNames = unmodifiableSet(propertyNames)
+        values = unmodifiableMap(values)
         return this
     }
 
