@@ -470,7 +470,7 @@ xstart=`date +%s`
 print_env >> $SUMMARY_LOG
 
 # colors are stripped from stream that goes to the file
-run $@ > >( tee >( sed 's/[\x01-\x1F\x7F]//g' | sed 's/(B//g' >> $SUMMARY_LOG ) )
+run $@ > >( tee >( sed 's/\x1B\[[0-9;]*[A-Za-z]//g' | sed 's/[\x01-\x1F\x7F]//g' | sed 's/(B//g' >> $SUMMARY_LOG ) )
 
 
 xend=`date +%s`
@@ -489,7 +489,7 @@ echo
 cat $SUMMARY_LOG | grep --color=always ERROR
 
 echo "summary saved to [$SUMMARY_LOG]"
-echo "stdout went to [$RUN_LOG]"
-echo "stderr went to [$DEBUG_LOG]"
+echo "stdout went to   [$RUN_LOG]"
+echo "stderr went to   [$DEBUG_LOG]"
 
 printf "\nDONE in $ftime\n" | tee -a $SUMMARY_LOG
