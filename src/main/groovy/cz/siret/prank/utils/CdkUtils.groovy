@@ -20,7 +20,7 @@ import javax.vecmath.Point3d
 class CdkUtils {
 
     static IAtom bioJavaToCDKAtom(Atom atom) {
-        Point3d point = new Point3d(atom.coords)
+        Point3d point = atom.getCoordsAsPoint3d()
 
         String elementSymbol = "C"
         if (atom.element!=null) {
