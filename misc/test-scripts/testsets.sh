@@ -4,10 +4,15 @@
 
 ROUTINE=$1
 shift
-RUN_LOG=local-run.log
-DEBUG_LOG=local-debug.log
-SUMMARY_LOG=local-summary.log
-ERRORS_LOG=local-errors.log
+
+TIMESTAMP=$(date +'%Y%m%d_%H%M%S')
+LOGDIR="local-logs/$TIMESTAMP"
+mkdir -pv $LOGDIR
+
+RUN_LOG="$LOGDIR/run.log"
+DEBUG_LOG="$LOGDIR/debug.log"
+SUMMARY_LOG="$LOGDIR/summary.log"
+ERRORS_LOG="$LOGDIR/errors.log"
 
 ###################################################################################################################
 
@@ -465,9 +470,8 @@ xstart=`date +%s`
 print_env >> $SUMMARY_LOG
 
 # colors are stripped from stream that goes to the file
-#run > >( tee >( sed -u 's/\x1B\[[0-9;]*[JKmsu]//g' >> $SUMMARY_LOG ) )
-#run $@ > >( tee >( sed -u 's/\x1B\[[0-9;]*[JKmsu]//g' >> $SUMMARY_LOG ) )
-run $@ > >( tee >( sed -u 's/\x1B\[[0-9;]\{1,\}[A-Za-z]//g' >> $SUMMARY_LOG ) )
+run $@ > >( tee >( sed 's/[\x01-\x1F\x7F]//g' | sed 's/(B//g' >> $SUMMARY_LOG ) )
+
 
 xend=`date +%s`
 runtime=$((xend-xstart))
