@@ -36,7 +36,7 @@ class ResidueToSasFeatWrapper extends SasFeatureCalculator {
 
     @Override
     double[] calculateForSasPoint(Atom sasPoint, SasFeatureCalculationContext context) {
-        Residue res = context.protein.residues.findNearest(sasPoint)
+        Residue res = context.protein.residues.findNearest(sasPoint) // TODO optimize use context
 
         if (res != null) {
             return delegate.calculateForResidue(res, new ResidueFeatureCalculationContext(context.protein))
