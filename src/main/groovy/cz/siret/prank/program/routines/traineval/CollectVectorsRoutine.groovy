@@ -66,6 +66,7 @@ class CollectVectorsRoutine extends Routine {
 
         final AtomicInteger pos = new AtomicInteger(0)
         final AtomicInteger neg = new AtomicInteger(0)
+        final AtomicInteger ligCount = new AtomicInteger(0)
         final List<Instances> instList = newSynchronizedList(dataset.size)
 
         Lists.newArrayList()
@@ -83,14 +84,15 @@ class CollectVectorsRoutine extends Routine {
 
             pos.addAndGet(collected.positives)
             neg.addAndGet(collected.negatives)
+            ligCount.addAndGet(item.predictionPair.protein.ligands.size())
             instList.add(inst)
         }
 
         int positives = pos.get()
         int negatives = neg.get()
         int count = positives + negatives
-        double ratio = PerfUtils.round ( (double)positives / negatives , 3)
-        int ligandCount = dataset.items.collect { it.predictionPair.protein.ligands.size() }.sum(0) as int
+        double ratio = PerfUtils.round ( (double)positives / negatives , 4)
+        int ligandCount = ligCount.get()
 
         write "processed $ligandCount ligands in $dataset.size files"
         write "extracted $count vectors...  positives:$positives negatives:$negatives ratio:$ratio"
