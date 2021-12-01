@@ -120,10 +120,14 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
 
         // add implicit table features
         if (!enabledFeatures.contains(AtomTableFeature.NAME)) {
-            enabledFeatures.add(AtomTableFeature.NAME)
+            if (!params.atom_table_features.empty) {
+                enabledFeatures.add(AtomTableFeature.NAME)
+            }
         }
         if (!enabledFeatures.contains(ResidueTableFeature.NAME)) {
-            enabledFeatures.add(ResidueTableFeature.NAME)
+            if (!params.residue_table_features.empty) {
+                enabledFeatures.add(ResidueTableFeature.NAME)
+            }
         }
 
         featureSetup = new FeatureSetup(enabledFeatures, params.feature_filters)
