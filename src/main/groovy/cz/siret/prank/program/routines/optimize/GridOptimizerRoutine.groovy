@@ -198,7 +198,7 @@ class GridOptimizerRoutine extends ParamLooper {
 
         List<ParamStat> statValues = new ArrayList<>(steps.size())
         for (Step s : steps) {
-            statValues.add new ParamStat(""+s.params[0].value, s.resultStats.get(statName) as Double)
+            statValues.add new ParamStat(""+s.params[0].value, s.resultStats.get(statName))
         }
 
         String tablef = "$tablesDir/${statName}.csv"
@@ -267,14 +267,14 @@ class GridOptimizerRoutine extends ParamLooper {
 
     static class ParamStat {
         String paramValue
-        Double statValue
+        Object statValue
 
-        ParamStat(String paramValue, Double statValue) {
+        ParamStat(String paramValue, Object statValue) {
             this.paramValue = paramValue
             this.statValue = statValue
         }
 
-        static Comparator<ParamStat> ORDER = Comparator.<ParamStat, Double>comparing({ ParamStat o -> o.statValue },
+        static Comparator<ParamStat> ORDER = Comparator.<ParamStat, Object>comparing({ ParamStat o -> o.statValue },
                 Comparator.nullsFirst(Comparator.naturalOrder())
         ).reversed()
     }
