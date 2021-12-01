@@ -274,7 +274,7 @@ class GridOptimizerRoutine extends ParamLooper {
             this.statValue = statValue
         }
 
-        static Comparator<ParamStat> ORDER = Comparator.<ParamStat, Double>comparing({ ParamStat o -> o.getClass() },
+        static Comparator<ParamStat> ORDER = Comparator.<ParamStat, Double>comparing({ ParamStat o -> o.statValue },
                 Comparator.nullsFirst(Comparator.naturalOrder())
         ).reversed()
     }
