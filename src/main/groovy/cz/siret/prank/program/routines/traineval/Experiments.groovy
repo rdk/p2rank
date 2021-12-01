@@ -5,6 +5,8 @@ import cz.siret.prank.domain.Dataset
 import cz.siret.prank.domain.loaders.DatasetCachedLoader
 import cz.siret.prank.domain.loaders.electrostatics.DelphiCubeLoader
 import cz.siret.prank.domain.loaders.electrostatics.GaussianCube
+import cz.siret.prank.features.FeatureSetup
+import cz.siret.prank.features.PrankFeatureExtractor
 import cz.siret.prank.program.Main
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.ml.Model
@@ -56,9 +58,9 @@ class Experiments extends Routine {
             throw new PrankException("Invalid command: " + command)
         }
 
-        if (command in ['traineval', 'ploop', 'hopt']) {
+        //if (command in ['traineval', 'ploop', 'hopt']) {
             prepareDatasets(main)
-        }
+        //}
     }
 
 //===========================================================================================================//
@@ -69,6 +71,11 @@ class Experiments extends Routine {
         "traineval" : { traineval() },
         "ploop" :     { ploop() },
         "hopt" :      { hopt() },
+
+        "ploop-features-tryeach" :        { ploop_features_tryeach() },
+        "ploop-features-leaveoneout" :    { ploop_features_leaveoneout() },
+        "ploop-subfeatures-tryeach" :     { ploop_subfeatures_tryeach() },
+        "ploop-subfeatures-leaveoneout" : { ploop_subfeatures_leaveoneout() },
     ])
 
 //===========================================================================================================//
@@ -84,7 +91,6 @@ class Experiments extends Routine {
             log.info "results saved to directory [${Futils.absPath(outdir)}]"
         }
     }
-
 
 //===========================================================================================================//
 
@@ -271,67 +277,73 @@ class Experiments extends Routine {
         }
     }
 
+
+
 //===========================================================================================================//
 
-    // TODO move
+    private checkNoListParams() {
+        List<String> listParamNames = ListParam.parseListArgs(cmdLineArgs)*.name
 
-    /**
-     * for jvm profiler
-     */
-    def bench_delphi_loading() {
-        def fname = 'src/test/resources/data/electrostatics/delphi/tmp/delphi-6PW2.cube'
-        GaussianCube cube
-        int n = 5
-        timeitLog("loading from text",    n, { cube = DelphiCubeLoader.loadFile(fname)      })
-    }
-
-    /**
-     * Benchmark compression algorithms on small binary file
-     */
-    def bench_compression_large() {
-        _benchmarkCompression('src/test/resources/data/electrostatics/delphi/tmp/delphi-6PW2.cube', 1)
-
-    }
-
-    /**
-     * Benchmark compression algorithms on small binary file
-     */
-    def bench_compression_small() {
-        _benchmarkCompression("src/test/resources/data/electrostatics/delphi/tmp/delphi-2src.cube", 10)
-    }
-
-    private _benchmarkCompression(String fname, int n) {
-        GaussianCube cube
-        timeitLog("loading from text",    n, { cube = DelphiCubeLoader.loadFile(fname     )      })
-        //timeit("loading from gz text", n, { cube = DelphiCubeLoader.loadFile(fname+".gz")      })
-
-        timeitLog("saving to ser",     n, { serializeToFile("${fname}.jser", cube)      })
-        timeitLog("loading from ser",  n, { cube = deserializeFromFile("${fname}.jser")     })
-
-        timeitLog("saving to gz",      n, { serializeToGzip(fname+".jser.gz", cube, 6)    })
-        timeitLog("loading from gz",   n, { cube = deserializeFromFile(fname+".jser.gz")   })
-
-        timeitLog("saving to lzma",    n, { serializeToLzma(fname+".jser.lzma", cube, 3)    })
-        timeitLog("loading from lzma", n, { cube = deserializeFromFile(fname+".jser.lzma")   })
-
-        //timeit("saving to zstd",    n, { serializeToZstd(fname+".jser.zstd", cube, 6)    })
-        //timeit("loading from zstd", n, { cube = deserializeFromFile(fname+".jser.zstd")   })
-
-        (1..9).each { l ->
-            timeitLog("   saving to zstd$l", n, { serializeToZstd(fname+".jser.${l}.zstd", cube, l)    })
-            timeitLog("loading from zstd$l", n, { cube = deserializeFromFile(fname+".jser.${l}.zstd")   })
+        if (!listParamNames.empty) {
+            throw new PrankException("No list params should be specified when running $command command. Specified list params: " + listParamNames)
         }
     }
 
-    def bench_model_loading() {
-        String modelf = main.findModel()
+    private runPloopWithFeatureFilters(List<List<String>> filters) {
 
-        def model = null
-        timeitLog "loading model", params.loop, {
-            model = Model.loadFromFile(modelf)
-        }
+        List<String> sFilters = filters.collect { "(" + it.join(",") + ")" }
+
+        write "Generated feature filters: " + sFilters
+
+        gridOptimize([new ListParam("feature_filters", sFilters)])
     }
 
+    private FeatureSetup getCurrentFeatureSetup() {
+        new PrankFeatureExtractor().featureSetup
+    }
+
+    public ploop_features_tryeach() {
+        checkNoListParams()
+
+        List<String> names = currentFeatureSetup.enabledFeatures*.name
+        List<String> all = names.collect { it + ".*" }
+
+        List<List<String>> filters = [["*"]] + all.collect { [it] }
+
+        runPloopWithFeatureFilters(filters)
+    }
+
+    public ploop_subfeatures_tryeach() {
+        checkNoListParams()
+
+        List<String> names = currentFeatureSetup.subFeaturesHeader
+
+        List<List<String>> filters = [["*"]] + names.collect { [it] }
+
+        runPloopWithFeatureFilters(filters)
+    }
+
+    public ploop_features_leaveoneout() {
+        checkNoListParams()
+
+        List<String> names = currentFeatureSetup.enabledFeatures*.name
+        List<String> all = names.collect { it + ".*" }
+
+        List<List<String>> filters = [["*"]] + all.collect { ["-$it" as String] }
+
+        runPloopWithFeatureFilters(filters)
+    }
+
+    public ploop_subfeatures_leaveoneout() {
+        checkNoListParams()
+
+        List<String> names = currentFeatureSetup.subFeaturesHeader
+
+        List<List<String>> filters = [["*"]] + names.collect { ["-$it" as String] }
+
+        runPloopWithFeatureFilters(filters)
+    }
+    
 }
 
 
