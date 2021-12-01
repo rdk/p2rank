@@ -26,6 +26,7 @@ class GridOptimizerRoutine extends ParamLooper {
     List<ListParam> listParams
     List<String> gridVariablesNames
 
+    List<TableToPlot> tablesToPlot
 
     GridOptimizerRoutine(String outdir, List<ListParam> listParams) {
         super(outdir)
@@ -53,9 +54,7 @@ class GridOptimizerRoutine extends ParamLooper {
         for (Step step in steps) {
             processStep(step, prepareDirLabel(step), closure)
 
-            if (listParams.size()==2) {
-                make2DTables(step)
-            }
+            make1DOr2DTables(steps)
         }
 
         logTime "param iteration finished in $timer.formatted"
@@ -80,11 +79,25 @@ class GridOptimizerRoutine extends ParamLooper {
 
 //===========================================================================================================//
 
-    private void make2DTables(Step step) {
-        tablesDir = "$outdir/tables"
-        tables2D = [:]
-        step.results.each {
+    private void make1DOr2DTables(List<Step> steps) {
+        if (listParams.size() == 1) {
+            make1DTables(steps)
+        } else if (listParams.size() == 2) {
+            make2DTables(steps)
+        }
+    }
+
+    private void make2DTables(List<Step> steps) {
+        tablesToPlot = [] // clear
+        steps[0].resultStats.each {
             make2DTable(it.key as String)
+        }
+    }
+
+    private void make1DTables(List<Step> steps) {
+        tablesToPlot = [] // clear
+        steps[0].resultStats.each {
+            make1DTableWithSorted(it.key as String)
         }
     }
 
@@ -121,25 +134,35 @@ class GridOptimizerRoutine extends ParamLooper {
     }
 
     @CompileDynamic
-    private make2DPlots() {
-        def vars = tables2D.keySet().findAll { plotVariable(it) }.asList()
+    private make1DPlots() {
         GParsPool.withPool(numRThreads) {
-            vars.eachParallel { String key ->
-                String value = tables2D.get(key)
-                String label = key
-                String fname = Futils.absSafePath(value)
-                String labelX = listParams[1].name
-                String labelY = listParams[0].name
-                new RPlotter(plotsDir).plotHeatMapTable(fname, label, labelX, labelY)
+            tablesToPlot.eachParallel { TableToPlot tp ->
+                if (plotVariable(tp.label)) {
+                    new RPlotter(tp.plotDir).plot1DVariable(tp.tableFile, tp.label)
+                }
             }
         }
     }
 
-    private make1DPlots() {
-        def plotter = new RPlotter(statsTableFile, plotsDir)
-        def vars = plotter.header.findAll { plotVariable(it) }.asList()
-        plotter.plot1DVariables(vars, numRThreads)
+    @CompileDynamic
+    private make2DPlots() {
+        GParsPool.withPool(numRThreads) {
+            tablesToPlot.eachParallel { TableToPlot tp ->
+                if (plotVariable(tp.label)) {
+                    String labelX = listParams[1].name
+                    String labelY = listParams[0].name
+                    new RPlotter(tp.plotDir).plotHeatMapTable(tp.tableFile, tp.label, labelX, labelY)
+                }
+            }
+        }
     }
+
+//    @Deprecated
+//    private make1DPlotsOld() {
+//        def plotter = new RPlotter(statsTableFile, plotsDir)
+//        def vars = plotter.header.findAll { plotVariable(it) }.asList()
+//        plotter.plot1DVariables(vars, numRThreads)
+//    }
 
     private make2DTable(String statName) {
         ListParam paramX = listParams[0]
@@ -148,7 +171,7 @@ class GridOptimizerRoutine extends ParamLooper {
         Map<List, Double> valueMap = new HashMap()
         for (Step s : steps) {
             def key = [ s.params[0].value, s.params[1].value ]
-            valueMap.put( key, s.results.get(statName) )
+            valueMap.put( key, s.resultStats.get(statName) )
         }
 
         StringBuilder sb = new StringBuilder()
@@ -162,7 +185,40 @@ class GridOptimizerRoutine extends ParamLooper {
         }
 
         String fname = "$tablesDir/${statName}.csv"
-        tables2D.put(statName, fname)
+        tablesToPlot.add(new TableToPlot(statName, fname, plotsDir))
+        Futils.writeFile fname, sb.toString()
+    }
+
+
+    /**
+     * makes 2 tables: normal and sorted by stat values desc nulls last
+     */
+    private make1DTableWithSorted(String statName) {
+        ListParam paramX = listParams[0]
+
+        List<ParamStat> statValues = new ArrayList<>(steps.size())
+        for (Step s : steps) {
+            statValues.add new ParamStat(""+s.params[0].value, s.resultStats.get(statName) as Double)
+        }
+
+        String tablef = "$tablesDir/${statName}.csv"
+        write1DTable(statName, paramX.name, statValues, tablef)
+        tablesToPlot.add(new TableToPlot(statName, tablef, plotsDir))
+
+        statValues.sort(ParamStat.ORDER)
+        String sortedTablef = "$tablesDir/sorted/${statName}.csv"
+        write1DTable(statName, paramX.name, statValues, sortedTablef)
+        tablesToPlot.add(new TableToPlot(statName, sortedTablef, "${plotsDir}_sorted"))
+    }
+
+    private write1DTable(String statName, String paramName, List<ParamStat> statValues, String fname) {
+        StringBuilder sb = new StringBuilder()
+        sb << "$paramName, $statName\n"  // header
+
+        for (ParamStat row : statValues) {
+            sb << quote(row.paramValue) + "," + fmt(row.statValue) + "\n"
+        }
+
         Futils.writeFile fname, sb.toString()
     }
 
@@ -193,6 +249,34 @@ class GridOptimizerRoutine extends ParamLooper {
         }
 
         return steps
+    }
+
+//===========================================================================================================//
+
+    static class TableToPlot {
+        String label
+        String tableFile
+        String plotDir
+
+        TableToPlot(String label, String tableFile, String plotDir) {
+            this.label = label
+            this.tableFile = tableFile
+            this.plotDir = plotDir
+        }
+    }
+
+    static class ParamStat {
+        String paramValue
+        Double statValue
+
+        ParamStat(String paramValue, Double statValue) {
+            this.paramValue = paramValue
+            this.statValue = statValue
+        }
+
+        static Comparator<ParamStat> ORDER = Comparator.<ParamStat, Double>comparing({ ParamStat o -> o.getClass() },
+                Comparator.nullsFirst(Comparator.naturalOrder())
+        ).reversed()
     }
 
 }

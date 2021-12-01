@@ -1,15 +1,11 @@
 package cz.siret.prank.program.routines.traineval
 
-
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.domain.loaders.DatasetCachedLoader
-import cz.siret.prank.domain.loaders.electrostatics.DelphiCubeLoader
-import cz.siret.prank.domain.loaders.electrostatics.GaussianCube
 import cz.siret.prank.features.FeatureSetup
 import cz.siret.prank.features.PrankFeatureExtractor
 import cz.siret.prank.program.Main
 import cz.siret.prank.program.PrankException
-import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.params.ListParam
 import cz.siret.prank.program.routines.Routine
 import cz.siret.prank.program.routines.optimize.GridOptimizerRoutine
@@ -22,8 +18,8 @@ import groovy.transform.CompileStatic
 import groovy.transform.TypeCheckingMode
 import groovy.util.logging.Slf4j
 
-import static cz.siret.prank.utils.Bench.timeitLog
-import static cz.siret.prank.utils.Futils.*
+import static cz.siret.prank.utils.Futils.safe
+import static cz.siret.prank.utils.Futils.writeFile
 import static cz.siret.prank.utils.ThreadUtils.async
 import static java.util.Collections.unmodifiableMap
 

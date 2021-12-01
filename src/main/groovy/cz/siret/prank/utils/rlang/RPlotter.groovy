@@ -4,8 +4,6 @@ import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.Sutils
 import groovy.transform.CompileStatic
-import groovy.transform.TypeCheckingMode
-import groovyx.gpars.GParsPool
 
 import static cz.siret.prank.utils.Futils.delete
 
@@ -18,6 +16,8 @@ class RPlotter implements Parametrized {
     RExecutor rexec = new RExecutor()
 
     String outdir
+
+    @Deprecated
     String csvfile
 
     List<String> header
@@ -36,30 +36,28 @@ class RPlotter implements Parametrized {
         this.outdir = outdir
     }
 
-    void plot1DAll(int threads) {
-        plot1DVariables(header, threads)
-    }
-
-    @CompileStatic(TypeCheckingMode.SKIP)
-    void plot1DVariables(List<String> variables, int threads) {
-        GParsPool.withPool(threads) {
-            variables.eachParallel {
-                plot1DVariable(it as String)
-            }
-        }
-
-        cleanup()
-    }
+//    void plot1DAll(int threads) {
+//        plot1DVariables(header, threads)
+//    }
+//
+//    @Deprecated
+//    @CompileStatic(TypeCheckingMode.SKIP)
+//    void plot1DVariables(List<String> variables, int threads) {
+//        GParsPool.withPool(threads) {
+//            variables.eachParallel {
+//                plot1DVariableOld(it as String)
+//            }
+//        }
+//
+//        cleanup()
+//    }
 
     void cleanup() {
         delete("$outdir/Rplots.pdf")
     }
 
-    void plot1DVariable(String name) {
-
-        int column = header.indexOf(name)
-
-        String tabf = "../"+Futils.shortName(csvfile) //FileUtils.relativize(csvfile, outdir)
+    void plot1DVariable(String tablef, String label) {
+        tablef = Futils.absSafePath(tablef)
 
         String rcode = """
             if (!require("ggplot2")) {
@@ -70,28 +68,62 @@ class RPlotter implements Parametrized {
 
             r <- c("green4","green3","yellow","gold","red3")
 
-            data <- read.csv("$tabf")
+            data <- read.csv("$tablef")
 
             xx = names(data)[1]
-            yy = names(data)[${column+1}]
+            yy = names(data)[2]
 
             p <- ggplot(data, aes_string(x=xx, y=yy, colour=yy, fill = yy))
 
-            p + geom_bar(stat="identity", position = 'dodge', alpha = 3/4, color="gray20") + scale_fill_gradientn(colours=r) + theme(axis.text.x = element_text(angle = 340, hjust = 0))
+            p + geom_bar(stat="identity", position = 'dodge', alpha = 3/4, color="gray20") + scale_fill_gradientn(colours=r) + theme(axis.text.x = element_text(angle = 350, hjust = 0))
 
             fname <- paste(yy,".png", sep="")
             ggsave(file=fname, dpi=$dpi)
         """
         // to add line plot: p  +  geom_line(size = 1, color="gray40") + geom_point(shape=18, size=4, color="gray20")
 
-        rexec.runCode(rcode, name, outdir)
+        rexec.runCode(rcode, label, outdir)
     }
+
+//    @Deprecated
+//    void plot1DVariableOld(String name) {
+//
+//        int column = header.indexOf(name)
+//
+//        String tabf = "../"+Futils.shortName(csvfile) //FileUtils.relativize(csvfile, outdir)
+//
+//        String rcode = """
+//            if (!require("ggplot2")) {
+//                  install.packages("ggplot2", dependencies = TRUE, repos = "http://cran.us.r-project.org")
+//                  library(ggplot2)
+//            }
+//            library(scales)
+//
+//            r <- c("green4","green3","yellow","gold","red3")
+//
+//            data <- read.csv("$tabf")
+//
+//            xx = names(data)[1]
+//            yy = names(data)[${column+1}]
+//
+//            p <- ggplot(data, aes_string(x=xx, y=yy, colour=yy, fill = yy))
+//
+//            p + geom_bar(stat="identity", position = 'dodge', alpha = 3/4, color="gray20") + scale_fill_gradientn(colours=r) + theme(axis.text.x = element_text(angle = 340, hjust = 0))
+//
+//            fname <- paste(yy,".png", sep="")
+//            ggsave(file=fname, dpi=$dpi)
+//        """
+//        // to add line plot: p  +  geom_line(size = 1, color="gray40") + geom_point(shape=18, size=4, color="gray20")
+//
+//        rexec.runCode(rcode, name, outdir)
+//    }
 
     /**
      *
      * @param tablef  2d csv table
      */
     void plotHeatMapTable(String tablef, String label, String xlab, String ylab) {
+        tablef = Futils.absSafePath(tablef)
 
         String rcode = """
                 #########################################################

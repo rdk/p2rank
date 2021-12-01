@@ -27,11 +27,10 @@ abstract class ParamLooper extends Routine {
     String tablesDir
     String runsDir
 
-    Map<String, String> tables2D = new LinkedHashMap()
-
     ParamLooper(String outdir) {
         super(outdir)
         plotsDir = "$outdir/plots"
+        tablesDir = "$outdir/tables"
         statsTableFile = "$outdir/param_stats.csv"
         selectedStatsFile = "$outdir/selected_stats.csv"
         runsDir = "$outdir/runs"
@@ -63,10 +62,10 @@ abstract class ParamLooper extends Routine {
         String stepDir = "$runsDir/$dirLabel"
         EvalResults res = closure.call(stepDir)     // execute an experiment in closure for a step
 
-        step.results.putAll( res.stats )
-        step.results.TIME_MINUTES = stepTimer.minutes // absolute time spent on this step
+        step.resultStats.putAll( res.stats )
+        step.resultStats.TIME_STEP_MINUTES = stepTimer.minutes // absolute time spent on this step
         if (res.subResults.size() > 1) {
-            step.results.putAll prefixMapKeys(res.statsStddev, '_stddev_')
+            step.resultStats.putAll prefixMapKeys(res.statsStddev, '_stddev_')
         }
 
         // save stats
@@ -98,7 +97,7 @@ abstract class ParamLooper extends Routine {
     static class Step {
 
         List<ParamVal> params = new ArrayList<>() // order is important
-        Map<String, Double> results = new LinkedHashMap()
+        Map<String, Double> resultStats = new LinkedHashMap()
 
         void applyToParams(Params globalParams) {
             params.each { globalParams.setParam(it.name, it.value) }
@@ -113,7 +112,7 @@ abstract class ParamLooper extends Routine {
         }
 
         String getHeader() {
-            (params*.name).join(', ') + ', ' + results.keySet().join(', ')
+            (params*.name).join(', ') + ', ' + resultStats.keySet().join(', ')
         }
 
         String getHeader(List<String> selectedStats) {
@@ -127,16 +126,16 @@ abstract class ParamLooper extends Routine {
 
         @CompileDynamic
         String toCSV() {
-            paramValueColumns + ', ' + results.values().collect{ fmt(it) }.join(', ')
+            paramValueColumns + ', ' + resultStats.values().collect{ fmt(it) }.join(', ')
         }
 
         @CompileDynamic
         String toCSV(List<String> selectedStats) {
-            paramValueColumns + ', ' + selectedStats.collect{ fmt(results.get(it)) }.join(', ')
+            paramValueColumns + ', ' + selectedStats.collect{ fmt(resultStats.get(it)) }.join(', ')
         }
 
         String toString() {
-            return "Step{${params.toListString()}, ${results.toMapString()}}"
+            return "Step{${params.toListString()}, ${resultStats.toMapString()}}"
         }
 
     }
