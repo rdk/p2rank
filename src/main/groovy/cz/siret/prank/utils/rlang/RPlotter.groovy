@@ -23,7 +23,7 @@ class RPlotter implements Parametrized {
     List<String> header
 
     int size = 1000
-    int dpi = 300
+    int dpi = 150
 
     RPlotter(String csvfile, String outdir) {
         this.csvfile = csvfile
@@ -126,11 +126,14 @@ class RPlotter implements Parametrized {
                  geom_bar(stat="identity", position = 'dodge', alpha = 1, color="gray20") +
                  geom_text(aes(label = V2), hjust = 1, position = position_dodge(1), colour = "black") +
                  scale_fill_gradientn(colours=r) +
-                 theme(legend.title = element_blank()) +
+                 theme(legend.title = element_blank(), axis.text=element_text(color="black")) +
                  coord_flip()
+                 
+            nrows <- nrow(data)
+            hh <- max(20, nrows*0.57)      
 
             fname <- paste(yy,".png", sep="")
-            ggsave(file=fname, dpi=$dpi)
+            ggsave(file=fname, dpi=$dpi, width = 20, height = hh, units = "cm")
         """
         // to add line plot: p  +  geom_line(size = 1, color="gray40") + geom_point(shape=18, size=4, color="gray20")
 
