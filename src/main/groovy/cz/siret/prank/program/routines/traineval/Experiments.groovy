@@ -73,6 +73,7 @@ class Experiments extends Routine {
 
         "ploop-features-tryeach" :        { ploop_features_tryeach() },
         "ploop-features-tryeach-pairs" :        { ploop_features_tryeach_pairs() },
+        "ploop-features-subsets" :        { ploop_features_subsets() },
         "ploop-features-leaveoneout" :    { ploop_features_leaveoneout() },
         "ploop-subfeatures-tryeach" :     { ploop_subfeatures_tryeach() },
         "ploop-subfeatures-leaveoneout" : { ploop_subfeatures_leaveoneout() },
@@ -324,6 +325,18 @@ class Experiments extends Routine {
         runPloopWithFeatureFilters(filters)
     }
 
+    public ploop_features_subsets() {
+        checkNoListParams()
+
+        List<String> names = currentFeatureSetup.enabledFeatures*.name
+        List<String> all = names.collect { it + ".*" }
+
+        List<List<String>> filters = [["*"]] + generateMiddleSubsets(all)
+
+        runPloopWithFeatureFilters(filters)
+    }
+
+
     public ploop_subfeatures_tryeach() {
         checkNoListParams()
 
@@ -363,7 +376,23 @@ class Experiments extends Routine {
                 .stream()
                 .collect(Collectors.toList())
     }
-    
+
+    private List<List<String>> generateSubsets(List<String> list) {
+        return Generator.subset(list)
+                .simple()
+                .stream()
+                .collect(Collectors.toList())
+    }
+
+    /**
+     * subsets except all and empty
+     */
+    private List<List<String>> generateMiddleSubsets(List<String> list) {
+        generateSubsets(list).findAll { it.size()>0 && it.size()<list.size() }
+    }
+
+
+
 }
 
 
