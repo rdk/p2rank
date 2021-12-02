@@ -138,7 +138,8 @@ class GridOptimizerRoutine extends ParamLooper {
         GParsPool.withPool(numRThreads) {
             tablesToPlot.eachParallel { TableToPlot tp ->
                 if (plotVariable(tp.label)) {
-                    new RPlotter(tp.plotDir).plot1DVariable(tp.tableFile, tp.label)
+                    //new RPlotter(tp.plotDir).plot1DVariable(tp.tableFile, tp.label)
+                    new RPlotter(tp.plotDir).plot1DVariableHorizontal(tp.tableFile, tp.label)
                 }
             }
         }

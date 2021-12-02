@@ -23,7 +23,7 @@ class RPlotter implements Parametrized {
     List<String> header
 
     int size = 1000
-    int dpi = 150
+    int dpi = 300
 
     RPlotter(String csvfile, String outdir) {
         this.csvfile = csvfile
@@ -59,7 +59,7 @@ class RPlotter implements Parametrized {
     void plot1DVariable(String tablef, String label) {
         tablef = Futils.absSafePath(tablef)
 
-        String rcode = """
+        String rcode = """      
             if (!require("ggplot2")) {
                   install.packages("ggplot2", dependencies = TRUE, repos = "http://cran.us.r-project.org")
                   library(ggplot2)
@@ -68,14 +68,64 @@ class RPlotter implements Parametrized {
 
             r <- c("green4","green3","yellow","gold","red3")
 
-            data <- read.csv("$tablef")
+            data <- read.csv("$tablef",
+                  stringsAsFactors = TRUE, 
+                  strip.white = TRUE,)
 
-            xx = names(data)[1]
-            yy = names(data)[2]
+            xx=names(data)[1]
+            yy=names(data)[2]
 
-            p <- ggplot(data, aes_string(x=xx, y=yy, colour=yy, fill = yy))
+            colnames(data)=c("V1","V2")
 
-            p + geom_bar(stat="identity", position = 'dodge', alpha = 3/4, color="gray20") + scale_fill_gradientn(colours=r) + theme(axis.text.x = element_text(angle = 350, hjust = 0))
+            # make V1 an ordered factor to keep order from csv
+            data\$V1 <- factor(data\$V1, levels = data\$V1)
+
+            p <- ggplot(data, aes(x=V1, y=V2, colour=V2, fill = V2)) +
+                 labs(x = xx, y = yy, colour="") +
+                 geom_bar(stat="identity", position = 'dodge', alpha = 1, color="gray20") +
+                 geom_text(aes(label = V2), vjust = 1.5, colour = "black") +
+                 scale_fill_gradientn(colours=r) +
+                 theme(axis.text.x = element_text(angle = 280, hjust = 0), legend.title = element_blank())
+
+            fname <- paste(yy,".png", sep="")
+            ggsave(file=fname, dpi=$dpi)
+        """
+        // to add line plot: p  +  geom_line(size = 1, color="gray40") + geom_point(shape=18, size=4, color="gray20")
+
+        rexec.runCode(rcode, label, outdir)
+    }
+
+    void plot1DVariableHorizontal(String tablef, String label) {
+        tablef = Futils.absSafePath(tablef)
+
+        String rcode = """      
+            if (!require("ggplot2")) {
+                  install.packages("ggplot2", dependencies = TRUE, repos = "http://cran.us.r-project.org")
+                  library(ggplot2)
+            }
+            library(scales)
+
+            r <- c("green4","green3","yellow","gold","red3")
+
+            data <- read.csv("$tablef",
+                  stringsAsFactors = TRUE, 
+                  strip.white = TRUE,)
+
+            xx=names(data)[1]
+            yy=names(data)[2]
+
+            colnames(data)=c("V1","V2")
+
+            # make V1 an ordered factor to keep order from csv
+            data\$V1 <- factor(data\$V1, levels = data\$V1)
+
+            p <- ggplot(data, aes(x=V1, y=V2, colour=V2, fill = V2)) +
+                 labs(x = xx, y = yy, colour="") +
+                 geom_bar(stat="identity", position = 'dodge', alpha = 1, color="gray20") +
+                 geom_text(aes(label = V2), hjust = 1, position = position_dodge(1), colour = "black") +
+                 scale_fill_gradientn(colours=r) +
+                 theme(legend.title = element_blank()) +
+                 coord_flip()
 
             fname <- paste(yy,".png", sep="")
             ggsave(file=fname, dpi=$dpi)
