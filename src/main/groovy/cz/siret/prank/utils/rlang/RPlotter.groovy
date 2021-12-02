@@ -117,7 +117,7 @@ class RPlotter implements Parametrized {
             colnames(data)=c("V1","V2")
 
             # make V1 an ordered factor to keep order from csv
-            data\$V1 <- factor(data\$V1, levels = data\$V1)
+            data\$V1 <- rev(factor(data\$V1, levels = data\$V1))
 
             p <- ggplot(data, aes(x=V1, y=V2, colour=V2, fill = V2)) +
                  labs(x = xx, y = yy, colour="") +
