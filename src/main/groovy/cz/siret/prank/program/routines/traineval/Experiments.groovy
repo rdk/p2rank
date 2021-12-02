@@ -17,6 +17,9 @@ import cz.siret.prank.utils.Sutils
 import groovy.transform.CompileStatic
 import groovy.transform.TypeCheckingMode
 import groovy.util.logging.Slf4j
+import org.paukov.combinatorics3.Generator
+
+import java.util.stream.Collectors
 
 import static cz.siret.prank.utils.Futils.safe
 import static cz.siret.prank.utils.Futils.writeFile
@@ -69,6 +72,7 @@ class Experiments extends Routine {
         "hopt" :      { hopt() },
 
         "ploop-features-tryeach" :        { ploop_features_tryeach() },
+        "ploop-features-tryeach-pairs" :        { ploop_features_tryeach_pairs() },
         "ploop-features-leaveoneout" :    { ploop_features_leaveoneout() },
         "ploop-subfeatures-tryeach" :     { ploop_subfeatures_tryeach() },
         "ploop-subfeatures-leaveoneout" : { ploop_subfeatures_leaveoneout() },
@@ -309,6 +313,17 @@ class Experiments extends Routine {
         runPloopWithFeatureFilters(filters)
     }
 
+    public ploop_features_tryeach_pairs() {
+        checkNoListParams()
+
+        List<String> names = currentFeatureSetup.enabledFeatures*.name
+        List<String> all = names.collect { it + ".*" }
+
+        List<List<String>> filters = [["*"]] + all.collect { [it] } + generatePairs(all)
+
+        runPloopWithFeatureFilters(filters)
+    }
+
     public ploop_subfeatures_tryeach() {
         checkNoListParams()
 
@@ -338,6 +353,15 @@ class Experiments extends Routine {
         List<List<String>> filters = [["*"]] + names.collect { ["-$it" as String] }
 
         runPloopWithFeatureFilters(filters)
+    }
+
+    private List<List<String>> generatePairs(List<String> list) {
+        if (list.size() < 2) return []
+
+        return Generator.combination(list)
+                .simple(2)
+                .stream()
+                .collect(Collectors.toList())
     }
     
 }
