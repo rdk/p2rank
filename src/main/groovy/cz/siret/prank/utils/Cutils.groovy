@@ -1,10 +1,10 @@
 package cz.siret.prank.utils
 
-import com.google.common.base.Function
 import groovy.transform.CompileStatic
 
 import javax.annotation.Nonnull
 import javax.annotation.Nullable
+import java.util.function.Function
 import java.util.function.Predicate
 
 /**
@@ -38,6 +38,18 @@ class Cutils {
             return list[i+1]
         }
         return null
+    }
+
+    @Nonnull
+    static <T, E> List<T> mapList(@Nullable List<E> list, @Nonnull Function<E, T> mapper) {
+        if (list == null || list.isEmpty()) {
+            return Collections.emptyList()
+        }
+        List<T> res = new ArrayList<>(list.size())
+        for (E ent : list) {
+            res.add(mapper.apply(ent))
+        }
+        return res;
     }
 
     static <K, E> Map<K, E> transformKeys(Map<K, E> map, Closure<K> closure) {

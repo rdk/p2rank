@@ -26,6 +26,7 @@ public final class Atoms implements Iterable<Atom> {
 
     public final List<Atom> list;
 
+    // lazy fields
     private Map<Integer, Atom> index;
     private AtomKdTree kdTree;
     private Atom centroid;
@@ -59,6 +60,15 @@ public final class Atoms implements Iterable<Atom> {
             res.add(new Point(a.getCoords()));
         }
         return res;
+    }
+
+    /**
+     * Allows to cast to list of subtypes, e.g. LabeledPoint:
+     * .<LabeledPoint>asList()
+     */
+    @SuppressWarnings("unchecked")
+    public <T> List<T> asList() {
+        return (List<T>)list;
     }
 
     /**

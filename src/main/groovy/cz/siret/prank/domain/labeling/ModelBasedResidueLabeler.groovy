@@ -17,11 +17,12 @@ import groovy.util.logging.Slf4j
 import javax.annotation.concurrent.NotThreadSafe
 import java.util.function.Function
 
+import static cz.siret.prank.utils.Cutils.mapList
 import static cz.siret.prank.utils.Formatter.format
 import static cz.siret.prank.utils.Formatter.formatNumbers
 
 /**
- * (not intended to be reused with mode proteins)
+ * (not intended to be reused with more proteins)
  */
 @Slf4j
 @NotThreadSafe
@@ -113,7 +114,7 @@ class ModelBasedResidueLabeler extends ResidueLabeler<Boolean> implements Parame
         for (Residue res : residues) {
             List<Double> pscores = Collections.emptyList()
             if (!ONLY_EXPOSED || protein.exposedResidues.contains(res)) {
-                pscores = points.cutoutShell(res.atoms, RADIUS).collect { (it as LabeledPoint).score }.asList()
+                pscores = mapList(points.cutoutShell(res.atoms, RADIUS).<LabeledPoint>asList(), { it.score })
             }
             
             double score = aggregateScore(pscores)
@@ -155,7 +156,7 @@ class ModelBasedResidueLabeler extends ResidueLabeler<Boolean> implements Parame
             }
         }
 
-        List<Double> transformedScores = scores.collect { pointScoreCalculator.transformScore(it) }.asList()
+        List<Double> transformedScores = scores.collect { pointScoreCalculator.transformScore(it) }
 
         if (log.traceEnabled) {
             log.trace "transformed_scores(n={}): {}", transformedScores.size(), formatNumbers(transformedScores, 2)
