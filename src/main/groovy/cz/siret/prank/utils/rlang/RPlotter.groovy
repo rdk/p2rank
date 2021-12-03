@@ -23,7 +23,7 @@ class RPlotter implements Parametrized {
     List<String> header
 
     int size = 1000
-    int dpi = 150
+    int dpi = 100
 
     RPlotter(String csvfile, String outdir) {
         this.csvfile = csvfile
@@ -88,7 +88,7 @@ class RPlotter implements Parametrized {
                  theme(axis.text.x = element_text(angle = 280, hjust = 0), legend.title = element_blank())
 
             fname <- paste(yy,".png", sep="")
-            ggsave(file=fname, dpi=$dpi)
+            ggsave(file=fname, dpi=$dpi, limitsize = FALSE)
         """
         // to add line plot: p  +  geom_line(size = 1, color="gray40") + geom_point(shape=18, size=4, color="gray20")
 
@@ -133,7 +133,7 @@ class RPlotter implements Parametrized {
             hh <- max(20, nrows*0.57)      
 
             fname <- paste(yy,".png", sep="")
-            ggsave(file=fname, dpi=$dpi, width = 20, height = hh, units = "cm")
+            ggsave(file=fname, dpi=$dpi, width = 20, height = hh, units = "cm", limitsize = FALSE)
         """
         // to add line plot: p  +  geom_line(size = 1, color="gray40") + geom_point(shape=18, size=4, color="gray20")
 
