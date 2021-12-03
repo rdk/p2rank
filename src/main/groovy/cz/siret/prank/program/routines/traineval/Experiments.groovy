@@ -4,6 +4,7 @@ import cz.siret.prank.domain.Dataset
 import cz.siret.prank.domain.loaders.DatasetCachedLoader
 import cz.siret.prank.features.FeatureSetup
 import cz.siret.prank.features.PrankFeatureExtractor
+import cz.siret.prank.features.implementation.table.AAIndexAtomFeature
 import cz.siret.prank.program.Main
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.ListParam
@@ -72,11 +73,13 @@ class Experiments extends Routine {
         "hopt" :      { hopt() },
 
         "ploop-features-tryeach" :        { ploop_features_tryeach() },
-        "ploop-features-tryeach-pairs" :        { ploop_features_tryeach_pairs() },
+        "ploop-features-tryeach-pairs" :  { ploop_features_tryeach_pairs() },
         "ploop-features-subsets" :        { ploop_features_subsets() },
         "ploop-features-leaveoneout" :    { ploop_features_leaveoneout() },
         "ploop-subfeatures-tryeach" :     { ploop_subfeatures_tryeach() },
         "ploop-subfeatures-leaveoneout" : { ploop_subfeatures_leaveoneout() },
+
+        "ploop-aa-index" :                { ploop_aa_index() },
     ])
 
 //===========================================================================================================//
@@ -391,7 +394,17 @@ class Experiments extends Routine {
         generateSubsets(list).findAll { it.size()>0 && it.size()<list.size() }
     }
 
+//===========================================================================================================//
 
+    public ploop_aa_index() {
+        checkNoListParams()
+
+        List<String> lprops = AAIndexAtomFeature.propertyNames.collect { "($it)".toString() }
+
+        write "Generated feat_aa_properties: " + lprops
+
+        gridOptimize([new ListParam("feat_aa_properties", lprops)])
+    }
 
 }
 

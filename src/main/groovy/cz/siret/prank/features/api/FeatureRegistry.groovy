@@ -20,6 +20,8 @@ import cz.siret.prank.features.implementation.secstruct.SecStructSimpleMotifRF
 import cz.siret.prank.features.implementation.secstruct.SecStructSimpleRF
 import cz.siret.prank.features.implementation.sequence.DupletsPropensityFeature
 import cz.siret.prank.features.implementation.sequence.TripletsPropensityFeature
+import cz.siret.prank.features.implementation.table.AAIndexAtomFeature
+import cz.siret.prank.features.implementation.table.AAIndexFeature
 import cz.siret.prank.features.implementation.table.AtomTableFeature
 import cz.siret.prank.features.implementation.table.ResidueTableFeature
 import cz.siret.prank.features.implementation.volsite.VolsiteFeature
@@ -77,8 +79,11 @@ class FeatureRegistry {
         register new PairHistogramFeature()
         register new PyramidFeature()
         register new ProteinMassFeature()
-        register new AAIndexFeature()
+        register new AAIndexAtomFeature()
         register new XyzDummyFeature()
+
+        register new ResidueToSasFeatWrapper(new AAIndexFeature())
+        register new ResidueToAtomicFeatWrapper(new AAIndexFeature())
 
         register new ResidueToSasFeatWrapper(new DupletsPropensityFeature())
         register new ResidueToAtomicFeatWrapper(new DupletsPropensityFeature())

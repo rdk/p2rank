@@ -1,4 +1,4 @@
-package cz.siret.prank.features.implementation
+package cz.siret.prank.features.implementation.table
 
 import cz.siret.prank.features.api.AtomFeatureCalculationContext
 import cz.siret.prank.features.api.AtomFeatureCalculator
@@ -12,8 +12,9 @@ import org.biojava.nbio.structure.Atom
 /**
  * Features from AA index table
  */
+@Deprecated
 @CompileStatic
-class AAIndexFeature extends AtomFeatureCalculator implements Parametrized {
+class AAIndexAtomFeature extends AtomFeatureCalculator implements Parametrized {
     
     static final PropertyTable aaIndex   = PropertyTable.parse(Futils.readResource("/tables/aa-index-full.csv")).reverse()
 
