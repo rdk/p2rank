@@ -23,7 +23,7 @@ class RPlotter implements Parametrized {
     List<String> header
 
     int size = 1000
-    int dpi = 100
+    int dpi = 130
 
     RPlotter(String csvfile, String outdir) {
         this.csvfile = csvfile
