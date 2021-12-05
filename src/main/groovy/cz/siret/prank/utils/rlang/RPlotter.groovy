@@ -129,11 +129,15 @@ class RPlotter implements Parametrized {
                  theme(legend.title = element_blank(), axis.text=element_text(color="black")) +
                  coord_flip()
                  
-            nrows <- nrow(data)
-            hh <- max(20, nrows*0.57)      
+            nrows <- nrow(data)  # scale with rows
+            hh <- max(20, 0.57*nrows)    
+            
+            labels <- sapply(data\$V1, as.character)
+            max_label_chars = max(nchar(labels))
+            ww <- max(20, 15 + 0.2*max_label_chars)  # scale with longest label lenght
 
             fname <- paste(yy,".png", sep="")
-            ggsave(file=fname, dpi=$dpi, width = 20, height = hh, units = "cm", limitsize = FALSE)
+            ggsave(file=fname, dpi=$dpi, width = ww, height = hh, units = "cm", limitsize = FALSE)
         """
         // to add line plot: p  +  geom_line(size = 1, color="gray40") + geom_point(shape=18, size=4, color="gray20")
 
