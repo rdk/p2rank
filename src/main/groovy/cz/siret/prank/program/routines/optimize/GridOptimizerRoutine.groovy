@@ -207,7 +207,7 @@ class GridOptimizerRoutine extends ParamLooper {
         tablesToPlot.add(new TableToPlot(statName, tablef, plotsDir))
 
         statValues.sort(ParamStat.ORDER)
-        String sortedTablef = "$tablesDir/sorted/${statName}.csv"
+        String sortedTablef = "${tablesDir}_sorted/${statName}.csv"
         write1DTable(statName, paramX.name, statValues, sortedTablef)
         tablesToPlot.add(new TableToPlot(statName, sortedTablef, "${plotsDir}_sorted"))
     }
