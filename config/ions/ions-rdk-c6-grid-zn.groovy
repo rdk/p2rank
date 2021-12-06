@@ -103,10 +103,10 @@ import cz.siret.prank.program.params.Params
 
     // Features
 
-    features = ["chem_sas","volsite_sas","bfactor_sas","chem","volsite","bfactor","protrusion","ss_atomic","duplets_sas","triplets_sas","cres1","cr1pos","residue_table","residue_table_sas","atom_table","atom_table_sas","pyramid","exposed_dist"]
-    residue_table_features = ["ZNppuAt","RAx"]
+    features = ["chem_sas","volsite_sas","bfactor_sas","chem","volsite","bfactor","protrusion","ss_atomic","cres1","cr1pos","residue_table","residue_table_sas","atom_table","atom_table_sas","pyramid","exposed_dist"]
+    residue_table_features = ["RAx"]
     atom_table_features = ["apRawValids","apRawInvalids","atomicHydrophobicity"]
-    feat_propensity_tables = "ions/ZNppuAt"
+    feat_propensity_tables = ""
 
     // Feature params
 
