@@ -3,7 +3,6 @@ package cz.siret.prank.features.implementation.table
 import cz.siret.prank.domain.Residue
 import cz.siret.prank.features.api.ResidueFeatureCalculationContext
 import cz.siret.prank.features.api.ResidueFeatureCalculator
-import cz.siret.prank.features.implementation.table.PropertyTable
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
@@ -16,7 +15,7 @@ class AAIndexFeature extends ResidueFeatureCalculator implements Parametrized {
     
     static final PropertyTable aaIndex   = PropertyTable.parse(Futils.readResource("/tables/aa-index-full.csv")).reverse()
 
-    static final List<String> propertyNames = aaIndex.propertyNames.toList().toSorted()
+    static final List<String> allPropertyNames = aaIndex.propertyNames.toList().toSorted()
 
 
     @Override
@@ -26,7 +25,7 @@ class AAIndexFeature extends ResidueFeatureCalculator implements Parametrized {
 
     @Override
     List<String> getHeader() {
-        return params.feat_aa_properties ?: propertyNames
+        return params.feat_aa_properties ?: []
     }
 
     private Double getTableValue(Residue residue, String property) {

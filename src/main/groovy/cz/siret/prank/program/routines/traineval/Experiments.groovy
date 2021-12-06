@@ -5,6 +5,7 @@ import cz.siret.prank.domain.loaders.DatasetCachedLoader
 import cz.siret.prank.features.FeatureSetup
 import cz.siret.prank.features.PrankFeatureExtractor
 import cz.siret.prank.features.implementation.table.AAIndexAtomFeature
+import cz.siret.prank.features.implementation.table.AAIndexFeature
 import cz.siret.prank.program.Main
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.ListParam
@@ -399,7 +400,7 @@ class Experiments extends Routine {
     public ploop_aa_index() {
         checkNoListParams()
 
-        List<String> lprops = AAIndexAtomFeature.propertyNames.collect { "($it)".toString() }
+        List<String> lprops = AAIndexFeature.allPropertyNames.collect { "($it)".toString() }
 
         write "Generated feat_aa_properties: " + lprops
 
