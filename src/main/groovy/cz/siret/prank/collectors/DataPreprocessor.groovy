@@ -119,13 +119,14 @@ class DataPreprocessor implements Parametrized, Writable {
         int pos = positives.size()
         int neg = negatives.size()
 
-        double ratio = PerfUtils.round( (double)pos / neg, 6 )
+        double pos_ratio = (double)pos / (pos + neg)
+        double ratio = (double)pos / neg
 
-        "positives: $pos, negatives: $neg, ratio: ${fmt ratio}"
+        "positives: $pos, negatives: $neg, pos/neg: ${fmt ratio} pos/all: ${fmt pos_ratio}"
     }
 
     private static String fmt(double d) {
-        format(d, 3)
+        format(d, 5)
     }
 
     /**
