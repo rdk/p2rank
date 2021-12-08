@@ -13,6 +13,8 @@ import org.biojava.nbio.structure.Atom
 
 import javax.vecmath.Point3d
 
+import static cz.siret.prank.utils.Cutils.head
+
 /**
  * Structural motifs 
  */
@@ -75,7 +77,7 @@ class StructMotifFeature extends SasFeatureCalculator {
         }
 
         List<Residue> nNearest(int n) {
-            return Cutils.head(n, neighboursByDistance)*.residue
+            return head(n, neighboursByDistance)*.residue
         }
 
         List<Residue> inRadius(double radius) {
@@ -163,17 +165,15 @@ class StructMotifFeature extends SasFeatureCalculator {
         int i = 0
         for (ResidueMotif motif : motifs) {
             List<Residue> resForMotif
-            if (params.feat_stmotif_useradius) {
-                if (inRadius.size() >= motif.size) {
-                    resForMotif = inRadius
-                } else {
-                    resForMotif = Cutils.head(motif.size, nearest)
-                }
+            if (params.feat_stmotif_useradius && inRadius.size() >= motif.size) {
+                resForMotif = inRadius
             } else {
-                resForMotif = Cutils.head(motif.size, nearest)
+                resForMotif = head(motif.size, nearest)
             }
 
-            result[i] = motif.matches(resForMotif) ? 1d : 0d
+            boolean matches = motif.matches(resForMotif)
+
+            result[i] = matches ? 1d : 0d
             i++
         }
 

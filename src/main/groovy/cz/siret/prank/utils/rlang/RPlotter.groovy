@@ -130,7 +130,7 @@ class RPlotter implements Parametrized {
                  coord_flip()
                  
             nrows <- nrow(data)  # scale with rows
-            hh <- max(20, 0.57*nrows)    
+            hh <- max(5, 0.57*nrows)    
             
             labels <- sapply(data\$V1, as.character)
             max_label_chars = max(nchar(labels))

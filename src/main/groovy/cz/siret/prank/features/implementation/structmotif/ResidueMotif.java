@@ -49,7 +49,7 @@ public class ResidueMotif {
 
         boolean res = PerfUtils.coversWithBreaks(sortedResidueCodes, compiledCode);
 
-        //if (log.isDebugEnabled()) {
+        //if (res) {
         //    log.warn("Motif '{}/{}' matching residues with codes '{}': {}", code, compiledCode, sortedResidueCodes, res);
         //}
 
