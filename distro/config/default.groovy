@@ -348,25 +348,25 @@ import cz.siret.prank.program.params.Params
     output_only_stats = false
 
     /**
-     * Path to json file that contains parameters of transformation of raw score to "z-score calculated from distribution of true pockets" (pocket.auxInfo.zScoreTP).
+     * Path to a JSON file that contains parameters of a transformer from raw score to "z-score calculated from the distribution of true pockets" (pocket.auxInfo.zScoreTP).
      * Use path relative to distro/models/score.
      */
     zscoretp_transformer = "default_zscoretp.json"
 
     /**
-     * Path to json file that contains parameters of transformation of raw score to "probability that pocket with given score is true pocket" (pocket.auxInfo.probaTP).
+     * Path to a JSON file that contains parameters of a transformer from raw score to "probability that pocket with a given score is true pocket" (pocket.auxInfo.probaTP).
      * Use path relative to distro/models/score.
      */
     probatp_transformer = "default_probatp.json"
 
     /**
-     * Path to json file that contains parameters of transformation of raw score to "z-score calculated from distribution of all residue scores".
+     * Path to a JSON file that contains parameters of a transformer from raw score to "z-score calculated from the distribution of all residue scores".
      * Use path relative to distro/models/score.
      */
     zscoretp_res_transformer = "residue/p2rank_default_zscore.json"
 
     /**
-     * Path to json file that contains parameters of transformation of raw score to "probability that residue with given score is true (binding) residue".
+     * Path to a JSON file that contains parameters of a transformer from raw score to "probability that residue with a given score is true (binding) residue".
      * Use path relative to distro/models/score.
      */
     probatp_res_transformer = "residue/p2rank_default_proba.json"
