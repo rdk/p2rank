@@ -6,23 +6,25 @@ import groovy.transform.CompileStatic
 @CompileStatic
 class PrankException extends RuntimeException {
 
-    PrankException(String var1) {
-        super(var1)
-    }
-
-    PrankException(String var1, Throwable var2) {
-        super(var1, var2)
-    }
-
-    PrankException(String var1, Throwable var2, boolean var3, boolean var4) {
-        super(var1, var2, var3, var4)
-    }
-
     PrankException() {
+        super()
     }
 
-    PrankException(Throwable var1) {
-        super(var1)
+    PrankException(String message) {
+        super(message)
     }
 
+    PrankException(String message, Throwable cause) {
+        super(message, cause, false, true)
+        setStackTrace(cause.getStackTrace())
+    }
+
+    PrankException(Throwable cause) {
+        super(cause)
+    }
+
+    protected PrankException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace)
+    }
+    
 }

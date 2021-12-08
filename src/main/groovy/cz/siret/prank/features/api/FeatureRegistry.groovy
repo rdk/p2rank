@@ -1,5 +1,9 @@
 package cz.siret.prank.features.api
 
+import cz.siret.prank.features.api.wrappers.AtomicToSasFeatWrapper
+import cz.siret.prank.features.api.wrappers.ResidueToAtomicFeatWrapper
+import cz.siret.prank.features.api.wrappers.ResidueToSasFeatWrapper
+import cz.siret.prank.features.api.wrappers.SasToAtomicFeatWrapper
 import cz.siret.prank.features.implementation.*
 import cz.siret.prank.features.implementation.asa.Asa2Feature
 import cz.siret.prank.features.implementation.asa.AsaFeature
@@ -20,6 +24,7 @@ import cz.siret.prank.features.implementation.secstruct.SecStructSimpleMotifRF
 import cz.siret.prank.features.implementation.secstruct.SecStructSimpleRF
 import cz.siret.prank.features.implementation.sequence.DupletsPropensityFeature
 import cz.siret.prank.features.implementation.sequence.TripletsPropensityFeature
+import cz.siret.prank.features.implementation.structmotif.StructMotifFeature
 import cz.siret.prank.features.implementation.table.AAIndexAtomFeature
 import cz.siret.prank.features.implementation.table.AAIndexFeature
 import cz.siret.prank.features.implementation.table.AtomTableFeature
@@ -118,6 +123,9 @@ class FeatureRegistry {
         register new IsExposedAtomFeature()
         register new AtomicToSasFeatWrapper(new IsExposedAtomFeature())
         register new NearestExposedDistSasFeature()
+
+        register new StructMotifFeature()
+        register new SasToAtomicFeatWrapper(new StructMotifFeature())
 
         // Register new feature implementations here
 

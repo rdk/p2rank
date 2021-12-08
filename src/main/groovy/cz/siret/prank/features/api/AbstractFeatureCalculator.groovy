@@ -1,6 +1,7 @@
 package cz.siret.prank.features.api
 
 import cz.siret.prank.domain.Protein
+import cz.siret.prank.program.params.Parametrized
 import groovy.transform.CompileStatic
 
 /**
@@ -9,7 +10,7 @@ import groovy.transform.CompileStatic
  * To implement new features extend AtomFeatureCalculator or SasFeatureCalculator.
  */
 @CompileStatic
-abstract class AbstractFeatureCalculator implements FeatureCalculator {
+abstract class AbstractFeatureCalculator implements FeatureCalculator, Parametrized {
 
     /**
      * Default implementation for single value features. Override for multi-value features.

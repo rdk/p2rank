@@ -4,7 +4,9 @@ import cz.siret.prank.geom.Atoms;
 import org.biojava.nbio.structure.Atom;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  *  Methods that needed to be written in Java for performance reasons.
@@ -76,6 +78,46 @@ public class PerfUtils {
     public static double round(double x, int deg) {
         double p = Math.pow(10, deg);
         return ((double)Math.round(x*p)) / p;
+    }
+
+    public static String sortString(String s) {
+        if (s == null) return null;
+        char[] chars = s.toCharArray();
+        Arrays.sort(chars);
+        return new String(chars);
+    }
+
+    /**
+     *
+     * @return
+     */
+    public static boolean coversWithBreaks(String cover, String subchain) {
+        Objects.requireNonNull(cover, "cover cannot be null");
+        Objects.requireNonNull(subchain, "subchain cannot be null");
+
+        int m = cover.length();
+        int n = subchain.length();
+
+        if (m < n) {
+            return false;
+        }
+        if (n == 0) {
+            return true;
+        }
+        // now m>0, n>0
+
+        int i = 0; // cover
+        int j = 0; // subchain
+        while (i != m) {
+            if (cover.charAt(i) == subchain.charAt(j)) {
+                j++;
+                if (j == n) {
+                    return true; // whole subchain is covered
+                }
+            }
+            i++;
+        }
+        return false; // whole cover is covered but subchain is not
     }
 
 //===============================================================================================//

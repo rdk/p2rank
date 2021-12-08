@@ -176,6 +176,10 @@ class Sutils {
         return list.collect { (it==null) ? null : it.trim()}
     }
 
+    static String sortString(String s) {
+        PerfUtils.sortString(s)
+    }
+    
 //===========================================================================================================//
 
     static List<String> splitRespectInnerParentheses(String str, char delimiter) {

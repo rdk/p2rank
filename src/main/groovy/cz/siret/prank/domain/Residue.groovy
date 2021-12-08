@@ -1,5 +1,6 @@
 package cz.siret.prank.domain
 
+import com.sun.istack.NotNull
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.utils.PdbUtils
 import groovy.transform.CompileStatic
@@ -120,7 +121,7 @@ class Residue {
         getAtoms()
 
         headAtoms = new Atoms(4)
-        sideChainAtoms = new Atoms(atoms.count)
+        sideChainAtoms = new Atoms(atoms.count - 4)
 
         for (Atom a : atoms) {
             if (a.name in ['CA', 'C', 'O', 'N']) {
@@ -141,11 +142,17 @@ class Residue {
         return sideChainAtoms
     }
 
+    /**
+     * @return three letter residue code (e.g. "ASP")
+     */
     @Nullable
     String getCode() {
         PdbUtils.getResidueCode(group)
     }
 
+    /**
+     * @return three letter residue code (e.g. "ASP"), some corrections are applied
+     */
     @Nullable
     String getCorrectedCode() {
         PdbUtils.getCorrectedResidueCode(group)
@@ -156,8 +163,17 @@ class Residue {
         AA.forName(getCorrectedCode())
     }
 
+    @Nullable
     Character getCodeChar() {
         getAa()?.codeChar
+    }
+
+    /**
+     * @return if AAis unknown returns '?'
+     */
+    @NotNull
+    Character getCodeCharMasked() {
+        getCodeChar() ?: '?' as char
     }
 
     @Override
@@ -176,18 +192,40 @@ class Residue {
 
 //===========================================================================================================//
 
-    static String safe1Code(Residue res) {
+    boolean equals(o) {
+        if (this.is(o)) return true
+        if (getClass() != o.class) return false
+
+        Residue residue = (Residue) o
+
+        if (key != residue.key) return false
+
+        return true
+    }
+
+    int hashCode() {
+        return key.hashCode()
+    }
+
+//===========================================================================================================//
+
+    @Nonnull
+    static char safe1Code(Residue res) {
         if (res == null) {
-            return "_"
-        } else if (res.aa == null) {
-            return "?"
+            return '_' as char
         } else {
-            return res.aa.codeChar.toString()
+            return res.codeCharMasked
         }
     }
 
+    /**
+     * order significant
+     */
     static String safeOrderedCode2(Residue res1, Residue res2) {
-        safe1Code(res1) + safe1Code(res2)
+        StringBuilder sb = new StringBuilder()
+        sb.append(safe1Code(res1))
+        sb.append(safe1Code(res2))
+        return sb.toString()
     }
 
     /**

@@ -53,7 +53,7 @@ enum AA {
     }
 
     static {
-        for (AA value : EnumSet.allOf(AA.class)) {
+        for (AA value : AA.values()) {
             index.put(value.name(), value)
             indexByCodeChar.put(value.codeChar, value)
         }

@@ -1219,6 +1219,26 @@ class Params {
     @ModelParam
     boolean feat_csv_ignore_missing = false
 
+    /**
+     * Structural motifs for stmotif feature.
+     * e.g.: C2H2 D1H1 C4 H2
+     */
+    @ModelParam
+    List<String> feat_stmotif_motifs = ["C2H2","C4","C3H1","E1H2","C2H1","H3","D1H2","C3","D1H1","E1H1","C1H3","C2","H2"]
+
+    /**
+     * When matching motifs, consider all residues within feat_stmotif_radius around the SAS point.
+     * If false, only closest n residues are considered and must match exactly (n = lenght of a motif).
+     */
+    @ModelParam
+    boolean feat_stmotif_useradius = true
+
+    /**
+     * Radius related to feat_stmotif_useradius param.
+     */
+    @ModelParam
+    double feat_stmotif_radius = 4d
+
 //===========================================================================================================//
 // Derived parameters
 //===========================================================================================================//

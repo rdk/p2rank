@@ -176,6 +176,10 @@ public final class Atoms implements Iterable<Atom> {
     }
 
     public double dist(Atoms toAtoms) {
+        return Math.sqrt(sqrDist(toAtoms));
+    }
+
+    public double sqrDist(Atoms toAtoms) {
         double sqrMin = Double.POSITIVE_INFINITY;
         for (Atom a : toAtoms) {
             double next = sqrDist(a);
@@ -183,7 +187,7 @@ public final class Atoms implements Iterable<Atom> {
                 sqrMin = next;
             }
         }
-        return Math.sqrt(sqrMin);
+        return sqrMin;
     }
 
     public boolean areWithinDistance(Atom a, double dist) {
@@ -277,6 +281,9 @@ public final class Atoms implements Iterable<Atom> {
         return Struct.sortedGroups(getDistinctGroups());
     }
 
+    /**
+     * based on object identity
+     */
     public List<Group> getDistinctGroups() {
         Set<Group> res = new HashSet<>();
         for (Atom a : list) {

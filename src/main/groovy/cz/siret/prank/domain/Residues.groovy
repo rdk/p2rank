@@ -8,6 +8,7 @@ import org.biojava.nbio.structure.Atom
 import org.biojava.nbio.structure.Group
 
 import javax.annotation.Nullable
+import java.util.function.Function
 
 /**
  *
@@ -35,6 +36,11 @@ class Residues implements Iterable<Residue> {
 
     List<Residue> getList() {
         return list
+    }
+
+    @Override
+    Iterator<Residue> iterator() {
+        return list.iterator()
     }
 
     Atoms getAtoms() {
@@ -68,26 +74,66 @@ class Residues implements Iterable<Residue> {
     }
 
     List<Residue> getDistinctForAtoms(Atoms atoms) {
-        atoms.distinctGroups.collect { getResidueForGroup(it) }.findAll{ it != null }.asList()
+        atoms.distinctGroups.collect { getResidueForGroup(it) }.findAll{ it != null }.unique()
     }
+
+//===========================================================================================================//
+
+    List<Residue> cutoutSphere(Atom atom, double radius) {
+        getDistinctForAtoms(getAtoms().cutoutSphere(atom, radius))
+    }
+
+    List<Residue> cutoutShell(Atoms aroundAtoms, double radius) {
+        getDistinctForAtoms(getAtoms().cutoutShell(aroundAtoms, radius))
+    }
+
+//===========================================================================================================//
 
     Residue findNearest(Atom point) {
         Atom nearestAtom = getAtoms().withKdTree().kdTree.findNearest(point)
         return getResidueForAtom(nearestAtom)
     }
 
-    List<Residue> findNNearestToAtoms(int n, Atoms toAtoms) {
-        List<Tuple2<Residue,Double>> resWithDist = list.collect { Tuple.tuple(it, it.atoms.dist(toAtoms)) }
-        resWithDist.sort { it.v2 }
-
-        resWithDist = Cutils.head(n, resWithDist)
-
-        return resWithDist.collect { it.v1 }
+    /**
+     * @return sorted ascending
+     */
+    List<Residue> findNNearestToAtom(int n, Atom point) {
+        return findNNearestTo(n, {it.atoms.sqrDist(point) })
     }
 
-    @Override
-    Iterator<Residue> iterator() {
-        return list.iterator()
+    /**
+     * @return sorted ascending
+     */
+    List<Residue> findNNearestToAtoms(int n, Atoms toAtoms) {
+        return findNNearestTo(n, {it.atoms.sqrDist(toAtoms) })
+    }
+
+    /**
+     * @return sorted ascending
+     */
+    List<Residue> findNNearestTo(int n, Function<Residue, Double> distanceFunction) {
+        List<ResWithDist> resWithDist = Cutils.head(n, sortedByDistance(distanceFunction))
+        return resWithDist.collect { it.residue }
+    }
+
+    List<ResWithDist> sortedByDistanceToAtom(Atom point) {
+        return sortedByDistance({it.atoms.dist(point) })
+    }
+
+    List<ResWithDist> sortedByDistance(Function<Residue, Double> distanceFunction) {
+        List<ResWithDist> resWithDist = list.collect { new ResWithDist(it, distanceFunction.apply(it)) }
+        resWithDist.sort { it.distance }
+        return resWithDist
+    }
+
+    static class ResWithDist {
+        Residue residue
+        double distance
+
+        ResWithDist(Residue residue, double distance) {
+            this.residue = residue
+            this.distance = distance
+        }
     }
 
 }
