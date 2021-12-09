@@ -23,13 +23,16 @@ class StructureParsingTest {
     Path installDir = Paths.get("distro").toAbsolutePath()
     Path dataDir = path installDir, "test_data"
 
-    Path testFile2 = path dataDir, "1fbl.pdb.gz"
-    Path testFile2cif = path dataDir, "1fbl.cif"
+    Path pdb_1fbl = path dataDir, "1fbl.pdb.gz"
+    Path cif_1fbl = path dataDir, "1fbl.cif"
 
+    Path pdb_2W83 = path dataDir, "2W83.pdb"
+    Path cif_2W83 = path dataDir, "2W83.cif"
 
     @Test
     void pdbVsCifEquality() throws Exception {
-        doTestPdbVsCifEquality(testFile2, testFile2cif)
+        doTestPdbVsCifEquality(pdb_1fbl, cif_1fbl)
+        doTestPdbVsCifEquality(pdb_2W83, cif_2W83)
     }
 
     void doTestPdbVsCifEquality(Path pdbFile, Path cifFile) {
