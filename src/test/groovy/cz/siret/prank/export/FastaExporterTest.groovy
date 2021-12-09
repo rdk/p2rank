@@ -17,6 +17,7 @@ class FastaExporterTest {
     static String data_dir = "distro/test_data"
     Protein protein_2W83
     Protein protein_1fbl
+    Protein protein_1fbl_cif
 
 
     FastaExporter fastaExporter = new FastaExporter()
@@ -25,6 +26,7 @@ class FastaExporterTest {
     void setUp() throws Exception {
         protein_2W83 = Protein.load("$data_dir/2W83.pdb")
         protein_1fbl = Protein.load("$data_dir/1fbl.pdb.gz")
+        protein_1fbl = Protein.load("$data_dir/1fbl.cif")
     }
 
     @Test
@@ -36,6 +38,9 @@ class FastaExporterTest {
         String exported_1fbl_A = fastaExporter.getFastaChainRaw(protein_1fbl.getResidueChain("A"))
         String answer_1fbl_A = "FVLTPGNPRWENTHLTYRIENYTPDLSREDVDRAIEKAFQLWSNVSPLTFTKVSEGQADIMISFVRGDHRDNSPFDGPGGNLAHAFQPGPGIGGDAHFDEDERWTKNFRDYNLYRVAAHELGHSLGLSHSTDIGALMYPNYIYTGDVQLSQDDIDGIQAIYGPSENPVQPSGPQTPQVCDSKLTFDAITTLRGELMFFKDRFYMRTNSFYPEVELNFISVFWPQVPNGLQAAYEIADRDEVRFFKGNKYWAVRGQDVLYGYPKDIHRSFGFPSTVKNIDAAVFEEDTGKTYFFVAHECWRYDEYKQSMDTGYPKMIAEEFPGIGNKVDAVFQKDGFLYFFHGTRQYQFDFKTKRILTLQKANSWFNC"
         assertEquals answer_1fbl_A, exported_1fbl_A
+
+        String exported_1fbl_cif_A = fastaExporter.getFastaChainRaw(protein_1fbl.getResidueChain("A"))
+        assertEquals answer_1fbl_A, exported_1fbl_cif_A
     }
 
     @Test
@@ -48,6 +53,8 @@ class FastaExporterTest {
         String answer_1fbl_A = "FVLTPGNPRWENTHLTYRIENYTPDLSREDVDRAIEKAFQLWSNVSPLTFTKVSEGQADIMISFVRGDHRDNSPFDGPGGNLAHAFQPGPGIGGDAHFDEDERWTKNFRDYNLYRVAAHELGHSLGLSHSTDIGALMYPNYIYTGDVQLSQDDIDGIQAIYGPSENPVQPSGPQTPQVCDSKLTFDAITTLRGELMFFKDRFYMRTNSFYPEVELNFISVFWPQVPNGLQAAYEIADRDEVRFFKGNKYWAVRGQDVLYGYPKDIHRSFGFPSTVKNIDAAVFEEDTGKTYFFVAHECWRYDEYKQSMDTGYPKMIAEEFPGIGNKVDAVFQKDGFLYFFHGTRQYQFDFKTKRILTLQKANSWFNC"
         assertEquals answer_1fbl_A, exported_1fbl_A
 
+        String exported_1fbl_cif_A = fastaExporter.getFastaChainMasked(protein_1fbl.getResidueChain("A"))
+        assertEquals answer_1fbl_A, exported_1fbl_cif_A
 
         // TODO add examples where residue are actually masked by X
     }

@@ -6,6 +6,8 @@ import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.*
 import org.biojava.nbio.structure.io.FileParsingParameters
 import org.biojava.nbio.structure.io.PDBFileParser
+import org.biojava.nbio.structure.io.cif.CifStructureConverter
+
 //import org.biojava.nbio.structure.io.mmcif.ChemCompGroupFactory
 //import org.biojava.nbio.structure.io.mmcif.ReducedChemCompProvider
 
@@ -45,25 +47,49 @@ class PdbUtils {
     }
 
     static Structure loadFromFile(String file) {
-
         log.info "loading file [$file]"
 
         if (file==null) {
             throw new IllegalArgumentException("file name not provided")
         }
 
-        InputStream inputs = Futils.inputStream(file)
+        String ext = Futils.realExtension(file)
+
+
+        if (ext == "cif") {
+            return loadFromCifFile(file)
+        } else { // pdb / ent
+            return loadFromPdbFile(file)
+        }
+    }
+
+    static Structure loadFromPdbFile(String file) {
+        InputStream instream = Futils.inputStream(file)
         try {
             PDBFileParser pdbpars = new PDBFileParser()
             pdbpars.setFileParsingParameters(parsingParams)
-            return pdbpars.parsePDBFile(inputs)
+            return pdbpars.parsePDBFile(instream)
         } catch (Exception e) {
             throw new PrankException("Failed to load structure from '$file'", e)
         } finally {
-            inputs.close()
+            instream.close()
         }
-    
     }
+
+    static Structure loadFromCifFile(String file) {
+        InputStream instream = Futils.inputStream(file)
+        try {
+            return CifStructureConverter.fromInputStream(instream)
+        } catch (Exception e) {
+            throw new PrankException("Failed to load structure from '$file'", e)
+        } finally {
+            instream.close()
+        }
+    }
+
+    /*
+     *Structure cifStructure = CifStructureConverter.fromInputStream(inStream);
+     */
 
     static Structure loadFromString(String pdbText)  {
         PDBFileParser pdbpars = new PDBFileParser();
