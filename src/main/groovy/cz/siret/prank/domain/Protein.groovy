@@ -413,7 +413,7 @@ class Protein implements Parametrized {
             log.info "reducing protein [{}] to chains [{}]", name, onlyChains.join(",")
 
             name = name + onlyChains.join("")
-            structure = PdbUtils.getReducedStructure(structure, onlyChains)
+            structure = PdbUtils.reduceStructureToChains(structure, onlyChains)
         }
 
         calculateResidues()
