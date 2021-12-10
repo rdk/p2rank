@@ -3,6 +3,7 @@ package cz.siret.prank.utils
 import cz.siret.prank.program.PrankException
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+import org.apache.commons.io.IOUtils
 import org.biojava.nbio.structure.*
 import org.biojava.nbio.structure.io.FileParsingParameters
 import org.biojava.nbio.structure.io.PDBFileParser
@@ -80,7 +81,7 @@ class PdbUtils {
     static Structure loadFromCifFile(String file) {
         InputStream instream = Futils.inputStream(file)
         try {
-            return CifStructureConverter.fromInputStream(instream)
+            return CifStructureConverter.fromInputStream(instream, parsingParams)
         } catch (Exception e) {
             throw new PrankException("Failed to load structure from '$file'", e)
         } finally {
@@ -101,6 +102,14 @@ class PdbUtils {
         Structure struc = pdbpars.parsePDBFile(br)
         return struc
     }
+
+    static Structure loadFromCifString(String cifText)  {
+        InputStream inputStream = IOUtils.toInputStream(cifText)
+
+        Structure struc = CifStructureConverter.fromInputStream(inputStream, parsingParams)
+        return struc
+    }
+
 
     static String correctResidueCode(String residueCode) {
         //MSE is only found as a molecular replacement for MET
