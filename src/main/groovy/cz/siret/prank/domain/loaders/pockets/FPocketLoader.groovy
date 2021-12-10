@@ -13,6 +13,7 @@ import groovy.transform.TypeCheckingMode
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 import org.biojava.nbio.structure.Structure
+import org.biojava.nbio.structure.StructureImpl
 
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -286,6 +287,13 @@ HETATM      4    V APOL .  STP   C .   73 ?   -1.633 -16.633 -11.976  0.00  0   
     }
 
     private Structure loadPocketStructureAndDetailsFromCif(String pocketAtmFileName, FPocketPocket fpocket) {
+
+        return new StructureImpl() // TODO temp fix
+
+        // TODO fails
+        // org.rcsb.cif.EmptyColumnException: column pdbx_PDB_model_num is undefined
+        // at org.rcsb.cif.model.Column$EmptyColumn.getStringData(Column.java:111) ~[ciftools-java-jdk8-3.0.0.jar:?]
+
 
         Structure struc = PdbUtils.loadFromCifFile(pocketAtmFileName)
 
