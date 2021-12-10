@@ -254,9 +254,9 @@ HETATM      4    V APOL .  STP   C .   73 ?   -1.633 -16.633 -11.976  0.00  0   
 
         String formatExtension = Futils.realExtension(pocketAtmFileName)
         if (formatExtension == "cif") {
-            return loadPocketStructureAndDetailsFromPdb(pocketAtmFileName, fpocket)
-        } else { // pdb
             return loadPocketStructureAndDetailsFromCif(pocketAtmFileName, fpocket)
+        } else { // pdb
+            return loadPocketStructureAndDetailsFromPdb(pocketAtmFileName, fpocket)
         }
     }
 
