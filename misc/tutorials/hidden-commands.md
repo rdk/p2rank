@@ -7,7 +7,7 @@ Apart from hidden commands for training and grid optimization (see `training-tut
 
 ### binding residues
 List unique ligand binding residue IDs (for relevant ligands) for each protein in the dataset.
-~~~
+~~~sh
 ./prank.sh analyze binding-residues <dataset.ds>
 ~~~
 Related parameters:
@@ -22,7 +22,7 @@ Related parameters:
 
 Analyze a dataset with an explicitly specified residue labeling.
 
-~~~
+~~~sh
 ./prank.sh analyze labeled-residues <dataset.ds>
 ~~~
 
@@ -32,7 +32,7 @@ Analyze a dataset with an explicitly specified residue labeling.
 `-delete_vectors 0`           
 `xyz` is a dummy feature that stores 3D coordinates of give SAS point.   
 
-~~~
+~~~sh
 ./prank.sh traineval -t test_data/basic.ds -e test_data/basic.ds \
     -loop 1 -delete_vectors 0 -sample_negatives_from_decoys 0 \
     -features '(chem,volsite,protrusion,bfactor,xyz)'
@@ -44,7 +44,7 @@ Analyze a dataset with an explicitly specified residue labeling.
 `fasta-raw` exports residue codes as P2Rank sees them.
 `fasta-mask` will transform any possible non-letter code (such as `_` or `?`) to `X`.
 
-~~~
+~~~sh
 # run in P2Rank root directory (distro in repo)
 
 ./prank analyze fasta-raw test_data/basic.ds         # dataset
@@ -55,6 +55,34 @@ Analyze a dataset with an explicitly specified residue labeling.
 ./prank analyze fasta-masked -f test_data/2W83.pdb   # single file
 ./prank analyze fasta-masked test_data/basic.ds -o out_dir  # specify output directory
 ~~~
+   
+
+## Reduce structure to chains
+
+~~~sh
+./prank.sh analyze reduce-to-chains -f <structure_file> -chains <chain_names> -out_format <format_file_extension>
+~~~
+* `-f <>` required, structure fie in one of the formats `pdb|pdb.gz|cif|cif.gz`
+* `-chains` required, coma separated list of chain names, wildcard values: `keep`, `*`
+  * in the case of mmcif files, values refer to old PDB chain names (author id), not mmcif ids
+  * `keep` keeps the structure as is, just saves with required format (may not work perfectly due to biojava), useful for debugging
+  * `*` is not the same as keeping structure as is, but runs the reduction procedure with all the chains, useful for debugging
+* `-out_format` optional, default value is `keep` -- use the same format as the input 
+  * possible values: `keep|pdb|pdb.gz|cif|cif.gz`
+
+     
+Examples:
+~~~sh
+./prank.sh analyze reduce-to-chains  -f 2W83.cif     -chains A                         # output file: 2W83_A.cif
+./prank.sh analyze reduce-to-chains  -f 2W83.cif     -chains A,B                       # output file: 2W83_A,B.cif 
+./prank.sh analyze reduce-to-chains  -f 2W83.cif     -chains keep                      # output file: 2W83.cif
+./prank.sh analyze reduce-to-chains  -f 2W83.cif     -chains keep  -out_format pdb.gz  # output file: 2W83.pdb.gz
+./prank.sh analyze reduce-to-chains  -f 2W83.cif     -chains *                         # output file: 2W83_all.cif
+./prank.sh analyze reduce-to-chains  -f 2W83.cif     -chains A     -out_format keep    # output file: 2W83_A.cif
+./prank.sh analyze reduce-to-chains  -f 2W83.cif.gz  -chains A     -out_format pdb.gz  # output file: 2W83_A.pdb.gz
+./prank.sh analyze reduce-to-chains  -f 2W83.pdb.gz  -chains A,B   -out_format cif     # output file: 2W83_A,B.cif
+~~~
+
 
 ## Print
             
@@ -63,7 +91,7 @@ Analyze a dataset with an explicitly specified residue labeling.
 
 Check which features are enabled for a particular configuration.
 
-~~~
+~~~sh
 ./prank print features                          # for default config
 ./prank print features -c other_config.groovy   # for custom config
 ~~~
