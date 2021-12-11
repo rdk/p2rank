@@ -63,7 +63,7 @@ Analyze a dataset with an explicitly specified residue labeling.
 ./prank.sh analyze reduce-to-chains -f <structure_file> -chains <chain_names> -out_format <format_file_extension>
 ~~~
 * `-f <>` required, structure fie in one of the formats `pdb|pdb.gz|cif|cif.gz`
-* `-chains` required, coma separated list of chain names, wildcard values: `keep`, `*`
+* `-chains` required, coma separated list of chain names, wildcards: `keep`, `all`
   * in the case of mmcif files, values refer to old PDB chain names (author id), not mmcif ids
   * `keep` keeps the structure as is, just saves with required format (may not work perfectly due to biojava), useful for debugging
   * `*` is not the same as keeping structure as is, but runs the reduction procedure with all the chains, useful for debugging
@@ -77,7 +77,7 @@ Examples:
 ./prank.sh analyze reduce-to-chains  -f 2W83.cif     -chains A,B                       # output file: 2W83_A,B.cif 
 ./prank.sh analyze reduce-to-chains  -f 2W83.cif     -chains keep                      # output file: 2W83.cif
 ./prank.sh analyze reduce-to-chains  -f 2W83.cif     -chains keep  -out_format pdb.gz  # output file: 2W83.pdb.gz
-./prank.sh analyze reduce-to-chains  -f 2W83.cif     -chains *                         # output file: 2W83_all.cif
+./prank.sh analyze reduce-to-chains  -f 2W83.cif     -chains all                       # output file: 2W83_all.cif
 ./prank.sh analyze reduce-to-chains  -f 2W83.cif     -chains A     -out_format keep    # output file: 2W83_A.cif
 ./prank.sh analyze reduce-to-chains  -f 2W83.cif.gz  -chains A     -out_format pdb.gz  # output file: 2W83_A.pdb.gz
 ./prank.sh analyze reduce-to-chains  -f 2W83.pdb.gz  -chains A,B   -out_format cif     # output file: 2W83_A,B.cif
