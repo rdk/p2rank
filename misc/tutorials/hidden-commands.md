@@ -74,7 +74,7 @@ Analyze a dataset with an explicitly specified residue labeling.
 Examples:
 ~~~sh
 ./prank.sh analyze reduce-to-chains  -f 2W83.cif     -chains A                         # output file: 2W83_A.cif
-./prank.sh analyze reduce-to-chains  -f 2W83.cif     -chains A,B                       # output file: 2W83_A,B.cif 
+./prank.sh analyze reduce-to-chains  -f 2W83.cif.gz  -chains A,B                       # output file: 2W83_A,B.cif.gz 
 ./prank.sh analyze reduce-to-chains  -f 2W83.cif     -chains keep                      # output file: 2W83.cif
 ./prank.sh analyze reduce-to-chains  -f 2W83.cif     -chains keep  -out_format pdb.gz  # output file: 2W83.pdb.gz
 ./prank.sh analyze reduce-to-chains  -f 2W83.cif     -chains all                       # output file: 2W83_all.cif
