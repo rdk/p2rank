@@ -262,6 +262,34 @@ analyze() {
 
 }
 
+transform() {
+
+  title TRANSFORM COMMANDS
+
+  test ./prank.sh transform reduce-to-chains  -f distro/test_data/2W83.cif     -chains A                                                  # output: <out_dir>/2W83_A.cif
+  test ./prank.sh transform reduce-to-chains  -f distro/test_data/2W83.pdb     -chains A                                                  # output: <out_dir>/2W83_A.pdb
+  test ./prank.sh transform reduce-to-chains  -f distro/test_data/2W83.cif.gz  -chains A,B                                                # output: <out_dir>/2W83_A,B.cif.gz
+  test ./prank.sh transform reduce-to-chains  -f distro/test_data/2W83.cif.gz  -chains A,B  -out_file distro/test_output/2W83_A,B.cif.gz  # output: distro/test_output/2W83_A,B.cif.gz
+  test ./prank.sh transform reduce-to-chains  -f distro/test_data/2W83.cif     -chains keep                                               # output: <out_dir>/2W83.cif
+  test ./prank.sh transform reduce-to-chains  -f distro/test_data/2W83.cif     -chains keep -out_format pdb.gz                            # output: <out_dir>/2W83.pdb.gz
+  test ./prank.sh transform reduce-to-chains  -f distro/test_data/2W83.cif     -chains all                                                # output: <out_dir>/2W83_all.cif
+  test ./prank.sh transform reduce-to-chains  -f distro/test_data/2W83.cif     -chains A    -out_format keep                              # output: <out_dir>/2W83_A.cif
+  test ./prank.sh transform reduce-to-chains  -f distro/test_data/2W83.cif.gz  -chains A    -out_format pdb.gz                            # output: <out_dir>/2W83_A.pdb.gz
+  test ./prank.sh transform reduce-to-chains  -f distro/test_data/2W83.pdb.gz  -chains A,B  -out_format cif                               # output: <out_dir>/2W83_A,B.cif
+
+  test ./prank.sh transform reduce-to-chains  -f distro/test_data/1fbl.cif     -chains A
+  test ./prank.sh transform reduce-to-chains  -f distro/test_data/1fbl.pdb     -chains A
+  test ./prank.sh transform reduce-to-chains  -f distro/test_data/1fbl.cif.gz  -chains A,B
+  test ./prank.sh transform reduce-to-chains  -f distro/test_data/1fbl.cif.gz  -chains A,B  -out_file distro/test_output/1fbl_A,B.cif.gz
+  test ./prank.sh transform reduce-to-chains  -f distro/test_data/1fbl.cif     -chains keep
+  test ./prank.sh transform reduce-to-chains  -f distro/test_data/1fbl.cif     -chains keep -out_format pdb.gz
+  test ./prank.sh transform reduce-to-chains  -f distro/test_data/1fbl.cif     -chains all
+  test ./prank.sh transform reduce-to-chains  -f distro/test_data/1fbl.cif     -chains A    -out_format keep
+  test ./prank.sh transform reduce-to-chains  -f distro/test_data/1fbl.cif.gz  -chains A    -out_format pdb.gz
+  test ./prank.sh transform reduce-to-chains  -f distro/test_data/1fbl.pdb.gz  -chains A,B  -out_format cif
+  
+}
+
 classifiers() {
 
     title TRAIN/EVAL USING DIFFERENT CLASSIFIERS
@@ -282,6 +310,8 @@ feature_importances() {
     test ./prank.sh traineval -t chen11-fpocket.ds -e joined.ds -c config/train-default  -feature_importances 1 -classifier FasterForest     -label FF  -loop 1 -cache_datasets 0  -out_subdir TEST/IMPORTANCES
     test ./prank.sh traineval -t chen11-fpocket.ds -e joined.ds -c config/train-default  -feature_importances 1 -classifier FasterForest2    -label FF2 -loop 1 -cache_datasets 0  -out_subdir TEST/IMPORTANCES
 }
+
+
 
 ###################################################################################################################
 

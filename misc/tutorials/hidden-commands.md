@@ -60,7 +60,7 @@ Analyze a dataset with an explicitly specified residue labeling.
 ## Reduce structure to chains
 
 ~~~sh
-./prank.sh analyze reduce-to-chains -f <structure_file> -chains <chain_names> -out_format <format_file_extension>
+./prank.sh analyze reduce-to-chains -f <structure_file> -chains <chain_names> -out_format <format_file_extension> -out_file <file_name>
 ~~~
 * `-f <>` required, structure fie in one of the formats `pdb|pdb.gz|cif|cif.gz`
 * `-chains` required, coma separated list of chain names, wildcards: `keep`, `all`
@@ -69,20 +69,23 @@ Analyze a dataset with an explicitly specified residue labeling.
   * `*` is not the same as keeping structure as is, but runs the reduction procedure with all the chains, useful for debugging
 * `-out_format` optional, default value is `keep` -- use the same format as the input 
   * possible values: `keep|pdb|pdb.gz|cif|cif.gz`
-
+* `-out_file` optional, output structure file name, path relative to the shell working directory
+  * if specified, redced strucdure is saved under secified name and no other output is produced
+  * if not specified, default name is generated (see examples) and file is saved in the output directory specified with parameters `-o`, `-output_base_dir`, `-out_subdir`
      
 Examples:
 ~~~sh
-./prank.sh analyze reduce-to-chains  -f 2W83.cif     -chains A                         # output file: 2W83_A.cif
-./prank.sh analyze reduce-to-chains  -f 2W83.cif.gz  -chains A,B                       # output file: 2W83_A,B.cif.gz 
-./prank.sh analyze reduce-to-chains  -f 2W83.cif     -chains keep                      # output file: 2W83.cif
-./prank.sh analyze reduce-to-chains  -f 2W83.cif     -chains keep  -out_format pdb.gz  # output file: 2W83.pdb.gz
-./prank.sh analyze reduce-to-chains  -f 2W83.cif     -chains all                       # output file: 2W83_all.cif
-./prank.sh analyze reduce-to-chains  -f 2W83.cif     -chains A     -out_format keep    # output file: 2W83_A.cif
-./prank.sh analyze reduce-to-chains  -f 2W83.cif.gz  -chains A     -out_format pdb.gz  # output file: 2W83_A.pdb.gz
-./prank.sh analyze reduce-to-chains  -f 2W83.pdb.gz  -chains A,B   -out_format cif     # output file: 2W83_A,B.cif
+./prank.sh transform reduce-to-chains -f distro/test_data/2W83.cif    -chains A                                                 # output: <out_dir>/2W83_A.cif
+./prank.sh transform reduce-to-chains -f distro/test_data/2W83.pdb    -chains A                                                 # output: <out_dir>/2W83_A.pdb
+./prank.sh transform reduce-to-chains -f distro/test_data/2W83.cif.gz -chains A,B                                               # output: <out_dir>/2W83_A,B.cif.gz
+./prank.sh transform reduce-to-chains -f distro/test_data/2W83.cif.gz -chains A,B  -out_file distro/test_output/2W83_A,B.cif.gz # output: distro/test_output/2W83_A,B.cif.gz
+./prank.sh transform reduce-to-chains -f distro/test_data/2W83.cif    -chains keep                                              # output: <out_dir>/2W83.cif
+./prank.sh transform reduce-to-chains -f distro/test_data/2W83.cif    -chains keep -out_format pdb.gz                           # output: <out_dir>/2W83.pdb.gz
+./prank.sh transform reduce-to-chains -f distro/test_data/2W83.cif    -chains all                                               # output: <out_dir>/2W83_all.cif
+./prank.sh transform reduce-to-chains -f distro/test_data/2W83.cif    -chains A    -out_format keep                             # output: <out_dir>/2W83_A.cif
+./prank.sh transform reduce-to-chains -f distro/test_data/2W83.cif.gz -chains A    -out_format pdb.gz                           # output: <out_dir>/2W83_A.pdb.gz
+./prank.sh transform reduce-to-chains -f distro/test_data/2W83.pdb.gz -chains A,B  -out_format cif                              # output: <out_dir>/2W83_A,B.cif
 ~~~
-
 
 ## Print
             

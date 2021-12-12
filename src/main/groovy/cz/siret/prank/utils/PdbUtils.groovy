@@ -110,6 +110,29 @@ class PdbUtils {
         return struc
     }
 
+    /**
+     * @param fileName
+     * @param format "cif" or "pdb"
+     * @param compressed - compress to gz
+     * @return file name used
+     */
+    static String saveToFile(Structure structure, String format, String fileName, boolean compressed = false) {
+        String content
+        if (format == "cif") {
+            content = structure.toMMCIF()
+        } else {
+            content = structure.toPDB()
+        }
+
+        if (compressed) {
+            Futils.writeGzip fileName, content
+        } else {
+            Futils.writeFile fileName, content
+        }
+        return fileName
+    }
+
+//===========================================================================================================//
 
     static String correctResidueCode(String residueCode) {
         //MSE is only found as a molecular replacement for MET

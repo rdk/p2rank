@@ -369,10 +369,10 @@ class Protein implements Parametrized {
     String saveToPdbFile(String fileName, boolean compressed = false) {
         if (compressed) {
             fileName += ".gz"
-            Futils.writeGzip fileName, structure.toPDB()
-        } else {
-            Futils.writeFile fileName, structure.toPDB()
         }
+
+        PdbUtils.saveToFile(structure, "pdb", fileName, compressed)
+
         return fileName
     }
 
