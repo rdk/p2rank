@@ -20,7 +20,7 @@ apply plugin: 'idea'
 
 
 group = 'cz.siret'
-version = '2.4-dev.2-biojava6'
+version = '2.3.2-biojava6'
 
 
 description = 'Ligand binding site prediction based on machine learning.'

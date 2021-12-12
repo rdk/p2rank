@@ -57,6 +57,7 @@ class TransformRoutine extends Routine {
 
         label = "transform_" + subCommand + "_" + dataset.label
         outdir = main.findOutdir(label)
+        main.configureLoggers(outdir)
     }
 
     void execute() {
