@@ -356,8 +356,8 @@ speed() {
 
     title SPEED TESTS
 
-    misc/test-scripts/benchmark.sh 5  "FPTRAIN" "1 4 6 12"     "./prank.sh predict fptrain.ds -c config/test-default -out_subdir TEST/SPEED"
-    misc/test-scripts/benchmark.sh 15 "1FILE"   "1"            "./prank.sh predict -f distro/test_data/liganated/1aaxa.pdb -c config/test-default -out_subdir TEST/SPEED"
+    misc/test-scripts/benchmark.sh 3  "FPTRAIN" "1 4 6 12"     "./prank.sh predict fptrain.ds -c config/test-default -out_subdir TEST/SPEED"
+    misc/test-scripts/benchmark.sh 10 "1FILE"   "1"            "./prank.sh predict -f distro/test_data/liganated/1aaxa.pdb -c config/test-default -out_subdir TEST/SPEED"
 }
 
 speed_basic() {
@@ -449,6 +449,8 @@ all() {
     classifiers
     feature_importances
     eval_ploop
+    analyze
+    transform
     speed
 }
 
