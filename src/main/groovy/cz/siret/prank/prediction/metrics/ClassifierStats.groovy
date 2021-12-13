@@ -19,8 +19,8 @@ class ClassifierStats implements Parametrized, Writable {
 
     static final int HISTOGRAM_BINS = 100
 
-    int[][] op    // confusion matrix [observed][predicted]
-    int count = 0
+    long[][] op    // confusion matrix [observed][predicted]
+    long count = 0
     int nclasses
 
     double sumE = 0
@@ -174,7 +174,7 @@ class ClassifierStats implements Parametrized, Writable {
         return new DecimalFormat("#.####").format(x)
     }
 
-    private static String relative(double x, int count) {
+    private static String relative(double x, long count) {
         return formatPercent((double)x/count)
     }
 
@@ -201,8 +201,8 @@ class ClassifierStats implements Parametrized, Writable {
             sb << "       , ${formatPercent(NPV)},  ${formatPercent(P)}\n"
             sb << "\n"
             sb << "%:\n"
-            sb << ", ${relative(TN, count as int)}, ${relative(FP, count as int)}\n"
-            sb << ", ${relative(FN, count as int)}, ${relative(TP, count as int)}\n"
+            sb << ", ${relative(TN, count as long)}, ${relative(FP, count as long)}\n"
+            sb << ", ${relative(FN, count as long)}, ${relative(TP, count as long)}\n"
             sb << "\n"
             sb << "ACC:, ${format(ACC)}, accuracy\n"
             sb << "P:, ${format(P)}, precision / positive predictive value    ,,TP / (TP + FP)\n"

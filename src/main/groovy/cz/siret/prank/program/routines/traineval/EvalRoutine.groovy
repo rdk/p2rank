@@ -28,9 +28,9 @@ abstract class EvalRoutine extends Routine {
 
     String toMainResultsCsv(String label, String model, EvalResults results) {
 
-        int proteins = results.eval.proteinCount
-        int ligands = results.eval.ligandCount
-        int pockets = results.eval.pocketCount
+        long proteins = results.eval.proteinCount
+        long ligands = results.eval.ligandCount
+        long pockets = results.eval.pocketCount
 
         double top1 = results.origEval.calcDefaultCriteriumSuccessRate(0)
         double all = results.origEval.calcDefaultCriteriumSuccessRate(999)
