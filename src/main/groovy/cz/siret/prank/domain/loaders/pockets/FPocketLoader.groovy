@@ -270,14 +270,14 @@ HETATM      4    V APOL .  STP   C .   73 ?   -1.633 -16.633 -11.976  0.00  0   
 
     private Structure loadPocketStructureAndDetailsFromPdb(String pocketAtmFileName, FPocketPocket fpocket) {
 
-        File pocketFile = new File(pocketAtmFileName)
+        List<String> lines = Futils.readPossiblyCompressedFile(pocketAtmFileName).readLines()
 
-        StringBuilder tmpPdb = new StringBuilder(pocketFile.size() as int)
+        StringBuilder tmpPdb = new StringBuilder(lines.size() * 80)
 
         // ignoring headers because of biojava
 
         int nAtomLines = 0
-        for (String line : pocketFile.text.readLines()) {
+        for (String line : lines) {
             if (line.startsWith("HEADER")) {
                 fpocket.fpstats.parseLine(line)
             } else {
