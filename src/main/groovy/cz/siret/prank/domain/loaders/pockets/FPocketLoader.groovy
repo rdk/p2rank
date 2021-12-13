@@ -344,6 +344,24 @@ HETATM      4    V APOL .  STP   C .   73 ?   -1.633 -16.633 -11.976  0.00  0   
      HEADER 12 - Number of apolar alpha sphere     :   129
      HEADER 13 - Proportion of apolar alpha sphere : 0.8431
 
+     Fpocket 4.0.1
+
+     HEADER 0  - Pocket Score                      : 0.2226
+     HEADER 1  - Drug Score                        : 0.9780
+     HEADER 2  - Number of alpha spheres           :   336
+     HEADER 3  - Mean alpha-sphere radius          : 3.9803
+     HEADER 4  - Mean alpha-sphere Solvent Acc.    : 0.4466
+     HEADER 5  - Mean B-factor of pocket residues  : 0.6192
+     HEADER 6  - Hydrophobicity Score              : 31.2459
+     HEADER 7  - Polarity Score                    :    23
+     HEADER 8  - Amino Acid based volume Score     : 3.7377
+     HEADER 9  - Pocket volume (Monte Carlo)       : 2820.3418
+     HEADER 10  -Pocket volume (convex hull)       : 3057.8672
+     HEADER 11 - Charge Score                      :     1
+     HEADER 12 - Local hydrophobic density Score   : 46.8166
+     HEADER 13 - Number of apolar alpha sphere     :   169
+     HEADER 14 - Proportion of apolar alpha sphere : 0.5030
+
      */
     @CompileStatic(value = TypeCheckingMode.SKIP)
     static class FPocketStats extends Pocket.PocketStats {
@@ -378,10 +396,10 @@ HETATM      4    V APOL .  STP   C .   73 ?   -1.633 -16.633 -11.976  0.00  0   
          */
         public void consolidate() {
 
-            pocketScore = headers[0]
-            vornoiVertices = headers[1]
-            polarityScore = headers[6]
-            realVolumeApprox = headers[8]
+            pocketScore = headers[0] ?: Double.NaN
+            vornoiVertices = headers[1] ?: Double.NaN
+            polarityScore = headers[6] ?: Double.NaN
+            realVolumeApprox = headers[8] ?: Double.NaN
             
         }
 
