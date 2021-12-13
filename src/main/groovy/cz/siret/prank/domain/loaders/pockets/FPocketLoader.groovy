@@ -276,6 +276,7 @@ HETATM      4    V APOL .  STP   C .   73 ?   -1.633 -16.633 -11.976  0.00  0   
 
         // ignoring headers because of biojava
 
+        int nAtomLines = 0
         for (String line : pocketFile.text.readLines()) {
             if (line.startsWith("HEADER")) {
                 fpocket.fpstats.parseLine(line)
@@ -283,7 +284,11 @@ HETATM      4    V APOL .  STP   C .   73 ?   -1.633 -16.633 -11.976  0.00  0   
                 tmpPdb.append(line)
                 tmpPdb.append("\n")
             }
+            if (line.startsWith("ATOM")) {
+                nAtomLines++
+            }
         }
+        log.info("ATOM lines in pocket file: {}", nAtomLines)
 
         fpocket.fpstats.consolidate()
 
