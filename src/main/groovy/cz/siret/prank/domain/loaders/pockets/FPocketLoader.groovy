@@ -103,7 +103,10 @@ class FPocketLoader extends PredictionLoader implements Parametrized {
             pocket.rank = rank++
             pocket.vornoiCenters = g
 
-            String pocketAtmFile = resultFile.parent + File.separator + "pockets" + File.separator + "pocket${pocketIndex}_atm.${formatExtension}"
+            String pocketAtmFile = resultFile.parent + File.separator + "pockets" + File.separator + "pocket${pocketIndex}_atm.pdb" // for now only pdb format
+            if (!Futils.exists(pocketAtmFile)) {
+                pocketAtmFile += ".gz"    
+            }
             Structure pocketAtmStructure = loadPocketStructureAndDetails(pocketAtmFile, pocket)
             Atoms pocketAtmAtoms = Atoms.allFromStructure(pocketAtmStructure)
 
@@ -245,6 +248,9 @@ HETATM      4    V APOL .  STP   C .   73 ?   -1.633 -16.633 -11.976  0.00  0   
     }
     /**
      * read details from special fpocket output pdb file for one pocket (atom file)
+     *
+     * ! for now only pdb works due to biojava cif parsing error
+     *
      * @param pocketAtmFile
      * @param fpocket load details to
      */
