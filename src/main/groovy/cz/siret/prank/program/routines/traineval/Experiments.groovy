@@ -76,8 +76,6 @@ class Experiments extends Routine {
     void execute() {
         log.info "executing $command()"
 
-        main.configureLoggers(outdir)
-
         commandRegister.get(command).call()
 
         if (outdir != null) {
