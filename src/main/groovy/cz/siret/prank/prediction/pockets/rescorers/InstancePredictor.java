@@ -24,6 +24,7 @@ public interface InstancePredictor {
     static final Logger log = LoggerFactory.getLogger(InstancePredictor.class);
 
     double predictPositive(FeatureVector vect) throws Exception;
+    double[] getDistributionForPoint(FeatureVector vect) throws Exception;
 
 
     static InstancePredictor create(Model model, FeatureExtractor<?> proteinExtractor) {
@@ -47,10 +48,16 @@ public interface InstancePredictor {
 
                 res = new InstancePredictor() { // predictor using faster distributionForAttributes()
                     final FasterForest ff = (FasterForest) classifier;
+
                     @Override
                     public double predictPositive(FeatureVector vect) {
                         double[] hist = ff.distributionForAttributes(vect.getArray(), 2);
                         return normalizedScore(hist);
+                    }
+
+                    @Override
+                    public double[] getDistributionForPoint(FeatureVector vect) throws Exception {
+                        return ff.distributionForAttributes(vect.getArray(), 2);
                     }
                 };
             }
@@ -58,21 +65,34 @@ public interface InstancePredictor {
         } else if (classifier instanceof FasterForest2) {
             res = new InstancePredictor() { // predictor using faster distributionForAttributes()
                 final FasterForest2 ff = (FasterForest2) classifier;
+
                 @Override
                 public double predictPositive(FeatureVector vect) {
                     double[] hist = ff.distributionForAttributes(vect.getArray(), 2);
-                    return normalizedScore(hist);  // not all classifiers give histogram that sums up to 1
+                    return normalizedScore(hist);
+                }
+
+                @Override
+                public double[] getDistributionForPoint(FeatureVector vect) throws Exception {
+                    return ff.distributionForAttributes(vect.getArray(), 2);
                 }
             };
         } else if (classifier instanceof FlatBinaryForest) {
             res = new InstancePredictor() { // predictor using faster distributionForAttributes()
                 final FlatBinaryForest ff = (FlatBinaryForest) classifier;
+
                 @Override
                 public double predictPositive(FeatureVector vect) {
                     return ff.predict(vect.getArray());
                 }
+
+                @Override
+                public double[] getDistributionForPoint(FeatureVector vect) throws Exception {
+                    double p = predictPositive(vect);
+                    return new double[] {1d-p, p};
+                }
             };
-        }
+        } 
 
         if (res == null) {
             log.info("Creating WekaInstancePredictor");
@@ -102,10 +122,16 @@ public interface InstancePredictor {
 
         @Override
         public double predictPositive(FeatureVector vect) throws Exception {
-            PerfUtils.arrayCopy(vect.getArray(), alloc);
-            double[] hist = classifier.distributionForInstance(auxInst);
+            double[] hist = getDistributionForPoint(vect);
             return normalizedScore(hist);  // not all classifiers give histogram that sums up to 1
         }
+
+        @Override
+        public double[] getDistributionForPoint(FeatureVector vect) throws Exception {
+            PerfUtils.arrayCopy(vect.getArray(), alloc);
+            return classifier.distributionForInstance(auxInst);
+        }
+        
     }
     
 }

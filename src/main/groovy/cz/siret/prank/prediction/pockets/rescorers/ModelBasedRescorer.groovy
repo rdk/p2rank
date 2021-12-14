@@ -19,6 +19,7 @@ import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 
 import static cz.siret.prank.prediction.pockets.PointScoreCalculator.applyPointScoreThreshold
+import static cz.siret.prank.prediction.pockets.PointScoreCalculator.normalizedScore
 
 /**
  * rescorer and predictor
@@ -34,7 +35,8 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
 
     private final double POSITIVE_POINT_LIGAND_DISTANCE = params.positive_point_ligand_distance
 
-    private final PointScoreCalculator pointScoreCalculator = new PointScoreCalculator()
+    private final PointScoreCalculator calculator = new PointScoreCalculator()
+    private final boolean USE_ONLY_POSITIVE_SCORE = params.use_only_positive_score
 
     private FeatureExtractor extractorFactory
     private Model model
@@ -82,20 +84,18 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
 
                 // classification
 
-                FeatureVector vector = extractor.calcFeatureVector(point.point)
+                FeatureVector vect = extractor.calcFeatureVector(point.point)
 
                 // labels and statistics
 
-                double predictedScore = instancePredictor.predictPositive(vector)
-                boolean predicted = applyPointScoreThreshold(predictedScore)
-                boolean observed = isPositivePoint(point.point, ligandAtoms)
+                calculator.scorePoint(point, vect, instancePredictor)
 
-                point.predicted = predicted
-                point.observed = observed
-                point.score = predictedScore
+
+                point.predicted = applyPointScoreThreshold(point.score)
+                point.observed = isPositivePoint(point.point, ligandAtoms)
 
                 if (collectingStatistics) {
-                    stats.addPrediction(observed, predicted, predictedScore)
+                    stats.addPrediction(point.observed, point.predicted, point.score)
                 }
             }
 
@@ -122,7 +122,8 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
     }
 
     /**
-     * Rescore predictions of other method
+     * Rescore predictions of other methods
+     * TODO refactor to use PointScoreCalculator
      */
     private void doRescore(Prediction prediction, FeatureExtractor proteinExtractor, InstancePredictor instancePredictor) {
 
@@ -151,7 +152,7 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
                     labeledPoints.add(new LabeledPoint(point, observed, predicted))
                 }
 
-                sum += pointScoreCalculator.transformScore(predictedScore)
+                sum += calculator.transformScore(predictedScore)
 
                 rawSum += predictedScore // ~ P(ligandable)
             }

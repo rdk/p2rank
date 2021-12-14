@@ -1,5 +1,8 @@
 package cz.siret.prank.prediction.pockets
 
+import cz.siret.prank.domain.labeling.LabeledPoint
+import cz.siret.prank.features.FeatureVector
+import cz.siret.prank.prediction.pockets.rescorers.InstancePredictor
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.params.Params
 import groovy.transform.CompileStatic
@@ -45,7 +48,6 @@ class PointScoreCalculator implements Parametrized {
      * @param hist
      * @return
      */
-    @Deprecated
     double transformedPointScore(double[] hist) {
 
         double score
@@ -65,6 +67,28 @@ class PointScoreCalculator implements Parametrized {
         }
         score = Math.pow(score, POINT_SCORE_EXP)
         return score
+    }
+
+//===========================================================================================================//
+
+    /**
+     * assign score and transformedScore to point (ugly way to keep legacy param use_only_positive_score)
+     */
+    void scorePoint(LabeledPoint point, FeatureVector vector, InstancePredictor predictor) {
+        // score and transformed score (ugly way to keep legacy param use_only_positive_score)
+        double score
+        double transformedScore
+        if (USE_ONLY_POSITIVE_SCORE) { // legacy way via histogram
+            double[] hist = predictor.getDistributionForPoint(vector)
+            score = normalizedScore(hist)
+            transformedScore = transformedPointScore(hist)
+        } else {
+            score = predictor.predictPositive(vector)
+            transformedScore = transformScore(score)
+        }
+
+        point.score = score
+        point.transformedScore = transformedScore
     }
 
 }

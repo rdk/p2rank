@@ -17,6 +17,7 @@ class LabeledPoint implements Atom {
     Atom point //@Delegate
 
     double score = Double.NaN
+    double transformedScore = 0d // for sums
 
     boolean predicted
     boolean observed

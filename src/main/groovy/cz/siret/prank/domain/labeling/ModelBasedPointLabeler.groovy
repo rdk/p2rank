@@ -7,24 +7,31 @@ import cz.siret.prank.features.PrankFeatureExtractor
 import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.prediction.metrics.ClassifierStats
+import cz.siret.prank.prediction.pockets.PointScoreCalculator
 import cz.siret.prank.prediction.pockets.rescorers.InstancePredictor
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.ml.Model
+import cz.siret.prank.program.params.Parametrized
 import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
 
 import static cz.siret.prank.prediction.pockets.PointScoreCalculator.applyPointScoreThreshold
+import static cz.siret.prank.prediction.pockets.PointScoreCalculator.normalizedScore
 
 /**
  *
  */
 @CompileStatic
-class ModelBasedPointLabeler extends PointLabeler {
+class ModelBasedPointLabeler extends PointLabeler implements Parametrized {
 
     private Model model
     private ProcessedItemContext context
 
     private ClassifierStats classifierStats = new ClassifierStats()
+
+    private final PointScoreCalculator calculator = new PointScoreCalculator()
+    private final boolean USE_ONLY_POSITIVE_SCORE = params.use_only_positive_score
+
 
     private List<LabeledPoint> observedPoints = null
     
@@ -82,12 +89,15 @@ class ModelBasedPointLabeler extends PointLabeler {
         for (LabeledPoint point : labeledPoints) {
             // classification
 
-            FeatureVector props = extractor.calcFeatureVector(point.point)
-            double predictedScore = instancePredictor.predictPositive(props)
+            FeatureVector vect = extractor.calcFeatureVector(point.point)
+
+
+            calculator.scorePoint(point, vect, instancePredictor)
+
 
             // labels and statistics
 
-            boolean predicted = binaryLabel(predictedScore)
+            boolean predicted = binaryLabel(point.score)
             boolean observed = false
 
             if (observedPoints != null) {
@@ -96,10 +106,9 @@ class ModelBasedPointLabeler extends PointLabeler {
 
             point.predicted = predicted
             point.observed = observed
-            point.score = predictedScore
 
             if (collectingStats) {
-                classifierStats.addPrediction(observed, predicted, predictedScore)
+                classifierStats.addPrediction(observed, predicted, point.score)
             }
 
             i++
