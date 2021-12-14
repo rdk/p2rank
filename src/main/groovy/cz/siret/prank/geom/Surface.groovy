@@ -14,8 +14,8 @@ import org.openscience.cdk.interfaces.IAtomContainer
 @CompileStatic
 class Surface implements Parametrized {
 
-    public static final double CONSOLIDATE_DIST = 0.05 as double
-    public final double VAN_DER_WAALS_COMPENSATION = params.surface_additional_cutoff as double
+    public static final double CONSOLIDATE_DIST = 0.05
+    public final double VAN_DER_WAALS_COMPENSATION = params.surface_additional_cutoff
 
     Atoms points
     double surfaceArea
