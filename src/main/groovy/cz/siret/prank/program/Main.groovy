@@ -9,6 +9,7 @@ import cz.siret.prank.program.params.Params
 import cz.siret.prank.program.routines.Routine
 import cz.siret.prank.program.routines.analyze.AnalyzeRoutine
 import cz.siret.prank.program.routines.analyze.PrintRoutine
+import cz.siret.prank.program.routines.analyze.TransformRoutine
 import cz.siret.prank.program.routines.predict.PredictPocketsRoutine
 import cz.siret.prank.program.routines.predict.PredictResiduesRoutine
 import cz.siret.prank.program.routines.predict.RescorePocketsRoutine
@@ -339,6 +340,10 @@ class Main implements Parametrized, Writable {
         new AnalyzeRoutine(args, this).execute()
     }
 
+    private runTransform() {
+        new TransformRoutine(args, this).execute()
+    }
+
     private runPrint() {
         new PrintRoutine(args, this).execute()
     }
@@ -348,7 +353,7 @@ class Main implements Parametrized, Writable {
     }
 
     void initRescoreDefaultParams() {
-        initParams(params, "$installDir/config/default-rescore.groovy")
+        initParams(params, "$installDir/config/default_rescore.groovy")
     }
 
     /**
@@ -392,6 +397,8 @@ class Main implements Parametrized, Writable {
             case 'eval':          runEval()
                 break
             case 'analyze':       runAnalyze()
+                break
+            case 'transform':     runTransform()
                 break
             case 'print':         runPrint()
                 break

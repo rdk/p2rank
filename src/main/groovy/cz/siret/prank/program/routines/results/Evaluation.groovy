@@ -43,16 +43,16 @@ class Evaluation implements Parametrized {
     List<Double> bindingScores = newSynchronizedList()
     List<Double> nonBindingScores = newSynchronizedList()
 
-    int proteinCount
-    int pocketCount
+    long proteinCount
+    long pocketCount
 
-    int ligandCount
-    int ignoredLigandCount
-    int smallLigandCount
-    int distantLigandCount
+    long ligandCount
+    long ignoredLigandCount
+    long smallLigandCount
+    long distantLigandCount
 
-    int ligSASPointsCount
-    int ligSASPointsCoveredCount
+    long ligSASPointsCount
+    long ligSASPointsCoveredCount
     double ligSASPointsScoreSum
 
     Evaluation(List<PocketCriterium> criteria) {

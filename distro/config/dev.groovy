@@ -1,7 +1,7 @@
 import cz.siret.prank.program.params.Params
 
 /**
- * Parameters useful in training phase.
+ * Parameters useful in the training phase.
  */
 (params as Params).with {
 

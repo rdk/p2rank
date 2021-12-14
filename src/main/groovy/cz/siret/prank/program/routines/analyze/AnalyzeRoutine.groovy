@@ -51,6 +51,7 @@ class AnalyzeRoutine extends Routine {
 
         label = "analyze_" + subCommand + "_" + dataset.label
         outdir = main.findOutdir(label)
+        main.configureLoggers(outdir)
     }
 
     void execute() {

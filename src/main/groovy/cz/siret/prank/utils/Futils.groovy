@@ -249,6 +249,10 @@ class Futils {
         new File(fname).text
     }
 
+    static String readPossiblyCompressedFile(String fname) {
+        return inputStream(new File(fname)).text
+    }
+
     /**
      * loads properties from classpath
      */

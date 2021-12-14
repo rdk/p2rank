@@ -171,7 +171,17 @@ eval_predict() {
     test ./prank.sh eval-predict joined.ds       -c config/test-default    -out_subdir TEST/EVAL
     test ./prank.sh eval-predict holo4k.ds       -c config/test-default    -out_subdir TEST/EVAL
     test ./prank.sh eval-predict coach420.ds     -c config/test-default    -out_subdir TEST/EVAL
-    test ./prank.sh predict ah4h.holoraw.ds      -c config/test-default    -out_subdir TEST/PREDICT
+    # test ./prank.sh predict ah4h.holoraw.ds      -c config/test-default    -out_subdir TEST/PREDICT
+
+}
+
+eval_predict_alphafold() {
+
+    title EVALUATING PREDICTIONS ON MAIN DATASETS
+
+    test ./prank.sh eval-predict joined.ds       -c config/test-alphafold    -out_subdir TEST/EVAL_ALPHAFOLD
+    test ./prank.sh eval-predict holo4k.ds       -c config/test-alphafold    -out_subdir TEST/EVAL_ALPHAFOLD
+    test ./prank.sh eval-predict coach420.ds     -c config/test-alphafold    -out_subdir TEST/EVAL_ALPHAFOLD
 
 }
 
@@ -272,6 +282,34 @@ analyze() {
 
 }
 
+transform() {
+
+  title TRANSFORM COMMANDS
+
+  test ./prank.sh transform reduce-to-chains  -f distro/test_data/2W83.cif     -chains A                                                  # output: <out_dir>/2W83_A.cif
+  test ./prank.sh transform reduce-to-chains  -f distro/test_data/2W83.pdb     -chains A                                                  # output: <out_dir>/2W83_A.pdb
+  test ./prank.sh transform reduce-to-chains  -f distro/test_data/2W83.cif.gz  -chains A,B                                                # output: <out_dir>/2W83_A,B.cif.gz
+  test ./prank.sh transform reduce-to-chains  -f distro/test_data/2W83.cif.gz  -chains A,B  -out_file distro/test_output/2W83_A,B.cif.gz  # output: distro/test_output/2W83_A,B.cif.gz
+  test ./prank.sh transform reduce-to-chains  -f distro/test_data/2W83.cif     -chains keep                                               # output: <out_dir>/2W83.cif
+  test ./prank.sh transform reduce-to-chains  -f distro/test_data/2W83.cif     -chains keep -out_format pdb.gz                            # output: <out_dir>/2W83.pdb.gz
+  test ./prank.sh transform reduce-to-chains  -f distro/test_data/2W83.cif     -chains all                                                # output: <out_dir>/2W83_all.cif
+  test ./prank.sh transform reduce-to-chains  -f distro/test_data/2W83.cif     -chains A    -out_format keep                              # output: <out_dir>/2W83_A.cif
+  test ./prank.sh transform reduce-to-chains  -f distro/test_data/2W83.cif.gz  -chains A    -out_format pdb.gz                            # output: <out_dir>/2W83_A.pdb.gz
+  test ./prank.sh transform reduce-to-chains  -f distro/test_data/2W83.pdb.gz  -chains A,B  -out_format cif                               # output: <out_dir>/2W83_A,B.cif
+
+  test ./prank.sh transform reduce-to-chains  -f distro/test_data/1fbl.cif     -chains A
+  test ./prank.sh transform reduce-to-chains  -f distro/test_data/1fbl.pdb     -chains A
+  test ./prank.sh transform reduce-to-chains  -f distro/test_data/1fbl.cif.gz  -chains A,B
+  test ./prank.sh transform reduce-to-chains  -f distro/test_data/1fbl.cif.gz  -chains A,B  -out_file distro/test_output/1fbl_A,B.cif.gz
+  test ./prank.sh transform reduce-to-chains  -f distro/test_data/1fbl.cif     -chains keep
+  test ./prank.sh transform reduce-to-chains  -f distro/test_data/1fbl.cif     -chains keep -out_format pdb.gz
+  test ./prank.sh transform reduce-to-chains  -f distro/test_data/1fbl.cif     -chains all
+  test ./prank.sh transform reduce-to-chains  -f distro/test_data/1fbl.cif     -chains A    -out_format keep
+  test ./prank.sh transform reduce-to-chains  -f distro/test_data/1fbl.cif.gz  -chains A    -out_format pdb.gz
+  test ./prank.sh transform reduce-to-chains  -f distro/test_data/1fbl.pdb.gz  -chains A,B  -out_format cif
+  
+}
+
 classifiers() {
 
     title TRAIN/EVAL USING DIFFERENT CLASSIFIERS
@@ -292,6 +330,8 @@ feature_importances() {
     test ./prank.sh traineval -t chen11-fpocket.ds -e joined.ds -c config/train-default  -feature_importances 1 -classifier FasterForest     -label FF  -loop 1 -cache_datasets 0  -out_subdir TEST/IMPORTANCES
     test ./prank.sh traineval -t chen11-fpocket.ds -e joined.ds -c config/train-default  -feature_importances 1 -classifier FasterForest2    -label FF2 -loop 1 -cache_datasets 0  -out_subdir TEST/IMPORTANCES
 }
+
+
 
 ###################################################################################################################
 
@@ -336,8 +376,8 @@ speed() {
 
     title SPEED TESTS
 
-    misc/test-scripts/benchmark.sh 5  "FPTRAIN" "1 4 6 12"     "./prank.sh predict fptrain.ds -c config/test-default -out_subdir TEST/SPEED"
-    misc/test-scripts/benchmark.sh 15 "1FILE"   "1"            "./prank.sh predict -f distro/test_data/liganated/1aaxa.pdb -c config/test-default -out_subdir TEST/SPEED"
+    misc/test-scripts/benchmark.sh 3  "FPTRAIN" "1 4 6 12"     "./prank.sh predict fptrain.ds -c config/test-default -out_subdir TEST/SPEED"
+    misc/test-scripts/benchmark.sh 10 "1FILE"   "1"            "./prank.sh predict -f distro/test_data/liganated/1aaxa.pdb -c config/test-default -out_subdir TEST/SPEED"
 }
 
 speed_basic() {
@@ -406,6 +446,7 @@ dummy_speed() {
 
 eval_predict_all() {
     eval_predict
+    eval_predict_alphafold
     eval_predict_rest
 }
 
@@ -429,6 +470,8 @@ all() {
     classifiers
     feature_importances
     eval_ploop
+    analyze
+    transform
     speed
 }
 

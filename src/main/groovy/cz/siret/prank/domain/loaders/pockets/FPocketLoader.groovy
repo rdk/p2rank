@@ -13,6 +13,7 @@ import groovy.transform.TypeCheckingMode
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 import org.biojava.nbio.structure.Structure
+import org.biojava.nbio.structure.StructureImpl
 
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -82,6 +83,7 @@ class FPocketLoader extends PredictionLoader implements Parametrized {
         File resultFile = new File(resultPdbFileName)
 
         boolean isFpocket3 = isFpocket3Prediction(resultFile)
+        String formatExtension = Futils.realExtension(resultPdbFileName)  // "pdb" or "cif"
 
 
         List<Atoms> fpocketGroups = loadPocketGroups(resultPdbFileName)
@@ -101,7 +103,10 @@ class FPocketLoader extends PredictionLoader implements Parametrized {
             pocket.rank = rank++
             pocket.vornoiCenters = g
 
-            String pocketAtmFile = resultFile.parent + File.separator + "pockets" + File.separator + "pocket${pocketIndex}_atm.pdb"
+            String pocketAtmFile = resultFile.parent + File.separator + "pockets" + File.separator + "pocket${pocketIndex}_atm.pdb" // for now only pdb format
+            if (!Futils.exists(pocketAtmFile)) {
+                pocketAtmFile += ".gz"
+            }
             Structure pocketAtmStructure = loadPocketStructureAndDetails(pocketAtmFile, pocket)
             Atoms pocketAtmAtoms = Atoms.allFromStructure(pocketAtmStructure)
 
@@ -139,19 +144,31 @@ class FPocketLoader extends PredictionLoader implements Parametrized {
         return new Prediction(protein, pockets)
     }
 
+    private List<Atoms> loadPocketGroups(String resultPdbFileName) {
+        String formatExtension = Futils.realExtension(resultPdbFileName)
+        if (formatExtension == "cif") {
+            return loadPocketGroupsFromCif(resultPdbFileName)
+        } else {
+            return loadPocketGroupsFromPdb(resultPdbFileName)
+        }
+    }
+
     /**
      * ! fpocket sometimes produces files unparsable by biojava with letters in id column (here:...975f)
      *
-     HETATM91317 APOL STP C   1      43.189 -15.571 -19.933  0.00  0.00          Ve
-     HETATM91317  POL STP C   1      43.122 -15.632 -19.896  0.00  0.00          Ve
-     HETATM99532  POL STP C   1      44.632 -16.282 -19.585  0.00  0.00          Ve
-     HETATM1975f APOL STP C   1      52.281 -25.921  -7.631  0.00  0.00          Ve
-     HETATM24676 APOL STP C   2      -2.155 -21.045  -4.717  0.00  0.00          Ve
-     HETATM40261 APOL STP C   2      -1.977 -22.364  -5.748  0.00  0.00          Ve
-     HETATM40261 APOL STP C   2      -2.370 -22.325  -5.943  0.00  0.00          Ve
-     HETATM55930 APOL STP C   2      -2.407 -22.341  -6.002  0.00  0.00          Ve
+HETATM91317 APOL STP C   1      43.189 -15.571 -19.933  0.00  0.00          Ve
+HETATM91317  POL STP C   1      43.122 -15.632 -19.896  0.00  0.00          Ve
+HETATM99532  POL STP C   1      44.632 -16.282 -19.585  0.00  0.00          Ve
+HETATM1975f APOL STP C   1      52.281 -25.921  -7.631  0.00  0.00          Ve
+HETATM24676 APOL STP C   2      -2.155 -21.045  -4.717  0.00  0.00          Ve
+HETATM40261 APOL STP C   2      -1.977 -22.364  -5.748  0.00  0.00          Ve
+HETATM40261 APOL STP C   2      -2.370 -22.325  -5.943  0.00  0.00          Ve
+HETATM55930 APOL STP C   2      -2.407 -22.341  -6.002  0.00  0.00          Ve
+
+
+
      */
-    private List<Atoms> loadPocketGroups(String resultPdbFileName) {
+    private List<Atoms> loadPocketGroupsFromPdb(String resultPdbFileName) {
 
         List<String> lines = new File(resultPdbFileName).text.trim().readLines()
 
@@ -161,6 +178,8 @@ class FPocketLoader extends PredictionLoader implements Parametrized {
             if (!(line.startsWith('HETATM') && line.contains('STP C') && line.contains('Ve'))) {
                 continue
             }
+
+            // TODO update for cif
 
             int seqNum = line.substring(22, 26).toInteger()
             double x = line.substring(30, 37).toDouble()
@@ -185,30 +204,91 @@ class FPocketLoader extends PredictionLoader implements Parametrized {
     }
 
     /**
+     *
+     * @param resultCifFileName
+     * @return
+     *
+
+HETATM      1    V APOL .  STP   C .   73 ?   -1.509 -17.074 -13.830  0.00  0   C
+HETATM      2    V APOL .  STP   C .   73 ?   -2.127 -16.518 -13.824  0.00  0   C
+HETATM      3    V APOL .  STP   C .   73 ?   -1.542 -17.041 -13.794  0.00  0   C
+HETATM      4    V APOL .  STP   C .   73 ?   -1.633 -16.633 -11.976  0.00  0   C
+     */
+    private List<Atoms> loadPocketGroupsFromCif(String resultCifFileName) {
+
+        List<String> lines = Futils.readPossiblyCompressedFile(resultCifFileName).readLines()
+
+        Map<Integer, Atoms> groups = new HashMap<>()
+
+        for (String line : lines) {
+            if (!(line.startsWith('HETATM') && line.contains('STP   C'))) {
+                continue
+            }
+
+            int seqNum = line.substring(37, 41).toInteger()
+            double x = line.substring(45, 52).toDouble()
+            double y = line.substring(52, 60).toDouble()
+            double z = line.substring(60, 68).toDouble()
+
+            Point p = new Point(x, y, z)
+
+            if (!groups.containsKey(seqNum)) {
+                groups.put(seqNum, new Atoms())
+            }
+            groups.get(seqNum).add(p)
+        }
+
+        List<Atoms> res = new ArrayList<>()
+
+        for (int i=1; i<=groups.keySet().size(); i++) {
+            res.add(groups.get(i))
+        }
+
+        return res
+    }
+    /**
      * read details from special fpocket output pdb file for one pocket (atom file)
+     *
+     * ! for now only pdb works due to biojava cif parsing error
+     *
      * @param pocketAtmFile
      * @param fpocket load details to
      */
     private Structure loadPocketStructureAndDetails(String pocketAtmFileName, FPocketPocket fpocket) {
-
         if (!Futils.exists(pocketAtmFileName)) {
             throw new FileNotFoundException(pocketAtmFileName)
         }
 
-        File pocketFile = new File(pocketAtmFileName)
+        String formatExtension = Futils.realExtension(pocketAtmFileName)
+        if (formatExtension == "cif") {
+            return loadPocketStructureAndDetailsFromCif(pocketAtmFileName, fpocket)
+        } else { // pdb
+            return loadPocketStructureAndDetailsFromPdb(pocketAtmFileName, fpocket)
+        }
+    }
 
-        StringBuilder tmpPdb = new StringBuilder(pocketFile.size() as int)
+
+    private Structure loadPocketStructureAndDetailsFromPdb(String pocketAtmFileName, FPocketPocket fpocket) {
+
+        List<String> lines = Futils.readPossiblyCompressedFile(pocketAtmFileName).readLines()
+
+        StringBuilder tmpPdb = new StringBuilder(lines.size() * 80)
 
         // ignoring headers because of biojava
 
-        for (String line : pocketFile.text.readLines()) {
+        int nAtomLines = 0
+        for (String line : lines) {
             if (line.startsWith("HEADER")) {
                 fpocket.fpstats.parseLine(line)
             } else {
                 tmpPdb.append(line)
                 tmpPdb.append("\n")
             }
+            if (line.startsWith("ATOM")) {
+                nAtomLines++
+            }
         }
+        log.info("ATOM lines in pocket file: {}", nAtomLines)
 
         fpocket.fpstats.consolidate()
 
@@ -216,6 +296,26 @@ class FPocketLoader extends PredictionLoader implements Parametrized {
 
         return struc
     }
+
+    private Structure loadPocketStructureAndDetailsFromCif(String pocketAtmFileName, FPocketPocket fpocket) {
+
+        return new StructureImpl() // TODO temp fix
+
+        // TODO fails
+        // org.rcsb.cif.EmptyColumnException: column pdbx_PDB_model_num is undefined
+        // at org.rcsb.cif.model.Column$EmptyColumn.getStringData(Column.java:111) ~[ciftools-java-jdk8-3.0.0.jar:?]
+
+
+        Structure struc = PdbUtils.loadFromCifFile(pocketAtmFileName)
+
+        // TODO parse header in cif description
+        // fpocket.fpstats
+
+        //fpocket.fpstats.consolidate()
+
+        return struc
+    }
+
 
     /**
      HEADER 0  - Pocket Score                      : -1.5909
@@ -248,6 +348,24 @@ class FPocketLoader extends PredictionLoader implements Parametrized {
      HEADER 11 - Local hydrophobic density Score   : 72.2016
      HEADER 12 - Number of apolar alpha sphere     :   129
      HEADER 13 - Proportion of apolar alpha sphere : 0.8431
+
+     Fpocket 4.0.1
+
+     HEADER 0  - Pocket Score                      : 0.2226
+     HEADER 1  - Drug Score                        : 0.9780
+     HEADER 2  - Number of alpha spheres           :   336
+     HEADER 3  - Mean alpha-sphere radius          : 3.9803
+     HEADER 4  - Mean alpha-sphere Solvent Acc.    : 0.4466
+     HEADER 5  - Mean B-factor of pocket residues  : 0.6192
+     HEADER 6  - Hydrophobicity Score              : 31.2459
+     HEADER 7  - Polarity Score                    :    23
+     HEADER 8  - Amino Acid based volume Score     : 3.7377
+     HEADER 9  - Pocket volume (Monte Carlo)       : 2820.3418
+     HEADER 10  -Pocket volume (convex hull)       : 3057.8672
+     HEADER 11 - Charge Score                      :     1
+     HEADER 12 - Local hydrophobic density Score   : 46.8166
+     HEADER 13 - Number of apolar alpha sphere     :   169
+     HEADER 14 - Proportion of apolar alpha sphere : 0.5030
 
      */
     @CompileStatic(value = TypeCheckingMode.SKIP)
@@ -283,10 +401,10 @@ class FPocketLoader extends PredictionLoader implements Parametrized {
          */
         public void consolidate() {
 
-            pocketScore = headers[0]
-            vornoiVertices = headers[1]
-            polarityScore = headers[6]
-            realVolumeApprox = headers[8]
+            pocketScore = headers[0] ?: Double.NaN
+            vornoiVertices = headers[1] ?: Double.NaN
+            polarityScore = headers[6] ?: Double.NaN
+            realVolumeApprox = headers[8] ?: Double.NaN
             
         }
 

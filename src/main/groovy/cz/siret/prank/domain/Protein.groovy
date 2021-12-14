@@ -388,10 +388,10 @@ class Protein implements Parametrized {
     String saveToPdbFile(String fileName, boolean compressed = false) {
         if (compressed) {
             fileName += ".gz"
-            Futils.writeGzip fileName, structure.toPDB()
-        } else {
-            Futils.writeFile fileName, structure.toPDB()
         }
+
+        PdbUtils.saveToFile(structure, "pdb", fileName, compressed)
+
         return fileName
     }
 
@@ -432,7 +432,7 @@ class Protein implements Parametrized {
             log.info "reducing protein [{}] to chains [{}]", name, onlyChains.join(",")
 
             name = name + onlyChains.join("")
-            structure = PdbUtils.getReducedStructure(structure, onlyChains)
+            structure = PdbUtils.reduceStructureToChains(structure, onlyChains)
         }
 
         calculateResidues()

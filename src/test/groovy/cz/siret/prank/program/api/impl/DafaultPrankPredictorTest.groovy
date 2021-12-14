@@ -26,15 +26,20 @@ class DafaultPrankPredictorTest {
     Path dataDir = path installDir, "test_data"
     Path outDir = path installDir, "test_output"
 
-    Path testFile1 = path dataDir, "2W83.pdb"
-    Path testFile2 = path dataDir, "1fbl.pdb.gz"
+    Path pdb_1fbl = path dataDir, "1fbl.pdb.gz"
+    Path cif_1fbl = path dataDir, "1fbl.cif"
 
-    List<Path> testFiles = [  //should be liganated proteins with easily predictable bnding sites
-            testFile1,
-            testFile2,
+    Path pdb_2W83 = path dataDir, "2W83.pdb"
+    Path cif_2W83 = path dataDir, "2W83.cif"
+
+    List<Path> testFiles = [  //should be liganated proteins with easily predictable binding sites
+            pdb_1fbl,
+            cif_1fbl,
+            pdb_2W83,
+            cif_2W83,
             path(dataDir, "liganated", "1a82a.pdb"),
             path(dataDir, "liganated", "1aaxa.pdb"),
-            path(dataDir, "liganated", "1nlua.pdb"),
+            path(dataDir, "liganated", "1nlu.pdb"),
             path(dataDir, "liganated", "1t7qa.pdb"),
             path(dataDir, "liganated", "2ck3b.pdb")
     ]
@@ -74,9 +79,7 @@ class DafaultPrankPredictorTest {
         Futils.delete(outDir.toString())
 
         Path testOutDir = path(outDir, "predict_2W83_test")
-        predictor.runPrediction(
-                testFile1,
-                testOutDir )
+        predictor.runPrediction(pdb_2W83, testOutDir)
 
         def outf = testOutDir.toString() + "/2W83.pdb_predictions.csv"
 

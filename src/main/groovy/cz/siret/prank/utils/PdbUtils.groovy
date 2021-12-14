@@ -3,13 +3,17 @@ package cz.siret.prank.utils
 import cz.siret.prank.program.PrankException
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+import org.apache.commons.io.IOUtils
 import org.biojava.nbio.structure.*
 import org.biojava.nbio.structure.io.FileParsingParameters
 import org.biojava.nbio.structure.io.PDBFileParser
-import org.biojava.nbio.structure.io.mmcif.ChemCompGroupFactory
-import org.biojava.nbio.structure.io.mmcif.ReducedChemCompProvider
+import org.biojava.nbio.structure.io.cif.CifStructureConverter
+
+//import org.biojava.nbio.structure.io.mmcif.ChemCompGroupFactory
+//import org.biojava.nbio.structure.io.mmcif.ReducedChemCompProvider
 
 import static cz.siret.prank.geom.Struct.getAuthorId
+import static cz.siret.prank.geom.Struct.getMmcifId
 
 /**
  * BioJava PDB utility methods.
@@ -35,7 +39,8 @@ class PdbUtils {
      * Tries to disable BioJava fetching external information since it leads to inconsistent protein parsing.
      */
     private static void disableBiojavaFetching() {
-        ChemCompGroupFactory.setChemCompProvider(new ReducedChemCompProvider()) 
+        // TODO Biojava6: find out if there is a new way to disable fetching
+//        ChemCompGroupFactory.setChemCompProvider(new ReducedChemCompProvider())
     }
 
     private static FileParsingParameters getParsingParams() {
@@ -44,25 +49,49 @@ class PdbUtils {
     }
 
     static Structure loadFromFile(String file) {
-
         log.info "loading file [$file]"
 
         if (file==null) {
             throw new IllegalArgumentException("file name not provided")
         }
 
-        InputStream inputs = Futils.inputStream(file)
+        String ext = Futils.realExtension(file)
+
+
+        if (ext == "cif") {
+            return loadFromCifFile(file)
+        } else { // pdb / ent
+            return loadFromPdbFile(file)
+        }
+    }
+
+    static Structure loadFromPdbFile(String file) {
+        InputStream instream = Futils.inputStream(file)
         try {
             PDBFileParser pdbpars = new PDBFileParser()
             pdbpars.setFileParsingParameters(parsingParams)
-            return pdbpars.parsePDBFile(inputs)
+            return pdbpars.parsePDBFile(instream)
         } catch (Exception e) {
             throw new PrankException("Failed to load structure from '$file'", e)
         } finally {
-            inputs.close()
+            instream.close()
         }
-    
     }
+
+    static Structure loadFromCifFile(String file) {
+        InputStream instream = Futils.inputStream(file)
+        try {
+            return CifStructureConverter.fromInputStream(instream, parsingParams)
+        } catch (Exception e) {
+            throw new PrankException("Failed to load structure from '$file'", e)
+        } finally {
+            instream.close()
+        }
+    }
+
+    /*
+     *Structure cifStructure = CifStructureConverter.fromInputStream(inStream);
+     */
 
     static Structure loadFromString(String pdbText)  {
         PDBFileParser pdbpars = new PDBFileParser();
@@ -73,6 +102,37 @@ class PdbUtils {
         Structure struc = pdbpars.parsePDBFile(br)
         return struc
     }
+
+    static Structure loadFromCifString(String cifText)  {
+        InputStream inputStream = IOUtils.toInputStream(cifText)
+
+        Structure struc = CifStructureConverter.fromInputStream(inputStream, parsingParams)
+        return struc
+    }
+
+    /**
+     * @param fileName
+     * @param format "cif" or "pdb"
+     * @param compressed - compress to gz
+     * @return file name used
+     */
+    static String saveToFile(Structure structure, String format, String fileName, boolean compressed = false) {
+        String content
+        if (format == "cif") {
+            content = structure.toMMCIF()
+        } else {
+            content = structure.toPDB()
+        }
+
+        if (compressed) {
+            Futils.writeGzip fileName, content
+        } else {
+            Futils.writeFile fileName, content
+        }
+        return fileName
+    }
+
+//===========================================================================================================//
 
     static String correctResidueCode(String residueCode) {
         //MSE is only found as a molecular replacement for MET
@@ -148,48 +208,6 @@ class PdbUtils {
         }
     }
 
-    /**
-     * The code is based on StructureTools.getReducedStructure(String, String) from BioJava 5.3.0
-     *
-     * Note: has to be revised after upgrade to new BioJava versions!
-     */
-    static final Structure reduceStructureToModel(Structure s, int modelId) throws StructureException {
-
-        Structure newS = new StructureImpl();
-        newS.setPDBCode(s.getPDBCode());
-        newS.setPDBHeader(s.getPDBHeader());
-        newS.setName(s.getName());
-        newS.setSSBonds(s.getSSBonds());
-        newS.setDBRefs(s.getDBRefs());
-        newS.setSites(s.getSites());
-        newS.setBiologicalAssembly(s.isBiologicalAssembly());
-        newS.setEntityInfos(s.getEntityInfos());
-        newS.setSSBonds(s.getSSBonds());
-        newS.setSites(s.getSites());
-
-        // only get model modelId
-        List<Chain> model = s.getModel(modelId);
-        for (Chain c : model) {
-            newS.addChain(c);
-        }
-        return newS;
-    }
-
-
-//    private static shouldCopyChain(Chain ch, List<String> chainIds) {
-//        if (ch == null) return false
-//        if (ch.entityType == EntityType.POLYMER && chainIds.contains(ch.id)) return true
-//        if (ch.entityType == EntityType.NONPOLYMER) return true
-//
-//        ch.atomGroups[0].getChain().
-//
-//        return false
-//    }
-
-    private static shouldCopyChain(Chain ch, List<String> chainIds) {
-        return chainIds.contains(getAuthorId(ch))
-    }
-
     static List<Chain> getChanisForAuthorId(Structure s, String authorId) {
         List<Chain> res = new ArrayList<>()
         
@@ -203,6 +221,66 @@ class PdbUtils {
     }
 
     /**
+     * TODO consider case insensitive matching
+     */
+    private static shouldCopyChain(Chain ch, List<String> chainIds) {
+        return chainIds.contains(getAuthorId(ch))
+    }
+
+    private static Structure cleanCopyWithMetadata(Structure s) {
+        Structure newS = new StructureImpl();
+        newS.setPdbId(s.getPdbId());
+        newS.setPDBHeader(s.getPDBHeader());
+        newS.setName(s.getName());
+        newS.setSSBonds(s.getSSBonds());
+        newS.setDBRefs(s.getDBRefs());
+        newS.setSites(s.getSites());
+        newS.setBiologicalAssembly(s.isBiologicalAssembly());
+        newS.setEntityInfos(s.getEntityInfos());
+        newS.setSSBonds(s.getSSBonds());
+        newS.setSites(s.getSites());
+
+        newS.setStructureIdentifier(s.getStructureIdentifier()); // TODo maybe needs to reflect reduced chains
+        // newS.setJournalArticle(s.getJournalArticle());  // set via header
+        newS.setCrystallographicInfo(s.getCrystallographicInfo());
+
+        return newS;
+    }
+
+    private static void copyChains(List<Chain> chains, Structure sourceStructure, Structure targetStructure) {
+        for (Chain ch : chains) {
+            targetStructure.addChain(ch)
+
+            // TODO this is copied from BioJava 5.4 but seems just wrong
+            for (EntityInfo comp : sourceStructure.getEntityInfos()) {
+                if (comp.getChainIds().contains(getMmcifId(ch))) {  // matching by internal mmcif ID
+                    // found matching entity info. set description...
+                    targetStructure.getPDBHeader()
+                            .setDescription("Chain ${getMmcifId(ch)}(authorId:${getAuthorId(ch)}) of ${sourceStructure.pdbId?.id} $comp.description")
+                }
+            }
+
+            // TODO: need to copy anything else? EntityInfos?
+        }
+    }
+
+    /**
+     * The code is based on StructureTools.getReducedStructure(String, String) from BioJava 5.3.0
+     *
+     * Note: has to be revised after upgrade to new BioJava versions!
+     */
+    static final Structure reduceStructureToModel(Structure s, int modelId) throws StructureException {
+        Structure newS = cleanCopyWithMetadata(s)
+
+        // only get chains from model modelId
+        List<Chain> modelChains = s.getModel(modelId);
+
+        copyChains(modelChains, s, newS)
+
+        return newS;
+    }
+
+    /**
      * Reduces the structure to specified chains (and model 0 in case of multi-model structures).
      *
      * The code is based on StructureTools.getReducedStructure(String, String) from BioJava 5.3.0
@@ -213,39 +291,89 @@ class PdbUtils {
      * @param chainIds
      * @return
      */
-    static Structure getReducedStructure(Structure s, List<String> chainIds) {
-        // since we deal here with structure alignments,
-        // only use Model 1...
+    static Structure reduceStructureToChains(Structure s, List<String> chainIds) {
+        Structure newS = cleanCopyWithMetadata(s);
 
-        ///// copied from StructureTools
-        Structure newS = new StructureImpl();
-        newS.setPDBCode(s.getPDBCode());
-        newS.setPDBHeader(s.getPDBHeader());
-        newS.setName(s.getName());
-        newS.setSSBonds(s.getSSBonds());
-        newS.setDBRefs(s.getDBRefs());
-        newS.setSites(s.getSites());
-        newS.setBiologicalAssembly(s.isBiologicalAssembly());
-        newS.setEntityInfos(s.getEntityInfos());
-        newS.setSSBonds(s.getSSBonds());
-        newS.setSites(s.getSites());
-        ///// end copied
+        // maybe s.getModel(0).chains?
+        List<Chain> chainsToAdd = s.chains.findAll {shouldCopyChain(it, chainIds) }
 
-        for (Chain ch : s.chains) {
-            ///// end copied
-            if (shouldCopyChain(ch, chainIds)) {
-                newS.addChain(ch)
-            }
-        }
-
-        //for (String authorId : chainIds) {
-        //    getChanisForAuthorId(s, authorId).each {
-        //        newS.addChain(it)
-        //    }
-        //}
-
+        copyChains(chainsToAdd, s, newS)
 
         return newS;
     }
+
+
+
+//    /**
+//     * Original code from Biojava 5.4 for comparison
+//     * see https://github.com/biojava/biojava/blob/9dcddeb0072ecc29aca8d8b1d43c3b18a430ac30/biojava-structure/src/main/java/org/biojava/nbio/structure/StructureTools.java#L1286
+//     *
+//     * Reduce a structure to provide a smaller representation . Only takes the
+//     * first model of the structure. If chainName is provided only return a
+//     * structure containing that Chain ID. Converts lower case chain IDs to
+//     * upper case if structure does not contain a chain with that ID.
+//     *
+//     * @param s
+//     * @param chainId
+//     * @return Structure
+//     * @since 3.0
+//     * @deprecated Use {@link StructureIdentifier#reduce(Structure)} instead (v. 4.2.0)
+//     */
+//    @Deprecated
+//    public static Structure getReducedStructure(Structure s,
+//                                                String chainId) throws StructureException {
+//        // since we deal here with structure alignments,
+//        // only use Model 1...
+//
+//        Structure newS = new StructureImpl();
+//        newS.setPDBCode(s.getPDBCode());
+//        newS.setPDBHeader(s.getPDBHeader());
+//        newS.setName(s.getName());
+//        newS.setSSBonds(s.getSSBonds());
+//        newS.setDBRefs(s.getDBRefs());
+//        newS.setSites(s.getSites());
+//        newS.setBiologicalAssembly(s.isBiologicalAssembly());
+//        newS.setEntityInfos(s.getEntityInfos());
+//        newS.setSSBonds(s.getSSBonds());
+//        newS.setSites(s.getSites());
+//
+//        if (chainId != null)
+//            chainId = chainId.trim();
+//
+//        if (chainId == null || chainId.equals("")) {
+//            // only get model 0
+//            List<Chain> model0 = s.getModel(0);
+//            for (Chain c : model0) {
+//                newS.addChain(c);
+//            }
+//            return newS;
+//
+//        }
+//
+//        Chain c = null;
+//        try {
+//            c = s.getChainByPDB(chainId);
+//        } catch (StructureException e) {
+//            logger.warn(e.getMessage() + ". Chain id " + chainId
+//                    + " did not match, trying upper case Chain id.");
+//            c = s.getChainByPDB(chainId.toUpperCase());
+//
+//        }
+//        if (c != null) {
+//            newS.addChain(c);
+//            for (EntityInfo comp : s.getEntityInfos()) {
+//                if (comp.getChainIds() != null
+//                        && comp.getChainIds().contains(c.getChainID())) {
+//                    // found matching entity info. set description...
+//                    newS.getPDBHeader().setDescription(
+//                            "Chain " + c.getChainID() + " of " + s.getPDBCode()
+//                                    + " " + comp.getDescription());
+//                }
+//            }
+//        }
+//
+//        return newS;
+//    }
+
 
 }

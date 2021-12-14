@@ -1,5 +1,6 @@
 package cz.siret.prank.program
 
+import com.sun.istack.Nullable
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.Writable
 import groovy.transform.CompileStatic
@@ -32,7 +33,7 @@ class LogManager implements Writable {
     Configuration config
     LoggerConfig loggerConfig
 
-    void configureLoggers(String logLevel, boolean logToConsole, boolean logToFile, String outdir) {
+    void configureLoggers(String logLevel, boolean logToConsole, boolean logToFile, @Nullable String outdir) {
 
         String loggerName = LOGGER_NAME
         Level level = Level.getLevel(logLevel)
@@ -48,7 +49,7 @@ class LogManager implements Writable {
 
         loggerConfig.setLevel(level)
 
-        if (logToFile) {
+        if (logToFile && outdir!=null) {
             logFile = "$outdir/run.log"
             fileAppender = addFileAppender(config, loggerName, logFile, level)
             loggingToFile = true

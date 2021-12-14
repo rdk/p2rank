@@ -41,8 +41,8 @@ class EvalResults implements Parametrized, Writable  {
     /** time of first evaluation, may be longer than subsequent ones in seedloop due to caching */
     Long firstEvalTime = null
 
-    int train_positives = 0
-    int train_negatives = 0
+    long train_positives = 0
+    long train_negatives = 0
 
     List<Double> featureImportances
     List<EvalResults> subResults = new ArrayList<>()

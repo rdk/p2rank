@@ -943,7 +943,7 @@ class Params {
 
     /**
      * Timestamp that will be added as a prefix to each message printed to stdout ("" = no timestamp)
-     * Example: "yyyy.MM.dd HHmm:"
+     * Example: "yyyy.MM.dd HH:mm:"
      */
     @RuntimeParam
     String stdout_timestamp = ""
@@ -1238,6 +1238,19 @@ class Params {
      */
     @ModelParam
     double feat_stmotif_radius = 4d
+
+    /**
+     *
+     */
+    @RuntimeParam
+    String chains = "keep"
+
+    @RuntimeParam
+    String out_format = "keep"
+
+    @RuntimeParam
+    String out_file = null
+
 
 //===========================================================================================================//
 // Derived parameters
