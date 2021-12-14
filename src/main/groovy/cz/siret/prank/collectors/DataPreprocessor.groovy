@@ -2,7 +2,6 @@ package cz.siret.prank.collectors
 
 import cz.siret.prank.features.implementation.ProtrusionFeature
 import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.utils.PerfUtils
 import cz.siret.prank.utils.WekaUtils
 import cz.siret.prank.utils.Writable
 import groovy.transform.CompileStatic

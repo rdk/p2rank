@@ -4,7 +4,6 @@ import cz.siret.prank.domain.Dataset
 import cz.siret.prank.domain.loaders.DatasetCachedLoader
 import cz.siret.prank.features.FeatureSetup
 import cz.siret.prank.features.PrankFeatureExtractor
-import cz.siret.prank.features.implementation.table.AAIndexAtomFeature
 import cz.siret.prank.features.implementation.table.AAIndexFeature
 import cz.siret.prank.program.Main
 import cz.siret.prank.program.PrankException

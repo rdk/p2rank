@@ -1,11 +1,7 @@
 package cz.siret.prank.features.api.wrappers
 
 import cz.siret.prank.domain.Protein
-import cz.siret.prank.features.api.AtomFeatureCalculationContext
-import cz.siret.prank.features.api.AtomFeatureCalculator
-import cz.siret.prank.features.api.ProcessedItemContext
-import cz.siret.prank.features.api.SasFeatureCalculationContext
-import cz.siret.prank.features.api.SasFeatureCalculator
+import cz.siret.prank.features.api.*
 import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
 

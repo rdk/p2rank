@@ -6,7 +6,6 @@ import cz.siret.prank.domain.Residues
 import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.features.api.SasFeatureCalculationContext
 import cz.siret.prank.features.api.SasFeatureCalculator
-import cz.siret.prank.utils.Cutils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom

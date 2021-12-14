@@ -1,22 +1,15 @@
 package cz.siret.prank.features.implementation.structmotif;
 
 import cz.siret.prank.domain.Residue;
-import cz.siret.prank.geom.Atoms;
 import cz.siret.prank.program.PrankException;
-import cz.siret.prank.utils.Cutils;
 import cz.siret.prank.utils.PerfUtils;
 import cz.siret.prank.utils.Sutils;
 import org.apache.commons.lang3.StringUtils;
-import org.codehaus.groovy.runtime.DefaultGroovyMethods;
-import org.codehaus.groovy.runtime.StringGroovyMethods;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  *

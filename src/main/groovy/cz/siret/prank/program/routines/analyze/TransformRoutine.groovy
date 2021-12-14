@@ -1,33 +1,22 @@
 package cz.siret.prank.program.routines.analyze
 
-import com.google.common.base.Splitter
+
 import com.google.common.collect.ImmutableMap
-import cz.siret.prank.domain.*
-import cz.siret.prank.domain.labeling.*
-import cz.siret.prank.domain.loaders.LoaderParams
-import cz.siret.prank.export.FastaExporter
+import cz.siret.prank.domain.Dataset
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Struct
 import cz.siret.prank.program.Main
 import cz.siret.prank.program.PrankException
-import cz.siret.prank.program.rendering.PymolRenderer
-import cz.siret.prank.program.rendering.RenderingModel
 import cz.siret.prank.program.routines.Routine
-import cz.siret.prank.utils.BinCounter
 import cz.siret.prank.utils.CmdLineArgs
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.PdbUtils
 import cz.siret.prank.utils.Sutils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-import org.biojava.nbio.structure.ResidueNumber
 import org.biojava.nbio.structure.Structure
 
-import static cz.siret.prank.geom.SecondaryStructureUtils.assignSecondaryStructure
-import static cz.siret.prank.utils.Cutils.newSynchronizedList
-import static cz.siret.prank.utils.Formatter.format
 import static cz.siret.prank.utils.Futils.mkdirs
-import static cz.siret.prank.utils.Futils.writeFile
 
 /**
  * Various tools for analyzing datasets.

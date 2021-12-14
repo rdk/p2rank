@@ -9,10 +9,11 @@ import org.biojava.nbio.structure.io.FileParsingParameters
 import org.biojava.nbio.structure.io.PDBFileParser
 import org.biojava.nbio.structure.io.cif.CifStructureConverter
 
+import static cz.siret.prank.geom.Struct.getAuthorId
+
 //import org.biojava.nbio.structure.io.mmcif.ChemCompGroupFactory
 //import org.biojava.nbio.structure.io.mmcif.ReducedChemCompProvider
 
-import static cz.siret.prank.geom.Struct.getAuthorId
 import static cz.siret.prank.geom.Struct.getMmcifId
 
 /**

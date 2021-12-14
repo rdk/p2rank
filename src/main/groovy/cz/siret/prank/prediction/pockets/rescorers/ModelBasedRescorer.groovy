@@ -19,7 +19,6 @@ import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 
 import static cz.siret.prank.prediction.pockets.PointScoreCalculator.applyPointScoreThreshold
-import static cz.siret.prank.prediction.pockets.PointScoreCalculator.normalizedScore
 
 /**
  * rescorer and predictor
