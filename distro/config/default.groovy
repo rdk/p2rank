@@ -2,6 +2,8 @@ import cz.siret.prank.program.params.Params
 
 /**
  * This config file contains the default configuration of P2Rank running in predict mode (prank predict -f xxxx.pdb).
+ *
+ * For a full list of all parameters and their default values see Params.groovy in the source code. This file contains only a subset.
  */
 (params as Params).with {
 
@@ -21,7 +23,7 @@ import cz.siret.prank.program.params.Params
      * default model
      * (set path relative to install_dir/models/)
      */
-    model = "p2rank_a.model"
+    model = "default.model"
 
     /**
      * Random seed

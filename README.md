@@ -14,6 +14,8 @@ Ligand-binding site prediction based on machine learning.
 ### Description
 
 P2Rank is a stand-alone command line program that predicts ligand-binding pockets from a protein structure. It achieves high prediction success rates without relying on an external software for computation of complex features or on a database of known protein-ligand templates. 
+                        
+Version 2.4 adds support for `.cif` input and contains a special profile for predictions on AlphaFold models.  
 
 ### Requirements
 
@@ -92,23 +94,17 @@ prank help
 ### Predict ligand binding sites (P2Rank algorithm)
 
 ~~~bash
-prank predict test.ds                             # run on the whole dataset (containing list of pdb files)
+prank predict test.ds                    # run on a whole dataset (containing list of pdb/cif files)
 
-prank predict -f test_data/1fbl.pdb               # run on single pdb file
-prank predict -f test_data/1fbl.pdb.gz            # run on single gzipped pdb file
+prank predict -f test_data/1fbl.pdb      # run on a single pdb file
+prank predict -f test_data/1fbl.cif      # run on a single cif file
+prank predict -f test_data/1fbl.pdb.gz   # run on a single gzipped pdb file
 
-prank predict -threads 8              test.ds     # specify no. of working threads for parallel processing
-prank predict -o output_here          test.ds     # explicitly specify output directory
-prank predict -c conservation.groovy  test.ds     # specify configuration file (conservation.groovy  
-                                                  # uses different prediction model and parameters)
-~~~
+prank predict -threads 8     test.ds     # specify num. of working threads for parallel dataset processing
+prank predict -o output_here test.ds     # explicitly specify output directory
 
-### Evaluate prediction model
-...on a file or a dataset with known ligands.
-
-~~~bash
-prank eval-predict -f test_data/1fbl.pdb
-prank eval-predict test.ds
+prank predict -c alphafold   test.ds     # use alphafold config and model (config/alphafold.groovy)  
+                                         # this profile is recommended for AlphaFold models, NMR and cryo-EM structures since it doesn't depend on b-factor as a feature         
 ~~~
 
 ### Prediction output 
@@ -130,21 +126,30 @@ You can override the default params with a custom config file:
 
 ~~~bash
 prank predict -c config/example.groovy  test.ds
-prank predict -c example.groovy         test.ds
+prank predict -c example                test.ds # same effect, config/ is default location and .groovy implicit extension
 ~~~
 
 
 It is also possible to override the default params on the command line using their full name.
 
 ~~~bash
-prank predict                   -seed 151 -threads 8  test.ds   #  set random seed and number of threads, override defaults
-prank predict -c example.groovy -seed 151 -threads 8  test.ds   #  override defaults as well as values from example.groovy
+prank predict                   -visualizations 0 -threads 8  test.ds   #  turn off visualizations and set the number of threads
+prank predict -c example.groovy -visualizations 0 -threads 8  test.ds   #  overrides defaults as well as values from example.groovy
 ~~~     
 
 P2Rank has numerous configurable parameters. 
 To see the list of standard params look into `config/default.groovy` and other example config files in this directory.
 To see the complete commented list of all (including undocumented) 
 params see [Params.groovy](https://github.com/rdk/p2rank/blob/develop/src/main/groovy/cz/siret/prank/program/params/Params.groovy) in the source code.
+
+
+### Evaluate prediction model
+...on a file or a dataset with known ligands.
+
+~~~bash
+prank eval-predict -f test_data/1fbl.pdb
+prank eval-predict test.ds
+~~~
 
 ### Rescoring (PRANK algorithm)
 

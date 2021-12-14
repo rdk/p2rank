@@ -27,7 +27,7 @@ Parameters on the command line override those in the config file, which override
 Parameter application priority (last wins):
 1. default values in `Params.groovy`
 2. defaults in `config/default.groovy`
-3. (optionally) defaults in `config/default-rescore.groovy` only if you run `prank rescore ...`
+3. (optionally) defaults in `config/default_rescore.groovy` only if you run `prank rescore ...`
 4. `-c <config.file>`
 5. command line
 

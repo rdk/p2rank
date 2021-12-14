@@ -165,7 +165,17 @@ eval_predict() {
     test ./prank.sh eval-predict joined.ds       -c config/test-default    -out_subdir TEST/EVAL
     test ./prank.sh eval-predict holo4k.ds       -c config/test-default    -out_subdir TEST/EVAL
     test ./prank.sh eval-predict coach420.ds     -c config/test-default    -out_subdir TEST/EVAL
-    test ./prank.sh predict ah4h.holoraw.ds      -c config/test-default    -out_subdir TEST/PREDICT
+    # test ./prank.sh predict ah4h.holoraw.ds      -c config/test-default    -out_subdir TEST/PREDICT
+
+}
+
+eval_predict_alphafold() {
+
+    title EVALUATING PREDICTIONS ON MAIN DATASETS
+
+    test ./prank.sh eval-predict joined.ds       -c config/test-alphafold    -out_subdir TEST/EVAL_ALPHAFOLD
+    test ./prank.sh eval-predict holo4k.ds       -c config/test-alphafold    -out_subdir TEST/EVAL_ALPHAFOLD
+    test ./prank.sh eval-predict coach420.ds     -c config/test-alphafold    -out_subdir TEST/EVAL_ALPHAFOLD
 
 }
 
@@ -426,6 +436,7 @@ dummy_speed() {
 
 eval_predict_all() {
     eval_predict
+    eval_predict_alphafold
     eval_predict_rest
 }
 

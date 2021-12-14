@@ -353,7 +353,7 @@ class Main implements Parametrized, Writable {
     }
 
     void initRescoreDefaultParams() {
-        initParams(params, "$installDir/config/default-rescore.groovy")
+        initParams(params, "$installDir/config/default_rescore.groovy")
     }
 
     /**

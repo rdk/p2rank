@@ -17,7 +17,7 @@ import cz.siret.prank.program.params.Params
     /**
      * Here must be false for testing. Because if true,
      * fails on every conservation score file that is missing (it's calculation failed)
-     * ...and there some for each dataset.
+     * ...and there are some for each dataset.
      */
     fail_fast = false
 

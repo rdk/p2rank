@@ -3,6 +3,8 @@
 
 Apart from hidden commands for training and grid optimization (see `training-tutorial.md`) P2Rank contains some miscellaneous tools. 
 
+
+
 ## Analyze
 
 ### binding residues
@@ -30,7 +32,7 @@ Analyze a dataset with an explicitly specified residue labeling.
 ## Export feature vectors for further analysis
 
 `-delete_vectors 0`           
-`xyz` is a dummy feature that stores 3D coordinates of give SAS point.   
+`xyz` is a dummy feature that stores 3D coordinates of a given SAS point.   
 
 ~~~sh
 ./prank.sh traineval -t test_data/basic.ds -e test_data/basic.ds \
