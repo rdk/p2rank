@@ -32,7 +32,7 @@ import java.util.zip.GZIPOutputStream
 @CompileStatic
 class Futils {
 
-    public static final int GZIP_DEFAULT_LEVEL = Deflater.DEFAULT_COMPRESSION;
+    public static final int GZIP_DEFAULT_LEVEL = Deflater.DEFAULT_COMPRESSION as int
 
     public static final int ZIP_BEST_COMPRESSION = 9
 
