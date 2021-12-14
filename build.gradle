@@ -173,8 +173,8 @@ dependencies {
 //    implementation 'com.sun.xml.bind:jaxb-impl:2.3.2'   // ~
     implementation 'javax.activation:activation:1.1.1'  // ~
 
-    implementation 'org.openscience.cdk:cdk-qsarmolecular:2.5'    // for NumericalSurface class
-    implementation 'org.openscience.cdk:cdk-data:2.5'             // for Atom class
+    implementation 'org.openscience.cdk:cdk-qsarmolecular:2.6'    // for NumericalSurface class
+    implementation 'org.openscience.cdk:cdk-data:2.6'             // for Atom class
     implementation 'nz.ac.waikato.cms.weka:weka-dev:3.9.5'
     implementation fileTree(dir: 'lib', include: '*.jar')
 
