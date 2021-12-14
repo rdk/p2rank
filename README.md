@@ -8,7 +8,7 @@ Ligand-binding site prediction based on machine learning.
     <img src="https://github.com/rdk/p2rank/blob/develop/misc/img/p2rank_sas_points.png?raw=true" width="600" alt="P2Rank illustration">
 </p>
 
-[![version 2.3.1](https://img.shields.io/badge/version-2.3.1-green.svg)](/build.gradle)
+[![version 2.4-beta.2](https://img.shields.io/badge/version-2.4--beta.2-green.svg)](/build.gradle)
 [![Build Status](https://github.com/rdk/p2rank/actions/workflows/develop.yml/badge.svg)](https://github.com/rdk/p2rank/actions/workflows/develop.yml)
 [![License: MIT](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](/LICENSE.txt)
 
@@ -16,7 +16,7 @@ Ligand-binding site prediction based on machine learning.
 
 P2Rank is a stand-alone command line program that predicts ligand-binding pockets from a protein structure. It achieves high prediction success rates without relying on an external software for computation of complex features or on a database of known protein-ligand templates. 
                         
-Version 2.4 adds support for `.cif` input and contains a special profile for predictions on AlphaFold models.  
+Version 2.4 adds support for `.cif` input and contains a special profile for predictions on AlphaFold models and NMR/cryo-EM structures.  
 
 ### Requirements
 
@@ -110,16 +110,16 @@ prank predict -c alphafold   test.ds     # use alphafold config and model (confi
 
 ### Prediction output 
 
-   For each file in the dataset P2Rank produces several output files:
-   * `<pdb_file_name>_predictions.csv`: contains an ordered list of predicted pockets, their scores, coordinates 
-   of their centers together with a list of adjacent residues, and a list of adjacent protein surface atoms
-   * `<pdb_file_name>_residues.csv`: contains list of all residues from the input protein with their scores, 
-   mapping to predicted pockets and calibrated probability of being a ligand-binding residue
-   * PyMol visualization (`.pml` script with data files) 
+   For each structure file `<struct_file>` in the dataset P2Rank produces several output files:
+   * `<struct_file>_predictions.csv`: contains an ordered list of predicted pockets, their scores, coordinates 
+   of their centers together with a list of adjacent residues, list of adjacent protein surface atoms, and a calibrated probability of being a ligand-binding site
+   * `<struct_file>_residues.csv`: contains list of all residues from the input protein with their scores, 
+   mapping to predicted pockets, and a calibrated probability of being a ligand-binding residue
+   * `visualizations/<struct_file>.pml`: PyMol visualization (`.pml` script with data files in `data/`) 
+     * generating visualizations can be turned off by `-visualizations 0` parameter
+     * coordinates of the SAS points can be found in `visualizations/data/<struct_file>_points.pdb.gz`. There the "Residue sequence number" (23-26) of HETATM record
+       corresponds to the rank of the corresponding pocket (points with value 0 do not belong to any pocket).
 
-   If coordinates of SAS points that belong to predicted pockets are needed, they can be found
-   in `visualizations/data/<pdb_file_name>_points.pdb`. There "Residue sequence number" (23-26) of HETATM record 
-   corresponds to the rank of the corresponding pocket (points with value 0 do not belong to any pocket).
 
 ### Configuration
 
