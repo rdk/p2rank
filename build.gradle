@@ -163,9 +163,9 @@ dependencies {
     implementation 'org.apache.logging.log4j:log4j-core:2.15.0'
     implementation 'org.slf4j:jul-to-slf4j:1.7.32'         // for netlib logging messages
 
-    implementation 'org.biojava:biojava-core:6.0.1'
-    implementation 'org.biojava:biojava-alignment:6.0.1'
-    implementation 'org.biojava:biojava-structure:6.0.1'
+    implementation 'org.biojava:biojava-core:6.0.2'
+    implementation 'org.biojava:biojava-alignment:6.0.2'
+    implementation 'org.biojava:biojava-structure:6.0.2'
 //    implementation 'org.biojava.thirdparty:forester:1.039' // required by biojava 6
 //    implementation 'openchart:openchart:1.4.2'
 //    implementation 'javax.xml.bind:jaxb-api:2.3.1'      // extra dependencies of biojava for java 11
