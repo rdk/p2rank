@@ -63,23 +63,6 @@ If you use P2Rank, please cite relevant papers:
 * [Research article](https://doi.org/10.1186/s13321-015-0059-5) in JChem about PRANK rescoring algorithm  
  Krivak R, Hoksza D. ***Improving protein-ligand binding site prediction accuracy by classification of inner pocket points using local features.*** Journal of Cheminformatics. 2015 Dec.
 
-### Build from sources
-
-This project uses [Gradle](https://gradle.org/) build system via included Gradle wrapper. 
-On Windows use `bash` to execute build commands (`bash` is installed as a part of [Git for Windows](https://git-scm.com/download/win)). 
-
-```bash
-git clone https://github.com/rdk/p2rank.git && cd p2rank
-./make.sh       
-
-./unit-tests.sh    # optionally you can run tests to check everything works fine on your machine        
-./tests.sh quick   # runs further tests
-```    
-Now you can run the program via:
-```bash
-distro/prank       # standard mode that logs to distro/log/prank.log
-./prank.sh         # development mode that logs to console
-``` 
 
 Usage Examples
 --------------
@@ -95,7 +78,7 @@ prank help
 ### Predict ligand binding sites (P2Rank algorithm)
 
 ~~~bash
-prank predict test.ds                    # run on a whole dataset (containing list of pdb/cif files)
+prank predict test.ds                    # run on dataset containing a list of pdb/cif files
 
 prank predict -f test_data/1fbl.pdb      # run on a single pdb file
 prank predict -f test_data/1fbl.cif      # run on a single cif file
@@ -105,7 +88,8 @@ prank predict -threads 8     test.ds     # specify num. of working threads for p
 prank predict -o output_here test.ds     # explicitly specify output directory
 
 prank predict -c alphafold   test.ds     # use alphafold config and model (config/alphafold.groovy)  
-                                         # this profile is recommended for AlphaFold models, NMR and cryo-EM structures since it doesn't depend on b-factor as a feature         
+                                         # this profile is recommended for AlphaFold models, NMR and cryo-EM 
+                                         # structures since it doesn't depend on b-factor as a feature         
 ~~~
 
 ### Prediction output 
@@ -164,6 +148,24 @@ prank rescore fpocket.ds                 # test_data/ is default 'dataset_base_d
 prank rescore fpocket.ds -o output_dir   # test_output/ is default 'output_base_dir'       
 prank eval-rescore fpocket.ds            # evaluate rescoring model
 ~~~
+
+## Build from sources
+
+This project uses [Gradle](https://gradle.org/) build system via included Gradle wrapper.
+On Windows use `bash` to execute build commands (`bash` is installed as a part of [Git for Windows](https://git-scm.com/download/win)).
+
+```bash
+git clone https://github.com/rdk/p2rank.git && cd p2rank
+./make.sh       
+
+./unit-tests.sh    # optionally you can run tests to check everything works fine on your machine        
+./tests.sh quick   # runs further tests
+```    
+Now you can run the program via:
+```bash
+distro/prank       # standard mode that logs to distro/log/prank.log
+./prank.sh         # development mode that logs to console
+``` 
 
 ## Comparison with Fpocket
 
