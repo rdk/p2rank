@@ -13,11 +13,8 @@ buildscript {  // for "com.github.ben-manes.versions" plugin
 }
 
 apply plugin: "com.github.ben-manes.versions"   //  ./gradlew dependencyUpdates
-
 apply plugin: 'groovy'
 apply plugin: 'java'
-apply plugin: 'idea'
-
 
 group = 'cz.siret'
 version = '2.4-beta.2'
@@ -135,11 +132,6 @@ configurations {
     runtimeClasspath.extendsFrom implementation
 }
 
-configurations.all { // fix gradle 7.0 warning related to xml-apis
-    resolutionStrategy {
-        force 'xml-apis:xml-apis:1.4.01'
-    }
-}
 
 dependencies {
 
