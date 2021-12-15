@@ -2,7 +2,9 @@ package cz.siret.prank.program.routines.analyze
 
 
 import com.google.common.collect.ImmutableMap
+import cz.siret.prank.domain.AA
 import cz.siret.prank.domain.Dataset
+import cz.siret.prank.features.implementation.table.AAIndex1
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Struct
 import cz.siret.prank.program.Main
@@ -17,6 +19,7 @@ import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Structure
 
 import static cz.siret.prank.utils.Futils.mkdirs
+import static cz.siret.prank.utils.Futils.writeFile
 
 /**
  * Various tools for analyzing datasets.
@@ -60,7 +63,8 @@ class TransformRoutine extends Routine {
  //===========================================================================================================//
 
     final Map<String, Closure> commandRegister = ImmutableMap.copyOf([
-        "reduce-to-chains" : { cmdReduceToChains() }
+        "reduce-to-chains" : { cmdReduceToChains() },
+        "aaindex1-to-csv" : { cmdAAIndex1ToCsv() }
     ])
 
 //===========================================================================================================//
@@ -145,4 +149,25 @@ class TransformRoutine extends Routine {
         PdbUtils.saveToFile(structure, outFormat, outFilePath, compress)
     }
 
+//===========================================================================================================//
+
+    private void cmdAAIndex1ToCsv() {
+        mkdirs(outdir)
+        writeParams(outdir)
+        String file = args.get("f")
+
+        AAIndex1 aaindex = AAIndex1.parse(Futils.readFile(file))
+
+        StringBuilder csv = new StringBuilder()
+        csv << "indexId," + AA.values().join(",") + "\n"
+
+        for (AAIndex1.Entry entry : aaindex.entries) {
+            csv << entry.id + "," + AA.values().collect{ entry.values.get(it) }.join(",") + "\n"
+        }
+
+        String outFilePath = outdir + "/aaindex1.csv"
+        write "Output file: " + Futils.absPath(outFilePath)
+        writeFile outFilePath, csv.toString()
+    }
+    
 }

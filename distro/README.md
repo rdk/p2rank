@@ -8,7 +8,7 @@ Ligand-binding site prediction based on machine learning.
     <img src="https://github.com/rdk/p2rank/blob/develop/misc/img/p2rank_sas_points.png?raw=true" width="600" alt="P2Rank illustration">
 </p>
 
-[![version 2.3.1](https://img.shields.io/badge/version-2.3.1-green.svg)](/build.gradle)
+[![version 2.4-beta.2](https://img.shields.io/badge/version-2.4--beta.2-green.svg)](/build.gradle)
 [![Build Status](https://github.com/rdk/p2rank/actions/workflows/develop.yml/badge.svg)](https://github.com/rdk/p2rank/actions/workflows/develop.yml)
 [![License: MIT](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](/LICENSE.txt)
 
@@ -16,7 +16,7 @@ Ligand-binding site prediction based on machine learning.
 
 P2Rank is a stand-alone command line program that predicts ligand-binding pockets from a protein structure. It achieves high prediction success rates without relying on an external software for computation of complex features or on a database of known protein-ligand templates. 
                         
-Version 2.4 adds support for `.cif` input and contains a special profile for predictions on AlphaFold models.  
+Version 2.4 adds support for `.cif` input and contains a special profile for predictions on AlphaFold models and NMR/cryo-EM structures.  
 
 ### Requirements
 
@@ -63,23 +63,6 @@ If you use P2Rank, please cite relevant papers:
 * [Research article](https://doi.org/10.1186/s13321-015-0059-5) in JChem about PRANK rescoring algorithm  
  Krivak R, Hoksza D. ***Improving protein-ligand binding site prediction accuracy by classification of inner pocket points using local features.*** Journal of Cheminformatics. 2015 Dec.
 
-### Build from sources
-
-This project uses [Gradle](https://gradle.org/) build system via included Gradle wrapper. 
-On Windows use `bash` to execute build commands (`bash` is installed as a part of [Git for Windows](https://git-scm.com/download/win)). 
-
-```bash
-git clone https://github.com/rdk/p2rank.git && cd p2rank
-./make.sh       
-
-./unit-tests.sh    # optionally you can run tests to check everything works fine on your machine        
-./tests.sh quick   # runs further tests
-```    
-Now you can run the program via:
-```bash
-distro/prank       # standard mode that logs to distro/log/prank.log
-./prank.sh         # development mode that logs to console
-``` 
 
 Usage Examples
 --------------
@@ -95,7 +78,7 @@ prank help
 ### Predict ligand binding sites (P2Rank algorithm)
 
 ~~~bash
-prank predict test.ds                    # run on a whole dataset (containing list of pdb/cif files)
+prank predict test.ds                    # run on dataset containing a list of pdb/cif files
 
 prank predict -f test_data/1fbl.pdb      # run on a single pdb file
 prank predict -f test_data/1fbl.cif      # run on a single cif file
@@ -105,21 +88,22 @@ prank predict -threads 8     test.ds     # specify num. of working threads for p
 prank predict -o output_here test.ds     # explicitly specify output directory
 
 prank predict -c alphafold   test.ds     # use alphafold config and model (config/alphafold.groovy)  
-                                         # this profile is recommended for AlphaFold models, NMR and cryo-EM structures since it doesn't depend on b-factor as a feature         
+                                         # this profile is recommended for AlphaFold models, NMR and cryo-EM 
+                                         # structures since it doesn't depend on b-factor as a feature         
 ~~~
 
 ### Prediction output 
 
-   For each file in the dataset P2Rank produces several output files:
-   * `<pdb_file_name>_predictions.csv`: contains an ordered list of predicted pockets, their scores, coordinates 
-   of their centers together with a list of adjacent residues, and a list of adjacent protein surface atoms
-   * `<pdb_file_name>_residues.csv`: contains list of all residues from the input protein with their scores, 
-   mapping to predicted pockets and calibrated probability of being a ligand-binding residue
-   * PyMol visualization (`.pml` script with data files) 
+   For each structure file `<struct_file>` in the dataset P2Rank produces several output files:
+   * `<struct_file>_predictions.csv`: contains an ordered list of predicted pockets, their scores, coordinates 
+   of their centers together with a list of adjacent residues, list of adjacent protein surface atoms, and a calibrated probability of being a ligand-binding site
+   * `<struct_file>_residues.csv`: contains list of all residues from the input protein with their scores, 
+   mapping to predicted pockets, and a calibrated probability of being a ligand-binding residue
+   * `visualizations/<struct_file>.pml`: PyMol visualization (`.pml` script with data files in `data/`) 
+     * generating visualizations can be turned off by `-visualizations 0` parameter
+     * coordinates of the SAS points can be found in `visualizations/data/<struct_file>_points.pdb.gz`. There the "Residue sequence number" (23-26) of HETATM record
+       corresponds to the rank of the corresponding pocket (points with value 0 do not belong to any pocket).
 
-   If coordinates of SAS points that belong to predicted pockets are needed, they can be found
-   in `visualizations/data/<pdb_file_name>_points.pdb`. There "Residue sequence number" (23-26) of HETATM record 
-   corresponds to the rank of the corresponding pocket (points with value 0 do not belong to any pocket).
 
 ### Configuration
 
@@ -164,6 +148,24 @@ prank rescore fpocket.ds                 # test_data/ is default 'dataset_base_d
 prank rescore fpocket.ds -o output_dir   # test_output/ is default 'output_base_dir'       
 prank eval-rescore fpocket.ds            # evaluate rescoring model
 ~~~
+
+## Build from sources
+
+This project uses [Gradle](https://gradle.org/) build system via included Gradle wrapper.
+On Windows use `bash` to execute build commands (`bash` is installed as a part of [Git for Windows](https://git-scm.com/download/win)).
+
+```bash
+git clone https://github.com/rdk/p2rank.git && cd p2rank
+./make.sh       
+
+./unit-tests.sh    # optionally you can run tests to check everything works fine on your machine        
+./tests.sh quick   # runs further tests
+```    
+Now you can run the program via:
+```bash
+distro/prank       # standard mode that logs to distro/log/prank.log
+./prank.sh         # development mode that logs to console
+``` 
 
 ## Comparison with Fpocket
 

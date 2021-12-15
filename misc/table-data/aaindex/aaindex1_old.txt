@@ -1,6 +1,6 @@
 H ANDN920101
 D alpha-CH chemical shifts (Andersen et al., 1992)
-R PMID:1575719
+R LIT:1810048b PMID:1575719
 A Andersen, N.H., Cao, B. and Chen, C.
 T Peptide/protein structure analysis using the chemical shift index method: 
   upfield alpha-CH values reveal dynamic helices and aL sites
@@ -12,7 +12,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H ARGP820101
 D Hydrophobicity index (Argos et al., 1982)
-R PMID:7151796
+R LIT:0901079b PMID:7151796
 A Argos, P., Rao, J.K.M. and Hargrave, P.A.
 T Structural prediction of membrane-bound proteins
 J Eur. J. Biochem. 128, 565-575 (1982)
@@ -29,7 +29,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H ARGP820102
 D Signal sequence helical potential (Argos et al., 1982)
-R PMID:7151796
+R LIT:0901079b PMID:7151796
 A Argos, P., Rao, J.K.M. and Hargrave, P.A.
 T Structural prediction of membrane-bound proteins
 J Eur. J. Biochem. 128, 565-575 (1982)
@@ -40,7 +40,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H ARGP820103
 D Membrane-buried preference parameters (Argos et al., 1982)
-R PMID:7151796
+R LIT:0901079b PMID:7151796
 A Argos, P., Rao, J.K.M. and Hargrave, P.A.
 T Structural prediction of membrane-bound proteins
 J Eur. J. Biochem. 128, 565-575 (1982)
@@ -53,7 +53,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H BEGF750101
 D Conformational parameter of inner helix (Beghin-Dirkx, 1975)
-R PMID:50789
+R LIT:1309065 PMID:50789
 A Beghin, F. and Dirkx, J.
 T Une methode statistique simple de prediction des conformations proteiques
 J Arch. Int. Physiol. Biochim. 83, 167-168 (1975)
@@ -69,7 +69,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H BEGF750102
 D Conformational parameter of beta-structure (Beghin-Dirkx, 1975)
-R PMID:50789
+R LIT:1309065 PMID:50789
 A Beghin, F. and Dirkx, J.
 T Une methode statistique simple de prediction des conformations proteiques
 J Arch. Int. Physiol. Biochim. 83, 167-168 (1975)
@@ -85,7 +85,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H BEGF750103
 D Conformational parameter of beta-turn (Beghin-Dirkx, 1975)
-R PMID:50789
+R LIT:1309065 PMID:50789
 A Beghin, F. and Dirkx, J.
 T Une methode statistique simple de prediction des conformations proteiques
 J Arch. Int. Physiol. Biochim. 83, 167-168 (1975)
@@ -98,7 +98,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H BHAR880101
 D Average flexibility indices (Bhaskaran-Ponnuswamy, 1988)
-R
+R LIT:1414112
 A Bhaskaran, R. and Ponnuswamy, P.K.
 T Positional flexibilities of amino acid residues in globular proteins
 J Int. J. Peptide Protein Res. 32, 241-255 (1988)
@@ -110,7 +110,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H BIGC670101
 D Residue volume (Bigelow, 1967)
-R PMID:6048539
+R LIT:2004108b PMID:6048539
 A Bigelow, C.C.
 T On the average hydrophobicity of proteins and the relation between it and 
   protein structure
@@ -129,7 +129,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H BIOV880101
 D Information value for accessibility; average fraction 35% (Biou et al., 1988)
-R PMID:3237683
+R LIT:1413106b PMID:3237683
 A Biou, V., Gibrat, J.F., Levin, J.M., Robson, B. and Garnier, J.
 T Secondary structure prediction: combination of three different methods
 J Protein Engineering 2, 185-191 (1988)
@@ -173,7 +173,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H BIOV880102
 D Information value for accessibility; average fraction 23% (Biou et al., 1988)
-R PMID:3237683
+R LIT:1413106b PMID:3237683
 A Biou, V., Gibrat, J.F., Levin, J.M., Robson, B. and Garnier, J.
 T Secondary structure prediction: combination of three different methods
 J Protein Engineering 2, 185-191 (1988)
@@ -215,7 +215,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H BROC820101
 D Retention coefficient in TFA (Browne et al., 1982)
-R PMID:7125223
+R LIT:0809229 PMID:7125223
 A Browne, C.A., Bennett, H.P.J. and Solomon, S.
 T The isolation of peptides by high-performance liquid chromatography using 
   predicted elution positions
@@ -230,7 +230,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H BROC820102
 D Retention coefficient in HFBA (Browne et al., 1982)
-R PMID:7125223
+R LIT:0809229 PMID:7125223
 A Browne, C.A., Bennett, H.P.J. and Solomon, S.
 T The isolation of peptides by high-performance liquid chromatography using 
   predicted elution positions
@@ -281,7 +281,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H BUNA790101
 D alpha-NH chemical shifts (Bundi-Wuthrich, 1979)
-R
+R LIT:0503064b
 A Bundi, A. and Wuthrich, K.
 T 1H-nmr parameters of the common amino acid residues measured in aqueous 
   solutions of the linear tetrapeptides H-Gly-Gly-X-L-Ala-OH
@@ -297,7 +297,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H BUNA790102
 D alpha-CH chemical shifts (Bundi-Wuthrich, 1979)
-R
+R LIT:0503064b
 A Bundi, A. and Wuthrich, K.
 T 1H-nmr parameters of the common amino acid residues measured in aqueous 
   solutions of the linear tetrapeptides H-Gly-Gly-X-L-Ala-OH
@@ -309,7 +309,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H BUNA790103
 D Spin-spin coupling constants 3JHalpha-NH (Bundi-Wuthrich, 1979)
-R
+R LIT:0503064b
 A Bundi, A. and Wuthrich, K.
 T 1H-nmr parameters of the common amino acid residues measured in aqueous 
   solutions of the linear tetrapeptides H-Gly-Gly-X-L-Ala-OH
@@ -321,7 +321,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H BURA740101
 D Normalized frequency of alpha-helix (Burgess et al., 1974)
-R
+R LIT:2004075b
 A Burgess, A.W., Ponnuswamy, P.K. and Scheraga, H.A.
 T Analysis of conformations of amino acid residues and prediction of backbone 
   topography in proteins
@@ -339,7 +339,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H BURA740102
 D Normalized frequency of extended structure (Burgess et al., 1974)
-R
+R LIT:2004075b
 A Burgess, A.W., Ponnuswamy, P.K. and Scheraga, H.A.
 T Analysis of conformations of amino acid residues and prediction of backbone 
   topography in proteins
@@ -351,7 +351,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H CHAM810101
 D Steric parameter (Charton, 1981)
-R PMID:7300379
+R LIT:2004112b PMID:7300379
 A Charton, M.
 T Protein folding and the genetic code: An alternative quantitative model
 J J. Theor. Biol. 91, 115-123 (1981) (Pro !)
@@ -362,7 +362,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H CHAM820101
 D Polarizability parameter (Charton-Charton, 1982)
-R PMID:7183857
+R LIT:0902079b PMID:7183857
 A Charton, M. and Charton, B.I.
 T The structural dependence of amino acid hydrophobicity parameters
 J J. Theor. Biol. 99, 629-644 (1982) (Pro 0.018)
@@ -381,7 +381,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H CHAM820102
 D Free energy of solution in water, kcal/mole (Charton-Charton, 1982)
-R PMID:7183857
+R LIT:0902079b PMID:7183857
 A Charton, M. and Charton, B.I.
 T The structural dependence of amino acid hydrophobicity parameters
 J J. Theor. Biol. 99, 629-644 (1982) (Asn His Lys Thr !)
@@ -392,7 +392,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H CHAM830101
 D The Chou-Fasman parameter of the coil conformation (Charton-Charton, 1983)
-R PMID:6876837
+R LIT:0907093b PMID:6876837
 A Charton, M. and Charton, B.
 T The dependence of the Chou-Fasman parameters on amino acid side chain 
   structure
@@ -418,7 +418,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 H CHAM830102
 D A parameter defined from the residuals obtained from the best correlation of 
   the Chou-Fasman parameter of beta-sheet (Charton-Charton, 1983)
-R PMID:6876837
+R LIT:0907093b PMID:6876837
 A Charton, M. and Charton, B.
 T The dependence of the Chou-Fasman parameters on amino acid side chain 
   structure
@@ -430,7 +430,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H CHAM830103
 D The number of atoms in the side chain labelled 1+1 (Charton-Charton, 1983)
-R PMID:6876837
+R LIT:0907093b PMID:6876837
 A Charton, M. and Charton, B.
 T The dependence of the Chou-Fasman parameters on amino acid side chain 
   structure
@@ -442,7 +442,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H CHAM830104
 D The number of atoms in the side chain labelled 2+1 (Charton-Charton, 1983)
-R PMID:
+R LIT:0907093b PMID:
 A Charton, M. and Charton, B.
 T The dependence of the Chou-Fasman parameters on amino acid side chain 
   structure
@@ -454,7 +454,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H CHAM830105
 D The number of atoms in the side chain labelled 3+1 (Charton-Charton, 1983)
-R PMID:6876837
+R LIT:0907093b PMID:6876837
 A Charton, M. and Charton, B.
 T The dependence of the Chou-Fasman parameters on amino acid side chain 
   structure
@@ -468,7 +468,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H CHAM830106
 D The number of bonds in the longest chain (Charton-Charton, 1983)
-R PMID:6876837
+R LIT:0907093b PMID:6876837
 A Charton, M. and Charton, B.
 T The dependence of the Chou-Fasman parameters on amino acid side chain 
   structure
@@ -486,7 +486,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H CHAM830107
 D A parameter of charge transfer capability (Charton-Charton, 1983)
-R PMID:6876837
+R LIT:0907093b PMID:6876837
 A Charton, M. and Charton, B.
 T The dependence of the Chou-Fasman parameters on amino acid side chain 
   structure
@@ -498,7 +498,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H CHAM830108
 D A parameter of charge transfer donor capability (Charton-Charton, 1983)
-R PMID:6876837
+R LIT:0907093b PMID:6876837
 A Charton, M. and Charton, B.
 T The dependence of the Chou-Fasman parameters on amino acid side chain 
   structure
@@ -529,7 +529,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H CHOC760101
 D Residue accessible surface area in tripeptide (Chothia, 1976)
-R PMID:994183
+R LIT:2004094b PMID:994183
 A Chothia, C.
 T The nature of the accessible and buried surfaces in proteins
 J J. Mol. Biol. 105, 1-14 (1976)
@@ -548,7 +548,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H CHOC760102
 D Residue accessible surface area in folded protein (Chothia, 1976)
-R PMID:994183
+R LIT:2004094b PMID:994183
 A Chothia, C.
 T The nature of the accessible and buried surfaces in proteins
 J J. Mol. Biol. 105, 1-14 (1976)
@@ -571,7 +571,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H CHOC760103
 D Proportion of residues 95% buried (Chothia, 1976)
-R PMID:994183
+R LIT:2004094b PMID:994183
 A Chothia, C.
 T The nature of the accessible and buried surfaces in proteins
 J J. Mol. Biol. 105, 1-14 (1976)
@@ -600,7 +600,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H CHOC760104
 D Proportion of residues 100% buried (Chothia, 1976)
-R PMID:994183
+R LIT:2004094b PMID:994183
 A Chothia, C.
 T The nature of the accessible and buried surfaces in proteins
 J J. Mol. Biol. 105, 1-14 (1976) (normalized by the total number)
@@ -617,7 +617,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H CHOP780101
 D Normalized frequency of beta-turn (Chou-Fasman, 1978a)
-R PMID:354496
+R LIT:2004003a PMID:354496
 A Chou, P.Y. and Fasman, G.D.
 T Empirical predictions of protein conformation
 J Ann. Rev. Biochem. 47, 251-276 (1978)
@@ -881,7 +881,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H CIDH920101
 D Normalized hydrophobicity scales for alpha-proteins (Cid et al., 1992)
-R PMID:1518784
+R LIT:1817105b PMID:1518784
 A Cid, H., Bunster, M., Canales, M. and Gazitua, F.
 T Hydrophobicity and structural classes in proteins
 J Protein Engineering 5, 373-375 (1992)
@@ -907,7 +907,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H CIDH920102
 D Normalized hydrophobicity scales for beta-proteins (Cid et al., 1992)
-R PMID:1518784
+R LIT:1817105b PMID:1518784
 A Cid, H., Bunster, M., Canales, M. and Gazitua, F.
 T Hydrophobicity and structural classes in proteins
 J Protein Engineering 5, 373-375 (1992)
@@ -938,7 +938,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H CIDH920103
 D Normalized hydrophobicity scales for alpha+beta-proteins (Cid et al., 1992)
-R PMID:1518784
+R LIT:1817105b PMID:1518784
 A Cid, H., Bunster, M., Canales, M. and Gazitua, F.
 T Hydrophobicity and structural classes in proteins
 J Protein Engineering 5, 373-375 (1992)
@@ -973,7 +973,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H CIDH920104
 D Normalized hydrophobicity scales for alpha/beta-proteins (Cid et al., 1992)
-R PMID:1518784
+R LIT:1817105b PMID:1518784
 A Cid, H., Bunster, M., Canales, M. and Gazitua, F.
 T Hydrophobicity and structural classes in proteins
 J Protein Engineering 5, 373-375 (1992)
@@ -1014,7 +1014,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H CIDH920105
 D Normalized average hydrophobicity scales (Cid et al., 1992)
-R PMID:1518784
+R LIT:1817105b PMID:1518784
 A Cid, H., Bunster, M., Canales, M. and Gazitua, F.
 T Hydrophobicity and structural classes in proteins
 J Protein Engineering 5, 373-375 (1992)
@@ -1159,7 +1159,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H DESM900101
 D Membrane preference for cytochrome b: MPH89 (Degli Esposti et al., 1990)
-R PMID:2364947
+R LIT:1612111b PMID:2364947
 A Degli Esposti, M., Crimi, M. and Venturoli, G.
 T A critical evaluation of the hydropathy profile of membrane proteins
 J Eur. J. Biochem. 190, 207-219 (1990)
@@ -1184,7 +1184,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H DESM900102
 D Average membrane preference: AMP07 (Degli Esposti et al., 1990)
-R PMID:2364947
+R LIT:1612111b PMID:2364947
 A Degli Esposti, M., Crimi, M. and Venturoli, G.
 T A critical evaluation of the hydropathy profile of membrane proteins
 J Eur. J. Biochem. 190, 207-219 (1990)
@@ -1219,7 +1219,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H EISD840101
 D Consensus normalized hydrophobicity scale (Eisenberg, 1984)
-R PMID:6383201
+R LIT:2004004a PMID:6383201
 A Eisenberg, D.
 T Three-dimensional structure of membrane and surface proteins
 J Ann. Rev. Biochem. 53, 595-623 (1984) Original references: Eisenberg, D., 
@@ -1251,7 +1251,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H EISD860101
 D Solvation free energy (Eisenberg-McLachlan, 1986)
-R PMID: 3945310
+R LIT:2004121b PMID: 3945310
 A Eisenberg, D. and McLachlan, A.D.
 T Solvation energy in protein folding and binding
 J Nature 319, 199-203 (1986)
@@ -1277,7 +1277,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H EISD860102
 D Atom-based hydrophobic moment (Eisenberg-McLachlan, 1986)
-R PMID: 3945310
+R LIT:2004121b PMID: 3945310
 A Eisenberg, D. and McLachlan, A.D.
 T Solvation energy in protein folding and binding
 J Nature 319, 199-203 (1986)
@@ -1289,7 +1289,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H EISD860103
 D Direction of hydrophobic moment (Eisenberg-McLachlan, 1986)
-R PMID: 3945310
+R LIT:2004121b PMID: 3945310
 A Eisenberg, D. and McLachlan, A.D.
 T Solvation energy in protein folding and binding
 J Nature 319, 199-203 (1986) (Gly Ala missing)
@@ -1388,7 +1388,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H FAUJ830101
 D Hydrophobic parameter pi (Fauchere-Pliska, 1983)
-R
+R LIT:0912085
 A Fauchere, J.L. and Pliska, V.
 T Hydrophobic parameters pi of amino-acid side chains from the partitioning of 
   N-acetyl-amino-acid amides
@@ -1429,7 +1429,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H FAUJ880101
 D Graph shape index (Fauchere et al., 1988)
-R PMID:3209351
+R LIT:1414114 PMID:3209351
 A Fauchere, J.L., Charton, M., Kier, L.B., Verloop, A. and Pliska, V.
 T Amino acid side chain parameters for correlation studies in biology and 
   pharmacology
@@ -1442,7 +1442,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H FAUJ880102
 D Smoothed upsilon steric parameter (Fauchere et al., 1988)
-R PMID:3209351
+R LIT:1414114 PMID:3209351
 A Fauchere, J.L., Charton, M., Kier, L.B., Verloop, A. and Pliska, V.
 T Amino acid side chain parameters for correlation studies in biology and 
   pharmacology
@@ -1460,7 +1460,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H FAUJ880103
 D Normalized van der Waals volume (Fauchere et al., 1988)
-R PMID:3209351
+R LIT:1414114 PMID:3209351
 A Fauchere, J.L., Charton, M., Kier, L.B., Verloop, A. and Pliska, V.
 T Amino acid side chain parameters for correlation studies in biology and 
   pharmacology
@@ -1483,7 +1483,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H FAUJ880104
 D STERIMOL length of the side chain (Fauchere et al., 1988)
-R PMID:3209351
+R LIT:1414114 PMID:3209351
 A Fauchere, J.L., Charton, M., Kier, L.B., Verloop, A. and Pliska, V.
 T Amino acid side chain parameters for correlation studies in biology and 
   pharmacology
@@ -1499,7 +1499,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H FAUJ880105
 D STERIMOL minimum width of the side chain (Fauchere et al., 1988)
-R PMID:3209351
+R LIT:1414114 PMID:3209351
 A Fauchere, J.L., Charton, M., Kier, L.B., Verloop, A. and Pliska, V.
 T Amino acid side chain parameters for correlation studies in biology and 
   pharmacology
@@ -1513,7 +1513,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H FAUJ880106
 D STERIMOL maximum width of the side chain (Fauchere et al., 1988)
-R PMID:3209351
+R LIT:1414114 PMID:3209351
 A Fauchere, J.L., Charton, M., Kier, L.B., Verloop, A. and Pliska, V.
 T Amino acid side chain parameters for correlation studies in biology and 
   pharmacology
@@ -1533,7 +1533,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H FAUJ880107
 D N.m.r. chemical shift of alpha-carbon (Fauchere et al., 1988)
-R PMID:3209351
+R LIT:1414114 PMID:3209351
 A Fauchere, J.L., Charton, M., Kier, L.B., Verloop, A. and Pliska, V.
 T Amino acid side chain parameters for correlation studies in biology and 
   pharmacology
@@ -1547,7 +1547,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H FAUJ880108
 D Localized electrical effect (Fauchere et al., 1988)
-R PMID:3209351
+R LIT:1414114 PMID:3209351
 A Fauchere, J.L., Charton, M., Kier, L.B., Verloop, A. and Pliska, V.
 T Amino acid side chain parameters for correlation studies in biology and 
   pharmacology
@@ -1560,7 +1560,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H FAUJ880109
 D Number of hydrogen bond donors (Fauchere et al., 1988)
-R PMID:3209351
+R LIT:1414114 PMID:3209351
 A Fauchere, J.L., Charton, M., Kier, L.B., Verloop, A. and Pliska, V.
 T Amino acid side chain parameters for correlation studies in biology and 
   pharmacology
@@ -1580,7 +1580,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H FAUJ880110
 D Number of full nonbonding orbitals (Fauchere et al., 1988)
-R PMID:3209351
+R LIT:1414114 PMID:3209351
 A Fauchere, J.L., Charton, M., Kier, L.B., Verloop, A. and Pliska, V.
 T Amino acid side chain parameters for correlation studies in biology and 
   pharmacology
@@ -1596,7 +1596,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H FAUJ880111
 D Positive charge (Fauchere et al., 1988)
-R PMID:3209351
+R LIT:1414114 PMID:3209351
 A Fauchere, J.L., Charton, M., Kier, L.B., Verloop, A. and Pliska, V.
 T Amino acid side chain parameters for correlation studies in biology and 
   pharmacology
@@ -1608,7 +1608,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H FAUJ880112
 D Negative charge (Fauchere et al., 1988)
-R PMID:3209351
+R LIT:1414114 PMID:3209351
 A Fauchere, J.L., Charton, M., Kier, L.B., Verloop, A. and Pliska, V.
 T Amino acid side chain parameters for correlation studies in biology and 
   pharmacology
@@ -1620,7 +1620,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H FAUJ880113
 D pK-a(RCOOH) (Fauchere et al., 1988)
-R PMID:3209351
+R LIT:1414114 PMID:3209351
 A Fauchere, J.L., Charton, M., Kier, L.B., Verloop, A. and Pliska, V.
 T Amino acid side chain parameters for correlation studies in biology and 
   pharmacology
@@ -1634,7 +1634,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H FINA770101
 D Helix-coil equilibrium constant (Finkelstein-Ptitsyn, 1977)
-R PMID:843599
+R LIT:2004052b PMID:843599
 A Finkelstein, A.V. and Ptitsyn, O.B.
 T Theory of protein molecule self-organization. II. A comparison of calculated 
   thermodynamic parameters of local secondary structures with experiments
@@ -1648,7 +1648,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H FINA910101
 D Helix initiation parameter at posision i-1 (Finkelstein et al., 1991)
-R PMID:1946339
+R LIT:1716158b PMID:1946339
 A Finkelstein, A.V., Badretdinov, A.Y. and Ptitsyn, O.B.
 T Physical reasons for secondary structure stability: alpha-helices in short 
   peptides
@@ -1663,7 +1663,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H FINA910102
 D Helix initiation parameter at posision i,i+1,i+2 (Finkelstein et al., 1991)
-R PMID:1946339
+R LIT:1716158b PMID:1946339
 A Finkelstein, A.V., Badretdinov, A.Y. and Ptitsyn, O.B.
 T Physical reasons for secondary structure stability: alpha-helices in short 
   peptides
@@ -1681,7 +1681,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H FINA910103
 D Helix termination parameter at posision j-2,j-1,j (Finkelstein et al., 1991)
-R PMID:1946339
+R LIT:1716158b PMID:1946339
 A Finkelstein, A.V., Badretdinov, A.Y. and Ptitsyn, O.B.
 T Physical reasons for secondary structure stability: alpha-helices in short 
   peptides
@@ -1696,7 +1696,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H FINA910104
 D Helix termination parameter at posision j+1 (Finkelstein et al., 1991)
-R PMID:1946339
+R LIT:1716158b PMID:1946339
 A Finkelstein, A.V., Badretdinov, A.Y. and Ptitsyn, O.B.
 T Physical reasons for secondary structure stability: alpha-helices in short 
   peptides
@@ -1711,7 +1711,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H GARJ730101
 D Partition coefficient (Garel et al., 1973)
-R PMID:4700470
+R LIT:2004092b PMID:4700470
 A Garel, J.P., Filliol, D. and Mandel, P.
 T Coefficients de partage d'aminoacides, nucleobases, nucleosides et 
   nucleotides dans un systeme solvant salin
@@ -1724,7 +1724,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H GEIM800101
 D Alpha-helix indices (Geisow-Roberts, 1980)
-R
+R LIT:0701087b
 A Geisow, M.J. and Roberts, R.D.B.
 T Amino acid preferences for secondary structure vary with protein class
 J Int. J. Biol. Macromol. 2, 387-389 (1980)
@@ -1741,7 +1741,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H GEIM800102
 D Alpha-helix indices for alpha-proteins (Geisow-Roberts, 1980)
-R
+R LIT:0701087b
 A Geisow, M.J. and Roberts, R.D.B.
 T Amino acid preferences for secondary structure vary with protein class
 J Int. J. Biol. Macromol. 2, 387-389 (1980)
@@ -1752,7 +1752,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H GEIM800103
 D Alpha-helix indices for beta-proteins (Geisow-Roberts, 1980)
-R
+R LIT:0701087b
 A Geisow, M.J. and Roberts, R.D.B.
 T Amino acid preferences for secondary structure vary with protein class
 J Int. J. Biol. Macromol. 2, 387-389 (1980)
@@ -1763,7 +1763,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H GEIM800104
 D Alpha-helix indices for alpha/beta-proteins (Geisow-Roberts, 1980)
-R
+R LIT:0701087b
 A Geisow, M.J. and Roberts, R.D.B.
 T Amino acid preferences for secondary structure vary with protein class
 J Int. J. Biol. Macromol. 2, 387-389 (1980)
@@ -1779,7 +1779,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H GEIM800105
 D Beta-strand indices (Geisow-Roberts, 1980)
-R
+R LIT:0701087b
 A Geisow, M.J. and Roberts, R.D.B.
 T Amino acid preferences for secondary structure vary with protein class
 J Int. J. Biol. Macromol. 2, 387-389 (1980)
@@ -1796,7 +1796,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H GEIM800106
 D Beta-strand indices for beta-proteins (Geisow-Roberts, 1980)
-R
+R LIT:0701087b
 A Geisow, M.J. and Roberts, R.D.B.
 T Amino acid preferences for secondary structure vary with protein class
 J Int. J. Biol. Macromol. 2, 387-389 (1980)
@@ -1809,7 +1809,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H GEIM800107
 D Beta-strand indices for alpha/beta-proteins (Geisow-Roberts, 1980)
-R
+R LIT:0701087b
 A Geisow, M.J. and Roberts, R.D.B.
 T Amino acid preferences for secondary structure vary with protein class
 J Int. J. Biol. Macromol. 2, 387-389 (1980)
@@ -1830,7 +1830,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H GEIM800108
 D Aperiodic indices (Geisow-Roberts, 1980)
-R
+R LIT:0701087b
 A Geisow, M.J. and Roberts, R.D.B.
 T Amino acid preferences for secondary structure vary with protein class
 J Int. J. Biol. Macromol. 2, 387-389 (1980)
@@ -1849,7 +1849,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H GEIM800109
 D Aperiodic indices for alpha-proteins (Geisow-Roberts, 1980)
-R
+R LIT:0701087b
 A Geisow, M.J. and Roberts, R.D.B.
 T Amino acid preferences for secondary structure vary with protein class
 J Int. J. Biol. Macromol. 2, 387-389 (1980)
@@ -1860,7 +1860,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H GEIM800110
 D Aperiodic indices for beta-proteins (Geisow-Roberts, 1980)
-R
+R LIT:0701087b
 A Geisow, M.J. and Roberts, R.D.B.
 T Amino acid preferences for secondary structure vary with protein class
 J Int. J. Biol. Macromol. 2, 387-389 (1980)
@@ -1878,7 +1878,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H GEIM800111
 D Aperiodic indices for alpha/beta-proteins (Geisow-Roberts, 1980)
-R
+R LIT:0701087b
 A Geisow, M.J. and Roberts, R.D.B.
 T Amino acid preferences for secondary structure vary with protein class
 J Int. J. Biol. Macromol. 2, 387-389 (1980)
@@ -1898,7 +1898,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H GOLD730101
 D Hydrophobicity factor (Goldsack-Chalifoux, 1973)
-R PMID:4354159
+R LIT:2004110b PMID:4354159
 A Goldsack, D.E. and Chalifoux, R.C.
 T Contribution of the free energy of mixing of hydrophobic side chains to the 
   stability of the tertiary structure
@@ -1917,7 +1917,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H GOLD730102
 D Residue volume (Goldsack-Chalifoux, 1973)
-R PMID:4354159
+R LIT:2004110b PMID:4354159
 A Goldsack, D.E. and Chalifoux, R.C.
 T Contribution of the free energy of mixing of hydrophobic side chains to the 
   stability of the tertiary structure
@@ -1936,7 +1936,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H GRAR740101
 D Composition (Grantham, 1974)
-R PMID:4843792
+R LIT:2004143b PMID:4843792
 A Grantham, R.
 T Amino acid difference formula to help explain protein evolution
 J Science 185, 862-864 (1974) (Atomic weight ratio of noncarbons to carbons in 
@@ -1948,7 +1948,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H GRAR740102
 D Polarity (Grantham, 1974)
-R PMID:4843792
+R LIT:2004143b PMID:4843792
 A Grantham, R.
 T Amino acid difference formula to help explain protein evolution
 J Science 185, 862-864 (1974)
@@ -1987,7 +1987,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H GRAR740103
 D Volume (Grantham, 1974)
-R PMID:4843792
+R LIT:2004143b PMID:4843792
 A Grantham, R.
 T Amino acid difference formula to help explain protein evolution
 J Science 185, 862-864 (1974)
@@ -2005,7 +2005,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H GUYH850101
 D Partition energy (Guy, 1985)
-R PMID:3978191
+R LIT:2004051b PMID:3978191
 A Guy, H.R.
 T Amino acid side-chain partition energies and distribution of residues in 
   soluble proteins
@@ -2056,7 +2056,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H HOPT810101
 D Hydrophilicity value (Hopp-Woods, 1981)
-R PMID:6167991
+R LIT:0707598 PMID:6167991
 A Hopp, T.P. and Woods, K.R.
 T Prediction of protein antigenic determinants from amino acid sequecces
 J Proc. Natl. Acad. Sci. USA 78, 3824-3828 (1981)
@@ -2124,7 +2124,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H ISOY800101
 D Normalized relative frequency of alpha-helix (Isogai et al., 1980)
-R PMID:7378550
+R LIT:2004053b PMID:7378550
 A Isogai, Y., Nemethy, G., Rackovsky, S., Leach, S.J. and Scheraga,H.A
 T Characterization of multiple bends in proteins
 J Biopolymers 19, 1183-1210 (1980) Recalculated by Kidera using a different set 
@@ -2147,7 +2147,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H ISOY800102
 D Normalized relative frequency of extended structure (Isogai et al., 1980)
-R PMID:7378550
+R LIT:2004053b PMID:7378550
 A Isogai, Y., Nemethy, G., Rackovsky, S., Leach, S.J. and Scheraga,H.A
 T Characterization of multiple bends in proteins
 J Biopolymers 19, 1183-1210 (1980) Recalculated by Kidera using a different set 
@@ -2160,7 +2160,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H ISOY800103
 D Normalized relative frequency of bend (Isogai et al., 1980)
-R PMID:7378550
+R LIT:2004053b PMID:7378550
 A Isogai, Y., Nemethy, G., Rackovsky, S., Leach, S.J. and Scheraga,H.A
 T Characterization of multiple bends in proteins
 J Biopolymers 19, 1183-1210 (1980) Recalculated by Kidera using a different set 
@@ -2178,7 +2178,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H ISOY800104
 D Normalized relative frequency of bend R (Isogai et al., 1980)
-R PMID:7378550
+R LIT:2004053b PMID:7378550
 A Isogai, Y., Nemethy, G., Rackovsky, S., Leach, S.J. and Scheraga,H.A
 T Characterization of multiple bends in proteins
 J Biopolymers 19, 1183-1210 (1980) Recalculated by Kidera using a different set 
@@ -2194,7 +2194,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H ISOY800105
 D Normalized relative frequency of bend S (Isogai et al., 1980)
-R PMID:7378550
+R LIT:2004053b PMID:7378550
 A Isogai, Y., Nemethy, G., Rackovsky, S., Leach, S.J. and Scheraga,H.A
 T Characterization of multiple bends in proteins
 J Biopolymers 19, 1183-1210 (1980) Recalculated by Kidera using a different set 
@@ -2206,7 +2206,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H ISOY800106
 D Normalized relative frequency of helix end (Isogai et al., 1980)
-R PMID:7378550
+R LIT:2004053b PMID:7378550
 A Isogai, Y., Nemethy, G., Rackovsky, S., Leach, S.J. and Scheraga,H.A
 T Characterization of multiple bends in proteins
 J Biopolymers 19, 1183-1210 (1980) Recalculated by Kidera using a different set 
@@ -2218,7 +2218,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H ISOY800107
 D Normalized relative frequency of double bend (Isogai et al., 1980)
-R PMID:7378550
+R LIT:2004053b PMID:7378550
 A Isogai, Y., Nemethy, G., Rackovsky, S., Leach, S.J. and Scheraga,H.A
 T Characterization of multiple bends in proteins
 J Biopolymers 19, 1183-1210 (1980) Recalculated by Kidera using a different set 
@@ -2230,7 +2230,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H ISOY800108
 D Normalized relative frequency of coil (Isogai et al., 1980)
-R PMID:7378550
+R LIT:2004053b PMID:7378550
 A Isogai, Y., Nemethy, G., Rackovsky, S., Leach, S.J. and Scheraga,H.A
 T Characterization of multiple bends in proteins
 J Biopolymers 19, 1183-1210 (1980) Recalculated by Kidera using a different set 
@@ -2244,7 +2244,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H JANJ780101
 D Average accessible surface area (Janin et al., 1978)
-R PMID:731698
+R LIT:0502087 PMID:731698
 A Janin, J., Wodak, S., Levitt, M. and Maigret, B.
 T Conformation of amino acid side-chains in proteins
 J J. Mol. Biol. 125, 357-386 (1978)
@@ -2268,7 +2268,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H JANJ780102
 D Percentage of buried residues (Janin et al., 1978)
-R PMID:731698
+R LIT:0502087 PMID:731698
 A Janin, J., Wodak, S., Levitt, M. and Maigret, B.
 T Conformation of amino acid side-chains in proteins
 J J. Mol. Biol. 125, 357-386 (1978)
@@ -2300,7 +2300,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H JANJ780103
 D Percentage of exposed residues (Janin et al., 1978)
-R PMID:731698
+R LIT:0502087 PMID:731698
 A Janin, J., Wodak, S., Levitt, M. and Maigret, B.
 T Conformation of amino acid side-chains in proteins
 J J. Mol. Biol. 125, 357-386 (1978)
@@ -2327,7 +2327,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H JANJ790101
 D Ratio of buried and accessible molar fractions (Janin, 1979)
-R PMID:763335
+R LIT:2004120b PMID:763335
 A Janin, J.
 T Surface and inside volumes in globular proteins
 J Nature 277, 491-492 (1979)
@@ -2350,7 +2350,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H JANJ790102
 D Transfer free energy (Janin, 1979)
-R PMID:763335
+R LIT:2004120b PMID:763335
 A Janin, J.
 T Surface and inside volumes in globular proteins
 J Nature 277, 491-492 (1979)
@@ -2412,7 +2412,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H JOND920101
 D Relative frequency of occurrence (Jones et al., 1992)
-R PMID:1633570
+R LIT:1814076 PMID:1633570
 A Jones, D.T., Taylor, W.R. and Thornton, J.M.
 T The rapid generation of mutation data matrices from protein sequences
 J CABIOS 8, 275-282 (1992)
@@ -2430,7 +2430,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H JOND920102
 D Relative mutability (Jones et al., 1992)
-R PMID:1633570
+R LIT:1814076 PMID:1633570
 A Jones, D.T., Taylor, W.R. and Thornton, J.M.
 T The rapid generation of mutation data matrices from protein sequences
 J CABIOS 8, 275-282 (1992)
@@ -2458,7 +2458,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H JUNJ780101
 D Sequence frequency (Jungck, 1978)
-R PMID:691072
+R LIT:2004107b PMID:691072
 A Jungck, J.R.
 T The genetic code as a periodic table
 J J. Mol. Evol. 11, 211-224 (1978)
@@ -2475,7 +2475,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H KANM800101
 D Average relative probability of helix (Kanehisa-Tsong, 1980)
-R PMID:7426680
+R LIT:0611060 PMID:7426680
 A Kanehisa, M.I. and Tsong, T.Y.
 T Local hydrophobicity stabilizes secondary structures in proteins
 J Biopolymers 19, 1617-1628 (1980)
@@ -2495,7 +2495,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H KANM800102
 D Average relative probability of beta-sheet (Kanehisa-Tsong, 1980)
-R PMID:7426680
+R LIT:0611060 PMID:7426680
 A Kanehisa, M.I. and Tsong, T.Y.
 T Local hydrophobicity stabilizes secondary structures in proteins
 J Biopolymers 19, 1617-1628 (1980)
@@ -2519,7 +2519,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H KANM800103
 D Average relative probability of inner helix (Kanehisa-Tsong, 1980)
-R PMID:7426680
+R LIT:0611060 PMID:7426680
 A Kanehisa, M.I. and Tsong, T.Y.
 T Local hydrophobicity stabilizes secondary structures in proteins
 J Biopolymers 19, 1617-1628 (1980)
@@ -2543,7 +2543,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H KANM800104
 D Average relative probability of inner beta-sheet (Kanehisa-Tsong, 1980)
-R PMID:7426680
+R LIT:0611060 PMID:7426680
 A Kanehisa, M.I. and Tsong, T.Y.
 T Local hydrophobicity stabilizes secondary structures in proteins
 J Biopolymers 19, 1617-1628 (1980)
@@ -2562,7 +2562,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H KARP850101
 D Flexibility parameter for no rigid neighbors (Karplus-Schulz, 1985)
-R
+R LIT:1110994
 A Karplus, P.A. and Schulz, G.E.
 T Prediction of chain flexibility in proteins
 J Naturwiss. 72, 212-213 (1985)
@@ -2580,7 +2580,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H KARP850102
 D Flexibility parameter for one rigid neighbor (Karplus-Schulz, 1985)
-R
+R LIT:1110994
 A Karplus, P.A. and Schulz, G.E.
 T Prediction of chain flexibility in proteins
 J Naturwiss. 72, 212-213 (1985)
@@ -2610,7 +2610,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H KARP850103
 D Flexibility parameter for two rigid neighbors (Karplus-Schulz, 1985)
-R
+R LIT:1110994
 A Karplus, P.A. and Schulz, G.E.
 T Prediction of chain flexibility in proteins
 J Naturwiss. 72, 212-213 (1985)
@@ -2621,7 +2621,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H KHAG800101
 D The Kerr-constant increments (Khanarian-Moore, 1980)
-R
+R LIT:0611050b
 A Khanarian, G. and Moore, W.J.
 T The Kerr effect of amino acids in water
 J Aust. J. Chem. 33, 1727-1741 (1980) (Cys Lys Tyr !)
@@ -2632,7 +2632,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H KLEP840101
 D Net charge (Klein et al., 1984)
-R PMID:6547351
+R LIT:1008055 PMID:6547351
 A Klein, P., Kanehisa, M. and DeLisi, C.
 T Prediction of protein function from sequence properties: Discriminant 
   analysis of a data base
@@ -2644,7 +2644,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H KRIW710101
 D Side chain interaction parameter (Krigbaum-Rubin, 1971)
-R PMID:5553983
+R LIT:2004046b PMID:5553983
 A Krigbaum, W.R. and Rubin, B.H.
 T Local interactions as structure determinant for globular proteins
 J Biochim. Biophys. Acta 229, 368-383 (1971)
@@ -2663,7 +2663,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H KRIW790101
 D Side chain interaction parameter (Krigbaum-Komoriya, 1979)
-R PMID:760806
+R LIT:0502056 PMID:760806
 A Krigbaum, W.R. and Komoriya, A.
 T Local interactions as a structure determinant for protein molecules: II
 J Biochim. Biophys. Acta 576, 204-228 (1979)
@@ -2698,7 +2698,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H KRIW790102
 D Fraction of site occupied by water (Krigbaum-Komoriya, 1979)
-R PMID:760806
+R LIT:0502056 PMID:760806
 A Krigbaum, W.R. and Komoriya, A.
 T Local interactions as a structure determinant for protein molecules: II
 J Biochim. Biophys. Acta 576, 204-228 (1979)
@@ -2724,7 +2724,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H KRIW790103
 D Side chain volume (Krigbaum-Komoriya, 1979)
-R PMID:760806
+R LIT:0502056 PMID:760806
 A Krigbaum, W.R. and Komoriya, A.
 T Local interactions as a structure determinant for protein molecules: II
 J Biochim. Biophys. Acta 576, 204-228 (1979) (Gly Pro 7.8)
@@ -2742,7 +2742,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H KYTJ820101
 D Hydropathy index (Kyte-Doolittle, 1982)
-R PMID:7108955
+R LIT:0807099 PMID:7108955
 A Kyte, J. and Doolittle, R.F.
 T A simple method for displaying the hydropathic character of a protein
 J J. Mol. Biol. 157, 105-132 (1982)
@@ -2778,7 +2778,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H LAWE840101
 D Transfer free energy, CHP/water (Lawson et al., 1984)
-R PMID:6699000
+R LIT:1004126 PMID:6699000
 A Lawson, E.Q., Sadler, A.J., Harmatz, D., Brandau, D.T., Micanovic, R. 
   MacElroy, R.D. and Middaught, C.R.
 T A simple experimental model for hydrophobic interactions in proteins
@@ -2790,7 +2790,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H LEVM760101
 D Hydrophobic parameter (Levitt, 1976)
-R PMID:957439
+R LIT:2004093b PMID:957439
 A Levitt, M.
 T A simplified representation of protein conformations for rapid simulation of 
   protein folfing
@@ -2814,7 +2814,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H LEVM760102
 D Distance between C-alpha and centroid of side chain (Levitt, 1976)
-R PMID:957439
+R LIT:2004093b PMID:957439
 A Levitt, M.
 T A simplified representation of protein conformations for rapid simulation of 
   protein folfing
@@ -2833,7 +2833,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H LEVM760103
 D Side chain angle theta(AAR) (Levitt, 1976)
-R PMID:957439
+R LIT:2004093b PMID:957439
 A Levitt, M.
 T A simplified representation of protein conformations for rapid simulation of 
   protein folfing
@@ -2846,7 +2846,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H LEVM760104
 D Side chain torsion angle phi(AAAR) (Levitt, 1976)
-R PMID:957439
+R LIT:2004093b PMID:957439
 A Levitt, M.
 T A simplified representation of protein conformations for rapid simulation of 
   protein folfing
@@ -2859,7 +2859,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H LEVM760105
 D Radius of gyration of side chain (Levitt, 1976)
-R PMID:957439
+R LIT:2004093b PMID:957439
 A Levitt, M.
 T A simplified representation of protein conformations for rapid simulation of 
   protein folfing
@@ -2879,7 +2879,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H LEVM760106
 D van der Waals parameter R0 (Levitt, 1976)
-R PMID:957439
+R LIT:2004093b PMID:957439
 A Levitt, M.
 T A simplified representation of protein conformations for rapid simulation of 
   protein folfing
@@ -2900,7 +2900,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H LEVM760107
 D van der Waals parameter epsilon (Levitt, 1976)
-R PMID:957439
+R LIT:2004093b PMID:957439
 A Levitt, M.
 T A simplified representation of protein conformations for rapid simulation of 
   protein folfing
@@ -2919,7 +2919,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H LEVM780101
 D Normalized frequency of alpha-helix, with weights (Levitt, 1978)
-R PMID:708713
+R LIT:0411042 PMID:708713
 A Levitt, M.
 T Conformational preferences of amino acids in globular proteins
 J Biochemistry 17, 4277-4285 (1978)
@@ -2936,7 +2936,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H LEVM780102
 D Normalized frequency of beta-sheet, with weights (Levitt, 1978)
-R PMID:708713
+R LIT:0411042 PMID:708713
 A Levitt, M.
 T Conformational preferences of amino acids in globular proteins
 J Biochemistry 17, 4277-4285 (1978)
@@ -2952,7 +2952,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H LEVM780103
 D Normalized frequency of reverse turn, with weights (Levitt, 1978)
-R PMID:708713
+R LIT:0411042 PMID:708713
 A Levitt, M.
 T Conformational preferences of amino acids in globular proteins
 J Biochemistry 17, 4277-4285 (1978)
@@ -2972,7 +2972,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H LEVM780104
 D Normalized frequency of alpha-helix, unweighted (Levitt, 1978)
-R PMID:708713
+R LIT:0411042 PMID:708713
 A Levitt, M.
 T Conformational preferences of amino acids in globular proteins
 J Biochemistry 17, 4277-4285 (1978)
@@ -2989,7 +2989,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H LEVM780105
 D Normalized frequency of beta-sheet, unweighted (Levitt, 1978)
-R PMID:708713
+R LIT:0411042 PMID:708713
 A Levitt, M.
 T Conformational preferences of amino acids in globular proteins
 J Biochemistry 17, 4277-4285 (1978)
@@ -3006,7 +3006,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H LEVM780106
 D Normalized frequency of reverse turn, unweighted (Levitt, 1978)
-R PMID:708713
+R LIT:0411042 PMID:708713
 A Levitt, M.
 T Conformational preferences of amino acids in globular proteins
 J Biochemistry 17, 4277-4285 (1978)
@@ -3037,7 +3037,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H LIFS790101
 D Conformational preference for all beta-strands (Lifson-Sander, 1979)
-R PMID:503185
+R LIT:0512128 PMID:503185
 A Lifson, S. and Sander, C.
 T Antiparallel and parallel beta-strands differ in amino acid residue 
   preference
@@ -3069,7 +3069,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H LIFS790102
 D Conformational preference for parallel beta-strands (Lifson-Sander, 1979)
-R PMID:503185
+R LIT:0512128 PMID:503185
 A Lifson, S. and Sander, C.
 T Antiparallel and parallel beta-strands differ in amino acid residue 
   preference
@@ -3084,7 +3084,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H LIFS790103
 D Conformational preference for antiparallel beta-strands (Lifson-Sander, 1979)
-R PMID:503185
+R LIT:0512128 PMID:503185
 A Lifson, S. and Sander, C.
 T Antiparallel and parallel beta-strands differ in amino acid residue 
   preference
@@ -3103,7 +3103,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H MANP780101
 D Average surrounding hydrophobicity (Manavalan-Ponnuswamy, 1978)
-R PMID:703834
+R LIT:0411088 PMID:703834
 A Manavalan, P. and Ponnuswamy, P.K.
 T Hydrophobic character of amino acid residues in globular proteins
 J Nature 275, 673-674 (1978)
@@ -3143,7 +3143,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H MAXF760101
 D Normalized frequency of alpha-helix (Maxfield-Scheraga, 1976)
-R PMID:990270
+R LIT:2004036b PMID:990270
 A Maxfield, F.R. and Scheraga, H.A.
 T Status of empirical methods for the prediction of protein backbone topography
 J Biochemistry 15, 5138-5153 (1976) Recalculated by Kidera using a different 
@@ -3165,7 +3165,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H MAXF760102
 D Normalized frequency of extended structure (Maxfield-Scheraga, 1976)
-R PMID:990270
+R LIT:2004036b PMID:990270
 A Maxfield, F.R. and Scheraga, H.A.
 T Status of empirical methods for the prediction of protein backbone topography
 J Biochemistry 15, 5138-5153 (1976) Recalculated by Kidera using a different 
@@ -3178,7 +3178,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H MAXF760103
 D Normalized frequency of zeta R (Maxfield-Scheraga, 1976)
-R PMID:990270
+R LIT:2004036b PMID:990270
 A Maxfield, F.R. and Scheraga, H.A.
 T Status of empirical methods for the prediction of protein backbone topography
 J Biochemistry 15, 5138-5153 (1976) Recalculated by Kidera using a different 
@@ -3190,7 +3190,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H MAXF760104
 D Normalized frequency of left-handed alpha-helix (Maxfield-Scheraga, 1976)
-R PMID:990270
+R LIT:2004036b PMID:990270
 A Maxfield, F.R. and Scheraga, H.A.
 T Status of empirical methods for the prediction of protein backbone topography
 J Biochemistry 15, 5138-5153 (1976) Recalculated by Kidera using a different 
@@ -3204,7 +3204,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H MAXF760105
 D Normalized frequency of zeta L (Maxfield-Scheraga, 1976)
-R PMID:990270
+R LIT:2004036b PMID:990270
 A Maxfield, F.R. and Scheraga, H.A.
 T Status of empirical methods for the prediction of protein backbone topography
 J Biochemistry 15, 5138-5153 (1976) Recalculated by Kidera using a different 
@@ -3217,7 +3217,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H MAXF760106
 D Normalized frequency of alpha region (Maxfield-Scheraga, 1976)
-R PMID:990270
+R LIT:2004036b PMID:990270
 A Maxfield, F.R. and Scheraga, H.A.
 T Status of empirical methods for the prediction of protein backbone topography
 J Biochemistry 15, 5138-5153 (1976) Recalculated by Kidera using a different 
@@ -3244,7 +3244,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H MEEJ800101
 D Retention coefficient in HPLC, pH7.4 (Meek, 1980)
-R PMID:6929513
+R LIT:0604247 PMID:6929513
 A Meek, J.L.
 T Prediction of peptide retention times in high-pressure liquid chromatography 
   on the basis of amino acid composition
@@ -3258,7 +3258,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H MEEJ800102
 D Retention coefficient in HPLC, pH2.1 (Meek, 1980)
-R PMID:6929513
+R LIT:0604247 PMID:6929513
 A Meek, J.L.
 T Prediction of peptide retention times in high-pressure liquid chromatography 
   on the basis of amino acid composition
@@ -3280,7 +3280,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H MEEJ810101
 D Retention coefficient in NaClO4 (Meek-Rossetti, 1981)
-R
+R LIT:0708201
 A Meek, J.L. and Rossetti, Z.L.
 T Factors affecting retention and resolution of peptides in high-performance 
   liquid chromatography
@@ -3309,7 +3309,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H MEEJ810102
 D Retention coefficient in NaH2PO4 (Meek-Rossetti, 1981)
-R
+R LIT:0708201
 A Meek, J.L. and Rossetti, Z.L.
 T Factors affecting retention and resolution of peptides in high-performance 
   liquid chromatography
@@ -3335,7 +3335,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H MEIH800101
 D Average reduced distance for C-alpha (Meirovitch et al., 1980)
-R
+R LIT:0702089
 A Meirovitch, H., Rackovsky, S. and Scheraga, H.A.
 T Empirical studies of hydrophobicity. 1. Effect of protein size on the 
   hydrophobic behavior of amino acids
@@ -3373,7 +3373,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H MEIH800102
 D Average reduced distance for side chain (Meirovitch et al., 1980)
-R
+R LIT:0702089
 A Meirovitch, H., Rackovsky, S. and Scheraga, H.A.
 T Empirical studies of hydrophobicity. 1. Effect of protein size on the 
   hydrophobic behavior of amino acids
@@ -3413,7 +3413,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H MEIH800103
 D Average side chain orientation angle (Meirovitch et al., 1980)
-R
+R LIT:0702089
 A Meirovitch, H., Rackovsky, S. and Scheraga, H.A.
 T Empirical studies of hydrophobicity. 1. Effect of protein size on the 
   hydrophobic behavior of amino acids
@@ -3450,7 +3450,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H MIYS850101
 D Effective partition energy (Miyazawa-Jernigan, 1985)
-R
+R LIT:2004114b
 A Miyazawa, S. and Jernigan, R.L.
 T Estimation of effective interresidue contact energies from protein crystal 
   structures: Quasi-chemical approximation
@@ -3544,7 +3544,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H NAKH900101
 D AA composition of total proteins (Nakashima et al., 1990)
-R PMID:2235995
+R LIT:2004138b PMID:2235995
 A Nakashima, H., Nishikawa, K. and Ooi, T.
 T Distinct character in hydrophobicity of amino acid composition of 
   mitochondrial proteins
@@ -3563,7 +3563,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H NAKH900102
 D SD of AA composition of total proteins (Nakashima et al., 1990)
-R PMID:2235995
+R LIT:2004138b PMID:2235995
 A Nakashima, H., Nishikawa, K. and Ooi, T.
 T Distinct character in hydrophobicity of amino acid composition of 
   mitochondrial proteins
@@ -3578,7 +3578,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H NAKH900103
 D AA composition of mt-proteins (Nakashima et al., 1990)
-R PMID:2235995
+R LIT:2004138b PMID:2235995
 A Nakashima, H., Nishikawa, K. and Ooi, T.
 T Distinct character in hydrophobicity of amino acid composition of 
   mitochondrial proteins
@@ -3592,7 +3592,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H NAKH900104
 D Normalized composition of mt-proteins (Nakashima et al., 1990)
-R PMID:2235995
+R LIT:2004138b PMID:2235995
 A Nakashima, H., Nishikawa, K. and Ooi, T.
 T Distinct character in hydrophobicity of amino acid composition of 
   mitochondrial proteins
@@ -3604,7 +3604,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H NAKH900105
 D AA composition of mt-proteins from animal (Nakashima et al., 1990)
-R PMID:2235995
+R LIT:2004138b PMID:2235995
 A Nakashima, H., Nishikawa, K. and Ooi, T.
 T Distinct character in hydrophobicity of amino acid composition of 
   mitochondrial proteins
@@ -3618,7 +3618,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H NAKH900106
 D Normalized composition from animal (Nakashima et al., 1990)
-R PMID:2235995
+R LIT:2004138b PMID:2235995
 A Nakashima, H., Nishikawa, K. and Ooi, T.
 T Distinct character in hydrophobicity of amino acid composition of 
   mitochondrial proteins
@@ -3630,7 +3630,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H NAKH900107
 D AA composition of mt-proteins from fungi and plant (Nakashima et al., 1990)
-R PMID:2235995
+R LIT:2004138b PMID:2235995
 A Nakashima, H., Nishikawa, K. and Ooi, T.
 T Distinct character in hydrophobicity of amino acid composition of 
   mitochondrial proteins
@@ -3644,7 +3644,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H NAKH900108
 D Normalized composition from fungi and plant (Nakashima et al., 1990)
-R PMID:2235995
+R LIT:2004138b PMID:2235995
 A Nakashima, H., Nishikawa, K. and Ooi, T.
 T Distinct character in hydrophobicity of amino acid composition of 
   mitochondrial proteins
@@ -3656,7 +3656,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H NAKH900109
 D AA composition of membrane proteins (Nakashima et al., 1990)
-R PMID:2235995
+R LIT:2004138b PMID:2235995
 A Nakashima, H., Nishikawa, K. and Ooi, T.
 T Distinct character in hydrophobicity of amino acid composition of 
   mitochondrial proteins
@@ -3673,7 +3673,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H NAKH900110
 D Normalized composition of membrane proteins (Nakashima et al., 1990)
-R PMID:2235995
+R LIT:2004138b PMID:2235995
 A Nakashima, H., Nishikawa, K. and Ooi, T.
 T Distinct character in hydrophobicity of amino acid composition of 
   mitochondrial proteins
@@ -3690,7 +3690,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H NAKH900111
 D Transmembrane regions of non-mt-proteins (Nakashima et al., 1990)
-R PMID:2235995
+R LIT:2004138b PMID:2235995
 A Nakashima, H., Nishikawa, K. and Ooi, T.
 T Distinct character in hydrophobicity of amino acid composition of 
   mitochondrial proteins
@@ -3705,7 +3705,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H NAKH900112
 D Transmembrane regions of mt-proteins (Nakashima et al., 1990)
-R PMID:2235995
+R LIT:2004138b PMID:2235995
 A Nakashima, H., Nishikawa, K. and Ooi, T.
 T Distinct character in hydrophobicity of amino acid composition of 
   mitochondrial proteins
@@ -3719,7 +3719,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H NAKH900113
 D Ratio of average and computed composition (Nakashima et al., 1990)
-R PMID:2235995
+R LIT:2004138b PMID:2235995
 A Nakashima, H., Nishikawa, K. and Ooi, T.
 T Distinct character in hydrophobicity of amino acid composition of 
   mitochondrial proteins
@@ -3731,7 +3731,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H NAKH920101
 D AA composition of CYT of single-spanning proteins (Nakashima-Nishikawa, 1992)
-R PMID:1607012
+R LIT:1811095b PMID:1607012
 A Nakashima, H. and Nishikawa, K.
 T The amino acid composition is different between the cytoplasmic and 
   extracellular sides in membrane proteins
@@ -3749,7 +3749,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 H NAKH920102
 D AA composition of CYT2 of single-spanning proteins (Nakashima-Nishikawa, 
   1992)
-R PMID:1607012
+R LIT:1811095b PMID:1607012
 A Nakashima, H. and Nishikawa, K.
 T The amino acid composition is different between the cytoplasmic and 
   extracellular sides in membrane proteins
@@ -3762,7 +3762,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H NAKH920103
 D AA composition of EXT of single-spanning proteins (Nakashima-Nishikawa, 1992)
-R PMID:1607012
+R LIT:1811095b PMID:1607012
 A Nakashima, H. and Nishikawa, K.
 T The amino acid composition is different between the cytoplasmic and 
   extracellular sides in membrane proteins
@@ -3779,7 +3779,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 H NAKH920104
 D AA composition of EXT2 of single-spanning proteins (Nakashima-Nishikawa, 
   1992)
-R PMID:1607012
+R LIT:1811095b PMID:1607012
 A Nakashima, H. and Nishikawa, K.
 T The amino acid composition is different between the cytoplasmic and 
   extracellular sides in membrane proteins
@@ -3795,7 +3795,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H NAKH920105
 D AA composition of MEM of single-spanning proteins (Nakashima-Nishikawa, 1992)
-R PMID:1607012
+R LIT:1811095b PMID:1607012
 A Nakashima, H. and Nishikawa, K.
 T The amino acid composition is different between the cytoplasmic and 
   extracellular sides in membrane proteins
@@ -3811,7 +3811,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H NAKH920106
 D AA composition of CYT of multi-spanning proteins (Nakashima-Nishikawa, 1992)
-R PMID:1607012
+R LIT:1811095b PMID:1607012
 A Nakashima, H. and Nishikawa, K.
 T The amino acid composition is different between the cytoplasmic and 
   extracellular sides in membrane proteins
@@ -3828,7 +3828,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H NAKH920107
 D AA composition of EXT of multi-spanning proteins (Nakashima-Nishikawa, 1992)
-R PMID:1607012
+R LIT:1811095b PMID:1607012
 A Nakashima, H. and Nishikawa, K.
 T The amino acid composition is different between the cytoplasmic and 
   extracellular sides in membrane proteins
@@ -3844,7 +3844,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H NAKH920108
 D AA composition of MEM of multi-spanning proteins (Nakashima-Nishikawa, 1992)
-R PMID:1607012
+R LIT:1811095b PMID:1607012
 A Nakashima, H. and Nishikawa, K.
 T The amino acid composition is different between the cytoplasmic and 
   extracellular sides in membrane proteins
@@ -3860,7 +3860,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H NISK800101
 D 8 A contact number (Nishikawa-Ooi, 1980)
-R PMID:7440060
+R LIT:2004068b PMID:7440060
 A Nishikawa, K. and Ooi, T.
 T Prediction of the surface-interior diagram of globular proteins by an 
   empirical method
@@ -3896,7 +3896,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H NISK860101
 D 14 A contact number (Nishikawa-Ooi, 1986)
-R PMID:3818558
+R LIT:1211490 PMID:3818558
 A Nishikawa, K. and Ooi, T.
 T Radial locations of amino acid residues in a globular protein: Correlation 
   with the sequence
@@ -3962,7 +3962,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H OOBM770101
 D Average non-bonded energy per atom (Oobatake-Ooi, 1977)
-R PMID:904331
+R LIT:2004111b PMID:904331
 A Oobatake, M. and Ooi, T.
 T An analysis of non-bonded energy of proteins
 J J. Theor. Biol. 67, 567-584 (1977) Last two calcualted by Kidera; multiplied 
@@ -3994,7 +3994,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H OOBM770102
 D Short and medium range non-bonded energy per atom (Oobatake-Ooi, 1977)
-R PMID:904331
+R LIT:2004111b PMID:904331
 A Oobatake, M. and Ooi, T.
 T An analysis of non-bonded energy of proteins
 J J. Theor. Biol. 67, 567-584 (1977) Last two calcualted by Kidera; multiplied 
@@ -4007,7 +4007,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H OOBM770103
 D Long range non-bonded energy per atom (Oobatake-Ooi, 1977)
-R PMID:904331
+R LIT:2004111b PMID:904331
 A Oobatake, M. and Ooi, T.
 T An analysis of non-bonded energy of proteins
 J J. Theor. Biol. 67, 567-584 (1977) Last two calcualted by Kidera; multiplied 
@@ -4046,7 +4046,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H OOBM770104
 D Average non-bonded energy per residue (Oobatake-Ooi, 1977)
-R PMID:904331
+R LIT:2004111b PMID:904331
 A Oobatake, M. and Ooi, T.
 T An analysis of non-bonded energy of proteins
 J J. Theor. Biol. 67, 567-584 (1977) Last two calcualted by Kidera; multiplied 
@@ -4058,7 +4058,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H OOBM770105
 D Short and medium range non-bonded energy per residue (Oobatake-Ooi, 1977)
-R PMID:904331
+R LIT:2004111b PMID:904331
 A Oobatake, M. and Ooi, T.
 T An analysis of non-bonded energy of proteins
 J J. Theor. Biol. 67, 567-584 (1977) Last two calcualted by Kidera; multiplied 
@@ -4070,7 +4070,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H OOBM850101
 D Optimized beta-structure-coil equilibrium constant (Oobatake et al., 1985)
-R
+R LIT:1207075b
 A Oobatake, M., Kubota, Y. and Ooi, T.
 T Optimization of amino acid parameters for correspondence of sequence to 
   tertiary structures of proteuins
@@ -4082,7 +4082,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H OOBM850102
 D Optimized propensity to form reverse turn (Oobatake et al., 1985)
-R
+R LIT:1207075b
 A Oobatake, M., Kubota, Y. and Ooi, T.
 T Optimization of amino acid parameters for correspondence of sequence to 
   tertiary structures of proteuins
@@ -4094,7 +4094,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H OOBM850103
 D Optimized transfer energy parameter (Oobatake et al., 1985)
-R
+R LIT:1207075b
 A Oobatake, M., Kubota, Y. and Ooi, T.
 T Optimization of amino acid parameters for correspondence of sequence to 
   tertiary structures of proteuins
@@ -4106,7 +4106,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H OOBM850104
 D Optimized average non-bonded energy per atom (Oobatake et al., 1985)
-R
+R LIT:1207075b
 A Oobatake, M., Kubota, Y. and Ooi, T.
 T Optimization of amino acid parameters for correspondence of sequence to 
   tertiary structures of proteuins
@@ -4118,7 +4118,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H OOBM850105
 D Optimized side chain interaction parameter (Oobatake et al., 1985)
-R
+R LIT:1207075b
 A Oobatake, M., Kubota, Y. and Ooi, T.
 T Optimization of amino acid parameters for correspondence of sequence to 
   tertiary structures of proteuins
@@ -4130,7 +4130,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H PALJ810101
 D Normalized frequency of alpha-helix from LG (Palau et al., 1981)
-R PMID:7118409
+R LIT:0805095 PMID:7118409
 A Palau, J., Argos, P. and Puigdomenech, P.
 T Protein secondary structure
 J Int. J. Peptide Protein Res. 19, 394-401 (1981) LG :a set of protein samples 
@@ -4147,7 +4147,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H PALJ810102
 D Normalized frequency of alpha-helix from CF (Palau et al., 1981)
-R PMID:7118409
+R LIT:0805095 PMID:7118409
 A Palau, J., Argos, P. and Puigdomenech, P.
 T Protein secondary structure
 J Int. J. Peptide Protein Res. 19, 394-401 (1981) LG :a set of protein samples 
@@ -4169,7 +4169,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H PALJ810103
 D Normalized frequency of beta-sheet from LG (Palau et al., 1981)
-R PMID:7118409
+R LIT:0805095 PMID:7118409
 A Palau, J., Argos, P. and Puigdomenech, P.
 T Protein secondary structure
 J Int. J. Peptide Protein Res. 19, 394-401 (1981) LG :a set of protein samples 
@@ -4188,7 +4188,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H PALJ810104
 D Normalized frequency of beta-sheet from CF (Palau et al., 1981)
-R PMID:7118409
+R LIT:0805095 PMID:7118409
 A Palau, J., Argos, P. and Puigdomenech, P.
 T Protein secondary structure
 J Int. J. Peptide Protein Res. 19, 394-401 (1981) LG :a set of protein samples 
@@ -4211,7 +4211,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H PALJ810105
 D Normalized frequency of turn from LG (Palau et al., 1981)
-R PMID:7118409
+R LIT:0805095 PMID:7118409
 A Palau, J., Argos, P. and Puigdomenech, P.
 T Protein secondary structure
 J Int. J. Peptide Protein Res. 19, 394-401 (1981) LG :a set of protein samples 
@@ -4228,7 +4228,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H PALJ810106
 D Normalized frequency of turn from CF (Palau et al., 1981)
-R PMID:7118409
+R LIT:0805095 PMID:7118409
 A Palau, J., Argos, P. and Puigdomenech, P.
 T Protein secondary structure
 J Int. J. Peptide Protein Res. 19, 394-401 (1981) LG :a set of protein samples 
@@ -4249,7 +4249,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H PALJ810107
 D Normalized frequency of alpha-helix in all-alpha class (Palau et al., 1981)
-R PMID:7118409
+R LIT:0805095 PMID:7118409
 A Palau, J., Argos, P. and Puigdomenech, P.
 T Protein secondary structure
 J Int. J. Peptide Protein Res. 19, 394-401 (1981) LG :a set of protein samples 
@@ -4261,7 +4261,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H PALJ810108
 D Normalized frequency of alpha-helix in alpha+beta class (Palau et al., 1981)
-R PMID:7118409
+R LIT:0805095 PMID:7118409
 A Palau, J., Argos, P. and Puigdomenech, P.
 T Protein secondary structure
 J Int. J. Peptide Protein Res. 19, 394-401 (1981) LG :a set of protein samples 
@@ -4273,7 +4273,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H PALJ810109
 D Normalized frequency of alpha-helix in alpha/beta class (Palau et al., 1981)
-R PMID:7118409
+R LIT:0805095 PMID:7118409
 A Palau, J., Argos, P. and Puigdomenech, P.
 T Protein secondary structure
 J Int. J. Peptide Protein Res. 19, 394-401 (1981) LG :a set of protein samples 
@@ -4289,7 +4289,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H PALJ810110
 D Normalized frequency of beta-sheet in all-beta class (Palau et al., 1981)
-R PMID:7118409
+R LIT:0805095 PMID:7118409
 A Palau, J., Argos, P. and Puigdomenech, P.
 T Protein secondary structure
 J Int. J. Peptide Protein Res. 19, 394-401 (1981) LG :a set of protein samples 
@@ -4305,7 +4305,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H PALJ810111
 D Normalized frequency of beta-sheet in alpha+beta class (Palau et al., 1981)
-R PMID:7118409
+R LIT:0805095 PMID:7118409
 A Palau, J., Argos, P. and Puigdomenech, P.
 T Protein secondary structure
 J Int. J. Peptide Protein Res. 19, 394-401 (1981) LG :a set of protein samples 
@@ -4317,7 +4317,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H PALJ810112
 D Normalized frequency of beta-sheet in alpha/beta class (Palau et al., 1981)
-R PMID:7118409
+R LIT:0805095 PMID:7118409
 A Palau, J., Argos, P. and Puigdomenech, P.
 T Protein secondary structure
 J Int. J. Peptide Protein Res. 19, 394-401 (1981) LG :a set of protein samples 
@@ -4333,7 +4333,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H PALJ810113
 D Normalized frequency of turn in all-alpha class (Palau et al., 1981)
-R PMID:7118409
+R LIT:0805095 PMID:7118409
 A Palau, J., Argos, P. and Puigdomenech, P.
 T Protein secondary structure
 J Int. J. Peptide Protein Res. 19, 394-401 (1981) LG :a set of protein samples 
@@ -4346,7 +4346,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H PALJ810114
 D Normalized frequency of turn in all-beta class (Palau et al., 1981)
-R PMID:7118409
+R LIT:0805095 PMID:7118409
 A Palau, J., Argos, P. and Puigdomenech, P.
 T Protein secondary structure
 J Int. J. Peptide Protein Res. 19, 394-401 (1981) LG :a set of protein samples 
@@ -4359,7 +4359,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H PALJ810115
 D Normalized frequency of turn in alpha+beta class (Palau et al., 1981)
-R PMID:7118409
+R LIT:0805095 PMID:7118409
 A Palau, J., Argos, P. and Puigdomenech, P.
 T Protein secondary structure
 J Int. J. Peptide Protein Res. 19, 394-401 (1981) LG :a set of protein samples 
@@ -4371,7 +4371,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H PALJ810116
 D Normalized frequency of turn in alpha/beta class (Palau et al., 1981)
-R PMID:7118409
+R LIT:0805095 PMID:7118409
 A Palau, J., Argos, P. and Puigdomenech, P.
 T Protein secondary structure
 J Int. J. Peptide Protein Res. 19, 394-401 (1981) LG :a set of protein samples 
@@ -4383,7 +4383,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H PARJ860101
 D HPLC parameter (Parker et al., 1986)
-R PMID:2430611
+R LIT:1211071 PMID:2430611
 A Parker, J.M.R., Guo, D. and Hodges, R.S.
 T New hydrophilicity scale derived from high-performance liquid chromatography 
   peptide retention data: Correlation of predicted surface residues with 
@@ -4423,7 +4423,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H PLIV810101
 D Partition coefficient (Pliska et al., 1981)
-R
+R LIT:0712223
 A Pliska, V., Schmidt, M. and Fauchere, J.L.
 T Partition coefficients of amino acids and hydrophobic parameters pi of their 
   side-chains as measured by thin-layer chromatography
@@ -4461,7 +4461,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H PONP800101
 D Surrounding hydrophobicity in folded form (Ponnuswamy et al., 1980)
-R PMID:7397216
+R LIT:0608056 PMID:7397216
 A Ponnuswamy, P.K., Prabhakaran, M. and Manavalan, P.
 T Hydrophobic packing and spatial arrangement of amino acid residues in 
   globular proteins
@@ -4500,7 +4500,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H PONP800102
 D Average gain in surrounding hydrophobicity (Ponnuswamy et al., 1980)
-R PMID:7397216
+R LIT:0608056 PMID:7397216
 A Ponnuswamy, P.K., Prabhakaran, M. and Manavalan, P.
 T Hydrophobic packing and spatial arrangement of amino acid residues in 
   globular proteins
@@ -4537,7 +4537,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H PONP800103
 D Average gain ratio in surrounding hydrophobicity (Ponnuswamy et al., 1980)
-R PMID:7397216
+R LIT:0608056 PMID:7397216
 A Ponnuswamy, P.K., Prabhakaran, M. and Manavalan, P.
 T Hydrophobic packing and spatial arrangement of amino acid residues in 
   globular proteins
@@ -4574,7 +4574,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H PONP800104
 D Surrounding hydrophobicity in alpha-helix (Ponnuswamy et al., 1980)
-R PMID:7397216
+R LIT:0608056 PMID:7397216
 A Ponnuswamy, P.K., Prabhakaran, M. and Manavalan, P.
 T Hydrophobic packing and spatial arrangement of amino acid residues in 
   globular proteins
@@ -4586,7 +4586,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H PONP800105
 D Surrounding hydrophobicity in beta-sheet (Ponnuswamy et al., 1980)
-R PMID:7397216
+R LIT:0608056 PMID:7397216
 A Ponnuswamy, P.K., Prabhakaran, M. and Manavalan, P.
 T Hydrophobic packing and spatial arrangement of amino acid residues in 
   globular proteins
@@ -4598,7 +4598,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H PONP800106
 D Surrounding hydrophobicity in turn (Ponnuswamy et al., 1980)
-R PMID:7397216
+R LIT:0608056 PMID:7397216
 A Ponnuswamy, P.K., Prabhakaran, M. and Manavalan, P.
 T Hydrophobic packing and spatial arrangement of amino acid residues in 
   globular proteins
@@ -4615,7 +4615,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H PONP800107
 D Accessibility reduction ratio (Ponnuswamy et al., 1980)
-R PMID:7397216
+R LIT:0608056 PMID:7397216
 A Ponnuswamy, P.K., Prabhakaran, M. and Manavalan, P.
 T Hydrophobic packing and spatial arrangement of amino acid residues in 
   globular proteins
@@ -4638,7 +4638,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H PONP800108
 D Average number of surrounding residues (Ponnuswamy et al., 1980)
-R PMID:7397216
+R LIT:0608056 PMID:7397216
 A Ponnuswamy, P.K., Prabhakaran, M. and Manavalan, P.
 T Hydrophobic packing and spatial arrangement of amino acid residues in 
   globular proteins
@@ -4674,7 +4674,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H PRAM820101
 D Intercept in regression analysis (Prabhakaran-Ponnuswamy, 1982)
-R
+R LIT:2004113b
 A Prabhakaran, M. and Ponnuswamy, P.K.
 T Shape and surface features of globular proteins
 J Macromolecules 15, 314-320 (1982) Regression analysis of solvent contact area 
@@ -4686,7 +4686,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H PRAM820102
 D Slope in regression analysis x 1.0E1 (Prabhakaran-Ponnuswamy, 1982)
-R
+R LIT:2004113b
 A Prabhakaran, M. and Ponnuswamy, P.K.
 T Shape and surface features of globular proteins
 J Macromolecules 15, 314-320 (1982) Regression analysis of solvent contact area 
@@ -4698,7 +4698,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H PRAM820103
 D Correlation coefficient in regression analysis (Prabhakaran-Ponnuswamy, 1982)
-R
+R LIT:2004113b
 A Prabhakaran, M. and Ponnuswamy, P.K.
 T Shape and surface features of globular proteins
 J Macromolecules 15, 314-320 (1982) Regression analysis of solvent contact area 
@@ -4710,7 +4710,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H PRAM900101
 D Hydrophobicity (Prabhakaran, 1990)
-R PMID:2390062
+R LIT:1614053b PMID:2390062
 A Prabhakaran, M.
 T The distribution of physical, chemical and conformational properties in 
   signal and nascent peptides
@@ -4737,7 +4737,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H PRAM900102
 D Relative frequency in alpha-helix (Prabhakaran, 1990)
-R PMID:2390062
+R LIT:1614053b PMID:2390062
 A Prabhakaran, M.
 T The distribution of physical, chemical and conformational properties in 
   signal and nascent peptides
@@ -4757,7 +4757,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H PRAM900103
 D Relative frequency in beta-sheet (Prabhakaran, 1990)
-R PMID:2390062
+R LIT:1614053b PMID:2390062
 A Prabhakaran, M.
 T The distribution of physical, chemical and conformational properties in 
   signal and nascent peptides
@@ -4776,7 +4776,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H PRAM900104
 D Relative frequency in reverse-turn (Prabhakaran, 1990)
-R PMID:2390062
+R LIT:1614053b PMID:2390062
 A Prabhakaran, M.
 T The distribution of physical, chemical and conformational properties in 
   signal and nascent peptides
@@ -4799,7 +4799,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H PTIO830101
 D Helix-coil equilibrium constant (Ptitsyn-Finkelstein, 1983)
-R PMID:6673754
+R LIT:0904057 PMID:6673754
 A Ptitsyn, O.B. and Finkelstein, A.V.
 T Theory of protein secondary structure and algorithm of its prediction
 J Biopolymers 22, 15-25 (1983) Charged state for Arg, His, Lys, Asp, and Glu
@@ -4821,7 +4821,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H PTIO830102
 D Beta-coil equilibrium constant (Ptitsyn-Finkelstein, 1983)
-R PMID:6673754
+R LIT:0904057 PMID:6673754
 A Ptitsyn, O.B. and Finkelstein, A.V.
 T Theory of protein secondary structure and algorithm of its prediction
 J Biopolymers 22, 15-25 (1983) Charged state for Arg, His, Lys, Asp, and Glu
@@ -4848,7 +4848,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H QIAN880101
 D Weights for alpha-helix at the window position of -6 (Qian-Sejnowski, 1988)
-R PMID:3172241
+R LIT:1411084 PMID:3172241
 A Qian, N. and Sejnowski, T.J.
 T Predicting the secondary structure of globular proteins using neural network 
   models
@@ -4860,7 +4860,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H QIAN880102
 D Weights for alpha-helix at the window position of -5 (Qian-Sejnowski, 1988)
-R PMID:3172241
+R LIT:1411084 PMID:3172241
 A Qian, N. and Sejnowski, T.J.
 T Predicting the secondary structure of globular proteins using neural network 
   models
@@ -4872,7 +4872,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H QIAN880103
 D Weights for alpha-helix at the window position of -4 (Qian-Sejnowski, 1988)
-R PMID:3172241
+R LIT:1411084 PMID:3172241
 A Qian, N. and Sejnowski, T.J.
 T Predicting the secondary structure of globular proteins using neural network 
   models
@@ -4884,7 +4884,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H QIAN880104
 D Weights for alpha-helix at the window position of -3 (Qian-Sejnowski, 1988)
-R PMID:3172241
+R LIT:1411084 PMID:3172241
 A Qian, N. and Sejnowski, T.J.
 T Predicting the secondary structure of globular proteins using neural network 
   models
@@ -4896,7 +4896,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H QIAN880105
 D Weights for alpha-helix at the window position of -2 (Qian-Sejnowski, 1988)
-R PMID:3172241
+R LIT:1411084 PMID:3172241
 A Qian, N. and Sejnowski, T.J.
 T Predicting the secondary structure of globular proteins using neural network 
   models
@@ -4912,7 +4912,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H QIAN880106
 D Weights for alpha-helix at the window position of -1 (Qian-Sejnowski, 1988)
-R PMID:3172241
+R LIT:1411084 PMID:3172241
 A Qian, N. and Sejnowski, T.J.
 T Predicting the secondary structure of globular proteins using neural network 
   models
@@ -4933,7 +4933,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H QIAN880107
 D Weights for alpha-helix at the window position of 0 (Qian-Sejnowski, 1988)
-R PMID:3172241
+R LIT:1411084 PMID:3172241
 A Qian, N. and Sejnowski, T.J.
 T Predicting the secondary structure of globular proteins using neural network 
   models
@@ -4957,7 +4957,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H QIAN880108
 D Weights for alpha-helix at the window position of 1 (Qian-Sejnowski, 1988)
-R PMID:3172241
+R LIT:1411084 PMID:3172241
 A Qian, N. and Sejnowski, T.J.
 T Predicting the secondary structure of globular proteins using neural network 
   models
@@ -4975,7 +4975,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H QIAN880109
 D Weights for alpha-helix at the window position of 2 (Qian-Sejnowski, 1988)
-R PMID:3172241
+R LIT:1411084 PMID:3172241
 A Qian, N. and Sejnowski, T.J.
 T Predicting the secondary structure of globular proteins using neural network 
   models
@@ -4994,7 +4994,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H QIAN880110
 D Weights for alpha-helix at the window position of 3 (Qian-Sejnowski, 1988)
-R PMID:3172241
+R LIT:1411084 PMID:3172241
 A Qian, N. and Sejnowski, T.J.
 T Predicting the secondary structure of globular proteins using neural network 
   models
@@ -5009,7 +5009,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H QIAN880111
 D Weights for alpha-helix at the window position of 4 (Qian-Sejnowski, 1988)
-R PMID:3172241
+R LIT:1411084 PMID:3172241
 A Qian, N. and Sejnowski, T.J.
 T Predicting the secondary structure of globular proteins using neural network 
   models
@@ -5023,7 +5023,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H QIAN880112
 D Weights for alpha-helix at the window position of 5 (Qian-Sejnowski, 1988)
-R PMID:3172241
+R LIT:1411084 PMID:3172241
 A Qian, N. and Sejnowski, T.J.
 T Predicting the secondary structure of globular proteins using neural network 
   models
@@ -5036,7 +5036,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H QIAN880113
 D Weights for alpha-helix at the window position of 6 (Qian-Sejnowski, 1988)
-R PMID:3172241
+R LIT:1411084 PMID:3172241
 A Qian, N. and Sejnowski, T.J.
 T Predicting the secondary structure of globular proteins using neural network 
   models
@@ -5048,7 +5048,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H QIAN880114
 D Weights for beta-sheet at the window position of -6 (Qian-Sejnowski, 1988)
-R PMID:3172241
+R LIT:1411084 PMID:3172241
 A Qian, N. and Sejnowski, T.J.
 T Predicting the secondary structure of globular proteins using neural network 
   models
@@ -5060,7 +5060,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H QIAN880115
 D Weights for beta-sheet at the window position of -5 (Qian-Sejnowski, 1988)
-R PMID:3172241
+R LIT:1411084 PMID:3172241
 A Qian, N. and Sejnowski, T.J.
 T Predicting the secondary structure of globular proteins using neural network 
   models
@@ -5072,7 +5072,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H QIAN880116
 D Weights for beta-sheet at the window position of -4 (Qian-Sejnowski, 1988)
-R PMID:3172241
+R LIT:1411084 PMID:3172241
 A Qian, N. and Sejnowski, T.J.
 T Predicting the secondary structure of globular proteins using neural network 
   models
@@ -5084,7 +5084,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H QIAN880117
 D Weights for beta-sheet at the window position of -3 (Qian-Sejnowski, 1988)
-R PMID:3172241
+R LIT:1411084 PMID:3172241
 A Qian, N. and Sejnowski, T.J.
 T Predicting the secondary structure of globular proteins using neural network 
   models
@@ -5096,7 +5096,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H QIAN880118
 D Weights for beta-sheet at the window position of -2 (Qian-Sejnowski, 1988)
-R PMID:3172241
+R LIT:1411084 PMID:3172241
 A Qian, N. and Sejnowski, T.J.
 T Predicting the secondary structure of globular proteins using neural network 
   models
@@ -5109,7 +5109,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H QIAN880119
 D Weights for beta-sheet at the window position of -1 (Qian-Sejnowski, 1988)
-R PMID:3172241
+R LIT:1411084 PMID:3172241
 A Qian, N. and Sejnowski, T.J.
 T Predicting the secondary structure of globular proteins using neural network 
   models
@@ -5132,7 +5132,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H QIAN880120
 D Weights for beta-sheet at the window position of 0 (Qian-Sejnowski, 1988)
-R PMID:3172241
+R LIT:1411084 PMID:3172241
 A Qian, N. and Sejnowski, T.J.
 T Predicting the secondary structure of globular proteins using neural network 
   models
@@ -5160,7 +5160,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H QIAN880121
 D Weights for beta-sheet at the window position of 1 (Qian-Sejnowski, 1988)
-R PMID:3172241
+R LIT:1411084 PMID:3172241
 A Qian, N. and Sejnowski, T.J.
 T Predicting the secondary structure of globular proteins using neural network 
   models
@@ -5186,7 +5186,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H QIAN880122
 D Weights for beta-sheet at the window position of 2 (Qian-Sejnowski, 1988)
-R PMID:3172241
+R LIT:1411084 PMID:3172241
 A Qian, N. and Sejnowski, T.J.
 T Predicting the secondary structure of globular proteins using neural network 
   models
@@ -5200,7 +5200,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H QIAN880123
 D Weights for beta-sheet at the window position of 3 (Qian-Sejnowski, 1988)
-R PMID:3172241
+R LIT:1411084 PMID:3172241
 A Qian, N. and Sejnowski, T.J.
 T Predicting the secondary structure of globular proteins using neural network 
   models
@@ -5212,7 +5212,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H QIAN880124
 D Weights for beta-sheet at the window position of 4 (Qian-Sejnowski, 1988)
-R PMID:3172241
+R LIT:1411084 PMID:3172241
 A Qian, N. and Sejnowski, T.J.
 T Predicting the secondary structure of globular proteins using neural network 
   models
@@ -5224,7 +5224,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H QIAN880125
 D Weights for beta-sheet at the window position of 5 (Qian-Sejnowski, 1988)
-R PMID:3172241
+R LIT:1411084 PMID:3172241
 A Qian, N. and Sejnowski, T.J.
 T Predicting the secondary structure of globular proteins using neural network 
   models
@@ -5236,7 +5236,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H QIAN880126
 D Weights for beta-sheet at the window position of 6 (Qian-Sejnowski, 1988)
-R PMID:3172241
+R LIT:1411084 PMID:3172241
 A Qian, N. and Sejnowski, T.J.
 T Predicting the secondary structure of globular proteins using neural network 
   models
@@ -5248,7 +5248,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H QIAN880127
 D Weights for coil at the window position of -6 (Qian-Sejnowski, 1988)
-R PMID:3172241
+R LIT:1411084 PMID:3172241
 A Qian, N. and Sejnowski, T.J.
 T Predicting the secondary structure of globular proteins using neural network 
   models
@@ -5260,7 +5260,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H QIAN880128
 D Weights for coil at the window position of -5 (Qian-Sejnowski, 1988)
-R PMID:3172241
+R LIT:1411084 PMID:3172241
 A Qian, N. and Sejnowski, T.J.
 T Predicting the secondary structure of globular proteins using neural network 
   models
@@ -5272,7 +5272,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H QIAN880129
 D Weights for coil at the window position of -4 (Qian-Sejnowski, 1988)
-R PMID:3172241
+R LIT:1411084 PMID:3172241
 A Qian, N. and Sejnowski, T.J.
 T Predicting the secondary structure of globular proteins using neural network 
   models
@@ -5284,7 +5284,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H QIAN880130
 D Weights for coil at the window position of -3 (Qian-Sejnowski, 1988)
-R PMID:3172241
+R LIT:1411084 PMID:3172241
 A Qian, N. and Sejnowski, T.J.
 T Predicting the secondary structure of globular proteins using neural network 
   models
@@ -5296,7 +5296,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H QIAN880131
 D Weights for coil at the window position of -2 (Qian-Sejnowski, 1988)
-R PMID:3172241
+R LIT:1411084 PMID:3172241
 A Qian, N. and Sejnowski, T.J.
 T Predicting the secondary structure of globular proteins using neural network 
   models
@@ -5313,7 +5313,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H QIAN880132
 D Weights for coil at the window position of -1 (Qian-Sejnowski, 1988)
-R PMID:3172241
+R LIT:1411084 PMID:3172241
 A Qian, N. and Sejnowski, T.J.
 T Predicting the secondary structure of globular proteins using neural network 
   models
@@ -5335,7 +5335,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H QIAN880133
 D Weights for coil at the window position of 0 (Qian-Sejnowski, 1988)
-R PMID:3172241
+R LIT:1411084 PMID:3172241
 A Qian, N. and Sejnowski, T.J.
 T Predicting the secondary structure of globular proteins using neural network 
   models
@@ -5357,7 +5357,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H QIAN880134
 D Weights for coil at the window position of 1 (Qian-Sejnowski, 1988)
-R PMID:3172241
+R LIT:1411084 PMID:3172241
 A Qian, N. and Sejnowski, T.J.
 T Predicting the secondary structure of globular proteins using neural network 
   models
@@ -5379,7 +5379,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H QIAN880135
 D Weights for coil at the window position of 2 (Qian-Sejnowski, 1988)
-R PMID:3172241
+R LIT:1411084 PMID:3172241
 A Qian, N. and Sejnowski, T.J.
 T Predicting the secondary structure of globular proteins using neural network 
   models
@@ -5398,7 +5398,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H QIAN880136
 D Weights for coil at the window position of 3 (Qian-Sejnowski, 1988)
-R PMID:3172241
+R LIT:1411084 PMID:3172241
 A Qian, N. and Sejnowski, T.J.
 T Predicting the secondary structure of globular proteins using neural network 
   models
@@ -5411,7 +5411,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H QIAN880137
 D Weights for coil at the window position of 4 (Qian-Sejnowski, 1988)
-R PMID:3172241
+R LIT:1411084 PMID:3172241
 A Qian, N. and Sejnowski, T.J.
 T Predicting the secondary structure of globular proteins using neural network 
   models
@@ -5423,7 +5423,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H QIAN880138
 D Weights for coil at the window position of 5 (Qian-Sejnowski, 1988)
-R PMID:3172241
+R LIT:1411084 PMID:3172241
 A Qian, N. and Sejnowski, T.J.
 T Predicting the secondary structure of globular proteins using neural network 
   models
@@ -5435,7 +5435,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H QIAN880139
 D Weights for coil at the window position of 6 (Qian-Sejnowski, 1988)
-R PMID:3172241
+R LIT:1411084 PMID:3172241
 A Qian, N. and Sejnowski, T.J.
 T Predicting the secondary structure of globular proteins using neural network 
   models
@@ -5447,7 +5447,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H RACS770101
 D Average reduced distance for C-alpha (Rackovsky-Scheraga, 1977)
-R PMID:271950
+R LIT:2004126b PMID:271950
 A Rackovsky, S. and Scheraga, H.A.
 T Hydrophobicity, hydrophilicity, and the radial and orientational 
   distributions of residues in native proteins
@@ -5480,7 +5480,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H RACS770102
 D Average reduced distance for side chain (Rackovsky-Scheraga, 1977)
-R PMID:271950
+R LIT:2004126b PMID:271950
 A Rackovsky, S. and Scheraga, H.A.
 T Hydrophobicity, hydrophilicity, and the radial and orientational 
   distributions of residues in native proteins
@@ -5516,7 +5516,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H RACS770103
 D Side chain orientational preference (Rackovsky-Scheraga, 1977)
-R PMID:271950
+R LIT:2004126b PMID:271950
 A Rackovsky, S. and Scheraga, H.A.
 T Hydrophobicity, hydrophilicity, and the radial and orientational 
   distributions of residues in native proteins
@@ -5542,7 +5542,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H RACS820101
 D Average relative fractional occurrence in A0(i) (Rackovsky-Scheraga, 1982)
-R
+R LIT:0903736
 A Rackovsky, S. and Scheraga, H.A.
 T Differential geometry and polymer conformation. 4. Conformational and 
   nucleation properties of individual amino acids
@@ -5554,7 +5554,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H RACS820102
 D Average relative fractional occurrence in AR(i) (Rackovsky-Scheraga, 1982)
-R
+R LIT:0903736
 A Rackovsky, S. and Scheraga, H.A.
 T Differential geometry and polymer conformation. 4. Conformational and 
   nucleation properties of individual amino acids
@@ -5566,7 +5566,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H RACS820103
 D Average relative fractional occurrence in AL(i) (Rackovsky-Scheraga, 1982)
-R
+R LIT:0903736
 A Rackovsky, S. and Scheraga, H.A.
 T Differential geometry and polymer conformation. 4. Conformational and 
   nucleation properties of individual amino acids
@@ -5578,7 +5578,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H RACS820104
 D Average relative fractional occurrence in EL(i) (Rackovsky-Scheraga, 1982)
-R
+R LIT:0903736
 A Rackovsky, S. and Scheraga, H.A.
 T Differential geometry and polymer conformation. 4. Conformational and 
   nucleation properties of individual amino acids
@@ -5590,7 +5590,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H RACS820105
 D Average relative fractional occurrence in E0(i) (Rackovsky-Scheraga, 1982)
-R
+R LIT:0903736
 A Rackovsky, S. and Scheraga, H.A.
 T Differential geometry and polymer conformation. 4. Conformational and 
   nucleation properties of individual amino acids
@@ -5602,7 +5602,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H RACS820106
 D Average relative fractional occurrence in ER(i) (Rackovsky-Scheraga, 1982)
-R
+R LIT:0903736
 A Rackovsky, S. and Scheraga, H.A.
 T Differential geometry and polymer conformation. 4. Conformational and 
   nucleation properties of individual amino acids
@@ -5614,7 +5614,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H RACS820107
 D Average relative fractional occurrence in A0(i-1) (Rackovsky-Scheraga, 1982)
-R
+R LIT:0903736
 A Rackovsky, S. and Scheraga, H.A.
 T Differential geometry and polymer conformation. 4. Conformational and 
   nucleation properties of individual amino acids
@@ -5626,7 +5626,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H RACS820108
 D Average relative fractional occurrence in AR(i-1) (Rackovsky-Scheraga, 1982)
-R
+R LIT:0903736
 A Rackovsky, S. and Scheraga, H.A.
 T Differential geometry and polymer conformation. 4. Conformational and 
   nucleation properties of individual amino acids
@@ -5647,7 +5647,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H RACS820109
 D Average relative fractional occurrence in AL(i-1) (Rackovsky-Scheraga, 1982)
-R
+R LIT:0903736
 A Rackovsky, S. and Scheraga, H.A.
 T Differential geometry and polymer conformation. 4. Conformational and 
   nucleation properties of individual amino acids
@@ -5659,7 +5659,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H RACS820110
 D Average relative fractional occurrence in EL(i-1) (Rackovsky-Scheraga, 1982)
-R
+R LIT:0903736
 A Rackovsky, S. and Scheraga, H.A.
 T Differential geometry and polymer conformation. 4. Conformational and 
   nucleation properties of individual amino acids
@@ -5672,7 +5672,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H RACS820111
 D Average relative fractional occurrence in E0(i-1) (Rackovsky-Scheraga, 1982)
-R
+R LIT:0903736
 A Rackovsky, S. and Scheraga, H.A.
 T Differential geometry and polymer conformation. 4. Conformational and 
   nucleation properties of individual amino acids
@@ -5684,7 +5684,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H RACS820112
 D Average relative fractional occurrence in ER(i-1) (Rackovsky-Scheraga, 1982)
-R
+R LIT:0903736
 A Rackovsky, S. and Scheraga, H.A.
 T Differential geometry and polymer conformation. 4. Conformational and 
   nucleation properties of individual amino acids
@@ -5696,7 +5696,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H RACS820113
 D Value of theta(i) (Rackovsky-Scheraga, 1982)
-R
+R LIT:0903736
 A Rackovsky, S. and Scheraga, H.A.
 T Differential geometry and polymer conformation. 4. Conformational and 
   nucleation properties of individual amino acids
@@ -5708,7 +5708,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H RACS820114
 D Value of theta(i-1) (Rackovsky-Scheraga, 1982)
-R
+R LIT:0903736
 A Rackovsky, S. and Scheraga, H.A.
 T Differential geometry and polymer conformation. 4. Conformational and 
   nucleation properties of individual amino acids
@@ -5721,7 +5721,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H RADA880101
 D Transfer free energy from chx to wat (Radzicka-Wolfenden, 1988)
-R
+R LIT:1405051b
 A Radzicka, A. and Wolfenden, R.
 T Comparing the polarities of the amino acids: Side-chain distribution 
   coefficients between the vapor phase, cyclohexane, 1-octanol, and neutral 
@@ -5749,7 +5749,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H RADA880102
 D Transfer free energy from oct to wat (Radzicka-Wolfenden, 1988)
-R
+R LIT:1405051b
 A Radzicka, A. and Wolfenden, R.
 T Comparing the polarities of the amino acids: Side-chain distribution 
   coefficients between the vapor phase, cyclohexane, 1-octanol, and neutral 
@@ -5773,7 +5773,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H RADA880103
 D Transfer free energy from vap to chx (Radzicka-Wolfenden, 1988)
-R
+R LIT:1405051b
 A Radzicka, A. and Wolfenden, R.
 T Comparing the polarities of the amino acids: Side-chain distribution 
   coefficients between the vapor phase, cyclohexane, 1-octanol, and neutral 
@@ -5793,7 +5793,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H RADA880104
 D Transfer free energy from chx to oct (Radzicka-Wolfenden, 1988)
-R
+R LIT:1405051b
 A Radzicka, A. and Wolfenden, R.
 T Comparing the polarities of the amino acids: Side-chain distribution 
   coefficients between the vapor phase, cyclohexane, 1-octanol, and neutral 
@@ -5813,7 +5813,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H RADA880105
 D Transfer free energy from vap to oct (Radzicka-Wolfenden, 1988)
-R
+R LIT:1405051b
 A Radzicka, A. and Wolfenden, R.
 T Comparing the polarities of the amino acids: Side-chain distribution 
   coefficients between the vapor phase, cyclohexane, 1-octanol, and neutral 
@@ -5827,7 +5827,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H RADA880106
 D Accessible surface area (Radzicka-Wolfenden, 1988)
-R
+R LIT:1405051b
 A Radzicka, A. and Wolfenden, R.
 T Comparing the polarities of the amino acids: Side-chain distribution 
   coefficients between the vapor phase, cyclohexane, 1-octanol, and neutral 
@@ -5845,7 +5845,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H RADA880107
 D Energy transfer from out to in(95%buried) (Radzicka-Wolfenden, 1988)
-R
+R LIT:1405051b
 A Radzicka, A. and Wolfenden, R.
 T Comparing the polarities of the amino acids: Side-chain distribution 
   coefficients between the vapor phase, cyclohexane, 1-octanol, and neutral 
@@ -5867,7 +5867,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H RADA880108
 D Mean polarity (Radzicka-Wolfenden, 1988)
-R
+R LIT:1405051b
 A Radzicka, A. and Wolfenden, R.
 T Comparing the polarities of the amino acids: Side-chain distribution 
   coefficients between the vapor phase, cyclohexane, 1-octanol, and neutral 
@@ -5913,7 +5913,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H RICJ880101
 D Relative preference value at N" (Richardson-Richardson, 1988)
-R PMID:3381086
+R LIT:1408116 PMID:3381086
 A Richardson, J.S. and Richardson, D.C.
 T Amino acid preferences for specific locations at the ends of alpha helices
 J Science 240, 1648-1652 (1988)
@@ -5924,7 +5924,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H RICJ880102
 D Relative preference value at N' (Richardson-Richardson, 1988)
-R PMID:3381086
+R LIT:1408116 PMID:3381086
 A Richardson, J.S. and Richardson, D.C.
 T Amino acid preferences for specific locations at the ends of alpha helices
 J Science 240, 1648-1652 (1988)
@@ -5935,7 +5935,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H RICJ880103
 D Relative preference value at N-cap (Richardson-Richardson, 1988)
-R PMID:3381086
+R LIT:1408116 PMID:3381086
 A Richardson, J.S. and Richardson, D.C.
 T Amino acid preferences for specific locations at the ends of alpha helices
 J Science 240, 1648-1652 (1988)
@@ -5946,7 +5946,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H RICJ880104
 D Relative preference value at N1 (Richardson-Richardson, 1988)
-R PMID:3381086
+R LIT:1408116 PMID:3381086
 A Richardson, J.S. and Richardson, D.C.
 T Amino acid preferences for specific locations at the ends of alpha helices
 J Science 240, 1648-1652 (1988)
@@ -5957,7 +5957,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H RICJ880105
 D Relative preference value at N2 (Richardson-Richardson, 1988)
-R PMID:3381086
+R LIT:1408116 PMID:3381086
 A Richardson, J.S. and Richardson, D.C.
 T Amino acid preferences for specific locations at the ends of alpha helices
 J Science 240, 1648-1652 (1988)
@@ -5968,7 +5968,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H RICJ880106
 D Relative preference value at N3 (Richardson-Richardson, 1988)
-R PMID:3381086
+R LIT:1408116 PMID:3381086
 A Richardson, J.S. and Richardson, D.C.
 T Amino acid preferences for specific locations at the ends of alpha helices
 J Science 240, 1648-1652 (1988)
@@ -5979,7 +5979,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H RICJ880107
 D Relative preference value at N4 (Richardson-Richardson, 1988)
-R PMID:3381086
+R LIT:1408116 PMID:3381086
 A Richardson, J.S. and Richardson, D.C.
 T Amino acid preferences for specific locations at the ends of alpha helices
 J Science 240, 1648-1652 (1988)
@@ -5990,7 +5990,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H RICJ880108
 D Relative preference value at N5 (Richardson-Richardson, 1988)
-R PMID:3381086
+R LIT:1408116 PMID:3381086
 A Richardson, J.S. and Richardson, D.C.
 T Amino acid preferences for specific locations at the ends of alpha helices
 J Science 240, 1648-1652 (1988)
@@ -6001,7 +6001,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H RICJ880109
 D Relative preference value at Mid (Richardson-Richardson, 1988)
-R PMID:3381086
+R LIT:1408116 PMID:3381086
 A Richardson, J.S. and Richardson, D.C.
 T Amino acid preferences for specific locations at the ends of alpha helices
 J Science 240, 1648-1652 (1988)
@@ -6013,7 +6013,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H RICJ880110
 D Relative preference value at C5 (Richardson-Richardson, 1988)
-R PMID:3381086
+R LIT:1408116 PMID:3381086
 A Richardson, J.S. and Richardson, D.C.
 T Amino acid preferences for specific locations at the ends of alpha helices
 J Science 240, 1648-1652 (1988)
@@ -6024,7 +6024,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H RICJ880111
 D Relative preference value at C4 (Richardson-Richardson, 1988)
-R PMID:3381086
+R LIT:1408116 PMID:3381086
 A Richardson, J.S. and Richardson, D.C.
 T Amino acid preferences for specific locations at the ends of alpha helices
 J Science 240, 1648-1652 (1988)
@@ -6036,7 +6036,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H RICJ880112
 D Relative preference value at C3 (Richardson-Richardson, 1988)
-R PMID:3381086
+R LIT:1408116 PMID:3381086
 A Richardson, J.S. and Richardson, D.C.
 T Amino acid preferences for specific locations at the ends of alpha helices
 J Science 240, 1648-1652 (1988)
@@ -6047,7 +6047,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H RICJ880113
 D Relative preference value at C2 (Richardson-Richardson, 1988)
-R PMID:3381086
+R LIT:1408116 PMID:3381086
 A Richardson, J.S. and Richardson, D.C.
 T Amino acid preferences for specific locations at the ends of alpha helices
 J Science 240, 1648-1652 (1988)
@@ -6058,7 +6058,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H RICJ880114
 D Relative preference value at C1 (Richardson-Richardson, 1988)
-R PMID:3381086
+R LIT:1408116 PMID:3381086
 A Richardson, J.S. and Richardson, D.C.
 T Amino acid preferences for specific locations at the ends of alpha helices
 J Science 240, 1648-1652 (1988)
@@ -6069,7 +6069,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H RICJ880115
 D Relative preference value at C-cap (Richardson-Richardson, 1988)
-R PMID:3381086
+R LIT:1408116 PMID:3381086
 A Richardson, J.S. and Richardson, D.C.
 T Amino acid preferences for specific locations at the ends of alpha helices
 J Science 240, 1648-1652 (1988)
@@ -6081,7 +6081,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H RICJ880116
 D Relative preference value at C' (Richardson-Richardson, 1988)
-R PMID:3381086
+R LIT:1408116 PMID:3381086
 A Richardson, J.S. and Richardson, D.C.
 T Amino acid preferences for specific locations at the ends of alpha helices
 J Science 240, 1648-1652 (1988)
@@ -6092,7 +6092,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H RICJ880117
 D Relative preference value at C" (Richardson-Richardson, 1988)
-R PMID:3381086
+R LIT:1408116 PMID:3381086
 A Richardson, J.S. and Richardson, D.C.
 T Amino acid preferences for specific locations at the ends of alpha helices
 J Science 240, 1648-1652 (1988)
@@ -6301,7 +6301,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H ROBB790101
 D Hydration free energy (Robson-Osguthorpe, 1979)
-R PMID:513136
+R LIT:0511124 PMID:513136
 A Robson, B. and Osguthorpe, D.J.
 T Refined models for computer simulation of protein folding: Applications to 
   the study of conserved secondary structure and flexible hinge points during 
@@ -6334,7 +6334,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H ROSG850101
 D Mean area buried on transfer (Rose et al., 1985)
-R PMID:4023714
+R LIT:1109092 PMID:4023714
 A Rose, G.D., Geselowitz, A.R., Lesser, G.J., Lee, R.H. and Zehfus, M.H.
 T Hydrophobicity of amino acid residues in globular proteins
 J Science 229, 834-838 (1985)
@@ -6354,7 +6354,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H ROSG850102
 D Mean fractional area loss (Rose et al., 1985)
-R PMID:4023714
+R LIT:1109092 PMID:4023714
 A Rose, G.D., Geselowitz, A.R., Lesser, G.J., Lee, R.H. and Zehfus, M.H.
 T Hydrophobicity of amino acid residues in globular proteins
 J Science 229, 834-838 (1985)
@@ -6395,7 +6395,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H ROSM880101
 D Side chain hydropathy, uncorrected for solvation (Roseman, 1988)
-R PMID:3398047
+R LIT:1405111b PMID:3398047
 A Roseman, M.A.
 T Hydrophilicity of polar amino acid side-chains is markedly reduced by 
   flanking peptide bonds
@@ -6424,7 +6424,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H ROSM880102
 D Side chain hydropathy, corrected for solvation (Roseman, 1988)
-R PMID:3398047
+R LIT:1405111b PMID:3398047
 A Roseman, M.A.
 T Hydrophilicity of polar amino acid side-chains is markedly reduced by 
   flanking peptide bonds
@@ -6456,7 +6456,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H ROSM880103
 D Loss of Side chain hydropathy by helix formation (Roseman, 1988)
-R PMID:3398047
+R LIT:1405111b PMID:3398047
 A Roseman, M.A.
 T Hydrophilicity of polar amino acid side-chains is markedly reduced by 
   flanking peptide bonds
@@ -6531,7 +6531,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H SUEM840101
 D Zimm-Bragg parameter s at 20 C (Sueki et al., 1984)
-R
+R LIT:1004141
 A Sueki, M., Lee, S., Powers, S.P., Denton, J.B., Konishi, Y. and Scheraga, 
   H.A.
 T Helix-coil stability constants for the naturally occurring amino acids in 
@@ -6553,7 +6553,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H SUEM840102
 D Zimm-Bragg parameter sigma x 1.0E4 (Sueki et al., 1984)
-R
+R LIT:1004141
 A Sueki, M., Lee, S., Powers, S.P., Denton, J.B., Konishi, Y. and Scheraga, 
   H.A.
 T Helix-coil stability constants for the naturally occurring amino acids in 
@@ -6568,7 +6568,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H SWER830101
 D Optimal matching hydrophobicity (Sweet-Eisenberg, 1983)
-R PMID:6663622
+R LIT:2004095b PMID:6663622
 A Sweet, R.M. and Eisenberg, D.
 T Correlation of sequence hydrophobicities measures similarity in 
   three-dimensional protein structure
@@ -6749,7 +6749,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H VASM830101
 D Relative population of conformational state A (Vasquez et al., 1983)
-R
+R LIT:0908110
 A Vasquez, M., Nemethy, G. and Scheraga, H.A.
 T Computed conformational states of the 20 naturally occurring amino acid 
   residues and of the prototype residue alpha-aminobutyric acid
@@ -6761,7 +6761,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H VASM830102
 D Relative population of conformational state C (Vasquez et al., 1983)
-R
+R LIT:0908110
 A Vasquez, M., Nemethy, G. and Scheraga, H.A.
 T Computed conformational states of the 20 naturally occurring amino acid 
   residues and of the prototype residue alpha-aminobutyric acid
@@ -6773,7 +6773,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H VASM830103
 D Relative population of conformational state E (Vasquez et al., 1983)
-R
+R LIT:0908110
 A Vasquez, M., Nemethy, G. and Scheraga, H.A.
 T Computed conformational states of the 20 naturally occurring amino acid 
   residues and of the prototype residue alpha-aminobutyric acid
@@ -6785,7 +6785,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H VELV850101
 D Electron-ion interaction potential (Veljkovic et al., 1985)
-R
+R LIT:2004067b
 A Veljkovic, V., Cosic, I., Dimitrijevic, B. and Lalovic, D.
 T Is it possible to analyze DNA and protein sequences by the method of digital 
   signal processing?
@@ -6797,7 +6797,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H VENT840101
 D Bitterness (Venanzi, 1984)
-R PMID:6521488
+R LIT:1103107b PMID:6521488
 A Venanzi, T.J.
 T Hydrophobicity parameters and the bitter taste of L-amino acids
 J J. Theor. Biol. 111, 447-450 (1984)
@@ -6817,7 +6817,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H VHEG790101
 D Transfer free energy to lipophilic phase (von Heijne-Blomberg, 1979)
-R PMID:477664
+R LIT:0509382 PMID:477664
 A von Heijne, G. and Blomberg, C.
 T Trans-membrane translocation of proteins: The direct transfer model
 J Eur. J. Biochem. 97, 175-181 (1979)
@@ -6835,7 +6835,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H WARP780101
 D Average interactions per side chain atom (Warme-Morgan, 1978)
-R PMID:633361
+R LIT:0405099 PMID:633361
 A Warme, P.K. and Morgan, R.S.
 T A survey of amino acid side-chain interactions in 21 proteins
 J J. Mol. Biol. 118, 289-304 (1978) (Gly 0.81)
@@ -6855,7 +6855,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H WEBA780101
 D RF value in high salt chromatography (Weber-Lacey, 1978)
-R PMID:691071
+R LIT:2004106b PMID:691071
 A Weber, A.L. and Lacey, J.C.,Jr.
 T Genetic code correlations: Amino acids and their anticodon nucleotides
 J J. Mol. Evol. 11, 199-210 (1978)
@@ -6868,7 +6868,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H WERD780101
 D Propensity to be buried inside (Wertz-Scheraga, 1978)
-R PMID:621952
+R LIT:0405105 PMID:621952
 A Wertz, D.H. and Scheraga, H.A.
 T Influence of water on protein structure. An analysis of the preferences of 
   amino acid residues for the inside or outside and for specific conformations 
@@ -6905,7 +6905,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H WERD780102
 D Free energy change of epsilon(i) to epsilon(ex) (Wertz-Scheraga, 1978)
-R PMID:621952
+R LIT:0405105 PMID:621952
 A Wertz, D.H. and Scheraga, H.A.
 T Influence of water on protein structure. An analysis of the preferences of 
   amino acid residues for the inside or outside and for specific conformations 
@@ -6918,7 +6918,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H WERD780103
 D Free energy change of alpha(Ri) to alpha(Rh) (Wertz-Scheraga, 1978)
-R PMID:621952
+R LIT:0405105 PMID:621952
 A Wertz, D.H. and Scheraga, H.A.
 T Influence of water on protein structure. An analysis of the preferences of 
   amino acid residues for the inside or outside and for specific conformations 
@@ -6931,7 +6931,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H WERD780104
 D Free energy change of epsilon(i) to alpha(Rh) (Wertz-Scheraga, 1978)
-R PMID:621952
+R LIT:0405105 PMID:621952
 A Wertz, D.H. and Scheraga, H.A.
 T Influence of water on protein structure. An analysis of the preferences of 
   amino acid residues for the inside or outside and for specific conformations 
@@ -6971,7 +6971,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H WOLR810101
 D Hydration potential (Wolfenden et al., 1981)
-R PMID:7213619
+R LIT:0704095 PMID:7213619
 A Wolfenden, R. andersson, L., Cullis, P.M. and Southgate, C.C.B.
 T Affinties of amino acid side chains for solvent water
 J Biochemistry 20, 849-855 (1981) (Pro 2.9)
@@ -6991,7 +6991,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H WOLS870101
 D Principal property value z1 (Wold et al., 1987)
-R
+R LIT:1312098b
 A Wold, S., Eriksson, L., Hellberg, S., Jonsson, J., Sjostrom, M., Skagerberg, 
   B. and Wikstrom, C.
 T Principal property values for six non-natural amino acids and their 
@@ -7027,7 +7027,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H WOLS870102
 D Principal property value z2 (Wold et al., 1987)
-R
+R LIT:1312098b
 A Wold, S., Eriksson, L., Hellberg, S., Jonsson, J., Sjostrom, M., Skagerberg, 
   B. and Wikstrom, C.
 T Principal property values for six non-natural amino acids and their 
@@ -7042,7 +7042,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H WOLS870103
 D Principal property value z3 (Wold et al., 1987)
-R
+R LIT:1312098b
 A Wold, S., Eriksson, L., Hellberg, S., Jonsson, J., Sjostrom, M., Skagerberg, 
   B. and Wikstrom, C.
 T Principal property values for six non-natural amino acids and their 
@@ -7056,7 +7056,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H YUTK870101
 D Unfolding Gibbs energy in water, pH7.0 (Yutani et al., 1987)
-R PMID:3299367
+R LIT:2004127b PMID:3299367
 A Yutani, K., Ogasahara, K., Tsujita, T. and Sugino, Y.
 T Dependence of conformational stability on hydrophobicity of the amino acid 
   residue in a series of variant proteins substituted at a unique position of 
@@ -7070,7 +7070,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H YUTK870102
 D Unfolding Gibbs energy in water, pH9.0 (Yutani et al., 1987)
-R PMID:3299367
+R LIT:2004127b PMID:3299367
 A Yutani, K., Ogasahara, K., Tsujita, T. and Sugino, Y.
 T Dependence of conformational stability on hydrophobicity of the amino acid 
   residue in a series of variant proteins substituted at a unique position of 
@@ -7083,7 +7083,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H YUTK870103
 D Activation Gibbs energy of unfolding, pH7.0 (Yutani et al., 1987)
-R PMID:3299367
+R LIT:2004127b PMID:3299367
 A Yutani, K., Ogasahara, K., Tsujita, T. and Sugino, Y.
 T Dependence of conformational stability on hydrophobicity of the amino acid 
   residue in a series of variant proteins substituted at a unique position of 
@@ -7096,7 +7096,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H YUTK870104
 D Activation Gibbs energy of unfolding, pH9.0 (Yutani et al., 1987)
-R PMID:3299367
+R LIT:2004127b PMID:3299367
 A Yutani, K., Ogasahara, K., Tsujita, T. and Sugino, Y.
 T Dependence of conformational stability on hydrophobicity of the amino acid 
   residue in a series of variant proteins substituted at a unique position of 
@@ -7110,7 +7110,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 H ZASB820101
 D Dependence of partition coefficient on ionic strength (Zaslavsky et al., 
   1982)
-R
+R LIT:0806206
 A Zaslavsky, B.Yu, Mestechkina, N.M., Miheeva, L.M. and Rogozhin, S.V.
 T Measurement of relative hydrophobicity of amino acid side-chains by partition 
   in an aqueous two-phase polymeric system: Hydrophobicity scale for non-polar 
@@ -7124,7 +7124,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H ZIMJ680101
 D Hydrophobicity (Zimmerman et al., 1968)
-R PMID:5700434
+R LIT:2004109b PMID:5700434
 A Zimmerman, J.M., Eliezer, N. and Simha, R.
 T The characterization of amino acid sequences in proteins by statistical 
   methods
@@ -7136,7 +7136,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H ZIMJ680102
 D Bulkiness (Zimmerman et al., 1968)
-R PMID:5700434
+R LIT:2004109b PMID:5700434
 A Zimmerman, J.M., Eliezer, N. and Simha, R.
 T The characterization of amino acid sequences in proteins by statistical 
   methods
@@ -7150,7 +7150,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H ZIMJ680103
 D Polarity (Zimmerman et al., 1968)
-R PMID:5700434
+R LIT:2004109b PMID:5700434
 A Zimmerman, J.M., Eliezer, N. and Simha, R.
 T The characterization of amino acid sequences in proteins by statistical 
   methods
@@ -7163,7 +7163,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H ZIMJ680104
 D Isoelectric point (Zimmerman et al., 1968)
-R PMID:5700434
+R LIT:2004109b PMID:5700434
 A Zimmerman, J.M., Eliezer, N. and Simha, R.
 T The characterization of amino acid sequences in proteins by statistical 
   methods
@@ -7175,7 +7175,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H ZIMJ680105
 D RF rank (Zimmerman et al., 1968)
-R PMID:5700434
+R LIT:2004109b PMID:5700434
 A Zimmerman, J.M., Eliezer, N. and Simha, R.
 T The characterization of amino acid sequences in proteins by statistical 
   methods
@@ -7195,7 +7195,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 H AURR980101
 D Normalized positional residue frequency at helix termini N4'(Aurora-Rose, 
   1998)
-R PMID:9514257
+R LIT:2409041 PMID:9514257
 A Aurora, R. and Rose, G.
 T Helix capping
 J Protein Science 7, 21-38 (1998)
@@ -7207,7 +7207,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 H AURR980102
 D Normalized positional residue frequency at helix termini N"' (Aurora-Rose, 
   1998)
-R PMID:9514257
+R LIT:2409041 PMID:9514257
 A Aurora, R. and Rose, G.
 T Helix capping
 J Protein Science 7, 21-38 (1998)
@@ -7219,7 +7219,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 H AURR980103
 D Normalized positional residue frequency at helix termini N" (Aurora-Rose, 
   1998)
-R PMID:9514257
+R LIT:2409041 PMID:9514257
 A Aurora, R. and Rose, G.
 T Helix capping
 J Protein Science 7, 21-38 (1998)
@@ -7231,7 +7231,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 H AURR980104
 D Normalized positional residue frequency at helix termini N'(Aurora-Rose, 
   1998)
-R PMID:9514257
+R LIT:2409041 PMID:9514257
 A Aurora, R. and Rose, G.
 T Helix capping
 J Protein Science 7, 21-38 (1998)
@@ -7243,7 +7243,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 H AURR980105
 D Normalized positional residue frequency at helix termini Nc (Aurora-Rose, 
   1998)
-R PMID:9514257
+R LIT:2409041 PMID:9514257
 A Aurora, R. and Rose, G.
 T Helix capping
 J Protein Science 7, 21-38 (1998)
@@ -7255,7 +7255,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 H AURR980106
 D Normalized positional residue frequency at helix termini N1 (Aurora-Rose, 
   1998)
-R PMID:9514257
+R LIT:2409041 PMID:9514257
 A Aurora, R. and Rose, G.
 T Helix capping
 J Protein Science 7, 21-38 (1998)
@@ -7267,7 +7267,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 H AURR980107
 D Normalized positional residue frequency at helix termini N2 (Aurora-Rose, 
   1998)
-R PMID:9514257
+R LIT:2409041 PMID:9514257
 A Aurora, R. and Rose, G.
 T Helix capping
 J Protein Science 7, 21-38 (1998)
@@ -7279,7 +7279,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 H AURR980108
 D Normalized positional residue frequency at helix termini N3 (Aurora-Rose, 
   1998)
-R PMID:9514257
+R LIT:2409041 PMID:9514257
 A Aurora, R. and Rose, G.
 T Helix capping
 J Protein Science 7, 21-38 (1998)
@@ -7296,7 +7296,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 H AURR980109
 D Normalized positional residue frequency at helix termini N4 (Aurora-Rose, 
   1998)
-R PMID:9514257
+R LIT:2409041 PMID:9514257
 A Aurora, R. and Rose, G.
 T Helix capping
 J Protein Science 7, 21-38 (1998)
@@ -7318,7 +7318,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 H AURR980110
 D Normalized positional residue frequency at helix termini N5 (Aurora-Rose, 
   1998)
-R PMID:9514257
+R LIT:2409041 PMID:9514257
 A Aurora, R. and Rose, G.
 T Helix capping
 J Protein Science 7, 21-38 (1998)
@@ -7334,7 +7334,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 H AURR980111
 D Normalized positional residue frequency at helix termini C5 (Aurora-Rose, 
   1998)
-R PMID:9514257
+R LIT:2409041 PMID:9514257
 A Aurora, R. and Rose, G.
 T Helix capping
 J Protein Science 7, 21-38 (1998)
@@ -7349,7 +7349,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 H AURR980112
 D Normalized positional residue frequency at helix termini C4 (Aurora-Rose, 
   1998)
-R PMID:9514257
+R LIT:2409041 PMID:9514257
 A Aurora, R. and Rose, G.
 T Helix capping
 J Protein Science 7, 21-38 (1998)
@@ -7368,7 +7368,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 H AURR980113
 D Normalized positional residue frequency at helix termini C3 (Aurora-Rose, 
   1998)
-R PMID:9514257
+R LIT:2409041 PMID:9514257
 A Aurora, R. and Rose, G.
 T Helix capping
 J Protein Science 7, 21-38 (1998)
@@ -7385,7 +7385,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 H AURR980114
 D Normalized positional residue frequency at helix termini C2 (Aurora-Rose, 
   1998)
-R PMID:9514257
+R LIT:2409041 PMID:9514257
 A Aurora, R. and Rose, G.
 T Helix capping
 J Protein Science 7, 21-38 (1998)
@@ -7406,7 +7406,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 H AURR980115
 D Normalized positional residue frequency at helix termini C1 (Aurora-Rose, 
   1998)
-R PMID:9514257
+R LIT:2409041 PMID:9514257
 A Aurora, R. and Rose, G.
 T Helix capping
 J Protein Science 7, 21-38 (1998)
@@ -7423,7 +7423,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 H AURR980116
 D Normalized positional residue frequency at helix termini Cc (Aurora-Rose, 
   1998)
-R PMID:9514257
+R LIT:2409041 PMID:9514257
 A Aurora, R. and Rose, G.
 T Helix capping
 J Protein Science 7, 21-38 (1998)
@@ -7435,7 +7435,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 H AURR980117
 D Normalized positional residue frequency at helix termini C' (Aurora-Rose, 
   1998)
-R PMID:9514257
+R LIT:2409041 PMID:9514257
 A Aurora, R. and Rose, G.
 T Helix capping
 J Protein Science 7, 21-38 (1998)
@@ -7447,7 +7447,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 H AURR980118
 D Normalized positional residue frequency at helix termini C" (Aurora-Rose, 
   1998)
-R PMID:9514257
+R LIT:2409041 PMID:9514257
 A Aurora, R. and Rose, G.
 T Helix capping
 J Protein Science 7, 21-38 (1998)
@@ -7459,7 +7459,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 H AURR980119
 D Normalized positional residue frequency at helix termini C"' (Aurora-Rose, 
   1998)
-R PMID:9514257
+R LIT:2409041 PMID:9514257
 A Aurora, R. and Rose, G.
 T Helix capping
 J Protein Science 7, 21-38 (1998)
@@ -7471,7 +7471,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 H AURR980120
 D Normalized positional residue frequency at helix termini C4' (Aurora-Rose, 
   1998)
-R PMID:9514257
+R LIT:2409041 PMID:9514257
 A Aurora, R. and Rose, G.
 T Helix capping
 J Protein Science 7, 21-38 (1998)
@@ -7483,7 +7483,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 H ONEK900101
 D Delta G values for the peptides extrapolated to 0 M urea (O'Neil-DeGrado, 
   1990)
-R PMID:2237415
+R LIT:1701155 PMID:2237415
 A O'Neil, K.T. and DeGrado, W.F.
 T A thermodynamic scale for the helix-forming tendencies of the commonly 
   occurring amino acids
@@ -7500,7 +7500,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H ONEK900102
 D Helix formation parameters (delta delta G) (O'Neil-DeGrado, 1990)
-R PMID:2237415
+R LIT:1701155 PMID:2237415
 A O'Neil, K.T. and DeGrado, W.F.
 T A thermodynamic scale for the helix-forming tendencies of the commonly 
   occurring amino acids
@@ -7518,7 +7518,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H VINM940101
 D Normalized flexibility parameters (B-values), average (Vihinen et al., 1994)
-R PMID:8090708
+R LIT:2014123 PMID:8090708
 A Vihinen, M., Torkkila, E. and Riikonen, P.
 T Accuracy of protein flexibility predictions
 J Proteins 19, 141-149 (1994)
@@ -7559,7 +7559,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 H VINM940102
 D Normalized flexibility parameters (B-values) for each residue surrounded by 
   none rigid neighbours (Vihinen et al., 1994)
-R PMID:8090708
+R LIT:2014123 PMID:8090708
 A Vihinen, M., Torkkila, E. and Riikonen, P.
 T Accuracy of protein flexibility predictions
 J Proteins 19, 141-149 (1994)
@@ -7593,7 +7593,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 H VINM940103
 D Normalized flexibility parameters (B-values) for each residue surrounded by 
   one rigid neighbours (Vihinen et al., 1994)
-R PMID:8090708
+R LIT:2014123 PMID:8090708
 A Vihinen, M., Torkkila, E. and Riikonen, P.
 T Accuracy of protein flexibility predictions
 J Proteins 19, 141-149 (1994)
@@ -7622,7 +7622,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 H VINM940104
 D Normalized flexibility parameters (B-values) for each residue surrounded by 
   two rigid neighbours (Vihinen et al., 1994)
-R PMID:8090708
+R LIT:2014123 PMID:8090708
 A Vihinen, M., Torkkila, E. and Riikonen, P.
 T Accuracy of protein flexibility predictions
 J Proteins 19, 141-149 (1994)
@@ -7635,7 +7635,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H MUNV940101
 D Free energy in alpha-helical conformation (Munoz-Serrano, 1994)
-R PMID:7731949
+R LIT:2105109 PMID:7731949
 A Munoz, V. and Serrano, L.
 T Intrinsic secondary structure propensities of the amino acids, using 
   statistical phi-psi matrices: comparison with experimental scales
@@ -7656,7 +7656,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H MUNV940102
 D Free energy in alpha-helical region (Munoz-Serrano, 1994)
-R PMID:7731949
+R LIT:2105109 PMID:7731949
 A Munoz, V. and Serrano, L.
 T Intrinsic secondary structure propensities of the amino acids, using 
   statistical phi-psi matrices: comparison with experimental scales
@@ -7676,7 +7676,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H MUNV940103
 D Free energy in beta-strand conformation (Munoz-Serrano, 1994)
-R PMID:7731949
+R LIT:2105109 PMID:7731949
 A Munoz, V. and Serrano, L.
 T Intrinsic secondary structure propensities of the amino acids, using 
   statistical phi-psi matrices: comparison with experimental scales
@@ -7704,7 +7704,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H MUNV940104
 D Free energy in beta-strand region (Munoz-Serrano, 1994)
-R PMID:7731949
+R LIT:2105109 PMID:7731949
 A Munoz, V. and Serrano, L.
 T Intrinsic secondary structure propensities of the amino acids, using 
   statistical phi-psi matrices: comparison with experimental scales
@@ -7721,7 +7721,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H MUNV940105
 D Free energy in beta-strand region (Munoz-Serrano, 1994)
-R PMID:7731949
+R LIT:2105109 PMID:7731949
 A Munoz, V. and Serrano, L.
 T Intrinsic secondary structure propensities of the amino acids, using 
   statistical phi-psi matrices: comparison with experimental scales
@@ -7738,7 +7738,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 H WIMW960101
 D Free energies of transfer of AcWl-X-LL peptides from bilayer interface to 
   water (Wimley-White, 1996)
-R PMID:8836100
+R LIT:2223095 PMID:8836100
 A Wimley, W.C. and White, S.
 T Experimentally determined hydrophobicity scale for proteins at membrane 
   interfaces
@@ -7754,7 +7754,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H KIMC930101
 D Thermodynamic beta sheet propensity (Kim-Berg, 1993)
-R PMID:8459852
+R LIT:1909070 PMID:8459852
 A Kim, C.A. and Berg, J.M.
 T Thermodynamic beta-sheet propensities measured using a zinc-finger host 
   peptide
@@ -7783,7 +7783,7 @@ I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
 //
 H BLAM930101
 D Alpha helix propensity of position 44 in T4 lysozyme (Blaber et al., 1993)
-R PMID:8503008
+R LIT:1915114 PMID:8503008
 A Blaber, M., Zhang, X.J. and Matthews, B.W.
 T Structural basis of amino acid alpha helix propensity
 J Science 260, 1637-1640 (1993)
@@ -10293,283 +10293,4 @@ C MIYS990105    0.959  MIYS990103    0.957  MEIH800102    0.951
 I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
    -0.21    2.11    0.96    1.36   -6.04    1.52    2.30    0.00   -1.23   -4.81
    -4.68    3.88   -3.66   -4.65    0.75    1.74    0.78   -3.32   -1.01   -3.50
-//
-H KARS160101
-D Number of vertices (order of the graph) (Karkbara-Knisley, 2016)
-R
-A Karkbara, S. and Knisley, D.
-T A graph-theoretic model of single point mutations in the cystic fibrosis
-  transmembrane conductance regulator
-J J. Adv. Biotechnol. Vol.6, No.1, 780-786 (2016)
-C
-I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
-    2.00    8.00    5.00    5.00    3.00    6.00    6.00    1.00    7.00    5.00
-    5.00    6.00    5.00    8.00    4.00    3.00    4.00   11.00    9.00    4.00
-//
-H KARS160102
-D Number of edges (size of the graph) (Karkbara-Knisley, 2016)
-R
-A Karkbara, S. and Knisley, D.
-T A graph-theoretic model of single point mutations in the cystic fibrosis
-  transmembrane conductance regulator
-J J. Adv. Biotechnol. Vol.6, No.1, 780-786 (2016)
-C
-I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
-    1.00    7.00    4.00    4.00    2.00    5.00    5.00    0.00    6.00    4.00
-    4.00    5.00    4.00    8.00    4.00    2.00    3.00   12.00    9.00    3.00
-//
-H KARS160103
-D Total weighted degree of the graph (obtained by adding all the weights of
-  all the vertices) (Karkbara-Knisley, 2016)
-R
-A Karkbara, S. and Knisley, D.
-T A graph-theoretic model of single point mutations in the cystic fibrosis
-  transmembrane conductance regulator
-J J. Adv. Biotechnol. Vol.6, No.1, 780-786 (2016)
-C
-I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
-    2.00   12.00    8.00    8.00    4.00   10.00   10.00    0.00   14.00    8.00
-    8.00   10.00    8.00   14.00    8.00    4.00    6.00   24.00   18.00    6.00
-//
-H KARS160104
-D Weighted domination number (Karkbara-Knisley, 2016)
-R
-A Karkbara, S. and Knisley, D.
-T A graph-theoretic model of single point mutations in the cystic fibrosis
-  transmembrane conductance regulator
-J J. Adv. Biotechnol. Vol.6, No.1, 780-786 (2016)
-C
-I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
-    1.00    6.00    4.00    4.00    2.00    4.00    5.00    1.00   6.000    4.00
-    4.00    4.00    4.00    6.00    4.00    2.00    3.00    8.00    7.00    3.00
-//
-H KARS160105
-D Average eccentricity (Karkbara-Knisley, 2016)
-R
-A Karkbara, S. and Knisley, D.
-T A graph-theoretic model of single point mutations in the cystic fibrosis
-  transmembrane conductance regulator
-J J. Adv. Biotechnol. Vol.6, No.1, 780-786 (2016)
-C
-I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
-    1.00   8.120    5.00    5.17    2.33   5.860    6.00    0.00    6.71    3.25
-    5.00    7.00    5.40    7.00    4.00   1.670   3.250   11.10    8.88    3.25
-//
-H KARS160106
-D Radius (minimum eccentricity) (Karkbara-Knisley, 2016)
-R
-A Karkbara, S. and Knisley, D.
-T A graph-theoretic model of single point mutations in the cystic fibrosis
-  transmembrane conductance regulator
-J J. Adv. Biotechnol. Vol.6, No.1, 780-786 (2016)
-C
-I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
-    1.00    6.00    3.00    3.00    1.00    4.00    4.00    0.00   6.000    3.00
-    3.00    5.00    3.00   6.000    4.00    2.00    1.00   9.000   6.000    1.00
-//
-H KARS160107
-D Diameter (maximum eccentricity) (Karkbara-Knisley, 2016)
-R
-A Karkbara, S. and Knisley, D.
-T A graph-theoretic model of single point mutations in the cystic fibrosis
-  transmembrane conductance regulator
-J J. Adv. Biotechnol. Vol.6, No.1, 780-786 (2016)
-C
-I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
-    1.00   12.00    6.00    6.00    3.00    8.00    8.00    0.00    9.00    6.00
-    6.00    9.00    7.00  11.000   4.000    3.00    4.00  14.000  13.000    4.00
-//
-H KARS160108
-D Average weighted degree (total degree, divided by the number of vertices)
-  (Karkbara-Knisley, 2016)
-R
-A Karkbara, S. and Knisley, D.
-T A graph-theoretic model of single point mutations in the cystic fibrosis
-  transmembrane conductance regulator
-J J. Adv. Biotechnol. Vol.6, No.1, 780-786 (2016)
-C
-I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
-    1.00    1.50    1.60    1.60   1.333   1.667   1.667    0.00    2.00   1.600
-    1.60   1.667    1.60   1.750    2.00   1.333    1.50   2.182   2.000    1.50
-//
-H KARS160109
-D Maximum eigenvalue of the weighted Laplacian matrix of the graph
-  (Karkbara-Knisley, 2016)
-R
-A Karkbara, S. and Knisley, D.
-T A graph-theoretic model of single point mutations in the cystic fibrosis
-  transmembrane conductance regulator
-J J. Adv. Biotechnol. Vol.6, No.1, 780-786 (2016)
-C
-I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
-    2.00  12.499  11.539  11.539   6.243  12.207  11.530    0.00  12.876  10.851
-  11.029  10.363    9.49  14.851   12.00    5.00   9.928  13.511  12.868   9.928
-//
-H KARS160110
-D Minimum eigenvalue of the weighted Laplacian matrix of the graph
-  (Karkbara-Knisley, 2016)
-R
-A Karkbara, S. and Knisley, D.
-T A graph-theoretic model of single point mutations in the cystic fibrosis
-  transmembrane conductance regulator
-J J. Adv. Biotechnol. Vol.6, No.1, 780-786 (2016)
-C
-I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
-    0.00  -4.307  -4.178  -4.178  -2.243  -4.255  -3.425    0.00  -3.721  -6.085
-  -4.729  -3.151  -2.812  -4.801   -4.00    1.00  -3.928  -6.324  -4.793  -3.928
-//
-H KARS160111
-D Average eigenvalue of the Laplacian matrix of the the graph
-  (Karkbara-Knisley, 2016)
-R
-A Karkbara, S. and Knisley, D.
-T A graph-theoretic model of single point mutations in the cystic fibrosis
-  transmembrane conductance regulator
-J J. Adv. Biotechnol. Vol.6, No.1, 780-786 (2016)
-C
-I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
-    1.00   3.500    3.20    3.20    2.00   3.333   3.333    0.00   4.286    1.80
-    3.20    3.00    2.80    4.25    4.00    2.00    3.00    4.00   4.333    3.00
-//
-H KARS160112
-D Second smallest eigenvalue of the Laplacian matrix of the graph
-  (Karkbara-Knisley, 2016)
-R
-A Karkbara, S. and Knisley, D.
-T A graph-theoretic model of single point mutations in the cystic fibrosis
-  transmembrane conductance regulator
-J J. Adv. Biotechnol. Vol.6, No.1, 780-786 (2016)
-C
-I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
-    2.00  -2.590   0.528   0.528    2.00  -1.043  -0.538    0.00  -1.185  -1.517
-   1.052  -0.536   0.678  -1.672    4.00    2.00    3.00  -2.576  -2.054    3.00
-//
-H KARS160113
-D Weighted domination number using the atomic number (Karkbara-Knisley, 2016)
-R
-A Karkbara, S. and Knisley, D.
-T A graph-theoretic model of single point mutations in the cystic fibrosis
-  transmembrane conductance regulator
-J J. Adv. Biotechnol. Vol.6, No.1, 780-786 (2016)
-C
-I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
-    6.00   19.00   12.00   12.00    6.00   12.00   12.00    1.00   15.00   12.00
-   12.00   12.00   18.00   18.00   12.00    6.00    6.00   24.00   18.00    6.00
-//
-H KARS160114
-D Average weighted eccentricity based on the the atomic number
-  (Karkbara-Knisley, 2016)
-R
-A Karkbara, S. and Knisley, D.
-T A graph-theoretic model of single point mutations in the cystic fibrosis
-  transmembrane conductance regulator
-J J. Adv. Biotechnol. Vol.6, No.1, 780-786 (2016)
-C
-I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
-    6.00  31.444    16.50  16.40  16.670  21.167   21.00    3.50    23.10  15.60
-   15.60   24.50    27.20  23.25   12.00   13.33   12.40   27.50    27.78  10.50
-//
-H KARS160115
-D Weighted radius based on the atomic number (minimum eccentricity)
-  (Karkbara-Knisley, 2016)
-R
-A Karkbara, S. and Knisley, D.
-T A graph-theoretic model of single point mutations in the cystic fibrosis
-  transmembrane conductance regulator
-J J. Adv. Biotechnol. Vol.6, No.1, 780-786 (2016)
-C
-I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
-    6.00   20.00   14.00   12.00   12.00   15.00   14.00    1.00   18.00   12.00
-   12.00   18.00   18.00   18.00   12.00    8.00    8.00   18.00   20.00    6.00
-//
-H KARS160116
-D Weighted diameter based on the atomic number (maximum eccentricity)
-  (Karkbara-Knisley, 2016)
-R
-A Karkbara, S. and Knisley, D.
-T A graph-theoretic model of single point mutations in the cystic fibrosis
-  transmembrane conductance regulator
-J J. Adv. Biotechnol. Vol.6, No.1, 780-786 (2016)
-C
-I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
-    6.00   38.00   20.00   20.00   22.00   24.00   26.00    6.00   31.00   18.00
-   18.00   31.00   34.00   24.00   12.00   20.00   14.00   36.00   38.00   12.00
-//
-H KARS160117
-D Total weighted atomic number of the graph (obtained by summing all the atomic
-  number of each of the vertices in the graph) (Karkbara-Knisley, 2016)
-R
-A Karkbara, S. and Knisley, D.
-T A graph-theoretic model of single point mutations in the cystic fibrosis
-  transmembrane conductance regulator
-J J. Adv. Biotechnol. Vol.6, No.1, 780-786 (2016)
-C
-I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
-   12.00   45.00  33.007   34.00   28.00   39.00   40.00    7.00   47.00   30.00
-   30.00   37.00   40.00   48.00   24.00   22.00   27.00   68.00   56.00  24.007
-//
-H KARS160118
-D Average weighted atomic number or degree based on atomic number in the graph
-  (Karkbara-Knisley, 2016)
-R
-A Karkbara, S. and Knisley, D.
-T A graph-theoretic model of single point mutations in the cystic fibrosis
-  transmembrane conductance regulator
-J J. Adv. Biotechnol. Vol.6, No.1, 780-786 (2016)
-C
-I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
-    6.00    5.00    6.60    6.80    9.33    6.50    6.67    3.50    4.70    6.00
-    6.00    6.17    8.00    6.00    6.00    7.33    5.40   5.667    6.22    6.00
-//
-H KARS160119
-D Weighted maximum eigenvalue based on the atomic numbers
-  (Karkbara-Knisley, 2016)
-R
-A Karkbara, S. and Knisley, D.
-T A graph-theoretic model of single point mutations in the cystic fibrosis
-  transmembrane conductance regulator
-J J. Adv. Biotechnol. Vol.6, No.1, 780-786 (2016)
-C
-I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
-   12.00  23.343  27.708  28.634   28.00  27.831  28.731    7.00  24.243  24.841
-  25.021  22.739  31.344  26.993   24.00   20.00  23.819  29.778  28.252   24.00
-//
-H KARS160120
-D Weighted minimum eigenvalue based on the atomic numbers
-  (Karkbara-Knisley, 2016)
-R
-A Karkbara, S. and Knisley, D.
-T A graph-theoretic model of single point mutations in the cystic fibrosis
-  transmembrane conductance regulator
-J J. Adv. Biotechnol. Vol.6, No.1, 780-786 (2016)
-C
-I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
-    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  -1.734  -1.641
-    0.00  -0.179    0.00    0.00    0.00    0.00  -4.227   0.211   -0.96    0.00
-//
-H KARS160121
-D Weighted average eigenvalue based on the atomic numbers
-  (Karkbara-Knisley, 2016)
-R
-A Karkbara, S. and Knisley, D.
-T A graph-theoretic model of single point mutations in the cystic fibrosis
-  transmembrane conductance regulator
-J J. Adv. Biotechnol. Vol.6, No.1, 780-786 (2016)
-C
-I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
-    6.00  10.667   10.00   10.40  11.333   10.50  10.667    3.50  10.400    9.60
-    9.60  10.167   13.60   12.00   12.00   8.667    9.00   12.75  12.222    9.00
-//
-H KARS160122
-D Weighted second smallest eigenvalue of the weighted Laplacian matrix
-  (Karkbara-Knisley, 2016)
-R
-A Karkbara, S. and Knisley, D.
-T A graph-theoretic model of single point mutations in the cystic fibrosis
-  transmembrane conductance regulator
-J J. Adv. Biotechnol. Vol.6, No.1, 780-786 (2016)
-C
-I    A/L     R/K     N/M     D/F     C/P     Q/S     E/T     G/W     H/Y     I/V
-    0.00    4.20    3.00   2.969    6.00   1.849   1.822    0.00   1.605   3.373
-   3.113   1.372   2.656   2.026   12.00    6.00    6.00   2.044   1.599    6.00
 //

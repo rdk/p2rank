@@ -81,7 +81,7 @@ class AAIndex1 {
         return result
     }
 
-    public getEntries() {
+    public Collection<Entry> getEntries() {
         return entryMap.values()
     }
 
