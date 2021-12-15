@@ -52,7 +52,7 @@ class TrainEvalRoutineTest {
             assertTrue(res.stats.TRAIN_POSITIVES > 10)
             assertTrue(res.stats.TRAIN_NEGATIVES > 10)
 
-            assertTrue("point_MCC must be > 0.4, actual: ${res.stats.point_MCC}", res.stats.point_MCC > 0.4)
+            assertTrue("point_MCC must be > 0.35, actual: ${res.stats.point_MCC}", res.stats.point_MCC > 0.35)
 
             double dca_4_0 = Double.parseDouble(res.stats.DCA_4_0 as String)
 
