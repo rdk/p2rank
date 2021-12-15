@@ -1,5 +1,6 @@
 package cz.siret.prank.features.api
 
+import cz.siret.prank.features.ResidueTypeFeature
 import cz.siret.prank.features.api.wrappers.AtomicToSasFeatWrapper
 import cz.siret.prank.features.api.wrappers.ResidueToAtomicFeatWrapper
 import cz.siret.prank.features.api.wrappers.ResidueToSasFeatWrapper
@@ -74,7 +75,6 @@ class FeatureRegistry {
 
         register new SurfaceProtrusionFeature()
         register new ProtrusionHistogramFeature()
-        register new AtomicResidueFeature()
         register new ContactResidue1Feature()
         register new ContactResiduesPositionFeature()
         register new ContactResidue1PositionFeature()
@@ -84,9 +84,13 @@ class FeatureRegistry {
         register new PairHistogramFeature()
         register new PyramidFeature()
         register new ProteinMassFeature()
-        register new AAIndexAtomFeature()
         register new XyzDummyFeature()
+        register new AAIndexAtomFeature()
+        register new AtomicResidueFeature()
 
+        register new ResidueToSasFeatWrapper(new ResidueTypeFeature())
+        register new ResidueToAtomicFeatWrapper(new ResidueTypeFeature())
+        
         register new ResidueToSasFeatWrapper(new AAIndexFeature())
         register new ResidueToAtomicFeatWrapper(new AAIndexFeature())
 

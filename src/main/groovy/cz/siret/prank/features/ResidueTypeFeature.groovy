@@ -1,26 +1,28 @@
-package cz.siret.prank.features.implementation
+package cz.siret.prank.features
 
 import cz.siret.prank.domain.AA
+import cz.siret.prank.domain.Residue
 import cz.siret.prank.features.api.AtomFeatureCalculationContext
 import cz.siret.prank.features.api.AtomFeatureCalculator
+import cz.siret.prank.features.api.ResidueFeatureCalculationContext
+import cz.siret.prank.features.api.ResidueFeatureCalculator
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.PdbUtils
 import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
 
 /**
- * One hot encoding for residue of the atom
+ * One hot encoding for residue type 
  */
-@Deprecated
 @CompileStatic
-class AtomicResidueFeature extends AtomFeatureCalculator implements Parametrized {
+class ResidueTypeFeature extends ResidueFeatureCalculator implements Parametrized {
 
     static List<AA> AATYPES = AA.values().toList()
     static List<String> HEADER = AATYPES.collect{ it.name() }.toList()
 
     @Override
     String getName() {
-        "ares"
+        "rtype"
     }
 
     @Override
@@ -29,9 +31,8 @@ class AtomicResidueFeature extends AtomFeatureCalculator implements Parametrized
     }
 
     @Override
-    double[] calculateForAtom(Atom atom, AtomFeatureCalculationContext ctx) {
-
-        AA aa = AA.forCode(PdbUtils.getCorrectedAtomResidueCode(atom))
+    double[] calculateForResidue(Residue residue, ResidueFeatureCalculationContext context) {
+        AA aa = residue.aa
 
         double[] vect = new double[AATYPES.size()]
         if (aa != null) {
@@ -40,5 +41,5 @@ class AtomicResidueFeature extends AtomFeatureCalculator implements Parametrized
 
         return vect
     }
-
+    
 }
