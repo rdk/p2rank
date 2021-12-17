@@ -169,11 +169,13 @@ class ConservationScore implements Parametrized {
                 if (lcs[i][j - 1] > lcs[i - 1][j]) {
                     sScore.append(scoreChain.charAt(j - 1))
                     sPdb.append("-")
+                    sCommom.append("-")
 
                     j--;
                 } else {
                     sPdb.append(pdbChain.charAt(i - 1))
                     sScore.append("-")
+                    sCommom.append("-")
 
                     i--;
                 }
