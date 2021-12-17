@@ -173,7 +173,7 @@ class ConservationScore implements Parametrized {
                 } else {
                     i--;
 
-                    sPdb.append(scoreChain.charAt(i - 1))
+                    sPdb.append(pdbChain.charAt(i - 1))
                     sScore.append(" ")
                 }
             }
