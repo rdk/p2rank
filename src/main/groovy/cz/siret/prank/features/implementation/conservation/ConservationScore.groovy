@@ -157,24 +157,24 @@ class ConservationScore implements Parametrized {
             if (pdbChain.charAt(i - 1) == scoreChain.charAt(j - 1)) {  // Letters are equal.
                 result.put(new ResidueNumberWrapper(chain.get(i - 1).getResidueNumber()),
                         scores.get(j - 1).score)
-                i--;
-                j--;
-
                 char c = pdbChain.charAt(i - 1)
                 sCommom.append(c)
                 sScore.append(c)
                 sPdb.append(c)
+
+                i--;
+                j--;
             } else {
                 if (lcs[i][j - 1] > lcs[i - 1][j]) {
-                    j--;
-
                     sScore.append(scoreChain.charAt(j - 1))
                     sPdb.append(" ")
-                } else {
-                    i--;
 
+                    j--;
+                } else {
                     sPdb.append(pdbChain.charAt(i - 1))
                     sScore.append(" ")
+
+                    i--;
                 }
             }
         }
