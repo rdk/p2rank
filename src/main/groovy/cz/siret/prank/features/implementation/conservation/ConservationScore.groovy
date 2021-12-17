@@ -144,6 +144,12 @@ class ConservationScore implements Parametrized {
         log.info("Matching chains using LCS")
         int[][] lcs = calcLongestCommonSubSequence(pdbChain, scoreChain);
 
+        // debug strings
+        StringBuilder sCommom = new StringBuilder(scoreChain.length())
+        StringBuilder sScore = new StringBuilder(scoreChain.length())
+        StringBuilder sPdb = new StringBuilder(pdbChain.length())
+
+
         Map<ResidueNumberWrapper, Double> result = new HashMap<>()
         // Backtrack the actual sequence.
         int i = chain.size(), j = scores.size();
@@ -153,16 +159,33 @@ class ConservationScore implements Parametrized {
                         scores.get(j - 1).score)
                 i--;
                 j--;
+
+                char c = pdbChain.charAt(i - 1)
+                sCommom.append(c)
+                sScore.append(c)
+                sPdb.append(c)
             } else {
                 if (lcs[i][j - 1] > lcs[i - 1][j]) {
                     j--;
+
+                    sScore.append(scoreChain.charAt(j - 1))
+                    sPdb.append(" ")
                 } else {
                     i--;
+
+                    sPdb.append(scoreChain.charAt(i - 1))
+                    sScore.append(" ")
                 }
             }
         }
 
         log.info("Score matched for {} residues", result.size())
+
+        if (log.isDebugEnabled()) {
+            log.debug "matchSequences/common: " + sCommom.toString().reverse()
+            log.debug "matchSequences/pdb   : " + sPdb.toString().reverse()
+            log.debug "matchSequences/common: " + sScore.toString().reverse()
+        }
 
         outResult.putAll(result)
     }
