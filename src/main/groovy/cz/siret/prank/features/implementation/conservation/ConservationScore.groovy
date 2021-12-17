@@ -185,7 +185,7 @@ class ConservationScore implements Parametrized {
         if (log.isDebugEnabled()) {
             log.debug "matchSequences/common: " + sCommom.toString().reverse()
             log.debug "matchSequences/pdb   : " + sPdb.toString().reverse()
-            log.debug "matchSequences/common: " + sScore.toString().reverse()
+            log.debug "matchSequences/score : " + sScore.toString().reverse()
         }
 
         outResult.putAll(result)
