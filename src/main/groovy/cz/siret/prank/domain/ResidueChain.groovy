@@ -3,6 +3,8 @@ package cz.siret.prank.domain
 import cz.siret.prank.geom.Atoms
 import groovy.transform.CompileStatic
 
+import javax.annotation.Nonnull
+
 /**
  *
  */
@@ -44,14 +46,20 @@ class ResidueChain {
         residues.size()
     }
 
+    /**
+     * One letter AA code string, with "?" for unknown
+     */
+    @Nonnull
     String getCodeCharString() {
-        residues.collect { it.codeChar }.join("")
+        residues.collect { it.codeChar ?: "?" }.join("")
     }
 
+    @Nonnull
     String getSecStructString() {
         residues.collect { it.secStruct?.type ?: "?" }.join("")
     }
 
+    @Nonnull
     Atoms getAtoms() {
         if (atoms==null) {
             atoms = Atoms.join(residues.collect { it.atoms })
