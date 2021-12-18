@@ -140,8 +140,8 @@ class PdbUtils {
         //'non-standard', genetically encoded
         if ("MSE".equals(residueCode)) {
             residueCode = "MET"
-        } else if ("MEN".equals(residueCode)) {  // N-METHYL ASPARAGINE
-            residueCode = "ASP"
+        } else if ("MEN".equals(residueCode)) {  // N-METHYL ASPARAGINE present only in cca. 60 entries in the PDB but also in one in CHEN11 training dataset
+            residueCode = "ASN"
         }
 
         return residueCode
