@@ -1,6 +1,6 @@
 package cz.siret.prank.export
 
-
+import cz.siret.prank.domain.AA
 import cz.siret.prank.domain.ResidueChain
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
@@ -28,12 +28,11 @@ class FastaExporter {
     }
 
     String getFastaChainRaw(ResidueChain chain) {
-        // TODO using codeCharString via AA.codeChar is flawed, ignores unknown residues and does not give _ or ? codes expected in raw fasta
-        return chain.codeCharString
+        return chain.biojavaCodeCharString
     }
 
     String getFastaChainMasked(ResidueChain chain) {
-        return maskFastaChain(getFastaChainRaw(chain))
+        return maskFastaChain(chain.standardCodeCharString)
     }
 
     String getFastaChain(ResidueChain chain, boolean masked) {
@@ -52,14 +51,17 @@ class FastaExporter {
 
     /**
      * Mask single letter residue code chain.
-     * Non letters are replaced by 'X'.
+     * Anything that is not one of 20 standard one letter codes is masked as 'X'.
      */
     public static String maskFastaChain(String chain) {
         return chain.getChars().collect { maskResidueCode(it as char) }.join("")
     }
 
+    /**
+     * Anything that is not one of 20 standard one letter codes is masked as 'X'
+     */
     public static char maskResidueCode(char code) {
-        if (!code.isLetter()) {
+        if (!AA.isStandardOneLetterCode(code)) {
             code = 'X' as char
         }
         return code

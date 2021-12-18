@@ -10,6 +10,7 @@ import cz.siret.prank.geom.Struct
 import cz.siret.prank.program.P2Rank
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Futils
+import cz.siret.prank.utils.PdbUtils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.*
@@ -123,7 +124,7 @@ class ConservationScore implements Parametrized {
         log.info "Matching pdb chain (n={}) with score chain (n={})", chain.size(), scores.size()
 
         // Check if the strings match
-        String pdbChain = chain.collect { group -> group.getChemComp().getOneLetterCode().toUpperCase() }.join("")
+        String pdbChain = chain.collect { group -> PdbUtils.getStandardOneLetterCode(group) }.join("")
         String scoreChain = scores.collect { ch -> ch.letter.toUpperCase() }.join("")
 
         pdbChain = FastaExporter.maskFastaChain(pdbChain)

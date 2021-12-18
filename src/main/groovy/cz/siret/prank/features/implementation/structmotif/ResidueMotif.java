@@ -70,7 +70,7 @@ public class ResidueMotif {
 
         int i = 0;
         for (Residue residue : residues) {
-            chars[i] = residue.getCodeCharMasked();
+            chars[i] = residue.getCodeCharStandard();
             i++;
         }
 

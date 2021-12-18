@@ -50,8 +50,16 @@ class ResidueChain {
      * One letter AA code string, with "?" for unknown
      */
     @Nonnull
-    String getCodeCharString() {
-        residues.collect { it.codeChar ?: "?" }.join("")
+    String getBiojavaCodeCharString() {
+        residues.collect { it.codeCharBiojava }.join("")
+    }
+
+    /**
+     * One letter AA code string, with "?" for unknown
+     */
+    @Nonnull
+    String getStandardCodeCharString() {
+        residues.collect { it.codeCharStandard }.join("")
     }
 
     @Nonnull

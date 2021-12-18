@@ -163,17 +163,25 @@ class Residue {
         AA.forName(getCorrectedCode())
     }
 
+    /**
+     * One letter code via ChemComp. Result may depend on the online access.
+     * null/empty is masked as '?'
+     */
     @Nullable
-    Character getCodeChar() {
-        getAa()?.codeChar
+    Character getCodeCharBiojava() {
+        return PdbUtils.getBiojavaOneLetterCode(group)
     }
 
     /**
-     * @return if AAis unknown returns '?'
+     * Anything that is not one of 20 standard one letter codes is masked as '?'
+     * Does not go via ChemComp as getBioJavaOneLetterCode but instead via residue three-letter code.
+     * Should be more stable when online access sin not allowed.
+     *
+     * The only three letter code masking done is MSE->MET=M
      */
     @NotNull
-    Character getCodeCharMasked() {
-        getCodeChar() ?: '?' as char
+    Character getCodeCharStandard() {
+        return PdbUtils.getStandardOneLetterCode(group)
     }
 
     @Override
@@ -181,11 +189,13 @@ class Residue {
         return key.toString()
     }
 
+    @Nullable
     SecStrucInfo getSectStructInfo() {
         SecStrucInfo ss = (SecStrucInfo) group.getProperty(Group.SEC_STRUC)
         ss
     }
 
+    @Nullable
     SecStrucType getSecStruct() {
         sectStructInfo?.type
     }
@@ -214,7 +224,7 @@ class Residue {
         if (res == null) {
             return '_' as char
         } else {
-            return res.codeCharMasked
+            return res.codeCharStandard
         }
     }
 

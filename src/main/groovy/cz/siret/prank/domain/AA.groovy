@@ -2,6 +2,8 @@ package cz.siret.prank.domain
 
 import groovy.transform.CompileStatic
 
+import javax.annotation.Nullable
+
 /**
  * 20 main amino acid codes
  */
@@ -59,10 +61,12 @@ enum AA {
         }
     }
 
+    @Nullable
     static AA forName(String name) {
         return index.get(name)
     }
 
+    @Nullable
     static AA forCode(String code) {
         return forName(code)
     }
@@ -71,7 +75,7 @@ enum AA {
         return indexByCodeChar.get(codeChar)
     }
 
-    boolean isLegalCodeChar(char codeChar) {
+    static boolean isStandardOneLetterCode(char codeChar) {
         return forCodeChar(codeChar) != null
     }
 

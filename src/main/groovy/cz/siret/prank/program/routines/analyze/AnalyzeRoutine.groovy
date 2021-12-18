@@ -140,7 +140,7 @@ class AnalyzeRoutine extends Routine {
                 String chainId = it.authorId
                 String mmcifId = it.authorId
                 int nres = it.length
-                String chars = it.codeCharString
+                String chars = it.biojavaCodeCharString
                 rows += "${item.label}, $nchains, $chainId, $mmcifId, $nres, $chars \n"
             }
             csv << rows
@@ -305,7 +305,7 @@ class AnalyzeRoutine extends Routine {
                 if (loader.elementsByCode.containsKey(chainCode)) {
                     log.info "writing sprint chain [{}]", chainCode
 
-                    def strStruct = chain.codeCharString
+                    def strStruct = chain.biojavaCodeCharString
                     def strLabeler = loader.elementsByCode.get(chainCode).chain
                     def strLabels = loader.elementsByCode.get(chainCode).labels
 

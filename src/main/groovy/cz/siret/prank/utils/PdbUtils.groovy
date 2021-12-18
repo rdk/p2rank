@@ -1,5 +1,6 @@
 package cz.siret.prank.utils
 
+import cz.siret.prank.domain.AA
 import cz.siret.prank.program.PrankException
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
@@ -8,6 +9,9 @@ import org.biojava.nbio.structure.*
 import org.biojava.nbio.structure.io.FileParsingParameters
 import org.biojava.nbio.structure.io.PDBFileParser
 import org.biojava.nbio.structure.io.cif.CifStructureConverter
+
+import javax.annotation.Nonnull
+import javax.annotation.Nullable
 
 import static cz.siret.prank.geom.Struct.getAuthorId
 
@@ -135,6 +139,10 @@ class PdbUtils {
 
 //===========================================================================================================//
 
+    /**
+     * Masking for internal P2Rank representation
+     */
+    @Nullable
     static String correctResidueCode(String residueCode) {
         //MSE is only found as a molecular replacement for MET
         //'non-standard', genetically encoded
@@ -148,10 +156,73 @@ class PdbUtils {
     }
 
     /**
+     * Masking for sequence / one-residue code mapping
+     */
+    @Nullable
+    static String maskMseResidueCode(String residueCode) {
+        //MSE is only found as a molecular replacement for MET
+        if ("MSE".equals(residueCode)) {
+            residueCode = "MET"
+        }
+
+        return residueCode
+    }
+
+    /**
+     * One letter code via ChemComp. Result may depend on the online access.
+     * @param group
+     * @return
+     */
+    @Nullable
+    static String getBiojavaOneLetterCodeString(Group group) {
+        return group?.getChemComp()?.getOneLetterCode()
+    }
+
+    /**
+     * Same as getBioJavaOneLetterCodeString() but null/empty is masked as '?'
+     */
+    @Nonnull
+    static char getBiojavaOneLetterCode(Group group) {
+        String code = getBiojavaOneLetterCodeString(group)
+        if (code == null || code.size() == 0) {
+            return '?' as char
+        } else {
+            return code.charAt(0)
+        }
+    }
+
+    /**
+     * Anything that is not one of 20 standard one letter codes is masked as '?'
+     * Does not go via ChemComp as getBioJavaOneLetterCode but instead via residue three-letter code.
+     * Should be more stable when online access sin not allowed.
+     *
+     * The only three letter code masking done is MSE->MET=M
+     */
+    @Nonnull
+    static char getStandardOneLetterCode(Group group) {
+        return getStandardOneLetterCode(getResidueCode(group))
+    }
+
+    /**
+     * Maps standard 3-letter codes to 1-letter code.
+     * Anything that is not one of 20 standard one letter codes is masked as '?'.
+     * The only three letter code masking done is MSE->MET=M
+     */
+    @Nonnull
+    static char getStandardOneLetterCode(String threeLetterCode) {
+        String rawCode = maskMseResidueCode(threeLetterCode)
+
+        AA aa = AA.forCode(rawCode)
+
+        return (aa != null) ? aa.codeChar : '?' as char
+    }
+
+    /**
      * @return three letter residue code (e.g. "ASP")
      */
+    @Nullable
     static String getAtomResidueCode(Atom a) {
-        a.group.PDBName
+        a?.group?.PDBName
     }
     
     /**
@@ -166,6 +237,7 @@ class PdbUtils {
     /**
      * @return three letter residue code (e.g. "ASP")
      */
+    @Nullable
     static String getResidueCode(Group group) {
         if (group==null || group.size()==0) return null;
 

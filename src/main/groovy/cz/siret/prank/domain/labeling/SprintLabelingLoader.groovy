@@ -71,8 +71,8 @@ class SprintLabelingLoader extends ResidueLabeler<Boolean> implements Writable {
             for (Residue residue : chain.residues) {
                 char eleChar = element.chain.charAt(i)
 
-                if (residue.codeChar != eleChar) {
-                    throw new PrankException("Residue code mismatch in [$chainCode] at position [$i] (structure: $residue.codeChar, labeling file: $eleChar)")
+                if (residue.codeCharBiojava != eleChar) {
+                    throw new PrankException("Residue code mismatch in [$chainCode] at position [$i] (structure: $residue.codeCharBiojava, labeling file: $eleChar)")
                 }
 
                 boolean value = element.labels.charAt(i) != ('0' as char)
