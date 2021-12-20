@@ -881,6 +881,13 @@ class Params {
     boolean fail_fast = false
 
     /**
+     * Fail when (X-masked) sequences in the structure and in the conservation score file do not match exactly.
+     * Has effect only when fail_fast = true.
+     */
+    @RuntimeParam
+    boolean fail_on_conserv_seq_mismatch = false
+
+    /**
      * target class ratio of positives/negatives we train on.
      * relates to subsampling and supersampling
      */
