@@ -16,7 +16,12 @@ class PrankException extends RuntimeException {
 
     PrankException(String message, Throwable cause) {
         super(message, cause, false, true)
-        setStackTrace(cause.getStackTrace())
+        if (cause != null) {
+            // cause stacktrace is not written
+            // so we set it as main
+            // (possible groovy/java17 bug)
+            setStackTrace(cause.getStackTrace())
+        }
     }
 
     PrankException(Throwable cause) {
