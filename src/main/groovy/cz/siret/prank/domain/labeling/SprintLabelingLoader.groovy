@@ -82,7 +82,7 @@ class SprintLabelingLoader extends ResidueLabeler<Boolean> implements Writable {
         }
 
         if (!foundOneChain) {
-            throw new PrankException("Labeling not defined for any chain of protein [$protein.name]")
+            throw new PrankException("Labeling not defined for any chain of the protein [$protein.name]")
         }
 
         BinaryLabeling result = new BinaryLabeling(residues.count)
