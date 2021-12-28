@@ -201,15 +201,16 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
         WekaUtils.trainClassifier(model.classifier, data)
 
         if (params.rf_flatten) {
-            if (!(model.classifier instanceof FlattableForest)) {
-                throw new PrankException("Trying to flatten invalid classifier: " + model.classifier.class.simpleName)
+            if (model.classifier instanceof FlattableForest) {
+                log.info "Flattening random forest"
+                def timer = startTimer()
+                model.classifier = ((FlattableForest)model.classifier).toFlatBinaryForest()
+                logTime "model flattened in " + timer.formatted
+
+                model.label = model.label + "_flat"
+            } else {
+                log.warn("Trying to flatten classifier that does not support it: " + model.classifier.class.simpleName)
             }
-
-            def timer = startTimer()
-            model.classifier = ((FlattableForest)model.classifier).toFlatBinaryForest()
-            logTime "model flattened in " + timer.formatted
-
-            model.label = model.label + "_flat"
         }
     }
 
