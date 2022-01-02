@@ -1,6 +1,7 @@
 package cz.siret.prank.program.routines.optimize
 
 import cz.siret.prank.program.PrankException
+import cz.siret.prank.program.params.IterativeParam
 import cz.siret.prank.program.params.ListParam
 import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.utils.Cutils
@@ -11,7 +12,10 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import groovyx.gpars.GParsPool
 
+import javax.annotation.Nullable
+
 import static cz.siret.prank.utils.ATimer.startTimer
+import static cz.siret.prank.utils.Futils.inputStream
 import static cz.siret.prank.utils.Futils.mkdirs
 import static cz.siret.prank.utils.Futils.sanitizeFilename
 
@@ -23,15 +27,19 @@ import static cz.siret.prank.utils.Futils.sanitizeFilename
 @CompileStatic
 class GridOptimizerRoutine extends ParamLooper {
 
-    List<ListParam> listParams
+    static final int REGENERATE_PLOTS_EVERY_N_STEPS = 10
+
+    List<IterativeParam> listParams
     List<String> gridVariablesNames
 
     List<TableToPlot> tablesToPlot
 
-    GridOptimizerRoutine(String outdir, List<ListParam> listParams) {
+    GridOptimizerRoutine(String outdir, List<IterativeParam> listParams) {
         super(outdir)
         this.listParams = listParams
         this.gridVariablesNames = listParams*.name
+
+
     }
 
     private String prepareDirLabel(Step step) {
@@ -45,17 +53,11 @@ class GridOptimizerRoutine extends ParamLooper {
      *
      * TODO: merge with code in Experiments, there is no point in separation with closure
      */
-    void runGridOptimization(Closure<EvalResults> closure) {
+    void runGridOptimization(Closure<EvalResults> eval) {
+
         def timer = startTimer()
 
-        steps = generateSteps(listParams)
-        log.info "STEPS: " + steps.toListString().replace("Step","\nStep")
-
-        for (Step step in steps) {
-            processStep(step, prepareDirLabel(step), closure)
-
-            make1DOr2DTables(steps)
-        }
+        processSteps(eval)
 
         logTime "param iteration finished in $timer.formatted"
         write "results saved to directory [${Futils.absPath(outdir)}]"
@@ -68,13 +70,58 @@ class GridOptimizerRoutine extends ParamLooper {
             if (params.ploop_delete_runs) {
                 Futils.delete(runsDir)
             } else if (params.ploop_zip_runs) {
-                Futils.zipAndDelete(runsDir, Futils.ZIP_BEST_COMPRESSION)
+                Futils.zipAndDelete(runsDir)
             }
         } catch (Exception e) {
             log.error("failed to delete directory", e)
         }
 
         logTime "ploop routine finished in $timer.formatted"
+
+    }
+
+    private void runInfiniteIteration(Closure<EvalResults> eval) {
+
+    }
+
+    private void processSteps(Closure<EvalResults> eval) {
+
+        IterativeParam first = listParams[0]
+
+        // if first iteretive param is generative
+        boolean generative = listParams.size() == 1 && !(first instanceof ListParam)
+
+        if (generative) {
+
+            Object val = first.nextValue
+            while (val != null) {
+                Step step = new Step().extendWith(first.name, val)
+                steps.add(step)
+
+                processStep(step, prepareDirLabel(step), eval)
+
+                make1DOr2DTables(steps)
+                if (steps.size() % REGENERATE_PLOTS_EVERY_N_STEPS == 0) {
+                    if (params.r_generate_plots) {
+                        makePlots()
+                    } 
+                }
+
+                val = first.nextValue
+            }
+
+        } else { // all static
+
+            steps = generateSteps(listParams)
+            log.info "STEPS: " + steps.toListString().replace("Step","\nStep")
+
+            for (Step step in steps) {
+                processStep(step, prepareDirLabel(step), eval)
+
+                make1DOr2DTables(steps)
+            }
+        }
+
     }
 
 //===========================================================================================================//
@@ -166,8 +213,8 @@ class GridOptimizerRoutine extends ParamLooper {
 //    }
 
     private make2DTable(String statName) {
-        ListParam paramX = listParams[0]
-        ListParam paramY = listParams[1]
+        IterativeParam paramX = listParams[0]
+        IterativeParam paramY = listParams[1]
 
         Map<List, Double> valueMap = new HashMap()
         for (Step s : steps) {
@@ -195,7 +242,7 @@ class GridOptimizerRoutine extends ParamLooper {
      * makes 2 tables: normal and sorted by stat values desc nulls last
      */
     private make1DTableWithSorted(String statName) {
-        ListParam paramX = listParams[0]
+        IterativeParam paramX = listParams[0]
 
         List<ParamStat> statValues = new ArrayList<>(steps.size())
         for (Step s : steps) {
@@ -228,25 +275,25 @@ class GridOptimizerRoutine extends ParamLooper {
         return "\"$s\""
     }
 
-    private List<Step> generateSteps(List<ListParam> lparams) {
+    private List<Step> generateSteps(List<IterativeParam> iterativeParams) {
 
-        if (Cutils.empty(lparams)) {
-            throw new PrankException("No list params were provided for grid optimization.")
+        if (Cutils.empty(iterativeParams)) {
+            throw new PrankException("No iterative params were provided for grid optimization.")
         }
 
-        genStepsRecur(new ArrayList<Step>(), new Step(), lparams)
+        genStepsRecur(new ArrayList<Step>(), new Step(), iterativeParams)
     }
     
-    private List<Step> genStepsRecur(List<Step> steps, Step base, List<ListParam> rparams) {
-        if (rparams.empty) {
+    private List<Step> genStepsRecur(List<Step> steps, Step base, List<IterativeParam> iterativeParams) {
+        if (iterativeParams.empty) {
             steps.add(base)
             return steps
         }
 
-        ListParam rparam = rparams.head()
+        IterativeParam rparam = iterativeParams.head()
         for (Object val : rparam.values) {
             Step deeperStep = base.extendWith(rparam.name, val)
-            genStepsRecur(steps, deeperStep, rparams.tail())
+            genStepsRecur(steps, deeperStep, iterativeParams.tail())
         }
 
         return steps

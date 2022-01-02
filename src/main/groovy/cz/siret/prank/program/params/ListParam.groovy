@@ -1,6 +1,7 @@
 package cz.siret.prank.program.params
 
 import cz.siret.prank.utils.CmdLineArgs
+import cz.siret.prank.utils.Cutils
 import cz.siret.prank.utils.Formatter
 import cz.siret.prank.utils.PerfUtils
 import cz.siret.prank.utils.Sutils
@@ -15,28 +16,45 @@ import static cz.siret.prank.utils.Sutils.trimEach
  * Used in grid optimization with 'prank ploop'
  */
 @CompileStatic
-class ListParam {
+class ListParam<T> implements IterativeParam<T> {
 
-    String name
-    List values
+    private final String name
+    private final List<T> values
+    int i = 0
 
-    ListParam(String name, List values) {
+    ListParam(String name, List<T> values) {
         this.name = name
         this.values = values
     }
 
+    @Override
+    String getName() {
+        return name
+    }
+
+    @Override
+    List<T> getValues() {
+        return values
+    }
+
+    @Override
+    T getNextValue() {
+        return Cutils.listElement(i++, values)
+    }
+
+//===========================================================================================================//
+
+
     static ListParam parse(String name, String value) {
-        ListParam res = new ListParam(name, null)
 
         value = value.trim()
-
+        boolean isList = value.startsWith("(") || value.contains(",")
         def inner = value.substring(1, value.length()-1)
+        def values = []
 
-        boolean list = value.startsWith("(") || value.contains(",")
+        if (isList) {
 
-        if (list) {
-
-            res.values = trimEach(splitRespectInnerParentheses(inner, ',' as char))
+            values = trimEach(splitRespectInnerParentheses(inner, ',' as char))
 
         } else { // range
 
@@ -59,10 +77,10 @@ class ListParam {
                 next += step
             }
 
-            res.values = nums
+            values = nums
         }
 
-        return res
+        return new ListParam(name, values)
     }
 
 

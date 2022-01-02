@@ -7,6 +7,7 @@ import cz.siret.prank.features.PrankFeatureExtractor
 import cz.siret.prank.features.implementation.table.AAIndexFeature
 import cz.siret.prank.program.Main
 import cz.siret.prank.program.PrankException
+import cz.siret.prank.program.params.IterativeParam
 import cz.siret.prank.program.params.ListParam
 import cz.siret.prank.program.routines.Routine
 import cz.siret.prank.program.routines.optimize.GridOptimizerRoutine
@@ -78,6 +79,9 @@ class Experiments extends Routine {
         "ploop-features-leaveoneout" :    { ploop_features_leaveoneout() },
         "ploop-subfeatures-tryeach" :     { ploop_subfeatures_tryeach() },
         "ploop-subfeatures-leaveoneout" : { ploop_subfeatures_leaveoneout() },
+
+        "ploop-features-random" : { ploop_features_random() },
+        "ploop-subfeatures-random" : { ploop_subfeatures_random() },
 
         "ploop-aa-index" :                { ploop_aa_index() },
     ])
@@ -212,7 +216,7 @@ class Experiments extends Routine {
 
 //===========================================================================================================//
 
-    private void gridOptimize(List<ListParam> rparams) {
+    private void gridOptimize(List<? extends IterativeParam> rparams) {
 
         write "List variables: " + rparams.toListString()
 
@@ -393,6 +397,30 @@ class Experiments extends Routine {
     private List<List<String>> generateMiddleSubsets(List<String> list) {
         generateSubsets(list).findAll { it.size()>0 && it.size()<list.size() }
     }
+
+//===========================================================================================================//
+
+    public ploop_features_random() {
+        checkNoListParams()
+
+        List<String> names = currentFeatureSetup.subFeaturesHeader
+
+        List<List<String>> filters = [["*"]] + names.collect { [it] }
+
+        runPloopWithFeatureFilters(filters)
+    }
+
+    public ploop_subfeatures_random() {
+        checkNoListParams()
+
+        List<String> names = currentFeatureSetup.subFeaturesHeader
+
+        List<List<String>> filters = [["*"]] + names.collect { [it] }
+
+        runPloopWithFeatureFilters(filters)
+    }
+
+
 
 //===========================================================================================================//
 
