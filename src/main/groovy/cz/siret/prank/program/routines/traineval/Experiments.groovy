@@ -21,6 +21,7 @@ import groovy.transform.TypeCheckingMode
 import groovy.util.logging.Slf4j
 import org.paukov.combinatorics3.Generator
 
+import javax.annotation.Nonnull
 import java.util.stream.Collectors
 
 import static cz.siret.prank.utils.Futils.safe
@@ -403,24 +404,80 @@ class Experiments extends Routine {
     public ploop_features_random() {
         checkNoListParams()
 
-        List<String> names = currentFeatureSetup.subFeaturesHeader
+        List<String> featureNames = currentFeatureSetup.enabledFeatureNames
 
-        List<List<String>> filters = [["*"]] + names.collect { [it] }
-
-        runPloopWithFeatureFilters(filters)
+        gridOptimize([new RandomSublistGenerator("feature_filters", featureNames)])
     }
 
     public ploop_subfeatures_random() {
         checkNoListParams()
 
-        List<String> names = currentFeatureSetup.subFeaturesHeader
+        List<String> subFeatureNames = currentFeatureSetup.subFeaturesHeader
 
-        List<List<String>> filters = [["*"]] + names.collect { [it] }
+        gridOptimize([new RandomSublistGenerator("feature_filters", subFeatureNames)])
+    }
 
-        runPloopWithFeatureFilters(filters)
+    static class RandomSublistGenerator implements IterativeParam<String>  {
+
+        String name
+        List<String> fullList
+
+        Random random = new Random()
+        List<String> generatedValues = []
+
+        RandomSublistGenerator(String name, List<String> fullList) {
+            this.name = name
+            this.fullList = fullList
+        }
+
+        @Override
+        String getName() {
+            return name
+        }
+
+        @Override
+        List getValues() {
+            return generatedValues
+        }
+
+        @Override
+        String getNextValue() {
+            List<String> randList = randomSublistNonempty(fullList, random)
+            String val = toListLiteral(randList)
+            generatedValues.add(val)
+            return val
+        }
+
+    }
+
+    static String toListLiteral(List<String> list) {
+        return "(" + list.join(",") + ")"
     }
 
 
+    @Nonnull
+    static <E> List<E> randomSublistNonempty(List<E> fullList, Random random) {
+        List<E> res = []
+        while (res.empty) {
+            res = randomSublist(fullList, random)
+        }
+        return res
+    }
+
+    @Nonnull
+    static <E> List<E> randomSublist(List<E> fullList, Random random) {
+        if (fullList == null || fullList.empty) {
+            throw new IllegalArgumentException("fullList cannot empty")
+        }
+
+        def res = new ArrayList<E>()
+        for (E el : fullList) {
+            if (random.nextBoolean()) {
+                res.add(el)
+            }
+        }
+        return res
+    }
 
 //===========================================================================================================//
 
