@@ -43,7 +43,16 @@ class GridOptimizerRoutine extends ParamLooper {
     }
 
     private String prepareDirLabel(Step step) {
-        return sanitizeFilename(step.label)
+
+        String label = sanitizeFilename(step.label)
+
+        if (label.length() > 200) {
+            label = label.substring(0, 200)
+        }
+
+        label = String.format("%05d", steps.size()) + "_" + label
+
+        return label
     }
 
     /**

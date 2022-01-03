@@ -16,6 +16,7 @@ import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.utils.CmdLineArgs
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.Sutils
+import cz.siret.prank.utils.Writable
 import groovy.transform.CompileStatic
 import groovy.transform.TypeCheckingMode
 import groovy.util.logging.Slf4j
@@ -300,7 +301,7 @@ class Experiments extends Routine {
 
     private runPloopWithFeatureFilters(List<List<String>> filters) {
 
-        List<String> sFilters = filters.collect { "(" + it.join(",") + ")" }
+        List<String> sFilters = filters.collect {toListLiteral(it) }
 
         write "Generated feature filters: " + sFilters
 
@@ -404,9 +405,11 @@ class Experiments extends Routine {
     public ploop_features_random() {
         checkNoListParams()
 
-        List<String> featureNames = currentFeatureSetup.enabledFeatureNames
+        List<String> features = currentFeatureSetup.enabledFeatureNames
+        features = features.collect { it + ".*" }
 
-        gridOptimize([new RandomSublistGenerator("feature_filters", featureNames)])
+
+        gridOptimize([new RandomSublistGenerator("feature_filters", features)])
     }
 
     public ploop_subfeatures_random() {
@@ -417,7 +420,7 @@ class Experiments extends Routine {
         gridOptimize([new RandomSublistGenerator("feature_filters", subFeatureNames)])
     }
 
-    static class RandomSublistGenerator implements IterativeParam<String>  {
+    static class RandomSublistGenerator implements IterativeParam<String>, Writable  {
 
         String name
         List<String> fullList
@@ -443,6 +446,9 @@ class Experiments extends Routine {
         @Override
         String getNextValue() {
             List<String> randList = randomSublistNonempty(fullList, random)
+
+            write "Generated random sublist: " + randList
+
             String val = toListLiteral(randList)
             generatedValues.add(val)
             return val
