@@ -3,7 +3,6 @@ package cz.siret.prank.program.routines.traineval
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.fforest.api.FlattableForest
 import cz.siret.prank.prediction.metrics.ClassifierStats
-import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.ml.FeatureVectors
 import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.params.Parametrized

@@ -14,11 +14,10 @@ import javax.annotation.Nonnull
 import javax.annotation.Nullable
 
 import static cz.siret.prank.geom.Struct.getAuthorId
+import static cz.siret.prank.geom.Struct.getMmcifId
 
 //import org.biojava.nbio.structure.io.mmcif.ChemCompGroupFactory
 //import org.biojava.nbio.structure.io.mmcif.ReducedChemCompProvider
-
-import static cz.siret.prank.geom.Struct.getMmcifId
 
 /**
  * BioJava PDB utility methods.

@@ -2,14 +2,10 @@ package cz.siret.prank.features
 
 import cz.siret.prank.domain.AA
 import cz.siret.prank.domain.Residue
-import cz.siret.prank.features.api.AtomFeatureCalculationContext
-import cz.siret.prank.features.api.AtomFeatureCalculator
 import cz.siret.prank.features.api.ResidueFeatureCalculationContext
 import cz.siret.prank.features.api.ResidueFeatureCalculator
 import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.utils.PdbUtils
 import groovy.transform.CompileStatic
-import org.biojava.nbio.structure.Atom
 
 /**
  * One hot encoding for residue type 

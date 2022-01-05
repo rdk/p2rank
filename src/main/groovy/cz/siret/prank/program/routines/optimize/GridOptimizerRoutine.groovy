@@ -12,10 +12,7 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import groovyx.gpars.GParsPool
 
-import javax.annotation.Nullable
-
 import static cz.siret.prank.utils.ATimer.startTimer
-import static cz.siret.prank.utils.Futils.inputStream
 import static cz.siret.prank.utils.Futils.mkdirs
 import static cz.siret.prank.utils.Futils.sanitizeFilename
 

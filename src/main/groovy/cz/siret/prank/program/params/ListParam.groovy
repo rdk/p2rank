@@ -1,10 +1,6 @@
 package cz.siret.prank.program.params
 
-import cz.siret.prank.utils.CmdLineArgs
-import cz.siret.prank.utils.Cutils
-import cz.siret.prank.utils.Formatter
-import cz.siret.prank.utils.PerfUtils
-import cz.siret.prank.utils.Sutils
+import cz.siret.prank.utils.*
 import groovy.transform.CompileStatic
 import groovy.transform.TypeCheckingMode
 
