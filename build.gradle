@@ -139,6 +139,7 @@ dependencies {
 
     implementation 'org.codehaus.gpars:gpars:1.2.1'
     implementation 'org.apache.commons:commons-lang3:3.12.0'
+    implementation 'org.apache.commons:commons-math3:3.6.1'
     implementation 'commons-io:commons-io:2.11.0'
     implementation 'com.google.guava:guava:31.0.1-jre'
     implementation 'com.google.code.gson:gson:2.8.9'
@@ -161,7 +162,9 @@ dependencies {
 
     implementation 'org.openscience.cdk:cdk-qsarmolecular:2.7'    // for NumericalSurface class
     implementation 'org.openscience.cdk:cdk-data:2.7'             // for Atom class
+
     implementation 'nz.ac.waikato.cms.weka:weka-dev:3.9.5'
+
     implementation fileTree(dir: 'lib', include: '*.jar')
 
     testImplementation 'junit:junit:4.13.2'
