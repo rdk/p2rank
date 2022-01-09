@@ -159,8 +159,8 @@ dependencies {
     implementation 'org.biojava:biojava-alignment:6.0.4'
     implementation 'org.biojava:biojava-structure:6.0.4'
 
-    implementation 'org.openscience.cdk:cdk-qsarmolecular:2.6'    // for NumericalSurface class
-    implementation 'org.openscience.cdk:cdk-data:2.6'             // for Atom class
+    implementation 'org.openscience.cdk:cdk-qsarmolecular:2.7'    // for NumericalSurface class
+    implementation 'org.openscience.cdk:cdk-data:2.7'             // for Atom class
     implementation 'nz.ac.waikato.cms.weka:weka-dev:3.9.5'
     implementation fileTree(dir: 'lib', include: '*.jar')
 
