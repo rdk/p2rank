@@ -8,7 +8,7 @@ buildscript {  // for "com.github.ben-manes.versions" plugin
         }
     }
     dependencies {
-        classpath "com.github.ben-manes:gradle-versions-plugin:0.39.0"
+        classpath "com.github.ben-manes:gradle-versions-plugin:0.41.0"
     }
 }
 
@@ -155,12 +155,12 @@ dependencies {
     implementation 'org.apache.logging.log4j:log4j-core:2.17.1'
     implementation 'org.slf4j:jul-to-slf4j:1.7.32'         // for netlib logging messages
 
-    implementation 'org.biojava:biojava-core:6.0.3'
-    implementation 'org.biojava:biojava-alignment:6.0.3'
-    implementation 'org.biojava:biojava-structure:6.0.3'
+    implementation 'org.biojava:biojava-core:6.0.4'
+    implementation 'org.biojava:biojava-alignment:6.0.4'
+    implementation 'org.biojava:biojava-structure:6.0.4'
 
-    implementation 'org.openscience.cdk:cdk-qsarmolecular:2.6'    // for NumericalSurface class
-    implementation 'org.openscience.cdk:cdk-data:2.6'             // for Atom class
+    implementation 'org.openscience.cdk:cdk-qsarmolecular:2.7'    // for NumericalSurface class
+    implementation 'org.openscience.cdk:cdk-data:2.7'             // for Atom class
     implementation 'nz.ac.waikato.cms.weka:weka-dev:3.9.5'
     implementation fileTree(dir: 'lib', include: '*.jar')
 
