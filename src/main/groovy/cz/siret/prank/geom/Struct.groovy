@@ -185,18 +185,18 @@ class Struct {
         return new AtomGroupClusterer(new SLinkClusterer()).clusterGroups(atomGroups, clusterDist)
     }
 
-    static List<Group> sortedGroups(Iterable<Group> groups) {
-
-        new Ordering<Group>() {
-            @Override
-            int compare(Group left, Group right) {
-                ComparisonChain.start()
-                    .compare(left?.PDBName, right?.PDBName)
+    static final Ordering<Group> GROUP_ORDERING = new Ordering<Group>() {
+        @Override
+        int compare(Group left, Group right) {
+            ComparisonChain.start()
                     .compare(left?.residueNumber, right?.residueNumber)
-                .result()
-            }
-        }.sortedCopy(groups)
+                    .compare(left?.PDBName, right?.PDBName)
+                    .result()
+        }
+    }
 
+    static List<Group> sortedGroups(Iterable<Group> groups) {
+        GROUP_ORDERING.sortedCopy(groups)
     }
 
     /**

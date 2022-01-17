@@ -8,10 +8,13 @@ Apart from hidden commands for training and grid optimization (see `training-tut
 ## Analyze
 
 ### binding residues
-List unique ligand binding residue IDs (for relevant ligands) for each protein in the dataset.
+
+List unique ligand binding residue codes (for relevant ligands) for each protein in the dataset.
+
 ~~~sh
 ./prank.sh analyze binding-residues <dataset.ds>
 ~~~
+
 Related parameters:
 - `-ligand_protein_contact_distance`: cutoff distance between ligand and protein atoms
 - params that determine which ligands are relevant:  
