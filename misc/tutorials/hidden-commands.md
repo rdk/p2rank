@@ -7,11 +7,29 @@ Apart from hidden commands for training and grid optimization (see `training-tut
 
 ## Analyze
 
+### residues
+
+List all residues with some details:
+* secondary structure
+* binding information
+
+See also "binding residues".
+
+~~~sh
+./prank.sh analyze residues <dataset.ds>
+~~~
+
+
 ### binding residues
-List unique ligand binding residue IDs (for relevant ligands) for each protein in the dataset.
+
+List residues binding relevant ligands.
+            
+Residue key format: `<chain_author_id>_<seq_number><ins_code>`
+
 ~~~sh
 ./prank.sh analyze binding-residues <dataset.ds>
 ~~~
+
 Related parameters:
 - `-ligand_protein_contact_distance`: cutoff distance between ligand and protein atoms
 - params that determine which ligands are relevant:  

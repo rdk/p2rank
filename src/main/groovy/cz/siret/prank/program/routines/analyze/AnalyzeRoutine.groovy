@@ -68,6 +68,7 @@ class AnalyzeRoutine extends Routine {
  //===========================================================================================================//
 
     final Map<String, Closure> commandRegister = unmodifiableMap([
+        "residues" : { cmdResidues() },
         "binding-residues" : { cmdBindingResidues() },
         "labeled-residues" : { cmdLabeledResidues() },
         "aa-propensities" : { cmdAaPropensities() },
@@ -85,26 +86,59 @@ class AnalyzeRoutine extends Routine {
 //===========================================================================================================//
 
     /**
-     * Write out binding residue ids
+     * Write out residue details
+     *
+     * Similar to cmdChainsResidues but add binding info and produces only one csv per protein.
+     */
+    void cmdResidues() {
+
+        double residueCutoff = params.ligand_protein_contact_distance
+
+        dataset.processItems { Dataset.Item item ->
+            Protein p = item.protein
+            p.assignSecondaryStructure()
+
+            Atoms bindingAtoms = p.proteinAtoms.cutoutShell(p.allLigandAtoms, residueCutoff)
+            Set<Residue> bindingResidues = p.residues.getDistinctForAtoms(bindingAtoms).toSet()
+
+            StringBuffer csv = new StringBuffer("chain_name, seq_num, ins_code, key, chain_mmcif_id, atoms, sec_struct_type, is_binding\n")
+            for (ResidueChain chain : p.residueChains) {
+                for (Residue res : chain.residues) {
+                    ResidueNumber rn = res.residueNumber
+                    int binding = bindingResidues.contains(res) ? 1 : 0
+                    String insCode = (rn.insCode != null) ? ""+rn.insCode : "-"
+                    csv << "$rn.chainName, $rn.seqNum, $insCode, $res.key, $res.chainMmcifId, $res.atoms.count, $res.secStruct, $binding\n"
+                }
+            }
+
+            String outf = "$outdir/${p.name}_residues.csv"
+            writeFile outf, csv.toString()
+        }
+
+    }
+
+
+    /**
+     * Write out binding residue keys
      */
     void cmdBindingResidues() {
 
-        double residueCutoff = params.ligand_protein_contact_distance
+        double bindingCutoff = params.ligand_protein_contact_distance
 
         StringBuffer summary = new StringBuffer()
 
         dataset.processItems { Dataset.Item item ->
             Protein p = item.protein
 
-            Atoms bindingAtoms = p.proteinAtoms.cutoutShell(p.allLigandAtoms, residueCutoff)
-            List<Integer> bindingResidueIds = bindingAtoms.distinctGroupsSorted.collect { it.residueNumber.seqNum }.toSet().toSorted()
+            Atoms bindingAtoms = p.proteinAtoms.cutoutShell(p.allLigandAtoms, bindingCutoff)
+            List<String> bindingResidueCodes = bindingAtoms.distinctGroups.collect { it.residueNumber.printFull() }.toSet().toSorted()
 
-            String msg = "Protein [$p.name]  ligands: $p.ligandCount  bindingAtoms: $bindingAtoms.count  bindingResidues: ${bindingResidueIds.size()}"
+            String msg = "Protein [$p.name]  ligands: $p.ligandCount  bindingAtoms: $bindingAtoms.count  bindingResidues: ${bindingResidueCodes.size()}"
             log.info msg
             summary << msg + "\n"
 
             String outf = "$outdir/${p.name}_binding-residues.txt"
-            writeFile outf, bindingResidueIds.join("\n")
+            writeFile outf, bindingResidueCodes.join("\n")
         }
 
         write "\n" + summary.toString()
