@@ -148,13 +148,13 @@ dependencies {
     implementation 'org.zeroturnaround:zt-zip:1.14'
     implementation 'org.apache.commons:commons-compress:1.21'
     implementation 'org.tukaani:xz:1.9'
-    implementation 'com.github.luben:zstd-jni:1.5.1-1'
-    implementation 'com.github.dpaukov:combinatoricslib3:3.3.2'
+    implementation 'com.github.luben:zstd-jni:1.5.2-1'
+    implementation 'com.github.dpaukov:combinatoricslib3:3.3.3'
 
-    implementation 'org.slf4j:slf4j-api:1.7.32'
+    implementation 'org.slf4j:slf4j-api:1.7.35'
     implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.17.1'
     implementation 'org.apache.logging.log4j:log4j-core:2.17.1'
-    implementation 'org.slf4j:jul-to-slf4j:1.7.32'         // for netlib logging messages
+    implementation 'org.slf4j:jul-to-slf4j:1.7.35'         // for netlib logging messages
 
     implementation 'org.biojava:biojava-core:6.0.4'
     implementation 'org.biojava:biojava-alignment:6.0.4'
