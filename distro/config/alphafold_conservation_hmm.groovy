@@ -1,7 +1,7 @@
 import cz.siret.prank.program.params.Params
 
 /*
- * P2Rank configuration for use with AlphaFold DB models (also NMR and Cryo-EM structures).
+ * P2Rank configuration for use with AlphaFold, cryo-EM, and NMR models.
  * Same as conservation_hmm.groovy, but doesn't use "bfactor" as a feature.
  */
 (params as Params).with {
