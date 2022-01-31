@@ -13,26 +13,26 @@ These include:
 
 All changes of that type should be rare and should be all listed here.
 
-### List of changes
+## List of changes
 
 
-#### 2.4-dev.x
+### 2.4
 
-##### Prediction
+###### Prediction
 
 none
 
-##### Training new models
+###### Training new models
 
 * Removed deprecated parameters `-conservation_origin` and `-load_conservation_paths` 
 
-#### 2.3
+### 2.3
 
-##### Prediction
+###### Prediction
 
 none
 
-##### Training new models
+###### Training new models
 
 * parameter `-extra_features` was renamed to `-features` 
 * command line format of parameters values with type `List<String>` and `List<List<String>>` has changed
@@ -55,7 +55,7 @@ none
       
     
 
-#### 2.2
+### 2.2
 
 * parameter `-conservation_dir` (type: `String`) was renamed to `-conservation_dirs` (type: `List<String>`)
 * column `probability` was added to `*_predictions.csv` output file
