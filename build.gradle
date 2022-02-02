@@ -17,7 +17,7 @@ apply plugin: 'groovy'
 apply plugin: 'java'
 
 group = 'cz.siret'
-version = '2.4'
+version = '2.5-dev.1'
 
 
 description = 'Ligand binding site prediction based on machine learning.'
@@ -163,7 +163,7 @@ dependencies {
     implementation 'org.openscience.cdk:cdk-qsarmolecular:2.7.1'    // for NumericalSurface class
     implementation 'org.openscience.cdk:cdk-data:2.7.1'             // for Atom class
 
-    implementation 'nz.ac.waikato.cms.weka:weka-dev:3.9.5'
+    implementation 'nz.ac.waikato.cms.weka:weka-dev:3.9.6'
 
     implementation fileTree(dir: 'lib', include: '*.jar')
 
