@@ -135,7 +135,7 @@ configurations {
 
 dependencies {
 
-    implementation 'org.codehaus.groovy:groovy-all:3.0.10'
+    implementation 'org.apache.groovy:groovy:4.0.1'
 
     implementation 'org.codehaus.gpars:gpars:1.2.1'
     implementation 'org.apache.commons:commons-lang3:3.12.0'
