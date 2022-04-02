@@ -20,7 +20,7 @@ Version 2.4 adds support for `.cif` input and contains a special profile for pre
 
 ### Requirements
 
-* Java 8 to 17
+* Java 8 to 18
 * PyMOL 1.7 (or newer) for viewing visualizations (optional)
 
 P2Rank is tested on Linux, macOS, and Windows. 
