@@ -135,7 +135,7 @@ configurations {
 
 dependencies {
 
-    implementation 'org.codehaus.groovy:groovy-all:3.0.9' // 3.0.5 to 3.0.7 are buggy
+    implementation 'org.codehaus.groovy:groovy-all:3.0.10'
 
     implementation 'org.codehaus.gpars:gpars:1.2.1'
     implementation 'org.apache.commons:commons-lang3:3.12.0'

@@ -47,7 +47,8 @@ class Cutils {
         }
         List<T> res = new ArrayList<>(list.size())
         for (E ent : list) {
-            res.add(mapper.apply(ent))
+            T val = mapper.apply(ent)
+            res.add(val)
         }
         return res;
     }
