@@ -1,5 +1,6 @@
 package cz.siret.prank.program.params
 
+import cz.siret.prank.program.PrankException
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.codehaus.groovy.control.CompilerConfiguration
@@ -30,8 +31,7 @@ class ConfigLoader {
         try {
             shell.evaluate(paramsGroovyFile)
         } catch (Exception e) {
-            log.error("Error in the config file [$paramsGroovyFile.path]: " + e.message, e)
-            return false
+            throw new PrankException("Error in the config file [$paramsGroovyFile.path]: " + e.message, e)
         }
 
         return true
