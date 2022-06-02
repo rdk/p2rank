@@ -148,7 +148,7 @@ dependencies {
     implementation 'org.zeroturnaround:zt-zip:1.15'
     implementation 'org.apache.commons:commons-compress:1.21'
     implementation 'org.tukaani:xz:1.9'
-    implementation 'com.github.luben:zstd-jni:1.5.2-2'
+    implementation 'com.github.luben:zstd-jni:1.5.2-3'
     implementation 'com.github.dpaukov:combinatoricslib3:3.3.3'
 
     implementation 'org.slf4j:slf4j-api:1.7.36'
