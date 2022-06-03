@@ -18,14 +18,13 @@ abstract class PocketRescorer implements Parametrized {
     Protein ligandedProtein
     Atoms ligandAtoms = null
 
-    boolean getCollectingStatistics() {
-        return ligandAtoms!=null
-    }
+    boolean collectStats = false
 
-    void collectStats(Protein ligandedProtein) {
-        this.ligandedProtein = ligandedProtein
-        if (ligandedProtein!=null) {
-            ligandAtoms = ligandedProtein.allLigandAtoms
+    void collectStatsForProtein(Protein liganatedProtein) {
+        collectStats = true
+        this.ligandedProtein = liganatedProtein
+        if (liganatedProtein != null) {
+            ligandAtoms = liganatedProtein.allLigandAtoms
         }
     }
 

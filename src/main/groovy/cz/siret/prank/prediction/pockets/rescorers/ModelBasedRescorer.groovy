@@ -93,7 +93,7 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
                 point.predicted = applyPointScoreThreshold(point.score)
                 point.observed = isPositivePoint(point.point, ligandAtoms)
 
-                if (collectingStatistics) {
+                if (collectStats) {
                     stats.addPrediction(point.observed, point.predicted, point.score)
                 }
             }
@@ -143,7 +143,7 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
                 boolean predicted = applyPointScoreThreshold(predictedScore)
                 boolean observed = false
 
-                if (collectingStatistics) {
+                if (collectStats) {
                     observed = isPositivePoint(point, ligandAtoms)
                     stats.addPrediction(observed, predicted, predictedScore)
                 }
