@@ -8,8 +8,6 @@ import org.apache.commons.compress.compressors.CompressorStreamFactory
 import org.apache.commons.compress.compressors.zstandard.ZstdCompressorInputStream
 import org.apache.commons.compress.compressors.zstandard.ZstdCompressorOutputStream
 import org.apache.commons.io.FileUtils
-import org.apache.tools.bzip2.CBZip2InputStream
-import org.apache.tools.bzip2.CBZip2OutputStream
 import org.tukaani.xz.LZMA2Options
 import org.tukaani.xz.LZMAInputStream
 import org.tukaani.xz.LZMAOutputStream
@@ -215,8 +213,6 @@ class Futils {
 
         if (fname.endsWith(".gz")) {
             is = new GZIPInputStream(is)
-        } else if (fname.endsWith(".bz2")) {
-            is = new CBZip2InputStream(is)
         } else if (fname.endsWith(".lzma")) {
             is = new LZMAInputStream(is)
         } else if (fname.endsWith(".zst") || fname.endsWith(".zstd")) {
@@ -300,10 +296,6 @@ class Futils {
         }
     }
 
-    static CBZip2OutputStream getBzip2OutputStream(String fname, int blockSize = CBZip2OutputStream.MAX_BLOCKSIZE) {
-        return new CBZip2OutputStream(bufferedOutputStream(fname), blockSize)
-    }
-
     static OutputStream getLzmaOutputStream(String fname, int level = LZMA2Options.PRESET_DEFAULT) {
         return new LZMAOutputStream(bufferedOutputStream(fname), new LZMA2Options(level), -1)
     }
@@ -341,10 +333,6 @@ class Futils {
         } finally {
             lzmas.close()
         }
-    }
-
-    static void serializeToBzip2(String fname, Object object) {
-        serializeTo(fname, object, getBzip2OutputStream(fname))
     }
 
     static void serializeToFile(String fname, Object object) {

@@ -8,6 +8,7 @@ import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Formatter
 import cz.siret.prank.utils.Writable
 import cz.siret.prank.utils.csv.CSV
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 

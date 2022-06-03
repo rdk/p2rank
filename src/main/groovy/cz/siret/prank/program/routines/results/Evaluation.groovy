@@ -6,6 +6,7 @@ import cz.siret.prank.domain.labeling.ResidueLabelings
 import cz.siret.prank.features.implementation.conservation.ConservationScore
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.prediction.pockets.criteria.*
+import cz.siret.prank.prediction.pockets.criteria.PocketCriterium
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Cutils
 import cz.siret.prank.utils.MathUtils
