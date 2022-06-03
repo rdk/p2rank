@@ -5,6 +5,7 @@ import cz.siret.prank.prediction.metrics.Curves
 import cz.siret.prank.prediction.metrics.Histogram
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Writable
+import groovy.transform.CompileStatic
 
 import static cz.siret.prank.utils.Futils.mkdirs
 import static cz.siret.prank.utils.Futils.writeFile
@@ -14,6 +15,7 @@ import static cz.siret.prank.utils.Futils.writeFile
 /**
  *
  */
+@CompileStatic
 class ResultsBase implements Parametrized, Writable {
 
 
