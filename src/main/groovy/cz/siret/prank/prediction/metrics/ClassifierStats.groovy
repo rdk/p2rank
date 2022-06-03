@@ -120,17 +120,22 @@ class ClassifierStats implements Parametrized, Writable {
     class Histograms {
 
         /** scores for all points */
-        Histogram score  = new Histogram(0, 1, HISTOGRAM_BINS)
+        Histogram score  = new Histogram("score",0, 1, HISTOGRAM_BINS)
         /** scores for observed negatives */
-        Histogram scoreNeg  = new Histogram(0, 1, HISTOGRAM_BINS)
+        Histogram scoreNeg  = new Histogram("scoreNeg", 0, 1, HISTOGRAM_BINS)
         /** scores for observed positives */
-        Histogram scorePos  = new Histogram(0, 1, HISTOGRAM_BINS)
+        Histogram scorePos  = new Histogram("scorePos", 0, 1, HISTOGRAM_BINS)
 
         void add(Histograms others) {
             score.add(others.score)
             scoreNeg.add(others.scoreNeg)
             scorePos.add(others.scorePos)
         }
+
+        List<Histogram> getAllHistograms() {
+            [score, scoreNeg, scorePos]
+        }
+        
     }
 
     //===========================================================================================================//

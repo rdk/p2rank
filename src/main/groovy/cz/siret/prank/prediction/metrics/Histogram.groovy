@@ -12,6 +12,8 @@ import static cz.siret.prank.utils.Formatter.format0
 @CompileStatic
 class Histogram {
 
+    String label
+
     double min
     double max
     int nbins
@@ -26,9 +28,11 @@ class Histogram {
      * @param max
      * @param nbins bin count
      */
-    Histogram(double min, double max, int nbins) {
+    Histogram(String label, double min, double max, int nbins) {
         assert min <= max
         assert nbins > 0
+
+        this.label = label
 
         this.min = min
         this.max = max
