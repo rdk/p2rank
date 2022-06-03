@@ -42,7 +42,7 @@ class EvalPocketsRoutine extends EvalRoutine {
         switch ( params.rescorer ) {
             case "ModelBasedRescorer":
                 rescorer = new ModelBasedRescorer(model, extractor)
-                rescorer.collectStats(pair.protein)
+                rescorer.collectStatsForProtein(pair.protein)
                 break
             case "PLBIndexRescorer":
                 rescorer = new PLBIndexRescorer()

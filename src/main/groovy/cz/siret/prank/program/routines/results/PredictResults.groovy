@@ -17,7 +17,7 @@ import static cz.siret.prank.utils.Futils.writeFile
  */
 @Slf4j
 @CompileStatic
-class PredictResults implements Parametrized, Writable {
+class PredictResults extends ResultsBase {
 
     Evaluation evaluation
     ClassifierStats classStats
@@ -55,12 +55,11 @@ class PredictResults implements Parametrized, Writable {
         List<Integer> tolerances = params.eval_tolerances
 
         String succ_rates          = evaluation.toSuccRatesCSV(tolerances)
-        String classifier_stats    = classStats.toCSV(" $classifierName ")
         String stats             = getMiscStatsCSV()
 
         writeFile "$outdir/success_rates.csv", succ_rates
-        writeFile "$outdir/classifier.csv", classifier_stats
         writeFile "$outdir/stats.csv", stats
+        def classifier_stats = logClassifierStats("point_classification", classifierName,  classStats, outdir)
 
         if (logIndividualCases) {
             evaluation.sort()

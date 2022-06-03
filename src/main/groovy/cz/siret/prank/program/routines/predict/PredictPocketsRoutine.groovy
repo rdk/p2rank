@@ -90,6 +90,9 @@ class PredictPocketsRoutine extends Routine {
 
             PredictionPair pair = item.predictionPair
             PocketRescorer rescorer = new ModelBasedRescorer(model, extractor)
+            if (collectStats) {
+                rescorer.collectStatsForProtein(pair.protein)
+            }
             rescorer.reorderPockets(pair.prediction, item.context) // in this context reorderPockets() makes predictions
 
             if (produceVisualizations) {

@@ -20,7 +20,7 @@ import static cz.siret.prank.utils.MathUtils.stddev
  */
 @Slf4j
 @CompileStatic
-class EvalResults implements Parametrized, Writable  {
+class EvalResults extends ResultsBase {
 
     /**
      * number of Eval runs this result represents
@@ -220,31 +220,6 @@ class EvalResults implements Parametrized, Writable  {
 
     String statsCSV(Map stats) {
         stats.collect { "$it.key, ${Formatter.fmt(it.value)}" }.join("\n")
-    }
-
-
-    String logClassifierStats(String fileLabel, String classifierLabel, ClassifierStats cs, String outdir) {
-
-        // main stats
-
-        String stats_str    = cs.toCSV(" $classifierLabel ")
-        writeFile "$outdir/${fileLabel}.csv", stats_str
-
-        // additional stats: histograms, roc
-
-        String dir = "$outdir/$fileLabel"
-        mkdirs(dir)
-
-        cs.histograms.properties.findAll { it.value instanceof Histogram }.each {
-            String hist_label = it.key
-            Histogram hist = (Histogram) it.value
-            writeFile "$dir/hist_${hist_label}.csv", hist.toCSV()
-        }
-
-        if (cs.collecting && params.stats_curves)
-            writeFile "$dir/roc_curve.csv", Curves.roc(cs.predictions).toCSV()
-
-        return stats_str
     }
 
     /**
