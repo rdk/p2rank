@@ -35,13 +35,17 @@ Note: some parameters (`-c`,`-o`, `-l/-label`) are strictly command line attribu
 
 ## Preparing the environment
 
-Training and optimization runs can be run from the project directory (repo root) using `./prank.sh` wrapper.
+Training and optimization runs can be run from the project directory (repo root) using `./prank.sh` script.
 
 * clone P2Rank repo (https://github.com/rdk/p2rank) 
 * clone dataset repo (https://github.com/rdk/p2rank-datasets) or prepare your datasets 
 * copy `misc/local-env.sh` to root directory of the project and edit it according to your machine (the file is then included by `prank.sh`)
-* you will need a lot of memory: at least to store the whole training dataset of feature vectors and a trained model and then some (see _Raquired memory and memory/time trade-offs_) 
-
+  * `cd p2rank; cp misc/local-env.sh .` 
+* set available memory with `-Xmx32G` parameter. You will need a lot of memory: at least to store the whole training dataset of feature vectors and a trained model and then some (see _Raquired memory and memory/time trade-offs_) 
+    
+Note: for continuos work/experimentation is better to clone the git repo, have local java config in `local-env.sh` and use `prank.sh` for running experiments as described here.
+The reason is that that way it will be easy to download updates (`git pull`) ot switch to a different P2Rank version (`git checkout`). 
+If you decide to use downloaded `.tar.gz` distribution or `.zip` source package this will not be easily possible.
 
 ## Training and evaluation
 
@@ -75,6 +79,7 @@ Parameters that influence memory/time trade-off:
     - `-clear_sec_caches` clear secondary caches (protein surfaces etc.) between runs (when iterating params or seed)
 * `-rf_threads` number of trees trained in parallel 
 * `-rf_trees`, `-fr_depth` influence the size of the model in memory      
+* `-rf_bagsize` influences memory needed for training and training time (defualt is `100`% but good results can be achieved with `55` or less)
 * `-crossval_threads` when running crossvalidation it determines how many models are trained at the same time. Set to `1` if you don't have enough memory.
 
 * `-cache_datasets <bool>`: keep datasets (structures and SAS points) in memory between crossval/traineval iterations. 
@@ -128,10 +133,17 @@ Ways to deal with class imbalances:
     - `-supersample`
     - use in combination with `-target_class_ratio`
     - can sbstantially influence the size of the training vactor dataset and consequentially the required memory
+* using different density of points on Solvent Accessible Surface for positives and negatives. It is also possible to use different density for training and evaluation.
+    - `-tessellation`, `-train_tessellation`, `-train_tessellation_negatives` 
+    - by default `tessellation = train_tessellation = train_tessellation_negatives = 2`
+    - higher tesselation equals higher density = more datapoints
 * class weight balancing
     - use `-balance_class_weights 1` in combination with `-target_class_weight_ratio`
     - works only with weight sensitive classifiers (`RandomForest`, `FastRandomForest`, `FasterForest`, `FasterForest2`)
-
+     
+Note: ratio of positioves and negatives in a training dataset (as well as `-target_class_weight_ratio` if used) can strongly influence produced results.
+Change in ratios will most probably need to be compensated by optimizing `-pred_point_threshold` parameter (possibly also `-point_score_pow`).
+See [hyperparameter optimization tutorial](hyperparameter-optimization-tutorial.md) and [particular example](new-feature-evaluation-tutorial.md#next-we-take-a-look-how-2-parameters-influence-dca-metrics) of optimization run. 
 
 ## Crossvalidation
 To run crossvalidation on a single dataset use the `prank crossval` command.
