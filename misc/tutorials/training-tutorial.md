@@ -43,9 +43,9 @@ Training and optimization runs can be run from the project directory (repo root)
   * `cd p2rank; cp misc/local-env.sh .` 
 * set available memory with `-Xmx32G` parameter. You will need a lot of memory: at least to store the whole training dataset of feature vectors and a trained model and then some (see _Raquired memory and memory/time trade-offs_) 
     
-Note: for continuos work/experimentation is better to clone the git repo, have local java config in `local-env.sh` and use `prank.sh` for running experiments as described here.
-The reason is that that way it will be easy to download updates (`git pull`) ot switch to a different P2Rank version (`git checkout`). 
-If you decide to use downloaded `.tar.gz` distribution or `.zip` source package this will not be easily possible.
+Note: for continuous work/experimentation it is better to clone the git repo, have a local java config in `local-env.sh`, and use `prank.sh` for running experiments (as described here).
+The reason is that this way it will be easy to download updates (`git pull`) ot switch to a different P2Rank version (`git checkout`) while config will stay put in `local-env.sh`. 
+If you decide to use downloaded `.tar.gz` distribution or `.zip` source package this will not be as easy, and you will need to manually update the config each time you download an update.
 
 ## Training and evaluation
 
@@ -141,8 +141,8 @@ Ways to deal with class imbalances:
     - use `-balance_class_weights 1` in combination with `-target_class_weight_ratio`
     - works only with weight sensitive classifiers (`RandomForest`, `FastRandomForest`, `FasterForest`, `FasterForest2`)
      
-Note: ratio of positioves and negatives in a training dataset (as well as `-target_class_weight_ratio` if used) can strongly influence produced results.
-Change in ratios will most probably need to be compensated by optimizing `-pred_point_threshold` parameter (possibly also `-point_score_pow`).
+Note: ratio of positives and negatives in the training dataset (as well as `-target_class_weight_ratio` if used) can strongly influence produced results.
+Change in ratios will most likely need to be compensated by optimizing `-pred_point_threshold` parameter (possibly also `-point_score_pow`).
 See [hyperparameter optimization tutorial](hyperparameter-optimization-tutorial.md) and [particular example](new-feature-evaluation-tutorial.md#next-we-take-a-look-how-2-parameters-influence-dca-metrics) of optimization run. 
 
 ## Crossvalidation
