@@ -27,8 +27,10 @@ class LoaderParams {
 
     int minLigandAtoms = Params.inst.min_ligand_atoms
 
+    private Set<String> ignoredHetGroups = Params.inst.ignore_het_groups as Set
+
     Set<String> getIgnoredHetGroups() {
-        return Params.inst.ignore_het_groups
+        return ignoredHetGroups
     }
     
 }
