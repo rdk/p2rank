@@ -121,7 +121,7 @@ import cz.siret.prank.program.params.Params
     /**
      * HETATM groups that are considered cofactor and ignored
      */
-    ignore_het_groups = ["HOH","DOD","WAT","NAG","MAN","UNK","GLC","ABA","MPD","GOL","SO4","PO4"] as Set
+    ignore_het_groups = ["HOH","DOD","WAT","NAG","MAN","UNK","GLC","ABA","MPD","GOL","SO4","PO4"]
 
     /**
      * positive podefining ligand types acceped values: "relevant", "ignored", "small", "distant"
