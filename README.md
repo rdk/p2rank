@@ -163,7 +163,7 @@ git clone https://github.com/rdk/p2rank.git && cd p2rank
 ```    
 Now you can run the program via:
 ```bash
-distro/prank       # standard mode that logs to distro/log/prank.log
+distro/prank       # standard mode that is run in production and logs to console
 ./prank.sh         # development mode that logs to console
 ``` 
 
