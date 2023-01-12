@@ -8,7 +8,7 @@ buildscript {  // for "com.github.ben-manes.versions" plugin
         }
     }
     dependencies {
-        classpath "com.github.ben-manes:gradle-versions-plugin:0.43.0"
+        classpath "com.github.ben-manes:gradle-versions-plugin:0.44.0"
     }
 }
 
@@ -17,7 +17,7 @@ apply plugin: 'groovy'
 apply plugin: 'java'
 
 group = 'cz.siret'
-version = '2.4.1-beta.2'
+version = '2.4.1-beta.3'
 
 
 description = 'Ligand binding site prediction based on machine learning.'
@@ -142,19 +142,19 @@ dependencies {
     implementation 'org.apache.commons:commons-math3:3.6.1'
     implementation 'commons-io:commons-io:2.11.0'
     implementation 'com.google.guava:guava:31.1-jre'
-    implementation 'com.google.code.gson:gson:2.9.1'
+    implementation 'com.google.code.gson:gson:2.10.1'
     implementation 'com.univocity:univocity-parsers:2.9.1' // csv parser
     implementation 'org.apache.commons:commons-csv:1.9.0'
     implementation 'org.zeroturnaround:zt-zip:1.15'
-    implementation 'org.apache.commons:commons-compress:1.21'
+    implementation 'org.apache.commons:commons-compress:1.22'
     implementation 'org.tukaani:xz:1.9'
-    implementation 'com.github.luben:zstd-jni:1.5.2-4'
+    implementation 'com.github.luben:zstd-jni:1.5.2-5'
     implementation 'com.github.dpaukov:combinatoricslib3:3.3.3'
 
-    implementation 'org.slf4j:slf4j-api:2.0.3'
+    implementation 'org.slf4j:slf4j-api:2.0.6'
     implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.19.0'
     implementation 'org.apache.logging.log4j:log4j-core:2.19.0'
-    implementation 'org.slf4j:jul-to-slf4j:2.0.3'         // for netlib logging messages
+    implementation 'org.slf4j:jul-to-slf4j:2.0.6'         // for netlib logging messages
 
     implementation 'org.biojava:biojava-core:6.0.5'
     implementation 'org.biojava:biojava-alignment:6.0.5'
