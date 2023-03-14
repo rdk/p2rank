@@ -16,7 +16,7 @@ import org.biojava.nbio.structure.Group
  * Ligand categorizer and holder.
  */
 @Slf4j
-@CompileStatic
+//@CompileStatic
 class Ligands implements Parametrized, Writable, Failable {
 
     /* ligands that are considered during training and evaluation, other ligands are ignored */
