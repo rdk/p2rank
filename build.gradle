@@ -151,10 +151,10 @@ dependencies {
     implementation 'com.github.luben:zstd-jni:1.5.4-2'
     implementation 'com.github.dpaukov:combinatoricslib3:3.3.3'
 
-    implementation 'org.slf4j:slf4j-api:2.0.7'
+    implementation 'org.slf4j:slf4j-api:1.7.36'
     implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.20.0'
     implementation 'org.apache.logging.log4j:log4j-core:2.20.0'
-    implementation 'org.slf4j:jul-to-slf4j:2.0.7'         // for netlib logging messages
+    implementation 'org.slf4j:jul-to-slf4j:1.7.36'         // for netlib logging messages
 
     implementation 'org.biojava:biojava-core:6.1.0'
     implementation 'org.biojava:biojava-alignment:6.1.0'
