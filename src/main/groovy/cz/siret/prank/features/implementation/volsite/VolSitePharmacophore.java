@@ -5,7 +5,7 @@ package cz.siret.prank.features.implementation.volsite;
  */
 public class VolSitePharmacophore {
 
-    static class AtomProps {
+    public static class AtomProps {
         public boolean aromatic;
         public boolean cation;
         public boolean anion;
@@ -24,7 +24,7 @@ public class VolSitePharmacophore {
      * @param atomCode CD1, ND2, ...
      * @param residueCode PHE, Trp, TYR...
      */
-    static AtomProps getAtomProperties(String atomCode, String residueCode) {
+    public static AtomProps getAtomProperties(String atomCode, String residueCode) {
         if (residueCode==null) residueCode="";
         if (atomCode==null) atomCode="";
 

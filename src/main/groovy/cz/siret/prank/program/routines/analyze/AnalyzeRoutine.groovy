@@ -5,6 +5,8 @@ import cz.siret.prank.domain.*
 import cz.siret.prank.domain.labeling.*
 import cz.siret.prank.domain.loaders.LoaderParams
 import cz.siret.prank.export.FastaExporter
+import cz.siret.prank.features.implementation.table.AtomTableFeature
+import cz.siret.prank.features.implementation.volsite.VolSitePharmacophore
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Struct
 import cz.siret.prank.program.Main
@@ -16,6 +18,7 @@ import cz.siret.prank.utils.BinCounter
 import cz.siret.prank.utils.CmdLineArgs
 import cz.siret.prank.utils.Cutils
 import cz.siret.prank.utils.Futils
+import cz.siret.prank.utils.Sutils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.ResidueNumber
@@ -47,9 +50,11 @@ class AnalyzeRoutine extends Routine {
             throw new PrankException("Invalid command.")
         }
 
-        dataset = main.loadDatasetOrFile()
+        if (!args.unnamedArgs.empty) {
+            dataset = main.loadDatasetOrFile()
+        }
 
-        label = "analyze_" + subCommand + "_" + dataset.label
+        label = "analyze_" + subCommand + (dataset!=null ? "_"+dataset.label : "")
         outdir = main.findOutdir(label)
         main.configureLoggers(outdir)
     }
@@ -80,7 +85,8 @@ class AnalyzeRoutine extends Routine {
         "fasta-raw" : { cmdFastaRaw() },
         "fasta-masked" : { cmdFastaMasked() },
         "peptides" : { cmdPeptides() },
-        "convert-dataset-to-atomid" : { cmdConvertContactresDataset() }
+        "convert-dataset-to-atomid" : { cmdConvertContactresDataset() },
+        "print-volsite-table" : { print_volsite_table() }
     ])
 
 //===========================================================================================================//
@@ -509,6 +515,35 @@ class AnalyzeRoutine extends Routine {
 
         writeFile "$outdir/${dataset.label}_converted.ds", newDsText
         writeFile "$outdir/non_matching_items.txt", nonMatchingText
+    }
+
+    
+    void print_volsite_table() {
+        List<String> atomTypes = AtomTableFeature.atomPropertyTable.itemNames.toSorted()
+
+        StringBuilder sb = new StringBuilder()
+        sb << "atomName, vsAromatic, vsCation, vsAnion, vsHydrophobic, vsAcceptor, vsDonor\n"
+        for (String atomType : atomTypes) {
+            def ss = Sutils.split(atomType, ".")
+            String resName = ss[0]
+            String atomName = ss[1]
+
+            VolSitePharmacophore.AtomProps props = VolSitePharmacophore.getAtomProperties(atomName, resName)
+
+            sb << atomType + ", "
+            sb << (props.aromatic?"1":"0"   ) + ", "
+            sb << (props.cation?"1":"0"     ) + ", "
+            sb << (props.anion?"1":"0"      ) + ", "
+            sb << (props.hydrophobic?"1":"0") + ", "
+            sb << (props.acceptor?"1":"0"   ) + ", "
+            sb << (props.donor?"1":"0"      )
+            sb << "\n"
+        }
+
+        String ss = sb.toString()
+        write ss
+        writeFile "$outdir/volsite_atom_table.csv", ss
+
     }
 
 }
