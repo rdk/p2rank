@@ -135,7 +135,7 @@ configurations {
 
 dependencies {
 
-    implementation 'org.apache.groovy:groovy:4.0.10' // 4.0.5-9 are buggy - probems with Ligands.groovy @CompileStatic
+    implementation 'org.apache.groovy:groovy:4.0.11' // 4.0.5-9 are buggy - probems with Ligands.groovy @CompileStatic
 
     implementation 'org.codehaus.gpars:gpars:1.2.1'
     implementation 'org.apache.commons:commons-lang3:3.12.0'
@@ -146,7 +146,7 @@ dependencies {
     implementation 'com.univocity:univocity-parsers:2.9.1' // csv parser
     implementation 'org.apache.commons:commons-csv:1.10.0'
     implementation 'org.zeroturnaround:zt-zip:1.15'
-    implementation 'org.apache.commons:commons-compress:1.22'
+    implementation 'org.apache.commons:commons-compress:1.23.0'
     implementation 'org.tukaani:xz:1.9'
     implementation 'com.github.luben:zstd-jni:1.5.4-2'
     implementation 'com.github.dpaukov:combinatoricslib3:3.3.3'
