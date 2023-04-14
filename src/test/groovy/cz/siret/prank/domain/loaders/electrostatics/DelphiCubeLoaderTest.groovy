@@ -4,10 +4,11 @@ package cz.siret.prank.domain.loaders.electrostatics
 import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
 
-import static org.junit.Assert.assertEquals
+import static org.junit.jupiter.api.Assertions.assertEquals
+
 
 /**
  *
@@ -18,10 +19,10 @@ class DelphiCubeLoaderTest {
 
     static String dir = 'src/test/resources/data/electrostatics/delphi'
 
-    GaussianCube cube
+    static GaussianCube cube
 
-    @Before
-    void loadCube() {
+    @BeforeAll
+    static void loadCube() {
        cube = DelphiCubeLoader.loadFile("$dir/delphi-2src.cube.gz")
     }
 

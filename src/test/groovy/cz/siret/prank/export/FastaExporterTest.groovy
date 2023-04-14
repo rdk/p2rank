@@ -2,10 +2,10 @@ package cz.siret.prank.export
 
 import cz.siret.prank.domain.Protein
 import groovy.transform.CompileStatic
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
 
-import static org.junit.Assert.assertEquals
+import static org.junit.jupiter.api.Assertions.assertEquals
 
 /**
  *
@@ -15,15 +15,15 @@ import static org.junit.Assert.assertEquals
 class FastaExporterTest {
 
     static String data_dir = "distro/test_data"
-    Protein protein_2W83
-    Protein protein_1fbl
-    Protein protein_1fbl_cif
+    static Protein protein_2W83
+    static Protein protein_1fbl
+    static Protein protein_1fbl_cif
 
 
     FastaExporter fastaExporter = new FastaExporter()
 
-    @Before
-    void setUp() throws Exception {
+    @BeforeAll
+    static void setUp() throws Exception {
         protein_2W83 = Protein.load("$data_dir/2W83.pdb")
         protein_1fbl = Protein.load("$data_dir/1fbl.pdb.gz")
         protein_1fbl = Protein.load("$data_dir/1fbl.cif")

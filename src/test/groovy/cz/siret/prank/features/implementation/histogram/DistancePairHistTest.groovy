@@ -1,9 +1,9 @@
 package cz.siret.prank.features.implementation.histogram
 
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals
 
 /**
  *
@@ -87,7 +87,5 @@ public class DistancePairHistTest {
         aeq( [0, 0.5, 0.5], newSmooth(3).add(0.75).bins   )
 
     }
-
-
 
 }

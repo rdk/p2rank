@@ -2,9 +2,9 @@ package cz.siret.prank
 
 import cz.siret.prank.domain.loaders.pockets.FPocketLoader
 import groovy.transform.CompileStatic
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
-import static org.junit.Assert.assertEquals
+import static org.junit.jupiter.api.Assertions.assertEquals
 
 @CompileStatic
 class FPocketTest {
@@ -22,8 +22,6 @@ class FPocketTest {
 
         stats.consolidate()
 
-
-
         assertEquals(54, stats.vornoiVertices)
         assertEquals(4, stats.polarityScore, DELTA)
         assertEquals(1217.1342d, stats.realVolumeApprox, DELTA)
@@ -31,6 +29,5 @@ class FPocketTest {
         assertEquals(-1.5909d, stats.pocketScore, DELTA)
 
     }
-
 
 }

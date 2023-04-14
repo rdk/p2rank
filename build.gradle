@@ -94,6 +94,7 @@ clean {
 }
 
 test {
+    useJUnitPlatform()
 
     // show standard out and standard error of the test JVM(s) on the console
     // testLogging.showStandardStreams = true
@@ -167,6 +168,6 @@ dependencies {
 
     implementation fileTree(dir: 'lib', include: '*.jar')
 
-    testImplementation 'junit:junit:4.13.2'
-
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
 }

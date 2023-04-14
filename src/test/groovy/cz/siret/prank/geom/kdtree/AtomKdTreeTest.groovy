@@ -5,9 +5,9 @@ import cz.siret.prank.geom.Atoms
 import cz.siret.prank.utils.Writable
 import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
-import static org.junit.Assert.assertEquals
+import static org.junit.jupiter.api.Assertions.assertEquals
 
 /**
  *
@@ -39,6 +39,5 @@ class AtomKdTreeTest implements Writable {
         }
 
     }
-
 
 }

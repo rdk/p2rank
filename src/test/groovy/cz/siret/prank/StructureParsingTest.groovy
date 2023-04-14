@@ -2,18 +2,13 @@ package cz.siret.prank
 
 import cz.siret.prank.domain.Protein
 import groovy.transform.CompileStatic
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 import java.nio.file.Path
 import java.nio.file.Paths
 
 import static cz.siret.prank.utils.PathUtils.path
-import static cz.siret.prank.utils.PathUtils.path
-import static cz.siret.prank.utils.PathUtils.path
-import static cz.siret.prank.utils.PathUtils.path
-import static cz.siret.prank.utils.PathUtils.path
-import static org.junit.Assert.assertEquals
+import static org.junit.jupiter.api.Assertions.assertEquals
 
 /**
  *
