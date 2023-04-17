@@ -25,7 +25,7 @@ jobs:
         java-version: ${{ matrix.java-version }}
         distribution: 'temurin'
     - name: Validate Gradle wrapper
-      uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
+      uses: gradle/wrapper-validation-action@v1
     - name: Build with Gradle
       run: ./gradlew assemble
     - name: Run unit tests
