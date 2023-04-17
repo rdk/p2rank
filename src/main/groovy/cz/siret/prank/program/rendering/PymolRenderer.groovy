@@ -124,7 +124,7 @@ orient
 
     private String renderLigands() {
 
-        List<String> ligandAtomIds = model.protein.allLigandAtoms.collect {it.PDBserial.toString() }
+        List<String> ligandAtomIds = model.protein.allRelevantLigandAtoms.collect {it.PDBserial.toString() }
         String idsOrList = ligandAtomIds.collect {"id $it" }.join(" or ")
 
         if (ligandAtomIds.empty) return

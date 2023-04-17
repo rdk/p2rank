@@ -86,6 +86,7 @@ abstract class EvalRoutine extends Routine {
      * Create EvalRoutine for residues or pockets depending on residueMode
      */
     static EvalRoutine create(boolean residueMode, Dataset dataset, Model model, String outdir) {
+        dataset.forTraining(false)
         if (residueMode) {
             return new EvalResiduesRoutine(dataset, model, outdir)
         } else {

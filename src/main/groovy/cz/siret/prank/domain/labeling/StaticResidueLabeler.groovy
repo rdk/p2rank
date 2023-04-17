@@ -23,11 +23,11 @@ import org.apache.commons.lang3.StringUtils
 abstract class StaticResidueLabeler extends ResidueLabeler<Boolean> implements Writable {
 
     static StaticResidueLabeler createForDatasetItem(Dataset.Item item) {
-        String method = item.dataset.attributes.get(Dataset.PARAM_PREDICTION_METHOD)
+        String method = item.originDataset.attributes.get(Dataset.PARAM_PREDICTION_METHOD)
 
         if ("vorffip" == method) {
             String path = item.columnValues.get('predicted_labeling')
-            path = item.dataset.dir + '/' + path
+            path = item.originDataset.dir + '/' + path
 
             return new VorffipPredictedLabelingLoader(path)
         } else {

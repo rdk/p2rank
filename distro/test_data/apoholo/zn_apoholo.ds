@@ -1,0 +1,19 @@
+# Example apo-holo dataset
+#
+# Columns:
+# protein ... Holo protein
+# chains  ... Holo chain(s)
+# apo_protein ... Apo protein
+# apo_chains  ... Apo chain(s)
+# ligands ... Relevant ligands in Holo structure
+#
+# Note: mmCIF files in this dataset were produced by PyMol and don't contain auth_seq_id column in ATOM records.
+#
+
+HEADER:  protein  chains  apo_protein  apo_chains  ligands
+
+holo\2yr2.cif.gz  B  apo\3gf2A_to_2yr2B.cif.gz  A  ZN[group_id:B_1001]
+holo\1ef0.cif.gz  B  apo\1jvaA_to_1ef0B.cif.gz  A  ZN[group_id:B_701]
+holo\2hcn.cif.gz  A  apo\2hfzA_to_2hcnA.cif.gz  A  ZN[group_id:A_3]
+holo\1i7w.cif.gz  A  apo\1i7xA_to_1i7wA.cif.gz  A  ZN[group_id:A_1]
+holo\3o9p.cif.gz  A  apo\4tozA_to_3o9pA.cif.gz  A  ZN[group_id:A_519]

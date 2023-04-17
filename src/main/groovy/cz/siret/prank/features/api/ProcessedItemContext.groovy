@@ -27,7 +27,7 @@ class ProcessedItemContext {
     }
 
     Dataset getDataset() {
-        item.dataset
+        item.originDataset
     }
     
 }

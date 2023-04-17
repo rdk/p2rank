@@ -32,7 +32,7 @@ class AtomKdTreeTest implements Writable {
             Atoms serial = atoms.cutoutSphere(a, RADIUS)
             Atoms kd = atoms.cutoutSphereKD(a, RADIUS)
 
-            write "findAtomsWithinRadius serial:$serial.count kd:$kd.count"
+            // write "findAtomsWithinRadius serial:$serial.count kd:$kd.count"
 
             //assertEquals(serial.count, kd.count)
             assertEquals(serial.toSet(), kd.toSet())

@@ -1,5 +1,6 @@
 package cz.siret.prank.domain.labeling
 
+
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.domain.Residues
 import cz.siret.prank.program.PrankException

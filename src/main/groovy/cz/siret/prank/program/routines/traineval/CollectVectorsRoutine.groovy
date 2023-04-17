@@ -1,6 +1,6 @@
 package cz.siret.prank.program.routines.traineval
 
-import com.google.common.collect.Lists
+
 import cz.siret.prank.collectors.CollectorFactory
 import cz.siret.prank.collectors.DataPreprocessor
 import cz.siret.prank.collectors.VectorCollector
@@ -69,9 +69,11 @@ class CollectVectorsRoutine extends Routine {
         final AtomicInteger ligCount = new AtomicInteger(0)
         final List<Instances> instList = newSynchronizedList(dataset.size)
 
-        Lists.newArrayList()
-
         dataset = prepareDataset(dataset)
+
+        if (dataset.size == 0) {
+            throw new PrankException("Datsets has no items [$dataset.name].")
+        }
 
         dataset.processItems { Dataset.Item item ->
 
@@ -84,7 +86,7 @@ class CollectVectorsRoutine extends Routine {
 
             pos.addAndGet(collected.positives)
             neg.addAndGet(collected.negatives)
-            ligCount.addAndGet(item.predictionPair.protein.ligands.size())
+            ligCount.addAndGet(item.predictionPair.ligands.relevantLigandCount)
             instList.add(inst)
         }
 
@@ -98,6 +100,14 @@ class CollectVectorsRoutine extends Routine {
         write "extracted $count vectors...  positives:$positives negatives:$negatives ratio:$ratio"
 
         write "preparing instance dataset...."
+
+        if (instList.size() == 0) {
+            throw new PrankException("Vectors from no protein were collected for dataset [$dataset.name].")
+        }
+        if (ligandCount == 0) {
+            throw new PrankException("No vectors extracted from dataset [$dataset.name].")
+        }
+
         Instances data = prepareDataForWeka(instList, vectf)
 
         logTime "collecting vectors finished in $timer.formatted"

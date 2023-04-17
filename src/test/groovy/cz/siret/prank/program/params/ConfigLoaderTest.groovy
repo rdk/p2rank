@@ -2,12 +2,13 @@ package cz.siret.prank.program.params
 
 import groovy.transform.CompileStatic
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.parallel.ResourceLock
 
 @CompileStatic
-public class ConfigLoaderTest {
+class ConfigLoaderTest {
 
     @Test
-    public void testOverride() throws Exception {
+    void testOverride() throws Exception {
         File f = new File("./src/test/resources/test-params.groovy")
         Params p = new Params()
         ConfigLoader.overrideConfig(p, f)
@@ -16,7 +17,7 @@ public class ConfigLoaderTest {
     }
 
     @Test
-    public void testDefaultParams() throws Exception {
+    void testDefaultParams() throws Exception {
         File f = new File("./distro/config/default.groovy")
         Params p = new Params()
         ConfigLoader.overrideConfig(p, f)

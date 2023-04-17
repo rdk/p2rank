@@ -17,7 +17,7 @@ apply plugin: 'groovy'
 apply plugin: 'java'
 
 group = 'cz.siret'
-version = '2.4.1'
+version = '2.5.0-dev.1'
 
 
 description = 'Ligand binding site prediction based on machine learning.'
@@ -119,6 +119,7 @@ test {
         showStackTraces true
 
         showStandardStreams = false
+//        showStandardStreams = true
     }
 
     // listen to standard out and standard error of the test JVM(s)
@@ -158,7 +159,7 @@ dependencies {
 
     implementation 'org.biojava:biojava-core:6.1.0'
     implementation 'org.biojava:biojava-alignment:6.1.0'
-    implementation 'org.biojava:biojava-structure:6.1.0'
+    implementation 'org.biojava:biojava-structure:6.1.0-rdk1'
 
     implementation 'org.openscience.cdk:cdk-qsarmolecular:2.8'    // for NumericalSurface class
     implementation 'org.openscience.cdk:cdk-data:2.8'             // for Atom class

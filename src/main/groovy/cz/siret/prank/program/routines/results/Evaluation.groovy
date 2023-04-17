@@ -6,7 +6,6 @@ import cz.siret.prank.domain.labeling.ResidueLabelings
 import cz.siret.prank.features.implementation.conservation.ConservationScore
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.prediction.pockets.criteria.*
-import cz.siret.prank.prediction.pockets.criteria.PocketCriterium
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Cutils
 import cz.siret.prank.utils.MathUtils
@@ -119,9 +118,10 @@ class Evaluation implements Parametrized {
     void addPrediction(PredictionPair pair, List<Pocket> pockets) {
         EvalContext context = new EvalContext()
 
-        pair.protein.ligands.each { it.sasPoints = null } // clear sas points cache
+        Ligands ligands = pair.ligands
 
-        assignPocketsToLigands(pair.protein.ligands, pockets, context)
+        ligands.relevantLigands.each { it.sasPoints = null } // clear sas points cache
+        assignPocketsToLigands(ligands.relevantLigands, pockets, context)
 
         List<LigRow> tmpLigRows = new ArrayList<>()
         List<PocketRow> tmpPockets = new ArrayList<>()
@@ -137,21 +137,22 @@ class Evaluation implements Parametrized {
         protRow.exposedAtoms = pair.prediction.protein.exposedAtoms.count
         protRow.chains = protein.residueChains.size()
         protRow.chainNames = protein.residueChains.collect {it.authorId}.join(" ")
-        protRow.ligands = pair.ligandCount
+        protRow.ligands = ligands.relevantLigandCount
         protRow.pockets = pair.prediction.pocketCount
-        protRow.ligNames = protein.ligands.collect { "$it.name($it.size)" }.join(" ")
-        protRow.ignoredLigands = protein.ignoredLigands.size()
-        protRow.ignoredLigNames = protein.ignoredLigands.collect { "$it.name($it.size)" }.join(" ")
-        protRow.smallLigands = protein.smallLigands.size()
-        protRow.smallLigNames = protein.smallLigands.collect { "$it.name($it.size)" }.join(" ")
-        protRow.distantLigands = protein.distantLigands.size()
-        protRow.distantLigNames = protein.distantLigands.collect { "$it.name($it.size|${format(it.contactDistance,1)}|${format(it.centerToProteinDist,1)})" }.join(" ")
+
+        protRow.ligNames = ligands.relevantLigands.collect { "$it.name($it.size)" }.join(" ")
+        protRow.ignoredLigands = ligands.ignoredLigandCount
+        protRow.ignoredLigNames = ligands.ignoredLigands.collect { "$it.name($it.size)" }.join(" ")
+        protRow.smallLigands = ligands.smallLigandCount
+        protRow.smallLigNames = ligands.smallLigands.collect { "$it.name($it.size)" }.join(" ")
+        protRow.distantLigands = ligands.distantLigandCount
+        protRow.distantLigNames = ligands.distantLigands.collect { "$it.name($it.size|${format(it.contactDistance,1)}|${format(it.centerToProteinDist,1)})" }.join(" ")
         protRow.sasPoints = sasPoints.count
 
         // overlaps and coverages
         int n_ligSasPoints = calcCoveragesProt(protRow, pair, sasPoints, pockets)
         // ligand coverage by positively predicted points (note: not by pockets!)
-        Atoms allLigLabeledPoints = labeledPoints.cutoutShell(protein.allLigandAtoms, LIG_SAS_CUTOFF)
+        Atoms allLigLabeledPoints = labeledPoints.cutoutShell(ligands.allRelevantLigandAtoms, LIG_SAS_CUTOFF)
         int n_ligSasPointsCovered = allLigLabeledPoints.findAll { ((LabeledPoint) it).predicted }.size()  // only for P2Rank
         double _ligSasPointsScoreSum = allLigLabeledPoints.collect { LabeledPoint it -> it.score }.sum(0)
         //log.debug "XXXX n_ligSasPoints: $n_ligSasPoints covered: $n_ligSasPointsCovered"
@@ -159,7 +160,7 @@ class Evaluation implements Parametrized {
         // Conservation stats
         def (ConservationScore score, List<Double> bindingScrs, List<Double> nonBindingScrs) = calcConservationStats(protein, protRow)
 
-        for (Ligand lig : protein.ligands) {
+        for (Ligand lig : ligands.relevantLigands) {
             LigRow row = new LigRow()
 
             row.protName = pair.name
@@ -167,7 +168,7 @@ class Evaluation implements Parametrized {
             row.ligCode = lig.code
             row.chainCode = lig.chain
 
-            row.ligCount = pair.ligandCount
+            row.ligCount = ligands.relevantLigandCount
             row.ranks = criteria.collect { criterium -> pair.rankOfIdentifiedPocket(lig, pockets, criterium, context) }
             row.dca4rank = pair.rankOfIdentifiedPocket(lig, pockets, standardCriterium, context)
             row.atoms = lig.atoms.count
@@ -202,7 +203,7 @@ class Evaluation implements Parametrized {
             prow.pocketName = pocket.name
             prow.pocketVolume = pocket.stats.realVolumeApprox
             prow.surfaceAtomCount = pocket.surfaceAtoms.count
-            prow.ligCount = pair.ligandCount
+            prow.ligCount = ligands.relevantLigandCount
             prow.pocketCount = pair.prediction.pocketCount
 
             Ligand ligand = pair.findLigandForPocket(pocket, standardCriterium, context)
@@ -243,11 +244,11 @@ class Evaluation implements Parametrized {
         }
 
         synchronized (this) {
-            ligandCount += pair.ligandCount
-            ignoredLigandCount += pair.ignoredLigandCount
-            smallLigandCount += pair.smallLigandCount
-            distantLigandCount += pair.distantLigandCount
-            pocketCount +=tmpPockets.size()
+            ligandCount += ligands.relevantLigandCount
+            ignoredLigandCount += ligands.ignoredLigandCount
+            smallLigandCount += ligands.smallLigandCount
+            distantLigandCount += ligands.distantLigandCount
+            pocketCount += tmpPockets.size()
             proteinCount += 1
             proteinRows.add(protRow)
             ligandRows.addAll(tmpLigRows)
@@ -269,7 +270,7 @@ class Evaluation implements Parametrized {
         List<Double> nonBindingScrs = new ArrayList<>()
         if (score != null) {
             protRow.avgConservation = getAvgConservationForAtoms(protein.proteinAtoms, score)
-            Atoms bindingAtoms = protein.proteinAtoms.cutoutShell(protein.allLigandAtoms, protein.params.ligand_protein_contact_distance)
+            Atoms bindingAtoms = protein.proteinAtoms.cutoutShell(protein.allRelevantLigandAtoms, protein.params.ligand_protein_contact_distance)
             protRow.avgBindingConservation = getAvgConservationForAtoms(bindingAtoms, score)
             Atoms nonBindingAtoms = new Atoms(protein.proteinAtoms - bindingAtoms)
             protRow.avgNonBindingConservation = getAvgConservationForAtoms(nonBindingAtoms, score)
@@ -297,12 +298,12 @@ class Evaluation implements Parametrized {
 
     private int calcCoveragesProt(ProteinRow protRow, PredictionPair pair, Atoms sasPoints, List<Pocket> pockets) {
         Protein prot = pair.protein
-        Atoms ligSasp = sasPoints.cutoutShell(prot.allLigandAtoms, LIG_SAS_CUTOFF)
+        Atoms ligSasp = sasPoints.cutoutShell(prot.allRelevantLigandAtoms, LIG_SAS_CUTOFF)
         int n_ligSasPoints = ligSasp.count
 
         // ligand coverage by pockets
-        List<Pocket> topn0Pockets = head(pair.ligandCount, pockets)
-        List<Pocket> topn2Pockets = head(pair.ligandCount + 2, pockets)
+        List<Pocket> topn0Pockets = head(pair.ligands.relevantLigandCount, pockets)
+        List<Pocket> topn2Pockets = head(pair.ligands.relevantLigandCount + 2, pockets)
         def (ligCovN0, surfOverlapN0) = calcOverlapStatsForPockets(topn0Pockets, ligSasp)
         def (ligCovN2, surfOverlapN2) = calcOverlapStatsForPockets(topn2Pockets, ligSasp)
         protRow.ligandCoverageN0 = ligCovN0
@@ -311,7 +312,7 @@ class Evaluation implements Parametrized {
         protRow.surfOverlapN2 = surfOverlapN2
 
         // TODO revisit: consider prot averaging vs ligand averaging etc...
-        List<Ligand> succLigands = prot.ligands.findAll { it.predictedPocket!=null }.toList() //.toList()
+        List<Ligand> succLigands = prot.relevantLigands.findAll { it.predictedPocket!=null }.toList() //.toList()
         List<Pocket> succPockets = succLigands.collect { it.predictedPocket }.toList()
         Atoms succLigSasp = union( (succLigands*.sasPoints).toList() )
         Atoms succPocSasp = union( (succPockets*.sasPoints).toList() )
@@ -377,7 +378,6 @@ class Evaluation implements Parametrized {
 
         return res
     }
-
 
     double calcDefaultCriteriumSuccessRate(int tolerance) {
         return calcSuccRate(3, tolerance)

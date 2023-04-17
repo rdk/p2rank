@@ -126,7 +126,7 @@ class OldPymolRenderer implements Parametrized {
         set stick_color, magenta
         
         
-        ${renderLigands(pair.protein)}
+        ${renderLigands(pair.holoProtein)}
         
         # SAS points
  

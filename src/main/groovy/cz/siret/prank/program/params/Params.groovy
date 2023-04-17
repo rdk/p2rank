@@ -1259,6 +1259,18 @@ class Params {
     @RuntimeParam
     String out_file = null
 
+    /**
+     * When using Apo-Holo train dataset enable Apo structures, if false use Holo structures instead.
+     */
+    @RuntimeParam
+    boolean apoholo_use_for_train = false
+
+    /**
+     * When using Apo-Holo eval/main dataset enable Apo structures, if false use Holo structures instead.
+     */
+    @RuntimeParam
+    boolean apoholo_use_for_eval = false
+
 
 //===========================================================================================================//
 // Derived parameters

@@ -91,6 +91,7 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
 
         mkdirs(outdir)
 
+        dataSet.forTraining(true)
         CollectVectorsRoutine collector = new CollectVectorsRoutine(dataSet, outdir, vectFileName)
 
         FeatureVectors res = collector.collectVectors()
@@ -177,6 +178,7 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
 
         logTime "model prepared in " + timer.formatted
         timer.restart()
+
 
         evalRoutine = EvalRoutine.create(params.predict_residues, evalDataSet, model, outdir)
 

@@ -24,7 +24,7 @@ abstract class PocketRescorer implements Parametrized {
         collectStats = true
         this.ligandedProtein = liganatedProtein
         if (liganatedProtein != null) {
-            ligandAtoms = liganatedProtein.allLigandAtoms
+            ligandAtoms = liganatedProtein.allRelevantLigandAtoms
         }
     }
 

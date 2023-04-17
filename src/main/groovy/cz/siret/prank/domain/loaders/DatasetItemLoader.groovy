@@ -45,37 +45,40 @@ class DatasetItemLoader implements Parametrized, Writable {
      * @param predictionFile main pocket prediction output file (from the second column in the dataset file)
      * @return
      */
-    PredictionPair loadPredictionPair(@Nonnull String proteinFile,
-                                      @Nullable String predictionFile,
-                                      @Nonnull ProcessedItemContext itemContext) {
-        File protf = new File(proteinFile)
-
+    PredictionPair loadPredictionPair(@Nonnull Dataset.Item item) {
         PredictionPair res = new PredictionPair()
-        res.name = protf.name
+        res.name = Futils.shortName(item.proteinFile)
+        res.holoProtein = Protein.load(item.proteinFile, item.chains, loaderParams)
 
-        if (itemContext.item.hasSpecifiedChaids()) {
-            res.protein = Protein.loadReduced(proteinFile, loaderParams, itemContext.item.getChains())
-        } else {
-            res.protein = Protein.load(proteinFile, loaderParams)
+        if (item.apoProteinFile != null) {
+            Protein apo = Protein.load(item.apoProteinFile, item.apoChains, loaderParams)
+            apo.apoStructure = true
+            apo.apoLigands = apo.ligands
+            apo.ligands = res.holoProtein.ligands
+            res.apoProtein = apo
         }
 
-        if (predictionFile != null) {
-            res.prediction = predictionLoader.loadPrediction(predictionFile, res.protein)
+        if (item.pocketPredictionFile != null) {
+            res.prediction = predictionLoader.loadPrediction(item.pocketPredictionFile, res.holoProtein)
         } else {
             res.prediction = new Prediction(res.protein, [])
         }
 
+        ProcessedItemContext itemContext = item.context
+
         // TODO: move conservation related stuff to feature implementation
         if (loaderParams.load_conservation) {
-            loadConservationScores(proteinFile, itemContext, res)
+            loadConservationScores(item.proteinFile, itemContext, res)
         }
 
         if (params.identify_peptides_by_labeling) {
-            loadPeptidesFromLabeling(res.protein, itemContext)
+            loadPeptidesFromLabeling(res.holoProtein, itemContext)
         }
 
         return res
     }
+
+//===========================================================================================================//
 
     private loadPeptidesFromLabeling(Protein prot, ProcessedItemContext ctx) {
         log.info 'loading peptides for {}', prot.name
@@ -96,7 +99,7 @@ class DatasetItemLoader implements Parametrized, Writable {
             if (isBindingPeptide(ch, prot, labeling, ctx)) {
                 prot.structure.addChain(ch)
                 prot.peptides.add(rc)
-                prot.ligands.add new Ligand(Atoms.allFromChain(ch), prot)
+                prot.relevantLigands.add new Ligand(Atoms.allFromChain(ch), prot)
                 log.info 'adding binding peptide {}', rc.authorId
             } else {
                 log.info 'refused peptide {} as non binding', rc.authorId
@@ -130,6 +133,8 @@ class DatasetItemLoader implements Parametrized, Writable {
 
         return ratio >= 0.5
     }
+
+//===========================================================================================================//
 
     @Nullable
     private File findConservationFile(List<String> dirs, String proteinFile, String chainId) {
@@ -171,7 +176,7 @@ class DatasetItemLoader implements Parametrized, Writable {
     private List<String> getConservationLookupDirs(String proteinFile, ProcessedItemContext itemContext) {
 
         if (!Cutils.empty(params.conservation_dirs)) {
-            String datasetDir = itemContext.item.dataset.dir
+            String datasetDir = itemContext.item.originDataset.dir
             List<String> dirs = params.conservation_dirs.collect {Futils.prependIfNotAbsolute(it, datasetDir) }
             return dirs
         } else {

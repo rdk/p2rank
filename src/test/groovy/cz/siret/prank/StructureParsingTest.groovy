@@ -36,7 +36,7 @@ class StructureParsingTest {
 
         assertEquals pdb.allAtoms.count, cif.allAtoms.count
         assertEquals pdb.ligandCount, cif.ligandCount
-        assertEquals pdb.allLigandAtoms.count, cif.allLigandAtoms.count
+        assertEquals pdb.allRelevantLigandAtoms.count, cif.allRelevantLigandAtoms.count
         assertEquals pdb.residues.count, cif.residues.count
         assertEquals pdb.residueChains.size(), cif.residueChains.size()
     }

@@ -1,5 +1,5 @@
-package cz.siret.prank.program.routines.analyze
 
+package cz.siret.prank.program.routines.analyze
 
 import cz.siret.prank.domain.*
 import cz.siret.prank.domain.labeling.*
@@ -14,11 +14,7 @@ import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.rendering.PymolRenderer
 import cz.siret.prank.program.rendering.RenderingModel
 import cz.siret.prank.program.routines.Routine
-import cz.siret.prank.utils.BinCounter
-import cz.siret.prank.utils.CmdLineArgs
-import cz.siret.prank.utils.Cutils
-import cz.siret.prank.utils.Futils
-import cz.siret.prank.utils.Sutils
+import cz.siret.prank.utils.*
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.ResidueNumber
@@ -104,7 +100,7 @@ class AnalyzeRoutine extends Routine {
             Protein p = item.protein
             p.assignSecondaryStructure()
 
-            Atoms bindingAtoms = p.proteinAtoms.cutoutShell(p.allLigandAtoms, residueCutoff)
+            Atoms bindingAtoms = p.proteinAtoms.cutoutShell(p.allRelevantLigandAtoms, residueCutoff)
             Set<Residue> bindingResidues = p.residues.getDistinctForAtoms(bindingAtoms).toSet()
 
             StringBuffer csv = new StringBuffer("chain_name, seq_num, ins_code, key, chain_mmcif_id, atoms, sec_struct_type, is_binding\n")
@@ -136,7 +132,7 @@ class AnalyzeRoutine extends Routine {
         dataset.processItems { Dataset.Item item ->
             Protein p = item.protein
 
-            Atoms bindingAtoms = p.proteinAtoms.cutoutShell(p.allLigandAtoms, bindingCutoff)
+            Atoms bindingAtoms = p.proteinAtoms.cutoutShell(p.allRelevantLigandAtoms, bindingCutoff)
             List<String> bindingResidueCodes = bindingAtoms.distinctGroups.collect { it.residueNumber.printFull() }.toSet().toSorted()
 
             String msg = "Protein [$p.name]  ligands: $p.ligandCount  bindingAtoms: $bindingAtoms.count  bindingResidues: ${bindingResidueCodes.size()}"

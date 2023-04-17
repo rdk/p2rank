@@ -45,7 +45,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank
 @CompileStatic
 class Dataset implements Parametrized, Writable, Failable {
 
-    static final Splitter SPLITTER = Splitter.on(CharMatcher.whitespace()).trimResults().omitEmptyStrings()
+    private static final Splitter SPLITTER = Splitter.on(CharMatcher.whitespace()).trimResults().omitEmptyStrings()
 
     /*
      * dataset parameter names
@@ -60,11 +60,13 @@ class Dataset implements Parametrized, Writable, Failable {
      * dataset column names
      */
     static final String COLUMN_PROTEIN = "protein"
+    static final String COLUMN_CHAINS = "chains"
     static final String COLUMN_PREDICTION = "prediction"
     static final String COLUMN_LIGANDS = "ligands"
     static final String COLUMN_LIGAND_CODES = "ligand_codes"
     static final String COLUMN_CONSERVATION_FILES_PATTERN = "conservation_files_pattern"
-    static final String COLUMN_CHAINS = "chains"
+    static final String COLUMN_APO_PROTEIN = "apo_protein"
+    static final String COLUMN_APO_CHAINS = "apo_chains"
 
     static final List<String> DEFAULT_HEADER = [ COLUMN_PROTEIN ]
 
@@ -76,6 +78,8 @@ class Dataset implements Parametrized, Writable, Failable {
     List<String> header = DEFAULT_HEADER
     List<Item> items = new ArrayList<>()
     boolean cached = false
+    boolean apoholo = false
+    boolean forTraining = false
 
     private ResidueLabeler residueLabeler
 
@@ -86,6 +90,11 @@ class Dataset implements Parametrized, Writable, Failable {
         return this
     }
 
+    Dataset forTraining(boolean t = true) {
+        forTraining = t
+        return this
+    }
+
     String getLabel() {
         Futils.removeLastExtension(name)
     }
@@ -93,6 +102,7 @@ class Dataset implements Parametrized, Writable, Failable {
     int getSize() {
         items.size()
     }
+
 
     /**
      * clear cached properties of cached proteins
@@ -153,6 +163,10 @@ class Dataset implements Parametrized, Writable, Failable {
         //if (log.isTraceEnabled()) {
         //    log.trace "ITEMS: {}", Sutils.toStr(items) // doesn't work with java 17
         //}
+
+        if (items.empty) {
+            throw new PrankException("Trying to process dataset with no items [$name].")
+        }
 
         Result result = new Result()
 
@@ -226,13 +240,20 @@ class Dataset implements Parametrized, Writable, Failable {
     boolean checkFilesExist() {
         AtomicBoolean allOk = new AtomicBoolean(true)
 
-        boolean checkPrediction = header.contains(COLUMN_PREDICTION)
         boolean checkProtein = header.contains(COLUMN_PROTEIN)
+        boolean checkApoProtein = header.contains(COLUMN_APO_PROTEIN)
+        boolean checkPrediction = header.contains(COLUMN_PREDICTION)
 
         processItemsQuiet { Item it ->
             if (checkProtein) {
                 if (!Futils.exists(it.proteinFile)) {
                     log.error "protein file doesn't exist: $it.proteinFile"
+                    allOk.set(false)
+                }
+            }
+            if (checkApoProtein) {
+                if (!Futils.exists(it.apoProteinFile)) {
+                    log.error "apo_protein file doesn't exist: $it.proteinFile"
                     allOk.set(false)
                 }
             }
@@ -333,8 +354,8 @@ class Dataset implements Parametrized, Writable, Failable {
         List<Fold> folds = new ArrayList<>(k)
         for (int i=0; i!=k; ++i) {
             int num = i+1
-            Dataset evalset = createSubset(subsets[i], "${name}_fold.${k}.${num}_eval")
-            Dataset trainset = createSubset( shuffledItems - subsets[i], "${name}_fold.${k}.${num}_train" )
+            Dataset evalset = createSubset(subsets[i], "${name}_fold.${k}.${num}_eval").forTraining(false)
+            Dataset trainset = createSubset(shuffledItems - subsets[i], "${name}_fold.${k}.${num}_train").forTraining(true)
             folds.add(new Fold(num, trainset, evalset))
         }
 
@@ -345,11 +366,17 @@ class Dataset implements Parametrized, Writable, Failable {
      * create dataset view from subset of items
      */
     private Dataset createSubset(List<Item> items, String name) {
+
+        items = items.collect { it.copy() }
+
         Dataset res = new Dataset(name, this.dir)
         res.items = items
         res.attributes = this.attributes
         res.cached = this.cached
         res.header = this.header
+        res.apoholo = this.apoholo
+
+        items.forEach { it.currentDataset = res }
 
         return res
     }
@@ -359,16 +386,16 @@ class Dataset implements Parametrized, Writable, Failable {
      * @param itemContext allows to specify additional columns May be null.
      * @return
      */
-    static Dataset createSingleFileDataset(String pdbFile, ProcessedItemContext itemContext) {
-        Dataset ds = new Dataset(Futils.shortName(pdbFile), Futils.dir(pdbFile))
+    static Dataset createSingleFileDataset(String proteinFile, ProcessedItemContext itemContext) {
+        Dataset ds = new Dataset(Futils.shortName(proteinFile), Futils.dir(proteinFile))
 
         Map<String, String> columnValues = new HashMap<>()
 
         if (itemContext!=null) {
             columnValues.putAll(itemContext.datsetColumnValues)
         }
-        
-        ds.items.add(ds.createNewItem(pdbFile, null, columnValues))
+
+        ds.items.add(ds.createNewItemForSingleFileDs(proteinFile, columnValues))
 
         return ds
     }
@@ -493,6 +520,17 @@ class Dataset implements Parametrized, Writable, Failable {
         
         log.debug("dataset header: {}", dataset.header)
 
+        if (dataset.header.contains(COLUMN_APO_PROTEIN)) {
+            if (!dataset.header.contains(COLUMN_PROTEIN)) {
+                throw new PrankException("Invalid dataset file. Dataset that contains '${COLUMN_APO_PROTEIN}' must also contain '${COLUMN_PROTEIN}' column.")
+            }
+            dataset.apoholo = true
+        }
+
+        if (dataset.size == 0) {
+            throw new PrankException("Empty dataset [$dataset.name]")
+        }
+
         if (!dataset.checkFilesExist()) {
             throw new PrankException("dataset contains invalid files")
         }
@@ -510,7 +548,7 @@ class Dataset implements Parametrized, Writable, Failable {
             }
             colValues.put(col, cols[i])
         }
-        return createNewItem(colValues)
+        return createNewItemFromColumns(colValues)
     }
 
     static List<String> parseHeader(String line) {
@@ -529,8 +567,10 @@ class Dataset implements Parametrized, Writable, Failable {
         res.header = datasets[0].header
 
         for (Dataset d : datasets) {
-            res.items.addAll(d.items)
+            res.items.addAll(d.items.collect { it.copy() })
         }
+
+        res.items.forEach { it.currentDataset = res }
 
         return res
     }
@@ -700,18 +740,29 @@ class Dataset implements Parametrized, Writable, Failable {
     class Item {
 
         /**
-         * origin dataset (points to original loaded dataset when dataset is split to folds)
+         * Origin dataset. Points to original loaded dataset (from file), before dataset is split to crossval folds or joined with other dataset.
          */
-        Dataset dataset
+        Dataset originDataset
+
+        /**
+         * Current dataset. Only differs when datasets are joined or split to folds. In that case points to the joined dataset or (joined) fold(s).
+         */
+        Dataset currentDataset
+
+        String label
+
         Map<String, String> columnValues
 
         /**
          * liganated or unliganated protein for predictions
          */
         String proteinFile
+        @Nullable String apoProteinFile
         @Nullable String pocketPredictionFile
 
-        String label
+        @Nullable List<String> chains
+        @Nullable List<String> apoChains
+
 
         /**
          * Loaded protein with prediction (if available)
@@ -719,26 +770,62 @@ class Dataset implements Parametrized, Writable, Failable {
         PredictionPair cachedPair
         @Nullable List<LigandDefinition> ligandDefinitions
 
-        private Item(Dataset dataset, String proteinFile, String predictionFile, Map<String, String> columnValues) {
-            this.dataset = dataset
-            this.columnValues = columnValues
+        private Item(Dataset dataset,
+                     String label,
+                     String proteinFile,
+                     @Nullable String apoProteinFile,
+                     @Nullable String predictionFile,
+                     @Nullable List<String> chains,
+                     @Nullable List<String> apoChains,
+                     @Nullable List<LigandDefinition> ligandDefinitions,
+                     Map<String, String> columnValues) {
+            this.originDataset = dataset
+            this.currentDataset = dataset
+            this.label = label
             this.proteinFile = proteinFile
+            this.apoProteinFile = apoProteinFile
             this.pocketPredictionFile = predictionFile
-            this.label = Futils.shortName( pocketPredictionFile ?: proteinFile )
-
-            this.ligandDefinitions = parseLigandsColumn(getLigandsColumnValue())
+            this.chains = chains
+            this.apoChains = apoChains
+            this.ligandDefinitions = ligandDefinitions
+            this.columnValues = columnValues
         }
 
+        private Item(Item item) {
+            this.originDataset        = item.originDataset
+            this.currentDataset       = item.currentDataset
+            this.label                = item.label
+            this.proteinFile          = item.proteinFile
+            this.apoProteinFile       = item.apoProteinFile
+            this.pocketPredictionFile = item.pocketPredictionFile
+            this.chains               = item.chains
+            this.apoChains            = item.apoChains
+            this.ligandDefinitions    = item.ligandDefinitions
+            this.columnValues         = item.columnValues
+
+            this.cachedPair           = item.cachedPair
+        }
+
+        Item copy() {
+            return new Item(this)
+        }
+
+
         PredictionPair getPredictionPair() {
+            PredictionPair res = null
             if (cached) {
-                if (cachedPair==null) {
+                if (cachedPair == null) {
                     cachedPair = loadPredictionPair()
                     log.info "caching structures in dataset item [$label]"
                 }
-                return cachedPair
+                res = cachedPair
             } else {
-                return loadPredictionPair()
+                res = loadPredictionPair()
             }
+
+            res.forTraining = currentDataset.forTraining
+
+            return res
         }
 
         // for one column datasets
@@ -746,31 +833,12 @@ class Dataset implements Parametrized, Writable, Failable {
             getPredictionPair().protein
         }
 
-        PredictionPair loadPredictionPair() {
-            return getLoader(this).loadPredictionPair(proteinFile, pocketPredictionFile, getContext())
+        Protein getApoProtein() {
+            getPredictionPair().apoProtein
         }
 
-        @Nullable
-        private List<LigandDefinition> parseLigandsColumn(String columnValue) {
-            if (columnValue == null) return null
-            List<String> ligDefs = Sutils.splitRespectInnerParentheses(columnValue, ',' as char, '[' as char, ']' as char)
-            return ligDefs.collect { LigandDefinition.parse(it) }
-        }
-
-        @Nullable
-        private String getLigandsColumnValue() {
-            return columnValues.getOrDefault(COLUMN_LIGANDS, columnValues.get(COLUMN_LIGAND_CODES))
-        }
-
-        @Nullable
-        private String getChainsColumnValue() {
-            return columnValues.get(COLUMN_CHAINS)
-        }
-
-        boolean hasSpecifiedChaids() {
-            String chains = getChainsColumnValue()
-            
-            return chains!=null && chains.trim()!="*"
+        private PredictionPair loadPredictionPair() {
+            return getLoader(this).loadPredictionPair(this)
         }
 
         /**
@@ -779,11 +847,16 @@ class Dataset implements Parametrized, Writable, Failable {
          */
         @Nullable
         List<String> getChains() {
-            if (!columnValues.containsKey(COLUMN_CHAINS)) {
-                null
-            } else {
-                Splitter.on(",").split(columnValues[COLUMN_CHAINS]).asList()
-            }
+            chains
+        }
+
+        /**
+         * explicitly specified chain codes
+         * @return null if column is not defined
+         */
+        @Nullable
+        List<String> getApoChains() {
+            apoChains
         }
 
         /**
@@ -791,8 +864,8 @@ class Dataset implements Parametrized, Writable, Failable {
          */
         @Nullable
         BinaryLabeling getExplicitBinaryLabeling() {
-            if (dataset.hasExplicitResidueLabeling()) {
-                return dataset.explicitBinaryResidueLabeler.getBinaryLabeling(protein.residues, protein)
+            if (originDataset.hasExplicitResidueLabeling()) {
+                return originDataset.explicitBinaryResidueLabeler.getBinaryLabeling(protein.residues, protein)
             }
             return null
         }
@@ -802,7 +875,7 @@ class Dataset implements Parametrized, Writable, Failable {
          */
         @Nullable
         BinaryLabeling getBinaryLabeling() {
-            return dataset.binaryResidueLabeler.getBinaryLabeling(protein.residues, protein)
+            return originDataset.binaryResidueLabeler.getBinaryLabeling(protein.residues, protein)
         }
 
         ProcessedItemContext getContext() {
@@ -811,22 +884,76 @@ class Dataset implements Parametrized, Writable, Failable {
         
     }
 
-    Item createNewItem(String proteinFile, String predictionFile, Map<String, String> columnValues) {
-        return new Item(this, proteinFile, predictionFile, columnValues)
+    Item createNewItemForSingleFileDs(String proteinFile, Map<String, String> columnValues) {
+        String label = Futils.shortName(proteinFile)
+        return new Item(
+                this,
+                label,
+                proteinFile,
+                null,
+                null,
+                null,
+                null,
+                null,
+                columnValues
+        )
     }
 
-    Item createNewItem(Map<String, String> columnValues) {
+    Item createNewItemFromColumns(Map<String, String> columnValues) {
         String proteinFile = absolutePathOrPrefixWithDir(columnValues.get(COLUMN_PROTEIN), dir)
-        String predictionFile = null
-        if (header.contains(COLUMN_PREDICTION)) {
-            predictionFile = absolutePathOrPrefixWithDir(columnValues.get(COLUMN_PREDICTION), dir)
-        }
+        String apoProteinFile = absolutePathOrPrefixWithDir(columnValues.get(COLUMN_APO_PROTEIN), dir)
+        String predictionFile = absolutePathOrPrefixWithDir(columnValues.get(COLUMN_PREDICTION), dir)
 
-        return createNewItem(proteinFile, predictionFile, columnValues)
+        String label = Futils.shortName(predictionFile ?: proteinFile)
+        List<LigandDefinition> ligandDefinitions = parseLigandsColumn(getLigandsColumnValue(columnValues))
+        List<String> chains = parseChainsColumn(columnValues.get(COLUMN_CHAINS))
+        List<String> apoChains = parseChainsColumn(columnValues.get(COLUMN_APO_CHAINS))
+
+        return new Item(
+                this,
+                label,
+                proteinFile,
+                apoProteinFile,
+                predictionFile,
+                chains,
+                apoChains,
+                ligandDefinitions,
+                columnValues
+        )
     }
 
-    String absolutePathOrPrefixWithDir(String path, String dir) {
+    @Nullable
+    String absolutePathOrPrefixWithDir(@Nullable String path, String dir) {
+        if (path == null) return null
         return Futils.prependIfNotAbsolute(path, dir)
+    }
+
+    @Nullable
+    private List<LigandDefinition> parseLigandsColumn(String columnValue) {
+        if (columnValue == null) return null
+        List<String> ligDefs = Sutils.splitRespectInnerParentheses(columnValue, ',' as char, '[' as char, ']' as char)
+        return ligDefs.collect { LigandDefinition.parse(it) }
+    }
+
+    /**
+     *
+     * @param columnValue
+     * @return null = all chains
+     */
+    @Nullable
+    private List<String> parseChainsColumn(@Nullable String columnValue) {
+        if (columnValue == null || columnValue.trim() == "*") {
+            return null
+        } else {
+            return CHAIN_SPLITTER.split(columnValue).asList()
+        }
+    }
+
+    private static final Splitter CHAIN_SPLITTER = Splitter.on(",")
+
+    @Nullable
+    private String getLigandsColumnValue(Map<String, String> columnValues) {
+        return columnValues.getOrDefault(COLUMN_LIGANDS, columnValues.get(COLUMN_LIGAND_CODES))
     }
 
 //===========================================================================================================//

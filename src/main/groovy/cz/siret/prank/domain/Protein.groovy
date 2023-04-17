@@ -68,17 +68,18 @@ class Protein implements Parametrized {
 
 //===========================================================================================================//
 
-    /* relevant ligands (counted in prediction evaluation) */
-    List<Ligand> ligands = new ArrayList<>()
+    boolean apoStructure = false
 
-    /* too small ligands */
-    List<Ligand> smallLigands = new ArrayList<>()
+    /**
+     * Ligands from the structure if this structure is HOLO,
+     * ot ligands from paired HOLO structure if this structure is APO.
+     */
+    Ligands ligands = new Ligands()
 
-    /* usually cofactors and biologically irrelevant ligands */
-    List<Ligand> ignoredLigands = new ArrayList<>()
-
-    /* ligands(hetgroups) too distant from protein surface */
-    List<Ligand> distantLigands = new ArrayList<>()
+    /**
+     * Original ligands from the structure if this structure is APO.
+     */
+    @Nullable Ligands apoLigands = null
 
     List<ResidueChain> peptides = new ArrayList<>()
 
@@ -103,7 +104,7 @@ class Protein implements Parametrized {
      * relevant ligand count
      */
     int getLigandCount() {
-        ligands.size()
+        ligands.relevantLigandCount
     }
 
     void calcuateSurfaceAndExposedAtoms() {
@@ -211,28 +212,28 @@ class Protein implements Parametrized {
         trainSurface = null
         trainNegativesSurface = null
         secondaryData.clear()
-        ligands.each { it.sasPoints = null; it.predictedPocket = null }
+        ligands.relevantLigands.each { it.sasPoints = null; it.predictedPocket = null }
         clearResidues()
     }
 
 //===========================================================================================================//
 
     List<Ligand> getRelevantLigands() {
-        return ligands
+        return ligands.relevantLigands
     }
 
     /**
      * @return ignoredLigands + smallLigands + distantLigands
      */
     List<Ligand> getAllIgnoredLigands() {
-        return ignoredLigands + smallLigands + distantLigands
+        return ligands.allIgnoredLigands
     }
 
     /**
      * @return all atoms from relevant ligands
      */
-    Atoms getAllLigandAtoms() {
-        return Atoms.join(relevantLigands*.atoms)
+    Atoms getAllRelevantLigandAtoms() {
+        return ligands.allRelevantLigandAtoms
     }
 
     /**
@@ -395,17 +396,30 @@ class Protein implements Parametrized {
         return fileName
     }
 
-    static Protein load(String pdbFileName, LoaderParams loaderParams = new LoaderParams()) {
+//===========================================================================================================//
+
+    static Protein load(String structureFile) {
+        return load(structureFile, new LoaderParams())
+    }
+
+    static Protein load(String structureFile, LoaderParams loaderParams) {
+        return load(structureFile, null, loaderParams)
+    }
+
+    /**
+     *
+     * @param structureFile
+     * @param onlyChains reduce to chains, if null all chains are loaded
+     * @param loaderParams
+     * @return
+     */
+    static Protein load(String structureFile, @Nullable List<String> onlyChains, LoaderParams loaderParams) {
         Protein res = new Protein()
-        res.loadFile(pdbFileName, loaderParams, null)
+        res.loadFile(structureFile, loaderParams, onlyChains)
         return res
     }
 
-    static Protein loadReduced(String pdbFileName, LoaderParams loaderParams, List<String> onlyChains) {
-        Protein res = new Protein()
-        res.loadFile(pdbFileName, loaderParams, onlyChains)
-        return res
-    }
+//===========================================================================================================//
 
     /**
      *
@@ -457,12 +471,7 @@ class Protein implements Parametrized {
             // load ligands
             log.info "loading ligands"
 
-            Ligands categorizedLigands = new Ligands().loadForProtein(this, loaderParams, pdbFileName)
-
-            ligands = categorizedLigands.relevantLigands
-            smallLigands = categorizedLigands.smallLigands
-            distantLigands = categorizedLigands.distantLigands
-            ignoredLigands = categorizedLigands.ignoredLigands
+            ligands = new Ligands().loadForProtein(this, loaderParams, pdbFileName)
         } else {
             log.info "ignoring ligands"
         }

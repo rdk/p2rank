@@ -17,7 +17,7 @@ class FastaExporterTest {
     static String data_dir = "distro/test_data"
     static Protein protein_2W83
     static Protein protein_1fbl
-    static Protein protein_1fbl_cif
+    //static Protein protein_1fbl_cif
 
 
     FastaExporter fastaExporter = new FastaExporter()

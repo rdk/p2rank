@@ -21,7 +21,7 @@ class LigandBasedPointLabeler extends PointLabeler implements Parametrized {
     List<LabeledPoint> labelPoints(Atoms points, Protein protein) {
         List<LabeledPoint> res = new ArrayList<>(points.size())
 
-        Atoms ligandAtoms = protein.allLigandAtoms
+        Atoms ligandAtoms = protein.allRelevantLigandAtoms
         for (Atom point : points) {
             boolean observed = ligandAtoms.areWithinDistance(point, params.positive_point_ligand_distance)
             res.add(new LabeledPoint(point, observed))

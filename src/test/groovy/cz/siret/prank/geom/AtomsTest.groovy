@@ -40,7 +40,7 @@ class AtomsTest implements Writable {
             Atoms kd = fromAtoms.cutoutShell(res.atoms, dist)
             Atoms serial = Atoms.cutoutShell(fromAtoms, res.atoms, dist)
 
-            write "cutoutShell serial:$serial.count kd:$kd.count"
+            //write "cutoutShell serial:$serial.count kd:$kd.count"
 
             //assertEquals(serial.count, kd.count)
             assertEquals(serial.toSet(), kd.toSet())

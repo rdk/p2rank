@@ -110,14 +110,14 @@ class Experiments extends Routine {
         if (trainSetArg == null) {
             throw new PrankException("Training dataset is not specified (-t/-train)")
         }
-        trainDataset = prepareDataset(trainSetArg)
+        trainDataset = prepareDataset(trainSetArg).forTraining(true)
 
         // TODO: enable executing 'prank ploop crossval'
         // (now ploop with crossvalidation is possible only implicitly by not specifying eval dataset)
 
         String evalSetArg  =  cmdLineArgs.get('eval', 'e')
         if (evalSetArg!=null) { // no eval dataset -> do crossvalidation
-            evalDataset = prepareDataset(evalSetArg)
+            evalDataset = prepareDataset(evalSetArg).forTraining(false)
         } else {
             doCrossValidation = true
         }

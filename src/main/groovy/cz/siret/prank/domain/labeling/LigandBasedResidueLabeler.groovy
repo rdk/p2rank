@@ -21,13 +21,12 @@ class LigandBasedResidueLabeler extends ResidueLabeler<Boolean> implements Param
 
     ResidueLabeling<Double> lastLigandDistanceLabeling
 
-
     @Override
     ResidueLabeling<Boolean> labelResidues(Residues residues, Protein protein) {
 
         ResidueLabeling<Double> ligandDistanceLabelng = new ResidueLabeling<>(residues.count)
         for (Residue res : residues) {
-            double dist = protein.allLigandAtoms.dist(res.atoms)
+            double dist = protein.allRelevantLigandAtoms.dist(res.atoms)
             ligandDistanceLabelng.add(res, dist)
         }
 

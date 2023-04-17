@@ -7,7 +7,6 @@ import cz.siret.prank.program.Failable
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Cutils
 import cz.siret.prank.utils.Writable
-import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 import org.biojava.nbio.structure.Group
@@ -30,6 +29,38 @@ class Ligands implements Parametrized, Writable, Failable {
 
     /* ligands(hetgroups) that are too distant from the protein surface */
     List<Ligand> distantLigands = new ArrayList<>()
+
+//===========================================================================================================//
+
+    /**
+     * @return ignoredLigands + smallLigands + distantLigands
+     */
+    List<Ligand> getAllIgnoredLigands() {
+        return ignoredLigands + smallLigands + distantLigands
+    }
+
+    int getRelevantLigandCount() {
+        relevantLigands.size()
+    }
+
+    int getIgnoredLigandCount() {
+        ignoredLigands.size()
+    }
+
+    int getSmallLigandCount() {
+        smallLigands.size()
+    }
+
+    int getDistantLigandCount() {
+        distantLigands.size()
+    }
+
+    /**
+     * @return all atoms from relevant ligands
+     */
+    Atoms getAllRelevantLigandAtoms() {
+        return Atoms.join(relevantLigands*.atoms)
+    }
 
 //===========================================================================================================//
 
