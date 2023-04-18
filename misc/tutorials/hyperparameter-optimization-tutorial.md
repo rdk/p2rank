@@ -57,6 +57,12 @@ sudo R -e "install.packages(c('ggplot2','gplots','RColorBrewer'), dependencies=T
 sudo R -e "update.packages(repos='http://cran.us.r-project.org', ask = FALSE)"  # possible fix for dependency conflicts
 ~~~
 
+Script to re-generate all plots
+~~~sh
+cd plots
+find rcode | xargs -P 16 -I '{}' Rscript '{}' 
+~~~
+
 #### Real examples
     
 Quick test run:

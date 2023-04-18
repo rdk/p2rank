@@ -816,13 +816,17 @@ class Dataset implements Parametrized, Writable, Failable {
     }
 
     Item createNewItem(Map<String, String> columnValues) {
-        String proteinFile = dir + "/" + columnValues.get(COLUMN_PROTEIN)
+        String proteinFile = absolutePathOrPrefixWithDir(columnValues.get(COLUMN_PROTEIN), dir)
         String predictionFile = null
         if (header.contains(COLUMN_PREDICTION)) {
-            predictionFile = dir + "/" + columnValues.get(COLUMN_PREDICTION)
+            predictionFile = absolutePathOrPrefixWithDir(columnValues.get(COLUMN_PREDICTION), dir)
         }
 
         return createNewItem(proteinFile, predictionFile, columnValues)
+    }
+
+    String absolutePathOrPrefixWithDir(String path, String dir) {
+        return Futils.prependIfNotAbsolute(path, dir)
     }
 
 //===========================================================================================================//

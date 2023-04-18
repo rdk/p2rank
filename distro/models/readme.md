@@ -18,5 +18,5 @@ I.e.: the feature extraction has to be executed with the same parameters.
 
 ### PRANK (pocket rescoring)
 
-* `default-rescore.model` ... trained on chen11-fpocket.ds using config `default_rescore.groovy`
+* `default_rescore.model` ... trained on chen11-fpocket.ds using config `default_rescore.groovy`
 

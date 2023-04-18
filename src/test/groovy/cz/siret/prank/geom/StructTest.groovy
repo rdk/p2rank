@@ -3,9 +3,9 @@ package cz.siret.prank.geom
 import cz.siret.prank.domain.Protein
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
-import static org.junit.Assert.assertEquals
+import static org.junit.jupiter.api.Assertions.assertEquals
 
 /**
  *
@@ -37,6 +37,5 @@ class StructTest {
 
         // TODo add test for chain with phosphorylated residue
     }
-
 
 }

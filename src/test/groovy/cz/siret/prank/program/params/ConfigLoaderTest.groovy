@@ -1,7 +1,7 @@
 package cz.siret.prank.program.params
 
 import groovy.transform.CompileStatic
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 @CompileStatic
 public class ConfigLoaderTest {

@@ -174,7 +174,7 @@ class ClassifierStats implements Parametrized, Writable {
             sb << ",FN   , TP, (r)\n"
             sb << ",(npv),(p)\n"
             sb << "\n"
-            sb << "n:,$count\n"
+            sb << "N:,$count, ${OP} positives + ${ON} negatives, Ratio: ${format(OPON_ratio)}\n"
             sb << "pred:  , [0],  [1]\n"
             sb << "obs[0] , ${TN},  ${FP}, ${formatPercent(SPC)}\n"
             sb << "obs[1] , ${FN},  ${TP}, ${formatPercent(R)}\n"

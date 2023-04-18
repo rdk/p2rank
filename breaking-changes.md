@@ -16,6 +16,19 @@ All changes of that type should be rare and should be all listed here.
 ## List of changes
 
 
+
+### 2.4.1
+
+###### Prediction
+
+none
+
+###### Training new models
+
+* Type of paremeter `-ignore_het_groups` changed from `Set<String>` to `List<String>`
+     
+
+
 ### 2.4
 
 ###### Prediction

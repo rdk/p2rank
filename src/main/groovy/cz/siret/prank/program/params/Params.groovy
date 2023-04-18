@@ -99,10 +99,17 @@ class Params {
 
     /**
      * defines witch atoms around the ligand are considered to be part of the pocket
-     * (ligands with longer distance are considered irrelevant floating ligands)
+     * (ligands with longer distance are considered 'distant', i.e. irrelevant floating ligands)
      */
     @ModelParam // training
     double ligand_protein_contact_distance = 4
+
+    /**
+     * acceptable distance between ligand center and closest protein atom for relevant ligands
+     * (ligands with longer distance are considered 'distant', i.e. irrelevant floating ligands)
+     */
+    @ModelParam // training
+    double ligc_prot_dist = 5.5
 
     //==[ Features ]=========================================================================================================//
 
@@ -396,7 +403,7 @@ class Params {
      * HETATM groups that are ignored (not marked as relevant ligands, e.g because they are cofactors or part of a substrate)
      */
     @ModelParam // training
-    Set<String> ignore_het_groups = ["HOH","DOD","WAT","NAG","MAN","UNK","GLC","ABA","MPD","GOL","SO4","PO4"] as Set
+    List<String> ignore_het_groups = ["HOH","DOD","WAT","NAG","MAN","UNK","GLC","ABA","MPD","GOL","SO4","PO4"]
 
     /**
      * Which ligand types define positive SAS points.
@@ -853,12 +860,6 @@ class Params {
      */
     @RuntimeParam // training
     boolean clear_sec_caches = false
-
-    /**
-     * acceptable distance between ligand center and closest protein atom for relevant ligands
-     */
-    @ModelParam // training
-    double ligc_prot_dist = 5.5
 
     /**
      * Select pocket re-scoring algorithm when running in re-scoring mode (predictions=false).

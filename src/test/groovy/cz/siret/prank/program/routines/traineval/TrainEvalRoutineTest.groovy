@@ -7,16 +7,21 @@ import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-import org.junit.Test
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.parallel.Execution
+import org.junit.jupiter.api.parallel.ExecutionMode
+import org.junit.jupiter.api.parallel.Isolated
 
 import java.util.function.Consumer
 
-import static org.junit.Assert.assertEquals
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals
+import static org.junit.jupiter.api.Assertions.assertTrue
 
 /**
  *
  */
+@Isolated
+@Execution(ExecutionMode.SAME_THREAD)
 @CompileStatic
 @Slf4j
 class TrainEvalRoutineTest {
@@ -47,16 +52,16 @@ class TrainEvalRoutineTest {
             routine.collectTrainVectors()
             EvalResults res = routine.trainAndEvalModel()
 
-            assertEquals("Check if processed 5 proteins", 5 as long, res.stats.PROTEINS as long)
+            assertEquals(5 as long, res.stats.PROTEINS as long, "Check if processed 5 proteins")
             assertTrue(res.stats.POCKETS > 5)
             assertTrue(res.stats.TRAIN_POSITIVES > 10)
             assertTrue(res.stats.TRAIN_NEGATIVES > 10)
 
-            assertTrue("point_MCC must be > 0.35, actual: ${res.stats.point_MCC}", res.stats.point_MCC > 0.35)
+            assertTrue(res.stats.point_MCC > 0.35, "point_MCC must be > 0.35, actual: ${res.stats.point_MCC}")
 
             double dca_4_0 = Double.parseDouble(res.stats.DCA_4_0 as String)
 
-            assertTrue("DCA_4_0 must be >= 0.5, actual: $dca_4_0", dca_4_0 >= 0.5)
+            assertTrue(dca_4_0 >= 0.5, "DCA_4_0 must be >= 0.5, actual: $dca_4_0")
 
 
         } finally {
@@ -97,7 +102,7 @@ class TrainEvalRoutineTest {
 
             // TODO add sensible tests
 
-            assertTrue("point_MCC must be > 0.1, actual: ${res.stats.point_MCC}", res.stats.point_MCC > 0.1)
+            assertTrue(res.stats.point_MCC > 0.1, "point_MCC must be > 0.1, actual: ${res.stats.point_MCC}")
 
         } finally {
             Params.INSTANCE = originalParams

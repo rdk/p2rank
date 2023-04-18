@@ -8,13 +8,13 @@ import cz.siret.prank.program.api.PrankPredictor
 import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 import java.nio.file.Path
 import java.nio.file.Paths
 
 import static cz.siret.prank.utils.PathUtils.path
-import static org.junit.Assert.assertTrue
+import static org.junit.jupiter.api.Assertions.assertTrue
 
 /**
  *
@@ -57,19 +57,19 @@ class DafaultPrankPredictorTest {
 
         String fname = protFile.fileName.toString()
         
-        assertTrue "SAS points empty! [$fname]", prediction.labeledPoints.size() > 0
-        assertTrue "Predicted no pockets! [$fname]", prediction.pockets.size() > 0
+        assertTrue prediction.labeledPoints.size() > 0, "SAS points empty! [$fname]"
+        assertTrue prediction.pockets.size() > 0, "Predicted no pockets! [$fname]"
         
         // Test if the first predicted pocket binds a ligand (should be true for all proteins from testFiles)
 
         Protein liganatedProtein = Protein.load(protFile.toString(), new LoaderParams(ignoreLigands: false))
 
-        assertTrue "Testing on protein with no ligands! [$fname]", liganatedProtein.ligandCount > 0
+        assertTrue liganatedProtein.ligandCount > 0, "Testing on protein with no ligands! [$fname]"
 
         Atom pocketCenter = prediction.pockets.head().centroid
         double dca = liganatedProtein.allLigandAtoms.dist(pocketCenter)
 
-        assertTrue "The first predicted pocket does not bind a ligand! [$fname]", dca <= 4.0
+        assertTrue dca <= 4.0, "The first predicted pocket does not bind a ligand! [$fname]"
 
     }
 

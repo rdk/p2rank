@@ -4,6 +4,8 @@ package cz.siret.prank.program.routines.analyze
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.features.FeatureSetup
 import cz.siret.prank.features.PrankFeatureExtractor
+import cz.siret.prank.features.implementation.table.AtomTableFeature
+import cz.siret.prank.features.implementation.volsite.VolSitePharmacophore
 import cz.siret.prank.program.Main
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.ml.Model
@@ -11,6 +13,7 @@ import cz.siret.prank.program.routines.Routine
 import cz.siret.prank.utils.CmdLineArgs
 import cz.siret.prank.utils.Formatter
 import cz.siret.prank.utils.Futils
+import cz.siret.prank.utils.Sutils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 

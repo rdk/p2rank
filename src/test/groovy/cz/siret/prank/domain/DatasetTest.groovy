@@ -3,10 +3,10 @@ package cz.siret.prank.domain
 import cz.siret.prank.domain.loaders.LoaderParams
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
-import static org.junit.Assert.assertEquals
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals
+import static org.junit.jupiter.api.Assertions.assertNotNull
 
 /**
  *
@@ -84,7 +84,6 @@ class DatasetTest {
                 item.protein.residueChains.each {assertNotNull it.secStructSections }
             }
         }
-
     }
 
 }

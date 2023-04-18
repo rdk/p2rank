@@ -95,7 +95,7 @@ quick() {
     test ./prank.sh eval-rescore concavity.ds                                     -out_subdir TEST/TESTS
 
     test ./prank.sh traineval -t fpocket.ds -e test.ds       -loop 1 -fail_fast 1 -out_subdir TEST/TESTS
-    test ./prank.sh crossval  fpocket.ds                     -loop 1 -fail_fast 1 -out_subdir TEST/TESTS
+    test ./prank.sh crossval  fpocket.ds  -folds 4           -loop 1 -fail_fast 1 -out_subdir TEST/TESTS
 
     # test grid optimization
     test ./prank.sh ploop -t fpocket.ds -e test.ds -loop 1 -fail_fast 1 -r_generate_plots 0 -feature_filters '((-chem.*),(-chem.*,chem.atoms),(protrusion.*,bfactor.*))' -out_subdir TEST/TESTS
