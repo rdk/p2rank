@@ -21,8 +21,6 @@ fi
 
 THIS_SCRIPT_DIR_REL_PATH=`dirname "${BASH_SOURCE[0]}"`
 export INSTALL_DIR="$THIS_SCRIPT_DIR_REL_PATH"
-mkdir -p "$INSTALL_DIR/log"
-LOG_FILE="$INSTALL_DIR/log/prank.log"
 
 CLASSPATH="${INSTALL_DIR}/bin/p2rank.jar${PATH_SEPARATOR}${INSTALL_DIR}/bin/lib/*"
 
@@ -43,4 +41,4 @@ fi
 
 
 
-"$JAVACMD" $JAVA_OPTS -cp "${CLASSPATH}" cz.siret.prank.program.Main "$@" 2>${LOG_FILE}
+"$JAVACMD" $JAVA_OPTS -cp "${CLASSPATH}" cz.siret.prank.program.Main "$@"

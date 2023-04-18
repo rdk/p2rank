@@ -163,8 +163,8 @@ git clone https://github.com/rdk/p2rank.git && cd p2rank
 ```    
 Now you can run the program via:
 ```bash
-distro/prank       # standard mode that logs to distro/log/prank.log
-./prank.sh         # development/training mode 
+distro/prank       # standard mode that is run in production and logs to console
+./prank.sh         # development mode that logs to console
 ``` 
 To use `./prank.sh` (development/training mode) first you need to copy and edit `misc/locval-env.sh` into repo root directory (see https://github.com/rdk/p2rank/blob/develop/misc/tutorials/training-tutorial.md#preparing-the-environment).
 
