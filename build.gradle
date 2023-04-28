@@ -149,7 +149,7 @@ dependencies {
     implementation 'org.zeroturnaround:zt-zip:1.15'
     implementation 'org.apache.commons:commons-compress:1.23.0'
     implementation 'org.tukaani:xz:1.9'
-    implementation 'com.github.luben:zstd-jni:1.5.5-1'
+    implementation 'com.github.luben:zstd-jni:1.5.5-2'
     implementation 'com.github.dpaukov:combinatoricslib3:3.3.3'
 
     implementation 'org.slf4j:slf4j-api:1.7.36'
@@ -168,6 +168,6 @@ dependencies {
 
     implementation fileTree(dir: 'lib', include: '*.jar')
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.9.3'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.3'
 }
