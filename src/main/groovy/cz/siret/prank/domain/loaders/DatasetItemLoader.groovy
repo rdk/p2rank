@@ -107,7 +107,7 @@ class DatasetItemLoader implements Parametrized, Writable {
 
     boolean isBindingPeptide(Chain chain, Protein toProtein, BinaryLabeling labeling, ProcessedItemContext ctx) {
         Atoms protAtoms = toProtein.getResidueChain(ctx.item.chains.first()).atoms
-        Residues labeledRes = new Residues(toProtein.residues.findAll { labeling.getLabel((Residue)it) }.asList())
+        Residues labeledRes = new Residues(toProtein.residues.findAll { labeling.getLabel((Residue)it) }.asList() as List<Residue>)
 
         Atoms chainAtoms = Atoms.allFromChain(chain).withoutHydrogens()
         Atoms contactChainAtoms = chainAtoms.cutoutShell(protAtoms, 3.5d)
