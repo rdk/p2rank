@@ -8,7 +8,7 @@ buildscript {  // for "com.github.ben-manes.versions" plugin
         }
     }
     dependencies {
-        classpath "com.github.ben-manes:gradle-versions-plugin:0.46.0"
+        classpath "com.github.ben-manes:gradle-versions-plugin:0.47.0"
     }
 }
 
@@ -141,15 +141,15 @@ dependencies {
     implementation 'org.codehaus.gpars:gpars:1.2.1'
     implementation 'org.apache.commons:commons-lang3:3.12.0'
     implementation 'org.apache.commons:commons-math3:3.6.1'
-    implementation 'commons-io:commons-io:2.11.0'
-    implementation 'com.google.guava:guava:31.1-jre'
+    implementation 'commons-io:commons-io:2.13.0'
+    implementation 'com.google.guava:guava:32.1.1-jre'
     implementation 'com.google.code.gson:gson:2.10.1'
     implementation 'com.univocity:univocity-parsers:2.9.1' // csv parser
     implementation 'org.apache.commons:commons-csv:1.10.0'
     implementation 'org.zeroturnaround:zt-zip:1.15'
     implementation 'org.apache.commons:commons-compress:1.23.0'
     implementation 'org.tukaani:xz:1.9'
-    implementation 'com.github.luben:zstd-jni:1.5.5-2'
+    implementation 'com.github.luben:zstd-jni:1.5.5-4'
     implementation 'com.github.dpaukov:combinatoricslib3:3.3.3'
 
     implementation 'org.slf4j:slf4j-api:1.7.36'
