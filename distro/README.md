@@ -8,7 +8,7 @@ Ligand-binding site prediction based on machine learning.
     <img src="https://github.com/rdk/p2rank/blob/develop/misc/img/p2rank_sas_points.png?raw=true" width="600" alt="P2Rank illustration">
 </p>
 
-[![version 2.4.0](https://img.shields.io/badge/version-2.4.0-green.svg)](/build.gradle)
+[![version 2.4](https://img.shields.io/badge/version-2.4-green.svg)](/build.gradle)
 [![Build Status](https://github.com/rdk/p2rank/actions/workflows/develop.yml/badge.svg)](https://github.com/rdk/p2rank/actions/workflows/develop.yml)
 [![License: MIT](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](/LICENSE.txt)
 
