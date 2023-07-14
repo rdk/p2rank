@@ -50,7 +50,7 @@ class AnalyzeRoutine extends Routine {
             throw new PrankException("Invalid command.")
         }
 
-        if (!args.unnamedArgs.empty) {
+        if (!args.unnamedArgs.empty || args.get('f') != null) {
             dataset = main.loadDatasetOrFile()
         }
 
