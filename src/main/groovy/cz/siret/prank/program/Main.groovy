@@ -481,11 +481,11 @@ class Main implements Parametrized, Writable {
             }
 
             if (main!=null) {
-                String logLocation = "$main.installDir/log/prank.log"
+                //String logLocation = "$main.installDir/log/prank.log"
                 if (main.logManager.loggingToFile) {
-                    logLocation = main.logManager.logFile
+                    String logLocation = main.logManager.logFile
+                    write "For details see log file: $logLocation"
                 }
-                write "For details see log file: $logLocation"
             }
 
         }
