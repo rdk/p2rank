@@ -126,8 +126,8 @@ class FeatureSetup {
             featureFilters.add(0, "*")
         }
 
-        List<SubFeature> subFeatures = subFeaturesHeader.withIndex().collect { String name, int idx ->
-            new SubFeature(name, false, idx)
+        List<SubFeature> subFeatures = subFeaturesHeader.withIndex().collect { name, idx ->
+            new SubFeature(name as String, false, idx as int)
         }
 
         for (String filter : featureFilters) {
