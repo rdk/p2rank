@@ -451,9 +451,7 @@ class Main implements Parametrized, Writable {
             return
         }
 
-        write "----------------------------------------------------------------------------------------------"
-        write " $versionName"
-        write "----------------------------------------------------------------------------------------------"
+        write "$versionName"
         write ""
 
         boolean error = false
@@ -491,9 +489,7 @@ class Main implements Parametrized, Writable {
         }
 
         write ""
-        write "----------------------------------------------------------------------------------------------"
-        write " finished ${error?"with ERROR":"successfully"} in $timer.formatted"
-        write "----------------------------------------------------------------------------------------------"
+        write "Finished ${error?"with ERROR":"successfully"} in ${timer.formatted}."
 
         if (error) {
             System.exit(1)
