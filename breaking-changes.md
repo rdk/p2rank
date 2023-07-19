@@ -21,11 +21,13 @@ All changes of that type should be rare and should be all listed here.
 
 ###### Prediction
 
-none
+* Scripts that execute P2Rank (shell script `distro/prank` and `distro/prank.bat`) no longer redirect log (***stderr*** stream) to the file `distro/log/prank.log`. 
+  Instead, they write ***stderr*** to the console. This was done to avoid P2Rank writing to the installation directory by default, which may be forbidden on some systems.
+  See issue #59.
 
 ###### Training new models
 
-* Type of paremeter `-ignore_het_groups` changed from `Set<String>` to `List<String>`
+* Type of parameter `-ignore_het_groups` changed from `Set<String>` to `List<String>`
      
 
 
