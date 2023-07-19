@@ -8,7 +8,7 @@ set -e
 
 ./make-clean.sh
 
-VERSION=`gradle properties -q | grep "version:" | awk '{print $2}'`
+VERSION=`./gradlew properties -q | grep "version:" | awk '{print $2}'`
 DIRNAME="p2rank_$VERSION"
 
 mkdir -p build
