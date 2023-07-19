@@ -54,15 +54,15 @@ Presentation slides introducing the original version of the algorithm: [Slides (
 
 If you use P2Rank, please cite relevant papers:
 
-* [Software article](https://doi.org/10.1186/s13321-018-0285-8) in JChem about P2Rank pocket prediction tool  
+* [Software article](https://doi.org/10.1186/s13321-018-0285-8) about P2Rank pocket prediction tool  
  Krivak R, Hoksza D. ***P2Rank: machine learning based tool for rapid and accurate prediction of ligand binding sites from protein structure.*** Journal of Cheminformatics. 2018 Aug.
-* [A new web-server article](https://doi.org/10.1093/nar/gkac389) in NAR about updates in the web interface [prankweb.cz](https://prankweb.cz)
+* [A new web-server article](https://doi.org/10.1093/nar/gkac389) about updates in the web interface [prankweb.cz](https://prankweb.cz)  
  Jakubec D, Skoda P, Krivak R, Novotny M, Hoksza D ***PrankWeb 3: accelerated ligand-binding site predictions for experimental and modelled protein structures.*** Nucleic Acids Research, Volume 50, Issue W1, 5 July 2022, Pages W593–W597
-* [Web-server article](https://doi.org/10.1093/nar/gkz424) in NAR introducing the web interface at [prankweb.cz](https://prankweb.cz)  
+* [Web-server article](https://doi.org/10.1093/nar/gkz424) introducing the web interface at [prankweb.cz](https://prankweb.cz)  
  Jendele L, Krivak R, Skoda P, Novotny M, Hoksza D. ***PrankWeb: a web server for ligand binding site prediction and visualization.*** Nucleic Acids Research, Volume 47, Issue W1, 02 July 2019, Pages W345-W349 
 * [Conference paper](https://doi.org/10.1007/978-3-319-21233-3_4) introducing P2Rank prediction algorithm  
  Krivak R, Hoksza D. ***P2RANK: Knowledge-Based Ligand Binding Site Prediction Using Aggregated Local Features.*** International Conference on Algorithms for Computational Biology 2015 Aug 4 (pp. 41-52). Springer
-* [Research article](https://doi.org/10.1186/s13321-015-0059-5) in JChem about PRANK rescoring algorithm  
+* [Research article](https://doi.org/10.1186/s13321-015-0059-5) about PRANK rescoring algorithm  
  Krivak R, Hoksza D. ***Improving protein-ligand binding site prediction accuracy by classification of inner pocket points using local features.*** Journal of Cheminformatics. 2015 Dec.
 
 
