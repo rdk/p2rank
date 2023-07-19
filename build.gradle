@@ -17,7 +17,7 @@ apply plugin: 'groovy'
 apply plugin: 'java'
 
 group = 'cz.siret'
-version = '2.5.0-dev.1'
+version = '2.5.0-dev.1-biojava7'
 
 
 description = 'Ligand binding site prediction based on machine learning.'
@@ -25,8 +25,8 @@ description = 'Ligand binding site prediction based on machine learning.'
 
 allprojects {
     apply plugin: 'java'
-    sourceCompatibility = 1.8
-    targetCompatibility = 1.8
+    sourceCompatibility = 11
+    targetCompatibility = 11
 }
 
 repositories {
@@ -160,9 +160,10 @@ dependencies {
     implementation 'org.apache.logging.log4j:log4j-core:2.20.0'
     implementation 'org.slf4j:jul-to-slf4j:1.7.36'         // for netlib logging messages
 
-    implementation 'org.biojava:biojava-core:6.1.0'
-    implementation 'org.biojava:biojava-alignment:6.1.0'
-    implementation 'org.biojava:biojava-structure:6.1.0-rdk1'
+    implementation 'org.biojava:biojava-core:7.0.2'
+    implementation 'org.biojava:biojava-alignment:7.0.2'
+    implementation 'org.biojava:biojava-structure:7.0.2'  // todo update to rdk version
+//    implementation 'org.biojava:biojava-structure:6.1.0-rdk1'
 
     implementation 'org.openscience.cdk:cdk-qsarmolecular:2.8'    // for NumericalSurface class
     implementation 'org.openscience.cdk:cdk-data:2.8'             // for Atom class
