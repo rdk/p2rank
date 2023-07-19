@@ -1,8 +1,6 @@
 package cz.siret.prank.program.routines.results
 
 import cz.siret.prank.prediction.metrics.ClassifierStats
-import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.utils.Writable
 import cz.siret.prank.utils.csv.CSV
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j

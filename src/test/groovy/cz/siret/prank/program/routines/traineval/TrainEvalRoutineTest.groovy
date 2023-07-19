@@ -7,11 +7,7 @@ import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.parallel.Execution
-import org.junit.jupiter.api.parallel.ExecutionMode
-import org.junit.jupiter.api.parallel.Isolated
 import org.junit.jupiter.api.parallel.ResourceLock
 
 import java.util.function.Consumer

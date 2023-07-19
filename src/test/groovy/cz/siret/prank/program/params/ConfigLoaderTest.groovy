@@ -2,7 +2,6 @@ package cz.siret.prank.program.params
 
 import groovy.transform.CompileStatic
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.parallel.ResourceLock
 
 @CompileStatic
 class ConfigLoaderTest {
