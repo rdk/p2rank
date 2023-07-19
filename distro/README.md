@@ -8,7 +8,7 @@ Ligand-binding site prediction based on machine learning.
     <img src="https://github.com/rdk/p2rank/blob/develop/misc/img/p2rank_sas_points.png?raw=true" width="600" alt="P2Rank illustration">
 </p>
 
-[![version 2.4](https://img.shields.io/badge/version-2.4-green.svg)](/build.gradle)
+[![version 2.4.1](https://img.shields.io/badge/version-2.4.1-green.svg)](/build.gradle)
 [![Build Status](https://github.com/rdk/p2rank/actions/workflows/develop.yml/badge.svg)](https://github.com/rdk/p2rank/actions/workflows/develop.yml)
 [![License: MIT](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](/LICENSE.txt)
 
@@ -56,7 +56,9 @@ If you use P2Rank, please cite relevant papers:
 
 * [Software article](https://doi.org/10.1186/s13321-018-0285-8) in JChem about P2Rank pocket prediction tool  
  Krivak R, Hoksza D. ***P2Rank: machine learning based tool for rapid and accurate prediction of ligand binding sites from protein structure.*** Journal of Cheminformatics. 2018 Aug.
-* [Web-server article](https://doi.org/10.1093/nar/gkz424) in NAR about the web interface accessible at [prankweb.cz](https://prankweb.cz)  
+* [A new web-server article](https://doi.org/10.1093/nar/gkac389) in NAR about updates in the web interface [prankweb.cz](https://prankweb.cz)
+ Jakubec D, Skoda P, Krivak R, Novotny M, Hoksza D ***PrankWeb 3: accelerated ligand-binding site predictions for experimental and modelled protein structures.*** Nucleic Acids Research, Volume 50, Issue W1, 5 July 2022, Pages W593–W597
+* [Web-server article](https://doi.org/10.1093/nar/gkz424) in NAR introducing the web interface at [prankweb.cz](https://prankweb.cz)  
  Jendele L, Krivak R, Skoda P, Novotny M, Hoksza D. ***PrankWeb: a web server for ligand binding site prediction and visualization.*** Nucleic Acids Research, Volume 47, Issue W1, 02 July 2019, Pages W345-W349 
 * [Conference paper](https://doi.org/10.1007/978-3-319-21233-3_4) introducing P2Rank prediction algorithm  
  Krivak R, Hoksza D. ***P2RANK: Knowledge-Based Ligand Binding Site Prediction Using Aggregated Local Features.*** International Conference on Algorithms for Computational Biology 2015 Aug 4 (pp. 41-52). Springer
@@ -163,8 +165,8 @@ git clone https://github.com/rdk/p2rank.git && cd p2rank
 ```    
 Now you can run the program via:
 ```bash
-distro/prank       # standard mode that is run in production and logs to console
-./prank.sh         # development mode that logs to console
+distro/prank       # standard mode that is run in production
+./prank.sh         # development/training mode 
 ``` 
 To use `./prank.sh` (development/training mode) first you need to copy and edit `misc/locval-env.sh` into repo root directory (see https://github.com/rdk/p2rank/blob/develop/misc/tutorials/training-tutorial.md#preparing-the-environment).
 
@@ -179,7 +181,7 @@ Some practical differences:
 * **Fpocket**
     - has a much smaller memory footprint 
     - runs faster when executed on a single protein
-    - produces a high number of less relevant pockets (and since the default scoring function isn't very effective the most relevant pockets often doesn't get to the top)
+    - produces a high number of less relevant pockets (and since the default scoring function isn't very effective the most relevant pockets often don't get to the top)
     - contains MDpocket algorithm for pocket predictions from molecular trajectories 
     - still better documented
 * **P2Rank** 
