@@ -33,6 +33,9 @@ repositories {
     mavenCentral()
     mavenLocal()
     maven {url "https://repository.jboss.org/nexus/content/repositories/thirdparty-releases/" }
+    maven {
+        url = file('lib/local-mvn-repo')
+    }
     flatDir(dirs: 'lib')
 }
 
