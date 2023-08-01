@@ -30,7 +30,7 @@ class DafaultPrankPredictorTest {
     Path cif_1fbl = path dataDir, "1fbl.cif"
 
     Path pdb_2W83 = path dataDir, "2W83.pdb"
-    Path cif_2W83 = path dataDir, "2W83.cif"
+    Path cif_2W83 = path dataDir, "2W83.cif.zst"
 
     List<Path> testFiles = [  //should be liganated proteins with easily predictable binding sites
             pdb_1fbl,

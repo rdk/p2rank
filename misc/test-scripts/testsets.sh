@@ -83,7 +83,12 @@ quick() {
     # uses default config
     # therefore the results are stored in distro/test_output/
 
-    test ./prank.sh predict -f distro/test_data/liganated/1aaxa.pdb               -out_subdir TEST/TESTS
+    test ./prank.sh predict -f distro/test_data/1fbl.pdb                          -out_subdir TEST/TESTS
+    test ./prank.sh predict -f distro/test_data/1fbl.pdb.gz                       -out_subdir TEST/TESTS
+    test ./prank.sh predict -f distro/test_data/1fbl.pdb.zst -c alphafold         -out_subdir TEST/TESTS
+    test ./prank.sh predict -f distro/test_data/1fbl.cif     -c alphafold         -out_subdir TEST/TESTS
+    test ./prank.sh predict -f distro/test_data/1fbl.cif.gz  -c alphafold         -out_subdir TEST/TESTS
+    test ./prank.sh predict -f distro/test_data/1fbl.cif.zst                      -out_subdir TEST/TESTS
     test ./prank.sh predict test.ds                                               -out_subdir TEST/TESTS
     test ./prank.sh eval-predict -f distro/test_data/liganated/1aaxa.pdb          -out_subdir TEST/TESTS
     test ./prank.sh eval-predict test.ds                                          -out_subdir TEST/TESTS
