@@ -44,7 +44,7 @@ class PdbUtils {
      */
     private static void disableBiojavaFetching() {
         // TODO Biojava6: find out if there is a new way to disable fetching
-//        ChemCompGroupFactory.setChemCompProvider(new ReducedChemCompProvider())
+        // ChemCompGroupFactory.setChemCompProvider(new ReducedChemCompProvider())
     }
 
     private static FileParsingParameters getParsingParams() {
@@ -60,7 +60,6 @@ class PdbUtils {
         }
 
         String ext = Futils.realExtension(file)
-
 
         if (ext == "cif") {
             return loadFromCifFile(file)
@@ -92,10 +91,6 @@ class PdbUtils {
             instream.close()
         }
     }
-
-    /*
-     *Structure cifStructure = CifStructureConverter.fromInputStream(inStream);
-     */
 
     static Structure loadFromString(String pdbText)  {
         PDBFileParser pdbpars = new PDBFileParser();
