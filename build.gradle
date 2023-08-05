@@ -149,7 +149,7 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.10.1'
     implementation 'com.univocity:univocity-parsers:2.9.1' // csv parser
     implementation 'org.apache.commons:commons-csv:1.10.0'
-    implementation 'org.zeroturnaround:zt-zip:1.15'
+    implementation 'org.zeroturnaround:zt-zip:1.16'
     implementation 'org.apache.commons:commons-compress:1.23.0'
     implementation 'org.tukaani:xz:1.9'
     implementation 'com.github.luben:zstd-jni:1.5.5-5'
