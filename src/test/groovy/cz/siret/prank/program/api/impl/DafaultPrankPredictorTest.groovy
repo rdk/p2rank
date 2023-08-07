@@ -5,9 +5,13 @@ import cz.siret.prank.domain.Protein
 import cz.siret.prank.domain.loaders.LoaderParams
 import cz.siret.prank.program.api.PrankFacade
 import cz.siret.prank.program.api.PrankPredictor
+import cz.siret.prank.program.params.Params
 import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.Isolated
 import org.junit.jupiter.api.parallel.ResourceLock
@@ -52,6 +56,19 @@ class DafaultPrankPredictorTest {
 
     PrankPredictor predictor = PrankFacade.createPredictor(installDir);
 
+
+    @BeforeAll
+    static void initAll() {
+        Params.INSTANCE = new Params()
+    }
+
+    @AfterAll
+    static void tearDownAll() {
+        Params.INSTANCE = new Params()
+    }
+
+
+    
     @Test
     void predict() throws Exception {
         testFiles.each { doTestPredict(it) }

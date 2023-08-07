@@ -7,7 +7,10 @@ import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.parallel.Isolated
 import org.junit.jupiter.api.parallel.ResourceLock
 
 import java.util.function.Consumer
@@ -18,14 +21,28 @@ import static org.junit.jupiter.api.Assertions.assertTrue
 /**
  *
  */
+@Isolated
 @ResourceLock("Params")
 @CompileStatic
 @Slf4j
-//@Disabled
 class TrainEvalRoutineTest {
 
     static String data_dir = 'distro/test_data'
     static String out_dir = 'distro/test_output/traineval_test'
+
+//===========================================================================================================//
+
+    @BeforeAll
+    static void initAll() {
+        Params.INSTANCE = new Params()
+    }
+
+    @AfterAll
+    static void tearDownAll() {
+        Params.INSTANCE = new Params()
+    }
+
+//===========================================================================================================//
 
 
     static EvalResults doTrainEval(String trainDs, String evalDs, Consumer<Params> paramsSetter) {
@@ -33,6 +50,7 @@ class TrainEvalRoutineTest {
         EvalResults res = null
 
         try {
+            Params.INSTANCE = new Params()
             Params.inst.installDir = "distro" // necessary, P2Rank must know where to find score transformer data
             Params.inst.sample_negatives_from_decoys = true
             Params.inst.loop = 1

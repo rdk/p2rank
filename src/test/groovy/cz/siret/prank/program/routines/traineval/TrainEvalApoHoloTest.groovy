@@ -4,7 +4,10 @@ import cz.siret.prank.program.params.Params
 import cz.siret.prank.program.routines.results.EvalResults
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.parallel.Isolated
 import org.junit.jupiter.api.parallel.ResourceLock
 
 import java.util.function.Consumer
@@ -15,12 +18,27 @@ import static org.junit.jupiter.api.Assertions.assertTrue
 /**
  *
  */
+@Isolated
 @ResourceLock("Params")
 @CompileStatic
 @Slf4j
 class TrainEvalApoHoloTest {
 
     static String data_dir = 'distro/test_data'
+
+//===========================================================================================================//
+
+    @BeforeAll
+    static void initAll() {
+        Params.INSTANCE = new Params()
+    }
+
+    @AfterAll
+    static void tearDownAll() {
+        Params.INSTANCE = new Params()
+    }
+
+//===========================================================================================================//
 
 
     private EvalResults doTrainEval(String trainDs, String evalDs, Consumer<Params> paramsSetter) {
