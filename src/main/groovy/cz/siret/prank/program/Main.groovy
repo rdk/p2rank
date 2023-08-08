@@ -303,7 +303,7 @@ class Main implements Parametrized, Writable {
 
         new EvalPocketsRoutine(
                 dataset,
-                Model.loadFromFile(findModel()),
+                Model.load(findModel()),
                 outdir).execute()
 
     }
@@ -313,7 +313,7 @@ class Main implements Parametrized, Writable {
         String outdir = findOutdir("eval_$dataset.label")
         configureLoggers(outdir)
 
-        Model model = Model.loadFromFile(findModel())
+        Model model = Model.load(findModel())
         model.disableParalelism()
 
         EvalRoutine evalRoutine = EvalRoutine.create(params.predict_residues, dataset, model, outdir)

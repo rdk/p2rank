@@ -59,6 +59,18 @@ class Model {
         Console.write "model saved to file $fname (${Futils.sizeMBFormatted(fname)} MB)"
     }
 
+
+    /**
+     * Load from file and apply conversions
+     * @param fname
+     * @return
+     */
+    static Model load(String fname) {
+        Model model = loadFromFile(fname)
+        model = new ModelConverter().applyConversions(model)
+        return model
+    }
+
     static Model loadFromFile(String fname) {
         if (fname.contains(".model2")) {
             return loadFromFileV2(fname)

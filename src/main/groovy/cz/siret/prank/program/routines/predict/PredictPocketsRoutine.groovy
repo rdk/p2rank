@@ -11,6 +11,7 @@ import cz.siret.prank.prediction.pockets.rescorers.PocketRescorer
 import cz.siret.prank.prediction.pockets.results.PredictionSummary
 import cz.siret.prank.prediction.transformation.ScoreTransformer
 import cz.siret.prank.program.ml.Model
+import cz.siret.prank.program.ml.ModelConverter
 import cz.siret.prank.program.rendering.OldPymolRenderer
 import cz.siret.prank.program.routines.Routine
 import cz.siret.prank.program.routines.results.PredictResults
@@ -63,7 +64,7 @@ class PredictPocketsRoutine extends Routine {
             log.info "outdir: $outdir"
         }
 
-        Model model = Model.loadFromFile(modelf)
+        Model model = Model.load(modelf)
         model.disableParalelism()
 
         String visDir = "$outdir/visualizations"

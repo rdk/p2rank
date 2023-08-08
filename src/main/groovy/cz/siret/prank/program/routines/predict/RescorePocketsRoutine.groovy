@@ -48,7 +48,7 @@ class RescorePocketsRoutine extends Routine {
 
         log.info "outdir: $outdir"
 
-        Model model = Model.loadFromFile(modelf)
+        Model model = Model.load(modelf)
         model.disableParalelism()
 
         FeatureExtractor extractor = FeatureExtractor.createFactory()

@@ -144,6 +144,23 @@ predict() {
 
 }
 
+# test prediction with flattened forest
+predict_flattened() {
+
+   title PREDICTIONS WITH FLATTENED FOREST
+
+   test ./prank.sh predict joined.ds          -c config/test-default  -rf_flatten 1   -out_subdir TEST/PREDICT_FLATTENED
+   test ./prank.sh predict holo4k.ds          -c config/test-default  -rf_flatten 1   -out_subdir TEST/PREDICT_FLATTENED
+   test ./prank.sh predict coach420.ds        -c config/test-default  -rf_flatten 1   -out_subdir TEST/PREDICT_FLATTENED
+   test ./prank.sh predict ah4h.holoraw.ds    -c config/test-default  -rf_flatten 1   -out_subdir TEST/PREDICT_FLATTENED
+   
+   test ./prank.sh predict chen11.ds          -c config/test-default  -rf_flatten 1   -out_subdir TEST/PREDICT_FLATTENED
+   test ./prank.sh predict fptrain.ds         -c config/test-default  -rf_flatten 1   -out_subdir TEST/PREDICT_FLATTENED
+   test ./prank.sh predict 'joined(mlig).ds'  -c config/test-default  -rf_flatten 1   -out_subdir TEST/PREDICT_FLATTENED
+   test ./prank.sh predict 'holo4k(mlig).ds'  -c config/test-default  -rf_flatten 1   -out_subdir TEST/PREDICT_FLATTENED
+
+}
+
 conservation() {
 
    title PREDICTIONS USING CONSERVATION
@@ -177,8 +194,20 @@ eval_predict() {
     test ./prank.sh eval-predict holo4k.ds       -c config/test-default    -out_subdir TEST/EVAL
     test ./prank.sh eval-predict coach420.ds     -c config/test-default    -out_subdir TEST/EVAL
     # test ./prank.sh predict ah4h.holoraw.ds      -c config/test-default    -out_subdir TEST/PREDICT
+    
+}
+
+
+eval_predict_flattened() {
+
+    title EVALUATING PREDICTIONS WITH FLATTENED FOREST
+
+    test ./prank.sh eval-predict joined.ds       -c config/test-default  -rf_flatten 1  -out_subdir TEST/EVAL_FLATTENED
+    test ./prank.sh eval-predict holo4k.ds       -c config/test-default  -rf_flatten 1  -out_subdir TEST/EVAL_FLATTENED
+    test ./prank.sh eval-predict coach420.ds     -c config/test-default  -rf_flatten 1  -out_subdir TEST/EVAL_FLATTENED
 
 }
+
 
 eval_predict_alphafold() {
 
