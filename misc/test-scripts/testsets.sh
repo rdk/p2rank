@@ -319,10 +319,10 @@ classifiers() {
 
     title TRAIN/EVAL USING DIFFERENT CLASSIFIERS
 
-    test ./prank.sh traineval -t chen11-fpocket.ds -e joined.ds  -c config/train-default -classifier RandomForest     -label RF   -loop 1 -cache_datasets 0   -out_subdir TEST/CLASSIFIETS
-    test ./prank.sh traineval -t chen11-fpocket.ds -e joined.ds  -c config/train-default -classifier FastRandomForest -label FRF  -loop 1 -cache_datasets 0   -out_subdir TEST/CLASSIFIETS
-    test ./prank.sh traineval -t chen11-fpocket.ds -e joined.ds  -c config/train-default -classifier FasterForest     -label FF   -loop 1 -cache_datasets 0   -out_subdir TEST/CLASSIFIETS
-    test ./prank.sh traineval -t chen11-fpocket.ds -e joined.ds  -c config/train-default -classifier FasterForest2    -label FF2  -loop 1 -cache_datasets 0   -out_subdir TEST/CLASSIFIETS
+    test ./prank.sh traineval -t chen11-fpocket.ds -e joined.ds  -c config/train-default -classifier RandomForest     -label RF   -loop 1 -cache_datasets 0   -out_subdir TEST/CLASSIFIERS
+    test ./prank.sh traineval -t chen11-fpocket.ds -e joined.ds  -c config/train-default -classifier FastRandomForest -label FRF  -loop 1 -cache_datasets 0   -out_subdir TEST/CLASSIFIERS
+    test ./prank.sh traineval -t chen11-fpocket.ds -e joined.ds  -c config/train-default -classifier FasterForest     -label FF   -loop 1 -cache_datasets 0   -out_subdir TEST/CLASSIFIERS
+    test ./prank.sh traineval -t chen11-fpocket.ds -e joined.ds  -c config/train-default -classifier FasterForest2    -label FF2  -loop 1 -cache_datasets 0   -out_subdir TEST/CLASSIFIERS
 
 }
 
