@@ -61,7 +61,7 @@ class ModelConverter implements Parametrized, Writable {
      * @param fastRandomTree  hr.irb.fastRandomForest.FastRandomTree
      * @return
      */
-    @CompileStatic
+    @CompileDynamic
     FasterTree toFasterTree(@Nullable Object fastRandomTree) {
         if (fastRandomTree == null) return null
 
