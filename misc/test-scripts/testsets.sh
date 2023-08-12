@@ -191,8 +191,8 @@ eval_predict() {
     title EVALUATING PREDICTIONS ON MAIN DATASETS
 
     test ./prank.sh eval-predict joined.ds       -c config/test-default    -out_subdir TEST/EVAL
-    test ./prank.sh eval-predict holo4k.ds       -c config/test-default    -out_subdir TEST/EVAL
     test ./prank.sh eval-predict coach420.ds     -c config/test-default    -out_subdir TEST/EVAL
+    test ./prank.sh eval-predict holo4k.ds       -c config/test-default    -out_subdir TEST/EVAL
     # test ./prank.sh predict ah4h.holoraw.ds      -c config/test-default    -out_subdir TEST/PREDICT
     
 }
@@ -203,10 +203,36 @@ eval_predict_flattened() {
     title EVALUATING PREDICTIONS WITH FLATTENED FOREST
 
     test ./prank.sh eval-predict joined.ds       -c config/test-default  -rf_flatten 1  -out_subdir TEST/EVAL_FLATTENED
-    test ./prank.sh eval-predict holo4k.ds       -c config/test-default  -rf_flatten 1  -out_subdir TEST/EVAL_FLATTENED
     test ./prank.sh eval-predict coach420.ds     -c config/test-default  -rf_flatten 1  -out_subdir TEST/EVAL_FLATTENED
+    test ./prank.sh eval-predict holo4k.ds       -c config/test-default  -rf_flatten 1  -out_subdir TEST/EVAL_FLATTENED
 
 }
+
+
+
+
+eval_predict_uop() {
+
+    title EVALUATING PREDICTIONS ON MAIN DATASETS
+
+    test ./prank.sh eval-predict joined.ds       -c config/test-default  -use_only_positive_score 1  -out_subdir TEST/EVAL_UOP
+    test ./prank.sh eval-predict holo4k.ds       -c config/test-default  -use_only_positive_score 1  -out_subdir TEST/EVAL_UOP
+    test ./prank.sh eval-predict coach420.ds     -c config/test-default  -use_only_positive_score 1  -out_subdir TEST/EVAL_UOP
+    # test ./prank.sh predict ah4h.holoraw.ds      -c config/test-default    -out_subdir TEST/PREDICT
+
+}
+eval_predict_flattened_uop() {
+
+    title EVALUATING PREDICTIONS WITH FLATTENED FOREST
+
+    test ./prank.sh eval-predict joined.ds       -c config/test-default  -rf_flatten 1 -use_only_positive_score 1 -out_subdir TEST/EVAL_FLATTENED_UOP
+    test ./prank.sh eval-predict holo4k.ds       -c config/test-default  -rf_flatten 1 -use_only_positive_score 1 -out_subdir TEST/EVAL_FLATTENED_UOP
+    test ./prank.sh eval-predict coach420.ds     -c config/test-default  -rf_flatten 1 -use_only_positive_score 1 -out_subdir TEST/EVAL_FLATTENED_UOP
+
+}
+
+
+
 
 
 eval_predict_alphafold() {

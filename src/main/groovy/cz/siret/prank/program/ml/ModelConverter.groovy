@@ -49,7 +49,8 @@ class ModelConverter implements Parametrized, Writable {
 
         write " - taster trees collected in:  $timer.formatted"
 
-        FlatBinaryForest res = new FlatBinaryForestBuilder().buildFromFasterTrees(trees)
+        int numAttributes = forest.@m_Info.numAttributes();
+        FlatBinaryForest res = new FlatBinaryForestBuilder().buildFromFasterTrees(numAttributes, trees, true)  // params.use_only_positive_score
 
         write " - flattened in:  $timer.formatted"
 
