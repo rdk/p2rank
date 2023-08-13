@@ -484,8 +484,7 @@ speed_joined() {
 
     title SPEED TESTS
 
-    misc/test-scripts/benchmark.sh 3  "JOINED"   "1 2 3 4 5 6 7 8 9 10 11 12 13"   "./prank.sh predict joined.ds -c config/test-default -out_subdir TEST/SPEED"
-    misc/test-scripts/benchmark.sh 10 "1FILE" "1"                                  "./prank.sh predict -f distro/test_data/liganated/1aaxa.pdb -c config/test-default -out_subdir TEST/SPEED"
+    misc/test-scripts/benchmark.sh 1  "JOINED"   "1 2 4 6 8 10 12 14 16 17 18"   "./prank.sh predict joined.ds -c config/test-default -out_subdir TEST/SPEED"
 }
 
 speed_joined16() {

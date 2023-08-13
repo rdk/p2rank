@@ -74,7 +74,8 @@ class TransformRoutine extends Routine {
     final Map<String, Closure> commandRegister = ImmutableMap.copyOf([
         "reduce-to-chains" : { cmdReduceToChains() },
         "aaindex1-to-csv" : { cmdAAIndex1ToCsv() },
-        "flatten-rf-model" : { cmdFlattenRfModel() }
+        "flatten-rf-model" : { cmdFlattenRfModel() },
+        "loop-flatten-rf-model" : { cmdLoopFlattenRfModel() }
     ])
 
 //===========================================================================================================//
@@ -191,7 +192,7 @@ class TransformRoutine extends Routine {
 
         String modelFile = main.findModel()
 
-        Model model = Model.loadFromFile(main.findModel())
+        Model model = Model.loadFromFile(modelFile)
         model = new ModelConverter().applyConversions(model)
 
         String newModelFile = "$outdir/$model.label"
@@ -204,6 +205,18 @@ class TransformRoutine extends Routine {
         write "New size:" + Futils.sizeMBFormatted(newModelFile)
 
         
+    }
+
+    private void cmdLoopFlattenRfModel() {
+
+        params.rf_flatten = true
+
+        String modelFile = main.findModel()
+        Model model = Model.loadFromFile(modelFile)
+
+        while (true) {
+            new ModelConverter().applyConversions(model)
+        }
     }
     
 }
