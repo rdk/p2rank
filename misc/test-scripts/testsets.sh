@@ -480,11 +480,12 @@ speed_quick_tes3() {
     misc/test-scripts/benchmark.sh 10 "1FILE" "1"                           "./prank.sh predict -f distro/test_data/liganated/1aaxa.pdb -c config/test-default -tessellation 3 -out_subdir TEST/SPEED"
 }
 
-speed_joined() {
+speed_joined_flattening() {
 
     title SPEED TESTS
 
-    misc/test-scripts/benchmark.sh 1  "JOINED"   "1 2 4 6 8 10 12 14 16 17 18"   "./prank.sh predict joined.ds -c config/test-default -out_subdir TEST/SPEED"
+    misc/test-scripts/benchmark.sh 1  "JOINED"   "1 2 4 8 12 16 17 18"   "./prank.sh predict joined.ds -c config/test-default  -rf_flatten 0  -out_subdir TEST/SPEED"
+    misc/test-scripts/benchmark.sh 1  "JOINED"   "1 2 4 8 12 16 17 18"   "./prank.sh predict joined.ds -c config/test-default  -rf_flatten 1  -out_subdir TEST/SPEED"
 }
 
 speed_joined16() {
