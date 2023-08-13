@@ -19,6 +19,8 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.ResidueNumber
 
+import javax.annotation.Nullable
+
 import static cz.siret.prank.geom.SecondaryStructureUtils.assignSecondaryStructure
 import static cz.siret.prank.utils.Cutils.newSynchronizedList
 import static cz.siret.prank.utils.Formatter.format
@@ -35,7 +37,7 @@ class AnalyzeRoutine extends Routine {
 
     String subCommand
     String label
-    Dataset dataset
+    @Nullable Dataset dataset
 
     AnalyzeRoutine(CmdLineArgs args, Main main) {
         super(null)

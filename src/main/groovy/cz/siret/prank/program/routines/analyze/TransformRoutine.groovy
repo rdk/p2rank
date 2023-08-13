@@ -9,6 +9,8 @@ import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Struct
 import cz.siret.prank.program.Main
 import cz.siret.prank.program.PrankException
+import cz.siret.prank.program.ml.Model
+import cz.siret.prank.program.ml.ModelConverter
 import cz.siret.prank.program.routines.Routine
 import cz.siret.prank.utils.CmdLineArgs
 import cz.siret.prank.utils.Futils
@@ -17,6 +19,8 @@ import cz.siret.prank.utils.Sutils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Structure
+
+import javax.annotation.Nullable
 
 import static cz.siret.prank.utils.Futils.mkdirs
 import static cz.siret.prank.utils.Futils.writeFile
@@ -29,15 +33,18 @@ import static cz.siret.prank.utils.Futils.writeFile
 @CompileStatic
 class TransformRoutine extends Routine {
 
+    CmdLineArgs args
+    Main main
+
     String subCommand
     String label
-    Dataset dataset
-    CmdLineArgs args
+    @Nullable Dataset dataset
 
     TransformRoutine(CmdLineArgs args, Main main) {
         super(null)
 
         this.args = args
+        this.main = main
 
         subCommand = args.popFirstUnnamedArg() // next if present should be dataset
         if (!commandRegister.containsKey(subCommand)) {
@@ -45,9 +52,11 @@ class TransformRoutine extends Routine {
             throw new PrankException("Invalid command.")
         }
 
-        dataset = main.loadDatasetOrFile()
+        if (!args.unnamedArgs.empty || args.get('f') != null) {
+            dataset = main.loadDatasetOrFile()
+        }
 
-        label = "transform_" + subCommand + "_" + dataset.label
+        label = "transform_" + subCommand + (dataset!=null ? "_"+dataset.label : "")
         outdir = main.findOutdir(label)
         main.configureLoggers(outdir)
     }
@@ -64,7 +73,8 @@ class TransformRoutine extends Routine {
 
     final Map<String, Closure> commandRegister = ImmutableMap.copyOf([
         "reduce-to-chains" : { cmdReduceToChains() },
-        "aaindex1-to-csv" : { cmdAAIndex1ToCsv() }
+        "aaindex1-to-csv" : { cmdAAIndex1ToCsv() },
+        "flatten-rf-model" : { cmdFlattenRfModel() }
     ])
 
 //===========================================================================================================//
@@ -168,6 +178,32 @@ class TransformRoutine extends Routine {
         String outFilePath = outdir + "/aaindex1.csv"
         write "Output file: " + Futils.absPath(outFilePath)
         writeFile outFilePath, csv.toString()
+    }
+
+//===========================================================================================================//
+
+    private void cmdFlattenRfModel() {
+        mkdirs(outdir)
+        writeParams(outdir)
+
+
+        params.rf_flatten = true
+
+        String modelFile = main.findModel()
+
+        Model model = Model.loadFromFile(main.findModel())
+        model = new ModelConverter().applyConversions(model)
+
+        String newModelFile = "$outdir/$model.label"
+
+        model.saveToFile(newModelFile)
+
+        write "Original model: $modelFile"
+        write "Original size:" + Futils.sizeMBFormatted(modelFile)
+        write "New model: $newModelFile"
+        write "New size:" + Futils.sizeMBFormatted(newModelFile)
+
+        
     }
     
 }
