@@ -51,6 +51,11 @@ class RescorePocketsRoutine extends Routine {
         Model model = Model.load(modelf)
         model.disableParalelism()
 
+        if (params.rf_flatten && !params.delete_models) {
+            model.saveToFile("$outdir/${model.label}_flattened.model")
+        }
+
+
         FeatureExtractor extractor = FeatureExtractor.createFactory()
 
         Dataset.Result result = dataset.processItems { Dataset.Item item ->

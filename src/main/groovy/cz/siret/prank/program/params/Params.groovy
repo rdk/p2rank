@@ -370,6 +370,14 @@ class Params {
     boolean rf_flatten = false
 
     /**
+     * Flatten random forest in a way that has exactly the same output
+     * by preserving weird way tree results are aggregated in FastRandomForest.
+     */
+    @RuntimeParam
+    @ModelParam // training
+    boolean rf_flatten_as_legacy = true
+
+    /**
      * cutoff for joining ligand atom groups into one ligand
      */
     @ModelParam // training
