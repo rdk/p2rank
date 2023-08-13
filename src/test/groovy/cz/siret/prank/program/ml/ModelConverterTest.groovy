@@ -16,7 +16,7 @@ class ModelConverterTest {
         Model model = Model.loadFromFile("distro/models/default.model")
         assert model.classifier instanceof FastRandomForest
 
-        ModelConverter.toFlatForest((FastRandomForest)model.classifier)
+        new ModelConverter().frfToFlatForest((FastRandomForest)model.classifier)
     }
 
 }

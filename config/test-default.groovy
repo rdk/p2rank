@@ -18,4 +18,6 @@ import cz.siret.prank.program.params.Params
 
     log_to_console = false
 
+    rf_flatten = true
+
 }

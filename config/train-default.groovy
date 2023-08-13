@@ -81,5 +81,9 @@ import cz.siret.prank.program.params.Params
      * Setting FasterForest to allow fair comparison with train-conservation config.
      */
     classifier="FasterForest"
-    
+
+//===========================================================================================================//
+
+    rf_flatten = true
+
 }

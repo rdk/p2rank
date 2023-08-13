@@ -1,11 +1,11 @@
 package cz.siret.prank.program.ml
 
+import cz.siret.prank.fforest.FasterForest
 import cz.siret.prank.fforest.FasterTree
 import cz.siret.prank.fforest.api.FlatBinaryForest
 import cz.siret.prank.fforest.api.FlatBinaryForestBuilder
+import cz.siret.prank.fforest2.FasterForest2
 import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.program.routines.results.EvalResults
-import cz.siret.prank.program.routines.traineval.TrainEvalRoutine
 import cz.siret.prank.utils.ATimer
 import cz.siret.prank.utils.Writable
 import groovy.transform.CompileDynamic
@@ -24,9 +24,22 @@ class ModelConverter implements Parametrized, Writable {
 
     Model applyConversions(Model model) {
         if (params.rf_flatten) {
-            if (model.classifier instanceof FastRandomForest) {
-                write "Converting FastRandomForest to FlatBinaryForest"
-                FlatBinaryForest fbf = toFlatForest((FastRandomForest)model.classifier)
+            def c = model.classifier
+            if (c instanceof FastRandomForest || c instanceof FasterForest || c instanceof FasterForest2) {
+                ATimer timer = ATimer.startTimer()
+
+                write "Converting ${c.class.simpleName} to FlatBinaryForest"
+
+                FlatBinaryForest fbf
+                if (c instanceof FastRandomForest) {
+                    fbf = frfToFlatForest((FastRandomForest)c)
+                } else if (c instanceof FasterForest) {
+                    fbf = ((FasterForest)c).toFlatBinaryForest(params.rf_flatten_as_legacy)
+                } else { // FF2
+                    fbf = ((FasterForest2)c).toFlatBinaryForest(params.rf_flatten_as_legacy)
+                }
+                write " - flattened in:  $timer.formatted"
+
                 return new Model("FlatBinaryForest_from_${model.label}", fbf)
             }
         }
@@ -36,25 +49,20 @@ class ModelConverter implements Parametrized, Writable {
 //===========================================================================================================//
 
     @CompileDynamic
-    FlatBinaryForest toFlatForest(FastRandomForest forest) {
-
+    FlatBinaryForest frfToFlatForest(FastRandomForest forest) {
         ATimer timer = ATimer.startTimer()
 
-        List<FasterTree> trees
+        int numAttributes = forest.@m_Info.numAttributes();
         List<Classifier> mTrees = Arrays.asList(forest.@m_bagger.@m_Classifiers)
 
+        List<FasterTree> trees
         GParsPool.withPool(params.threads * 2) {
-            trees = mTrees.collectParallel { toFasterTree(it) }
+            trees = mTrees.collectParallel { frfTreeToFasterTree(it) }
         }
 
-        write " - taster trees collected in:  $timer.formatted"
+        write " - faster trees converted in:  $timer.formatted"
 
-        int numAttributes = forest.@m_Info.numAttributes();
-        FlatBinaryForest res = new FlatBinaryForestBuilder().buildFromFasterTrees(numAttributes, trees, params.rf_flatten_as_legacy)  // params.use_only_positive_score
-
-        write " - flattened in:  $timer.formatted"
-
-        return res
+        return new FlatBinaryForestBuilder().buildFromFasterTrees(numAttributes, trees, params.rf_flatten_as_legacy)
     }
 
     /**
@@ -63,15 +71,15 @@ class ModelConverter implements Parametrized, Writable {
      * @return
      */
     @CompileDynamic
-    FasterTree toFasterTree(@Nullable Object fastRandomTree) {
+    FasterTree frfTreeToFasterTree(@Nullable Object fastRandomTree) {
         if (fastRandomTree == null) return null
 
         Classifier[] successors = fastRandomTree.@m_Successors
         FasterTree childLeft = null
         FasterTree childRight = null
         if (successors != null) {
-            childLeft = toFasterTree(successors[0])
-            childRight = toFasterTree(successors[1])
+            childLeft = frfTreeToFasterTree(successors[0])
+            childRight = frfTreeToFasterTree(successors[1])
         }
 
         int attribute = fastRandomTree.@m_Attribute
