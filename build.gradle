@@ -8,7 +8,7 @@ buildscript {  // for "com.github.ben-manes.versions" plugin
         }
     }
     dependencies {
-        classpath "com.github.ben-manes:gradle-versions-plugin:0.47.0"
+        classpath "com.github.ben-manes:gradle-versions-plugin:0.48.0"
     }
 }
 
@@ -139,7 +139,7 @@ configurations {
 
 dependencies {
 
-    implementation 'org.apache.groovy:groovy:4.0.13' // 4.0.5-9,13 are buggy - probems with Ligands.groovy @CompileStatic
+    implementation 'org.apache.groovy:groovy:4.0.15' // 4.0.5-9,13 are buggy - probems with Ligands.groovy @CompileStatic
 
     implementation 'org.codehaus.gpars:gpars:1.2.1'
     implementation 'org.apache.commons:commons-lang3:3.13.0'
@@ -150,7 +150,7 @@ dependencies {
     implementation 'com.univocity:univocity-parsers:2.9.1' // csv parser
     implementation 'org.apache.commons:commons-csv:1.10.0'
     implementation 'org.zeroturnaround:zt-zip:1.16'
-    implementation 'org.apache.commons:commons-compress:1.23.0'
+    implementation 'org.apache.commons:commons-compress:1.24.0'
     implementation 'org.tukaani:xz:1.9'
     implementation 'com.github.luben:zstd-jni:1.5.5-5'
     implementation 'com.github.dpaukov:combinatoricslib3:3.3.3'
@@ -164,8 +164,8 @@ dependencies {
     implementation 'org.biojava:biojava-alignment:7.0.2'
     implementation 'org.biojava:biojava-structure:7.0.2-rdk1'
 
-    implementation 'org.openscience.cdk:cdk-qsarmolecular:2.8'    // for NumericalSurface class
-    implementation 'org.openscience.cdk:cdk-data:2.8'             // for Atom class
+    implementation 'org.openscience.cdk:cdk-qsarmolecular:2.9'    // for NumericalSurface class
+    implementation 'org.openscience.cdk:cdk-data:2.9'             // for Atom class
 
     implementation 'nz.ac.waikato.cms.weka:weka-dev:3.9.6'
 
