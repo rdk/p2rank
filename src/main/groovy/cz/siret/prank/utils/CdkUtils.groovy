@@ -5,7 +5,7 @@ import cz.siret.prank.geom.Point
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
-import org.openscience.cdk.AtomContainer
+import org.openscience.cdk.silent.AtomContainer
 import org.openscience.cdk.config.Elements
 import org.openscience.cdk.interfaces.IAtom
 import org.openscience.cdk.interfaces.IAtomContainer
@@ -36,7 +36,7 @@ class CdkUtils {
             //log.warn "Element unknown to CDK: $bad (from {}) - using {}", atom.name, elementSymbol
         }
 
-        IAtom res = new org.openscience.cdk.Atom(elementSymbol, point)
+        IAtom res = new org.openscience.cdk.silent.Atom(elementSymbol, point)
 
         return res
     }
