@@ -61,7 +61,7 @@ class PdbUtils {
 
         String ext = Futils.realExtension(file)
 
-        if (ext == "cif") {
+        if (ext == "cif" || ext == "bcif" ) {
             return loadFromCifFile(file)
         } else { // pdb / ent
             return loadFromPdbFile(file)
