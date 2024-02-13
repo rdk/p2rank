@@ -8,7 +8,7 @@ buildscript {  // for "com.github.ben-manes.versions" plugin
         }
     }
     dependencies {
-        classpath "com.github.ben-manes:gradle-versions-plugin:0.50.0"
+        classpath "com.github.ben-manes:gradle-versions-plugin:0.51.0"
     }
 }
 
@@ -164,7 +164,7 @@ tasks.named("dependencyUpdates").configure {
 
 dependencies {
 
-    implementation 'org.apache.groovy:groovy:4.0.17' // 4.0.5-9,13 are buggy - probems with Ligands.groovy @CompileStatic
+    implementation 'org.apache.groovy:groovy:4.0.18' 
 
     implementation 'org.codehaus.gpars:gpars:1.2.1'
     implementation 'org.apache.commons:commons-lang3:3.14.0'
@@ -174,7 +174,7 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.10.1'
     implementation 'com.univocity:univocity-parsers:2.9.1' // csv parser
     implementation 'org.apache.commons:commons-csv:1.10.0'
-    implementation 'org.zeroturnaround:zt-zip:1.16'
+    implementation 'org.zeroturnaround:zt-zip:1.17'
     implementation 'org.apache.commons:commons-compress:1.25.0'
     implementation 'org.tukaani:xz:1.9'
     implementation 'com.github.luben:zstd-jni:1.5.5-11'
@@ -196,6 +196,6 @@ dependencies {
 
     implementation fileTree(dir: 'lib', include: '*.jar')
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.10.1'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
 }
