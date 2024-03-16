@@ -387,7 +387,7 @@ class Protein implements Parametrized {
      * @return file name used
      */
     String saveToPdbFile(String fileName, boolean compressed = false) {
-        if (compressed) {
+        if (compressed && !fileName.endsWith(".gz")) {
             fileName += ".gz"
         }
 
