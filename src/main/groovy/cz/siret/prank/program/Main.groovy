@@ -85,11 +85,13 @@ class Main implements Parametrized, Writable {
         return configFile
     }
 
+
     void initParams(Params params, String defaultConfigFile) {
 
         File fdefault = new File(defaultConfigFile)
         log.info "loading default config from [$fdefault.absolutePath]"
         ConfigLoader.overrideConfig(params, fdefault)
+        String lastConfigPath = fdefault.absolutePath
 
         String configParam = configFileParam
         if (configParam != null) {
@@ -97,13 +99,20 @@ class Main implements Parametrized, Writable {
             File fcustom = findConfigFile(configParam)
             log.info "overriding default config with [$fcustom.absolutePath]"
             ConfigLoader.overrideConfig(params, fcustom)
+            lastConfigPath = fcustom.absolutePath
         }
 
+        params.dataset_base_dir = evalDirParam(params.dataset_base_dir, Futils.dir(lastConfigPath))
+        params.output_base_dir = evalDirParam(params.output_base_dir, Futils.dir(lastConfigPath))
+
         params.updateFromCommandLine(args)
-        params.with {
-            dataset_base_dir = evalDirParam(dataset_base_dir)
-            output_base_dir = evalDirParam(output_base_dir)
+        if (args.namedArgs.contains("dataset_base_dir")) {
+            params.dataset_base_dir = evalDirParam(params.dataset_base_dir, ".")
         }
+        if (args.namedArgs.contains("output_base_dir")) {
+            params.output_base_dir = evalDirParam(params.output_base_dir, ".")
+        }
+
 
         String mod = args.get('m')
         if (mod!=null) {
@@ -122,16 +131,16 @@ class Main implements Parametrized, Writable {
         log.debug "CMD LINE ARGS: " + args
     }
 
-    String evalDirParam(String dir) {
-        if (dir==null) {
+    String evalDirParam(String dir, String relativePrefixDir) {
+        if (dir == null) {
             dir = "."
         } else {
             if (!new File(dir).isAbsolute()) {
-                dir = "$installDir/$dir"
+                dir = "$relativePrefixDir/$dir"
             }
         }
         assert dir != null
-        dir = Futils.normalize(dir)
+        dir = Futils.absPath(Futils.normalize(dir))
         assert dir != null
         return dir
     }

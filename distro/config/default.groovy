@@ -9,15 +9,15 @@ import cz.siret.prank.program.params.Params
 
     /**
      * define this if you want dataset program parameters to be evaluated relative to this directory
-     * (set absolute path or path relative to install dir, null defaults to working dir)
+     * (an absolute path or path relative to this config file dir, null defaults to working dir)
      */
-    dataset_base_dir = "./test_data"
+    dataset_base_dir = "../test_data"
 
     /**
      * all output of the program will be stored in subdirectories of this directory
-     * (set absolute path or path relative to install dir, null defaults to working dir)
+     * (an absolute path or path relative to this config file dir, null defaults to working dir)
      */
-    output_base_dir = "./test_output"
+    output_base_dir = "../test_output"
 
     /**
      * default model
