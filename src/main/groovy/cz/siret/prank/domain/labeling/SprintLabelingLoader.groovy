@@ -3,6 +3,7 @@ package cz.siret.prank.domain.labeling
 import com.google.common.collect.Maps
 import cz.siret.prank.domain.*
 import cz.siret.prank.program.PrankException
+import cz.siret.prank.utils.Cutils
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.Writable
 import groovy.transform.CompileStatic
@@ -22,7 +23,10 @@ class SprintLabelingLoader extends ResidueLabeler<Boolean> implements Writable {
     private SprintLabelingLoader(List<LabeledChain> elements) {
         this.elements = elements
 
-        elementsByCode = Maps.uniqueIndex(elements, { it.code })
+
+        elementsByCode = Cutils.mapWithUniqueIndex(elements, { it.code }, {
+            throw new PrankException("Found duplicate keys in labeling file: " + it)
+        })
     }
 
     @Override

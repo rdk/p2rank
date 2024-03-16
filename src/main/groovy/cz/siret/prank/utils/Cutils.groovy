@@ -1,9 +1,12 @@
 package cz.siret.prank.utils
 
+import com.google.common.collect.ImmutableMap
+import com.google.common.collect.Maps
 import groovy.transform.CompileStatic
 
 import javax.annotation.Nonnull
 import javax.annotation.Nullable
+import java.util.function.Consumer
 import java.util.function.Function
 import java.util.function.Predicate
 
@@ -93,6 +96,31 @@ class Cutils {
 
     static <E> List<E> findDuplicates(Iterable<E> values) {
         values.groupBy{ it }.values().findAll { it.size() > 1}.collect { it[0] }.toList()
+    }
+
+    static <K, V> ImmutableMap<K, V> mapWithUniqueIndex(
+            @Nonnull Iterable<V> values,
+            @Nonnull Function<? super V, K> keyFunction,
+            @Nullable Consumer<List<K>> duplicateKeysFoundCallback) {
+
+        List<K> duplicates = findDuplicates( values.collect { keyFunction(it)} )
+
+        if (duplicates.empty) {
+            return Maps.uniqueIndex(values, keyFunction as com.google.common.base.Function<? super V, K>)
+        } else {
+            if (duplicateKeysFoundCallback != null) {
+                duplicateKeysFoundCallback(duplicates)
+                return null
+            } else {
+                throw new IllegalArgumentException("Duplicate keys are not allowed")
+            }
+        }
+    }
+
+    static <K, V> ImmutableMap<K, V> mapWithUniqueIndex(
+            @Nonnull Iterable<V> values,
+            @Nonnull Function<? super V, K> keyFunction) {
+        return mapWithUniqueIndex(values, keyFunction, null)
     }
 
     /**
