@@ -176,7 +176,7 @@ class AnalyzeRoutine extends Routine {
             String rows = ""
             p.residueChains.each {
                 String chainId = it.authorId
-                String mmcifId = it.authorId
+                String mmcifId = it.mmcifId
                 int nres = it.length
                 String chars = it.biojavaCodeCharString
                 rows += "${item.label}, $nchains, $chainId, $mmcifId, $nres, $chars \n"
