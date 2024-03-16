@@ -1,6 +1,5 @@
 package cz.siret.prank.domain.labeling
 
-import com.google.common.collect.Maps
 import cz.siret.prank.domain.*
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.utils.Cutils
@@ -25,7 +24,7 @@ class SprintLabelingLoader extends ResidueLabeler<Boolean> implements Writable {
 
 
         elementsByCode = Cutils.mapWithUniqueIndex(elements, { it.code }, {
-            throw new RuntimeException("Duplicate keys in labeling file ${fname}: " + it)
+            throw new RuntimeException("Duplicate keys in labeling file [${fname}]: " + it)
         })
     }
 
@@ -127,7 +126,7 @@ class SprintLabelingLoader extends ResidueLabeler<Boolean> implements Writable {
     /**
      * Bin of Sprint labeling file representing one chain
      */
-    private static class LabeledChain {
+    static class LabeledChain {
         /** 4-character lower case pdb code + uppercase chain id (one char) */
         String code
         /** single letter residue codes */

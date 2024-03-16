@@ -330,13 +330,18 @@ class AnalyzeRoutine extends Routine {
     /**
      * Compare chain strings in structure with those defined in sprint labeling file
      */
+    @CompileStatic
     private void printSprintChains(SprintLabelingLoader loader) {
-        StringBuffer csv = new StringBuffer("chain_code, source, length, residue_string\n")
+        StringBuffer csv = new StringBuffer(
+                "# status: 'MATCH' | '!:LEN' = labeling/structure chain lengths don't match | '!:RES' = labeling/structure chain residues don't match\n" +
+                "chain_code, source, status, length, chain_data\n")
 
         dataset.processItems { Dataset.Item item ->
             Protein p = item.protein
 
             assignSecondaryStructure(p.structure)
+
+            log.info("processing protein [$p.name] with residue chains ${p.residueChains*.authorId}")
 
             for (ResidueChain chain : p.residueChains) {
                 String chainCode = loader.toElementCode(p, chain)
@@ -344,12 +349,12 @@ class AnalyzeRoutine extends Routine {
                     log.info "writing sprint chain [{}]", chainCode
 
                     def strStruct = chain.biojavaCodeCharString
-                    def strLabeler = loader.elementsByCode.get(chainCode).chain
-                    def strLabels = loader.elementsByCode.get(chainCode).labels
+                    def strLabeler = loader.elementsByCode.get(chainCode)?.chain
+                    def strLabels = loader.elementsByCode.get(chainCode)?.labels
 
                     def secStruct = chain.secStructString
 
-                    String status = "OK"
+                    String status = "MATCH"
                     if (strStruct.length() != strLabeler.length()) {
                         status = "!:LEN"
                     } else if (strStruct != strLabeler) {
@@ -358,9 +363,9 @@ class AnalyzeRoutine extends Routine {
 
                     StringBuilder sb = new StringBuilder()
                     sb << String.format("%s, structure, %-6s, %6s, %s \n", chainCode, status, strStruct .length(), strStruct )
-                    sb << String.format("%s,   labeler, %-6s, %6s, %s \n", chainCode, status, strLabeler.length(), strLabeler)
-                    sb << String.format("%s,    labels, %-6s, %6s, %s \n", chainCode, status, strLabels .length(), strLabels )
-                    sb << String.format("%s, sec.struc, %-6s, %6s, %s \n", chainCode, status, secStruct .length(), secStruct )
+                    sb << String.format("%s,   labeler, %-6s, %6s, %s \n", chainCode, "", strLabeler.length(), strLabeler)
+                    sb << String.format("%s,    labels, %-6s, %6s, %s \n", chainCode, "", strLabels .length(), strLabels )
+                    sb << String.format("%s, sec.struc, %-6s, %6s, %s \n", chainCode, "", secStruct .length(), secStruct )
                     csv << sb.toString()
                 } else {
                     log.warn "labeling for chain [{}] not found", chainCode
@@ -368,7 +373,7 @@ class AnalyzeRoutine extends Routine {
             }
         }
 
-        writeFile "$outdir/sprint_chains.csv", csv
+        writeFile "$outdir/labeled_chains.csv", csv
     }
 
     /**
