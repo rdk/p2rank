@@ -20,12 +20,12 @@ class SprintLabelingLoader extends ResidueLabeler<Boolean> implements Writable {
     Map<String, LabeledChain> elementsByCode
     
 
-    private SprintLabelingLoader(List<LabeledChain> elements) {
+    private SprintLabelingLoader(List<LabeledChain> elements, String fname) {
         this.elements = elements
 
 
         elementsByCode = Cutils.mapWithUniqueIndex(elements, { it.code }, {
-            throw new PrankException("Found duplicate keys in labeling file: " + it)
+            throw new RuntimeException("Duplicate keys in labeling file ${fname}: " + it)
         })
     }
 
@@ -121,7 +121,7 @@ class SprintLabelingLoader extends ResidueLabeler<Boolean> implements Writable {
             }
         }
 
-        return new SprintLabelingLoader(elements)
+        return new SprintLabelingLoader(elements, fname)
     }
 
     /**
