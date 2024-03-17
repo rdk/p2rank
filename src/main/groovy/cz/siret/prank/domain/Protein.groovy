@@ -34,6 +34,7 @@ import static cz.siret.prank.utils.Cutils.previousInList
 class Protein implements Parametrized {
 
     String name
+    String fileName
     Structure structure
     
     /**
@@ -431,7 +432,8 @@ class Protein implements Parametrized {
 
         log.info "loading protein [${Futils.absPath(pdbFileName)}]"
 
-        name = Futils.shortName(pdbFileName)
+        fileName = Futils.shortName(pdbFileName)
+        name = fileName
         structure = PdbUtils.loadFromFile(pdbFileName)
 
         // NMR structures contain multiple models with same chain ids and atom ids
