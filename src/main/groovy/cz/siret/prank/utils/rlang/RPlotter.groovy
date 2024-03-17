@@ -52,7 +52,8 @@ class RPlotter implements Parametrized {
 //        cleanup()
 //    }
 
-    String PALETTE = """ c("#d73027", "#ffffbe", "#1a9850") """
+    String PALETTE = """ c("#1a9850", "#90ce60", "#d9ef8b",  "#ffffbe", "#fee08b", "#fc8c58", "#d73027") """
+    //String PALETTE = """ c("#d73027", "#ffffbe", "#1a9850") """
     // String PALETTE = """ c("green4","green3","yellow","gold","red3") """
 
     void cleanup() {
