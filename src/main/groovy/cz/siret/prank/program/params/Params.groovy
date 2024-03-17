@@ -751,6 +751,8 @@ class Params {
 
     /**
      * added to the cutoff distance around residue in score aggregation from SAS points
+     * full distance cutoff R around residue atoms is calculated as follows:
+     * R = solvent_radius + surface_additional_cutoff + residue_score_extra_dist
      */
     @ModelParam
     double residue_score_extra_dist = 0d

@@ -104,8 +104,11 @@ class CollectVectorsRoutine extends Routine {
         if (instList.size() == 0) {
             throw new PrankException("Vectors from no protein were collected for dataset [$dataset.name].")
         }
-        if (ligandCount == 0) {
-            throw new PrankException("No vectors extracted from dataset [$dataset.name].")
+        if (count == 0) {
+            throw new PrankException("No vectors were extracted from dataset [$dataset.name].")
+        }
+        if (positives == 0) {
+            throw new PrankException("No positive vectors were extracted from dataset [$dataset.name].")
         }
 
         Instances data = prepareDataForWeka(instList, vectf)
