@@ -52,6 +52,9 @@ class RPlotter implements Parametrized {
 //        cleanup()
 //    }
 
+    String PALETTE = """ c("#d73027", "#ffffbe", "#1a9850") """
+    // String PALETTE = """ c("green4","green3","yellow","gold","red3") """
+
     void cleanup() {
         delete("$outdir/Rplots.pdf")
     }
@@ -66,7 +69,7 @@ class RPlotter implements Parametrized {
             }
             library(scales)
 
-            r <- c("green4","green3","yellow","gold","red3")
+            r <- $PALETTE
 
             data <- read.csv("$tablef",
                   stringsAsFactors = TRUE, 
@@ -105,7 +108,7 @@ class RPlotter implements Parametrized {
             }
             library(scales)
 
-            r <- c("green4","green3","yellow","gold","red3")
+            r <- $PALETTE
 
             data <- read.csv("$tablef",
                   stringsAsFactors = TRUE, 
@@ -218,7 +221,7 @@ class RPlotter implements Parametrized {
                 #########################################################
 
                 # creates a own color palette from red to green
-                my_palette <- colorRampPalette(c("green4", "gold", "red3"))(n = 20000)
+                my_palette <- colorRampPalette($PALETTE)(n = 20000)
 
                 # (optional) defines the color breaks manually for a "skewed" color transition
                 #col_breaks = c(seq(-1,0,length=100),  # for red
