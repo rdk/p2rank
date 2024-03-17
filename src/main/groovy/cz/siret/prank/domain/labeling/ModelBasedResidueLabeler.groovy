@@ -152,7 +152,7 @@ class ModelBasedResidueLabeler extends ResidueLabeler<Boolean> implements Parame
         int limit = params.score_point_limit
         if (limit > 0) {
             if (scores.size() > limit) {
-                scores = Cutils.head(limit, scores.toSorted())
+                scores = Cutils.head(limit, scores.toSorted().reverse())
             }
         }
 
