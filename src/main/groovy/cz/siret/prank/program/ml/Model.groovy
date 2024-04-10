@@ -7,6 +7,7 @@ import cz.siret.prank.utils.Console
 import cz.siret.prank.utils.Cutils
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.WekaUtils
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import hr.irb.fastRandomForest.FastRandomForest
 import weka.classifiers.Classifier
@@ -95,6 +96,7 @@ class Model {
         return new Model(label, classifier)
     }
 
+    @CompileDynamic
     Info getInfo() {
 
         Info info = new Info()
