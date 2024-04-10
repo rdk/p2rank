@@ -164,12 +164,12 @@ tasks.named("dependencyUpdates").configure {
 
 dependencies {
 
-    implementation 'org.apache.groovy:groovy:4.0.20'
+    implementation 'org.apache.groovy:groovy:4.0.21'
 
     implementation 'org.codehaus.gpars:gpars:1.2.1'
     implementation 'org.apache.commons:commons-lang3:3.14.0'
     implementation 'org.apache.commons:commons-math3:3.6.1'
-    implementation 'commons-io:commons-io:2.16.0'
+    implementation 'commons-io:commons-io:2.16.1'
     implementation 'com.google.guava:guava:33.1.0-jre'
     implementation 'com.google.code.gson:gson:2.10.1'
     implementation 'com.univocity:univocity-parsers:2.9.1' // csv parser
@@ -177,7 +177,7 @@ dependencies {
     implementation 'org.zeroturnaround:zt-zip:1.17'
     implementation 'org.apache.commons:commons-compress:1.26.1'
     implementation 'org.tukaani:xz:1.9'
-    implementation 'com.github.luben:zstd-jni:1.5.6-1'
+    implementation 'com.github.luben:zstd-jni:1.5.6-2'
     implementation 'com.github.dpaukov:combinatoricslib3:3.4.0'
 
     implementation 'org.slf4j:slf4j-api:1.7.36'
