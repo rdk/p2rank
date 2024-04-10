@@ -379,6 +379,20 @@ class Params {
     boolean rf_flatten_as_legacy = true
 
     /**
+     * try predict in batches if possible
+     */
+    @RuntimeParam
+    boolean rf_batch_prediction = true
+
+
+    /**
+     * Fix bug in RF libraries where class probabilities on leaves were not properly normalized.
+     * Valid for FasterForest and FasterForest2. FastRandomForest has the bug (but not the fix).
+     */
+    @ModelParam // training
+    boolean rf_ensure_leaves_normalized = false
+
+    /**
      * cutoff for joining ligand atom groups into one ligand
      */
     @ModelParam // training

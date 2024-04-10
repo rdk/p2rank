@@ -75,7 +75,8 @@ class TransformRoutine extends Routine {
         "reduce-to-chains" : { cmdReduceToChains() },
         "aaindex1-to-csv" : { cmdAAIndex1ToCsv() },
         "flatten-rf-model" : { cmdFlattenRfModel() },
-        "loop-flatten-rf-model" : { cmdLoopFlattenRfModel() }
+        "loop-flatten-rf-model" : { cmdLoopFlattenRfModel() },
+        "bench-flatten-optimizers" : { cmdBenchFlattenOptimizers() }
     ])
 
 //===========================================================================================================//
@@ -217,6 +218,11 @@ class TransformRoutine extends Routine {
         while (true) {
             new ModelConverter().applyConversions(model)
         }
+    }
+
+
+    private void cmdBenchFlattenOptimizers() {
+        // TODO
     }
     
 }

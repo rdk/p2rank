@@ -78,6 +78,7 @@ class ClassifierFactory implements Parametrized, Writable {
             seed = params.seed
             numThreads = getRfThreads()
             computeImportances = params.feature_importances
+            ensureLeavesNormalized = params.rf_ensure_leaves_normalized
         }
         return cs
     }
@@ -94,6 +95,7 @@ class ClassifierFactory implements Parametrized, Writable {
             computeImportances = params.feature_importances
             calcOutOfBag =  params.feature_importances
             computeDropoutImportance = params.feature_importances
+            ensureLeavesNormalized = params.rf_ensure_leaves_normalized
         }
         return cs
     }

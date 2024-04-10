@@ -494,16 +494,20 @@ speed_joined_flattening() {
 
     title SPEED TESTS
 
-    misc/test-scripts/benchmark.sh 1  "JOINED"   "1 2 4 8 12 16 17 18"   "./prank.sh predict joined.ds -c config/test-default  -rf_flatten 0  -out_subdir TEST/SPEED"
-    misc/test-scripts/benchmark.sh 1  "JOINED"   "1 2 4 8 12 16 17 18"   "./prank.sh predict joined.ds -c config/test-default  -rf_flatten 1  -out_subdir TEST/SPEED"
+    misc/test-scripts/benchmark.sh 1  "JOINED"   "1 2 4 8 12 16 17 18"   "./prank.sh predict joined.ds -c config/test-default  -rf_flatten 0 -rf_batch_prediction 0 -out_subdir TEST/SPEED"
+    misc/test-scripts/benchmark.sh 1  "JOINED"   "1 2 4 8 12 16 17 18"   "./prank.sh predict joined.ds -c config/test-default  -rf_flatten 1 -rf_batch_prediction 0 -out_subdir TEST/SPEED"
+    misc/test-scripts/benchmark.sh 1  "JOINED"   "1 2 4 8 12 16 17 18"   "./prank.sh predict joined.ds -c config/test-default  -rf_flatten 0 -rf_batch_prediction 1 -out_subdir TEST/SPEED"
+    misc/test-scripts/benchmark.sh 1  "JOINED"   "1 2 4 8 12 16 17 18"   "./prank.sh predict joined.ds -c config/test-default  -rf_flatten 1 -rf_batch_prediction 1 -out_subdir TEST/SPEED"
 }
 
 speed_joined_flattening3() {
 
     title SPEED TESTS
 
-    misc/test-scripts/benchmark.sh 3  "JOINED"   "1 2 4 8 12 16 17 18"   "./prank.sh predict joined.ds -c config/test-default  -rf_flatten 0  -out_subdir TEST/SPEED"
-    misc/test-scripts/benchmark.sh 3  "JOINED"   "1 2 4 8 12 16 17 18"   "./prank.sh predict joined.ds -c config/test-default  -rf_flatten 1  -out_subdir TEST/SPEED"
+    misc/test-scripts/benchmark.sh 3  "JOINED"   "1 2 4 8 12 16 17 18"   "./prank.sh predict joined.ds -c config/test-default  -rf_flatten 0 -rf_batch_prediction 0 -out_subdir TEST/SPEED"
+    misc/test-scripts/benchmark.sh 3  "JOINED"   "1 2 4 8 12 16 17 18"   "./prank.sh predict joined.ds -c config/test-default  -rf_flatten 1 -rf_batch_prediction 0 -out_subdir TEST/SPEED"
+    misc/test-scripts/benchmark.sh 3  "JOINED"   "1 2 4 8 12 16 17 18"   "./prank.sh predict joined.ds -c config/test-default  -rf_flatten 0 -rf_batch_prediction 1 -out_subdir TEST/SPEED"
+    misc/test-scripts/benchmark.sh 3  "JOINED"   "1 2 4 8 12 16 17 18"   "./prank.sh predict joined.ds -c config/test-default  -rf_flatten 1 -rf_batch_prediction 1 -out_subdir TEST/SPEED"
 }
 
 speed_joined16() {

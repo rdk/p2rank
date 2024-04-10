@@ -29,7 +29,6 @@ class ModelBasedPointLabeler extends PointLabeler implements Parametrized {
     private ClassifierStats classifierStats = new ClassifierStats()
 
     private final PointScoreCalculator calculator = new PointScoreCalculator()
-    private final boolean USE_ONLY_POSITIVE_SCORE = params.use_only_positive_score
 
 
     private List<LabeledPoint> observedPoints = null

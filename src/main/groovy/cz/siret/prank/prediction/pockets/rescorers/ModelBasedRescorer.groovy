@@ -35,7 +35,6 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
     private final double POSITIVE_POINT_LIGAND_DISTANCE = params.positive_point_ligand_distance
 
     private final PointScoreCalculator calculator = new PointScoreCalculator()
-    private final boolean USE_ONLY_POSITIVE_SCORE = params.use_only_positive_score
 
     private FeatureExtractor extractorFactory
     private Model model
@@ -73,22 +72,27 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
 
             FeatureExtractor extractor = (proteinExtractor as PrankFeatureExtractor).createInstanceForWholeProtein()
 
-            labeledPoints = new ArrayList<>(extractor.sampledPoints.points.count)
+
+            int n_points = extractor.sampledPoints.points.count
+            labeledPoints = new ArrayList<>(n_points)
             for (Atom point : extractor.sampledPoints.points) {
                 labeledPoints.add(new LabeledPoint(point))
             }
 
-            // TODO refactor: use ModelBasedPointLabeler instead of this loop
+            List<FeatureVector> vectors = new ArrayList<>(n_points)
             for (LabeledPoint point : labeledPoints) {
+                vectors.add(extractor.calcFeatureVector(point.point))
+            }
 
-                // classification
+            // classification
+            double[] scores = instancePredictor.predictBatch(vectors)
 
-                FeatureVector vect = extractor.calcFeatureVector(point.point)
+            // TODO refactor: use ModelBasedPointLabeler instead of this loop
+            for (int i=0; i!=n_points; ++i) {
+                LabeledPoint point = labeledPoints.get(i)
 
                 // labels and statistics
-
-                calculator.scorePoint(point, vect, instancePredictor)
-
+                calculator.scorePoint(point, scores[i])
 
                 point.predicted = applyPointScoreThreshold(point.score)
                 point.observed = isPositivePoint(point.point, ligandAtoms)

@@ -48,6 +48,7 @@ class PointScoreCalculator implements Parametrized {
      * @param hist
      * @return
      */
+    @Deprecated
     double transformedPointScore(double[] hist) {
 
         double score
@@ -71,9 +72,16 @@ class PointScoreCalculator implements Parametrized {
 
 //===========================================================================================================//
 
+    void scorePoint(LabeledPoint point, double score) {
+        point.score = score
+        point.transformedScore = transformScore(score)
+    }
+
+
     /**
      * assign score and transformedScore to point (ugly way to keep legacy param use_only_positive_score)
      */
+    @Deprecated
     void scorePoint(LabeledPoint point, FeatureVector vector, InstancePredictor predictor) {
         // score and transformed score (ugly way to keep legacy param use_only_positive_score)
         double score
