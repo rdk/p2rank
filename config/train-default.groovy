@@ -86,4 +86,6 @@ import cz.siret.prank.program.params.Params
 
     rf_flatten = false
 
+    rf_batch_prediction = false
+
 }
