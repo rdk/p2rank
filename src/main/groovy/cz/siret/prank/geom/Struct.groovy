@@ -216,6 +216,15 @@ class Struct {
         group?.getAtom("OXT") != null
     }
 
+    private static int getLastTerminalResidue(List<Group> chainGroups) {
+        for (int i=chainGroups.size()-1; i<=0; i--) {
+            if (isTerminalResidue(chainGroups[i])) {
+                return i
+            }
+        }
+        return -1
+    }
+
     static List<Group> getResidueGroupsFromChain(Chain chain) {
 
         List<Group> chainGroups = chain.getAtomGroups()
@@ -224,11 +233,13 @@ class Struct {
 
         log.info "groups in chain {}: {}", getAuthorId(chain), n
 
+        int lastTerminalResidueIdx = getLastTerminalResidue(chainGroups)
+
         for (int i=0; i!=n; i++) {
             if (isAminoAcidResidueHeuristic(i, chainGroups)) {
                 Group g = chainGroups[i]
                 res.add g
-                if (isTerminalResidue(g)) {
+                if (i == lastTerminalResidueIdx) {
                     break // this is done so amino acid ligands at the end are excluded
                 }
             }

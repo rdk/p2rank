@@ -24,4 +24,6 @@ class ConfigLoaderTest {
         assert p.seed == 42
     }
 
+    // TODO test rescore params
+
 }

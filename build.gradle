@@ -18,7 +18,7 @@ apply plugin: 'groovy'
 apply plugin: 'java'
 
 group = 'cz.siret'
-version = '2.5.0-dev.4.1'
+version = '2.5.0-dev.4.2'
 
 
 description = 'Ligand binding site prediction based on machine learning.'
