@@ -217,8 +217,8 @@ class Struct {
     }
 
     private static int getLastTerminalResidue(List<Group> chainGroups) {
-        for (int i=chainGroups.size()-1; i<=0; i--) {
-            if (isTerminalResidue(chainGroups[i])) {
+        for (int i=chainGroups.size()-1; i>=0; i--) {
+            if (isAminoAcidResidueHeuristic(i, chainGroups) && isTerminalResidue(chainGroups[i])) {
                 return i
             }
         }
@@ -231,17 +231,22 @@ class Struct {
         int n = chainGroups.size()
         List<Group> res = new ArrayList<>(n)
 
-        log.info "groups in chain {}: {}", getAuthorId(chain), n
+        log.info "all groups in chain {}: {}", getAuthorId(chain), n
 
-        int lastTerminalResidueIdx = getLastTerminalResidue(chainGroups)
+        //int lastTerminalResidueIdx = getLastTerminalResidue(chainGroups)
+        //log.info "lastTerminalResidueIdx: {}", lastTerminalResidueIdx
 
         for (int i=0; i!=n; i++) {
+            Group g = chainGroups[i]
             if (isAminoAcidResidueHeuristic(i, chainGroups)) {
-                Group g = chainGroups[i]
                 res.add g
-                if (i == lastTerminalResidueIdx) {
-                    break // this is done so amino acid ligands at the end are excluded
-                }
+
+                // Note: commented out because this just doesn't work in proteins with discontinued chains (OXT atom is not present at the last residue)
+                //if (i == lastTerminalResidueIdx) {
+                //    break // this is done so amino acid ligands at the end are excluded
+                //}
+            } else {
+                log.warn "group {} ({}) considered non-protein", i, g.getPDBName()
             }
         }
 

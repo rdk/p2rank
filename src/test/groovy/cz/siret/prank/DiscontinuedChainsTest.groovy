@@ -14,8 +14,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals
 @CompileStatic
 class DiscontinuedChainsTest {
 
-    String PDB_1O6U = 'src/test/resources/data/tricky_cases/1o6u.pdb'
-    String CIF_1O6U = 'src/test/resources/data/tricky_cases/1o6u.cif'
+    String DIR = 'src/test/resources/data/tricky_cases/'
+    String PDB_1O6U = DIR +'1o6u.pdb'
+    String CIF_1O6U = DIR +'1o6u.cif'
+    String PDB_1UWY = DIR +'1uwy.pdb'
+    String CIF_1UWY = DIR +'1uwy.cif'
 
     @Test
     void discontinuedChainsLoading_1O6U_pdb() throws Exception {
@@ -57,10 +60,43 @@ class DiscontinuedChainsTest {
         def chainA = prot.getResidueChain('A')
         def chainC = prot.getResidueChain('C')
 
-        assertEquals(394, chainA.length, "Expected length of chain A")
+        assertEquals(394, chainA.length, "Expected length of chain A")  // TODO pdb says different
         assertEquals(387, chainC.length, "Expected length of chain C")
         assertEquals(10203, prot.allAtoms.count, "Expected number of all structure atoms")
         assertEquals(9311, prot.proteinAtoms.count, "Expected number of protein atoms")
+
+    }
+
+
+    @Test
+    void discontinuedChainsLoading_1UWY_pdb() throws Exception {
+        Protein prot = Protein.load(PDB_1UWY)
+
+        def chainA = prot.getResidueChain('A')
+
+        log.info "All Atoms: {}", prot.allAtoms.count
+        log.info "Protein Atoms: {}", prot.proteinAtoms.count
+        log.info "Chain A Length: {}", chainA.length
+
+        assertEquals(394, chainA.length, "Expected length of chain A") // TODO pdb says 426!
+        assertEquals(3230, prot.allAtoms.count, "Expected number of all structure atoms")
+        assertEquals(3116, prot.proteinAtoms.count, "Expected number of protein atoms")
+
+    }
+
+    @Test
+    void discontinuedChainsLoading_1UWY_cif() throws Exception {
+        Protein prot = Protein.load(CIF_1UWY)
+
+        def chainA = prot.getResidueChain('A')
+
+        log.info "All Atoms: {}", prot.allAtoms.count
+        log.info "Protein Atoms: {}", prot.proteinAtoms.count
+        log.info "Chain A Length: {}", chainA.length
+
+        assertEquals(394, chainA.length, "Expected length of chain A") // TODO pdb says 426!
+        assertEquals(3230, prot.allAtoms.count, "Expected number of all structure atoms")
+        assertEquals(3116, prot.proteinAtoms.count, "Expected number of protein atoms")
 
     }
     
