@@ -1,0 +1,25 @@
+# Dataset for rescoring PUResNet predictions.
+
+
+# Note: 'prank rescore' expects 2 columns: prediction, protein
+# Providing protein (with or without ligands) that was used to calculate the prediction is required.
+# Proteins have to be liganated only if you want to calculate metrics by running 'prank eval-rescore'.
+
+# Note: this dataset CANNOT be used for eval-rescore
+# because protein column points to proteins without known ligands.
+
+
+PARAM.PREDICTION_METHOD=puresnet
+
+
+HEADER: protein prediction
+
+predictions/PUResNet/2024-05-21_11-58-03.995/pdb/protein.pdb    predictions/PUResNet/2024-05-21_11-58-03.995/pocket
+predictions/PUResNet/2024-05-21_12-17-06.447/pdb/protein.pdb    predictions/PUResNet/2024-05-21_12-17-06.447/pocket
+predictions/PUResNet/2024-05-21_12-20-25.362/pdb/protein.pdb    predictions/PUResNet/2024-05-21_12-20-25.362/pocket
+predictions/PUResNet/2024-05-21_12-26-16.725/pdb/protein.pdb    predictions/PUResNet/2024-05-21_12-26-16.725/pocket
+predictions/PUResNet/2024-05-21_12-26-46.37/pdb/protein.pdb     predictions/PUResNet/2024-05-21_12-26-46.37/pocket
+predictions/PUResNet/2024-05-21_12-29-35.359/pdb/protein.pdb    predictions/PUResNet/2024-05-21_12-29-35.359/pocket
+
+
+

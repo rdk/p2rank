@@ -1,8 +1,14 @@
 # Dataset for rescoring Fpocket 3 predictions.
 # (predictions generated with Fpocket 3.1.2 on "./clean" structures)
-#
-# Note: this dataset (unlike fpocket.ds) cannot be used for eval-rescore
+
+
+# Note: 'prank rescore' expects 2 columns: prediction, protein
+# Providing protein (with or without ligands) that was used to calculate the prediction is required.
+# Proteins have to be liganated only if you want to calculate metrics by running 'prank eval-rescore'.
+
+# Note: this dataset (unlike fpocket.ds) CANNOT be used for eval-rescore
 # because protein column points to proteins without known ligands.
+
 
 PARAM.PREDICTION_METHOD=fpocket
 

@@ -318,6 +318,9 @@ class Dataset implements Parametrized, Writable, Failable {
             case "p2rank":
                 res = new P2RankLoader()
                 break
+            case "puresnet":
+                res = new PUResNetLoader()
+                break
             default:
                 throw new PrankException("Unknown prediction method specified in the dataset: $predictionMethod")
         }
@@ -904,7 +907,7 @@ class Dataset implements Parametrized, Writable, Failable {
         String apoProteinFile = absolutePathOrPrefixWithDir(columnValues.get(COLUMN_APO_PROTEIN), dir)
         String predictionFile = absolutePathOrPrefixWithDir(columnValues.get(COLUMN_PREDICTION), dir)
 
-        String label = Futils.shortName(predictionFile ?: proteinFile)
+        String label = Futils.shortName(proteinFile)
         List<LigandDefinition> ligandDefinitions = parseLigandsColumn(getLigandsColumnValue(columnValues))
         List<String> chains = parseChainsColumn(columnValues.get(COLUMN_CHAINS))
         List<String> apoChains = parseChainsColumn(columnValues.get(COLUMN_APO_CHAINS))
