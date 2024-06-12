@@ -599,18 +599,20 @@ class Evaluation implements Parametrized {
         m.DCA_4_0_PC = calcSuccRateProteinCentric(3,0)
         m.DCA_4_2_PC = calcSuccRateProteinCentric(3,2)
 
-        // compare to getDefaultEvalCriteria()
-        m.DCC_4_0 = calcSuccRate(18,0)
-        m.DCC_4_2 = calcSuccRate(18,2)
-        m.DCC_5_0 = calcSuccRate(19,0)
-        m.DCC_5_2 = calcSuccRate(19,2)
+        // for indexes see cz.siret.prank.program.routines.results.Evaluation.getDefaultEvalCriteria
+        m.DCC_5_0 = calcSuccRate(12,0)
+        m.DCC_5_2 = calcSuccRate(12,2)
+        m.DCC_10_0 = calcSuccRate(17,0)
+        m.DCC_10_2 = calcSuccRate(17,2)
+        m.DCC_12_0 = calcSuccRate(19,0)
+        m.DCC_12_2 = calcSuccRate(19,2)
 
-        m.DSOR_03_0 = calcSuccRate(29,0)
-        m.DSOR_03_2 = calcSuccRate(29,2)
-        m.DSOR_02_0 = calcSuccRate(29,0)
-        m.DSOR_02_2 = calcSuccRate(29,2)
-        m.DSWO_05_0 = calcSuccRate(37,0)
-        m.DSWO_05_2 = calcSuccRate(37,2)
+        m.DSOR_03_0 = calcSuccRate(26,0)
+        m.DSOR_03_2 = calcSuccRate(26,2)
+        m.DSOR_02_0 = calcSuccRate(27,0)
+        m.DSOR_02_2 = calcSuccRate(27,2)
+        m.DSWO_05_0 = calcSuccRate(34,0)
+        m.DSWO_05_2 = calcSuccRate(34,2)
 
 //        m.DPA_1_0 = calcSuccRate(25,0)
 //        m.DPA_1_2 = calcSuccRate(25,2)
@@ -642,12 +644,12 @@ class Evaluation implements Parametrized {
      */
     static List<PocketCriterium> getDefaultEvalCriteria() {
         double REQUIRED_POCKET_COVERAGE = 0.2  //  like in fpocket MOc criterion
-        ((1..15).collect { new DCA(it) }) +         // 0-14
-        ((1..10).collect { new DCC(it) }) +         // 15-24
+        ((2..12).collect { new DCA(it) }) +         // 0-10
+        ((4..14).collect { new DCC(it) }) +         // 11-21
 //        ((1..6).collect { new DPA(it) }) +
 //        ((1..6).collect { new DSA(it) }) +
-        ([0.7,0.6,0.5,0.4,0.3,0.2,0.1].collect { new DSO(it) }) + // 25-31
-        ([1,0.9,0.8,0.7,0.6,0.5,0.4,0.3,0.2,0.1].collect { new DSWO((double)it, REQUIRED_POCKET_COVERAGE) }) // 32-41
+        ([0.7,0.6,0.5,0.4,0.3,0.2,0.1].collect { new DSO(it) }) + // 22-28
+        ([1,0.9,0.8,0.7,0.6,0.5,0.4,0.3,0.2,0.1].collect { new DSWO((double)it, REQUIRED_POCKET_COVERAGE) }) // 29-38
     }
 
 //===========================================================================================================//
