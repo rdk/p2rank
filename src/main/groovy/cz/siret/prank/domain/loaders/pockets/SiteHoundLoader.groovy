@@ -4,6 +4,7 @@ import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Prediction
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.geom.Point
+import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Sutils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
@@ -13,14 +14,14 @@ import groovy.util.logging.Slf4j
  */
 @Slf4j
 @CompileStatic
-class SiteHoundLoader extends PredictionLoader {
+class SiteHoundLoader extends PredictionLoader implements Parametrized {
 
     /**
      * cutoff for determining surface atoms around centroid
      */
     double SURFACE_ATOMS_CUTOFF = 8
 
-    int POCKET_LIMIT = 12
+    int POCKET_LIMIT = params.loaded_pockets_limit == 0 ? Integer.MAX_VALUE : params.loaded_pockets_limit
 
 
     /**
@@ -70,13 +71,13 @@ class SiteHoundLoader extends PredictionLoader {
             double z = cols[5].toDouble()
 
             poc.centroid = new Point(x, y, z)
-            if (liganatedProtein!=null) {
+            if (liganatedProtein != null) {
                 poc.surfaceAtoms = liganatedProtein.exposedAtoms.cutoutSphere(poc.centroid, SURFACE_ATOMS_CUTOFF)
             }
 
             res.add(poc)
 
-            if (res.size()>=POCKET_LIMIT) {
+            if (res.size() >= POCKET_LIMIT) {
                 break
             }
         }

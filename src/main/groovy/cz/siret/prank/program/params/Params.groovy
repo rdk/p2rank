@@ -1282,6 +1282,11 @@ class Params {
     @RuntimeParam
     boolean apoholo_use_for_eval = false
 
+    /**
+     * limit number of loaded pockets predicted by other methods per protein. 0 = no limit
+     */
+    @RuntimeParam
+    int loaded_pockets_limit = 0
 
 //===========================================================================================================//
 // Derived parameters
