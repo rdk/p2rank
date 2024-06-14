@@ -36,10 +36,10 @@ abstract class EvalRoutine extends Routine {
         double all = results.origEval.calcDefaultCriteriumSuccessRate(999)
         double rescored = results.eval.calcDefaultCriteriumSuccessRate(0)
 
-        double orig_DCA4_0 = results.origEval.calcDefaultCriteriumSuccessRate(0)
-        double orig_DCA4_2 = results.origEval.calcDefaultCriteriumSuccessRate(2)
-        double DCA4_0 = results.eval.calcDefaultCriteriumSuccessRate(0)
-        double DCA4_2 = results.eval.calcDefaultCriteriumSuccessRate(2)
+        double orig_DCA4_0 = results.origEval.calcSuccessRate("DCA_4", 0)
+        double orig_DCA4_2 = results.origEval.calcSuccessRate("DCA_4", 2)
+        double DCA4_0 = results.eval.calcSuccessRate("DCA_4", 0)
+        double DCA4_2 = results.eval.calcSuccessRate("DCA_4", 2)
 
         double diff = rescored - top1
         double possible = all - top1

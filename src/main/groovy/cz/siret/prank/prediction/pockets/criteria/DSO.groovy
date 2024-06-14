@@ -17,11 +17,12 @@ import java.util.function.Function
  */
 @Slf4j
 @CompileStatic
-class DSO implements PocketCriterium {
+class DSO extends PocketCriterium {
 
     final double threshold
 
-    DSO(double threshold) {
+    DSO(String name, double threshold) {
+        super(name)
         this.threshold = threshold
     }
 

@@ -9,11 +9,12 @@ import groovy.transform.CompileStatic
  * distance from the center of the predicted pocket to any atom of the ligand
  */
 @CompileStatic
-class DCA implements PocketCriterium {
+class DCA extends PocketCriterium {
 
     final double cutoff
 
-    DCA(double cutoff) {
+    DCA(String name, double cutoff) {
+        super(name)
         this.cutoff = cutoff
     }
 

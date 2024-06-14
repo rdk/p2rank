@@ -33,8 +33,9 @@ class Evaluation implements Parametrized {
     /** cutoff distance in A around ligand atoms that determines which SAS points cover the ligand */
     final double LIG_SAS_CUTOFF = params.ligand_induced_volume_cutoff  
 
-    PocketCriterium standardCriterium = new DCA(4.0d)
-    List<PocketCriterium> criteria
+    PocketCriterium standardCriterium = new DCA("DCA_4", 4.0d)
+    //List<PocketCriterium> criteria
+    PocketCriteria criteria
     List<ProteinRow> proteinRows = newSynchronizedList()
     List<LigRow> ligandRows = newSynchronizedList()
     List<PocketRow> pocketRows = newSynchronizedList()
@@ -56,7 +57,7 @@ class Evaluation implements Parametrized {
     double ligSASPointsScoreSum
 
     Evaluation(List<PocketCriterium> criteria) {
-        this.criteria = criteria
+        this.criteria = new PocketCriteria(criteria)
     }
 
     Evaluation() {
@@ -169,7 +170,7 @@ class Evaluation implements Parametrized {
             row.chainCode = lig.chain
 
             row.ligCount = ligands.relevantLigandCount
-            row.ranks = criteria.collect { criterium -> pair.rankOfIdentifiedPocket(lig, pockets, criterium, context) }
+            row.ranks = criteria.list.collect { criterium -> pair.rankOfIdentifiedPocket(lig, pockets, criterium, context) }
             row.dca4rank = pair.rankOfIdentifiedPocket(lig, pockets, standardCriterium, context)
             row.atoms = lig.atoms.count
             row.centerToProtDist = lig.centerToProteinDist
@@ -343,11 +344,11 @@ class Evaluation implements Parametrized {
         nonBindingScores.addAll(eval.nonBindingScores)
     }
 
-    double calcSuccRate(int assesorNum, int tolerance) {
+    double calcSuccessRate(int criteriumIndex, int tolerance) {
         int identified = 0
 
         for (LigRow ligRow in ligandRows) {
-            int rankForAssessor = ligRow.ranks[assesorNum]
+            int rankForAssessor = ligRow.ranks[criteriumIndex]
             if ((rankForAssessor > 0) && (rankForAssessor <= ligRow.ligCount + tolerance)) {
                 identified += 1
             }
@@ -361,11 +362,11 @@ class Evaluation implements Parametrized {
         return res
     }
 
-    double calcSuccRateProteinCentric(int assesorNum, int tolerance) {
+    double calcSuccessRateProteinCentric(int criteriumIndex, int tolerance) {
         double identified = 0
 
         for (LigRow ligRow in ligandRows) {
-            int rankForAssessor = ligRow.ranks[assesorNum]
+            int rankForAssessor = ligRow.ranks[criteriumIndex]
             if ((rankForAssessor > 0) && (rankForAssessor <= ligRow.ligCount + tolerance)) {
                 identified += 1.0 / ligRow.ligCount
             }
@@ -379,8 +380,16 @@ class Evaluation implements Parametrized {
         return res
     }
 
+    double calcSuccessRate(String criteriumName, int tolerance) {
+        return calcSuccessRate(criteria.getCriteriumIndexForName(criteriumName), tolerance)
+    }
+
+    double calcSuccessRateProteinCentric(String criteriumName, int tolerance) {
+        return calcSuccessRateProteinCentric(criteria.getCriteriumIndexForName(criteriumName), tolerance)
+    }
+
     double calcDefaultCriteriumSuccessRate(int tolerance) {
-        return calcSuccRate(3, tolerance)
+        return calcSuccessRate("DCA_4", tolerance)
     }
 
     /**
@@ -391,17 +400,19 @@ class Evaluation implements Parametrized {
     List<List<Double>> calcSuccessRates(List<Integer> tolerances) {
         assert tolerances !=null && !tolerances.isEmpty()
 
-        List<List<Double>> res = new ArrayList<>()
+        int n = criteria.list.size()
 
-        if (ligandCount==0) {
+        List<List<Double>> res = new ArrayList<>(n)
+
+        if (ligandCount == 0) {
             log.warn "no ligands loaded for calculating success rates!"
         }
 
-        for (int assNum=0; assNum!=criteria.size(); assNum++) {
+        for (int i=0; i!=n; i++) {
             List<Double> resRow = new ArrayList<>(tolerances.size())
 
             for (int tolerance in tolerances) {
-                double resCell = calcSuccRate(assNum, tolerance)
+                double resCell = calcSuccessRate(i, tolerance)
                 resRow.add(resCell)
             }
 
@@ -583,12 +594,12 @@ class Evaluation implements Parametrized {
         m.AVG_TRUE_POCKET_COMBINED_RANK = avg pocketRows.findAll { it.truePocket }, { it.combinedRank }
         m.AVG_FALSE_POCKET_COMBINED_RANK = avg pocketRows.findAll { !it.truePocket }, { it.combinedRank }
 
-        m.DCA_4_0 = calcDefaultCriteriumSuccessRate(0)
-        m.DCA_4_1 = calcDefaultCriteriumSuccessRate(1)
-        m.DCA_4_2 = calcDefaultCriteriumSuccessRate(2)
-        m.DCA_4_4 = calcDefaultCriteriumSuccessRate(4)
-        m.DCA_4_10 = calcDefaultCriteriumSuccessRate(10)
-        m.DCA_4_99 = calcDefaultCriteriumSuccessRate(99)
+        m.DCA_4_0 = calcSuccessRate("DCA_4", 0)
+        m.DCA_4_1 = calcSuccessRate("DCA_4", 1)
+        m.DCA_4_2 = calcSuccessRate("DCA_4", 2)
+        m.DCA_4_4 = calcSuccessRate("DCA_4", 4)
+        m.DCA_4_10 = calcSuccessRate("DCA_4", 10)
+        m.DCA_4_99 = calcSuccessRate("DCA_4", 99)
 
         m.DCA_4_0_NOMINAL = m.DCA_4_0 * m.LIGANDS
         m.DCA_4_1_NOMINAL = m.DCA_4_1 * m.LIGANDS
@@ -596,29 +607,25 @@ class Evaluation implements Parametrized {
         m.DCA_4_4_NOMINAL = m.DCA_4_4 * m.LIGANDS
         m.DCA_4_10_NOMINAL = m.DCA_4_10 * m.LIGANDS
 
-        m.DCA_4_0_PC = calcSuccRateProteinCentric(3,0)
-        m.DCA_4_2_PC = calcSuccRateProteinCentric(3,2)
+        m.DCA_4_0_PC = calcSuccessRateProteinCentric("DCA_4", 0)
+        m.DCA_4_2_PC = calcSuccessRateProteinCentric("DCA_4", 2)
 
         // for indexes see cz.siret.prank.program.routines.results.Evaluation.getDefaultEvalCriteria
-        m.DCC_5_0 = calcSuccRate(12,0)
-        m.DCC_5_2 = calcSuccRate(12,2)
-        m.DCC_10_0 = calcSuccRate(17,0)
-        m.DCC_10_2 = calcSuccRate(17,2)
-        m.DCC_12_0 = calcSuccRate(19,0)
-        m.DCC_12_2 = calcSuccRate(19,2)
+        m.DCC_5_0 = calcSuccessRate("DCC_5",0)
+        m.DCC_5_2 = calcSuccessRate("DCC_5",2)
+        m.DCC_10_0 = calcSuccessRate("DCC_10",0)
+        m.DCC_10_2 = calcSuccessRate("DCC_10",2)
+        m.DCC_12_0 = calcSuccessRate("DCC_12",0)
+        m.DCC_12_2 = calcSuccessRate("DCC_12",2)
 
-        m.DSOR_03_0 = calcSuccRate(26,0)
-        m.DSOR_03_2 = calcSuccRate(26,2)
-        m.DSOR_02_0 = calcSuccRate(27,0)
-        m.DSOR_02_2 = calcSuccRate(27,2)
-        m.DSWO_05_0 = calcSuccRate(34,0)
-        m.DSWO_05_2 = calcSuccRate(34,2)
+        m.DCC_10_0_PC = calcSuccessRateProteinCentric("DCC_10", 0)
+        m.DCC_10_2_PC = calcSuccessRateProteinCentric("DCC_10", 2)
 
-//        m.DPA_1_0 = calcSuccRate(25,0)
-//        m.DPA_1_2 = calcSuccRate(25,2)
-//        m.DSA_3_0 = calcSuccRate(33,0)
-//        m.DSA_3_2 = calcSuccRate(33,2)
-        
+        m.DSOR_01_0 = calcSuccessRate("DSO_0.1",0)
+        m.DSOR_01_2 = calcSuccessRate("DSO_0.1",2)
+        m.DSWO_05_0 = calcSuccessRate("DSWO_0.5",0)
+        m.DSWO_05_2 = calcSuccessRate("DSWO_0.5",2)
+
         m.OPT1 = 100*m.DCA_4_0 + 100*m.DCA_4_2 + 50*m.DCA_4_4 + 10*m.AVG_LIGCOV_SUCC + 5*m.AVG_DSO_SUCC
         m.OPT2 = 100*m.DCA_4_0_PC + 50*m.DCA_4_2_PC + 5*m.AVG_LIGCOV_SUCC + 3*m.AVG_DSO_SUCC
 
@@ -644,12 +651,53 @@ class Evaluation implements Parametrized {
      */
     static List<PocketCriterium> getDefaultEvalCriteria() {
         double REQUIRED_POCKET_COVERAGE = 0.2  //  like in fpocket MOc criterion
-        ((2..12).collect { new DCA(it) }) +         // 0-10
-        ((4..14).collect { new DCC(it) }) +         // 11-21
-//        ((1..6).collect { new DPA(it) }) +
-//        ((1..6).collect { new DSA(it) }) +
-        ([0.7,0.6,0.5,0.4,0.3,0.2,0.1].collect { new DSO(it) }) + // 22-28
-        ([1,0.9,0.8,0.7,0.6,0.5,0.4,0.3,0.2,0.1].collect { new DSWO((double)it, REQUIRED_POCKET_COVERAGE) }) // 29-38
+        return [
+                new DCA("DCA_2",   2),
+                new DCA("DCA_3",   3),
+                new DCA("DCA_4",   4),
+                new DCA("DCA_5",   5),
+                new DCA("DCA_6",   6),
+                new DCA("DCA_7",   7),
+                new DCA("DCA_8",   8),
+                new DCA("DCA_9",   9),
+                new DCA("DCA_10", 10),
+                new DCA("DCA_11", 11),
+                new DCA("DCA_12", 12),
+
+                new DCC("DCC_4",   4),
+                new DCC("DCC_5",   5),
+                new DCC("DCC_6",   6),
+                new DCC("DCC_7",   7),
+                new DCC("DCC_8",   8),
+                new DCC("DCC_9",   9),
+                new DCC("DCC_10", 10),
+                new DCC("DCC_11", 11),
+                new DCC("DCC_12", 12),
+                new DCC("DCC_13", 13),
+                new DCC("DCC_14", 14),
+
+                new DSO("DSO_0.7", 0.7),
+                new DSO("DSO_0.6", 0.6),
+                new DSO("DSO_0.5", 0.5),
+                new DSO("DSO_0.4", 0.4),
+                new DSO("DSO_0.3", 0.3),
+                new DSO("DSO_0.2", 0.2),
+                new DSO("DSO_0.1", 0.1),
+
+                new DSWO("DSWO_1.0", 1.0, REQUIRED_POCKET_COVERAGE),
+                new DSWO("DSWO_0.9", 0.9, REQUIRED_POCKET_COVERAGE),
+                new DSWO("DSWO_0.8", 0.8, REQUIRED_POCKET_COVERAGE),
+                new DSWO("DSWO_0.7", 0.7, REQUIRED_POCKET_COVERAGE),
+                new DSWO("DSWO_0.6", 0.6, REQUIRED_POCKET_COVERAGE),
+                new DSWO("DSWO_0.5", 0.5, REQUIRED_POCKET_COVERAGE),
+                new DSWO("DSWO_0.4", 0.4, REQUIRED_POCKET_COVERAGE),
+                new DSWO("DSWO_0.3", 0.3, REQUIRED_POCKET_COVERAGE),
+                new DSWO("DSWO_0.2", 0.2, REQUIRED_POCKET_COVERAGE),
+                new DSWO("DSWO_0.1", 0.1, REQUIRED_POCKET_COVERAGE),
+
+        ]
+        //        ((1..6).collect { new DPA(it) }) +
+        //        ((1..6).collect { new DSA(it) }) +
     }
 
 //===========================================================================================================//
@@ -674,8 +722,8 @@ class Evaluation implements Parametrized {
         StringBuilder str = new StringBuilder()
         str << "tolerances:," + tolerances.collect{"[$it]"}.join(",") + "\n"
         int i = 0
-        criteria.each {
-            str << criteria[i].toString() + "," + succRates[i].collect{ formatPercent(it) }.join(",")
+        criteria.list.each {
+            str << criteria.list[i].toString() + "," + succRates[i].collect{ formatPercent(it) }.join(",")
             str << "\n"
             i++
         }
@@ -723,7 +771,7 @@ class Evaluation implements Parametrized {
      */
     String toRanksCSV() {
         StringBuilder csv = new StringBuilder()
-        csv <<  "file, #ligands, ligand," + criteria.join(",") + "\n"
+        csv <<  "file, #ligands, ligand," + criteria.list.join(",") + "\n"
         ligandRows.each { row ->
             csv << "$row.protName, $row.ligCount, $row.ligName, " + row.ranks.join(",") + "\n"
         }

@@ -16,12 +16,13 @@ import groovy.transform.CompileStatic
  *
  */
 @CompileStatic
-class DSWO implements PocketCriterium {
+class DSWO extends PocketCriterium {
 
     final double ligandCoverageThreshold
     final double pocketCoverageThreshold
 
-    DSWO(double ligandCoverageThreshold, double pocketCoverageThreshold) {
+    DSWO(String name, double ligandCoverageThreshold, double pocketCoverageThreshold) {
+        super(name)
         this.ligandCoverageThreshold = ligandCoverageThreshold
         this.pocketCoverageThreshold = pocketCoverageThreshold
     }

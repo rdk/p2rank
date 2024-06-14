@@ -10,11 +10,12 @@ import groovy.transform.CompileStatic
  * distance from the center of the pocket to the center of the ligand
  */
 @CompileStatic
-class DCC implements PocketCriterium {
+class DCC extends PocketCriterium {
 
     final double cutoff
 
-    DCC(double cutoff) {
+    DCC(String name, double cutoff) {
+        super(name)
         this.cutoff = cutoff
     }
 
@@ -29,7 +30,6 @@ class DCC implements PocketCriterium {
     double score(Ligand ligand, Pocket pocket) {
         return cutoff - Struct.dist(ligand.centroid, pocket.centroid)
     }
-
 
     @Override
     String toString() {

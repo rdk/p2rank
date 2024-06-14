@@ -27,7 +27,7 @@ import org.biojava.nbio.structure.Atom
 class LigandabilityPointVectorCollector extends VectorCollector implements Parametrized, Failable {
 
     /** Criterion for calling true positive / false positive pockets */
-    static final PocketCriterium DEFAULT_POSITIVE_POCKET_CRITERIUM = new DCA(5)
+    static final PocketCriterium DEFAULT_POSITIVE_POCKET_CRITERIUM = new DCA("DCA_5", 5)
 
     /** distance from the point to the ligand that identifies positive point */
     final double POSITIVE_VC_LIGAND_DISTANCE = params.positive_point_ligand_distance

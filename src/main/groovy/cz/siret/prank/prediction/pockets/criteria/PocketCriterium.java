@@ -7,13 +7,23 @@ import cz.siret.prank.program.routines.results.EvalContext;
 /**
  * Successful pocket identification criterium
  */
-public interface PocketCriterium {
+public abstract class PocketCriterium {
 
-    boolean isIdentified(Ligand ligand, Pocket pocket, EvalContext context);
+    private final String name;
+
+    public PocketCriterium(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public abstract boolean isIdentified(Ligand ligand, Pocket pocket, EvalContext context);
 
     /**
      * higher score = better identified (eg. closer to ligand/ better overlap etc.)
      */
-    double score(Ligand ligand, Pocket pocket);
+    public abstract double score(Ligand ligand, Pocket pocket);
 
 }

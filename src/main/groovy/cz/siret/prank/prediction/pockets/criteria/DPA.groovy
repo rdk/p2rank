@@ -10,11 +10,12 @@ import groovy.transform.CompileStatic
  * distance from any of the pocket SAS points to any atom of the ligand
  */
 @CompileStatic
-class DPA implements PocketCriterium {
+class DPA extends PocketCriterium {
 
     final double cutoff
 
-    DPA(double cutoff) {
+    DPA(String name, double cutoff) {
+        super(name)
         this.cutoff = cutoff
     }
 
