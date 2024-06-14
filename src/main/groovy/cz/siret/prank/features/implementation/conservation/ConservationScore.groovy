@@ -26,34 +26,34 @@ class ConservationScore implements Parametrized {
     public static final String CONSERV_SCORE_KEY = "CONSERVATION_SCORE"
     public static final String CONSERV_PATH_FUNCTION_KEY = "CONSERVATION_PATH_FUNCTION"
 
-    private Map<ResidueNumberWrapper, Double> scores;
+    private Map<ResidueNumberWrapper, Double> scores
 
     private ConservationScore(Map<ResidueNumberWrapper, Double> scores) {
-        this.scores = scores;
+        this.scores = scores
     }
 
     private static class AAScore {
-        public String letter;
-        public double score;
-        public int index;
+        public String letter
+        public double score
+        public int index
 
         AAScore(String letter, double score, int index) {
-            this.letter = letter;
-            this.score = score;
-            this.index = index;
+            this.letter = letter
+            this.score = score
+            this.index = index
         }
     }
 
     double getScoreForResidue(ResidueNumber residueNum) {
-        return getScoreForResidue(new ResidueNumberWrapper(residueNum));
+        return getScoreForResidue(new ResidueNumberWrapper(residueNum))
     }
 
     double getScoreForResidue(ResidueNumberWrapper residueNum) {
-        Double res = this.scores.get(residueNum);
+        Double res = this.scores.get(residueNum)
         if (res == null) {
-            return 0;
+            return 0
         } else {
-            return res.doubleValue();
+            return res.doubleValue()
         }
     }
 
@@ -66,11 +66,11 @@ class ConservationScore implements Parametrized {
     }
 
     Map<ResidueNumberWrapper, Double> getScoreMap() {
-        return this.scores;
+        return this.scores
     }
 
     int size() {
-        return this.scores.size();
+        return this.scores.size()
     }
 
     static enum ScoreFormat {
@@ -79,39 +79,39 @@ class ConservationScore implements Parametrized {
     }
 
     private static List<AAScore> loadScoreFile(File scoreFile, ScoreFormat format) {
-        TsvParserSettings settings = new TsvParserSettings();
-        settings.setLineSeparatorDetectionEnabled(true);
-        TsvParser parser = new TsvParser(settings);
-        List<String[]> lines = parser.parseAll(Futils.inputStream(scoreFile));
-        List<AAScore> result = new ArrayList<>(lines.size());
+        TsvParserSettings settings = new TsvParserSettings()
+        settings.setLineSeparatorDetectionEnabled(true)
+        TsvParser parser = new TsvParser(settings)
+        List<String[]> lines = parser.parseAll(Futils.inputStream(scoreFile))
+        List<AAScore> result = new ArrayList<>(lines.size())
         for (String[] line : lines) {
-            int index = -1;
-            double score = 0;
-            String letter = "-";
+            int index = -1
+            double score = 0
+            String letter = "-"
             switch (format) {
                 case ScoreFormat.ConCavityFormat:
-                    index = Integer.parseInt(line[0]);
-                    letter = line[1];
-                    score = Double.parseDouble(line[2]);
-                    break;
+                    index = Integer.parseInt(line[0])
+                    letter = line[1]
+                    score = Double.parseDouble(line[2])
+                    break
                 case ScoreFormat.JSDFormat:
-                    index = Integer.parseInt(line[0]);
-                    score = Double.parseDouble(line[1]);
-                    letter = line[2].substring(0, 1);
-                    break;
+                    index = Integer.parseInt(line[0])
+                    score = Double.parseDouble(line[1])
+                    letter = line[2].substring(0, 1)
+                    break
             }
-            score = score < 0 ? 0 : score;
+            score = score < 0 ? 0 : score
             if (letter != "-") {
-                result.add(new AAScore(letter, score, index));
+                result.add(new AAScore(letter, score, index))
             }
         }
-        return result;
+        return result
     }
 
-    static ConservationScore fromFiles(Structure structure,
+    static ConservationScore fromFiles(Protein protein,
                                        Function<String, File> scoresFiles)
             throws FileNotFoundException {
-        return fromFiles(structure, scoresFiles, ScoreFormat.JSDFormat);
+        return fromFiles(protein, scoresFiles, ScoreFormat.JSDFormat)
     }
 
 
@@ -151,7 +151,7 @@ class ConservationScore implements Parametrized {
             P2Rank.failStatic(mismatchMsg, log)
         }
 
-        log.info(mismatchMsg + " Aligning chains using LCS")
+        log.info(mismatchMsg + ". Aligning chains using LCS...")
         int[][] lcs = calcLongestCommonSubSequence(pdbChain, scoreChain);
 
         Map<ResidueNumberWrapper, Double> result = matchUsingLcs(chain, scores, pdbChain, scoreChain, lcs)
@@ -237,12 +237,15 @@ class ConservationScore implements Parametrized {
      * @param format Score format (JSD or ConCavity), default: JSD
      * @return new instance of ConservationScore (map from residual numbers to conservation scores)
      */
-    static ConservationScore fromFiles(Structure structure,
+    static ConservationScore fromFiles(Protein protein,
                                        Function<String, File> scoreFiles,
                                        ScoreFormat format) throws FileNotFoundException {
         Map<ResidueNumberWrapper, Double> scores = new HashMap<>()
 
-        for (Chain chain : structure.getChains()) {
+
+        // TODO use protein.getResidueChains() instead and compare, masked sequences should give better match
+        
+        for (Chain chain : protein.structure.getChains()) {
             String chainId = Struct.getAuthorId(chain) // authorId == chain letter in old PDB model
             if (chain.getAtomGroups(GroupType.AMINOACID).size() <= 0) {
                 log.debug "Skip chain '{}': no amino acids", chainId
@@ -255,17 +258,17 @@ class ConservationScore implements Parametrized {
                 File scoreFile = scoreFiles.apply(chainId)
                 log.info "Loading conservation scores from file [{}]", scoreFile
                 if (scoreFile!=null && scoreFile.exists()) {
-                    chainScores = ConservationScore.loadScoreFile(scoreFile, format)
+                    chainScores = loadScoreFile(scoreFile, format)
 
                     log.trace "loaded chain scores:\n" +
                             chainScores.collect { "$it.index $it.letter $it.score" }.join("\n")
 
                     matchSequences(chainId, chain.getAtomGroups(GroupType.AMINOACID), chainScores, scores)
                 } else {
-                    P2Rank.failStatic("Conservation score file doesn't exist for [protein:$structure.name chain:$chainId] file:[$scoreFile]", log)
+                    P2Rank.failStatic("Conservation score file doesn't exist for [protein:$protein.name chain:$chainId] file:[$scoreFile]", log)
                 }
             } catch (Exception e) {
-                P2Rank.failStatic("Failed to load conservation file for [protein:$structure.name chain:$chainId]", e, log)
+                P2Rank.failStatic("Failed to load conservation file for [protein:$protein.name chain:$chainId]", e, log)
             }
         }
         return new ConservationScore(scores)

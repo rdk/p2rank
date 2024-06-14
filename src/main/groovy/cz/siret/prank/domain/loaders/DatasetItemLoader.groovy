@@ -151,9 +151,9 @@ class DatasetItemLoader implements Parametrized, Writable {
         }
 
         if (res != null) {
-            log.info "Conservation file for [{}] found: [{}]", prefix, res?.absolutePath
+            log.info "Conservation file for [baseName:$baseName chain:$chainId] found: [{}]", res?.absolutePath
         } else {
-            log.info "Conservation file for [{}] not found", prefix, res?.absolutePath
+            log.warn "Conservation file for [baseName:$baseName chain:$chainId] not found"
         }
 
         return res

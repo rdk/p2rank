@@ -124,7 +124,7 @@ class Protein implements Parametrized {
         log.info "Loading conservation scores for [{}]", itemContext.item.label
 
         Function<String, File> pathFunction = (Function<String, File>) itemContext.auxData.get(CONSERV_PATH_FUNCTION_KEY)
-        ConservationScore score = ConservationScore.fromFiles(structure, pathFunction)
+        ConservationScore score = ConservationScore.fromFiles(this, pathFunction)
         secondaryData.put(CONSERV_SCORE_KEY, score)
         secondaryData.put(CONSERV_LOADED_KEY, true)
 
