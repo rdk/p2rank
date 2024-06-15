@@ -24,6 +24,7 @@ import org.biojava.nbio.structure.ResidueNumber
 @Slf4j
 @CompileStatic
 class ConservationScore implements Parametrized {
+    
     /** conservation keys for secondaryData map in Protein class. */
     public static final String CONSERV_LOADED_KEY = "CONSERVATION_LOADED"
     public static final String CONSERV_SCORE_KEY = "CONSERVATION_SCORE"
