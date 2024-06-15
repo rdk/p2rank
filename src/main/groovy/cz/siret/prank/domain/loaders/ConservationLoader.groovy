@@ -77,7 +77,7 @@ class ConservationLoader implements Parametrized {
 
     @Nullable
     File findConservationFile(ProcessedItemContext itemContext, String proteinFile, String chainId) {
-        String conservColumn = itemContext.datsetColumnValues.get(Dataset.COLUMN_CONSERVATION_FILES_PATTERN)
+        String conservColumn = itemContext.datasetColumnValues.get(Dataset.COLUMN_CONSERVATION_FILES_PATTERN)
 
         if (conservColumn == null) {
             List<String> conservDirs = getConservationLookupDirs(proteinFile, itemContext)

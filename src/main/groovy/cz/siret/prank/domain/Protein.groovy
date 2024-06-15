@@ -193,9 +193,7 @@ class Protein implements Parametrized {
     }
 
     void ensureConservationLoaded(ProcessedItemContext itemContext) {
-        if (!secondaryData.getOrDefault(CONSERV_LOADED_KEY, false)
-                && itemContext.auxData.getOrDefault(CONSERV_SCORE_KEY,
-                null) != null) {
+        if (!secondaryData.getOrDefault(CONSERV_LOADED_KEY, false)) {
             loadConservationScores(itemContext)
         }
 

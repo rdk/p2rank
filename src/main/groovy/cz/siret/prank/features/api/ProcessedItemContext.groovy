@@ -14,16 +14,12 @@ class ProcessedItemContext {
     /**
      * Column values from dataset item
      */
-    Map<String, String> datsetColumnValues
+    Map<String, String> datasetColumnValues
 
-    /**
-     * Generic store for passing any custom attributes or data
-     */
-    Map<String, Object> auxData = new HashMap<>()
 
-    ProcessedItemContext(Dataset.Item item, Map<String, String> datsetColumnValues) {
+    ProcessedItemContext(Dataset.Item item, Map<String, String> datasetColumnValues) {
         this.item = item
-        this.datsetColumnValues = datsetColumnValues
+        this.datasetColumnValues = datasetColumnValues
     }
 
     Dataset getDataset() {

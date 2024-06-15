@@ -395,7 +395,7 @@ class Dataset implements Parametrized, Writable, Failable {
         Map<String, String> columnValues = new HashMap<>()
 
         if (itemContext!=null) {
-            columnValues.putAll(itemContext.datsetColumnValues)
+            columnValues.putAll(itemContext.datasetColumnValues)
         }
 
         ds.items.add(ds.createNewItemForSingleFileDs(proteinFile, columnValues))

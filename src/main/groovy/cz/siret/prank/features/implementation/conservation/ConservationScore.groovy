@@ -27,7 +27,6 @@ class ConservationScore implements Parametrized {
     /** conservation keys for secondaryData map in Protein class. */
     public static final String CONSERV_LOADED_KEY = "CONSERVATION_LOADED"
     public static final String CONSERV_SCORE_KEY = "CONSERVATION_SCORE"
-    public static final String CONSERV_PATH_FUNCTION_KEY = "CONSERVATION_PATH_FUNCTION"
 
     private Map<ResidueNumberWrapper, Double> scores
 
