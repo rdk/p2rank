@@ -19,9 +19,9 @@ import org.biojava.nbio.structure.Structure
 import org.biojava.nbio.structure.secstruc.SecStrucType
 
 import javax.annotation.Nullable
-import java.util.function.Function
 
-import static cz.siret.prank.features.implementation.conservation.ConservationScore.*
+import static cz.siret.prank.features.implementation.conservation.ConservationScore.CONSERV_LOADED_KEY
+import static cz.siret.prank.features.implementation.conservation.ConservationScore.CONSERV_SCORE_KEY
 import static cz.siret.prank.geom.Struct.residueChainsFromStructure
 import static cz.siret.prank.utils.Cutils.nextInList
 import static cz.siret.prank.utils.Cutils.previousInList
@@ -35,6 +35,7 @@ class Protein implements Parametrized {
 
     String name
     String fileName
+    String shortFileName
     Structure structure
     
     /**
@@ -117,44 +118,6 @@ class Protein implements Parametrized {
     }
 
     /**
-     * TODO move to conservation features
-     * @return
-     */
-    ConservationScore loadConservationScores(ProcessedItemContext itemContext) {
-        log.info "Loading conservation scores for [{}]", itemContext.item.label
-
-        Function<String, File> pathFunction = (Function<String, File>) itemContext.auxData.get(CONSERV_PATH_FUNCTION_KEY)
-        ConservationScore score = ConservationScore.fromFiles(this, pathFunction)
-        secondaryData.put(CONSERV_SCORE_KEY, score)
-        secondaryData.put(CONSERV_LOADED_KEY, true)
-
-        return score
-    }
-
-    /**
-     * TODO move to conservation features
-     * @return
-     */
-    void ensureConservationLoaded(ProcessedItemContext itemContext) {
-        if (!secondaryData.getOrDefault(CONSERV_LOADED_KEY, false)
-                && itemContext.auxData.getOrDefault(CONSERV_SCORE_KEY,
-                null) != null) {
-            loadConservationScores(itemContext)
-        }
-    }
-
-    @Nullable
-    ConservationScore getConservationScore() {
-        (ConservationScore) secondaryData.get(CONSERV_SCORE_KEY)
-    }
-
-    @Nullable
-    ResidueLabeling<Double> getConservationLabeling() {
-        ConservationScore score = getConservationScore()
-        return (score==null) ? null : score.toDoubleLabeling(this)
-    }
-
-    /**
      * solvent exposed protein atoms (i.e. surface atoms)
      */
     Atoms getExposedAtoms() {
@@ -215,6 +178,46 @@ class Protein implements Parametrized {
         secondaryData.clear()
         ligands.relevantLigands.each { it.sasPoints = null; it.predictedPocket = null }
         clearResidues()
+    }
+
+//===========================================================================================================//
+
+    ConservationScore loadConservationScores(ProcessedItemContext itemContext) {
+        log.info "Loading conservation scores for [{}]", itemContext.item.label
+
+        ConservationScore score = ConservationScore.loadForProtein(this, itemContext)
+        secondaryData.put(CONSERV_SCORE_KEY, score)
+        secondaryData.put(CONSERV_LOADED_KEY, true)
+
+        return score
+    }
+
+    void ensureConservationLoaded(ProcessedItemContext itemContext) {
+        if (!secondaryData.getOrDefault(CONSERV_LOADED_KEY, false)
+                && itemContext.auxData.getOrDefault(CONSERV_SCORE_KEY,
+                null) != null) {
+            loadConservationScores(itemContext)
+        }
+
+        if (getConservationScore() == null) {
+            String msg = "Failed to load conservation for protein [$name]"
+            if (params.fail_fast) {
+                throw new PrankException(msg)
+            } else {
+                log.warn msg
+            }
+        }
+    }
+
+    @Nullable
+    ConservationScore getConservationScore() {
+        (ConservationScore) secondaryData.get(CONSERV_SCORE_KEY)
+    }
+
+    @Nullable
+    ResidueLabeling<Double> getConservationLabeling() {
+        ConservationScore score = getConservationScore()
+        return (score==null) ? null : score.toDoubleLabeling(this)
     }
 
 //===========================================================================================================//
@@ -432,8 +435,9 @@ class Protein implements Parametrized {
 
         log.info "loading protein [${Futils.absPath(pdbFileName)}]"
 
-        fileName = Futils.shortName(pdbFileName)
-        name = fileName
+        fileName = pdbFileName
+        shortFileName = Futils.shortName(pdbFileName)
+        name = shortFileName
         structure = PdbUtils.loadFromFile(pdbFileName)
 
         // NMR structures contain multiple models with same chain ids and atom ids

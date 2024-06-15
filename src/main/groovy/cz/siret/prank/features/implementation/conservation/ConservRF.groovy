@@ -31,11 +31,11 @@ class ConservRF extends ResidueFeatureCalculator {
     }
 
     static double getScoreForResidue(Residue residue, Protein protein) {
-        ConservationScore score = protein.getConservationScore()
+        ConservationScore score = protein.conservationScore
         if (score == null) {
             return 0d
         } else {
-            return score.getScoreForResidue(residue.getResidueNumber())
+            return score.getScoreForResidue(residue.residueNumber)
         } 
     }
 

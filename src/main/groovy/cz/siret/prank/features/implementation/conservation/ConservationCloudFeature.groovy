@@ -20,17 +20,14 @@ class ConservationCloudFeature extends SasFeatureCalculator implements Parametri
 
     @Override
     void preProcessProtein(Protein protein, ProcessedItemContext itemContext) {
-        // Check if conservation is already loaded.
-        if (!protein.secondaryData.getOrDefault(ConservationScore.CONSERV_LOADED_KEY, false)) {
-            // Load conservation score.
-            protein.loadConservationScores(itemContext)
-        }
+        protein.ensureConservationLoaded(itemContext)
     }
+
 
     @Override
     double[] calculateForSasPoint(Atom sasPoint, SasFeatureCalculationContext context) {
 
-        ConservationScore score = (ConservationScore) context.protein.secondaryData.get(ConservationScore.CONSERV_SCORE_KEY)
+        ConservationScore score = context.protein.conservationScore
         if (score == null) {
             return [0.0] as double[]
         }
@@ -45,7 +42,6 @@ class ConservationCloudFeature extends SasFeatureCalculator implements Parametri
             }).average().getAsDouble();
         }
         if (value==Double.NaN) value = 0d
-
 
         return [value] as double[]
     }

@@ -5,7 +5,9 @@ import com.univocity.parsers.tsv.TsvParserSettings
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.domain.Residue
 import cz.siret.prank.domain.labeling.ResidueLabeling
+import cz.siret.prank.domain.loaders.ConservationLoader
 import cz.siret.prank.export.FastaExporter
+import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.geom.Struct
 import cz.siret.prank.program.P2Rank
 import cz.siret.prank.program.params.Parametrized
@@ -14,9 +16,10 @@ import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.PdbUtils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-import org.biojava.nbio.structure.*
-
-import java.util.function.Function
+import org.biojava.nbio.structure.Chain
+import org.biojava.nbio.structure.Group
+import org.biojava.nbio.structure.GroupType
+import org.biojava.nbio.structure.ResidueNumber
 
 @Slf4j
 @CompileStatic
@@ -108,10 +111,9 @@ class ConservationScore implements Parametrized {
         return result
     }
 
-    static ConservationScore fromFiles(Protein protein,
-                                       Function<String, File> scoresFiles)
+    static ConservationScore loadForProtein(Protein protein, ProcessedItemContext itemContext)
             throws FileNotFoundException {
-        return fromFiles(protein, scoresFiles, ScoreFormat.JSDFormat)
+        return loadForProtein(protein, itemContext, ScoreFormat.JSDFormat)
     }
 
 
@@ -237,9 +239,7 @@ class ConservationScore implements Parametrized {
      * @param format Score format (JSD or ConCavity), default: JSD
      * @return new instance of ConservationScore (map from residual numbers to conservation scores)
      */
-    static ConservationScore fromFiles(Protein protein,
-                                       Function<String, File> scoreFiles,
-                                       ScoreFormat format) throws FileNotFoundException {
+    static ConservationScore loadForProtein(Protein protein, ProcessedItemContext itemContext, ScoreFormat format) throws FileNotFoundException {
         Map<ResidueNumberWrapper, Double> scores = new HashMap<>()
 
 
@@ -247,21 +247,21 @@ class ConservationScore implements Parametrized {
         
         for (Chain chain : protein.structure.getChains()) {
             String chainId = Struct.getAuthorId(chain) // authorId == chain letter in old PDB model
-            if (chain.getAtomGroups(GroupType.AMINOACID).size() <= 0) {
+            if (chain.getAtomGroups(GroupType.AMINOACID).size() <= 0) {       // TODO this also includes some ligand chains
                 log.debug "Skip chain '{}': no amino acids", chainId
                 continue // skip non-amino acid chains
             }
             chainId = Struct.maskEmptyChainId(chainId)
 
-            List<AAScore> chainScores = null
             try {
-                File scoreFile = scoreFiles.apply(chainId)
+                File scoreFile = ConservationLoader.instance.findConservationFile(itemContext, protein.fileName, chainId)
                 log.info "Loading conservation scores from file [{}]", scoreFile
                 if (scoreFile!=null && scoreFile.exists()) {
-                    chainScores = loadScoreFile(scoreFile, format)
+                    List<AAScore> chainScores = loadScoreFile(scoreFile, format)
 
-                    log.trace "loaded chain scores:\n" +
-                            chainScores.collect { "$it.index $it.letter $it.score" }.join("\n")
+                    if (log.traceEnabled) {
+                        log.trace "loaded chain scores:\n  {}", chainScores.collect { "$it.index $it.letter $it.score" }.join("\n")
+                    }
 
                     matchSequences(chainId, chain.getAtomGroups(GroupType.AMINOACID), chainScores, scores)
                 } else {

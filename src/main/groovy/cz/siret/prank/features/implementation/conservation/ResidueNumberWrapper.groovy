@@ -1,7 +1,7 @@
 package cz.siret.prank.features.implementation.conservation
 
 import groovy.transform.CompileStatic
-import org.biojava.nbio.structure.ResidueNumber;
+import org.biojava.nbio.structure.ResidueNumber
 
 /**
  * TODO remove the wrapper
@@ -9,17 +9,18 @@ import org.biojava.nbio.structure.ResidueNumber;
  */
 @CompileStatic
 public class ResidueNumberWrapper {
-    private ResidueNumber resNum;
+
+    private ResidueNumber resNum
 
     public ResidueNumberWrapper(ResidueNumber resNum) {
-        this.resNum = resNum;
+        this.resNum = resNum
     }
 
     public ResidueNumber getResNum() {
-        return resNum;
+        return resNum
     }
     public void setResNum(ResidueNumber resNum) {
-        this.resNum = resNum;
+        this.resNum = resNum
     }
 
     boolean equals(o) {
@@ -39,7 +40,7 @@ public class ResidueNumberWrapper {
 
     @Override
     public String toString() {
-        return resNum != null ? resNum.toString() : "null";
+        return resNum != null ? resNum.toString() : "null"
     }
     
 }

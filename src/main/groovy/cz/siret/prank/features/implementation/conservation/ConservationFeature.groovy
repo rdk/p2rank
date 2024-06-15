@@ -4,7 +4,6 @@ import cz.siret.prank.domain.Protein
 import cz.siret.prank.features.api.AtomFeatureCalculationContext
 import cz.siret.prank.features.api.AtomFeatureCalculator
 import cz.siret.prank.features.api.ProcessedItemContext
-import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.Parametrized
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
@@ -24,26 +23,9 @@ class ConservationFeature extends AtomFeatureCalculator implements Parametrized 
         "conservation"
     }
 
-    private ConservationScore getConservationScore(Protein protein) {
-        (ConservationScore) protein.secondaryData.get(ConservationScore.CONSERV_SCORE_KEY)
-    }
-
     @Override
     void preProcessProtein(Protein protein, ProcessedItemContext itemContext) {
-        // Check if conservation is already loaded.
-        if (getConservationScore(protein) == null) {
-            // Load conservation score.
-            protein.loadConservationScores(itemContext)
-        }
-
-        if (getConservationScore(protein) == null) {
-            String msg = "Failed to load conservation for protein [$protein.name]"
-            if (params.fail_fast) {
-                throw new PrankException(msg)
-            } else {
-                log.warn msg
-            }
-        }
+        protein.ensureConservationLoaded(itemContext)
     }
 
     @Override
@@ -53,7 +35,7 @@ class ConservationFeature extends AtomFeatureCalculator implements Parametrized 
             return [0.0] as double[]
         }
 
-        ConservationScore score = getConservationScore(context.protein)
+        ConservationScore score = context.protein.conservationScore
         if (score == null) {
             return [0.0] as double[]
         } else {

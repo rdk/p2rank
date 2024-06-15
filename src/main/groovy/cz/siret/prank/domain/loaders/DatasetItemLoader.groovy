@@ -4,12 +4,10 @@ import cz.siret.prank.domain.*
 import cz.siret.prank.domain.labeling.BinaryLabeling
 import cz.siret.prank.domain.loaders.pockets.PredictionLoader
 import cz.siret.prank.features.api.ProcessedItemContext
-import cz.siret.prank.features.implementation.conservation.ConservationScore
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Struct
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.utils.Cutils
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.Writable
 import groovy.transform.CompileStatic
@@ -19,9 +17,6 @@ import org.biojava.nbio.structure.Chain
 
 import javax.annotation.Nonnull
 import javax.annotation.Nullable
-import java.nio.file.Path
-import java.nio.file.Paths
-import java.util.function.Function
 
 /**
  *
@@ -65,11 +60,6 @@ class DatasetItemLoader implements Parametrized, Writable {
         }
 
         ProcessedItemContext itemContext = item.context
-
-        // TODO: move conservation related stuff to feature implementation
-        if (loaderParams.load_conservation) {
-            loadConservationScores(item.proteinFile, itemContext, res)
-        }
 
         if (params.identify_peptides_by_labeling) {
             loadPeptidesFromLabeling(res.holoProtein, itemContext)
@@ -132,81 +122,6 @@ class DatasetItemLoader implements Parametrized, Writable {
         log.info 'permissible_a:{} contact_a:{} ratio:{}', permissible, n, ratio
 
         return ratio >= 0.5
-    }
-
-//===========================================================================================================//
-
-    @Nullable
-    private File findConservationFile(List<String> dirs, String proteinFile, String chainId) {
-        log.info "Looking for conservation in dirs {}", dirs
-
-        String baseName = Futils.baseName(proteinFile)
-
-        String prefix = baseName + '_' + chainId + '.'  // e.g. "2ed4_A."
-        File res = findConservFilePrefixed(dirs, prefix)
-
-        if (res == null) { // try old prefix format without '_'
-            prefix = baseName + chainId + '.'           // e.g. "2ed4A."
-            res = findConservFilePrefixed(dirs, prefix)
-        }
-
-        if (res != null) {
-            log.info "Conservation file for [baseName:$baseName chain:$chainId] found: [{}]", res?.absolutePath
-        } else {
-            log.warn "Conservation file for [baseName:$baseName chain:$chainId] not found"
-        }
-
-        return res
-    }
-
-    private File findConservFilePrefixed(List<String> dirs, String prefix) {
-        return Futils.findFileInDirs(dirs, {File f ->
-            f.name.startsWith(prefix) && (Futils.realExtension(f.name) == "hom")
-        })
-    }
-
-    private checkConservationDirsExist(List<String> dirs) {
-        for (String dir : dirs) {
-            if (!Futils.exists(dir)) {
-                throw new PrankException("Directory defined in 'conservation_dirs' param doesn't exist: " + dir)
-            }
-        }
-    }
-
-    private List<String> getConservationLookupDirs(String proteinFile, ProcessedItemContext itemContext) {
-
-        if (!Cutils.empty(params.conservation_dirs)) {
-            String datasetDir = itemContext.item.originDataset.dir
-            List<String> dirs = params.conservation_dirs.collect {Futils.prependIfNotAbsolute(it, datasetDir) }
-            return dirs
-        } else {
-            String pdbDir = Futils.dir(proteinFile)
-            return [pdbDir]
-        }
-    }
-
-    private loadConservationScores(String proteinFile, ProcessedItemContext itemContext, PredictionPair pair) {
-
-        String conservColumn = itemContext.datsetColumnValues.get(Dataset.COLUMN_CONSERVATION_FILES_PATTERN)
-
-        Function<String, File> conservationFinder // maps chain ids to files
-        if (conservColumn == null) {
-            List<String> conservDirs = getConservationLookupDirs(proteinFile, itemContext)
-            log.info "Conservation lookup dirs: " + conservDirs
-            checkConservationDirsExist(conservDirs)
-
-            conservationFinder = { String chainId -> findConservationFile(conservDirs, proteinFile, chainId) }
-        } else {
-            Path parentDir = Paths.get(proteinFile).parent
-            String pattern = conservColumn
-            conservationFinder = { String chainId ->
-                parentDir.resolve(pattern.replaceAll("%chainID%", chainId)).toFile()
-            }
-        }
-        // TODO use itemContext attribute instead
-        itemContext.auxData.put(ConservationScore.CONSERV_PATH_FUNCTION_KEY, conservationFinder)
-
-        pair.protein.loadConservationScores(itemContext)
     }
 
 }

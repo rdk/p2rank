@@ -125,7 +125,7 @@ class EvalResiduesRoutine extends EvalRoutine {
             LabeledResidue<Boolean> pred = predicted.labeledResidues[i]
             csv << "$obs.residue, $pred.residue, ${bton(obs.label)}, ${bton(pred.label)}\n"
         }
-        writeFile "$cdir/${protein.fileName}_residues.csv", csv
+        writeFile "$cdir/${protein.shortFileName}_residues.csv", csv
     }
 
 }
