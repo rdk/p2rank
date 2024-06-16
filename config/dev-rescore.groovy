@@ -42,6 +42,17 @@ import cz.siret.prank.program.params.Params
     cache_datasets = false
 
     /**
+     * clear primary caches (protein structures) between runs (when iterating params or seed)
+     */
+    clear_prim_caches = false
+
+    /**
+     * clear secondary caches (protein surfaces etc.) between runs (when iterating params or seed)
+     */
+    clear_sec_caches = false
+
+
+    /**
      * produce pymol visualisations
      */
     visualizations = false
@@ -129,8 +140,16 @@ import cz.siret.prank.program.params.Params
 
     /**
      * SAS tessellation (~density) used in training step
+     * 0 = use value of tessellation
      */
-    train_tessellation = 2
+    train_tessellation = 0
+
+    /**
+     * SAS tessellation (~density) used in training step to select negatives.
+     * Allows denser positive sampling than negative sampling and thus deal with class imbalance and train faster.
+     * 0 = use value of effective train_tessellation
+     */
+    train_tessellation_negatives = 0
 
 
     weight_power = 2
