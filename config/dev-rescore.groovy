@@ -2,7 +2,7 @@ import cz.siret.prank.program.params.Params
 
 (params as Params).with {
 
-    dataset_base_dir = "../../p2rank-datasets"
+    dataset_base_dir = "../../p2rank-datasets2"
 
     output_base_dir = "../../p2rank-results"
 
@@ -51,12 +51,22 @@ import cz.siret.prank.program.params.Params
      */
     clear_sec_caches = false
 
-
     /**
      * produce pymol visualisations
      */
     visualizations = false
 
+    /**
+     * Collect predictions for all points in the dataset.
+     * Allows calculation of AUC and AUPRC classifier statistics but consumes a lot of memory.
+     * (>1GB for holo4k dataset with tessellation=2)
+     */
+    stats_collect_predictions = true
+
+    /**
+     * produce classifier stats also for train dataset
+     */
+    classifier_train_stats = false
 
     //== FAETURES ===================
 
