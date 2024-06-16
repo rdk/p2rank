@@ -4,7 +4,7 @@ import cz.siret.prank.program.params.Params
 
     dataset_base_dir = "../../p2rank-datasets"
 
-    output_base_dir = "../../p2rank-results/${version}"
+    output_base_dir = "../../p2rank-results"
 
     /**
      * default model
