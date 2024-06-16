@@ -118,6 +118,7 @@ class FeatureRegistry {
         register new ResidueToSasFeatWrapper(new ConservRF())
         register new ResidueToAtomicFeatWrapper(new ConservRF())
         register new ConservCloudSF()
+        register new ConservCloud2SF()
 
         register new CsvFileFeature()
 
