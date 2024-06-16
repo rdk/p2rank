@@ -117,6 +117,11 @@ import cz.siret.prank.program.params.Params
     //=== Distances and thresholds =================
 
     /**
+     * n, use only top-n pockets to select training instances, 0=all
+     */
+    train_pockets = 0
+
+    /**
      * cutoff around ligand that defines positives
      */
     positive_point_ligand_distance = 2.5
