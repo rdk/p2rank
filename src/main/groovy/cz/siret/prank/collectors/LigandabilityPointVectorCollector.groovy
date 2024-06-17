@@ -69,6 +69,8 @@ class LigandabilityPointVectorCollector extends VectorCollector implements Param
             log.error "Protein has no relevant ligands - all SAS points will be negative [{}]", pair.protein.name
         }
 
+        // TODO: create param for different point selectors, add better pocket selector that uses all possible positives
+
         if (params.sample_negatives_from_decoys) {
             return collectForPockets(ligandAtoms, pair, proteinExtractorPrototype)
         } else {
@@ -190,19 +192,19 @@ class LigandabilityPointVectorCollector extends VectorCollector implements Param
 
         List<Pocket> usePockets = pair.prediction.pockets  // use all pockets
         if (params.train_pockets > 0) {
+            log.info "Limiting number of false positive pockets for training to {}", params.train_pockets
             usePockets = [*pair.getCorrectlyPredictedPockets(positivePocketCriterium), *Cutils.head(params.train_pockets, pair.getFalsePositivePockets(positivePocketCriterium)) ]
         }
+        log.info "Using {} pockets for training", usePockets.size()
 
         Result result = new Result()
         for (Pocket pocket in usePockets) {
             try {
                 FeatureExtractor pocketExtractor = proteinExtractorPrototype.createInstanceForPocket(pocket)
                 Result pocketRes = collectForPocket(pocket, pair, ligandAtoms, pocketExtractor)
-                //synchronized (result) {
                 result.addAll(pocketRes)
-                //}
             } catch (Exception e) {
-                log.error("skipping extraction from pocket:$pocket.name reason: " + e.message, e)
+                log.error("Failed to extract vectors from pocket:$pocket.name (skipping)", e)
             }
         }
 
