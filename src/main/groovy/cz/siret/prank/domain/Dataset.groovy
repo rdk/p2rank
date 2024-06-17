@@ -336,7 +336,7 @@ class Dataset implements Parametrized, Writable, Failable {
         List<Item> shuffledItems = new ArrayList<>(items)
         Collections.shuffle(shuffledItems, new Random(seed))
 
-        return createSubset( shuffledItems.subList(0, subsetSize), this.name + " (random subset of size $subsetSize)" )
+        return copyWithNewItems( shuffledItems.subList(0, subsetSize), this.name + " (random subset of size $subsetSize)" )
     }
 
     List<Fold> sampleFolds(int k, long seed) {
@@ -357,8 +357,8 @@ class Dataset implements Parametrized, Writable, Failable {
         List<Fold> folds = new ArrayList<>(k)
         for (int i=0; i!=k; ++i) {
             int num = i+1
-            Dataset evalset = createSubset(subsets[i], "${name}_fold.${k}.${num}_eval").forTraining(false)
-            Dataset trainset = createSubset(shuffledItems - subsets[i], "${name}_fold.${k}.${num}_train").forTraining(true)
+            Dataset evalset = copyWithNewItems(subsets[i], "${name}_fold.${k}.${num}_eval").forTraining(false)
+            Dataset trainset = copyWithNewItems(shuffledItems - subsets[i], "${name}_fold.${k}.${num}_train").forTraining(true)
             folds.add(new Fold(num, trainset, evalset))
         }
 
@@ -368,7 +368,7 @@ class Dataset implements Parametrized, Writable, Failable {
     /**
      * create dataset view from subset of items
      */
-    private Dataset createSubset(List<Item> items, String name) {
+    Dataset copyWithNewItems(List<Item> items, String name) {
 
         items = items.collect { it.copy() }
 
@@ -378,6 +378,7 @@ class Dataset implements Parametrized, Writable, Failable {
         res.cached = this.cached
         res.header = this.header
         res.apoholo = this.apoholo
+        res.forTraining = this.forTraining
 
         items.forEach { it.currentDataset = res }
 

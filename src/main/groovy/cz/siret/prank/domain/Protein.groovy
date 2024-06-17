@@ -16,9 +16,11 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 import org.biojava.nbio.structure.Structure
+import org.biojava.nbio.structure.StructureImpl
 import org.biojava.nbio.structure.secstruc.SecStrucType
 
 import javax.annotation.Nullable
+import java.util.function.Consumer
 
 import static cz.siret.prank.features.implementation.conservation.ConservationScore.CONSERV_LOADED_KEY
 import static cz.siret.prank.features.implementation.conservation.ConservationScore.CONSERV_SCORE_KEY
@@ -421,6 +423,37 @@ class Protein implements Parametrized {
         return res
     }
 
+
+    static Protein fromStructure(Structure structure, String name, String pdbFileName, @Nullable List<String> onlyChains, LoaderParams loaderParams) {
+        Protein res = new Protein()
+        res.name = name
+        res.fileName = pdbFileName
+        res.shortFileName = Futils.shortName(pdbFileName)
+
+        res.loadStructure(structure, name, pdbFileName, onlyChains, loaderParams)
+
+        return res
+    }
+
+    static Protein fromStructure(Structure structure, String name, String pdbFileName) {
+        return fromStructure(structure, name, pdbFileName, null, new LoaderParams())
+    }
+
+    /**
+     * preserves fileName
+     *
+     * @param newName
+     * @param inplaceStructureTransformation
+     * @return
+     */
+    Protein transformedCopy(String newName, Consumer<Structure> inplaceStructureTransformation) {
+        Structure newStructure = PdbUtils.deepCopyStructure(structure)
+
+        inplaceStructureTransformation.accept(structure)
+
+        return fromStructure(newStructure, newName, fileName)
+    }
+
 //===========================================================================================================//
 
     /**
@@ -436,11 +469,18 @@ class Protein implements Parametrized {
         fileName = pdbFileName
         shortFileName = Futils.shortName(pdbFileName)
         name = shortFileName
-        structure = PdbUtils.loadFromFile(pdbFileName)
+        Structure structure = PdbUtils.loadFromFile(pdbFileName)
+
+        loadStructure(structure, name, pdbFileName, onlyChains, loaderParams)
+
+    }
+
+    private void loadStructure(Structure struct, String name, String pdbFileName, @Nullable List<String> onlyChains, LoaderParams loaderParams) {
+        structure = struct
 
         // NMR structures contain multiple models with same chain ids and atom ids
         // we always work only with first model
-        if (structure.nrModels() > 1) {
+        if (struct.nrModels() > 1) {
             log.info "protein [{}] contains multiple models, reducing to model 0", name
             structure = Struct.reduceStructureToModel0(structure)
         }
@@ -479,7 +519,6 @@ class Protein implements Parametrized {
         } else {
             log.info "ignoring ligands"
         }
-
     }
 
 }

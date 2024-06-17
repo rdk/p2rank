@@ -1288,6 +1288,13 @@ class Params {
     @RuntimeParam
     int loaded_pockets_limit = 0
 
+
+    /**
+     * Add random rotations of each protein (from training dataset) to the training dataset
+     */
+    @RuntimeParam // training
+    int train_random_rotated_copies = 0
+
 //===========================================================================================================//
 // Derived parameters
 //===========================================================================================================//

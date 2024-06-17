@@ -7,6 +7,7 @@ import cz.siret.prank.collectors.VectorCollector
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.features.FeatureVector
+import cz.siret.prank.geom.Rotations
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.ml.FeatureVectors
 import cz.siret.prank.program.routines.Routine
@@ -15,10 +16,13 @@ import cz.siret.prank.utils.PerfUtils
 import cz.siret.prank.utils.WekaUtils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+import org.biojava.nbio.structure.Structure
+import us.ihmc.euclid.matrix.RotationMatrix
 import weka.core.Instance
 import weka.core.Instances
 
 import java.util.concurrent.atomic.AtomicInteger
+import java.util.function.Consumer
 
 import static cz.siret.prank.utils.ATimer.startTimer
 import static cz.siret.prank.utils.Cutils.newSynchronizedList
@@ -41,11 +45,57 @@ class CollectVectorsRoutine extends Routine {
     }
 
     private Dataset prepareDataset(Dataset dataset) {
-        if (params.train_protein_limit>0 && params.train_protein_limit < dataset.size) {
+        if (params.train_protein_limit > 0 && params.train_protein_limit < dataset.size) {
             write "training on random subset of size $params.train_protein_limit"
             dataset = dataset.randomSubset(params.train_protein_limit, params.seed)
         }
+
+        // add random rotations
+        // TODO move to TrainEvalRoutine to make use of dataset caching
+        if (params.train_random_rotated_copies > 0) {
+            dataset = expandDatasetWithRandomRotations(dataset, params.train_random_rotated_copies)
+        }
+
         return dataset
+    }
+
+    private Dataset expandDatasetWithRandomRotations(Dataset dataset, int numRotations) {
+        log.info "Extending training dataset with {} random rotations of each protein", numRotations
+
+        Random rand = new Random(params.seed)
+
+        // preload
+        dataset.processItems { Dataset.Item item ->
+            item.predictionPair
+        }
+
+        List<Dataset.Item> newItems = new ArrayList<>()
+
+        newItems.addAll( dataset.items.collect { it.copy() } )
+
+        for (int i=1; i<=numRotations; ++i) {
+            String nameSuffix = "-rotation." + i
+
+            RotationMatrix matrix = Rotations.generateRandomRotation(rand)
+
+            log.info "Random rotation $i: " + matrix
+
+            List<Dataset.Item> rotItems = dataset.items.collect { it.copy() }
+            for (Dataset.Item item : rotItems) {
+                item.label += nameSuffix
+                item.predictionPair.holoProtein = item.predictionPair.holoProtein.transformedCopy(item.predictionPair.holoProtein.name + nameSuffix, new Consumer<Structure>() {
+                    @Override
+                    void accept(Structure structure) {
+                        Rotations.rotateStructureInplace(structure, matrix)
+                    }
+                })
+                // TODO conditionally rotate apoProtein and prediction
+            }
+
+            newItems.addAll(rotItems)
+        }
+
+        return dataset.copyWithNewItems(newItems, dataset.name + "-with-rotations")
     }
 
     /**

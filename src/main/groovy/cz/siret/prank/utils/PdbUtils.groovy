@@ -288,6 +288,13 @@ class PdbUtils {
     }
 
     /**
+     * deep clone to the level of atoms
+     */
+    static Structure deepCopyStructure(Structure structure) {
+        return ((StructureImpl)structure).clone()
+    }
+
+    /**
      * TODO consider case insensitive matching
      */
     private static shouldCopyChain(Chain ch, List<String> chainIds) {
