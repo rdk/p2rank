@@ -78,7 +78,7 @@ class CollectVectorsRoutine extends Routine {
 
         List<Dataset.Item> newItems = new ArrayList<>()
 
-//        newItems.addAll( dataset.items.collect { it.copy() } )
+        newItems.addAll( dataset.items.collect { it.copy() } )
 
         for (int i=1; i<=numRotations; ++i) {
             String nameSuffix = "rotation." + i
