@@ -8,6 +8,7 @@ import cz.siret.prank.domain.labeling.ResidueLabeler
 import cz.siret.prank.domain.loaders.DatasetItemLoader
 import cz.siret.prank.domain.loaders.ExtendedResidueId
 import cz.siret.prank.domain.loaders.LoaderParams
+import cz.siret.prank.domain.loaders.StructureTransformation
 import cz.siret.prank.domain.loaders.pockets.*
 import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.geom.Atoms
@@ -23,6 +24,7 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 import org.biojava.nbio.structure.Group
+import org.biojava.nbio.structure.Structure
 
 import javax.annotation.Nonnull
 import javax.annotation.Nullable
@@ -30,6 +32,7 @@ import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.function.Consumer
 
 import static cz.siret.prank.utils.Cutils.newSynchronizedList
 import static cz.siret.prank.utils.Sutils.*
@@ -276,10 +279,9 @@ class Dataset implements Parametrized, Writable, Failable {
 
     private LoaderParams getLoaderParams(Item item) {
         LoaderParams lp = new LoaderParams()
-        lp.ligandsSeparatedByTER = (attributes.get(PARAM_LIGANDS_SEPARATED_BY_TER) == "true")  // for bench11 dataset
+        lp.ligandsSeparatedByTER = (attributes.get(PARAM_LIGANDS_SEPARATED_BY_TER) == "true")  // for chen11 dataset
         lp.relevantLigandsDefined = hasExplicitlyDefinedLigands()
         lp.relevantLigandDefinitions = item.getLigandDefinitions()
-        lp.load_conservation = (params.load_conservation || params.selectedFeatures.any{ s->s.contains("conserv")})
         return lp
     }
 
@@ -767,6 +769,10 @@ class Dataset implements Parametrized, Writable, Failable {
         @Nullable List<String> chains
         @Nullable List<String> apoChains
 
+        /**
+         * Optional structure transformation applied after loading
+         */
+        @Nullable StructureTransformation transformation
 
         /**
          * Loaded protein with prediction (if available)
@@ -808,16 +814,26 @@ class Dataset implements Parametrized, Writable, Failable {
             this.columnValues         = item.columnValues
 
             this.cachedPair           = item.cachedPair
+
+            this.transformation       = item.transformation
         }
 
         Item copy() {
             return new Item(this)
         }
 
+        Item cleanCopy() {
+            Item res = copy()
+            res.chains = null
+            res.apoChains = null
+            res.cachedPair = null
+            return res
+        }
+
 
         PredictionPair getPredictionPair() {
             PredictionPair res = null
-            if (cached) {
+            if (currentDataset.cached) {
                 if (cachedPair == null) {
                     cachedPair = loadPredictionPair()
                     log.info "caching structures in dataset item [$label]"

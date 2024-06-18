@@ -5,6 +5,7 @@ import cz.siret.prank.collectors.CollectorFactory
 import cz.siret.prank.collectors.DataPreprocessor
 import cz.siret.prank.collectors.VectorCollector
 import cz.siret.prank.domain.Dataset
+import cz.siret.prank.domain.loaders.StructureTransformation
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.features.FeatureVector
 import cz.siret.prank.geom.Rotations
@@ -12,6 +13,7 @@ import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.ml.FeatureVectors
 import cz.siret.prank.program.routines.Routine
 import cz.siret.prank.utils.Futils
+import cz.siret.prank.utils.PdbUtils
 import cz.siret.prank.utils.PerfUtils
 import cz.siret.prank.utils.WekaUtils
 import groovy.transform.CompileStatic
@@ -54,9 +56,19 @@ class CollectVectorsRoutine extends Routine {
         // TODO move to TrainEvalRoutine to make use of dataset caching
         if (params.train_random_rotated_copies > 0) {
             dataset = expandDatasetWithRandomRotations(dataset, params.train_random_rotated_copies)
+
+            // savePdbsToDir(dataset, outdir + "/train_pdbs")   // TODO remove
         }
 
         return dataset
+    }
+
+    private void savePdbsToDir(Dataset dataset, String dir) {
+        Futils.mkdirs(dir)
+        dataset.processItems { Dataset.Item item ->
+            def fname = "$dir/${item.protein.name}.pdb"
+            item.protein.saveToPdbFile(fname)
+        }
     }
 
     private Dataset expandDatasetWithRandomRotations(Dataset dataset, int numRotations) {
@@ -71,25 +83,29 @@ class CollectVectorsRoutine extends Routine {
 
         List<Dataset.Item> newItems = new ArrayList<>()
 
-        newItems.addAll( dataset.items.collect { it.copy() } )
+//        newItems.addAll( dataset.items.collect { it.copy() } )
 
         for (int i=1; i<=numRotations; ++i) {
-            String nameSuffix = "-rotation." + i
+            String nameSuffix = "rotation." + i
 
             RotationMatrix matrix = Rotations.generateRandomRotation(rand)
 
+            //matrix.setIdentity() // TODO xxx temp
+            matrix.normalize()
+
             log.info "Random rotation $i: " + matrix
 
-            List<Dataset.Item> rotItems = dataset.items.collect { it.copy() }
+            List<Dataset.Item> rotItems = dataset.items.collect { it.cleanCopy() }
             for (Dataset.Item item : rotItems) {
                 item.label += nameSuffix
-                item.predictionPair.holoProtein = item.predictionPair.holoProtein.transformedCopy(item.predictionPair.holoProtein.name + nameSuffix, new Consumer<Structure>() {
+                item.transformation = new StructureTransformation(nameSuffix, new Consumer<Structure>() {
                     @Override
                     void accept(Structure structure) {
                         Rotations.rotateStructureInplace(structure, matrix)
                     }
                 })
-                // TODO conditionally rotate apoProtein and prediction
+
+                // TODO conditionally rotate predictions (pockets of other methods)
             }
 
             newItems.addAll(rotItems)

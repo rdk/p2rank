@@ -2,6 +2,7 @@ package cz.siret.prank.domain
 
 import cz.siret.prank.domain.labeling.ResidueLabeling
 import cz.siret.prank.domain.loaders.LoaderParams
+import cz.siret.prank.domain.loaders.StructureTransformation
 import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.features.implementation.conservation.ConservationScore
 import cz.siret.prank.geom.Atoms
@@ -39,6 +40,8 @@ class Protein implements Parametrized {
     String fileName
     String shortFileName
     Structure structure
+
+    LoaderParams loaderParams
     
     /**
      * unreduced structure (when structure was reduced to single chain)
@@ -435,8 +438,8 @@ class Protein implements Parametrized {
         return res
     }
 
-    static Protein fromStructure(Structure structure, String name, String pdbFileName) {
-        return fromStructure(structure, name, pdbFileName, null, new LoaderParams())
+    static Protein fromStructure(Structure structure, String name, String pdbFileName, LoaderParams loaderParams) {
+        return fromStructure(structure, name, pdbFileName, null, loaderParams)
     }
 
     /**
@@ -449,9 +452,17 @@ class Protein implements Parametrized {
     Protein transformedCopy(String newName, Consumer<Structure> inplaceStructureTransformation) {
         Structure newStructure = PdbUtils.deepCopyStructure(structure)
 
-        inplaceStructureTransformation.accept(structure)
+        inplaceStructureTransformation.accept(newStructure)
 
-        return fromStructure(newStructure, newName, fileName)
+        return fromStructure(newStructure, newName, fileName, loaderParams)
+    }
+
+    Protein transformed(@Nullable StructureTransformation transformation) {
+        if (transformation == null) {
+            return this
+        }
+
+        return transformedCopy(name + "-" + transformation.name, transformation.inplaceStructureTransformation)
     }
 
 //===========================================================================================================//
@@ -477,6 +488,7 @@ class Protein implements Parametrized {
 
     private void loadStructure(Structure struct, String name, String pdbFileName, @Nullable List<String> onlyChains, LoaderParams loaderParams) {
         structure = struct
+        this.loaderParams = loaderParams
 
         // NMR structures contain multiple models with same chain ids and atom ids
         // we always work only with first model

@@ -417,7 +417,7 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
         return res
     }
 
-    private checkVector(PrankFeatureVector vector) {
+    private static checkVector(PrankFeatureVector vector) {
         double[] arr = vector.array
         for (int i=0; i!=arr.length; i++) {
             if (Double.isNaN(arr[i])) {

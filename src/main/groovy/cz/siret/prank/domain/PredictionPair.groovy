@@ -30,9 +30,9 @@ class PredictionPair implements Parametrized {
     PredictionPair() {
     }
 
-    PredictionPair(String name, Protein protein, Protein apoProtein, Prediction prediction) {
+    PredictionPair(String name, Protein holoProtein, Protein apoProtein, Prediction prediction) {
         this.name = name
-        this.holoProtein = protein
+        this.holoProtein = holoProtein
         this.apoProtein = apoProtein
         this.prediction = prediction
     }

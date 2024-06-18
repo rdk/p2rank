@@ -115,7 +115,7 @@ class Main implements Parametrized, Writable {
 
 
         String mod = args.get('m')
-        if (mod!=null) {
+        if (mod != null) {
             params.model = mod
         }
 

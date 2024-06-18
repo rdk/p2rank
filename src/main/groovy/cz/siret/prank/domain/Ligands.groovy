@@ -7,6 +7,7 @@ import cz.siret.prank.program.Failable
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Cutils
 import cz.siret.prank.utils.Writable
+import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 import org.biojava.nbio.structure.Group
@@ -15,7 +16,7 @@ import org.biojava.nbio.structure.Group
  * Ligand categorizer and holder.
  */
 @Slf4j
-//@CompileStatic
+@CompileStatic
 class Ligands implements Parametrized, Writable, Failable {
 
     /* ligands that are considered during training and evaluation, other ligands are ignored */
@@ -64,7 +65,7 @@ class Ligands implements Parametrized, Writable, Failable {
 
 //===========================================================================================================//
 
-    public Ligands loadForProtein(Protein protein, LoaderParams loaderParams, String pdbFileName) {
+    Ligands loadForProtein(Protein protein, LoaderParams loaderParams, String pdbFileName) {
 
         if (loaderParams.ligandsSeparatedByTER) {
             // ligands are separated by TER lines in specific datasets (CHEN11)
@@ -80,7 +81,7 @@ class Ligands implements Parametrized, Writable, Failable {
                 log.info "Relevant ligands are explicitly defined in the dataset: " + loaderParams.relevantLigandDefinitions
             }
 
-            def split = Cutils.splitByPredicate(ligandGroups, {isRelevantLigandGroup(it, protein, loaderParams) })
+            def split = Cutils.splitByPredicate(ligandGroups, { isRelevantLigandGroup(it, protein, loaderParams) })
             List<Group> relevantGroups = split.positives
             List<Group> ignoredGroups = split.negatives
 
@@ -96,7 +97,7 @@ class Ligands implements Parametrized, Writable, Failable {
             if (loaderParams.relevantLigandsDefined) {
                 relevantLigands = ligands
             } else {
-                categorizeLigands(ligands, loaderParams)
+                categorizeLigands(ligands)
             }
 
             ignoredLigands = makeLigands(ignoredAtomGroups, protein)
@@ -161,9 +162,9 @@ class Ligands implements Parametrized, Writable, Failable {
 
 //===========================================================================================================//
 
-    private void categorizeLigands(List<Ligand> ligands, LoaderParams loaderParams) {
+    private void categorizeLigands(List<Ligand> ligands) {
         for (Ligand ligand : ligands) {
-            categorizeLigand(ligand, loaderParams)
+            categorizeLigand(ligand)
         }
     }
 
@@ -171,11 +172,11 @@ class Ligands implements Parametrized, Writable, Failable {
      * pranks own ligand categorization logic
      * relevant / distant / too small / ignored
      */
-    private void categorizeLigand(Ligand lig, LoaderParams loaderParams) {
+    private void categorizeLigand(Ligand lig) {
 
-        if (lig.atoms.count < loaderParams.minLigandAtoms ) {
+        if (lig.atoms.count < params.min_ligand_atoms ) {
 
-            log.info "ignoring ligand $lig.name with only $lig.atoms.count atoms (min ${loaderParams.minLigandAtoms})"
+            log.info "ignoring ligand $lig.name with only $lig.atoms.count atoms (min $params.min_ligand_atoms)"
             smallLigands.add(lig)
 
         } else if (lig.contactDistance > params.ligand_protein_contact_distance) {

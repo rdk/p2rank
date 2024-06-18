@@ -43,10 +43,10 @@ class DatasetItemLoader implements Parametrized, Writable {
     PredictionPair loadPredictionPair(@Nonnull Dataset.Item item) {
         PredictionPair res = new PredictionPair()
         res.name = Futils.shortName(item.proteinFile)
-        res.holoProtein = Protein.load(item.proteinFile, item.chains, loaderParams)
+        res.holoProtein = Protein.load(item.proteinFile, item.chains, loaderParams).transformed(item.transformation)
 
         if (item.apoProteinFile != null) {
-            Protein apo = Protein.load(item.apoProteinFile, item.apoChains, loaderParams)
+            Protein apo = Protein.load(item.apoProteinFile, item.apoChains, loaderParams).transformed(item.transformation)
             apo.apoStructure = true
             apo.apoLigands = apo.ligands
             apo.ligands = res.holoProtein.ligands

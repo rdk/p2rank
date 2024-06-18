@@ -17,20 +17,26 @@ class LoaderParams {
      */
     public static ignoreLigandsSwitch = false
 
+
+
     boolean ignoreLigands = ignoreLigandsSwitch
     boolean ligandsSeparatedByTER = false
 
     boolean relevantLigandsDefined
     List<Dataset.LigandDefinition> relevantLigandDefinitions = new ArrayList<>()
 
-    boolean load_conservation
-
-    int minLigandAtoms = Params.inst.min_ligand_atoms
-
     private Set<String> ignoredHetGroups = Params.inst.ignore_het_groups as Set
 
     Set<String> getIgnoredHetGroups() {
         return ignoredHetGroups
     }
+
+//    LoaderParams(LoaderParams lp) {
+//        this.ignoreLigands = lp.ignoreLigands
+//        this.ligandsSeparatedByTER = lp.ligandsSeparatedByTER
+//        this.relevantLigandsDefined = lp.relevantLigandsDefined
+//        this.relevantLigandDefinitions = lp.relevantLigandDefinitions
+//        this.ignoredHetGroups = lp.ignoredHetGroups
+//    }
     
 }

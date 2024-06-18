@@ -33,7 +33,7 @@ abstract class PointVectorCollector extends VectorCollector implements Parametri
     @Override
     Result collectVectors(PredictionPair pair, ProcessedItemContext context) {
 
-        FeatureExtractor proteinExtractorPrototype = extractorFactory.createPrototypeForProtein(pair.prediction.protein, context)
+        FeatureExtractor proteinExtractorPrototype = extractorFactory.createPrototypeForProtein(pair.protein, context)
         FeatureExtractor proteinExtractor = (proteinExtractorPrototype as PrankFeatureExtractor).createInstanceForWholeProtein()
 
         Result res = null
