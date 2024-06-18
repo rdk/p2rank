@@ -76,11 +76,6 @@ class CollectVectorsRoutine extends Routine {
 
         Random rand = new Random(params.seed)
 
-        // preload
-        dataset.processItems { Dataset.Item item ->
-            item.predictionPair
-        }
-
         List<Dataset.Item> newItems = new ArrayList<>()
 
 //        newItems.addAll( dataset.items.collect { it.copy() } )
