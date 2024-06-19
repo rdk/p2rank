@@ -1,0 +1,75 @@
+data_pocket8_atm
+# 
+loop_
+_struct.pdbx_descriptor
+This is a mmcif format file writen by the programm fpocket.                 
+It represents the atoms contacted by the voronoi vertices of the pocket.  
+                                                                           
+Information about the pocket     8:
+0  - Pocket Score                      : 0.2046
+1  - Drug Score                        : 0.5696
+2  - Number of alpha spheres           :    46
+3  - Mean alpha-sphere radius          : 3.8986
+4  - Mean alpha-sphere Solvent Acc.    : 0.5000
+5  - Mean B-factor of pocket residues  : 0.1343
+6  - Hydrophobicity Score              : -23.4000
+7  - Polarity Score                    :     3
+8  - Amino Acid based volume Score     : 4.0000
+9  - Pocket volume (Monte Carlo)       : 407.2360
+10  -Pocket volume (convex hull)       : 59.0638
+11 - Charge Score                      :     2
+12 - Local hydrophobic density Score   : 40.3810
+13 - Number of apolar alpha sphere     :    42
+14 - Proportion of apolar alpha sphere : 0.9130
+# 
+loop_
+_atom_site.group_PDB
+_atom_site.id
+_atom_site.type_symbol
+_atom_site.label_atom_id
+_atom_site.label_alt_id
+_atom_site.label_comp_id
+_atom_site.label_asym_id
+_atom_site.label_seq_id
+_atom_site.pdbx_PDB_ins_code
+_atom_site.Cartn_x
+_atom_site.Cartn_y
+_atom_site.Cartn_z
+_atom_site.occupancy
+_atom_site.pdbx_formal_charge
+_atom_site.auth_seq_id
+_atom_site.auth_asym_id
+ATOM    968      C   CD ?  LYS      A 121 ?   40.744   -9.948    1.234   0.00  0 131 A
+ATOM    4612     C   CE ?  LYS      E 121 ?   36.102  -15.735    0.364   0.00  0 131 E
+ATOM    4613     N   NZ ?  LYS      E 121 ?   35.370  -15.616    1.661  -0.59  0 131 E
+ATOM    969      C   CE ?  LYS      A 121 ?   39.658   -8.957    0.796   0.00  0 131 A
+ATOM    1162     C   CB ?  PRO      A 143 ?   40.320  -12.924    7.220   0.00  0 153 A
+ATOM    977      C   CD ?  PRO      A 122 ?   43.131  -12.312    4.096   0.00  0 132 A
+ATOM    1163     C   CG ?  PRO      A 143 ?   39.888  -14.360    7.029   0.00  0 153 A
+ATOM    970      N   NZ ?  LYS      A 121 ?   39.532   -8.854   -0.687   0.00  0 131 A
+ATOM    4611     C   CD ?  LYS      E 121 ?   37.531  -16.281    0.520   0.00  0 131 E
+ATOM    986      C  CE1 ?  HIS      A 123 ?   44.075  -12.268   -2.321   0.00  0 133 A
+ATOM    4610     C   CG ?  LYS      E 121 ?   37.658  -17.328    1.614   0.00  0 131 E
+ATOM    967      C   CG ?  LYS      A 121 ?   42.057   -9.701    0.502   0.00  0 131 A
+ATOM    984      N  ND1 ?  HIS      A 123 ?   44.249  -13.163   -1.366   0.00  0 133 A
+ATOM    4627     N  ND1 ?  HIS      E 123 ?   40.772  -17.216    4.827   0.00  0 133 E
+ATOM    4609     C   CB ?  LYS      E 121 ?   39.058  -17.913    1.697   0.00  0 131 E
+ATOM    4629     C  CE1 ?  HIS      E 123 ?   39.575  -17.359    5.369   0.00  0 133 E
+ATOM    916      O  OE1 ?  GLN      A 114 ?   41.016   -8.988    4.901  -1.07  0 124 A
+ATOM    913      C   CB ?  GLN      A 114 ?   39.170   -8.189    7.105   0.00  0 124 A
+ATOM    914      C   CG ?  GLN      A 114 ?   40.372   -9.145    7.211   0.00  0 124 A
+ATOM    4806     C   CG ?  PRO      E 143 ?   43.345  -15.400   -4.260   0.00  0 153 E
+ATOM    4805     C   CB ?  PRO      E 143 ?   42.324  -16.464   -4.525   0.00  0 153 E
+ATOM    912      O    O ?  GLN      A 114 ?   38.036   -5.799    5.479  -2.28  0 124 A
+ATOM    4556     C   CB ?  GLN      E 114 ?   37.697  -17.517   -5.871   0.00  0 124 E
+ATOM    4557     C   CG ?  GLN      E 114 ?   38.981  -18.038   -5.230   0.00  0 124 E
+ATOM    4559     O  OE1 ?  GLN      E 114 ?   38.170  -17.878   -2.985  -2.14  0 124 E
+ATOM    4620     C   CD ?  PRO      E 122 ?   41.597  -17.683   -0.503   0.00  0 132 E
+ATOM    978      N    N ?  HIS      A 123 ?   45.918  -13.792    1.725   0.00  0 133 A
+ATOM    4619     C   CG ?  PRO      E 122 ?   42.970  -17.502   -1.094   0.00  0 132 E
+ATOM    975      C   CB ?  PRO      A 122 ?   44.595  -14.156    4.549   0.00  0 132 A
+ATOM    4621     N    N ?  HIS      E 123 ?   43.122  -18.885    2.870   0.00  0 133 E
+ATOM    966      C   CB ?  LYS      A 121 ?   43.206  -10.536    1.057   0.00  0 131 A
+ATOM    976      C   CG ?  PRO      A 122 ?   43.362  -13.474    5.049   0.00  0 132 A
+ATOM    4618     C   CB ?  PRO      E 122 ?   43.909  -18.092   -0.073   0.00  0 132 E
+# 

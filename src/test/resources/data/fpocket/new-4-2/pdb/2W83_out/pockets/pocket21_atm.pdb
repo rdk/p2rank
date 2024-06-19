@@ -1,0 +1,59 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket    21:
+HEADER 0  - Pocket Score                      : 0.0314
+HEADER 1  - Drug Score                        : 0.0141
+HEADER 2  - Number of alpha spheres           :    47
+HEADER 3  - Mean alpha-sphere radius          : 3.9551
+HEADER 4  - Mean alpha-sphere Solvent Acc.    : 0.5901
+HEADER 5  - Mean B-factor of pocket residues  : 0.2940
+HEADER 6  - Hydrophobicity Score              : -2.1818
+HEADER 7  - Polarity Score                    :     8
+HEADER 8  - Amino Acid based volume Score     : 4.2727
+HEADER 9  - Pocket volume (Monte Carlo)       : 485.4413
+HEADER 10 - Pocket volume (convex hull)       : 60.0286
+HEADER 11 - Charge Score                      :    -2
+HEADER 12 - Local hydrophobic density Score   : 24.6250
+HEADER 13 - Number of apolar alpha sphere     :    32
+HEADER 14 - Proportion of apolar alpha sphere : 0.6809
+ATOM   1319  OE2 GLU B  13      41.725  -0.251  46.669  0.00  0.00           O 0
+ATOM   2928   CA GLU C 426      43.681  -6.450  41.759  0.00  0.00           C 0
+ATOM   2932   CG GLU C 426      42.604  -5.256  39.754  0.00  0.00           C 0
+ATOM   2931   CB GLU C 426      43.869  -5.850  40.354  0.00  0.00           C 0
+ATOM   1318  OE1 GLU B  13      40.215  -1.851  46.682  0.66  8.57           O 0
+ATOM   2935  OE2 GLU C 426      42.865  -3.398  38.293  0.00  0.00           O 0
+ATOM   2956   SGACYS C 429      41.974  -5.919  46.558  0.00  0.00           S 0
+ATOM   1317   CD GLU B  13      41.095  -1.164  47.251  0.00  0.00           C 0
+ATOM   1315   CB GLU B  13      42.618  -0.733  49.249  0.00  0.00           C 0
+ATOM   1316   CG GLU B  13      41.390  -1.457  48.718  0.00  0.00           C 0
+ATOM   2955   CBACYS C 429      40.849  -6.611  45.371  0.00  0.00           C 0
+ATOM   2927    N GLU C 426      44.976  -6.755  42.362  0.59  2.19           N 0
+ATOM   2930    O GLU C 426      41.625  -7.633  42.120  0.74  1.07           O 0
+ATOM   2960    N GLU C 430      39.262  -8.556  43.589  0.00  0.00           N 0
+ATOM   2992  CG2 VAL C 433      35.189  -6.870  45.722  0.00  0.00           C 0
+ATOM   2952    C CYS C 429      39.199  -8.399  44.909  0.00  0.00           C 0
+ATOM   2923   CB ASP C 425      47.234  -6.162  44.479  0.00  0.00           C 0
+ATOM   2921    C ASP C 425      45.101  -7.178  43.622  0.00  0.00           C 0
+ATOM   2922    O ASP C 425      44.145  -7.355  44.390  0.00  0.00           O 0
+ATOM   1662   CE LYS B  58      37.746  -6.142  49.019  0.00  0.00           C 0
+ATOM   2925  OD1 ASP C 425      47.992  -7.081  46.555  0.00  0.00           O 0
+ATOM   2924   CG ASP C 425      48.283  -6.371  45.562  0.00  0.00           C 0
+ATOM   1679   CB ASN B  60      46.031  -6.818  49.445  0.00  0.00           C 0
+ATOM   1332   CB ARG B  15      49.494  -3.162  49.510  0.00  0.00           C 0
+ATOM   1320    N MET B  14      44.595  -1.392  51.814  0.00  0.00           N 0
+ATOM   1322    C MET B  14      46.724  -2.586  51.868  0.00  0.00           C 0
+ATOM   1323    O MET B  14      46.287  -3.718  52.082  0.00  0.00           O 0
+ATOM   1680   CG ASN B  60      44.838  -7.001  48.532  0.00  0.00           C 0
+ATOM   1681  OD1 ASN B  60      43.690  -7.040  48.988  0.00  0.00           O 0
+ATOM   1328    N ARG B  15      47.866  -2.356  51.220  0.00  0.00           N 0
+ATOM   1329   CA ARG B  15      48.732  -3.454  50.818  0.00  0.00           C 0
+ATOM   1658    O LYS B  58      42.531  -3.884  52.050  0.50  1.07           O 0
+ATOM   2965   CG GLU C 430      38.562  -7.391  40.751  0.00  0.00           C 0
+ATOM   2961   CA GLU C 430      38.084  -8.874  42.785  0.00  0.00           C 0
+ATOM   1682  ND2 ASN B  60      45.099  -7.118  47.232  0.00  0.00           N 0
+ATOM   2926  OD2 ASP C 425      49.397  -5.816  45.425  0.85  5.36           O 0
+ATOM   1870  OE1 GLN B  82      48.065   0.308  50.513  0.61  7.50           O 0
+TER
+END

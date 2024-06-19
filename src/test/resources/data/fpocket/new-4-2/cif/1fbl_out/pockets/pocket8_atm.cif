@@ -1,0 +1,57 @@
+data_pocket8_atm
+# 
+loop_
+_struct.pdbx_descriptor
+This is a mmcif format file writen by the programm fpocket.                 
+It represents the atoms contacted by the voronoi vertices of the pocket.  
+                                                                           
+Information about the pocket     8:
+0  - Pocket Score                      : 0.0838
+1  - Drug Score                        : 0.0023
+2  - Number of alpha spheres           :    15
+3  - Mean alpha-sphere radius          : 3.8804
+4  - Mean alpha-sphere Solvent Acc.    : 0.7300
+5  - Mean B-factor of pocket residues  : 0.3086
+6  - Hydrophobicity Score              : 12.6000
+7  - Polarity Score                    :     4
+8  - Amino Acid based volume Score     : 5.0000
+9  - Pocket volume (Monte Carlo)       : 183.2029
+10  -Pocket volume (convex hull)       : 4.2006
+11 - Charge Score                      :     2
+12 - Local hydrophobic density Score   : 8.0000
+13 - Number of apolar alpha sphere     :     9
+14 - Proportion of apolar alpha sphere : 0.6000
+# 
+loop_
+_atom_site.group_PDB
+_atom_site.id
+_atom_site.type_symbol
+_atom_site.label_atom_id
+_atom_site.label_alt_id
+_atom_site.label_comp_id
+_atom_site.label_asym_id
+_atom_site.label_seq_id
+_atom_site.pdbx_PDB_ins_code
+_atom_site.Cartn_x
+_atom_site.Cartn_y
+_atom_site.Cartn_z
+_atom_site.occupancy
+_atom_site.pdbx_formal_charge
+_atom_site.auth_seq_id
+_atom_site.auth_asym_id
+ATOM    2892     C   CA ?  GLN      A 359 ?   84.604  120.711    2.552   0.00  0 458 A
+ATOM    2907     C   CE ?  LYS      A 360 ?   81.835  120.010   -3.011   0.00  0 459 A
+ATOM    2905     C   CG ?  LYS      A 360 ?   81.241  119.035   -0.792   0.00  0 459 A
+ATOM    2886     O    O ?  LEU      A 358 ?   85.382  123.372    2.711   0.00  0 457 A
+ATOM    2894     O    O ?  GLN      A 359 ?   82.530  120.000    3.534   0.00  0 458 A
+ATOM    2757     C   CB ?  ARG      A 344 ?   79.098  120.647    5.664   0.00  0 443 A
+ATOM    2888     C   CG ?  LEU      A 358 ?   82.385  123.954    5.272   0.00  0 457 A
+ATOM    2890     C  CD2 ?  LEU      A 358 ?   81.365  125.046    5.038   0.00  0 457 A
+ATOM    2901     C   CA ?  LYS      A 360 ?   81.919  118.242    1.551   0.00  0 459 A
+ATOM    2749     O    O ?  THR      A 343 ?   78.807  117.692    3.136   0.00  0 442 A
+ATOM    2885     C    C ?  LEU      A 358 ?   85.000  122.800    3.729   0.00  0 457 A
+ATOM    2900     N    N ?  LYS      A 360 ?   83.101  119.090    1.568   0.00  0 459 A
+ATOM    2893     C    C ?  GLN      A 359 ?   83.333  119.881    2.603   0.00  0 458 A
+ATOM    2899     N  NE2 ?  GLN      A 359 ?   85.290  119.801   -0.476  -1.93  0 458 A
+ATOM    2906     C   CD ?  LYS      A 360 ?   82.265  119.072   -1.901   0.00  0 459 A
+# 

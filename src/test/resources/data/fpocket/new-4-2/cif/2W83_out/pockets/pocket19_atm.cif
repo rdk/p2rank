@@ -1,0 +1,70 @@
+data_pocket19_atm
+# 
+loop_
+_struct.pdbx_descriptor
+This is a mmcif format file writen by the programm fpocket.                 
+It represents the atoms contacted by the voronoi vertices of the pocket.  
+                                                                           
+Information about the pocket    19:
+0  - Pocket Score                      : 0.0394
+1  - Drug Score                        : 0.0028
+2  - Number of alpha spheres           :    29
+3  - Mean alpha-sphere radius          : 3.9278
+4  - Mean alpha-sphere Solvent Acc.    : 0.6306
+5  - Mean B-factor of pocket residues  : 0.1121
+6  - Hydrophobicity Score              : -16.8000
+7  - Polarity Score                    :     7
+8  - Amino Acid based volume Score     : 2.9000
+9  - Pocket volume (Monte Carlo)       : 374.7155
+10  -Pocket volume (convex hull)       : 28.6458
+11 - Charge Score                      :    -3
+12 - Local hydrophobic density Score   : 11.0000
+13 - Number of apolar alpha sphere     :    12
+14 - Proportion of apolar alpha sphere : 0.4138
+# 
+loop_
+_atom_site.group_PDB
+_atom_site.id
+_atom_site.type_symbol
+_atom_site.label_atom_id
+_atom_site.label_alt_id
+_atom_site.label_comp_id
+_atom_site.label_asym_id
+_atom_site.label_seq_id
+_atom_site.pdbx_PDB_ins_code
+_atom_site.Cartn_x
+_atom_site.Cartn_y
+_atom_site.Cartn_z
+_atom_site.occupancy
+_atom_site.pdbx_formal_charge
+_atom_site.auth_seq_id
+_atom_site.auth_asym_id
+ATOM    1175     C   CB ?  CYS      A 145 ?   36.230   -7.129   11.300   0.00  0 155 A
+ATOM    1194     O   OG ?  SER      A 148 ?   33.078   -7.731   12.516   0.00  0 158 A
+ATOM    1176     S   SG ?  CYS      A 145 ?   35.586   -5.536   11.894   0.00  0 155 A
+ATOM    1206     O  OD2 ?  ASP      A 150 ?   32.017   -9.607    9.858   0.00  0 160 A
+ATOM    919      C   CA ?  ASP      A 115 ?   36.637   -4.182    7.299   0.00  0 125 A
+ATOM    918      N    N ?  ASP      A 115 ?   37.709   -5.129    7.609   0.00  0 125 A
+ATOM    1239     O  OE2 ?  GLU      A 154 ?   33.326  -17.220   11.641   0.00  0 164 A
+ATOM    1157     N  NE2 ?  GLN      A 142 ?   38.756  -16.311   10.053  -0.84  0 152 A
+ATOM    1237     C   CD ?  GLU      A 154 ?   34.439  -17.382   12.192   0.00  0 164 A
+ATOM    1236     C   CG ?  GLU      A 154 ?   35.287  -18.580   11.756   0.00  0 164 A
+ATOM    913      C   CB ?  GLN      A 114 ?   39.170   -8.189    7.105   0.00  0 124 A
+ATOM    922      C   CB ?  ASP      A 115 ?   35.934   -3.750    8.594   0.00  0 125 A
+ATOM    1193     C   CB ?  SER      A 148 ?   32.200   -6.783   13.098   0.00  0 158 A
+ATOM    1203     C   CB ?  ASP      A 150 ?   33.756  -10.688   11.101   0.00  0 160 A
+ATOM    1171     N    N ?  CYS      A 145 ?   37.722   -9.045   11.751  -1.09  0 155 A
+ATOM    911      C    C ?  GLN      A 114 ?   38.348   -5.831    6.677   0.00  0 124 A
+ATOM    1161     O    O ?  PRO      A 143 ?   39.186  -13.378   10.072  -1.48  0 153 A
+ATOM    1166     C   CA ?  SER      A 144 ?   39.191  -10.870   11.218   0.00  0 154 A
+ATOM    1202     O    O ?  ASP      A 150 ?   36.369  -11.461   12.640   0.00  0 160 A
+ATOM    1162     C   CB ?  PRO      A 143 ?   40.320  -12.924    7.220   0.00  0 153 A
+ATOM    1163     C   CG ?  PRO      A 143 ?   39.888  -14.360    7.029   0.00  0 153 A
+ATOM    1207     N    N ?  GLY      A 151 ?   35.358  -13.458   12.333  -0.42  0 161 A
+ATOM    1201     C    C ?  ASP      A 150 ?   35.345  -12.130   12.455   0.00  0 160 A
+ATOM    1165     N    N ?  SER      A 144 ?   40.077  -11.309   10.155   0.00  0 154 A
+ATOM    1167     C    C ?  SER      A 144 ?   38.848   -9.391   11.131   0.00  0 154 A
+ATOM    1208     C   CA ?  GLY      A 151 ?   36.599  -14.238   12.278   0.00  0 161 A
+ATOM    912      O    O ?  GLN      A 114 ?   38.036   -5.799    5.479  -2.28  0 124 A
+ATOM    1160     C    C ?  PRO      A 143 ?   40.006  -12.544    9.677   0.00  0 153 A
+# 

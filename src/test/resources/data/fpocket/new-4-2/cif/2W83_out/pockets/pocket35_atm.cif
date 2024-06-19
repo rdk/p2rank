@@ -1,0 +1,58 @@
+data_pocket35_atm
+# 
+loop_
+_struct.pdbx_descriptor
+This is a mmcif format file writen by the programm fpocket.                 
+It represents the atoms contacted by the voronoi vertices of the pocket.  
+                                                                           
+Information about the pocket    35:
+0  - Pocket Score                      : -0.0291
+1  - Drug Score                        : 0.0005
+2  - Number of alpha spheres           :    17
+3  - Mean alpha-sphere radius          : 3.9981
+4  - Mean alpha-sphere Solvent Acc.    : 0.6188
+5  - Mean B-factor of pocket residues  : 0.0819
+6  - Hydrophobicity Score              : 11.0000
+7  - Polarity Score                    :     4
+8  - Amino Acid based volume Score     : 3.5714
+9  - Pocket volume (Monte Carlo)       : 252.5741
+10  -Pocket volume (convex hull)       : 6.6426
+11 - Charge Score                      :     0
+12 - Local hydrophobic density Score   : 11.0000
+13 - Number of apolar alpha sphere     :    12
+14 - Proportion of apolar alpha sphere : 0.7059
+# 
+loop_
+_atom_site.group_PDB
+_atom_site.id
+_atom_site.type_symbol
+_atom_site.label_atom_id
+_atom_site.label_alt_id
+_atom_site.label_comp_id
+_atom_site.label_asym_id
+_atom_site.label_seq_id
+_atom_site.pdbx_PDB_ins_code
+_atom_site.Cartn_x
+_atom_site.Cartn_y
+_atom_site.Cartn_z
+_atom_site.occupancy
+_atom_site.pdbx_formal_charge
+_atom_site.auth_seq_id
+_atom_site.auth_asym_id
+ATOM    3833     C    C ?  GLY      E 26 ?   41.461  -16.207  -24.296   0.00  0 36 E
+ATOM    3803     C   CD ?  LYS      E 22 ?   40.421  -17.631  -19.894   0.00  0 32 E
+ATOM    3804     C   CE ?  LYS      E 22 ?   39.584  -16.623  -19.130   0.00  0 32 E
+ATOM    3834     O    O ?  GLY      E 26 ?   40.851  -15.169  -24.572   0.00  0 36 E
+ATOM    3802     C   CG ?  LYS      E 22 ?   41.603  -18.146  -19.046   0.00  0 32 E
+ATOM    4871     C  CE2 ?  TYR      E 153 ?   46.378  -13.820  -18.238   0.00  0 163 E
+ATOM    4841     O    O ?  GLY      E 149 ?   42.758  -14.832  -14.331  -3.21  0 159 E
+ATOM    4835     O    O ?  SER      E 148 ?   38.987  -14.040  -16.800   0.00  0 158 E
+ATOM    4869     C  CD2 ?  TYR      E 153 ?   46.687  -13.358  -16.954   0.00  0 163 E
+ATOM    3832     C   CA ?  GLY      E 26 ?   42.965  -16.213  -24.176   0.00  0 36 E
+ATOM    3800     O    O ?  LYS      E 22 ?   43.779  -17.955  -21.680   0.00  0 32 E
+ATOM    4873     O   OH ?  TYR      E 153 ?   47.058  -14.786  -20.302  -0.95  0 163 E
+ATOM    4860     C  CD1 ?  LEU      E 152 ?   43.602  -18.596  -15.660   0.00  0 162 E
+ATOM    4839     C   CA ?  GLY      E 149 ?   40.974  -15.649  -15.690   0.00  0 159 E
+ATOM    4840     C    C ?  GLY      E 149 ?   41.547  -14.931  -14.470   0.00  0 159 E
+ATOM    4848     O  OD1 ?  ASP      E 150 ?   39.472  -11.608  -13.107   0.00  0 160 E
+# 

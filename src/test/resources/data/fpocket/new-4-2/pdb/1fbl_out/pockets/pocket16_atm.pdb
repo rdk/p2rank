@@ -1,0 +1,38 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket    16:
+HEADER 0  - Pocket Score                      : 0.0024
+HEADER 1  - Drug Score                        : 0.0001
+HEADER 2  - Number of alpha spheres           :    19
+HEADER 3  - Mean alpha-sphere radius          : 4.0738
+HEADER 4  - Mean alpha-sphere Solvent Acc.    : 0.5722
+HEADER 5  - Mean B-factor of pocket residues  : 0.4229
+HEADER 6  - Hydrophobicity Score              : -4.8889
+HEADER 7  - Polarity Score                    :     7
+HEADER 8  - Amino Acid based volume Score     : 4.1111
+HEADER 9  - Pocket volume (Monte Carlo)       : 221.2501
+HEADER 10 - Pocket volume (convex hull)       : 5.4191
+HEADER 11 - Charge Score                      :     1
+HEADER 12 - Local hydrophobic density Score   : 0.0000
+HEADER 13 - Number of apolar alpha sphere     :     0
+HEADER 14 - Proportion of apolar alpha sphere : 0.0000
+ATOM   1561   NZ LYS A 298      72.463 106.478   5.016  0.00  0.00           N 0
+ATOM   1435  OG1 THR A 283      73.641 111.177   6.517  0.32  4.29           O 0
+ATOM   1430    N THR A 283      75.175 111.252   4.007  0.63  2.19           N 0
+ATOM   1416    O LYS A 281      72.610 113.038   1.987  0.00  0.00           O 0
+ATOM   1560   CE LYS A 298      73.525 107.210   5.759  0.00  0.00           C 0
+ATOM   1423   CA LEU A 282      74.857 111.367   1.598  0.00  0.00           C 0
+ATOM   1406  OD2 ASP A 279      72.429 110.532  -2.236  0.00  0.00           O 0
+ATOM   1428  CD1 LEU A 282      75.336 108.196   1.793  0.00  0.00           C 0
+ATOM   1358   CB GLN A 273      68.549 103.432  -0.600  0.00  0.00           C 0
+ATOM   1362  NE2 GLN A 273      70.684 104.104  -3.029  0.64  6.56           N 0
+ATOM   1357    O GLN A 273      70.920 102.319   0.983  0.43  1.07           O 0
+ATOM   1359   CG GLN A 273      68.395 103.860  -2.105  0.00  0.00           C 0
+ATOM   1377    N GLN A 276      75.216 105.629  -2.028  0.56  2.19           N 0
+ATOM   1382   CG GLN A 276      73.333 106.424  -4.264  0.00  0.00           C 0
+ATOM   1371   CA PRO A 275      74.844 104.031  -0.276  0.00  0.00           C 0
+ATOM   1366    O THR A 274      72.843 103.086  -2.025  0.79  1.07           O 0
+TER
+END

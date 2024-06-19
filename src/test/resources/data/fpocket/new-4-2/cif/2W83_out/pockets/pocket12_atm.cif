@@ -1,0 +1,67 @@
+data_pocket12_atm
+# 
+loop_
+_struct.pdbx_descriptor
+This is a mmcif format file writen by the programm fpocket.                 
+It represents the atoms contacted by the voronoi vertices of the pocket.  
+                                                                           
+Information about the pocket    12:
+0  - Pocket Score                      : 0.1079
+1  - Drug Score                        : 0.0024
+2  - Number of alpha spheres           :    30
+3  - Mean alpha-sphere radius          : 4.1518
+4  - Mean alpha-sphere Solvent Acc.    : 0.6436
+5  - Mean B-factor of pocket residues  : 0.0534
+6  - Hydrophobicity Score              : 40.7500
+7  - Polarity Score                    :     6
+8  - Amino Acid based volume Score     : 4.0833
+9  - Pocket volume (Monte Carlo)       : 413.4377
+10  -Pocket volume (convex hull)       : 28.1064
+11 - Charge Score                      :     0
+12 - Local hydrophobic density Score   : 9.2727
+13 - Number of apolar alpha sphere     :    11
+14 - Proportion of apolar alpha sphere : 0.3667
+# 
+loop_
+_atom_site.group_PDB
+_atom_site.id
+_atom_site.type_symbol
+_atom_site.label_atom_id
+_atom_site.label_alt_id
+_atom_site.label_comp_id
+_atom_site.label_asym_id
+_atom_site.label_seq_id
+_atom_site.pdbx_PDB_ins_code
+_atom_site.Cartn_x
+_atom_site.Cartn_y
+_atom_site.Cartn_z
+_atom_site.occupancy
+_atom_site.pdbx_formal_charge
+_atom_site.auth_seq_id
+_atom_site.auth_asym_id
+ATOM    3893     N    N ?  VAL      E 35 ?   41.786  -37.689  -20.328  -3.28  0 45 E
+ATOM    3882     O    O ?  PRO      E 33 ?   38.627  -35.917  -20.446  -4.29  0 43 E
+ATOM    3896     O    O ?  VAL      E 35 ?   43.764  -38.487  -22.244   0.00  0 45 E
+ATOM    3878     C  CD1 ?  ILE      E 32 ?   36.670  -35.089  -24.228   0.00  0 42 E
+ATOM    3887     C   CA ?  THR      E 34 ?   41.273  -35.436  -19.621   0.00  0 44 E
+ATOM    3921     O  OD1 ?  ASN      E 38 ?   44.806  -31.956  -23.838   0.00  0 48 E
+ATOM    3892     C  CG2 ?  THR      E 34 ?   43.643  -34.653  -20.177   0.00  0 44 E
+ATOM    3907     O    O ?  PHE      E 37 ?   47.160  -34.351  -23.343  -1.62  0 47 E
+ATOM    3891     O  OG1 ?  THR      E 34 ?   41.913  -33.083  -19.630  -0.40  0 44 E
+ATOM    3876     C  CG1 ?  ILE      E 32 ?   36.733  -33.932  -23.222   0.00  0 42 E
+ATOM    3761     C  CG2 ?  THR      E 17 ?   41.689  -28.871  -20.776   0.00  0 27 E
+ATOM    3871     N    N ?  ILE      E 32 ?   36.172  -31.464  -21.640  -0.42  0 42 E
+ATOM    3874     O    O ?  ILE      E 32 ?   38.015  -32.810  -20.340  -1.48  0 42 E
+ATOM    3865     C   CA ?  THR      E 31 ?   36.229  -29.057  -21.563   0.00  0 41 E
+ATOM    3870     C  CG2 ?  THR      E 31 ?   37.960  -27.602  -20.407   0.00  0 41 E
+ATOM    3860     O    O ?  THR      E 30 ?   36.008  -27.289  -23.709   0.00  0 40 E
+ATOM    3868     C   CB ?  THR      E 31 ?   37.216  -28.929  -20.374   0.00  0 41 E
+ATOM    3856     C  CG2 ?  VAL      E 29 ?   38.793  -24.480  -23.430   0.00  0 39 E
+ATOM    3922     N  ND2 ?  ASN      E 38 ?   44.123  -31.217  -21.836  -1.09  0 48 E
+ATOM    3794     C  CE2 ?  TYR      E 21 ?   43.796  -27.447  -23.612   0.00  0 31 E
+ATOM    3790     C   CG ?  TYR      E 21 ?   43.095  -25.138  -23.778   0.00  0 31 E
+ATOM    3792     C  CD2 ?  TYR      E 21 ?   43.086  -26.357  -23.119   0.00  0 31 E
+ATOM    3791     C  CD1 ?  TYR      E 21 ?   43.881  -25.012  -24.923   0.00  0 31 E
+ATOM    3829     C  CD1 ?  LEU      E 25 ?   41.978  -22.381  -26.952   0.00  0 35 E
+ATOM    3855     C  CG1 ?  VAL      E 29 ?   38.485  -22.858  -25.335   0.00  0 39 E
+# 

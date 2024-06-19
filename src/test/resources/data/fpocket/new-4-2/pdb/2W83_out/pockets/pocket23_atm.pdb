@@ -1,0 +1,45 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket    23:
+HEADER 0  - Pocket Score                      : 0.0267
+HEADER 1  - Drug Score                        : 0.0021
+HEADER 2  - Number of alpha spheres           :    27
+HEADER 3  - Mean alpha-sphere radius          : 3.9828
+HEADER 4  - Mean alpha-sphere Solvent Acc.    : 0.5525
+HEADER 5  - Mean B-factor of pocket residues  : 0.3813
+HEADER 6  - Hydrophobicity Score              : 28.8333
+HEADER 7  - Polarity Score                    :     1
+HEADER 8  - Amino Acid based volume Score     : 3.8333
+HEADER 9  - Pocket volume (Monte Carlo)       : 351.9801
+HEADER 10 - Pocket volume (convex hull)       : 28.0991
+HEADER 11 - Charge Score                      :    -1
+HEADER 12 - Local hydrophobic density Score   : 12.0000
+HEADER 13 - Number of apolar alpha sphere     :    13
+HEADER 14 - Proportion of apolar alpha sphere : 0.4815
+ATOM   3162   SD MET D 392      96.914  -5.204  27.746  0.00  0.00           S 0
+ATOM   3161   CG MET D 392      96.063  -4.635  29.234  0.00  0.00           C 0
+ATOM   3163   CE MET D 392      97.777  -3.705  27.299  0.00  0.00           C 0
+ATOM   3186  OE1 GLU D 395      90.122  -2.524  29.173  0.92  5.36           O 0
+ATOM   3187  OE2 GLU D 395      90.382  -0.476  29.889  0.00  0.00           O 0
+ATOM   3154  CE2 PHE D 391      96.826   0.199  31.925  0.00  0.00           C 0
+ATOM   3152  CD2 PHE D 391      97.050  -1.148  32.226  0.00  0.00           C 0
+ATOM   3148    O PHE D 391      94.050  -3.454  33.418  0.54  4.29           O 0
+ATOM   3185   CD GLU D 395      90.227  -1.700  30.107  0.00  0.00           C 0
+ATOM   3157   CA MET D 392      94.602  -5.157  31.259  0.00  0.00           C 0
+ATOM   2657   CB MET C 392      92.746  -8.829  26.741  0.00  0.00           C 0
+ATOM   2629    O PRO C 389      93.337  -7.972  23.186  0.00  0.00           O 0
+ATOM   2627   CA PRO C 389      95.693  -8.215  23.474  0.00  0.00           C 0
+ATOM   2630   CB PRO C 389      96.494  -7.123  22.746  0.00  0.00           C 0
+ATOM   3160   CB MET D 392      95.330  -5.710  30.029  0.00  0.00           C 0
+ATOM   3159    O MET D 392      92.504  -6.291  31.541  0.70  2.14           O 0
+ATOM   2691  CG2 VAL C 396      88.137  -5.941  28.073  0.00  0.00           C 0
+ATOM   2661    N GLY C 393      90.729  -8.176  24.304  0.00  0.00           N 0
+ATOM   2662   CA GLY C 393      89.753  -7.320  23.636  0.00  0.00           C 0
+ATOM   2690  CG1 VAL C 396      86.522  -4.574  26.733  0.00  0.00           C 0
+ATOM   2655    C MET C 392      90.531  -8.645  25.535  0.00  0.00           C 0
+ATOM   2689   CB VAL C 396      87.176  -5.942  26.886  0.00  0.00           C 0
+ATOM   2656    O MET C 392      89.529  -8.396  26.201  0.00  0.00           O 0
+TER
+END

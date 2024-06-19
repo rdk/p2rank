@@ -1,0 +1,63 @@
+data_pocket15_atm
+# 
+loop_
+_struct.pdbx_descriptor
+This is a mmcif format file writen by the programm fpocket.                 
+It represents the atoms contacted by the voronoi vertices of the pocket.  
+                                                                           
+Information about the pocket    15:
+0  - Pocket Score                      : 0.0653
+1  - Drug Score                        : 0.0001
+2  - Number of alpha spheres           :    28
+3  - Mean alpha-sphere radius          : 3.8216
+4  - Mean alpha-sphere Solvent Acc.    : 0.5930
+5  - Mean B-factor of pocket residues  : 0.1020
+6  - Hydrophobicity Score              : 15.4286
+7  - Polarity Score                    :     3
+8  - Amino Acid based volume Score     : 3.7143
+9  - Pocket volume (Monte Carlo)       : 190.3547
+10  -Pocket volume (convex hull)       : 2.8902
+11 - Charge Score                      :    -1
+12 - Local hydrophobic density Score   : 1.0000
+13 - Number of apolar alpha sphere     :     2
+14 - Proportion of apolar alpha sphere : 0.0714
+# 
+loop_
+_atom_site.group_PDB
+_atom_site.id
+_atom_site.type_symbol
+_atom_site.label_atom_id
+_atom_site.label_alt_id
+_atom_site.label_comp_id
+_atom_site.label_asym_id
+_atom_site.label_seq_id
+_atom_site.pdbx_PDB_ins_code
+_atom_site.Cartn_x
+_atom_site.Cartn_y
+_atom_site.Cartn_z
+_atom_site.occupancy
+_atom_site.pdbx_formal_charge
+_atom_site.auth_seq_id
+_atom_site.auth_asym_id
+ATOM    2931     C   CD ?  GLU      C 41 ?   42.834   -4.645   38.381   0.00  0 426 C
+ATOM    2899     O    O ?  ALA      C 37 ?   47.363   -5.690   40.875  -2.14  0 422 C
+ATOM    2932     O  OE1 ?  GLU      C 41 ?   42.971   -5.403   37.394  -0.14  0 426 C
+ATOM    2933     O  OE2 ?  GLU      C 41 ?   42.865   -3.398   38.293   0.00  0 426 C
+ATOM    261      N    N ?  PHE      A 37 ?   49.729   -5.268   30.812  -1.09  0 47 A
+ATOM    253      O    O ?  VAL      A 35 ?   49.560   -1.744   30.993   0.00  0 45 A
+ATOM    2878     O  OD1 ?  ASP      C 34 ?   53.243   -2.780   35.209  -4.43  0 419 C
+ATOM    258      C   CA ?  GLY      A 36 ?   51.565   -3.702   31.043   0.00  0 46 A
+ATOM    2909     N   NZ ?  LYS      C 38 ?   45.784   -5.955   34.234  -0.59  0 423 C
+ATOM    2900     C   CB ?  ALA      C 37 ?   49.857   -3.837   39.731   0.00  0 422 C
+ATOM    264      O    O ?  PHE      A 37 ?   47.198   -5.900   31.710  -4.29  0 47 A
+ATOM    2875     O    O ?  ASP      C 34 ?   50.993   -6.324   37.340  -2.14  0 419 C
+ATOM    2908     C   CE ?  LYS      C 38 ?   46.445   -7.168   34.804   0.00  0 423 C
+ATOM    267      C  CD1 ?  PHE      A 37 ?   50.639   -7.780   32.671   0.00  0 47 A
+ATOM    269      C  CE1 ?  PHE      A 37 ?   50.623   -8.241   34.011   0.00  0 47 A
+ATOM    2901     N    N ?  LYS      C 38 ?   48.585   -6.677   39.267   0.00  0 423 C
+ATOM    2876     C   CB ?  ASP      C 34 ?   53.123   -5.172   35.125   0.00  0 419 C
+ATOM    2877     C   CG ?  ASP      C 34 ?   53.515   -3.808   34.557   0.00  0 419 C
+ATOM    2898     C    C ?  ALA      C 37 ?   48.428   -5.827   40.284   0.00  0 422 C
+ATOM    2902     C   CA ?  LYS      C 38 ?   47.485   -7.527   38.802   0.00  0 423 C
+ATOM    2907     C   CD ?  LYS      C 38 ?   45.742   -7.772   36.038   0.00  0 423 C
+# 

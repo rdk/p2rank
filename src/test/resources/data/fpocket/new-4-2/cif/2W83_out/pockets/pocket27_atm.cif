@@ -1,0 +1,57 @@
+data_pocket27_atm
+# 
+loop_
+_struct.pdbx_descriptor
+This is a mmcif format file writen by the programm fpocket.                 
+It represents the atoms contacted by the voronoi vertices of the pocket.  
+                                                                           
+Information about the pocket    27:
+0  - Pocket Score                      : 0.0061
+1  - Drug Score                        : 0.0002
+2  - Number of alpha spheres           :    17
+3  - Mean alpha-sphere radius          : 3.5711
+4  - Mean alpha-sphere Solvent Acc.    : 0.4262
+5  - Mean B-factor of pocket residues  : 0.2393
+6  - Hydrophobicity Score              : -16.5714
+7  - Polarity Score                    :     7
+8  - Amino Acid based volume Score     : 4.1429
+9  - Pocket volume (Monte Carlo)       : 88.7528
+10  -Pocket volume (convex hull)       : 1.0413
+11 - Charge Score                      :     0
+12 - Local hydrophobic density Score   : 0.0000
+13 - Number of apolar alpha sphere     :     0
+14 - Proportion of apolar alpha sphere : 0.0000
+# 
+loop_
+_atom_site.group_PDB
+_atom_site.id
+_atom_site.type_symbol
+_atom_site.label_atom_id
+_atom_site.label_alt_id
+_atom_site.label_comp_id
+_atom_site.label_asym_id
+_atom_site.label_seq_id
+_atom_site.pdbx_PDB_ins_code
+_atom_site.Cartn_x
+_atom_site.Cartn_y
+_atom_site.Cartn_z
+_atom_site.occupancy
+_atom_site.pdbx_formal_charge
+_atom_site.auth_seq_id
+_atom_site.auth_asym_id
+ATOM    294      O  OE1 ?  GLU      A 40 ?   38.873  -10.710   32.300  -6.83  0 50 A
+ATOM    3471     C   CE ?  LYS      D 46 ?   37.368  -10.673   37.682   0.00  0 431 D
+ATOM    3472     N   NZ ?  LYS      D 46 ?   38.140   -9.623   36.931  -3.28  0 431 D
+ATOM    3504     N  NE2 ?  GLN      D 50 ?   33.841  -11.620   36.926  -4.37  0 435 D
+ATOM    178      C   CE ?  LYS      A 24 ?   35.626  -12.391   31.195   0.00  0 34 A
+ATOM    3503     O  OE1 ?  GLN      D 50 ?   34.000  -13.536   35.768  -4.29  0 435 D
+ATOM    3470     C   CD ?  LYS      D 46 ?   38.235  -11.863   38.091   0.00  0 431 D
+ATOM    179      N   NZ ?  LYS      A 24 ?   35.621  -13.802   31.664  -4.37  0 34 A
+ATOM    3447     O  OG1 ?  THR      D 43 ?   41.556  -14.620   34.353  -3.21  0 428 D
+ATOM    296      N    N ?  THR      A 41 ?   39.938  -14.824   31.085  -1.09  0 51 A
+ATOM    300      C   CB ?  THR      A 41 ?   39.189  -16.954   32.131   0.00  0 51 A
+ATOM    3445     O    O ?  THR      D 43 ?   39.734  -16.345   36.320  -1.07  0 428 D
+ATOM    3469     C   CG ?  LYS      D 46 ?   37.400  -13.015   38.661   0.00  0 431 D
+ATOM    3473     N    N ?  ASP      D 47 ?   36.812  -16.612   37.362   0.00  0 432 D
+ATOM    3477     C   CB ?  ASP      D 47 ?   36.656  -17.727   35.172   0.00  0 432 D
+# 

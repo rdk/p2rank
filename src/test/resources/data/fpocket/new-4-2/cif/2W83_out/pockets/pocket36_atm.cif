@@ -1,0 +1,60 @@
+data_pocket36_atm
+# 
+loop_
+_struct.pdbx_descriptor
+This is a mmcif format file writen by the programm fpocket.                 
+It represents the atoms contacted by the voronoi vertices of the pocket.  
+                                                                           
+Information about the pocket    36:
+0  - Pocket Score                      : -0.0295
+1  - Drug Score                        : 0.0003
+2  - Number of alpha spheres           :    17
+3  - Mean alpha-sphere radius          : 4.0687
+4  - Mean alpha-sphere Solvent Acc.    : 0.6881
+5  - Mean B-factor of pocket residues  : 0.1217
+6  - Hydrophobicity Score              : -1.5714
+7  - Polarity Score                    :     7
+8  - Amino Acid based volume Score     : 4.5714
+9  - Pocket volume (Monte Carlo)       : 304.9402
+10  -Pocket volume (convex hull)       : 17.8395
+11 - Charge Score                      :     0
+12 - Local hydrophobic density Score   : 7.0000
+13 - Number of apolar alpha sphere     :     8
+14 - Proportion of apolar alpha sphere : 0.4706
+# 
+loop_
+_atom_site.group_PDB
+_atom_site.id
+_atom_site.type_symbol
+_atom_site.label_atom_id
+_atom_site.label_alt_id
+_atom_site.label_comp_id
+_atom_site.label_asym_id
+_atom_site.label_seq_id
+_atom_site.pdbx_PDB_ins_code
+_atom_site.Cartn_x
+_atom_site.Cartn_y
+_atom_site.Cartn_z
+_atom_site.occupancy
+_atom_site.pdbx_formal_charge
+_atom_site.auth_seq_id
+_atom_site.auth_asym_id
+ATOM    992      C   CB ?  GLU      A 124 ?   47.773   -9.565    0.032   0.00  0 134 A
+ATOM    1030     C   CE ?  LYS      A 128 ?   52.400   -7.444    0.194   0.00  0 138 A
+ATOM    991      O    O ?  GLU      A 124 ?   50.622  -10.124    0.872  -3.21  0 134 A
+ATOM    989      C   CA ?  GLU      A 124 ?   48.499  -10.902    0.097   0.00  0 134 A
+ATOM    4784     O   OH ?  TYR      E 140 ?   50.528  -13.705   -3.362   0.00  0 150 E
+ATOM    993      C   CG ?  GLU      A 124 ?   46.683   -9.494   -1.000   0.00  0 134 A
+ATOM    996      O  OE2 ?  GLU      A 124 ?   46.705   -7.209   -1.615  -0.95  0 134 A
+ATOM    4879     C   CG ?  GLU      E 154 ?   47.425  -11.530   -9.618   0.00  0 164 E
+ATOM    987      N  NE2 ?  HIS      A 123 ?   45.155  -12.260   -3.082   0.00  0 133 A
+ATOM    4800     N  NE2 ?  GLN      E 142 ?   45.864  -14.665   -7.012  -0.42  0 152 E
+ATOM    4799     O  OE1 ?  GLN      E 142 ?   48.068  -14.895   -6.655  -1.07  0 152 E
+ATOM    4878     C   CB ?  GLU      E 154 ?   48.066  -12.907   -9.435   0.00  0 164 E
+ATOM    4877     O    O ?  GLU      E 154 ?   51.016  -14.453   -9.562  -2.55  0 164 E
+ATOM    985      C  CD2 ?  HIS      A 123 ?   46.052  -13.181   -2.594   0.00  0 133 A
+ATOM    4875     C   CA ?  GLU      E 154 ?   49.138  -13.246  -10.479   0.00  0 164 E
+ATOM    4901     C  CG2 ?  THR      E 157 ?   54.143  -11.465  -10.531   0.00  0 167 E
+ATOM    4899     C   CB ?  THR      E 157 ?   53.188  -12.450  -11.233   0.00  0 167 E
+ATOM    4900     O  OG1 ?  THR      E 157 ?   52.571  -11.804  -12.348   0.00  0 167 E
+# 

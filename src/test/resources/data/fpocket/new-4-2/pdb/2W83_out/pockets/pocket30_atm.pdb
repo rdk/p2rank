@@ -1,0 +1,40 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket    30:
+HEADER 0  - Pocket Score                      : -0.0047
+HEADER 1  - Drug Score                        : 0.0001
+HEADER 2  - Number of alpha spheres           :    19
+HEADER 3  - Mean alpha-sphere radius          : 4.0652
+HEADER 4  - Mean alpha-sphere Solvent Acc.    : 0.6436
+HEADER 5  - Mean B-factor of pocket residues  : 0.2455
+HEADER 6  - Hydrophobicity Score              : -7.5556
+HEADER 7  - Polarity Score                    :     7
+HEADER 8  - Amino Acid based volume Score     : 4.4444
+HEADER 9  - Pocket volume (Monte Carlo)       : 323.7919
+HEADER 10 - Pocket volume (convex hull)       : 8.8647
+HEADER 11 - Charge Score                      :     1
+HEADER 12 - Local hydrophobic density Score   : 0.0000
+HEADER 13 - Number of apolar alpha sphere     :     1
+HEADER 14 - Proportion of apolar alpha sphere : 0.0526
+ATOM   4497  CG2 ILE E 116      60.381 -22.838  -6.660  0.00  0.00           C 0
+ATOM   4944    O ASN E 172      61.916 -19.344  -8.476  0.00  0.00           O 0
+ATOM   4760   CG ASN E 148      60.461 -20.854  -2.580  0.00  0.00           C 0
+ATOM   4761  OD1 ASN E 148      61.301 -20.818  -1.664  0.00  0.00           O 0
+ATOM   4481    O ASP E 114      62.697 -26.922  -7.326  0.30  9.64           O 0
+ATOM   4489    O ALA E 115      59.183 -27.155  -5.718  0.69  1.07           O 0
+ATOM   4755    N ASN E 148      59.430 -24.016  -1.511  0.56  1.09           N 0
+ATOM   4759   CB ASN E 148      59.797 -22.133  -2.954  0.00  0.00           C 0
+ATOM   4470    O ARG E 113      62.627 -29.804  -3.771  0.41  6.43           O 0
+ATOM   4480    C ASP E 114      62.416 -28.065  -6.952  0.00  0.00           C 0
+ATOM   4484  OD1 ASP E 114      66.119 -29.201  -5.168  0.00  0.00           O 0
+ATOM   4479   CA ASP E 114      63.476 -28.939  -6.273  0.00  0.00           C 0
+ATOM   4762  ND2 ASN E 148      60.126 -19.788  -3.297  0.53  1.09           N 0
+ATOM   1069  NH2 ARG A 143      62.334 -17.549  -0.908  0.11  4.37           N 0
+ATOM   4947  OD1 ASN E 172      59.886 -17.130  -4.832  0.55  2.14           O 0
+ATOM   4745   CA ARG E 147      59.896 -25.973  -0.205  0.00  0.00           C 0
+ATOM   4750   CD ARG E 147      59.763 -28.951  -1.755  0.00  0.00           C 0
+ATOM   4739    O ASP E 146      62.344 -27.190   0.386  0.46  5.36           O 0
+TER
+END

@@ -1,0 +1,37 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket     8:
+HEADER 0  - Pocket Score                      : 0.0838
+HEADER 1  - Drug Score                        : 0.0023
+HEADER 2  - Number of alpha spheres           :    15
+HEADER 3  - Mean alpha-sphere radius          : 3.8804
+HEADER 4  - Mean alpha-sphere Solvent Acc.    : 0.7300
+HEADER 5  - Mean B-factor of pocket residues  : 0.3086
+HEADER 6  - Hydrophobicity Score              : 12.6000
+HEADER 7  - Polarity Score                    :     4
+HEADER 8  - Amino Acid based volume Score     : 5.0000
+HEADER 9  - Pocket volume (Monte Carlo)       : 185.7715
+HEADER 10 - Pocket volume (convex hull)       : 4.2006
+HEADER 11 - Charge Score                      :     2
+HEADER 12 - Local hydrophobic density Score   : 8.0000
+HEADER 13 - Number of apolar alpha sphere     :     9
+HEADER 14 - Proportion of apolar alpha sphere : 0.6000
+ATOM   2892   CA GLN A 458      84.604 120.711   2.552  0.00  0.00           C 0
+ATOM   2907   CE LYS A 459      81.835 120.010  -3.011  0.00  0.00           C 0
+ATOM   2905   CG LYS A 459      81.241 119.035  -0.792  0.00  0.00           C 0
+ATOM   2886    O LEU A 457      85.382 123.372   2.711  0.00  0.00           O 0
+ATOM   2894    O GLN A 458      82.530 120.000   3.534  0.00  0.00           O 0
+ATOM   2757   CB ARG A 443      79.098 120.647   5.664  0.00  0.00           C 0
+ATOM   2888   CG LEU A 457      82.385 123.954   5.272  0.00  0.00           C 0
+ATOM   2890  CD2 LEU A 457      81.365 125.046   5.038  0.00  0.00           C 0
+ATOM   2901   CA LYS A 459      81.919 118.242   1.551  0.00  0.00           C 0
+ATOM   2749    O THR A 442      78.807 117.692   3.136  0.00  0.00           O 0
+ATOM   2885    C LEU A 457      85.000 122.800   3.729  0.00  0.00           C 0
+ATOM   2900    N LYS A 459      83.101 119.090   1.568  0.00  0.00           N 0
+ATOM   2893    C GLN A 458      83.333 119.881   2.603  0.00  0.00           C 0
+ATOM   2899  NE2 GLN A 458      85.290 119.801  -0.476  0.57  5.47           N 0
+ATOM   2906   CD LYS A 459      82.265 119.072  -1.901  0.00  0.00           C 0
+TER
+END

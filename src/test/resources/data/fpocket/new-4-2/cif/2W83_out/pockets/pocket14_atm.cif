@@ -1,0 +1,58 @@
+data_pocket14_atm
+# 
+loop_
+_struct.pdbx_descriptor
+This is a mmcif format file writen by the programm fpocket.                 
+It represents the atoms contacted by the voronoi vertices of the pocket.  
+                                                                           
+Information about the pocket    14:
+0  - Pocket Score                      : 0.0664
+1  - Drug Score                        : 0.0083
+2  - Number of alpha spheres           :    15
+3  - Mean alpha-sphere radius          : 3.9106
+4  - Mean alpha-sphere Solvent Acc.    : 0.6035
+5  - Mean B-factor of pocket residues  : 0.0728
+6  - Hydrophobicity Score              : 38.8000
+7  - Polarity Score                    :     2
+8  - Amino Acid based volume Score     : 4.6000
+9  - Pocket volume (Monte Carlo)       : 253.8228
+10  -Pocket volume (convex hull)       : 9.4687
+11 - Charge Score                      :     0
+12 - Local hydrophobic density Score   : 10.5000
+13 - Number of apolar alpha sphere     :    12
+14 - Proportion of apolar alpha sphere : 0.8000
+# 
+loop_
+_atom_site.group_PDB
+_atom_site.id
+_atom_site.type_symbol
+_atom_site.label_atom_id
+_atom_site.label_alt_id
+_atom_site.label_comp_id
+_atom_site.label_asym_id
+_atom_site.label_seq_id
+_atom_site.pdbx_PDB_ins_code
+_atom_site.Cartn_x
+_atom_site.Cartn_y
+_atom_site.Cartn_z
+_atom_site.occupancy
+_atom_site.pdbx_formal_charge
+_atom_site.auth_seq_id
+_atom_site.auth_asym_id
+ATOM    4089     C   CG ?  LYS      E 59 ?   40.560  -45.730  -11.205   0.00  0 69 E
+ATOM    4083     O  OD2 ?  ASP      E 58 ?   40.820  -43.783   -7.171  -4.43  0 68 E
+ATOM    4080     C   CB ?  ASP      E 58 ?   40.734  -41.904   -8.607   0.00  0 68 E
+ATOM    4091     C   CE ?  LYS      E 59 ?   38.824  -47.415  -10.494   0.00  0 69 E
+ATOM    4088     C   CB ?  LYS      E 59 ?   41.645  -45.337  -12.223   0.00  0 69 E
+ATOM    4074     C  CD1 ?  LEU      E 57 ?   38.447  -39.288  -15.466   0.00  0 67 E
+ATOM    4090     C   CD ?  LYS      E 59 ?   39.749  -46.945  -11.624   0.00  0 69 E
+ATOM    4076     N    N ?  ASP      E 58 ?   41.047  -40.450  -10.554  -2.19  0 68 E
+ATOM    4075     C  CD2 ?  LEU      E 57 ?   37.661  -39.007  -13.077   0.00  0 67 E
+ATOM    4084     N    N ?  LYS      E 59 ?   42.007  -43.178  -11.088  -1.09  0 69 E
+ATOM    4072     C   CB ?  LEU      E 57 ?   40.084  -39.588  -13.590   0.00  0 67 E
+ATOM    4100     C  CD1 ?  ILE      E 60 ?   43.585  -39.741  -16.315   0.00  0 70 E
+ATOM    4099     C  CG2 ?  ILE      E 60 ?   44.014  -42.888  -16.135   0.00  0 70 E
+ATOM    3899     C  CG2 ?  VAL      E 35 ?   40.330  -40.175  -20.098   0.00  0 45 E
+ATOM    4098     C  CG1 ?  ILE      E 60 ?   43.791  -40.607  -15.038   0.00  0 70 E
+ATOM    4093     N    N ?  ILE      E 60 ?   43.965  -42.836  -13.063  -1.09  0 70 E
+# 

@@ -1,0 +1,58 @@
+data_pocket10_atm
+# 
+loop_
+_struct.pdbx_descriptor
+This is a mmcif format file writen by the programm fpocket.                 
+It represents the atoms contacted by the voronoi vertices of the pocket.  
+                                                                           
+Information about the pocket    10:
+0  - Pocket Score                      : 0.0719
+1  - Drug Score                        : 0.0002
+2  - Number of alpha spheres           :    15
+3  - Mean alpha-sphere radius          : 3.9982
+4  - Mean alpha-sphere Solvent Acc.    : 0.6859
+5  - Mean B-factor of pocket residues  : 0.3566
+6  - Hydrophobicity Score              : -39.6000
+7  - Polarity Score                    :     4
+8  - Amino Acid based volume Score     : 3.8000
+9  - Pocket volume (Monte Carlo)       : 365.8067
+10  -Pocket volume (convex hull)       : 14.4113
+11 - Charge Score                      :    -1
+12 - Local hydrophobic density Score   : 2.0000
+13 - Number of apolar alpha sphere     :     3
+14 - Proportion of apolar alpha sphere : 0.2000
+# 
+loop_
+_atom_site.group_PDB
+_atom_site.id
+_atom_site.type_symbol
+_atom_site.label_atom_id
+_atom_site.label_alt_id
+_atom_site.label_comp_id
+_atom_site.label_asym_id
+_atom_site.label_seq_id
+_atom_site.pdbx_PDB_ins_code
+_atom_site.Cartn_x
+_atom_site.Cartn_y
+_atom_site.Cartn_z
+_atom_site.occupancy
+_atom_site.pdbx_formal_charge
+_atom_site.auth_seq_id
+_atom_site.auth_asym_id
+ATOM    578      N    N ?  ASP      A 71 ?   67.661   70.356  -19.309   0.00  0 170 A
+ATOM    586      N    N ?  ASN      A 72 ?   69.297   71.920  -20.705  -2.19  0 171 A
+ATOM    569      C    C ?  ARG      A 70 ?   66.911   69.257  -19.307   0.00  0 169 A
+ATOM    592      O  OD1 ?  ASN      A 72 ?   68.536   72.234  -24.042   0.00  0 171 A
+ATOM    571      C   CB ?  ARG      A 70 ?   66.724   66.727  -19.251   0.00  0 169 A
+ATOM    570      O    O ?  ARG      A 70 ?   65.697   69.272  -19.557  -2.28  0 169 A
+ATOM    568      C   CA ?  ARG      A 70 ?   67.647   67.940  -19.037   0.00  0 169 A
+ATOM    572      C   CG ?  ARG      A 70 ?   67.436   65.426  -18.821   0.00  0 169 A
+ATOM    556      O  OD2 ?  ASP      A 68 ?   71.881   65.193  -19.029   0.00  0 167 A
+ATOM    593      N  ND2 ?  ASN      A 72 ?   70.700   71.537  -24.149   0.00  0 171 A
+ATOM    555      O  OD1 ?  ASP      A 68 ?   71.421   67.321  -18.630  -2.95  0 167 A
+ATOM    605      C   CG ?  PRO      A 74 ?   74.779   70.578  -17.497   0.00  0 173 A
+ATOM    606      C   CD ?  PRO      A 74 ?   74.008   71.786  -18.011   0.00  0 173 A
+ATOM    587      C   CA ?  ASN      A 72 ?   70.469   72.591  -21.288   0.00  0 171 A
+ATOM    589      O    O ?  ASN      A 72 ?   71.865   74.468  -20.802  -0.81  0 171 A
+ATOM    588      C    C ?  ASN      A 72 ?   71.203   73.531  -20.361   0.00  0 171 A
+# 

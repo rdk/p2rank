@@ -1,0 +1,61 @@
+data_pocket14_atm
+# 
+loop_
+_struct.pdbx_descriptor
+This is a mmcif format file writen by the programm fpocket.                 
+It represents the atoms contacted by the voronoi vertices of the pocket.  
+                                                                           
+Information about the pocket    14:
+0  - Pocket Score                      : 0.0353
+1  - Drug Score                        : 0.0182
+2  - Number of alpha spheres           :    20
+3  - Mean alpha-sphere radius          : 4.0414
+4  - Mean alpha-sphere Solvent Acc.    : 0.6643
+5  - Mean B-factor of pocket residues  : 0.1786
+6  - Hydrophobicity Score              : -9.5556
+7  - Polarity Score                    :     6
+8  - Amino Acid based volume Score     : 4.1111
+9  - Pocket volume (Monte Carlo)       : 323.3813
+10  -Pocket volume (convex hull)       : 21.7919
+11 - Charge Score                      :     1
+12 - Local hydrophobic density Score   : 13.0000
+13 - Number of apolar alpha sphere     :    14
+14 - Proportion of apolar alpha sphere : 0.7000
+# 
+loop_
+_atom_site.group_PDB
+_atom_site.id
+_atom_site.type_symbol
+_atom_site.label_atom_id
+_atom_site.label_alt_id
+_atom_site.label_comp_id
+_atom_site.label_asym_id
+_atom_site.label_seq_id
+_atom_site.pdbx_PDB_ins_code
+_atom_site.Cartn_x
+_atom_site.Cartn_y
+_atom_site.Cartn_z
+_atom_site.occupancy
+_atom_site.pdbx_formal_charge
+_atom_site.auth_seq_id
+_atom_site.auth_asym_id
+ATOM    1563     C   CA ?  ASP      A 200 ?   73.706  101.414    7.885   0.00  0 299 A
+ATOM    1811     C   CA ?  GLY      A 228 ?   73.780  100.883   12.414   0.00  0 327 A
+ATOM    1568     O  OD1 ?  ASP      A 200 ?   71.554  103.212    7.941  -3.35  0 299 A
+ATOM    1810     N    N ?  GLY      A 228 ?   74.205   99.690   11.690   0.00  0 327 A
+ATOM    1806     C   CB ?  ASN      A 227 ?   73.659   96.785   10.614   0.00  0 326 A
+ATOM    1564     C    C ?  ASP      A 200 ?   74.370  100.027    7.925   0.00  0 299 A
+ATOM    1804     C    C ?  ASN      A 227 ?   74.270   98.509   12.307   0.00  0 326 A
+ATOM    1959     N   NZ ?  LYS      A 245 ?   71.802   98.062   15.176  -3.45  0 344 A
+ATOM    1590     C  CE2 ?  PHE      A 202 ?   73.613   98.521    2.409   0.00  0 301 A
+ATOM    1351     C   CB ?  PRO      A 173 ?   67.888   98.857    3.210   0.00  0 272 A
+ATOM    1569     O  OD2 ?  ASP      A 200 ?   71.233  103.158    5.746  -6.17  0 299 A
+ATOM    1357     O    O ?  GLN      A 174 ?   70.920  102.319    0.983  -1.07  0 273 A
+ATOM    1567     C   CG ?  ASP      A 200 ?   71.789  102.733    6.799   0.00  0 299 A
+ATOM    1566     C   CB ?  ASP      A 200 ?   72.783  101.568    6.663   0.00  0 299 A
+ATOM    1576     C   CD ?  ARG      A 201 ?   71.399   96.305    5.620   0.00  0 300 A
+ATOM    1575     C   CG ?  ARG      A 201 ?   72.650   96.236    6.507   0.00  0 300 A
+ATOM    1808     O  OD1 ?  ASN      A 227 ?   73.223   94.692    9.540  -1.21  0 326 A
+ATOM    1570     N    N ?  ARG      A 201 ?   74.122   99.214    6.878  -1.09  0 300 A
+ATOM    1184     N  NE2 ?  GLN      A 148 ?   67.833   94.197    6.418   0.00  0 247 A
+# 

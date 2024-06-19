@@ -1,0 +1,38 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket    17:
+HEADER 0  - Pocket Score                      : -0.0199
+HEADER 1  - Drug Score                        : 0.0001
+HEADER 2  - Number of alpha spheres           :    19
+HEADER 3  - Mean alpha-sphere radius          : 4.2319
+HEADER 4  - Mean alpha-sphere Solvent Acc.    : 0.6221
+HEADER 5  - Mean B-factor of pocket residues  : 0.1039
+HEADER 6  - Hydrophobicity Score              : 9.1250
+HEADER 7  - Polarity Score                    :     7
+HEADER 8  - Amino Acid based volume Score     : 5.2500
+HEADER 9  - Pocket volume (Monte Carlo)       : 175.8183
+HEADER 10 - Pocket volume (convex hull)       : 2.0198
+HEADER 11 - Charge Score                      :     2
+HEADER 12 - Local hydrophobic density Score   : 0.0000
+HEADER 13 - Number of apolar alpha sphere     :     1
+HEADER 14 - Proportion of apolar alpha sphere : 0.0526
+ATOM    854  OD1 ASN A 206      72.439  77.202   9.416  0.78  2.14           O 0
+ATOM    814   NE ARG A 202      73.138  70.575   6.268  0.56  3.28           N 0
+ATOM    855  ND2 ASN A 206      71.917  76.918  11.578  0.00  0.00           N 0
+ATOM    817  NH2 ARG A 202      72.585  68.944   7.796  0.65  9.84           N 0
+ATOM    839    N LYS A 205      69.086  76.345   7.261  0.65  1.09           N 0
+ATOM    836   CB THR A 204      71.690  75.759   6.036  0.00  0.00           C 0
+ATOM    223  CD2 LEU A 125      66.721  72.754   6.440  0.00  0.00           C 0
+ATOM    815   CZ ARG A 202      72.461  69.478   6.583  0.00  0.00           C 0
+ATOM    211    O ASP A 124      67.879  69.176   6.411  0.46  6.43           O 0
+ATOM    821    O TRP A 203      69.770  72.744   4.483  0.83  1.07           O 0
+ATOM    876  NH1 ARG A 208      75.695  73.044   8.544  0.74  4.37           N 0
+ATOM    873   CD ARG A 208      75.705  75.508   9.939  0.00  0.00           C 0
+ATOM    838  CG2 THR A 204      72.853  74.973   5.470  0.00  0.00           C 0
+ATOM    846   CE LYS A 205      65.703  74.531  10.305  0.00  0.00           C 0
+ATOM    843   CB LYS A 205      67.227  76.384   8.855  0.00  0.00           C 0
+ATOM    833   CA THR A 204      70.342  75.216   5.540  0.00  0.00           C 0
+TER
+END

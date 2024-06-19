@@ -1,0 +1,92 @@
+data_pocket1_atm
+# 
+loop_
+_struct.pdbx_descriptor
+This is a mmcif format file writen by the programm fpocket.                 
+It represents the atoms contacted by the voronoi vertices of the pocket.  
+                                                                           
+Information about the pocket     1:
+0  - Pocket Score                      : 0.9050
+1  - Drug Score                        : 0.1236
+2  - Number of alpha spheres           :    97
+3  - Mean alpha-sphere radius          : 3.8539
+4  - Mean alpha-sphere Solvent Acc.    : 0.4591
+5  - Mean B-factor of pocket residues  : 0.0207
+6  - Hydrophobicity Score              : 11.0526
+7  - Polarity Score                    :    10
+8  - Amino Acid based volume Score     : 3.2105
+9  - Pocket volume (Monte Carlo)       : 704.6263
+10  -Pocket volume (convex hull)       : 166.5799
+11 - Charge Score                      :     0
+12 - Local hydrophobic density Score   : 10.6957
+13 - Number of apolar alpha sphere     :    23
+14 - Proportion of apolar alpha sphere : 0.2371
+# 
+loop_
+_atom_site.group_PDB
+_atom_site.id
+_atom_site.type_symbol
+_atom_site.label_atom_id
+_atom_site.label_alt_id
+_atom_site.label_comp_id
+_atom_site.label_asym_id
+_atom_site.label_seq_id
+_atom_site.pdbx_PDB_ins_code
+_atom_site.Cartn_x
+_atom_site.Cartn_y
+_atom_site.Cartn_z
+_atom_site.occupancy
+_atom_site.pdbx_formal_charge
+_atom_site.auth_seq_id
+_atom_site.auth_asym_id
+ATOM    3883     C   CB ?  PRO      E 33 ?   36.998  -35.983  -17.778   0.00  0 43 E
+ATOM    3728     C   CB ?  ASP      E 12 ?   38.942  -35.665  -11.961   0.00  0 22 E
+ATOM    3886     N    N ?  THR      E 34 ?   40.055  -35.116  -18.884   0.00  0 44 E
+ATOM    3880     C   CA ?  PRO      E 33 ?   37.676  -34.831  -18.536   0.00  0 43 E
+ATOM    3879     N    N ?  PRO      E 33 ?   36.594  -34.278  -19.359   0.00  0 43 E
+ATOM    3874     O    O ?  ILE      E 32 ?   38.015  -32.810  -20.340  -1.48  0 42 E
+ATOM    3869     O  OG1 ?  THR      E 31 ?   36.488  -29.034  -19.139  -1.07  0 41 E
+ATOM    3885     C   CD ?  PRO      E 33 ?   35.294  -34.893  -19.029   0.00  0 43 E
+ATOM    3884     C   CG ?  PRO      E 33 ?   35.565  -35.577  -17.702   0.00  0 43 E
+ATOM    3733     C   CA ?  ALA      E 13 ?   37.367  -31.367  -12.241   0.00  0 23 E
+ATOM    3891     O  OG1 ?  THR      E 34 ?   41.913  -33.083  -19.630  -0.40  0 44 E
+ATOM    4075     C  CD2 ?  LEU      E 57 ?   37.661  -39.007  -13.077   0.00  0 67 E
+ATOM    3731     O  OD2 ?  ASP      E 12 ?   37.006  -36.092  -10.642  -3.62  0 22 E
+ATOM    3736     C   CB ?  ALA      E 13 ?   35.971  -31.814  -11.682   0.00  0 23 E
+ATOM    3732     N    N ?  ALA      E 13 ?   38.308  -32.495  -12.317  -1.09  0 23 E
+ATOM    3743     C   CA ?  GLY      E 15 ?   40.057  -26.695  -13.513   0.00  0 25 E
+ATOM    3742     N    N ?  GLY      E 15 ?   40.000  -27.816  -12.583   0.00  0 25 E
+ATOM    3760     O  OG1 ?  THR      E 17 ?   42.424  -30.244  -18.941   0.00  0 27 E
+ATOM    3759     C   CB ?  THR      E 17 ?   41.750  -29.014  -19.258   0.00  0 27 E
+ATOM    4550     C   CE ?  LYS      E 113 ?   36.091  -26.141  -10.522   0.00  0 123 E
+ATOM    3767     O  OG1 ?  THR      E 18 ?   38.154  -25.495  -17.476  -1.07  0 28 E
+ATOM    4551     N   NZ ?  LYS      E 113 ?   35.165  -27.328  -10.632  -0.42  0 123 E
+ATOM    4831     C  CG2 ?  THR      E 147 ?   34.977  -21.114  -15.897   0.00  0 157 E
+ATOM    3755     N    N ?  THR      E 17 ?   42.621  -28.019  -17.142   0.00  0 27 E
+ATOM    4568     O  OD2 ?  ASP      E 115 ?   32.403  -19.316  -10.545  -1.21  0 125 E
+ATOM    4549     C   CD ?  LYS      E 113 ?   35.501  -25.068   -9.606   0.00  0 123 E
+ATOM    4567     O  OD1 ?  ASP      E 115 ?   34.468  -19.525   -9.801   0.00  0 125 E
+ATOM    4575     C  CD1 ?  LEU      E 116 ?   32.039  -23.663   -8.054   0.00  0 126 E
+ATOM    4830     O  OG1 ?  THR      E 147 ?   34.790  -19.319  -14.352   0.00  0 157 E
+ATOM    3725     C   CA ?  ASP      E 12 ?   39.699  -34.351  -11.662   0.00  0 22 E
+ATOM    4073     C   CG ?  LEU      E 57 ?   38.830  -38.840  -14.047   0.00  0 67 E
+ATOM    4068     N    N ?  LEU      E 57 ?   41.735  -37.838  -12.906   0.00  0 67 E
+ATOM    3889     O    O ?  THR      E 34 ?   42.243  -37.122  -18.202  -1.07  0 44 E
+ATOM    4548     C   CG ?  LYS      E 113 ?   36.528  -23.984   -9.286   0.00  0 123 E
+ATOM    4820     N    N ?  ALA      E 146 ?   39.251  -19.619  -12.954   0.00  0 156 E
+ATOM    4544     C   CA ?  LYS      E 113 ?   36.629  -21.589   -8.328   0.00  0 123 E
+ATOM    3735     O    O ?  ALA      E 13 ?   37.096  -29.185  -11.294   0.00  0 23 E
+ATOM    3734     C    C ?  ALA      E 13 ?   37.870  -30.111  -11.517   0.00  0 23 E
+ATOM    4064     N    N ?  GLY      E 56 ?   43.469  -35.896  -13.975   0.00  0 66 E
+ATOM    3762     N    N ?  THR      E 18 ?   40.909  -26.088  -18.140   0.00  0 28 E
+ATOM    3754     N   NZ ?  LYS      E 16 ?   43.224  -32.131  -12.991   0.00  0 26 E
+ATOM    4061     C   CA ?  GLY      E 55 ?   44.449  -35.933  -16.188   0.00  0 65 E
+ATOM    3890     C   CB ?  THR      E 34 ?   42.397  -34.393  -19.338   0.00  0 44 E
+ATOM    3746     N    N ?  LYS      E 16 ?   42.202  -27.584  -14.240   0.00  0 26 E
+ATOM    4542     N  ND2 ?  ASN      E 112 ?   39.595  -23.586  -11.102   0.00  0 122 E
+ATOM    4824     C   CB ?  ALA      E 146 ?   40.125  -21.431  -14.368   0.00  0 156 E
+ATOM    4825     N    N ?  THR      E 147 ?   37.512  -19.486  -15.070   0.00  0 157 E
+ATOM    3766     C   CB ?  THR      E 18 ?   39.189  -24.529  -17.254   0.00  0 28 E
+ATOM    3753     C   CE ?  LYS      E 16 ?   44.511  -31.790  -13.677   0.00  0 26 E
+ATOM    3768     C  CG2 ?  THR      E 18 ?   38.597  -23.136  -17.376   0.00  0 28 E
+# 

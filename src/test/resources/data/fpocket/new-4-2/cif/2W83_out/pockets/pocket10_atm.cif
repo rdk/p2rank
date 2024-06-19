@@ -1,0 +1,61 @@
+data_pocket10_atm
+# 
+loop_
+_struct.pdbx_descriptor
+This is a mmcif format file writen by the programm fpocket.                 
+It represents the atoms contacted by the voronoi vertices of the pocket.  
+                                                                           
+Information about the pocket    10:
+0  - Pocket Score                      : 0.1712
+1  - Drug Score                        : 0.0043
+2  - Number of alpha spheres           :    31
+3  - Mean alpha-sphere radius          : 3.6428
+4  - Mean alpha-sphere Solvent Acc.    : 0.4039
+5  - Mean B-factor of pocket residues  : 0.4683
+6  - Hydrophobicity Score              : 25.1000
+7  - Polarity Score                    :     4
+8  - Amino Acid based volume Score     : 3.8000
+9  - Pocket volume (Monte Carlo)       : 129.0889
+10  -Pocket volume (convex hull)       : 2.6198
+11 - Charge Score                      :    -2
+12 - Local hydrophobic density Score   : 14.0000
+13 - Number of apolar alpha sphere     :    15
+14 - Proportion of apolar alpha sphere : 0.4839
+# 
+loop_
+_atom_site.group_PDB
+_atom_site.id
+_atom_site.type_symbol
+_atom_site.label_atom_id
+_atom_site.label_alt_id
+_atom_site.label_comp_id
+_atom_site.label_asym_id
+_atom_site.label_seq_id
+_atom_site.pdbx_PDB_ins_code
+_atom_site.Cartn_x
+_atom_site.Cartn_y
+_atom_site.Cartn_z
+_atom_site.occupancy
+_atom_site.pdbx_formal_charge
+_atom_site.auth_seq_id
+_atom_site.auth_asym_id
+ATOM    1965     O    O ?  ARG      B 85 ?   66.229  -14.646   65.360   0.00  0 95 B
+ATOM    1939     C   CB ?  ASP      B 82 ?   62.783  -19.011   67.882   0.00  0 92 B
+ATOM    1966     C   CB ?  ARG      B 85 ?   66.323  -17.553   65.313   0.00  0 95 B
+ATOM    1938     O    O ?  ASP      B 82 ?   64.255  -16.958   69.049  -1.07  0 92 B
+ATOM    1974     C   CA ?  ILE      B 86 ?   65.674  -13.471   67.818   0.00  0 96 B
+ATOM    1914     C  CG1 ?  VAL      B 78 ?   60.221  -12.879   67.047   0.00  0 88 B
+ATOM    1380     C  CD1 ?  LEU      B 11 ?   64.764  -15.801   62.337   0.00  0 21 B
+ATOM    1942     O  OD2 ?  ASP      B 82 ?   63.676  -20.041   65.939  -0.81  0 92 B
+ATOM    1920     C   CB ?  ASP      B 79 ?   59.114  -18.077   66.404   0.00  0 89 B
+ATOM    1378     C   CB ?  LEU      B 11 ?   62.835  -16.307   60.788   0.00  0 21 B
+ATOM    1972     N  NH2 ?  ARG      B 85 ?   63.187  -20.416   62.586  -4.79  0 95 B
+ATOM    1385     O    O ?  ASP      B 12 ?   60.862  -19.793   60.939  -2.14  0 22 B
+ATOM    1919     O    O ?  ASP      B 79 ?   60.388  -16.550   68.520   0.00  0 89 B
+ATOM    1399     C   CB ?  ALA      B 14 ?   57.861  -16.577   62.252   0.00  0 24 B
+ATOM    2002     C   CB ?  ALA      B 89 ?   64.039  -12.130   64.196   0.00  0 99 B
+ATOM    1910     C   CA ?  VAL      B 78 ?   58.412  -13.350   65.348   0.00  0 88 B
+ATOM    1905     O    O ?  VAL      B 77 ?   58.285  -12.906   62.584  -2.14  0 87 B
+ATOM    1379     C   CG ?  LEU      B 11 ?   63.793  -15.221   61.304   0.00  0 21 B
+ATOM    1916     N    N ?  ASP      B 79 ?   58.732  -15.645   66.130  -2.19  0 89 B
+# 

@@ -1,0 +1,60 @@
+data_pocket38_atm
+# 
+loop_
+_struct.pdbx_descriptor
+This is a mmcif format file writen by the programm fpocket.                 
+It represents the atoms contacted by the voronoi vertices of the pocket.  
+                                                                           
+Information about the pocket    38:
+0  - Pocket Score                      : -0.0822
+1  - Drug Score                        : 0.0002
+2  - Number of alpha spheres           :    25
+3  - Mean alpha-sphere radius          : 3.8609
+4  - Mean alpha-sphere Solvent Acc.    : 0.4435
+5  - Mean B-factor of pocket residues  : 0.1384
+6  - Hydrophobicity Score              : 9.4444
+7  - Polarity Score                    :     7
+8  - Amino Acid based volume Score     : 5.6667
+9  - Pocket volume (Monte Carlo)       : 211.9884
+10  -Pocket volume (convex hull)       : 6.7951
+11 - Charge Score                      :     1
+12 - Local hydrophobic density Score   : 0.0000
+13 - Number of apolar alpha sphere     :     0
+14 - Proportion of apolar alpha sphere : 0.0000
+# 
+loop_
+_atom_site.group_PDB
+_atom_site.id
+_atom_site.type_symbol
+_atom_site.label_atom_id
+_atom_site.label_alt_id
+_atom_site.label_comp_id
+_atom_site.label_asym_id
+_atom_site.label_seq_id
+_atom_site.pdbx_PDB_ins_code
+_atom_site.Cartn_x
+_atom_site.Cartn_y
+_atom_site.Cartn_z
+_atom_site.occupancy
+_atom_site.pdbx_formal_charge
+_atom_site.auth_seq_id
+_atom_site.auth_asym_id
+ATOM    4105     C   CB ?  ARG      E 61 ?   46.358  -40.221   -9.716   0.00  0 71 E
+ATOM    4079     O    O ?  ASP      E 58 ?   43.814  -42.525   -9.935  -6.43  0 68 E
+ATOM    4401     N  NH1 ?  ARG      E 95 ?   47.771  -42.155   -3.294  -1.68  0 105 E
+ATOM    4082     O  OD1 ?  ASP      E 58 ?   42.431  -42.305   -6.943  -2.28  0 68 E
+ATOM    4118     C   CD ?  PRO      E 62 ?   47.384  -43.529  -10.806   0.00  0 72 E
+ATOM    4117     C   CG ?  PRO      E 62 ?   48.176  -44.716  -10.341   0.00  0 72 E
+ATOM    4373     O  OE2 ?  GLU      E 92 ?   45.296  -39.332   -5.079  -3.21  0 102 E
+ATOM    4372     O  OE1 ?  GLU      E 92 ?   47.305  -38.573   -5.421  -3.62  0 102 E
+ATOM    4151     N  NH2 ?  ARG      E 65 ?   51.926  -43.907   -8.149  -3.03  0 75 E
+ATOM    4103     C    C ?  ARG      E 61 ?   48.323  -41.146  -10.992   0.00  0 71 E
+ATOM    4398     C   CD ?  ARG      E 95 ?   49.703  -40.161   -2.649   0.00  0 105 E
+ATOM    4104     O    O ?  ARG      E 61 ?   49.310  -40.410  -10.915  -4.29  0 71 E
+ATOM    4185     O   OH ?  TYR      E 68 ?   53.467  -37.315   -8.327  -1.62  0 78 E
+ATOM    4148     N   NE ?  ARG      E 65 ?   53.595  -43.166   -9.555  -6.56  0 75 E
+ATOM    4396     C   CB ?  ARG      E 95 ?   51.386  -38.315   -2.977   0.00  0 105 E
+ATOM    4408     C  CG1 ?  ILE      E 96 ?   51.645  -34.779   -6.801   0.00  0 106 E
+ATOM    4137     C  CE3 ?  TRP      E 64 ?   49.047  -36.586   -9.196   0.00  0 74 E
+ATOM    4112     N    N ?  PRO      E 62 ?   48.424  -42.494  -10.965  -1.09  0 72 E
+# 

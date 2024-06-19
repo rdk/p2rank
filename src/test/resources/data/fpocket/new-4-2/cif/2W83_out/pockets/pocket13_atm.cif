@@ -1,0 +1,65 @@
+data_pocket13_atm
+# 
+loop_
+_struct.pdbx_descriptor
+This is a mmcif format file writen by the programm fpocket.                 
+It represents the atoms contacted by the voronoi vertices of the pocket.  
+                                                                           
+Information about the pocket    13:
+0  - Pocket Score                      : 0.1005
+1  - Drug Score                        : 0.0087
+2  - Number of alpha spheres           :    28
+3  - Mean alpha-sphere radius          : 4.0007
+4  - Mean alpha-sphere Solvent Acc.    : 0.6716
+5  - Mean B-factor of pocket residues  : 0.6019
+6  - Hydrophobicity Score              : -15.8750
+7  - Polarity Score                    :     5
+8  - Amino Acid based volume Score     : 2.6250
+9  - Pocket volume (Monte Carlo)       : 291.1958
+10  -Pocket volume (convex hull)       : 11.5476
+11 - Charge Score                      :    -2
+12 - Local hydrophobic density Score   : 14.8750
+13 - Number of apolar alpha sphere     :    16
+14 - Proportion of apolar alpha sphere : 0.5714
+# 
+loop_
+_atom_site.group_PDB
+_atom_site.id
+_atom_site.type_symbol
+_atom_site.label_atom_id
+_atom_site.label_alt_id
+_atom_site.label_comp_id
+_atom_site.label_asym_id
+_atom_site.label_seq_id
+_atom_site.pdbx_PDB_ins_code
+_atom_site.Cartn_x
+_atom_site.Cartn_y
+_atom_site.Cartn_z
+_atom_site.occupancy
+_atom_site.pdbx_formal_charge
+_atom_site.auth_seq_id
+_atom_site.auth_asym_id
+ATOM    2466     N    N ?  SER      B 144 ?   50.517  -12.363   70.242   0.00  0 154 B
+ATOM    2214     C   CB ?  GLN      B 114 ?   51.755  -15.338   73.364   0.00  0 124 B
+ATOM    2467     C   CA ?  SER      B 144 ?   49.590  -13.173   69.461   0.00  0 154 B
+ATOM    2468     C    C ?  SER      B 144 ?   49.782  -14.669   69.628   0.00  0 154 B
+ATOM    2461     C    C ?  PRO      B 143 ?   50.175  -11.143   70.638   0.00  0 153 B
+ATOM    2463     C   CB ?  PRO      B 143 ?   50.930  -10.340   72.899   0.00  0 153 B
+ATOM    2504     C   CB ?  ASP      B 150 ?   45.046  -15.313   71.100   0.00  0 160 B
+ATOM    2472     N    N ?  CYS      B 145 ?   48.678  -15.386   69.469   0.00  0 155 B
+ATOM    2476     C   CB ?  CYS      B 145 ?   48.017  -17.558   70.395   0.00  0 155 B
+ATOM    2462     O    O ?  PRO      B 143 ?   49.067  -10.645   70.412  -3.21  0 153 B
+ATOM    2506     O  OD1 ?  ASP      B 150 ?   44.143  -17.017   72.511  -1.88  0 160 B
+ATOM    2477     S   SG ?  CYS      B 145 ?   48.067  -19.343   70.210   0.00  0 155 B
+ATOM    2223     C   CB ?  ASP      B 115 ?   50.006  -20.687   73.240   0.00  0 125 B
+ATOM    2495     O   OG ?  SER      B 148 ?   44.567  -18.534   70.169   0.00  0 158 B
+ATOM    2494     C   CB ?  SER      B 148 ?   44.150  -19.815   69.724   0.00  0 158 B
+ATOM    2219     N    N ?  ASP      B 115 ?   51.493  -18.721   73.447   0.00  0 125 B
+ATOM    2213     O    O ?  GLN      B 114 ?   52.227  -17.661   75.299  -7.90  0 124 B
+ATOM    2212     C    C ?  GLN      B 114 ?   52.098  -17.713   74.073   0.00  0 124 B
+ATOM    2502     C    C ?  ASP      B 150 ?   45.482  -13.503   69.427   0.00  0 160 B
+ATOM    2508     N    N ?  GLY      B 151 ?   45.013  -12.261   69.530  -1.09  0 161 B
+ATOM    2215     C   CG ?  GLN      B 114 ?   52.313  -14.057   72.757   0.00  0 124 B
+ATOM    2220     C   CA ?  ASP      B 115 ?   50.933  -19.874   74.157   0.00  0 125 B
+ATOM    2503     O    O ?  ASP      B 150 ?   46.611  -13.768   69.020   0.00  0 160 B
+# 

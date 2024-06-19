@@ -1,0 +1,64 @@
+data_pocket33_atm
+# 
+loop_
+_struct.pdbx_descriptor
+This is a mmcif format file writen by the programm fpocket.                 
+It represents the atoms contacted by the voronoi vertices of the pocket.  
+                                                                           
+Information about the pocket    33:
+0  - Pocket Score                      : -0.0263
+1  - Drug Score                        : 0.0000
+2  - Number of alpha spheres           :    35
+3  - Mean alpha-sphere radius          : 3.9038
+4  - Mean alpha-sphere Solvent Acc.    : 0.4780
+5  - Mean B-factor of pocket residues  : 0.3031
+6  - Hydrophobicity Score              : 10.1250
+7  - Polarity Score                    :     6
+8  - Amino Acid based volume Score     : 5.1250
+9  - Pocket volume (Monte Carlo)       : 311.8777
+10  -Pocket volume (convex hull)       : 15.7750
+11 - Charge Score                      :     3
+12 - Local hydrophobic density Score   : 1.0000
+13 - Number of apolar alpha sphere     :     2
+14 - Proportion of apolar alpha sphere : 0.0571
+# 
+loop_
+_atom_site.group_PDB
+_atom_site.id
+_atom_site.type_symbol
+_atom_site.label_atom_id
+_atom_site.label_alt_id
+_atom_site.label_comp_id
+_atom_site.label_asym_id
+_atom_site.label_seq_id
+_atom_site.pdbx_PDB_ins_code
+_atom_site.Cartn_x
+_atom_site.Cartn_y
+_atom_site.Cartn_z
+_atom_site.occupancy
+_atom_site.pdbx_formal_charge
+_atom_site.auth_seq_id
+_atom_site.auth_asym_id
+ATOM    4724     O    O ?  ARG      E 135 ?   60.330  -29.108    2.783  -2.55  0 145 E
+ATOM    4425     O  OD1 ?  ASN      E 98 ?   57.711  -35.480    1.735   0.00  0 108 E
+ATOM    4748     C   CZ ?  ARG      E 137 ?   60.707  -31.200   -1.285   0.00  0 147 E
+ATOM    4750     N  NH2 ?  ARG      E 137 ?   60.619  -32.523   -1.389  -4.54  0 147 E
+ATOM    4721     N    N ?  ARG      E 135 ?   58.015  -28.838    4.459   0.00  0 145 E
+ATOM    4418     C  CD1 ?  ILE      E 97 ?   54.427  -30.658   -0.594   0.00  0 107 E
+ATOM    4747     N   NE ?  ARG      E 137 ?   59.763  -30.420   -1.816   0.00  0 147 E
+ATOM    4414     O    O ?  ILE      E 97 ?   58.178  -33.248   -2.528   0.00  0 107 E
+ATOM    4731     N  NH2 ?  ARG      E 135 ?   62.840  -32.798    7.588   0.00  0 145 E
+ATOM    4729     C   CZ ?  ARG      E 135 ?   61.527  -32.611    7.716   0.00  0 145 E
+ATOM    4730     N  NH1 ?  ARG      E 135 ?   60.728  -33.662    7.894   0.00  0 145 E
+ATOM    4738     O  OD1 ?  ASP      E 136 ?   63.794  -29.341    4.691   0.00  0 146 E
+ATOM    4416     C  CG1 ?  ILE      E 97 ?   54.808  -31.915   -1.379   0.00  0 107 E
+ATOM    4749     N  NH1 ?  ARG      E 137 ?   61.744  -30.666   -0.648  -1.26  0 147 E
+ATOM    4719     C  CG2 ?  ILE      E 134 ?   56.251  -27.783    1.960   0.00  0 144 E
+ATOM    4714     C   CA ?  ILE      E 134 ?   55.604  -28.630    4.262   0.00  0 144 E
+ATOM    4426     N  ND2 ?  ASN      E 98 ?   55.496  -35.288    1.367  -4.79  0 108 E
+ATOM    4388     N  ND1 ?  HIS      E 94 ?   52.212  -32.481    2.495  -4.37  0 104 E
+ATOM    4725     C   CB ?  ARG      E 135 ?   59.931  -29.570    5.781   0.00  0 145 E
+ATOM    4745     C   CG ?  ARG      E 137 ?   59.107  -28.440   -0.474   0.00  0 147 E
+ATOM    4727     C   CD ?  ARG      E 135 ?   59.602  -31.049    7.784   0.00  0 145 E
+ATOM    4705     O    O ?  ARG      E 133 ?   55.700  -30.156    6.563  -0.81  0 143 E
+# 

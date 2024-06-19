@@ -1,0 +1,59 @@
+data_pocket6_atm
+# 
+loop_
+_struct.pdbx_descriptor
+This is a mmcif format file writen by the programm fpocket.                 
+It represents the atoms contacted by the voronoi vertices of the pocket.  
+                                                                           
+Information about the pocket     6:
+0  - Pocket Score                      : 0.1204
+1  - Drug Score                        : 0.0003
+2  - Number of alpha spheres           :    25
+3  - Mean alpha-sphere radius          : 3.6696
+4  - Mean alpha-sphere Solvent Acc.    : 0.4824
+5  - Mean B-factor of pocket residues  : 0.3328
+6  - Hydrophobicity Score              : 5.7143
+7  - Polarity Score                    :     5
+8  - Amino Acid based volume Score     : 3.4286
+9  - Pocket volume (Monte Carlo)       : 206.9810
+10  -Pocket volume (convex hull)       : 3.7131
+11 - Charge Score                      :     0
+12 - Local hydrophobic density Score   : 1.0000
+13 - Number of apolar alpha sphere     :     2
+14 - Proportion of apolar alpha sphere : 0.0800
+# 
+loop_
+_atom_site.group_PDB
+_atom_site.id
+_atom_site.type_symbol
+_atom_site.label_atom_id
+_atom_site.label_alt_id
+_atom_site.label_comp_id
+_atom_site.label_asym_id
+_atom_site.label_seq_id
+_atom_site.pdbx_PDB_ins_code
+_atom_site.Cartn_x
+_atom_site.Cartn_y
+_atom_site.Cartn_z
+_atom_site.occupancy
+_atom_site.pdbx_formal_charge
+_atom_site.auth_seq_id
+_atom_site.auth_asym_id
+ATOM    2750     C   CB ?  THR      A 343 ?   76.006  117.105    2.955   0.00  0 442 A
+ATOM    1410     O    O ?  SER      A 181 ?   74.965  115.929   -0.710  -1.88  0 280 A
+ATOM    2905     C   CG ?  LYS      A 360 ?   81.241  119.035   -0.792   0.00  0 459 A
+ATOM    2749     O    O ?  THR      A 343 ?   78.807  117.692    3.136   0.00  0 442 A
+ATOM    1425     O    O ?  LEU      A 183 ?   76.442  112.742    2.854  -4.29  0 282 A
+ATOM    2751     O  OG1 ?  THR      A 343 ?   75.336  118.358    3.229  -2.69  0 442 A
+ATOM    2904     C   CB ?  LYS      A 360 ?   81.531  117.871    0.122   0.00  0 459 A
+ATOM    2921     N  ND2 ?  ASN      A 362 ?   80.142  114.308   -2.806  -1.09  0 461 A
+ATOM    2918     C   CB ?  ASN      A 362 ?   81.274  113.056   -1.054   0.00  0 461 A
+ATOM    1402     O    O ?  ASP      A 180 ?   75.992  112.071   -2.047  -1.07  0 279 A
+ATOM    1408     C   CA ?  SER      A 181 ?   75.750  114.769   -2.622   0.00  0 280 A
+ATOM    2919     C   CG ?  ASN      A 362 ?   81.164  114.295   -1.959   0.00  0 461 A
+ATOM    2909     N    N ?  ALA      A 361 ?   81.207  116.220    2.674  -1.09  0 460 A
+ATOM    1411     C   CB ?  SER      A 181 ?   75.870  116.056   -3.407   0.00  0 280 A
+ATOM    2908     N   NZ ?  LYS      A 360 ?   80.685  119.500   -3.828   0.00  0 459 A
+ATOM    2914     N    N ?  ASN      A 362 ?   81.794  114.108    1.089   0.00  0 461 A
+ATOM    2913     C   CB ?  ALA      A 361 ?   80.054  114.413    3.820   0.00  0 460 A
+# 

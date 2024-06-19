@@ -1,0 +1,54 @@
+data_pocket39_atm
+# 
+loop_
+_struct.pdbx_descriptor
+This is a mmcif format file writen by the programm fpocket.                 
+It represents the atoms contacted by the voronoi vertices of the pocket.  
+                                                                           
+Information about the pocket    39:
+0  - Pocket Score                      : -0.0855
+1  - Drug Score                        : 0.0003
+2  - Number of alpha spheres           :    15
+3  - Mean alpha-sphere radius          : 3.9330
+4  - Mean alpha-sphere Solvent Acc.    : 0.4898
+5  - Mean B-factor of pocket residues  : 0.1906
+6  - Hydrophobicity Score              : -4.8333
+7  - Polarity Score                    :     4
+8  - Amino Acid based volume Score     : 3.8333
+9  - Pocket volume (Monte Carlo)       : 148.4258
+10  -Pocket volume (convex hull)       : 2.4167
+11 - Charge Score                      :     1
+12 - Local hydrophobic density Score   : 5.0000
+13 - Number of apolar alpha sphere     :     6
+14 - Proportion of apolar alpha sphere : 0.4000
+# 
+loop_
+_atom_site.group_PDB
+_atom_site.id
+_atom_site.type_symbol
+_atom_site.label_atom_id
+_atom_site.label_alt_id
+_atom_site.label_comp_id
+_atom_site.label_asym_id
+_atom_site.label_seq_id
+_atom_site.pdbx_PDB_ins_code
+_atom_site.Cartn_x
+_atom_site.Cartn_y
+_atom_site.Cartn_z
+_atom_site.occupancy
+_atom_site.pdbx_formal_charge
+_atom_site.auth_seq_id
+_atom_site.auth_asym_id
+ATOM    3288     C   CD ?  GLU      D 23 ?   73.298  -12.362   44.068   0.00  0 408 D
+ATOM    1774     C   CB ?  PRO      B 62 ?   67.918  -13.279   48.527   0.00  0 72 B
+ATOM    3287     C   CG ?  GLU      D 23 ?   72.447  -12.873   42.931   0.00  0 408 D
+ATOM    3290     O  OE2 ?  GLU      D 23 ?   73.835  -13.190   44.834   0.00  0 408 D
+ATOM    1806     N   NE ?  ARG      B 65 ?   67.338   -7.246   46.000  -1.26  0 75 B
+ATOM    3323     C   CB ?  ALA      D 27 ?   66.675  -12.949   42.407   0.00  0 412 D
+ATOM    1773     O    O ?  PRO      B 62 ?   65.785  -11.073   47.710  -3.21  0 72 B
+ATOM    1819     N  NE2 ?  HIS      B 66 ?   65.110   -9.747   43.625  -2.19  0 76 B
+ATOM    3289     O  OE1 ?  GLU      D 23 ?   73.428  -11.132   44.207  -4.69  0 408 D
+ATOM    1809     N  NH2 ?  ARG      B 65 ?   68.253   -6.882   43.920  -2.19  0 75 B
+ATOM    3300     C  CG2 A  THR      D 24 ?   70.637   -8.519   41.332   0.00  0 409 D
+ATOM    3292     C   CA A  THR      D 24 ?   69.544  -10.502   40.209   0.00  0 409 D
+# 

@@ -1,0 +1,37 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket    29:
+HEADER 0  - Pocket Score                      : 0.0019
+HEADER 1  - Drug Score                        : 0.0003
+HEADER 2  - Number of alpha spheres           :    15
+HEADER 3  - Mean alpha-sphere radius          : 3.9637
+HEADER 4  - Mean alpha-sphere Solvent Acc.    : 0.7590
+HEADER 5  - Mean B-factor of pocket residues  : 0.2314
+HEADER 6  - Hydrophobicity Score              : 40.0000
+HEADER 7  - Polarity Score                    :     1
+HEADER 8  - Amino Acid based volume Score     : 4.0000
+HEADER 9  - Pocket volume (Monte Carlo)       : 183.9428
+HEADER 10 - Pocket volume (convex hull)       : 2.7700
+HEADER 11 - Charge Score                      :    -1
+HEADER 12 - Local hydrophobic density Score   : 7.0000
+HEADER 13 - Number of apolar alpha sphere     :     8
+HEADER 14 - Proportion of apolar alpha sphere : 0.5333
+ATOM   2650  CE1 PHE C 391      90.432 -15.858  25.538  0.00  0.00           C 0
+ATOM   2651  CE2 PHE C 391      91.249 -14.390  27.258  0.00  0.00           C 0
+ATOM   2617   CE MET C 387      94.140 -15.170  29.727  0.00  0.00           C 0
+ATOM   2649  CD2 PHE C 391      91.960 -13.665  26.293  0.00  0.00           C 0
+ATOM   2652   CZ PHE C 391      90.483 -15.481  26.874  0.00  0.00           C 0
+ATOM   2615   CG MET C 387      95.100 -13.299  27.924  0.00  0.00           C 0
+ATOM   2647   CG PHE C 391      91.915 -14.036  24.949  0.00  0.00           C 0
+ATOM   2646   CB PHE C 391      92.682 -13.255  23.905  0.00  0.00           C 0
+ATOM   2618    N ASP C 388      97.216 -12.562  25.020  0.00  0.00           N 0
+ATOM   2648  CD1 PHE C 391      91.141 -15.134  24.582  0.00  0.00           C 0
+ATOM   2625  OD2 ASP C 388      97.472 -14.638  21.635  0.64  9.64           O 0
+ATOM   2611   CA MET C 387      97.594 -13.117  27.368  0.00  0.00           C 0
+ATOM   2608    O ALA C 386     100.104 -14.139  26.633  0.00  0.00           O 0
+ATOM   2624  OD1 ASP C 388      99.043 -13.616  22.788  0.46  9.64           O 0
+ATOM   2623   CG ASP C 388      97.883 -13.674  22.317  0.00  0.00           C 0
+TER
+END

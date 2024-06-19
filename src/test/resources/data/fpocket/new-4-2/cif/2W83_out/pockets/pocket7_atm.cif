@@ -1,0 +1,74 @@
+data_pocket7_atm
+# 
+loop_
+_struct.pdbx_descriptor
+This is a mmcif format file writen by the programm fpocket.                 
+It represents the atoms contacted by the voronoi vertices of the pocket.  
+                                                                           
+Information about the pocket     7:
+0  - Pocket Score                      : 0.2473
+1  - Drug Score                        : 0.0016
+2  - Number of alpha spheres           :    44
+3  - Mean alpha-sphere radius          : 4.1065
+4  - Mean alpha-sphere Solvent Acc.    : 0.5540
+5  - Mean B-factor of pocket residues  : 0.1411
+6  - Hydrophobicity Score              : 0.1818
+7  - Polarity Score                    :     9
+8  - Amino Acid based volume Score     : 5.1818
+9  - Pocket volume (Monte Carlo)       : 530.5620
+10  -Pocket volume (convex hull)       : 70.0841
+11 - Charge Score                      :     0
+12 - Local hydrophobic density Score   : 4.5714
+13 - Number of apolar alpha sphere     :     7
+14 - Proportion of apolar alpha sphere : 0.1591
+# 
+loop_
+_atom_site.group_PDB
+_atom_site.id
+_atom_site.type_symbol
+_atom_site.label_atom_id
+_atom_site.label_alt_id
+_atom_site.label_comp_id
+_atom_site.label_asym_id
+_atom_site.label_seq_id
+_atom_site.pdbx_PDB_ins_code
+_atom_site.Cartn_x
+_atom_site.Cartn_y
+_atom_site.Cartn_z
+_atom_site.occupancy
+_atom_site.pdbx_formal_charge
+_atom_site.auth_seq_id
+_atom_site.auth_asym_id
+ATOM    475      C   CD ?  PRO      A 62 ?   61.125   -3.933   24.290   0.00  0 72 A
+ATOM    439      O  OD1 ?  ASP      A 58 ?   60.401   -0.821   18.728  -2.69  0 68 A
+ATOM    436      O    O ?  ASP      A 58 ?   59.525   -1.560   21.751  -1.48  0 68 A
+ATOM    474      C   CG ?  PRO      A 62 ?   62.590   -4.117   24.566   0.00  0 72 A
+ATOM    462      C   CB ?  ARG      A 61 ?   58.622   -4.959   21.674   0.00  0 71 A
+ATOM    469      N    N ?  PRO      A 62 ?   60.601   -5.306   24.412   0.00  0 72 A
+ATOM    730      O  OE2 ?  GLU      A 92 ?   59.704   -5.399   17.107  -2.14  0 102 A
+ATOM    729      O  OE1 ?  GLU      A 92 ?   59.449   -7.415   17.899   0.00  0 102 A
+ATOM    502      C   CB ?  ARG      A 65 ?   61.201  -12.388   25.890   0.00  0 75 A
+ATOM    542      O   OH ?  TYR      A 68 ?   59.012  -13.036   22.290  -1.07  0 78 A
+ATOM    505      N   NE ?  ARG      A 65 ?   63.291  -10.050   25.261  -1.09  0 75 A
+ATOM    790      O  OD1 ?  ASP      A 99 ?   63.131  -15.970   23.698  -4.02  0 109 A
+ATOM    752      O    O ?  ARG      A 95 ?   61.519  -14.644   18.709  -4.69  0 105 A
+ATOM    506      C   CZ ?  ARG      A 65 ?   64.298   -9.456   24.624   0.00  0 75 A
+ATOM    494      C  CE3 ?  TRP      A 64 ?   56.674   -8.942   21.062   0.00  0 74 A
+ATOM    461      O    O ?  ARG      A 61 ?   59.324   -7.109   23.922   0.00  0 71 A
+ATOM    785      C   CA ?  ASP      A 99 ?   62.530  -18.054   21.161   0.00  0 109 A
+ATOM    788      C   CB ?  ASP      A 99 ?   61.803  -17.004   22.011   0.00  0 109 A
+ATOM    765      C  CG1 ?  ILE      A 96 ?   57.102  -12.585   19.277   0.00  0 106 A
+ATOM    507      N  NH1 ?  ARG      A 65 ?   64.055   -8.410   23.847   0.00  0 75 A
+ATOM    460      C    C ?  ARG      A 61 ?   59.501   -5.887   23.881   0.00  0 71 A
+ATOM    750      C   CA ?  ARG      A 95 ?   61.594  -13.125   16.842   0.00  0 105 A
+ATOM    754      C   CG ?  ARG      A 95 ?   62.948  -11.009   16.421   0.00  0 105 A
+ATOM    780      C   CB ?  ASN      A 98 ?   63.149  -17.768   16.419   0.00  0 108 A
+ATOM    784      N    N ?  ASP      A 99 ?   62.092  -17.988   19.767   0.00  0 109 A
+ATOM    779      O    O ?  ASN      A 98 ?   63.868  -19.128   18.990  -2.95  0 108 A
+ATOM    753      C   CB ?  ARG      A 95 ?   61.859  -11.670   17.256   0.00  0 105 A
+ATOM    755      C   CD ?  ARG      A 95 ?   63.463   -9.737   17.071   0.00  0 105 A
+ATOM    508      N  NH2 ?  ARG      A 65 ?   65.545   -9.904   24.756   0.00  0 75 A
+ATOM    504      C   CD ?  ARG      A 65 ?   63.424  -11.213   26.144   0.00  0 75 A
+ATOM    756      N   NE ?  ARG      A 95 ?   62.682   -8.565   16.704  -1.09  0 105 A
+ATOM    778      C    C ?  ASN      A 98 ?   62.796  -18.561   18.790   0.00  0 108 A
+# 

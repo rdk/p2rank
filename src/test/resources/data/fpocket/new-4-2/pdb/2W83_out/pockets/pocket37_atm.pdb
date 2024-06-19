@@ -1,0 +1,36 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket    37:
+HEADER 0  - Pocket Score                      : -0.0306
+HEADER 1  - Drug Score                        : 0.0030
+HEADER 2  - Number of alpha spheres           :    16
+HEADER 3  - Mean alpha-sphere radius          : 4.1365
+HEADER 4  - Mean alpha-sphere Solvent Acc.    : 0.5976
+HEADER 5  - Mean B-factor of pocket residues  : 0.7277
+HEADER 6  - Hydrophobicity Score              : 19.2000
+HEADER 7  - Polarity Score                    :     3
+HEADER 8  - Amino Acid based volume Score     : 5.0000
+HEADER 9  - Pocket volume (Monte Carlo)       : 244.3920
+HEADER 10 - Pocket volume (convex hull)       : 5.9852
+HEADER 11 - Charge Score                      :     1
+HEADER 12 - Local hydrophobic density Score   : 14.0000
+HEADER 13 - Number of apolar alpha sphere     :    15
+HEADER 14 - Proportion of apolar alpha sphere : 0.9375
+ATOM   3549  CG2 VAL D 441      24.939 -20.296  43.942  0.00  0.00           C 0
+ATOM   3059   CE LYS C 442      27.330 -21.048  47.520  0.00  0.00           C 0
+ATOM   3057   CG LYS C 442      25.516 -19.565  48.435  0.00  0.00           C 0
+ATOM   3082   CE LYS C 445      20.142 -22.383  45.893  0.00  0.00           C 0
+ATOM   3548  CG1 VAL D 441      23.257 -18.855  45.056  0.00  0.00           C 0
+ATOM   3083   NZ LYS C 445      19.982 -23.576  46.777  0.00  0.00           N 0
+ATOM   3116  OE1 GLU C 449      18.317 -23.662  50.725  0.79  4.29           O 0
+ATOM   3080   CG LYS C 445      20.100 -20.846  47.882  0.00  0.00           C 0
+ATOM   3091  CD2 LEU C 446      20.940 -22.604  53.691  0.00  0.00           C 0
+ATOM   3058   CD LYS C 442      26.847 -20.247  48.721  0.00  0.00           C 0
+ATOM   3089   CG LEU C 446      21.198 -21.138  53.358  0.00  0.00           C 0
+ATOM   3090  CD1 LEU C 446      22.340 -20.585  54.197  0.00  0.00           C 0
+ATOM   3056   CB LYS C 442      25.033 -18.797  49.664  0.00  0.00           C 0
+ATOM   3055    O LYS C 442      22.090 -18.929  50.992  0.69  2.14           O 0
+TER
+END

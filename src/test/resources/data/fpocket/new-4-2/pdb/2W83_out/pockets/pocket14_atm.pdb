@@ -1,0 +1,38 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket    14:
+HEADER 0  - Pocket Score                      : 0.0664
+HEADER 1  - Drug Score                        : 0.0083
+HEADER 2  - Number of alpha spheres           :    15
+HEADER 3  - Mean alpha-sphere radius          : 3.9106
+HEADER 4  - Mean alpha-sphere Solvent Acc.    : 0.6035
+HEADER 5  - Mean B-factor of pocket residues  : 0.0728
+HEADER 6  - Hydrophobicity Score              : 38.8000
+HEADER 7  - Polarity Score                    :     2
+HEADER 8  - Amino Acid based volume Score     : 4.6000
+HEADER 9  - Pocket volume (Monte Carlo)       : 257.6355
+HEADER 10 - Pocket volume (convex hull)       : 9.4687
+HEADER 11 - Charge Score                      :     0
+HEADER 12 - Local hydrophobic density Score   : 10.5000
+HEADER 13 - Number of apolar alpha sphere     :    12
+HEADER 14 - Proportion of apolar alpha sphere : 0.8000
+ATOM   4093   CG LYS E  69      40.560 -45.730 -11.205  0.00  0.00           C 0
+ATOM   4087  OD2 ASP E  68      40.820 -43.783  -7.171  0.74  9.64           O 0
+ATOM   4084   CB ASP E  68      40.734 -41.904  -8.607  0.00  0.00           C 0
+ATOM   4095   CE LYS E  69      38.824 -47.415 -10.494  0.00  0.00           C 0
+ATOM   4092   CB LYS E  69      41.645 -45.337 -12.223  0.00  0.00           C 0
+ATOM   4078  CD1 LEU E  67      38.447 -39.288 -15.466  0.00  0.00           C 0
+ATOM   4094   CD LYS E  69      39.749 -46.945 -11.624  0.00  0.00           C 0
+ATOM   4080    N ASP E  68      41.047 -40.450 -10.554  0.64  2.19           N 0
+ATOM   4079  CD2 LEU E  67      37.661 -39.007 -13.077  0.00  0.00           C 0
+ATOM   4088    N LYS E  69      42.007 -43.178 -11.088  0.68  1.09           N 0
+ATOM   4076   CB LEU E  67      40.084 -39.588 -13.590  0.00  0.00           C 0
+ATOM   4104  CD1 ILE E  70      43.585 -39.741 -16.315  0.00  0.00           C 0
+ATOM   4103  CG2 ILE E  70      44.014 -42.888 -16.135  0.00  0.00           C 0
+ATOM   3903  CG2 VAL E  45      40.330 -40.175 -20.098  0.00  0.00           C 0
+ATOM   4102  CG1 ILE E  70      43.791 -40.607 -15.038  0.00  0.00           C 0
+ATOM   4097    N ILE E  70      43.965 -42.836 -13.063  0.82  1.09           N 0
+TER
+END

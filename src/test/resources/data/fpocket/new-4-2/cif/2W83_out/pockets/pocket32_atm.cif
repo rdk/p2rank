@@ -1,0 +1,56 @@
+data_pocket32_atm
+# 
+loop_
+_struct.pdbx_descriptor
+This is a mmcif format file writen by the programm fpocket.                 
+It represents the atoms contacted by the voronoi vertices of the pocket.  
+                                                                           
+Information about the pocket    32:
+0  - Pocket Score                      : -0.0141
+1  - Drug Score                        : 0.0001
+2  - Number of alpha spheres           :    18
+3  - Mean alpha-sphere radius          : 3.8547
+4  - Mean alpha-sphere Solvent Acc.    : 0.4555
+5  - Mean B-factor of pocket residues  : 0.2563
+6  - Hydrophobicity Score              : -12.0000
+7  - Polarity Score                    :     4
+8  - Amino Acid based volume Score     : 3.6000
+9  - Pocket volume (Monte Carlo)       : 157.3082
+10  -Pocket volume (convex hull)       : 0.6163
+11 - Charge Score                      :     0
+12 - Local hydrophobic density Score   : 1.0000
+13 - Number of apolar alpha sphere     :     2
+14 - Proportion of apolar alpha sphere : 0.1111
+# 
+loop_
+_atom_site.group_PDB
+_atom_site.id
+_atom_site.type_symbol
+_atom_site.label_atom_id
+_atom_site.label_alt_id
+_atom_site.label_comp_id
+_atom_site.label_asym_id
+_atom_site.label_seq_id
+_atom_site.pdbx_PDB_ins_code
+_atom_site.Cartn_x
+_atom_site.Cartn_y
+_atom_site.Cartn_z
+_atom_site.occupancy
+_atom_site.pdbx_formal_charge
+_atom_site.auth_seq_id
+_atom_site.auth_asym_id
+ATOM    1066     N   NE ?  ARG      A 133 ?   61.425  -18.073    1.140  -2.19  0 143 A
+ATOM    1068     N  NH1 ?  ARG      A 133 ?   62.856  -16.267    0.930   0.00  0 143 A
+ATOM    1067     C   CZ ?  ARG      A 133 ?   62.205  -17.295    0.390   0.00  0 143 A
+ATOM    1018     C   CB ?  GLU      A 127 ?   55.593  -13.831    0.589   0.00  0 137 A
+ATOM    1065     C   CD ?  ARG      A 133 ?   61.199  -17.896    2.577   0.00  0 143 A
+ATOM    1020     C   CD ?  GLU      A 127 ?   55.976  -15.138   -1.541   0.00  0 137 A
+ATOM    1022     O  OE2 ?  GLU      A 127 ?   56.010  -14.085   -2.222   0.00  0 137 A
+ATOM    1019     C   CG ?  GLU      A 127 ?   55.298  -15.110   -0.187   0.00  0 137 A
+ATOM    1057     O  OG1 ?  THR      A 132 ?   56.364  -18.360    2.011  -3.21  0 142 A
+ATOM    1017     O    O ?  GLU      A 127 ?   56.731  -12.542    3.257  -0.14  0 137 A
+ATOM    1041     C   CA ?  GLY      A 130 ?   57.276  -14.627    6.033   0.00  0 140 A
+ATOM    1021     O  OE1 ?  GLU      A 127 ?   56.480  -16.215   -1.919  -6.43  0 137 A
+ATOM    4943     O  OD1 ?  ASN      E 162 ?   59.886  -17.130   -4.832  -0.40  0 172 E
+ATOM    1069     N  NH2 ?  ARG      A 133 ?   62.334  -17.549   -0.908  -2.61  0 143 A
+# 

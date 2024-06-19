@@ -1,0 +1,55 @@
+data_pocket18_atm
+# 
+loop_
+_struct.pdbx_descriptor
+This is a mmcif format file writen by the programm fpocket.                 
+It represents the atoms contacted by the voronoi vertices of the pocket.  
+                                                                           
+Information about the pocket    18:
+0  - Pocket Score                      : -0.0406
+1  - Drug Score                        : 0.0004
+2  - Number of alpha spheres           :    15
+3  - Mean alpha-sphere radius          : 4.0401
+4  - Mean alpha-sphere Solvent Acc.    : 0.6203
+5  - Mean B-factor of pocket residues  : 0.4753
+6  - Hydrophobicity Score              : -23.8000
+7  - Polarity Score                    :     4
+8  - Amino Acid based volume Score     : 3.6000
+9  - Pocket volume (Monte Carlo)       : 220.4190
+10  -Pocket volume (convex hull)       : 4.9526
+11 - Charge Score                      :    -1
+12 - Local hydrophobic density Score   : 5.0000
+13 - Number of apolar alpha sphere     :     6
+14 - Proportion of apolar alpha sphere : 0.4000
+# 
+loop_
+_atom_site.group_PDB
+_atom_site.id
+_atom_site.type_symbol
+_atom_site.label_atom_id
+_atom_site.label_alt_id
+_atom_site.label_comp_id
+_atom_site.label_asym_id
+_atom_site.label_seq_id
+_atom_site.pdbx_PDB_ins_code
+_atom_site.Cartn_x
+_atom_site.Cartn_y
+_atom_site.Cartn_z
+_atom_site.occupancy
+_atom_site.pdbx_formal_charge
+_atom_site.auth_seq_id
+_atom_site.auth_asym_id
+ATOM    2676     C   CA ?  GLY      A 335 ?   97.104  115.641   12.603   0.00  0 434 A
+ATOM    2289     C   CB ?  ASP      A 286 ?   98.918  114.997   19.716   0.00  0 385 A
+ATOM    2284     O  OE2 ?  GLU      A 285 ?   99.234  109.833   14.876  -4.02  0 384 A
+ATOM    2291     O  OD1 ?  ASP      A 286 ?  101.215  115.724   19.756  -0.95  0 385 A
+ATOM    2281     C   CG ?  GLU      A 285 ?   98.068  110.377   16.961   0.00  0 384 A
+ATOM    2282     C   CD ?  GLU      A 285 ?   99.137  109.608   16.114   0.00  0 384 A
+ATOM    2831     C   CE ?  LYS      A 351 ?   97.758  118.761   16.688   0.00  0 450 A
+ATOM    2657     N  NE2 ?  GLN      A 332 ?   95.643  113.831   16.252  -2.19  0 431 A
+ATOM    2286     C   CA ?  ASP      A 286 ?   99.148  113.599   20.317   0.00  0 385 A
+ATOM    2285     N    N ?  ASP      A 286 ?   98.124  112.685   19.830   0.00  0 385 A
+ATOM    2279     O    O ?  GLU      A 285 ?   99.251  110.888   20.557   0.00  0 384 A
+ATOM    2288     O    O ?  ASP      A 286 ?  100.055  113.364   22.550   0.00  0 385 A
+ATOM    2283     O  OE1 ?  GLU      A 285 ?   99.910  108.805   16.696  -4.29  0 384 A
+# 

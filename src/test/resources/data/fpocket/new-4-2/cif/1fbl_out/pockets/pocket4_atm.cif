@@ -1,0 +1,67 @@
+data_pocket4_atm
+# 
+loop_
+_struct.pdbx_descriptor
+This is a mmcif format file writen by the programm fpocket.                 
+It represents the atoms contacted by the voronoi vertices of the pocket.  
+                                                                           
+Information about the pocket     4:
+0  - Pocket Score                      : 0.1990
+1  - Drug Score                        : 0.0185
+2  - Number of alpha spheres           :    27
+3  - Mean alpha-sphere radius          : 3.8415
+4  - Mean alpha-sphere Solvent Acc.    : 0.5997
+5  - Mean B-factor of pocket residues  : 0.2752
+6  - Hydrophobicity Score              : 19.7143
+7  - Polarity Score                    :     7
+8  - Amino Acid based volume Score     : 4.5714
+9  - Pocket volume (Monte Carlo)       : 254.7254
+10  -Pocket volume (convex hull)       : 7.9505
+11 - Charge Score                      :     0
+12 - Local hydrophobic density Score   : 13.5000
+13 - Number of apolar alpha sphere     :    16
+14 - Proportion of apolar alpha sphere : 0.5926
+# 
+loop_
+_atom_site.group_PDB
+_atom_site.id
+_atom_site.type_symbol
+_atom_site.label_atom_id
+_atom_site.label_alt_id
+_atom_site.label_comp_id
+_atom_site.label_asym_id
+_atom_site.label_seq_id
+_atom_site.pdbx_PDB_ins_code
+_atom_site.Cartn_x
+_atom_site.Cartn_y
+_atom_site.Cartn_z
+_atom_site.occupancy
+_atom_site.pdbx_formal_charge
+_atom_site.auth_seq_id
+_atom_site.auth_asym_id
+ATOM    2707     C  CE2 ?  TYR      A 338 ?   90.337  116.881    6.838   0.00  0 437 A
+ATOM    2895     C   CB ?  GLN      A 359 ?   85.848  119.818    2.451   0.00  0 458 A
+ATOM    2770     C   CD ?  GLN      A 345 ?   85.588  116.462    5.291   0.00  0 444 A
+ATOM    2789     C   CB ?  GLN      A 347 ?   89.913  120.922    7.660   0.00  0 446 A
+ATOM    2881     O  OG1 ?  THR      A 357 ?   89.483  122.726    4.755  -1.88  0 456 A
+ATOM    2896     C   CG ?  GLN      A 359 ?   86.862  120.262    1.372   0.00  0 458 A
+ATOM    2793     N  NE2 ?  GLN      A 347 ?   91.791  121.810    5.760   0.00  0 446 A
+ATOM    2709     O   OH ?  TYR      A 338 ?   92.682  116.873    6.554   0.00  0 437 A
+ATOM    2927     O   OG ?  SER      A 363 ?   86.382  116.049    1.428  -0.81  0 462 A
+ATOM    2941     C  CH2 ?  TRP      A 364 ?   91.613  113.327    4.690   0.00  0 463 A
+ATOM    2937     C  CE2 ?  TRP      A 364 ?   89.296  113.220    4.253   0.00  0 463 A
+ATOM    2940     C  CZ3 ?  TRP      A 364 ?   91.862  112.500    3.584   0.00  0 463 A
+ATOM    2939     C  CZ2 ?  TRP      A 364 ?   90.337  113.696    5.034   0.00  0 463 A
+ATOM    2898     O  OE1 ?  GLN      A 359 ?   87.450  119.232   -0.743   0.00  0 458 A
+ATOM    2705     C  CD2 ?  TYR      A 338 ?   89.191  116.408    7.481   0.00  0 437 A
+ATOM    2924     C    C ?  SER      A 363 ?   86.692  113.890   -0.827   0.00  0 462 A
+ATOM    2926     C   CB ?  SER      A 363 ?   86.215  116.220    0.036   0.00  0 462 A
+ATOM    2925     O    O ?  SER      A 363 ?   87.342  113.856   -1.875   0.00  0 462 A
+ATOM    2772     N  NE2 ?  GLN      A 345 ?   85.859  116.070    4.061  -1.09  0 444 A
+ATOM    2935     C  CD2 ?  TRP      A 364 ?   89.502  112.388    3.141   0.00  0 463 A
+ATOM    2929     C   CA ?  TRP      A 364 ?   87.773  111.850    0.058   0.00  0 463 A
+ATOM    2928     N    N ?  TRP      A 364 ?   86.797  112.963    0.127   0.00  0 463 A
+ATOM    2785     N    N ?  GLN      A 347 ?   87.634  120.870    8.549  -1.09  0 446 A
+ATOM    2938     C  CE3 ?  TRP      A 364 ?   90.815  112.020    2.805   0.00  0 463 A
+ATOM    2769     C   CG ?  GLN      A 345 ?   84.524  117.504    5.458   0.00  0 444 A
+# 

@@ -1,0 +1,61 @@
+data_pocket34_atm
+# 
+loop_
+_struct.pdbx_descriptor
+This is a mmcif format file writen by the programm fpocket.                 
+It represents the atoms contacted by the voronoi vertices of the pocket.  
+                                                                           
+Information about the pocket    34:
+0  - Pocket Score                      : -0.0268
+1  - Drug Score                        : 0.0013
+2  - Number of alpha spheres           :    19
+3  - Mean alpha-sphere radius          : 3.8720
+4  - Mean alpha-sphere Solvent Acc.    : 0.7126
+5  - Mean B-factor of pocket residues  : 0.6167
+6  - Hydrophobicity Score              : 21.1667
+7  - Polarity Score                    :     6
+8  - Amino Acid based volume Score     : 4.6667
+9  - Pocket volume (Monte Carlo)       : 281.7067
+10  -Pocket volume (convex hull)       : 17.8114
+11 - Charge Score                      :    -1
+12 - Local hydrophobic density Score   : 11.0000
+13 - Number of apolar alpha sphere     :    12
+14 - Proportion of apolar alpha sphere : 0.6316
+# 
+loop_
+_atom_site.group_PDB
+_atom_site.id
+_atom_site.type_symbol
+_atom_site.label_atom_id
+_atom_site.label_alt_id
+_atom_site.label_comp_id
+_atom_site.label_asym_id
+_atom_site.label_seq_id
+_atom_site.pdbx_PDB_ins_code
+_atom_site.Cartn_x
+_atom_site.Cartn_y
+_atom_site.Cartn_z
+_atom_site.occupancy
+_atom_site.pdbx_formal_charge
+_atom_site.auth_seq_id
+_atom_site.auth_asym_id
+ATOM    2457     O  OE1 ?  GLN      B 142 ?   47.702   -6.102   69.865  -2.55  0 152 B
+ATOM    2442     O   OH ?  TYR      B 140 ?   48.974   -2.973   71.764   0.00  0 150 B
+ATOM    2536     C   CB ?  GLU      B 154 ?   44.438   -6.778   69.094   0.00  0 164 B
+ATOM    2537     C   CG ?  GLU      B 154 ?   43.309   -7.137   70.079   0.00  0 164 B
+ATOM    2558     O  OG1 ?  THR      B 157 ?   41.510   -4.124   66.003  -3.62  0 167 B
+ATOM    2557     C   CB ?  THR      B 157 ?   42.361   -2.970   66.019   0.00  0 167 B
+ATOM    2533     C   CA ?  GLU      B 154 ?   43.970   -6.428   67.673   0.00  0 164 B
+ATOM    2559     C  CG2 ?  THR      B 157 ?   41.562   -1.770   66.507   0.00  0 167 B
+ATOM    2535     O    O ?  GLU      B 154 ?   45.264   -4.593   66.807  -1.48  0 164 B
+ATOM    2560     N    N ?  TRP      B 158 ?   45.162   -1.894   65.060  -1.09  0 168 B
+ATOM    2564     C   CB ?  TRP      B 158 ?   47.495   -1.536   65.769   0.00  0 168 B
+ATOM    2441     C   CZ ?  TYR      B 140 ?   49.764   -2.589   70.702   0.00  0 150 B
+ATOM    2440     C  CE2 ?  TYR      B 140 ?   49.970   -3.466   69.644   0.00  0 150 B
+ATOM    2561     C   CA ?  TRP      B 158 ?   46.260   -0.932   65.091   0.00  0 168 B
+ATOM    2556     O    O ?  THR      B 157 ?   43.627   -0.441   64.265  -1.07  0 167 B
+ATOM    2593     C   CB ?  SER      B 161 ?   44.442    2.738   65.031   0.00  0 171 B
+ATOM    2566     C  CD1 ?  TRP      B 158 ?   48.777    0.376   66.889   0.00  0 168 B
+ATOM    2439     C  CE1 ?  TYR      B 140 ?   50.349   -1.330   70.692   0.00  0 150 B
+ATOM    2594     O   OG ?  SER      B 161 ?   44.532    3.892   65.849   0.00  0 171 B
+# 

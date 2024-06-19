@@ -1,0 +1,72 @@
+data_pocket17_atm
+# 
+loop_
+_struct.pdbx_descriptor
+This is a mmcif format file writen by the programm fpocket.                 
+It represents the atoms contacted by the voronoi vertices of the pocket.  
+                                                                           
+Information about the pocket    17:
+0  - Pocket Score                      : 0.0436
+1  - Drug Score                        : 0.0096
+2  - Number of alpha spheres           :    35
+3  - Mean alpha-sphere radius          : 4.1315
+4  - Mean alpha-sphere Solvent Acc.    : 0.6864
+5  - Mean B-factor of pocket residues  : 0.3773
+6  - Hydrophobicity Score              : 35.3636
+7  - Polarity Score                    :     6
+8  - Amino Acid based volume Score     : 3.9091
+9  - Pocket volume (Monte Carlo)       : 459.2277
+10  -Pocket volume (convex hull)       : 43.6443
+11 - Charge Score                      :     0
+12 - Local hydrophobic density Score   : 12.2667
+13 - Number of apolar alpha sphere     :    15
+14 - Proportion of apolar alpha sphere : 0.4286
+# 
+loop_
+_atom_site.group_PDB
+_atom_site.id
+_atom_site.type_symbol
+_atom_site.label_atom_id
+_atom_site.label_alt_id
+_atom_site.label_comp_id
+_atom_site.label_asym_id
+_atom_site.label_seq_id
+_atom_site.pdbx_PDB_ins_code
+_atom_site.Cartn_x
+_atom_site.Cartn_y
+_atom_site.Cartn_z
+_atom_site.occupancy
+_atom_site.pdbx_formal_charge
+_atom_site.auth_seq_id
+_atom_site.auth_asym_id
+ATOM    1551     N    N ?  VAL      B 35 ?   57.134  -22.229   49.812  -1.09  0 45 B
+ATOM    1557     C  CG2 ?  VAL      B 35 ?   58.900  -24.221   48.742   0.00  0 45 B
+ATOM    1540     O    O ?  PRO      B 33 ?   56.746  -24.490   52.393  -2.14  0 43 B
+ATOM    1536     C  CD1 ?  ILE      B 32 ?   54.274  -27.855   51.539   0.00  0 42 B
+ATOM    1523     C   CA ?  THR      B 31 ?   51.025  -25.585   56.809   0.00  0 41 B
+ATOM    1419     C  CG2 ?  THR      B 17 ?   50.295  -20.401   55.092   0.00  0 27 B
+ATOM    1526     C   CB ?  THR      B 31 ?   51.320  -24.170   57.368   0.00  0 41 B
+ATOM    1529     N    N ?  ILE      B 32 ?   52.954  -26.161   55.487  -1.09  0 42 B
+ATOM    1518     O    O ?  THR      B 30 ?   48.396  -26.267   56.205  -3.35  0 40 B
+ATOM    1514     C  CG2 ?  VAL      B 29 ?   45.561  -23.390   57.058   0.00  0 39 B
+ATOM    1450     C  CD2 ?  TYR      B 21 ?   46.773  -19.318   54.518   0.00  0 31 B
+ATOM    1534     C  CG1 ?  ILE      B 32 ?   53.904  -27.042   52.768   0.00  0 42 B
+ATOM    1555     C   CB ?  VAL      B 35 ?   58.320  -23.148   47.823   0.00  0 45 B
+ATOM    1545     C   CA ?  THR      B 34 ?   56.187  -21.780   51.987   0.00  0 44 B
+ATOM    1549     O  OG1 ?  THR      B 34 ?   54.513  -20.610   53.308  -2.14  0 44 B
+ATOM    1550     C  CG2 ?  THR      B 34 ?   54.769  -19.896   51.010   0.00  0 44 B
+ATOM    1580     N  ND2 ?  ASN      B 38 ?   50.167  -19.635   49.763  -1.01  0 48 B
+ATOM    1532     O    O ?  ILE      B 32 ?   54.545  -24.306   54.582  -1.07  0 42 B
+ATOM    1452     C  CE2 ?  TYR      B 21 ?   47.202  -19.056   53.222   0.00  0 31 B
+ATOM    1448     C   CG ?  TYR      B 21 ?   45.412  -19.450   54.816   0.00  0 31 B
+ATOM    1451     C  CE1 ?  TYR      B 21 ?   44.903  -18.995   52.486   0.00  0 31 B
+ATOM    1449     C  CD1 ?  TYR      B 21 ?   44.485  -19.265   53.785   0.00  0 31 B
+ATOM    1528     C  CG2 ?  THR      B 31 ?   50.041  -23.343   57.507   0.00  0 41 B
+ATOM    1554     O    O ?  VAL      B 35 ?   55.884  -21.305   47.480   0.00  0 45 B
+ATOM    1579     O  OD1 ?  ASN      B 38 ?   51.155  -19.185   51.729  -0.40  0 48 B
+ATOM    1453     C   CZ ?  TYR      B 21 ?   46.261  -18.893   52.213   0.00  0 31 B
+ATOM    1454     O   OH ?  TYR      B 21 ?   46.679  -18.626   50.928  -0.81  0 31 B
+ATOM    1487     C  CD1 ?  LEU      B 25 ?   41.576  -21.465   54.405   0.00  0 35 B
+ATOM    1512     C   CB ?  VAL      B 29 ?   44.701  -24.588   57.450   0.00  0 39 B
+ATOM    1513     C  CG1 ?  VAL      B 29 ?   43.223  -24.231   57.360   0.00  0 39 B
+# 

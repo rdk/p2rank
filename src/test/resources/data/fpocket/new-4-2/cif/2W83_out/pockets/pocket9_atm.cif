@@ -1,0 +1,62 @@
+data_pocket9_atm
+# 
+loop_
+_struct.pdbx_descriptor
+This is a mmcif format file writen by the programm fpocket.                 
+It represents the atoms contacted by the voronoi vertices of the pocket.  
+                                                                           
+Information about the pocket     9:
+0  - Pocket Score                      : 0.2012
+1  - Drug Score                        : 0.0048
+2  - Number of alpha spheres           :    30
+3  - Mean alpha-sphere radius          : 3.5538
+4  - Mean alpha-sphere Solvent Acc.    : 0.3969
+5  - Mean B-factor of pocket residues  : 0.0482
+6  - Hydrophobicity Score              : 25.1000
+7  - Polarity Score                    :     4
+8  - Amino Acid based volume Score     : 3.8000
+9  - Pocket volume (Monte Carlo)       : 129.6827
+10  -Pocket volume (convex hull)       : 2.7448
+11 - Charge Score                      :    -2
+12 - Local hydrophobic density Score   : 14.0000
+13 - Number of apolar alpha sphere     :    15
+14 - Proportion of apolar alpha sphere : 0.5000
+# 
+loop_
+_atom_site.group_PDB
+_atom_site.id
+_atom_site.type_symbol
+_atom_site.label_atom_id
+_atom_site.label_alt_id
+_atom_site.label_comp_id
+_atom_site.label_asym_id
+_atom_site.label_seq_id
+_atom_site.pdbx_PDB_ins_code
+_atom_site.Cartn_x
+_atom_site.Cartn_y
+_atom_site.Cartn_z
+_atom_site.occupancy
+_atom_site.pdbx_formal_charge
+_atom_site.auth_seq_id
+_atom_site.auth_asym_id
+ATOM    664      O    O ?  ARG      A 85 ?   54.857   -3.889    9.948   0.00  0 95 A
+ATOM    79       C  CD1 ?  LEU      A 11 ?   53.946   -3.419   13.450   0.00  0 21 A
+ATOM    665      C   CB ?  ARG      A 85 ?   54.044   -1.136   10.436   0.00  0 95 A
+ATOM    637      O    O ?  ASP      A 82 ?   51.051   -2.051    7.624  -2.14  0 92 A
+ATOM    619      C   CB ?  ASP      A 79 ?   47.096   -3.120   11.707   0.00  0 89 A
+ATOM    671      N  NH2 ?  ARG      A 85 ?   51.390    0.396   14.352   0.00  0 95 A
+ATOM    641      O  OD2 ?  ASP      A 82 ?   50.635    0.345   11.180  -1.07  0 92 A
+ATOM    77       C   CB ?  LEU      A 11 ?   52.757   -3.591   15.631   0.00  0 21 A
+ATOM    84       O    O ?  ASP      A 12 ?   50.077   -1.042   16.527  -1.07  0 22 A
+ATOM    98       C   CB ?  ALA      A 14 ?   47.954   -5.232   15.901   0.00  0 24 A
+ATOM    618      O    O ?  ASP      A 79 ?   48.115   -4.181    9.204  -1.07  0 89 A
+ATOM    638      C   CB ?  ASP      A 82 ?   49.405   -0.824    9.508   0.00  0 92 A
+ATOM    663      C    C ?  ARG      A 85 ?   54.509   -3.165    9.010   0.00  0 95 A
+ATOM    673      C   CA ?  ILE      A 86 ?   53.972   -5.119    7.702   0.00  0 96 A
+ATOM    613      C  CG1 ?  VAL      A 78 ?   49.531   -7.688   10.139   0.00  0 88 A
+ATOM    701      C   CB ?  ALA      A 89 ?   53.914   -7.052   11.611   0.00  0 99 A
+ATOM    615      N    N ?  ASP      A 79 ?   47.638   -5.538   11.814   0.00  0 89 A
+ATOM    604      O    O ?  VAL      A 77 ?   49.245   -8.136   15.027  -2.14  0 87 A
+ATOM    78       C   CG ?  LEU      A 11 ?   53.721   -4.302   14.676   0.00  0 21 A
+ATOM    609      C   CA ?  VAL      A 78 ?   48.359   -7.795   12.399   0.00  0 88 A
+# 

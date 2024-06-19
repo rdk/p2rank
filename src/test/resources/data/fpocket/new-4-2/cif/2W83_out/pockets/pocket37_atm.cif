@@ -1,0 +1,56 @@
+data_pocket37_atm
+# 
+loop_
+_struct.pdbx_descriptor
+This is a mmcif format file writen by the programm fpocket.                 
+It represents the atoms contacted by the voronoi vertices of the pocket.  
+                                                                           
+Information about the pocket    37:
+0  - Pocket Score                      : -0.0306
+1  - Drug Score                        : 0.0030
+2  - Number of alpha spheres           :    16
+3  - Mean alpha-sphere radius          : 4.1365
+4  - Mean alpha-sphere Solvent Acc.    : 0.5976
+5  - Mean B-factor of pocket residues  : 0.7277
+6  - Hydrophobicity Score              : 19.2000
+7  - Polarity Score                    :     3
+8  - Amino Acid based volume Score     : 5.0000
+9  - Pocket volume (Monte Carlo)       : 242.4329
+10  -Pocket volume (convex hull)       : 5.9852
+11 - Charge Score                      :     1
+12 - Local hydrophobic density Score   : 14.0000
+13 - Number of apolar alpha sphere     :    15
+14 - Proportion of apolar alpha sphere : 0.9375
+# 
+loop_
+_atom_site.group_PDB
+_atom_site.id
+_atom_site.type_symbol
+_atom_site.label_atom_id
+_atom_site.label_alt_id
+_atom_site.label_comp_id
+_atom_site.label_asym_id
+_atom_site.label_seq_id
+_atom_site.pdbx_PDB_ins_code
+_atom_site.Cartn_x
+_atom_site.Cartn_y
+_atom_site.Cartn_z
+_atom_site.occupancy
+_atom_site.pdbx_formal_charge
+_atom_site.auth_seq_id
+_atom_site.auth_asym_id
+ATOM    3546     C  CG2 ?  VAL      D 56 ?   24.939  -20.296   43.942   0.00  0 441 D
+ATOM    3057     C   CE ?  LYS      C 57 ?   27.330  -21.048   47.520   0.00  0 442 C
+ATOM    3055     C   CG ?  LYS      C 57 ?   25.516  -19.565   48.435   0.00  0 442 C
+ATOM    3080     C   CE ?  LYS      C 60 ?   20.142  -22.383   45.893   0.00  0 445 C
+ATOM    3545     C  CG1 ?  VAL      D 56 ?   23.257  -18.855   45.056   0.00  0 441 D
+ATOM    3081     N   NZ ?  LYS      C 60 ?   19.982  -23.576   46.777   0.00  0 445 C
+ATOM    3114     O  OE1 ?  GLU      C 64 ?   18.317  -23.662   50.725  -0.81  0 449 C
+ATOM    3078     C   CG ?  LYS      C 60 ?   20.100  -20.846   47.882   0.00  0 445 C
+ATOM    3089     C  CD2 ?  LEU      C 61 ?   20.940  -22.604   53.691   0.00  0 446 C
+ATOM    3056     C   CD ?  LYS      C 57 ?   26.847  -20.247   48.721   0.00  0 442 C
+ATOM    3087     C   CG ?  LEU      C 61 ?   21.198  -21.138   53.358   0.00  0 446 C
+ATOM    3088     C  CD1 ?  LEU      C 61 ?   22.340  -20.585   54.197   0.00  0 446 C
+ATOM    3054     C   CB ?  LYS      C 57 ?   25.033  -18.797   49.664   0.00  0 442 C
+ATOM    3053     O    O ?  LYS      C 57 ?   22.090  -18.929   50.992  -2.14  0 442 C
+# 

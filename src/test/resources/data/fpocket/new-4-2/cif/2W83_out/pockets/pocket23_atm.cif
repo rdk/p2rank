@@ -1,0 +1,65 @@
+data_pocket23_atm
+# 
+loop_
+_struct.pdbx_descriptor
+This is a mmcif format file writen by the programm fpocket.                 
+It represents the atoms contacted by the voronoi vertices of the pocket.  
+                                                                           
+Information about the pocket    23:
+0  - Pocket Score                      : 0.0267
+1  - Drug Score                        : 0.0021
+2  - Number of alpha spheres           :    27
+3  - Mean alpha-sphere radius          : 3.9828
+4  - Mean alpha-sphere Solvent Acc.    : 0.5525
+5  - Mean B-factor of pocket residues  : 0.3813
+6  - Hydrophobicity Score              : 28.8333
+7  - Polarity Score                    :     1
+8  - Amino Acid based volume Score     : 3.8333
+9  - Pocket volume (Monte Carlo)       : 353.8141
+10  -Pocket volume (convex hull)       : 28.0991
+11 - Charge Score                      :    -1
+12 - Local hydrophobic density Score   : 12.0000
+13 - Number of apolar alpha sphere     :    13
+14 - Proportion of apolar alpha sphere : 0.4815
+# 
+loop_
+_atom_site.group_PDB
+_atom_site.id
+_atom_site.type_symbol
+_atom_site.label_atom_id
+_atom_site.label_alt_id
+_atom_site.label_comp_id
+_atom_site.label_asym_id
+_atom_site.label_seq_id
+_atom_site.pdbx_PDB_ins_code
+_atom_site.Cartn_x
+_atom_site.Cartn_y
+_atom_site.Cartn_z
+_atom_site.occupancy
+_atom_site.pdbx_formal_charge
+_atom_site.auth_seq_id
+_atom_site.auth_asym_id
+ATOM    3159     S   SD ?  MET      D 7 ?   96.914   -5.204   27.746   0.00  0 392 D
+ATOM    3158     C   CG ?  MET      D 7 ?   96.063   -4.635   29.234   0.00  0 392 D
+ATOM    3160     C   CE ?  MET      D 7 ?   97.777   -3.705   27.299   0.00  0 392 D
+ATOM    3183     O  OE1 ?  GLU      D 10 ?   90.122   -2.524   29.173  -3.62  0 395 D
+ATOM    3184     O  OE2 ?  GLU      D 10 ?   90.382   -0.476   29.889   0.00  0 395 D
+ATOM    3151     C  CE2 ?  PHE      D 6 ?   96.826    0.199   31.925   0.00  0 391 D
+ATOM    3149     C  CD2 ?  PHE      D 6 ?   97.050   -1.148   32.226   0.00  0 391 D
+ATOM    3145     O    O ?  PHE      D 6 ?   94.050   -3.454   33.418  -4.29  0 391 D
+ATOM    3182     C   CD ?  GLU      D 10 ?   90.227   -1.700   30.107   0.00  0 395 D
+ATOM    3154     C   CA ?  MET      D 7 ?   94.602   -5.157   31.259   0.00  0 392 D
+ATOM    2655     C   CB ?  MET      C 7 ?   92.746   -8.829   26.741   0.00  0 392 C
+ATOM    2627     O    O ?  PRO      C 4 ?   93.337   -7.972   23.186   0.00  0 389 C
+ATOM    2625     C   CA ?  PRO      C 4 ?   95.693   -8.215   23.474   0.00  0 389 C
+ATOM    2628     C   CB ?  PRO      C 4 ?   96.494   -7.123   22.746   0.00  0 389 C
+ATOM    3157     C   CB ?  MET      D 7 ?   95.330   -5.710   30.029   0.00  0 392 D
+ATOM    3156     O    O ?  MET      D 7 ?   92.504   -6.291   31.541  -2.14  0 392 D
+ATOM    2689     C  CG2 ?  VAL      C 11 ?   88.137   -5.941   28.073   0.00  0 396 C
+ATOM    2659     N    N ?  GLY      C 8 ?   90.729   -8.176   24.304   0.00  0 393 C
+ATOM    2660     C   CA ?  GLY      C 8 ?   89.753   -7.320   23.636   0.00  0 393 C
+ATOM    2688     C  CG1 ?  VAL      C 11 ?   86.522   -4.574   26.733   0.00  0 396 C
+ATOM    2653     C    C ?  MET      C 7 ?   90.531   -8.645   25.535   0.00  0 392 C
+ATOM    2687     C   CB ?  VAL      C 11 ?   87.176   -5.942   26.886   0.00  0 396 C
+ATOM    2654     O    O ?  MET      C 7 ?   89.529   -8.396   26.201   0.00  0 392 C
+# 

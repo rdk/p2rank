@@ -1,0 +1,60 @@
+data_pocket11_atm
+# 
+loop_
+_struct.pdbx_descriptor
+This is a mmcif format file writen by the programm fpocket.                 
+It represents the atoms contacted by the voronoi vertices of the pocket.  
+                                                                           
+Information about the pocket    11:
+0  - Pocket Score                      : 0.0542
+1  - Drug Score                        : 0.0016
+2  - Number of alpha spheres           :    20
+3  - Mean alpha-sphere radius          : 3.9799
+4  - Mean alpha-sphere Solvent Acc.    : 0.5507
+5  - Mean B-factor of pocket residues  : 0.5985
+6  - Hydrophobicity Score              : 16.5000
+7  - Polarity Score                    :     5
+8  - Amino Acid based volume Score     : 4.1000
+9  - Pocket volume (Monte Carlo)       : 320.5685
+10  -Pocket volume (convex hull)       : 23.3305
+11 - Charge Score                      :     1
+12 - Local hydrophobic density Score   : 6.0000
+13 - Number of apolar alpha sphere     :     7
+14 - Proportion of apolar alpha sphere : 0.3500
+# 
+loop_
+_atom_site.group_PDB
+_atom_site.id
+_atom_site.type_symbol
+_atom_site.label_atom_id
+_atom_site.label_alt_id
+_atom_site.label_comp_id
+_atom_site.label_asym_id
+_atom_site.label_seq_id
+_atom_site.pdbx_PDB_ins_code
+_atom_site.Cartn_x
+_atom_site.Cartn_y
+_atom_site.Cartn_z
+_atom_site.occupancy
+_atom_site.pdbx_formal_charge
+_atom_site.auth_seq_id
+_atom_site.auth_asym_id
+ATOM    2205     C  CG2 ?  VAL      A 275 ?   75.985  109.521   29.203   0.00  0 374 A
+ATOM    2214     N   NZ ?  LYS      A 276 ?   72.330  110.148   25.793  -8.75  0 375 A
+ATOM    2197     O  OG1 ?  THR      A 274 ?   72.828  111.095   31.923   0.00  0 373 A
+ATOM    2359     C  CG1 ?  VAL      A 294 ?   75.981  111.880   25.044   0.00  0 393 A
+ATOM    2194     C    C ?  THR      A 274 ?   72.010  109.078   29.522   0.00  0 373 A
+ATOM    2196     C   CB ?  THR      A 274 ?   71.560  110.863   31.300   0.00  0 373 A
+ATOM    2402     C  CZ2 ?  TRP      A 299 ?   79.374  112.608   30.301   0.00  0 398 A
+ATOM    2184     C   CG ?  PRO      A 272 ?   77.026  110.764   33.017   0.00  0 371 A
+ATOM    2509     C   CB ?  PRO      A 313 ?   79.385  116.435   30.934   0.00  0 412 A
+ATOM    2510     C   CG ?  PRO      A 313 ?   79.873  115.645   32.075   0.00  0 412 A
+ATOM    2399     N  NE1 ?  TRP      A 299 ?   79.776  112.924   27.844   0.00  0 398 A
+ATOM    2384     O  OE2 ?  GLU      A 297 ?   76.615  117.171   28.857  -2.69  0 396 A
+ATOM    2195     O    O ?  THR      A 274 ?   71.322  109.248   28.523  -1.07  0 373 A
+ATOM    2357     O    O ?  VAL      A 294 ?   76.514  115.069   23.835   0.00  0 393 A
+ATOM    2381     C   CG ?  GLU      A 297 ?   76.869  117.087   26.506   0.00  0 396 A
+ATOM    2365     C   CB ?  ALA      A 295 ?   73.624  115.537   22.721   0.00  0 394 A
+ATOM    2375     N  NE2 ?  HIS      A 296 ?   73.140  119.516   24.998   0.00  0 395 A
+ATOM    2374     C  CE1 ?  HIS      A 296 ?   74.188  119.956   25.674   0.00  0 395 A
+# 

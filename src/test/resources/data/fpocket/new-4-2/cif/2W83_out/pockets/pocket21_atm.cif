@@ -1,0 +1,79 @@
+data_pocket21_atm
+# 
+loop_
+_struct.pdbx_descriptor
+This is a mmcif format file writen by the programm fpocket.                 
+It represents the atoms contacted by the voronoi vertices of the pocket.  
+                                                                           
+Information about the pocket    21:
+0  - Pocket Score                      : 0.0314
+1  - Drug Score                        : 0.0141
+2  - Number of alpha spheres           :    47
+3  - Mean alpha-sphere radius          : 3.9551
+4  - Mean alpha-sphere Solvent Acc.    : 0.5901
+5  - Mean B-factor of pocket residues  : 0.2940
+6  - Hydrophobicity Score              : -2.1818
+7  - Polarity Score                    :     8
+8  - Amino Acid based volume Score     : 4.2727
+9  - Pocket volume (Monte Carlo)       : 485.6558
+10  -Pocket volume (convex hull)       : 60.0286
+11 - Charge Score                      :    -2
+12 - Local hydrophobic density Score   : 24.6250
+13 - Number of apolar alpha sphere     :    32
+14 - Proportion of apolar alpha sphere : 0.6809
+# 
+loop_
+_atom_site.group_PDB
+_atom_site.id
+_atom_site.type_symbol
+_atom_site.label_atom_id
+_atom_site.label_alt_id
+_atom_site.label_comp_id
+_atom_site.label_asym_id
+_atom_site.label_seq_id
+_atom_site.pdbx_PDB_ins_code
+_atom_site.Cartn_x
+_atom_site.Cartn_y
+_atom_site.Cartn_z
+_atom_site.occupancy
+_atom_site.pdbx_formal_charge
+_atom_site.auth_seq_id
+_atom_site.auth_asym_id
+ATOM    1318     O  OE2 ?  GLU      B 3 ?   41.725   -0.251   46.669   0.00  0 13 B
+ATOM    2926     C   CA ?  GLU      C 41 ?   43.681   -6.450   41.759   0.00  0 426 C
+ATOM    2930     C   CG ?  GLU      C 41 ?   42.604   -5.256   39.754   0.00  0 426 C
+ATOM    2929     C   CB ?  GLU      C 41 ?   43.869   -5.850   40.354   0.00  0 426 C
+ATOM    1317     O  OE1 ?  GLU      B 3 ?   40.215   -1.851   46.682  -3.35  0 13 B
+ATOM    2933     O  OE2 ?  GLU      C 41 ?   42.865   -3.398   38.293   0.00  0 426 C
+ATOM    2956     S   SG A  CYS      C 44 ?   41.974   -5.919   46.558   0.00  0 429 C
+ATOM    1316     C   CD ?  GLU      B 3 ?   41.095   -1.164   47.251   0.00  0 13 B
+ATOM    1314     C   CB ?  GLU      B 3 ?   42.618   -0.733   49.249   0.00  0 13 B
+ATOM    1315     C   CG ?  GLU      B 3 ?   41.390   -1.457   48.718   0.00  0 13 B
+ATOM    2954     C   CB A  CYS      C 44 ?   40.849   -6.611   45.371   0.00  0 429 C
+ATOM    2925     N    N ?  GLU      C 41 ?   44.976   -6.755   42.362  -2.19  0 426 C
+ATOM    2928     O    O ?  GLU      C 41 ?   41.625   -7.633   42.120  -1.07  0 426 C
+ATOM    2958     N    N ?  GLU      C 45 ?   39.262   -8.556   43.589   0.00  0 430 C
+ATOM    2990     C  CG2 ?  VAL      C 48 ?   35.189   -6.870   45.722   0.00  0 433 C
+ATOM    2952     C    C ?  CYS      C 44 ?   39.199   -8.399   44.909   0.00  0 429 C
+ATOM    2921     C   CB ?  ASP      C 40 ?   47.234   -6.162   44.479   0.00  0 425 C
+ATOM    2919     C    C ?  ASP      C 40 ?   45.101   -7.178   43.622   0.00  0 425 C
+ATOM    2920     O    O ?  ASP      C 40 ?   44.145   -7.355   44.390   0.00  0 425 C
+ATOM    1661     C   CE ?  LYS      B 48 ?   37.746   -6.142   49.019   0.00  0 58 B
+ATOM    2923     O  OD1 ?  ASP      C 40 ?   47.992   -7.081   46.555   0.00  0 425 C
+ATOM    2922     C   CG ?  ASP      C 40 ?   48.283   -6.371   45.562   0.00  0 425 C
+ATOM    1678     C   CB ?  ASN      B 50 ?   46.031   -6.818   49.445   0.00  0 60 B
+ATOM    1331     C   CB ?  ARG      B 5 ?   49.494   -3.162   49.510   0.00  0 15 B
+ATOM    1319     N    N ?  MET      B 4 ?   44.595   -1.392   51.814   0.00  0 14 B
+ATOM    1321     C    C ?  MET      B 4 ?   46.724   -2.586   51.868   0.00  0 14 B
+ATOM    1322     O    O ?  MET      B 4 ?   46.287   -3.718   52.082   0.00  0 14 B
+ATOM    1679     C   CG ?  ASN      B 50 ?   44.838   -7.001   48.532   0.00  0 60 B
+ATOM    1680     O  OD1 ?  ASN      B 50 ?   43.690   -7.040   48.988   0.00  0 60 B
+ATOM    1327     N    N ?  ARG      B 5 ?   47.866   -2.356   51.220   0.00  0 15 B
+ATOM    1328     C   CA ?  ARG      B 5 ?   48.732   -3.454   50.818   0.00  0 15 B
+ATOM    1657     O    O ?  LYS      B 48 ?   42.531   -3.884   52.050  -1.07  0 58 B
+ATOM    2963     C   CG ?  GLU      C 45 ?   38.562   -7.391   40.751   0.00  0 430 C
+ATOM    2959     C   CA ?  GLU      C 45 ?   38.084   -8.874   42.785   0.00  0 430 C
+ATOM    1681     N  ND2 ?  ASN      B 50 ?   45.099   -7.118   47.232   0.00  0 60 B
+ATOM    2924     O  OD2 ?  ASP      C 40 ?   49.397   -5.816   45.425  -3.62  0 425 C
+ATOM    1869     O  OE1 ?  GLN      B 72 ?   48.065    0.308   50.513  -0.54  0 82 B
+# 

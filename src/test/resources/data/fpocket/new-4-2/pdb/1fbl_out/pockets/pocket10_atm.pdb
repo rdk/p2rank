@@ -1,0 +1,38 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket    10:
+HEADER 0  - Pocket Score                      : 0.0719
+HEADER 1  - Drug Score                        : 0.0002
+HEADER 2  - Number of alpha spheres           :    15
+HEADER 3  - Mean alpha-sphere radius          : 3.9982
+HEADER 4  - Mean alpha-sphere Solvent Acc.    : 0.6859
+HEADER 5  - Mean B-factor of pocket residues  : 0.3566
+HEADER 6  - Hydrophobicity Score              : -39.6000
+HEADER 7  - Polarity Score                    :     4
+HEADER 8  - Amino Acid based volume Score     : 3.8000
+HEADER 9  - Pocket volume (Monte Carlo)       : 362.7307
+HEADER 10 - Pocket volume (convex hull)       : 14.4113
+HEADER 11 - Charge Score                      :    -1
+HEADER 12 - Local hydrophobic density Score   : 2.0000
+HEADER 13 - Number of apolar alpha sphere     :     3
+HEADER 14 - Proportion of apolar alpha sphere : 0.2000
+ATOM    578    N ASP A 170      67.661  70.356 -19.309  0.00  0.00           N 0
+ATOM    586    N ASN A 171      69.297  71.920 -20.705  0.52  2.19           N 0
+ATOM    569    C ARG A 169      66.911  69.257 -19.307  0.00  0.00           C 0
+ATOM    592  OD1 ASN A 171      68.536  72.234 -24.042  0.00  0.00           O 0
+ATOM    571   CB ARG A 169      66.724  66.727 -19.251  0.00  0.00           C 0
+ATOM    570    O ARG A 169      65.697  69.272 -19.557  0.59  7.50           O 0
+ATOM    568   CA ARG A 169      67.647  67.940 -19.037  0.00  0.00           C 0
+ATOM    572   CG ARG A 169      67.436  65.426 -18.821  0.00  0.00           C 0
+ATOM    556  OD2 ASP A 167      71.881  65.193 -19.029  0.00  0.00           O 0
+ATOM    593  ND2 ASN A 171      70.700  71.537 -24.149  0.00  0.00           N 0
+ATOM    555  OD1 ASP A 167      71.421  67.321 -18.630  0.51  6.43           O 0
+ATOM    605   CG PRO A 173      74.779  70.578 -17.497  0.00  0.00           C 0
+ATOM    606   CD PRO A 173      74.008  71.786 -18.011  0.00  0.00           C 0
+ATOM    587   CA ASN A 171      70.469  72.591 -21.288  0.00  0.00           C 0
+ATOM    589    O ASN A 171      71.865  74.468 -20.802  0.17  4.29           O 0
+ATOM    588    C ASN A 171      71.203  73.531 -20.361  0.00  0.00           C 0
+TER
+END

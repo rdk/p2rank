@@ -1,0 +1,59 @@
+HEADER
+HEADER This is a pdb format file writen by the programm fpocket.                 
+HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  
+HEADER                                                                           
+HEADER Information about the pocket     2:
+HEADER 0  - Pocket Score                      : 0.2747
+HEADER 1  - Drug Score                        : 0.6389
+HEADER 2  - Number of alpha spheres           :    66
+HEADER 3  - Mean alpha-sphere radius          : 3.7951
+HEADER 4  - Mean alpha-sphere Solvent Acc.    : 0.4269
+HEADER 5  - Mean B-factor of pocket residues  : 0.2966
+HEADER 6  - Hydrophobicity Score              : 27.3333
+HEADER 7  - Polarity Score                    :     8
+HEADER 8  - Amino Acid based volume Score     : 4.6667
+HEADER 9  - Pocket volume (Monte Carlo)       : 508.5406
+HEADER 10 - Pocket volume (convex hull)       : 111.0287
+HEADER 11 - Charge Score                      :    -2
+HEADER 12 - Local hydrophobic density Score   : 21.2000
+HEADER 13 - Number of apolar alpha sphere     :    25
+HEADER 14 - Proportion of apolar alpha sphere : 0.3788
+ATOM   2030    N GLY A 353      92.709  93.424  14.382  0.62  3.28           N 0
+ATOM   1499   CZ ARG A 291      95.350  95.469  11.055  0.00  0.00           C 0
+ATOM   1917  CG2 VAL A 340      90.359  98.930  14.288  0.00  0.00           C 0
+ATOM   1501  NH2 ARG A 291      95.555  94.660  12.093  0.60  1.09           N 0
+ATOM   1897    O ASP A 338      94.712  96.238  16.850  0.00  0.00           O 0
+ATOM   2031   CA GLY A 353      92.929  92.838  13.087  0.00  0.00           C 0
+ATOM   2034    N GLN A 354      90.985  91.864  12.072  0.61  2.19           N 0
+ATOM   1766  NE1 TRP A 321      87.376  94.299  10.985  0.61  3.28           N 0
+ATOM   1500  NH1 ARG A 291      94.518  95.096  10.096  0.00  0.00           N 0
+ATOM   1498   NE ARG A 291      96.003  96.627  10.946  0.00  0.00           N 0
+ATOM   1896    C ASP A 338      95.099  97.392  17.031  0.00  0.00           C 0
+ATOM   1900  OD1 ASP A 338      97.441  96.900  14.084  0.50  6.43           O 0
+ATOM   1755  CE1 PHE A 320      87.395  94.822   4.711  0.00  0.00           C 0
+ATOM   1743    O VAL A 319      83.670  90.155   5.361  0.57  8.57           O 0
+ATOM   1750    O PHE A 320      85.622  91.405   8.199  0.49  7.50           O 0
+ATOM   1753  CD1 PHE A 320      86.108  94.450   5.016  0.00  0.00           C 0
+ATOM   1756  CE2 PHE A 320      87.706  95.614   6.988  0.00  0.00           C 0
+ATOM   2039   CG GLN A 354      90.074  88.874   9.729  0.00  0.00           C 0
+ATOM   2035   CA GLN A 354      90.097  90.818  11.514  0.00  0.00           C 0
+ATOM   2038   CB GLN A 354      90.904  89.769  10.696  0.00  0.00           C 0
+ATOM   1513  OE1 GLU A 293      92.036  99.716   4.184  0.50  3.21           O 0
+ATOM   1488   CG LEU A 290      90.805  99.842   9.831  0.00  0.00           C 0
+ATOM   1497   CD ARG A 291      95.897  97.518   9.791  0.00  0.00           C 0
+ATOM   1486    O LEU A 290      93.143 101.479   7.967  0.65  1.07           O 0
+ATOM   1622  NH2 ARG A 304      91.434  96.549   3.261  0.45  8.75           N 0
+ATOM   1757   CZ PHE A 320      88.210  95.406   5.708  0.00  0.00           C 0
+ATOM   2042  NE2 GLN A 354      91.399  88.156   7.801  0.00  0.00           N 0
+ATOM   1748   CA PHE A 320      84.262  92.537   6.614  0.00  0.00           C 0
+ATOM   1495   CB ARG A 291      95.685  99.845   8.999  0.00  0.00           C 0
+ATOM   1489  CD1 LEU A 290      91.634  99.397  11.032  0.00  0.00           C 0
+ATOM   1861  OE2 GLU A 333      94.235 102.094  12.886  0.50  2.14           O 0
+ATOM   2017  CG1 VAL A 351      88.563  93.625  14.902  0.00  0.00           C 0
+ATOM   1490  CD2 LEU A 290      89.399  99.258   9.935  0.00  0.00           C 0
+ATOM   1769  CZ2 TRP A 321      87.037  96.703  10.347  0.00  0.00           C 0
+ATOM   1529   SD MET A 295      86.730  99.845   6.317  0.00  0.00           S 0
+ATOM   1528   CG MET A 295      87.583 100.943   7.504  0.00  0.00           C 0
+ATOM   1902    N GLU A 339      94.267  98.375  17.341  0.89  4.37           N 0
+TER
+END

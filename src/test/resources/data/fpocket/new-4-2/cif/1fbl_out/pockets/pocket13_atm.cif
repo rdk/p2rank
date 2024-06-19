@@ -1,0 +1,64 @@
+data_pocket13_atm
+# 
+loop_
+_struct.pdbx_descriptor
+This is a mmcif format file writen by the programm fpocket.                 
+It represents the atoms contacted by the voronoi vertices of the pocket.  
+                                                                           
+Information about the pocket    13:
+0  - Pocket Score                      : 0.0400
+1  - Drug Score                        : 0.0003
+2  - Number of alpha spheres           :    24
+3  - Mean alpha-sphere radius          : 4.0819
+4  - Mean alpha-sphere Solvent Acc.    : 0.6234
+5  - Mean B-factor of pocket residues  : 0.2034
+6  - Hydrophobicity Score              : 18.7000
+7  - Polarity Score                    :     7
+8  - Amino Acid based volume Score     : 3.8000
+9  - Pocket volume (Monte Carlo)       : 392.7729
+10  -Pocket volume (convex hull)       : 20.1978
+11 - Charge Score                      :    -2
+12 - Local hydrophobic density Score   : 5.0000
+13 - Number of apolar alpha sphere     :     6
+14 - Proportion of apolar alpha sphere : 0.2500
+# 
+loop_
+_atom_site.group_PDB
+_atom_site.id
+_atom_site.type_symbol
+_atom_site.label_atom_id
+_atom_site.label_alt_id
+_atom_site.label_comp_id
+_atom_site.label_asym_id
+_atom_site.label_seq_id
+_atom_site.pdbx_PDB_ins_code
+_atom_site.Cartn_x
+_atom_site.Cartn_y
+_atom_site.Cartn_z
+_atom_site.occupancy
+_atom_site.pdbx_formal_charge
+_atom_site.auth_seq_id
+_atom_site.auth_asym_id
+ATOM    1048     O  OG1 ?  THR      A 131 ?   74.935   97.754  -10.900   0.00  0 230 A
+ATOM    1        N    N ?  PHE      A 1 ?   68.793   97.892  -10.656  -0.84  0 100 A
+ATOM    1042     O   OG ?  SER      A 130 ?   70.978   95.683   -8.808   0.00  0 229 A
+ATOM    1214     O  OD1 ?  ASP      A 152 ?   68.535   99.008   -8.256  -1.21  0 251 A
+ATOM    1361     O  OE1 ?  GLN      A 174 ?   69.381  102.382   -3.770  -3.35  0 273 A
+ATOM    1384     O  OE1 ?  GLN      A 177 ?   73.818  104.293   -5.206   0.00  0 276 A
+ATOM    1057     O  OD2 ?  ASP      A 132 ?   71.198   98.568   -4.854  -0.40  0 231 A
+ATOM    1367     C   CB ?  THR      A 175 ?   73.047   99.995   -1.899   0.00  0 274 A
+ATOM    1055     C   CG ?  ASP      A 132 ?   72.139   97.761   -4.978   0.00  0 231 A
+ATOM    1056     O  OD1 ?  ASP      A 132 ?   72.924   97.545   -4.046   0.00  0 231 A
+ATOM    1369     C  CG2 ?  THR      A 175 ?   74.544   99.671   -1.737   0.00  0 274 A
+ATOM    1704     C   CG ?  LEU      A 215 ?   78.746  100.534   -1.346   0.00  0 314 A
+ATOM    1064     C  CG2 ?  ILE      A 133 ?   77.018   96.507   -2.555   0.00  0 232 A
+ATOM    1705     C  CD1 ?  LEU      A 215 ?   78.003   99.267   -0.966   0.00  0 314 A
+ATOM    1058     N    N ?  ILE      A 133 ?   75.362   95.805   -5.044   0.00  0 232 A
+ATOM    1046     O    O ?  THR      A 131 ?   76.093   96.116   -8.107  -0.40  0 230 A
+ATOM    1703     C   CB ?  LEU      A 215 ?   80.171  100.235   -1.834   0.00  0 314 A
+ATOM    1062     C   CB ?  ILE      A 133 ?   77.295   95.345   -3.446   0.00  0 232 A
+ATOM    1702     O    O ?  LEU      A 215 ?   81.139   97.287   -1.739  -0.54  0 314 A
+ATOM    1054     C   CB ?  ASP      A 132 ?   72.291   96.997   -6.293   0.00  0 231 A
+ATOM    1050     N    N ?  ASP      A 132 ?   73.826   96.137   -8.010  -1.09  0 231 A
+ATOM    1051     C   CA ?  ASP      A 132 ?   73.755   96.658   -6.645   0.00  0 231 A
+# 
