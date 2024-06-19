@@ -2,7 +2,7 @@ package cz.siret.prank.domain
 
 import cz.siret.prank.domain.labeling.ResidueLabeling
 import cz.siret.prank.domain.loaders.LoaderParams
-import cz.siret.prank.domain.loaders.StructureTransformation
+import cz.siret.prank.geom.transform.GeometricTransformation
 import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.features.implementation.conservation.ConservationScore
 import cz.siret.prank.geom.Atoms
@@ -17,7 +17,6 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 import org.biojava.nbio.structure.Structure
-import org.biojava.nbio.structure.StructureImpl
 import org.biojava.nbio.structure.secstruc.SecStrucType
 
 import javax.annotation.Nullable
@@ -449,20 +448,20 @@ class Protein implements Parametrized {
      * @param inplaceStructureTransformation
      * @return
      */
-    Protein transformedCopy(String newName, Consumer<Structure> inplaceStructureTransformation) {
+    Protein transformedCopy(String newName, GeometricTransformation transformation) {
         Structure newStructure = PdbUtils.deepCopyStructure(structure)
 
-        inplaceStructureTransformation.accept(newStructure)
+        transformation.applyToStructure(newStructure)
 
         return fromStructure(newStructure, newName, fileName, loaderParams)
     }
 
-    Protein transformed(@Nullable StructureTransformation transformation) {
+    Protein transformed(@Nullable GeometricTransformation transformation) {
         if (transformation == null) {
             return this
         }
 
-        return transformedCopy(name + "-" + transformation.name, transformation.inplaceStructureTransformation)
+        return transformedCopy(name + "-" + transformation.name, transformation)
     }
 
 //===========================================================================================================//

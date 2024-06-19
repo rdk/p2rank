@@ -5,6 +5,7 @@ import cz.siret.prank.domain.Prediction
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Point
+import cz.siret.prank.geom.transform.GeometricTransformation
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.PdbUtils
@@ -15,6 +16,7 @@ import org.biojava.nbio.structure.Atom
 import org.biojava.nbio.structure.Structure
 import org.biojava.nbio.structure.StructureImpl
 
+import javax.annotation.Nullable
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -50,9 +52,9 @@ class FPocketLoader extends PredictionLoader implements Parametrized {
     }
 
     @Override
-    Prediction loadPrediction(String pocketPredictionOutputFile, Protein liganatedProtein) {
+    Prediction loadPrediction(String pocketPredictionOutputFile, Protein queryProtein) {
         
-        return loadResultFromFile(pocketPredictionOutputFile, liganatedProtein)
+        return loadResultFromFile(pocketPredictionOutputFile, queryProtein)
     }
 
 
@@ -83,11 +85,16 @@ class FPocketLoader extends PredictionLoader implements Parametrized {
         File resultFile = new File(resultPdbFileName)
 
         boolean isFpocket3 = isFpocket3Prediction(resultFile)
-        String formatExtension = Futils.realExtension(resultPdbFileName)  // "pdb" or "cif"
 
 
         List<Atoms> fpocketGroups = loadPocketGroups(resultPdbFileName)
         log.info "loading ${fpocketGroups.size()} pockets"
+
+        if (hasTransformation()) {
+            for (Atoms atoms : fpocketGroups) {
+                transformation.applyToAtoms(atoms)
+            }
+        }
 
         int pocketIndex = 0
         if (isFpocket3) {
@@ -178,8 +185,6 @@ HETATM55930 APOL STP C   2      -2.407 -22.341  -6.002  0.00  0.00          Ve
             if (!(line.startsWith('HETATM') && line.contains('STP C') && line.contains('Ve'))) {
                 continue
             }
-
-            // TODO update for cif
 
             int seqNum = line.substring(22, 26).toInteger()
             double x = line.substring(30, 37).toDouble()

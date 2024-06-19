@@ -8,7 +8,7 @@ import cz.siret.prank.domain.labeling.ResidueLabeler
 import cz.siret.prank.domain.loaders.DatasetItemLoader
 import cz.siret.prank.domain.loaders.ExtendedResidueId
 import cz.siret.prank.domain.loaders.LoaderParams
-import cz.siret.prank.domain.loaders.StructureTransformation
+import cz.siret.prank.geom.transform.GeometricTransformation
 import cz.siret.prank.domain.loaders.pockets.*
 import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.geom.Atoms
@@ -24,7 +24,6 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 import org.biojava.nbio.structure.Group
-import org.biojava.nbio.structure.Structure
 
 import javax.annotation.Nonnull
 import javax.annotation.Nullable
@@ -32,7 +31,6 @@ import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicBoolean
-import java.util.function.Consumer
 
 import static cz.siret.prank.utils.Cutils.newSynchronizedList
 import static cz.siret.prank.utils.Sutils.*
@@ -274,7 +272,7 @@ class Dataset implements Parametrized, Writable, Failable {
 //===========================================================================================================//
 
     private DatasetItemLoader getLoader(Item item) {
-        new DatasetItemLoader(getLoaderParams(item), getPredictionLoader())
+        new DatasetItemLoader(getLoaderParams(item), getNewPredictionLoader().withTransformation(item.transformation))
     }
 
     private LoaderParams getLoaderParams(Item item) {
@@ -290,7 +288,7 @@ class Dataset implements Parametrized, Writable, Failable {
      * @return null if prediction method is not specified in the dataset
      */
     @Nullable
-    private PredictionLoader getPredictionLoader() {
+    private PredictionLoader getNewPredictionLoader() {
         String predictionMethod = attributes.get(PARAM_PREDICTION_METHOD)  // LBS prediction method name specified in the dataset
 
         if (predictionMethod == null) {
@@ -772,7 +770,7 @@ class Dataset implements Parametrized, Writable, Failable {
         /**
          * Optional structure transformation applied after loading
          */
-        @Nullable StructureTransformation transformation
+        @Nullable GeometricTransformation transformation
 
         /**
          * Loaded protein with prediction (if available)

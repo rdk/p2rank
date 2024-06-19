@@ -6,12 +6,15 @@ import cz.siret.prank.domain.Protein
 import cz.siret.prank.domain.loaders.LoaderParams
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Struct
+import cz.siret.prank.geom.transform.GeometricTransformation
 import cz.siret.prank.utils.PdbUtils
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 import org.biojava.nbio.structure.Element
 import org.biojava.nbio.structure.Group
 import org.biojava.nbio.structure.Structure
+
+import javax.annotation.Nullable
 
 /**
  * Loader for predictions produced by ConCavity
@@ -29,7 +32,7 @@ class ConcavityLoader extends PredictionLoader {
      * @return
      */
     @Override
-    Prediction loadPrediction(String ppOutputFile, Protein liganatedProtein) {
+    Prediction loadPrediction(String ppOutputFile, Protein queryProtein) {
 
         // a.001.001.001_1s69a_xxxxx_residue.pdb in the same dir
         String proteinFile = ppOutputFile.replaceFirst("_pocket.pdb\$", "_residue.pdb")

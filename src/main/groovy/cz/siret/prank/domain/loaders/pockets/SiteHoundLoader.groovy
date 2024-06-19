@@ -4,10 +4,13 @@ import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Prediction
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.geom.Point
+import cz.siret.prank.geom.transform.GeometricTransformation
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Sutils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+
+import javax.annotation.Nullable
 
 /**
  * Loader for SiteHound pocket predictions (*_summary.dat file)
@@ -45,9 +48,9 @@ class SiteHoundLoader extends PredictionLoader implements Parametrized {
      * @return
      */
     @Override
-    Prediction loadPrediction(String predictionOutputFile, Protein liganatedProtein) {
+    Prediction loadPrediction(String predictionOutputFile, Protein queryProtein) {
 
-        return new Prediction(liganatedProtein, loadPockets(predictionOutputFile, liganatedProtein))
+        return new Prediction(queryProtein, loadPockets(predictionOutputFile, queryProtein))
     }
 
     List<SiteHoundPocket> loadPockets(String predictionOutputFile, Protein liganatedProtein) {

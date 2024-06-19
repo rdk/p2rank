@@ -4,8 +4,11 @@ import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Prediction
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.geom.Point
+import cz.siret.prank.geom.transform.GeometricTransformation
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+
+import javax.annotation.Nullable
 
 /**
  * Loader for MetaPocket 2.0 pocket predictions from *_mpt.pdb file
@@ -25,9 +28,9 @@ class MetaPocket2Loader extends PredictionLoader {
      * @return
      */
     @Override
-    Prediction loadPrediction(String predictionOutputFile, Protein liganatedProtein) {
+    Prediction loadPrediction(String predictionOutputFile, Protein queryProtein) {
 
-        return new Prediction(liganatedProtein, loadPockets(predictionOutputFile, liganatedProtein))
+        return new Prediction(queryProtein, loadPockets(predictionOutputFile, queryProtein))
     }
 
     /**

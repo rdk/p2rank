@@ -5,26 +5,23 @@ import cz.siret.prank.collectors.CollectorFactory
 import cz.siret.prank.collectors.DataPreprocessor
 import cz.siret.prank.collectors.VectorCollector
 import cz.siret.prank.domain.Dataset
-import cz.siret.prank.domain.loaders.StructureTransformation
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.features.FeatureVector
-import cz.siret.prank.geom.Rotations
+import cz.siret.prank.geom.transform.Rotations
+import cz.siret.prank.geom.transform.Rotation
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.ml.FeatureVectors
 import cz.siret.prank.program.routines.Routine
 import cz.siret.prank.utils.Futils
-import cz.siret.prank.utils.PdbUtils
 import cz.siret.prank.utils.PerfUtils
 import cz.siret.prank.utils.WekaUtils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-import org.biojava.nbio.structure.Structure
 import us.ihmc.euclid.matrix.RotationMatrix
 import weka.core.Instance
 import weka.core.Instances
 
 import java.util.concurrent.atomic.AtomicInteger
-import java.util.function.Consumer
 
 import static cz.siret.prank.utils.ATimer.startTimer
 import static cz.siret.prank.utils.Cutils.newSynchronizedList
@@ -84,6 +81,7 @@ class CollectVectorsRoutine extends Routine {
             String nameSuffix = "rotation." + i
 
             RotationMatrix matrix = Rotations.generateRandomRotation(rand)
+            Rotation rotation = new Rotation(nameSuffix, matrix)
 
             //matrix.setIdentity() // TODO xxx temp
             matrix.normalize()
@@ -93,13 +91,7 @@ class CollectVectorsRoutine extends Routine {
             List<Dataset.Item> rotItems = dataset.items.collect { it.cleanCopy() }
             for (Dataset.Item item : rotItems) {
                 item.label += nameSuffix
-                item.transformation = new StructureTransformation(nameSuffix, new Consumer<Structure>() {
-                    @Override
-                    void accept(Structure structure) {
-                        Rotations.rotateStructureInplace(structure, matrix)
-                    }
-                })
-
+                item.transformation = rotation
                 // TODO conditionally rotate predictions (pockets of other methods)
             }
 

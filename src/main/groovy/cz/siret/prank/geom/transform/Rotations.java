@@ -1,4 +1,4 @@
-package cz.siret.prank.geom;
+package cz.siret.prank.geom.transform;
 
 import org.biojava.nbio.structure.Calc;
 import org.biojava.nbio.structure.Structure;
