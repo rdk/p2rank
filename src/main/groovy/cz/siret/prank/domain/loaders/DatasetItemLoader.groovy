@@ -54,7 +54,7 @@ class DatasetItemLoader implements Parametrized, Writable {
         }
 
         if (item.pocketPredictionFile != null) {
-            res.prediction = predictionLoader.loadPrediction(item.pocketPredictionFile, res.holoProtein)
+            res.prediction = predictionLoader.withTransformation(item.transformation).loadPrediction(item.pocketPredictionFile, res.holoProtein)
         } else {
             res.prediction = new Prediction(res.protein, [])
         }

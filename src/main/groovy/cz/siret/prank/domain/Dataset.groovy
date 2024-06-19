@@ -272,7 +272,7 @@ class Dataset implements Parametrized, Writable, Failable {
 //===========================================================================================================//
 
     private DatasetItemLoader getLoader(Item item) {
-        new DatasetItemLoader(getLoaderParams(item), getNewPredictionLoader().withTransformation(item.transformation))
+        new DatasetItemLoader(getLoaderParams(item), getNewPredictionLoader())
     }
 
     private LoaderParams getLoaderParams(Item item) {
