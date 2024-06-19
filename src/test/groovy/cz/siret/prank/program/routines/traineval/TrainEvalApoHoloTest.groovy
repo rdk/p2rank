@@ -68,25 +68,25 @@ class TrainEvalApoHoloTest {
         String dsPath = "$data_dir/apoholo/zn_apoholo.ds"
 
         doTestTrainEvalAH(dsPath, dsPath, {
-            it.classifier = "FasterForest2"
+            it.classifier = "FasterForest"
             it.sample_negatives_from_decoys = false
             it.apoholo_use_for_train = true
             it.apoholo_use_for_eval = true
         })
         doTestTrainEvalAH(dsPath, dsPath, {
-            it.classifier = "FasterForest2"
+            it.classifier = "FasterForest"
             it.sample_negatives_from_decoys = false
             it.apoholo_use_for_train = false
             it.apoholo_use_for_eval = true
         })
         doTestTrainEvalAH(dsPath, dsPath, {
-            it.classifier = "FasterForest2"
+            it.classifier = "FasterForest"
             it.sample_negatives_from_decoys = false
             it.apoholo_use_for_train = true
             it.apoholo_use_for_eval = false
         })
         doTestTrainEvalAH(dsPath, dsPath, {
-            it.classifier = "FasterForest2"
+            it.classifier = "FasterForest"
             it.sample_negatives_from_decoys = false
             it.apoholo_use_for_train = false
             it.apoholo_use_for_eval = false

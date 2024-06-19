@@ -33,7 +33,7 @@ class SurfacePointSampler extends PointSampler implements Parametrized {
         SampledPoints res
         if (Params.inst.strict_inner_points && (pocket instanceof FPocketLoader.FPocketPocket)) {
             FPocketLoader.FPocketPocket fpocket = (FPocketLoader.FPocketPocket) pocket
-            res = protSurf.cutoutShell(fpocket.vornoiCenters, 6) // 6 is max radius of fpocket alpha sphere
+            res = protSurf.cutoutShell(fpocket.voronoiCenters, 6) // 6 is max radius of fpocket alpha sphere
         } else {
 
             res = protSurf.cutoutShell(pocket.surfaceAtoms, protein.accessibleSurface.solventRadius + VAN_DER_WAALS_COMPENSATION)

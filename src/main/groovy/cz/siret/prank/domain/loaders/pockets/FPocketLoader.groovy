@@ -1,27 +1,30 @@
 package cz.siret.prank.domain.loaders.pockets
 
+import com.google.common.base.Splitter
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Prediction
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Point
-import cz.siret.prank.geom.transform.GeometricTransformation
+import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.PdbUtils
+import cz.siret.prank.utils.Sutils
 import groovy.transform.CompileStatic
 import groovy.transform.TypeCheckingMode
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
+import org.biojava.nbio.structure.AtomImpl
+import org.biojava.nbio.structure.ChainImpl
 import org.biojava.nbio.structure.Structure
 import org.biojava.nbio.structure.StructureImpl
 
-import javax.annotation.Nullable
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 /**
- * Loader for predictions produced by Fpocket (v1.0 and v2.0).
+ * Loader for predictions produced by Fpocket (1.0 - 4.2).
  */
 @Slf4j
 @CompileStatic
@@ -29,7 +32,7 @@ class FPocketLoader extends PredictionLoader implements Parametrized {
 
     public static class FPocketPocket extends Pocket {
 
-        Atoms vornoiCenters
+        Atoms voronoiCenters
         Atoms sasPoints
 
         FPocketPocket() {
@@ -38,7 +41,7 @@ class FPocketLoader extends PredictionLoader implements Parametrized {
 
         @Override
         Atom getCentroid() {
-            return vornoiCenters.centerOfMass
+            return voronoiCenters.centerOfMass
         }
 
         FPocketStats getFpstats() {
@@ -57,11 +60,12 @@ class FPocketLoader extends PredictionLoader implements Parametrized {
         return loadResultFromFile(pocketPredictionOutputFile, queryProtein)
     }
 
-
+    /**
+     * since Fpocket 3.0 pockets are indexed starting with 1 (older versions from 0)
+     *
+     * TODO find better way to check fpocket version
+     */
     boolean isFpocket3Prediction(File resultFile) {
-        // Fpocket 3.0 pockets are indexed starting with 1 (older versions from 0)
-        // TODO find better way to check fpocket version
-
         File pocketsSubdir = new File(resultFile.parent + "/pockets")
         for (String fname : pocketsSubdir.list()) {
             if (fname.startsWith("pocket0")) {
@@ -74,20 +78,25 @@ class FPocketLoader extends PredictionLoader implements Parametrized {
     /**
      * must be called on main fpocket result pdb file in directory with ./pockets subdirectory
      *
-     * @param resultPdbFileName
+     * @param resultStructFileName
      */
-    private Prediction loadResultFromFile(String resultPdbFileName, Protein queryProtein) {
+    private Prediction loadResultFromFile(String resultStructFileName, Protein queryProtein) {
 
         Protein protein = queryProtein   // original query protein (input to fpocket)
         protein.proteinAtoms.withIndex() // create index on protein atoms
 
+
+
         List<Pocket> pockets = new ArrayList<>()
-        File resultFile = new File(resultPdbFileName)
+        File resultFile = new File(resultStructFileName)
 
-        boolean isFpocket3 = isFpocket3Prediction(resultFile)
+        String extension = Futils.lastExt(resultStructFileName)  // pdb or cif
+        String pocketsDir = "${resultFile.parent}/pockets" 
+
+        boolean isFpocket3OrNewer = isFpocket3Prediction(resultFile)
 
 
-        List<Atoms> fpocketGroups = loadPocketGroups(resultPdbFileName)
+        List<Atoms> fpocketGroups = loadPocketGroups(resultStructFileName)
         log.info "loading ${fpocketGroups.size()} pockets"
 
         if (hasTransformation()) {
@@ -96,10 +105,7 @@ class FPocketLoader extends PredictionLoader implements Parametrized {
             }
         }
 
-        int pocketIndex = 0
-        if (isFpocket3) {
-            pocketIndex = 1
-        }
+        int pocketIndex = isFpocket3OrNewer ? 1 : 0
 
         int rank = 1
         for (Atoms g in fpocketGroups) {
@@ -108,36 +114,36 @@ class FPocketLoader extends PredictionLoader implements Parametrized {
 
             FPocketPocket pocket = new FPocketPocket()
             pocket.rank = rank++
-            pocket.vornoiCenters = g
+            pocket.voronoiCenters = g
 
-            String pocketAtmFile = resultFile.parent + File.separator + "pockets" + File.separator + "pocket${pocketIndex}_atm.pdb" // for now only pdb format
+            String pocketAtmFile = "${pocketsDir}/pocket${pocketIndex}_atm.${extension}"
             if (!Futils.exists(pocketAtmFile)) {
                 pocketAtmFile += ".gz"
             }
-            Structure pocketAtmStructure = loadPocketStructureAndDetails(pocketAtmFile, pocket)
-            Atoms pocketAtmAtoms = Atoms.allFromStructure(pocketAtmStructure)
+            Atoms pocketAtmAtoms = loadPocketAtomsAndDetails(pocketAtmFile, pocket)
 
             // we want Atom objects from/linked to original structure
             Atoms surfaceAtoms = new Atoms()
             for (Atom atm in pocketAtmAtoms.list) {
                 Atom linkedAtom = protein.proteinAtoms.getByID(atm.PDBserial)
-                // TODO fpocket3: check why ids not found / select atoms by distance
-                if (linkedAtom!=null) {
+                
+                if (linkedAtom != null) {
                     surfaceAtoms.add(linkedAtom)
                 } else {
+                    // TODO fpocket3: check why ids not found / select atoms by distance
                     log.warn "linked atom from pocket not found in protein [id:$atm.PDBserial]"
                 }
             }
 
             pocket.surfaceAtoms = surfaceAtoms
             pocket.name = "pocket.$pocket.rank"
-            pocket.centroid = pocket.vornoiCenters.centerOfMass
+            pocket.centroid = pocket.voronoiCenters.centerOfMass
             pocket.score = pocket.stats.pocketScore
 
             // sas points
             double surfaceSasCutoff = params.getSasCutoffDist()
             Atoms sas2 = queryProtein.accessibleSurface.points.cutoutShell(surfaceAtoms, surfaceSasCutoff)
-            Atoms sas1 = queryProtein.accessibleSurface.points.cutoutShell(pocket.vornoiCenters, params.extended_pocket_cutoff) // probably not needed
+            Atoms sas1 = queryProtein.accessibleSurface.points.cutoutShell(pocket.voronoiCenters, params.extended_pocket_cutoff) // probably not needed
             Atoms sas = Atoms.union(sas1, sas2)
             pocket.sasPoints = sas
 
@@ -208,39 +214,66 @@ HETATM55930 APOL STP C   2      -2.407 -22.341  -6.002  0.00  0.00          Ve
         return res
     }
 
+    Splitter CIF_ATOM_LINE_SPLITTER = Splitter.on(" ").omitEmptyStrings().trimResults()
+
     /**
-     *
-     * @param resultCifFileName
+
+     loop_
+     _atom_site.group_PDB
+     _atom_site.id
+     _atom_site.type_symbol
+     _atom_site.label_atom_id
+     _atom_site.label_alt_id
+     _atom_site.label_comp_id
+     _atom_site.label_asym_id
+     _atom_site.label_seq_id
+     _atom_site.pdbx_PDB_ins_code
+     _atom_site.Cartn_x
+     _atom_site.Cartn_y
+     _atom_site.Cartn_z
+     _atom_site.occupancy
+     _atom_site.pdbx_formal_charge
+     _atom_site.auth_seq_id
+     _atom_site.auth_asym_id
+
+     ATOM    2965     C   CB ?  CYS      A 367 ?   82.889  112.429   -5.721   0.00  0 466 A
+     ATOM    2966     S   SG ?  CYS      A 367 ?   82.149  110.870   -5.104   0.00  0 466 A
+     HETATM  2971    Zn   ZN ?   ZN      F 0 ?   67.379   73.289  -14.367   0.00  0 997 A
+     HETATM  2972    Zn   ZN ?   ZN      G 0 ?   70.574   84.649  -10.924   0.00  0 998 A
+     HETATM  1        V APOL .  STP      C 1 .   72.107   81.083   -5.962   0.00  0 1 C
+     HETATM  2        V APOL .  STP      C 1 .   72.593   82.262   -8.528   0.00  0 1 C
+
+     * @param resultCifFile e.g. 1fbl_out.cif
      * @return
-     *
-
-HETATM      1    V APOL .  STP   C .   73 ?   -1.509 -17.074 -13.830  0.00  0   C
-HETATM      2    V APOL .  STP   C .   73 ?   -2.127 -16.518 -13.824  0.00  0   C
-HETATM      3    V APOL .  STP   C .   73 ?   -1.542 -17.041 -13.794  0.00  0   C
-HETATM      4    V APOL .  STP   C .   73 ?   -1.633 -16.633 -11.976  0.00  0   C
      */
-    private List<Atoms> loadPocketGroupsFromCif(String resultCifFileName) {
-
-        List<String> lines = Futils.readPossiblyCompressedFile(resultCifFileName).readLines()
+    private List<Atoms> loadPocketGroupsFromCif(String resultCifFile) {
+        // Biojava parser fails, missing many columns
+        List<String> lines = Futils.readPossiblyCompressedFile(resultCifFile).readLines()
 
         Map<Integer, Atoms> groups = new HashMap<>()
 
         for (String line : lines) {
-            if (!(line.startsWith('HETATM') && line.contains('STP   C'))) {
+            if (!line.startsWith('HETATM')) {
                 continue
             }
 
-            int seqNum = line.substring(37, 41).toInteger()
-            double x = line.substring(45, 52).toDouble()
-            double y = line.substring(52, 60).toDouble()
-            double z = line.substring(60, 68).toDouble()
+            List<String> cols = CIF_ATOM_LINE_SPLITTER.splitToList(line)
+
+            if (!"STP".equals(cols[5])) {
+                continue
+            }
+
+            int pocketNum = cols[7].toInteger()
+            double x = cols[9].toDouble()
+            double y = cols[10].toDouble()
+            double z = cols[11].toDouble()
 
             Point p = new Point(x, y, z)
 
-            if (!groups.containsKey(seqNum)) {
-                groups.put(seqNum, new Atoms())
+            if (!groups.containsKey(pocketNum)) {
+                groups.put(pocketNum, new Atoms())
             }
-            groups.get(seqNum).add(p)
+            groups.get(pocketNum).add(p)
         }
 
         List<Atoms> res = new ArrayList<>()
@@ -251,6 +284,7 @@ HETATM      4    V APOL .  STP   C .   73 ?   -1.633 -16.633 -11.976  0.00  0   
 
         return res
     }
+
     /**
      * read details from special fpocket output pdb file for one pocket (atom file)
      *
@@ -259,21 +293,21 @@ HETATM      4    V APOL .  STP   C .   73 ?   -1.633 -16.633 -11.976  0.00  0   
      * @param pocketAtmFile
      * @param fpocket load details to
      */
-    private Structure loadPocketStructureAndDetails(String pocketAtmFileName, FPocketPocket fpocket) {
+    private Atoms loadPocketAtomsAndDetails(String pocketAtmFileName, FPocketPocket pocket) {
         if (!Futils.exists(pocketAtmFileName)) {
             throw new FileNotFoundException(pocketAtmFileName)
         }
 
         String formatExtension = Futils.realExtension(pocketAtmFileName)
         if (formatExtension == "cif") {
-            return loadPocketStructureAndDetailsFromCif(pocketAtmFileName, fpocket)
+            return loadPocketAtomsAndDetailsFromCif(pocketAtmFileName, pocket)
         } else { // pdb
-            return loadPocketStructureAndDetailsFromPdb(pocketAtmFileName, fpocket)
+            return loadPocketAtomsAndDetailsFromPdb(pocketAtmFileName, pocket)
         }
     }
 
 
-    private Structure loadPocketStructureAndDetailsFromPdb(String pocketAtmFileName, FPocketPocket fpocket) {
+    private Atoms loadPocketAtomsAndDetailsFromPdb(String pocketAtmFileName, FPocketPocket pocket) {
 
         List<String> lines = Futils.readPossiblyCompressedFile(pocketAtmFileName).readLines()
 
@@ -284,7 +318,7 @@ HETATM      4    V APOL .  STP   C .   73 ?   -1.633 -16.633 -11.976  0.00  0   
         int nAtomLines = 0
         for (String line : lines) {
             if (line.startsWith("HEADER")) {
-                fpocket.fpstats.parseLine(line)
+                pocket.fpstats.parseLine(line)
             } else {
                 tmpPdb.append(line)
                 tmpPdb.append("\n")
@@ -295,30 +329,113 @@ HETATM      4    V APOL .  STP   C .   73 ?   -1.633 -16.633 -11.976  0.00  0   
         }
         log.info("ATOM lines in pocket file: {}", nAtomLines)
 
-        fpocket.fpstats.consolidate()
+        pocket.fpstats.consolidate()
 
-        Structure struc = PdbUtils.loadFromString(tmpPdb.toString())
+        Structure structure = PdbUtils.loadFromString(tmpPdb.toString())
 
-        return struc
+        return Atoms.allFromStructure(structure)
     }
 
-    private Structure loadPocketStructureAndDetailsFromCif(String pocketAtmFileName, FPocketPocket fpocket) {
+    /**
 
-        return new StructureImpl() // TODO temp fix
+     loop_
+     _struct.pdbx_descriptor
+     This is a mmcif format file writen by the programm fpocket.
+     It represents the atoms contacted by the voronoi vertices of the pocket.
 
-        // TODO fails
+     Information about the pocket     1:
+     0  - Pocket Score                      : 0.6703
+     1  - Drug Score                        : 0.4038
+     2  - Number of alpha spheres           :    60
+     3  - Mean alpha-sphere radius          : 3.9971
+     4  - Mean alpha-sphere Solvent Acc.    : 0.5171
+     5  - Mean B-factor of pocket residues  : 0.0000
+     6  - Hydrophobicity Score              : 11.5000
+     7  - Polarity Score                    :     6
+     8  - Amino Acid based volume Score     : 3.5833
+     9  - Pocket volume (Monte Carlo)       : 469.0056
+     10  -Pocket volume (convex hull)       : 47.4540
+     11 - Charge Score                      :     1
+     12 - Local hydrophobic density Score   : 16.0000
+     13 - Number of apolar alpha sphere     :    17
+     14 - Proportion of apolar alpha sphere : 0.2833
+     #
+     loop_
+     _atom_site.group_PDB
+     _atom_site.id
+     _atom_site.type_symbol
+     _atom_site.label_atom_id
+     _atom_site.label_alt_id
+     _atom_site.label_comp_id
+     _atom_site.label_asym_id
+     _atom_site.label_seq_id
+     _atom_site.pdbx_PDB_ins_code
+     _atom_site.Cartn_x
+     _atom_site.Cartn_y
+     _atom_site.Cartn_z
+     _atom_site.occupancy
+     _atom_site.pdbx_formal_charge
+     _atom_site.auth_seq_id
+     _atom_site.auth_asym_id
+     ATOM    942      C  CG1 ?  VAL      A 116 ?   69.427   79.635   -4.211   0.00  0 215 A
+     ATOM    972      O  OE2 ?  GLU      A 120 ?   68.915   81.437   -7.387   0.00  0 219 A
+     HETATM  2972    Zn   ZN ?   ZN      G 0 ?   70.574   84.649  -10.924   0.00  0 998 A
+
+     * @param pocketAtmFileName
+     * @param pocket
+     * @return
+     */
+    private Atoms loadPocketAtomsAndDetailsFromCif(String pocketAtmFileName, FPocketPocket pocket) {
+        // Biojava parser fails, missing many columns
         // org.rcsb.cif.EmptyColumnException: column pdbx_PDB_model_num is undefined
         // at org.rcsb.cif.model.Column$EmptyColumn.getStringData(Column.java:111) ~[ciftools-java-jdk8-3.0.0.jar:?]
 
 
-        Structure struc = PdbUtils.loadFromCifFile(pocketAtmFileName)
+        List<String> lines = Futils.readPossiblyCompressedFile(pocketAtmFileName).readLines()
 
-        // TODO parse header in cif description
-        // fpocket.fpstats
+        Atoms atoms = new Atoms()
+        for (String line : lines) {
+            if (!(line.startsWith('ATOM') || line.startsWith('HETATM'))) {
+                continue
+            }
 
-        //fpocket.fpstats.consolidate()
+            List<String> cols = CIF_ATOM_LINE_SPLITTER.splitToList(line)
 
-        return struc
+            int pdbId = cols[1].toInteger()
+            // String element = cols[3]
+            double x = cols[9].toDouble()
+            double y = cols[10].toDouble()
+            double z = cols[11].toDouble()
+
+            atoms.add(simpleAtom(pdbId, x, y, z))
+        }
+
+        //TODO implement more sensible way to parse headers
+
+        List<String> headerLines = Sutils.selectLinesBetweenExcluding(lines,
+                { String s -> s.startsWith("Information about the pocket") },
+                { String s -> s.startsWith("#") }
+        )
+        headerLines = Sutils.prefixEach("HEADER ", headerLines)
+        if (headerLines.empty) {
+            throw new PrankException("No header lines found for fpocket pocket in [$pocketAtmFileName]")
+        }
+
+        for (String line : headerLines) {
+            pocket.fpstats.parseLine(line)
+        }
+        pocket.fpstats.consolidate()
+
+        return atoms
+    }
+
+    private static Atom simpleAtom(int pdbId, double x, double y, double z) {
+        AtomImpl a = new AtomImpl()
+        a.setPDBserial(pdbId)
+        a.setX(x)
+        a.setY(y)
+        a.setZ(z)
+        return a
     }
 
 
@@ -372,16 +489,37 @@ HETATM      4    V APOL .  STP   C .   73 ?   -1.633 -16.633 -11.976  0.00  0   
      HEADER 13 - Number of apolar alpha sphere     :   169
      HEADER 14 - Proportion of apolar alpha sphere : 0.5030
 
+     Fpocket 4.2
+
+     HEADER Information about the pocket     1:
+     HEADER 0  - Pocket Score                      : 0.6703
+     HEADER 1  - Drug Score                        : 0.4038
+     HEADER 2  - Number of alpha spheres           :    60
+     HEADER 3  - Mean alpha-sphere radius          : 3.9971
+     HEADER 4  - Mean alpha-sphere Solvent Acc.    : 0.5171
+     HEADER 5  - Mean B-factor of pocket residues  : 0.0000
+     HEADER 6  - Hydrophobicity Score              : 11.5000
+     HEADER 7  - Polarity Score                    :     6
+     HEADER 8  - Amino Acid based volume Score     : 3.5833
+     HEADER 9  - Pocket volume (Monte Carlo)       : 472.6400
+     HEADER 10 - Pocket volume (convex hull)       : 47.4540
+     HEADER 11 - Charge Score                      :     1
+     HEADER 12 - Local hydrophobic density Score   : 16.0000
+     HEADER 13 - Number of apolar alpha sphere     :    17
+     HEADER 14 - Proportion of apolar alpha sphere : 0.2833
+
+
+     TODO fix stats parsing for newer versions of fpocket
      */
     @CompileStatic(value = TypeCheckingMode.SKIP)
     static class FPocketStats extends Pocket.PocketStats {
 
-        static final Pattern PATTERN = ~ /HEADER (\d+) [^\:]* :\s* ([-\.\d]*).*/
+        static final Pattern PATTERN = ~ /HEADER\s*(\d+)\s*-[^\:]* :\s* ([-\.\d]*).*/
 
         Double[] headers = new Double[20]
 
         double pocketScore
-        int vornoiVertices
+        int voronoiVertices
         double polarityScore
         double realVolumeApprox
 
@@ -395,7 +533,7 @@ HETATM      4    V APOL .  STP   C .   73 ?   -1.633 -16.633 -11.976  0.00  0   
                     double val = Double.parseDouble(vals)
                     headers[id] = val
                 } catch (Exception e) {
-                    log.warn "invalid pocket stat value: " + line
+                    log.warn "invalid pocket stat value: [$line] ($e.message)"
                     headers[id] = 0
                 }
             }
@@ -407,7 +545,7 @@ HETATM      4    V APOL .  STP   C .   73 ?   -1.633 -16.633 -11.976  0.00  0   
         public void consolidate() {
 
             pocketScore = headers[0] ?: Double.NaN
-            vornoiVertices = headers[1] ?: Double.NaN
+            voronoiVertices = headers[1] ?: Double.NaN
             polarityScore = headers[6] ?: Double.NaN
             realVolumeApprox = headers[8] ?: Double.NaN
             
@@ -439,7 +577,7 @@ HETATM      4    V APOL .  STP   C .   73 ?   -1.633 -16.633 -11.976  0.00  0   
         public String toString() {
             return "Stats {" +
                     "\n  pocketScore=" + pocketScore +
-                    "\n  vornoiVertices=" + vornoiVertices +
+                    "\n  voronoiVertices=" + voronoiVertices +
                     "\n  polarityScore=" + polarityScore +
                     "\n  realVolumeApprox=" + realVolumeApprox +
                     '\n}';

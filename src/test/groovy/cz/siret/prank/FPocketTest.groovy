@@ -22,7 +22,7 @@ class FPocketTest {
 
         stats.consolidate()
 
-        assertEquals(54, stats.vornoiVertices)
+        assertEquals(54, stats.voronoiVertices)
         assertEquals(4, stats.polarityScore, DELTA)
         assertEquals(1217.1342d, stats.realVolumeApprox, DELTA)
 

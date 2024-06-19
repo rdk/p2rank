@@ -13,6 +13,7 @@ import org.apache.commons.lang3.builder.ToStringStyle
 
 import java.text.DateFormat
 import java.text.SimpleDateFormat
+import java.util.function.Predicate
 
 /**
  * String utils
@@ -232,5 +233,31 @@ class Sutils {
         }
         return str.length()
     }
+
+//===========================================================================================================//
+
+    static List<String> selectLinesBetweenExcluding(Iterable<String> lines, Predicate<String> startLineCondition, Predicate<String> terminatorLineCondition) {
+        List<String> res = new ArrayList<>()
+
+        Iterator<String> iter = lines.iterator()
+
+        while (iter.hasNext()) {
+            String line = iter.next()
+            if (startLineCondition.test(line)) {
+                while (iter.hasNext()) {
+                    String innerLine = iter.next()
+
+                    if (terminatorLineCondition.test(innerLine)) {
+                        return res
+                    } else {
+                        res.add(innerLine)
+                    }
+                }
+            }
+        }
+
+        return res
+    }
+
 
 }
