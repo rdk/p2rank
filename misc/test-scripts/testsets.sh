@@ -165,21 +165,21 @@ conservation() {
 
    title PREDICTIONS USING CONSERVATION
 
-   test ./prank.sh predict joined.ds   -c config/test-conservation -conservation_dirs 'joined/conservation/e5i1/scores'   -fail_fast 0 -log_cases 1 -visualizations 0 -out_subdir TEST/CONSERVATION
-   test ./prank.sh predict coach420.ds -c config/test-conservation -conservation_dirs 'coach420/conservation/e5i1/scores' -fail_fast 0 -log_cases 1 -visualizations 0 -out_subdir TEST/CONSERVATION
-   test ./prank.sh predict holo4k.ds   -c config/test-conservation -conservation_dirs 'holo4k/conservation/e5i1/scores'   -fail_fast 0 -log_cases 1 -visualizations 0 -out_subdir TEST/CONSERVATION
+   test ./prank.sh predict joined.ds   -c config/test-conservation -conservation_dirs 'joined/conservation/hmm/scores'   -fail_fast 0 -log_cases 1  -out_subdir TEST/CONSERVATION
+   test ./prank.sh predict coach420.ds -c config/test-conservation -conservation_dirs 'coach420/conservation/hmm/scores' -fail_fast 0 -log_cases 1  -out_subdir TEST/CONSERVATION
+   test ./prank.sh predict holo4k.ds   -c config/test-conservation -conservation_dirs 'holo4k/conservation/hmm/scores'   -fail_fast 0 -log_cases 1  -out_subdir TEST/CONSERVATION
 
    title EVALUATING PREDICTIONS USING CONSERVATION
 
-   test ./prank.sh eval-predict joined.ds   -c config/test-conservation -conservation_dirs 'joined/conservation/e5i1/scores'   -fail_fast 0 -log_cases 1 -visualizations 0 -out_subdir TEST/CONSERVATION
-   test ./prank.sh eval-predict coach420.ds -c config/test-conservation -conservation_dirs 'coach420/conservation/e5i1/scores' -fail_fast 0 -log_cases 1 -visualizations 0 -out_subdir TEST/CONSERVATION
-   test ./prank.sh eval-predict holo4k.ds   -c config/test-conservation -conservation_dirs 'holo4k/conservation/e5i1/scores'   -fail_fast 0 -log_cases 1 -visualizations 0 -out_subdir TEST/CONSERVATION
+   test ./prank.sh eval-predict joined.ds   -c config/test-conservation -conservation_dirs 'joined/conservation/hmm/scores'   -fail_fast 0 -log_cases 1  -out_subdir TEST/CONSERVATION
+   test ./prank.sh eval-predict coach420.ds -c config/test-conservation -conservation_dirs 'coach420/conservation/hmm/scores' -fail_fast 0 -log_cases 1  -out_subdir TEST/CONSERVATION
+   test ./prank.sh eval-predict holo4k.ds   -c config/test-conservation -conservation_dirs 'holo4k/conservation/hmm/scores'   -fail_fast 0 -log_cases 1  -out_subdir TEST/CONSERVATION
 
    title TRAIN/EVAL USING CONSERVATION
 
-   test ./prank.sh traineval -t chen11-fpocket.ds -e joined.ds   -c config/test-conservation -conservation_dirs 'joined/conservation/e5i1/scores'   -fail_fast 0 -log_cases 1 -visualizations 0 -out_subdir TEST/CONSERVATION
-   test ./prank.sh traineval -t chen11-fpocket.ds -e coach420.ds -c config/test-conservation -conservation_dirs 'coach420/conservation/e5i1/scores' -fail_fast 0 -log_cases 1 -visualizations 0 -out_subdir TEST/CONSERVATION
-   test ./prank.sh traineval -t chen11-fpocket.ds -e holo4k.ds   -c config/test-conservation -conservation_dirs 'holo4k/conservation/e5i1/scores'   -fail_fast 0 -log_cases 1 -visualizations 0 -out_subdir TEST/CONSERVATION
+   test ./prank.sh traineval -t chen11-fpocket.ds -e joined.ds   -c config/test-conservation -conservation_dirs 'joined/conservation/hmm/scores'   -fail_fast 0 -log_cases 1  -out_subdir TEST/CONSERVATION
+   test ./prank.sh traineval -t chen11-fpocket.ds -e coach420.ds -c config/test-conservation -conservation_dirs 'coach420/conservation/hmm/scores' -fail_fast 0 -log_cases 1  -out_subdir TEST/CONSERVATION
+   test ./prank.sh traineval -t chen11-fpocket.ds -e holo4k.ds   -c config/test-conservation -conservation_dirs 'holo4k/conservation/hmm/scores'   -fail_fast 0 -log_cases 1  -out_subdir TEST/CONSERVATION
 
 }
 
