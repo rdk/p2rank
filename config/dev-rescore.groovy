@@ -91,12 +91,12 @@ import cz.siret.prank.program.params.Params
     /**
      * see ClassifierOption
      */
-    classifier = "FastRandomForest"
+    classifier = "FasterForest"
 
     /**
      * RandomForest trees
      */
-    rf_trees = 100
+    rf_trees = 120
 
     /**
      * RandomForest depth limit, 0=unlimited
@@ -113,6 +113,7 @@ import cz.siret.prank.program.params.Params
      */
     rf_threads = 0
 
+    rf_flatten = 1
 
     //=== Distances and thresholds =================
 
@@ -204,5 +205,11 @@ import cz.siret.prank.program.params.Params
      * cutoff for protein exposed atoms calculation (distance from connolly surface is solv.radius. + surf_cutoff)
      */
     surface_additional_cutoff = 1.8
+
+    /**
+     * collect negatives just from decoy pockets found by other method
+     * (alternatively take negative points from all of the protein's surface)
+     */
+    sample_negatives_from_decoys = false
 
 }

@@ -2,10 +2,6 @@ import cz.siret.prank.program.params.Params
 
 (params as Params).with {
 
-    dataset_base_dir = "../../p2rank-datasets2"
-
-    output_base_dir = "../../p2rank-results"
-
     /**
      * default model
      * (set path relative to install_dir/models/)
@@ -70,7 +66,7 @@ import cz.siret.prank.program.params.Params
 
     //== FAETURES ===================
 
-    features = ["chem","volsite","protrusion","bfactor", "conservation"]
+    features = ["chem","volsite","protrusion","bfactor","conservation"]
 
     atom_table_features = ["ap5sasaValids","ap5sasaInvalids"]
 
@@ -112,6 +108,8 @@ import cz.siret.prank.program.params.Params
      * number of threads used in RandomForest training (0=use value of threads param)
      */
     rf_threads = 0
+
+    rf_flatten = 1
 
 
     //=== Distances and thresholds =================
@@ -209,6 +207,6 @@ import cz.siret.prank.program.params.Params
      * collect negatives just from decoy pockets found by other method
      * (alternatively take negative points from all of the protein's surface)
      */
-    sample_negatives_from_decoys = true
+    sample_negatives_from_decoys = false
 
 }
