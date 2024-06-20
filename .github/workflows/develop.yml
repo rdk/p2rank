@@ -26,6 +26,8 @@ jobs:
         distribution: 'temurin'
     - name: Validate Gradle wrapper
       uses: gradle/wrapper-validation-action@v3
+    - name: Check dependencies
+      run: ./gradlew dependencies
     - name: Build with Gradle
       run: ./gradlew assemble
     - name: Run unit tests
