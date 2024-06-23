@@ -124,9 +124,9 @@ class Struct {
 
 
     static boolean isHetGroup(Group group) {
-        if (group==null) return false
+        if (group == null) return false
 
-        GroupType.HETATM == group.type
+        return GroupType.HETATM.equals(group.type)
     }
 
     static List<Group> getGroups(Structure struc) {
@@ -209,7 +209,7 @@ class Struct {
     }
 
     static boolean isPolyChain(Chain chain) {
-        return chain.entityInfo?.type == EntityType.POLYMER
+        return EntityType.POLYMER.equals(chain.entityInfo?.type)
     }
 
     static boolean isTerminalResidue(Group group) {
@@ -257,7 +257,7 @@ class Struct {
 
     static boolean isAminoAcidGroup(Group g) {
         if (g == null) return false
-        return g.type == GroupType.AMINOACID
+        return GroupType.AMINOACID.equals(g.type)
     }
 
     /**
