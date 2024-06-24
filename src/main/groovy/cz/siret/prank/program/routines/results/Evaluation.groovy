@@ -797,6 +797,7 @@ class Evaluation implements Parametrized {
 
         for (PocketRow p in pocketRows) {
             csv << "$p.protName,$p.ligCount,$p.pocketCount,$p.pocketName,$p.ligName,"
+            // TODO possibly problematic, occasional groovy error in sprintf
             csv << "$p.rank,$p.score,$p.newRank,${fmt(p.oldScore)},${fmt(p.auxInfo.zScoreTP)},${fmt(p.auxInfo.probaTP)},$p.auxInfo.samplePoints,${fmt(p.auxInfo.rawNewScore)},$p.pocketVolume,$p.surfaceAtomCount"
             csv << "\n"
         }
