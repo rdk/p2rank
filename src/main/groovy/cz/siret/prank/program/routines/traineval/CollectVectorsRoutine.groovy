@@ -17,7 +17,7 @@ import cz.siret.prank.utils.PerfUtils
 import cz.siret.prank.utils.WekaUtils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-import us.ihmc.euclid.matrix.RotationMatrix
+//import us.ihmc.euclid.matrix.RotationMatrix
 import weka.core.Instance
 import weka.core.Instances
 
@@ -49,13 +49,13 @@ class CollectVectorsRoutine extends Routine {
             dataset = dataset.randomSubset(params.train_protein_limit, params.seed)
         }
 
-        // add random rotations
-        // TODO move to TrainEvalRoutine to make use of dataset caching
-        if (params.train_random_rotated_copies > 0) {
-            dataset = expandDatasetWithRandomRotations(dataset, params.train_random_rotated_copies)
-
-            // savePdbsToDir(dataset, outdir + "/train_pdbs")   // TODO remove
-        }
+//        // add random rotations
+//        // TODO move to TrainEvalRoutine to make use of dataset caching
+//        if (params.train_random_rotated_copies > 0) {
+//            dataset = expandDatasetWithRandomRotations(dataset, params.train_random_rotated_copies)
+//
+//            // savePdbsToDir(dataset, outdir + "/train_pdbs")   // TODO remove
+//        }
 
         return dataset
     }
@@ -69,36 +69,37 @@ class CollectVectorsRoutine extends Routine {
     }
 
     private Dataset expandDatasetWithRandomRotations(Dataset dataset, int numRotations) {
-        log.info "Extending training dataset with {} random rotations of each protein", numRotations
-
-        Random rand = new Random(params.seed)
-
-        List<Dataset.Item> newItems = new ArrayList<>()
-
-        newItems.addAll( dataset.items.collect { it.copy() } )
-
-        for (int i=1; i<=numRotations; ++i) {
-            String nameSuffix = "rotation." + i
-
-            RotationMatrix matrix = Rotations.generateRandomRotation(rand)
-            Rotation rotation = new Rotation(nameSuffix, matrix)
-
-            //matrix.setIdentity() // TODO xxx temp
-            matrix.normalize()
-
-            log.info "Random rotation $i: " + matrix
-
-            List<Dataset.Item> rotItems = dataset.items.collect { it.cleanCopy() }
-            for (Dataset.Item item : rotItems) {
-                item.label += nameSuffix
-                item.transformation = rotation
-                // TODO conditionally rotate predictions (pockets of other methods)
-            }
-
-            newItems.addAll(rotItems)
-        }
-
-        return dataset.copyWithNewItems(newItems, dataset.name + "-with-rotations")
+        throw new UnsupportedOperationException("Rotations are not supported in this version")
+//        log.info "Extending training dataset with {} random rotations of each protein", numRotations
+//
+//        Random rand = new Random(params.seed)
+//
+//        List<Dataset.Item> newItems = new ArrayList<>()
+//
+//        newItems.addAll( dataset.items.collect { it.copy() } )
+//
+//        for (int i=1; i<=numRotations; ++i) {
+//            String nameSuffix = "rotation." + i
+//
+//            RotationMatrix matrix = Rotations.generateRandomRotation(rand)
+//            Rotation rotation = new Rotation(nameSuffix, matrix)
+//
+//            //matrix.setIdentity() // TODO xxx temp
+//            matrix.normalize()
+//
+//            log.info "Random rotation $i: " + matrix
+//
+//            List<Dataset.Item> rotItems = dataset.items.collect { it.cleanCopy() }
+//            for (Dataset.Item item : rotItems) {
+//                item.label += nameSuffix
+//                item.transformation = rotation
+//                // TODO conditionally rotate predictions (pockets of other methods)
+//            }
+//
+//            newItems.addAll(rotItems)
+//        }
+//
+//        return dataset.copyWithNewItems(newItems, dataset.name + "-with-rotations")
     }
 
     /**
