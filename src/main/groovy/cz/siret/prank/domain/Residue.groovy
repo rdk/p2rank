@@ -167,8 +167,8 @@ class Residue {
      * One letter code via ChemComp. Result may depend on the online access.
      * null/empty is masked as '?'
      */
-    @Nullable
-    Character getCodeCharBiojava() {
+    @Nonnull
+    char getCodeCharBiojava() {
         return PdbUtils.getBiojavaOneLetterCode(group)
     }
 
@@ -179,8 +179,8 @@ class Residue {
      *
      * The only three letter code masking done is MSE->MET=M
      */
-    @NotNull
-    Character getCodeCharStandard() {
+    @Nonnull
+    char getCodeCharStandard() {
         return PdbUtils.getStandardOneLetterCode(group)
     }
 
@@ -232,7 +232,7 @@ class Residue {
      * order significant
      */
     static String safeOrderedCode2(Residue res1, Residue res2) {
-        StringBuilder sb = new StringBuilder()
+        StringBuilder sb = new StringBuilder(2)
         sb.append(safe1Code(res1))
         sb.append(safe1Code(res2))
         return sb.toString()
@@ -243,11 +243,16 @@ class Residue {
      * sorted orientation
      */
     static String safeSorted3Code(Residue res1, Residue res2, Residue res3) {
-        String code = safe1Code(res1) + safe1Code(res2) + safe1Code(res3)
+        StringBuilder code = new StringBuilder(3)
+        code.append(safe1Code(res1))
+        code.append(safe1Code(res2))
+        code.append(safe1Code(res3))
+
         if (code.charAt(0) > code.charAt(2)) {
             code = code.reverse()
         }
-        return code
+        
+        return code.toString()
     }
 
     static String safeSorted3CodeFor(Residue res) {

@@ -82,7 +82,7 @@ class PropertyTable {
 
         //log.info res.toCSV()
 
-        return res.immutabilize()
+        return res // res.immutabilize()
     }
 
     private PropertyTable immutabilize() {
