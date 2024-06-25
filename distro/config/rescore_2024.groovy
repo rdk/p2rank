@@ -69,7 +69,7 @@ import cz.siret.prank.program.params.Params
 
     //== FAETURES ===================
 
-    features = ["chem","volsite","protrusion","atom_table"]
+    features = ["chem","protrusion","atom_table","volsite"]
 
     atom_table_features = ["ap5sasaValids","ap5sasaInvalids","aph","anh"]
 
