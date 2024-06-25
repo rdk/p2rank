@@ -8,7 +8,7 @@ import cz.siret.prank.program.params.Params
  */
 (params as Params).with {
 
-    dataset_base_dir = "../../p2rank-datasets"
+    dataset_base_dir = "../../p2rank-datasets2"
 
     output_base_dir = "../../p2rank-results/${version}"
 
@@ -25,12 +25,14 @@ import cz.siret.prank.program.params.Params
 
 //===========================================================================================================//
 
-    model = "conservation.model"
+    model = "conservation_hmm.model"
 
     features = ["chem","volsite","protrusion","bfactor","conservation"]
 
     load_conservation = true
 
     classifier = "FasterForest"
+
+    visualizations = false
     
 }
