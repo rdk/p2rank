@@ -9,13 +9,13 @@ import cz.siret.prank.program.params.Params
      * define this if you want dataset program parameters to be evaluated relative to this directory
      * (an absolute path or path relative to this config file dir, null defaults to the working dir)
      */
-    dataset_base_dir = "../../pocket-rank-data/datasets"
+    dataset_base_dir = "../../p2rank-datasets"
 
     /**
      * all output of the program will be stored in subdirectories of this directory
      * (an absolute path or path relative to this config file dir, null defaults to the working dir)
      */
-    output_base_dir = "../../pocket-rank-results"
+    output_base_dir = "../../p2rank-results"
 
     /**
      * produce pymol visualisations

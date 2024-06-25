@@ -251,6 +251,7 @@ class Params {
     /**
      * Load sequence conservation data
      */
+    @Deprecated
     @RuntimeParam
     boolean load_conservation = false
 

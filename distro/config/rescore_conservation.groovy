@@ -1,5 +1,8 @@
 import cz.siret.prank.program.params.Params
 
+/**
+ * Config for new rescoring model that is using using conservation
+ */
 (params as Params).with {
 
     /**

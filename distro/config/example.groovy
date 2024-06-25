@@ -1,4 +1,5 @@
 import cz.siret.prank.program.params.Params
+
 /**
  * to override default params configuration (stored in default.groovy)
  * run program with
