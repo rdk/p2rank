@@ -332,7 +332,9 @@ analyze() {
     test ./prank.sh analyze fasta-masked coach420.ds            -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
     test ./prank.sh analyze fasta-masked holo4k.ds              -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
 
+    test ./prank.sh analyze residues              joined.ds     -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
     test ./prank.sh analyze binding-residues      joined.ds     -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
+    test ./prank.sh analyze labeled-residues      joined.ds     -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
     test ./prank.sh analyze chains                joined.ds     -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
     test ./prank.sh analyze chains-residues       joined.ds     -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
     test ./prank.sh analyze aa-propensities       joined.ds     -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
@@ -340,7 +342,15 @@ analyze() {
     test ./prank.sh analyze aa-surf-seq-triplets  joined.ds     -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
     test ./prank.sh analyze fasta-raw             joined.ds     -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
 
+    test ./prank.sh analyze residues              holo4k.ds     -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
+    test ./prank.sh analyze binding-residues      holo4k.ds     -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
+    test ./prank.sh analyze labeled-residues      holo4k.ds     -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
+    test ./prank.sh analyze chains                holo4k.ds     -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
+    test ./prank.sh analyze chains-residues       holo4k.ds     -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
+
 }
+
+
 
 transform() {
 
@@ -436,8 +446,8 @@ speed() {
 
     title SPEED TESTS
 
-    misc/test-scripts/benchmark.sh 3  "FPTRAIN" "1 2 4 8 16"   "./prank.sh predict fptrain.ds -c config/test-default -out_subdir TEST/SPEED"
-    misc/test-scripts/benchmark.sh 10 "1FILE"   "1"            "./prank.sh predict -f distro/test_data/liganated/1aaxa.pdb -c config/test-default -out_subdir TEST/SPEED"
+    misc/test-scripts/benchmark.sh 1  "FPTRAIN" "1 2 4 8 16"   "./prank.sh predict fptrain.ds -c config/test-default -out_subdir TEST/SPEED"
+    misc/test-scripts/benchmark.sh 5  "1FILE"   "1"            "./prank.sh predict -f distro/test_data/liganated/1aaxa.pdb -c config/test-default -out_subdir TEST/SPEED"
 }
 
 speed_basic() {
