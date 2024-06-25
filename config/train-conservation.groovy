@@ -8,7 +8,7 @@ import cz.siret.prank.program.params.Params
  */
 (params as Params).with {
 
-    dataset_base_dir = "../../p2rank-datasets"
+    dataset_base_dir = "../../p2rank-datasets2"
 
     output_base_dir = "../../p2rank-results/${version}"
 

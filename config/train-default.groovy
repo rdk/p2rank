@@ -84,6 +84,6 @@ import cz.siret.prank.program.params.Params
 
 //===========================================================================================================//
 
-    rf_flatten = true
+    rf_flatten = false
 
 }
