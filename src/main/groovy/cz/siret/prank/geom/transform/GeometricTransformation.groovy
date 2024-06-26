@@ -25,7 +25,6 @@ abstract class GeometricTransformation {
         transformAtom(atom)
     }
 
-
     void applyToAtoms(Iterable<Atom> atoms) {
         for (Atom atom : atoms) {
             transformAtom(atom)
