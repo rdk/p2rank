@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2017-2024 Radoslav Krivak, David Hoksza, Lukas Jendele, Petr Skoda and other contributors
+Copyright (c) 2017-2024 Radoslav Krivák, David Hoksza, Lukáš Jendele, Petr Škoda and other contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
