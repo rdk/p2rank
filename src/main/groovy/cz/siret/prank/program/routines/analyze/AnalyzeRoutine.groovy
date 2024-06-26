@@ -259,7 +259,7 @@ class AnalyzeRoutine extends Routine {
      * Statistics about binary residue labeling + visualizations
      */
     void cmdLabeledResidues() {
-        assert dataset.hasExplicitResidueLabeling()
+        // assert dataset.hasExplicitResidueLabeling()
         LoaderParams.ignoreLigandsSwitch = true
 
         def labeler = dataset.binaryResidueLabeler
