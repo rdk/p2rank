@@ -1,14 +1,13 @@
 package cz.siret.prank.program.routines.traineval
 
-
 import cz.siret.prank.collectors.CollectorFactory
 import cz.siret.prank.collectors.DataPreprocessor
 import cz.siret.prank.collectors.VectorCollector
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.features.FeatureVector
-import cz.siret.prank.geom.transform.Rotations
 import cz.siret.prank.geom.transform.Rotation
+import cz.siret.prank.geom.transform.Rotations
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.ml.FeatureVectors
 import cz.siret.prank.program.routines.Routine

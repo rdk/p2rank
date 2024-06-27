@@ -6,7 +6,6 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.Isolated
 import org.junit.jupiter.api.parallel.ResourceLock
 

@@ -1,6 +1,6 @@
 package cz.siret.prank.domain
 
-import com.sun.istack.NotNull
+
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.utils.PdbUtils
 import groovy.transform.CompileStatic

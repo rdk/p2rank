@@ -6,15 +6,12 @@ import cz.siret.prank.domain.Protein
 import cz.siret.prank.domain.loaders.LoaderParams
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Struct
-import cz.siret.prank.geom.transform.GeometricTransformation
 import cz.siret.prank.utils.PdbUtils
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 import org.biojava.nbio.structure.Element
 import org.biojava.nbio.structure.Group
 import org.biojava.nbio.structure.Structure
-
-import javax.annotation.Nullable
 
 /**
  * Loader for predictions produced by ConCavity

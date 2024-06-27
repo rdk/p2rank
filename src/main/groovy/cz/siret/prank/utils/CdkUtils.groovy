@@ -5,10 +5,10 @@ import cz.siret.prank.geom.Point
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
-import org.openscience.cdk.silent.AtomContainer
 import org.openscience.cdk.config.Elements
 import org.openscience.cdk.interfaces.IAtom
 import org.openscience.cdk.interfaces.IAtomContainer
+import org.openscience.cdk.silent.AtomContainer
 
 import javax.vecmath.Point3d
 

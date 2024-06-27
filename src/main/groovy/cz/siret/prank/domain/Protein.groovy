@@ -2,13 +2,13 @@ package cz.siret.prank.domain
 
 import cz.siret.prank.domain.labeling.ResidueLabeling
 import cz.siret.prank.domain.loaders.LoaderParams
-import cz.siret.prank.geom.transform.GeometricTransformation
 import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.features.implementation.conservation.ConservationScore
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.SecondaryStructureUtils
 import cz.siret.prank.geom.Struct
 import cz.siret.prank.geom.Surface
+import cz.siret.prank.geom.transform.GeometricTransformation
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Futils
@@ -20,7 +20,6 @@ import org.biojava.nbio.structure.Structure
 import org.biojava.nbio.structure.secstruc.SecStrucType
 
 import javax.annotation.Nullable
-import java.util.function.Consumer
 
 import static cz.siret.prank.features.implementation.conservation.ConservationScore.CONSERV_LOADED_KEY
 import static cz.siret.prank.features.implementation.conservation.ConservationScore.CONSERV_SCORE_KEY

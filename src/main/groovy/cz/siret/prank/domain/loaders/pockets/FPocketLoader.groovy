@@ -16,9 +16,7 @@ import groovy.transform.TypeCheckingMode
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 import org.biojava.nbio.structure.AtomImpl
-import org.biojava.nbio.structure.ChainImpl
 import org.biojava.nbio.structure.Structure
-import org.biojava.nbio.structure.StructureImpl
 
 import java.util.regex.Matcher
 import java.util.regex.Pattern

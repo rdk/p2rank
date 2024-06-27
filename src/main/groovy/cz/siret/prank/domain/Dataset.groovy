@@ -8,10 +8,10 @@ import cz.siret.prank.domain.labeling.ResidueLabeler
 import cz.siret.prank.domain.loaders.DatasetItemLoader
 import cz.siret.prank.domain.loaders.ExtendedResidueId
 import cz.siret.prank.domain.loaders.LoaderParams
-import cz.siret.prank.geom.transform.GeometricTransformation
 import cz.siret.prank.domain.loaders.pockets.*
 import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.geom.Atoms
+import cz.siret.prank.geom.transform.GeometricTransformation
 import cz.siret.prank.program.Failable
 import cz.siret.prank.program.P2Rank
 import cz.siret.prank.program.PrankException

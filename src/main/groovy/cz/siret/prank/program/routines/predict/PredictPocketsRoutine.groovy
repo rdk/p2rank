@@ -11,7 +11,6 @@ import cz.siret.prank.prediction.pockets.rescorers.PocketRescorer
 import cz.siret.prank.prediction.pockets.results.PredictionSummary
 import cz.siret.prank.prediction.transformation.ScoreTransformer
 import cz.siret.prank.program.ml.Model
-import cz.siret.prank.program.ml.ModelConverter
 import cz.siret.prank.program.rendering.OldPymolRenderer
 import cz.siret.prank.program.routines.Routine
 import cz.siret.prank.program.routines.results.PredictResults

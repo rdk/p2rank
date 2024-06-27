@@ -4,6 +4,7 @@ import cz.siret.prank.domain.Prediction
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.utils.Futils
 import org.junit.jupiter.api.Test
+
 import static org.junit.jupiter.api.Assertions.assertEquals
 
 /**
