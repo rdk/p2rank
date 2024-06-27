@@ -24,7 +24,7 @@ class AtomKdTree extends KdTree.SqrEuclid3D<Atom> {
     }
 
     public addAll(Atoms atoms) {
-        for (Atom a : atoms) {
+        for (Atom a : atoms.list) {
             add(a)
         }
     }

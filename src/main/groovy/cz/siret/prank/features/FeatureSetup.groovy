@@ -90,9 +90,9 @@ class FeatureSetup {
 
             if (calculator!=null) {
                 Feature entry = new Feature(calculator)
-                if (calculator.type == FeatureCalculator.Type.ATOM) {
+                if (FeatureCalculator.Type.ATOM.equals(calculator.type)) {
                     enabledAtomFeatures.add(entry)
-                } else if (calculator.type == FeatureCalculator.Type.SAS_POINT) {
+                } else if (FeatureCalculator.Type.SAS_POINT.equals(calculator.type)) {
                     enabledSasFeatures.add(entry)
                 } else {
                     throw new IllegalStateException("Invalid feature: $name. Only ATOM and SAS_POINT features ca be used directly.")

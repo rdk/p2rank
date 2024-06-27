@@ -329,7 +329,10 @@ class Struct {
         //ordering seems reliable
         //groups.toSorted { it.residueNumber.seqNum }
 
-        List<Residue> residues = groups.collect { Residue.fromGroup(it) }.toList()
+        List<Residue> residues = new ArrayList<>(groups.size())
+        for (Group g : groups) {
+            residues.add(Residue.fromGroup(g))
+        }
 
         int len = residues.size()
         for (int i=0; i!=len; i++) {
