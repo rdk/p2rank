@@ -74,7 +74,7 @@ class GenericVector {
      */
     GenericVector add(GenericVector gv) {
         for (int i=0; i!=data.length; ++i) {
-            double toadd = gv.data[i]
+            double toadd = gv.@data[i]
             if (!Double.isNaN(toadd)) {
                 data[i] += toadd
             }

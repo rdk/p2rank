@@ -1,57 +1,113 @@
-package cz.siret.prank.domain.labeling
+package cz.siret.prank.domain.labeling;
 
-import groovy.transform.CompileStatic
-import org.biojava.nbio.structure.Atom
-import org.biojava.nbio.structure.Bond
-import org.biojava.nbio.structure.Element
-import org.biojava.nbio.structure.Group
+import org.biojava.nbio.structure.Atom;
+import org.biojava.nbio.structure.Bond;
+import org.biojava.nbio.structure.Element;
+import org.biojava.nbio.structure.Group;
 
-import javax.vecmath.Point3d
+import javax.vecmath.Point3d;
+import java.util.List;
 
 /**
  * Annotated point used for generating visualizations and pocket predictions.
  */
-@CompileStatic
-class LabeledPoint implements Atom {
+public class LabeledPoint implements Atom {
 
-    Atom point //@Delegate
+    private Atom point;
 
-    double score = Double.NaN
-    double transformedScore = 0d // for sums
+    private double score = Double.NaN;
+    private double transformedScore = 0d;
 
-    boolean predicted
-    boolean observed
+    private boolean predicted;
+    private boolean observed;
 
     /**
      * pocket number <br>
      * 0 = no pocket
      */
-    int pocket = 0
+    private int pocket = 0;
 
-
-    LabeledPoint(Atom point, boolean observed, boolean predicted) {
-        this.point = point
-        this.predicted = predicted
-        this.observed = observed
+    public LabeledPoint(Atom point, boolean observed, boolean predicted) {
+        this.point = point;
+        this.predicted = predicted;
+        this.observed = observed;
     }
 
-    LabeledPoint(Atom point) {
-        this.point = point
-        this.predicted = false
-        this.observed = false
+    public LabeledPoint(Atom point) {
+        this.point = point;
+        this.predicted = false;
+        this.observed = false;
     }
 
-    LabeledPoint(Atom point, boolean observed) {
-        this.point = point
-        this.predicted = false
-        this.observed = observed
+    public LabeledPoint(Atom point, boolean observed) {
+        this.point = point;
+        this.predicted = false;
+        this.observed = observed;
     }
 
-//===========================================================================================================//
+//===============================================================================================//
+
+    public Atom getPoint() {
+        return point;
+    }
+
+    public void setPoint(Atom point) {
+        this.point = point;
+    }
+
+    public double getScore() {
+        return score;
+    }
+
+    public void setScore(double score) {
+        this.score = score;
+    }
+
+    public double getTransformedScore() {
+        return transformedScore;
+    }
+
+    public void setTransformedScore(double transformedScore) {
+        this.transformedScore = transformedScore;
+    }
+
+    public boolean getPredicted() {
+        return predicted;
+    }
+
+    public boolean isPredicted() {
+        return predicted;
+    }
+
+    public void setPredicted(boolean predicted) {
+        this.predicted = predicted;
+    }
+
+    public boolean getObserved() {
+        return observed;
+    }
+
+    public boolean isObserved() {
+        return observed;
+    }
+
+    public void setObserved(boolean observed) {
+        this.observed = observed;
+    }
+
+    public int getPocket() {
+        return pocket;
+    }
+
+    public void setPocket(int pocket) {
+        this.pocket = pocket;
+    }
+
+//===============================================================================================//
 
     @Override
-    Point3d getCoordsAsPoint3d() {
-        return point.getCoordsAsPoint3d()
+    public Point3d getCoordsAsPoint3d() {
+        return point.getCoordsAsPoint3d();
     }
 
     @Override
