@@ -11,6 +11,7 @@ Ligand-binding site prediction based on machine learning.
 [![version 2.4.2](https://img.shields.io/badge/version-2.4.2-green.svg)](/build.gradle)
 [![Build Status](https://github.com/rdk/p2rank/actions/workflows/develop.yml/badge.svg)](https://github.com/rdk/p2rank/actions/workflows/develop.yml)
 [![License: MIT](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](/LICENSE.txt)
+![GitHub all releases](https://img.shields.io/github/downloads/rdk/p2rank/total)
 
 ### Description
 
