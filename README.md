@@ -15,8 +15,11 @@ Ligand-binding site prediction based on machine learning.
 ### Description
 
 P2Rank is a stand-alone command line program that predicts ligand-binding pockets from a protein structure. It achieves high prediction success rates without relying on an external software for computation of complex features or on a database of known protein-ligand templates. 
-                        
-Version 2.4 adds support for `.cif` input and contains a special profile for predictions on AlphaFold models and NMR/cryo-EM structures.  
+           
+### What's new?
+  
+* Version 2.4.2 adds support for BinaryCIF (`.bcif`) input and rescoring of fpocket predictions in `.cif` format.          
+* Version 2.4 adds support for mmCIF (`.cif`) input and contains a special profile for predictions on AlphaFold models and NMR/cryo-EM structures.  
 
 ### Requirements
 
@@ -24,7 +27,6 @@ Version 2.4 adds support for `.cif` input and contains a special profile for pre
 * PyMOL 1.7 (or newer) for viewing visualizations (optional)
 
 P2Rank is tested on Linux, macOS, and Windows. 
-On Windows, it is recommended to use the `bash` console to execute the program instead of `cmd` or `PowerShell`.
 
 ### Setup
 
@@ -83,8 +85,10 @@ prank help
 prank predict test.ds                    # run on dataset containing a list of pdb/cif files
 
 prank predict -f test_data/1fbl.pdb      # run on a single pdb file
-prank predict -f test_data/1fbl.cif      # run on a single cif file
-prank predict -f test_data/1fbl.pdb.gz   # run on a single gzipped pdb file
+prank predict -f test_data/1fbl.cif      # run on a single mmCIF file
+prank predict -f test_data/1fbl.bcif     # run on a single BinaryCIF file
+prank predict -f test_data/1fbl.pdb.gz   # run on a single gzipped pdb file (other formats can be compressed too)
+prank predict -f test_data/1fbl.cif.zst  # run on a single cif file compressed with Zstandard 
 
 prank predict -threads 8     test.ds     # specify num. of working threads for parallel dataset processing
 prank predict -o output_here test.ds     # explicitly specify output directory
@@ -109,7 +113,7 @@ prank predict -c alphafold   test.ds     # use alphafold config and model (confi
 
 ### Configuration
 
-You can override the default params with a custom config file:
+You can override the default parameters values in a custom config file:
 
 ~~~bash
 prank predict -c config/example.groovy  test.ds
@@ -117,7 +121,7 @@ prank predict -c example                test.ds # same effect, config/ is defaul
 ~~~
 
 
-It is also possible to override the default params on the command line using their full name.
+It is also possible to override parameters on the command line using their full name after `-` (not `--`).
 
 ~~~bash
 prank predict                   -visualizations 0 -threads 8  test.ds   #  turn off visualizations and set the number of threads
@@ -125,9 +129,9 @@ prank predict -c example.groovy -visualizations 0 -threads 8  test.ds   #  overr
 ~~~     
 
 P2Rank has numerous configurable parameters. 
-To see the list of standard params look into `config/default.groovy` and other example config files in this directory.
-To see the complete commented list of all (including undocumented) 
-params see [Params.groovy](https://github.com/rdk/p2rank/blob/develop/src/main/groovy/cz/siret/prank/program/params/Params.groovy) in the source code.
+To see the list of standard parameters look into `config/default.groovy` and other example config files in this directory.
+To see the complete commented list of all (including undocumented)
+parameters see [Params.groovy](https://github.com/rdk/p2rank/blob/develop/src/main/groovy/cz/siret/prank/program/params/Params.groovy) in the source code.
 
 
 ### Evaluate prediction model
@@ -142,7 +146,14 @@ prank eval-predict test.ds
 
 In addition to predicting new ligand binding sites, 
 P2Rank is also able to rescore pockets predicted by other methods 
-(Fpocket, ConCavity, SiteHound, MetaPocket2, LISE and DeepSite are supported at the moment).
+(Fpocket, 
+ConCavity, 
+SiteHound, 
+MetaPocket2, 
+LISE, 
+DeepSite,
+and PUResNetV2.0
+are supported at the moment).
 
 ~~~bash
 prank rescore test_data/fpocket.ds
@@ -150,6 +161,8 @@ prank rescore fpocket.ds                 # test_data/ is default 'dataset_base_d
 prank rescore fpocket.ds -o output_dir   # test_output/ is default 'output_base_dir'       
 prank eval-rescore fpocket.ds            # evaluate rescoring model
 ~~~
+           
+Note: for rescoring the dataset file needs to have a specific 2-column format. See examples in `test_data/fpocket.ds`.
 
 ## Build from sources
 
@@ -168,7 +181,7 @@ Now you can run the program via:
 distro/prank       # standard mode that is run in production
 ./prank.sh         # development/training mode 
 ``` 
-To use `./prank.sh` (development/training mode) first you need to copy and edit `misc/locval-env.sh` into repo root directory (see https://github.com/rdk/p2rank/blob/develop/misc/tutorials/training-tutorial.md#preparing-the-environment).
+To use `./prank.sh` (development/training mode) first you need to copy and edit `misc/locval-env.sh` into repo root directory (see [training tutorial](https://github.com/rdk/p2rank/blob/develop/misc/tutorials/training-tutorial.md#preparing-the-environment)).
 
 ## Comparison with Fpocket
 
