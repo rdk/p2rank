@@ -13,10 +13,6 @@ bin/
 *.class
 classes/
 
-distro/bin/
-distro/log/*
-distro/test_output/
-
 logs/*
 *.log
 out/*
@@ -29,7 +25,11 @@ out/*
 !lib/*
 !*.md
 
-*.stackdump
-
 venv/
 tmp
+
+# P2Rank distro
+distro/bin/
+distro/log/*
+distro/test_output/
+distro/README.md
