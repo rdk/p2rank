@@ -1,11 +1,15 @@
 package cz.siret.prank.geom
 
+import cz.cuni.cusbg.surface.FasterNumericalSurface
 import cz.siret.prank.program.params.Parametrized
+import cz.siret.prank.program.params.Params
 import cz.siret.prank.utils.CdkUtils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.openscience.cdk.geometry.surface.NumericalSurface
 import org.openscience.cdk.interfaces.IAtomContainer
+
+import javax.vecmath.Point3d
 
 /**
  * Point surface 
@@ -21,13 +25,13 @@ class Surface implements Parametrized {
     double surfaceArea
 
     double solventRadius
-    int tesslevel
+    int tesselationLevel
 
-    Surface(double surfaceArea, Atoms surfacePoints, double solventRadius, int tesslevel) {
+    Surface(double surfaceArea, Atoms surfacePoints, double solventRadius, int tesselationLevel) {
         this.surfaceArea = surfaceArea
         this.points = surfacePoints
         this.solventRadius = solventRadius
-        this.tesslevel = tesslevel
+        this.tesselationLevel = tesselationLevel
     }
 
     Atoms computeExposedAtoms(Atoms proteinAtoms) {
@@ -37,22 +41,36 @@ class Surface implements Parametrized {
     /**
      * computes solvent accessible surface
      */
-    static Surface computeAccessibleSurface(Atoms proteinAtoms, double solventRadius, int tesslevel) {
+    static Surface computeAccessibleSurface(Atoms proteinAtoms, double solventRadius, int tesselationLevel) {
 
         log.debug "proteinAtoms.count:" + proteinAtoms.count
 
         IAtomContainer container = CdkUtils.toAtomContainer(proteinAtoms)
-        NumericalSurface numericalSurface = new NumericalSurface(container, solventRadius, tesslevel)
-        numericalSurface.calculateSurface()  // for CDK since 2 or so surface is calculated in constructor, left here in case of temporary switch to cdk 1.*
 
-        Atoms surfacePoints = CdkUtils.toAtomPoints(numericalSurface.allSurfacePoints)
+
+        double totalSurfaceArea
+        Point3d[] allSurfacePoints
+
+        if (Params.inst.use_optimized_surface) {
+            FasterNumericalSurface numericalSurface = new FasterNumericalSurface(container, solventRadius, tesselationLevel)
+            totalSurfaceArea = numericalSurface.totalSurfaceArea
+            allSurfacePoints = numericalSurface.allSurfacePoints
+        } else {
+            NumericalSurface numericalSurface = new NumericalSurface(container, solventRadius, tesselationLevel)
+            totalSurfaceArea = numericalSurface.totalSurfaceArea
+            allSurfacePoints = numericalSurface.allSurfacePoints
+        }
+
+
+
+        Atoms surfacePoints = CdkUtils.toAtomPoints(allSurfacePoints)
 
         log.debug "numerical surface: {} points", surfacePoints.count
         // CDK returns lots of duplicate or too-close atoms (bug in the implementation?)
         surfacePoints = Atoms.consolidate(surfacePoints, CONSOLIDATE_DIST)
         log.debug "surface after consolidation: {} points", surfacePoints.count
 
-        Surface res = new Surface(numericalSurface.totalSurfaceArea, surfacePoints, solventRadius, tesslevel)
+        Surface res = new Surface(totalSurfaceArea, surfacePoints, solventRadius, tesselationLevel)
 
         return res
     }

@@ -14,3 +14,4 @@ misc/test-scripts/benchmark.sh 1 "dt198" "1" "./prank.sh predict -c workdef dt19
 
 
 
+misc/test-scripts/benchmark.sh 3 "HOLO4K" "8 16 20 24 28 32 40"  "./prank.sh predict -c config/test-default  holo4k.ds -l SPEEDTEST"

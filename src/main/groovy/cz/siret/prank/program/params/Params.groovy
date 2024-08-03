@@ -1310,6 +1310,13 @@ class Params {
     @RuntimeParam // training
     int train_random_rotated_copies = 0
 
+
+    /**
+     * Use optimized library for solvent accessible surface calculation
+     */
+    @RuntimeParam
+    boolean use_optimized_surface = true
+
 //===========================================================================================================//
 // Derived parameters
 //===========================================================================================================//

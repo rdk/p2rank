@@ -12,7 +12,7 @@ import static cz.siret.prank.utils.ATimer.startTimer
 @CompileStatic
 class Bench {
 
-    static long doTmeit(String label, Closure c, boolean doLog) {
+    static long doTimeit(String label, Closure c, boolean doLog) {
         def timer = startTimer()
         c.call()
         long time = timer.time
@@ -21,23 +21,36 @@ class Bench {
     }
 
     static long timeitLog(String label, Closure c) {
-        return doTmeit(label, c, true)
+        return doTimeit(label, c, true)
     }
     static long timeit(String label, Closure c) {
-        return doTmeit(label, c, false)
+        return doTimeit(label, c, false)
     }
 
     static long timeit(Closure c) {
-        return doTmeit(null, c, false)
+        return doTimeit(null, c, false)
     }
 
     static long timeitLog(String label, int reps, Closure c) {
-        def timer = startTimer()
-        for (int i=0; i!=reps; ++i) {
-            doTmeit("    " + label + " (run ${i+1})", c, reps>1)
+        return timeitLog(label, reps, false, c)
+    }
+
+    static long timeitLogWithHeatup(String label, int reps, Closure c) {
+        return timeitLog(label, reps, true, c)
+    }
+
+    static long timeitLog(String label, int reps, boolean doHeatup, Closure c) {
+        if (doHeatup) {
+            doTimeit("    " + label + " (heatup)", c, true)
         }
-        long sum = timer.time
-        long avg = (long)(sum/reps)
+
+        boolean doLog = reps>1 || doHeatup
+        long time = 0
+        for (int i=0; i!=reps; ++i) {
+            time += doTimeit("    " + label + " (run ${i+1})", c, doLog)
+            Thread.sleep(50)
+        }
+        long avg = (long)(time/reps)
         //log.info("$label (SUM): " + sum)
         log.warn("$label (AVG): " + avg)
         return avg
