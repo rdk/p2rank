@@ -1,54 +1,95 @@
 package cz.siret.prank.program.routines.benchmark
 
-import cz.siret.prank.domain.Dataset
+import cz.cuni.cusbg.surface.FasterNumericalSurface
+import cz.siret.prank.domain.Protein
 import cz.siret.prank.domain.loaders.electrostatics.DelphiCubeLoader
 import cz.siret.prank.domain.loaders.electrostatics.GaussianCube
 import cz.siret.prank.program.Main
 import cz.siret.prank.program.routines.Routine
+import cz.siret.prank.utils.Bench
+import cz.siret.prank.utils.CdkUtils
 import cz.siret.prank.utils.CmdLineArgs
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+import org.openscience.cdk.geometry.surface.NumericalSurface
+import org.openscience.cdk.interfaces.IAtomContainer
 
 import static cz.siret.prank.utils.Bench.timeitLog
 import static cz.siret.prank.utils.Futils.*
 
 /**
- * Old benchmarks moved from Experiments routine
- * TODO revive
+ * 
  */
 @Slf4j
 @CompileStatic
 class Benchmarks extends Routine {
 
-    String command
-
-    Dataset trainDataset
-    Dataset evalDataset
-    boolean doCrossValidation = false
-
-    String outdirRoot
-    String datadirRoot
-
-    String label
-
     Main main
-    CmdLineArgs cmdLineArgs
+    CmdLineArgs args
 
-    public Benchmarks(CmdLineArgs args, Main main, String command) {
+    Benchmarks(CmdLineArgs args, Main main) {
         super(null)
-        this.cmdLineArgs = args
-        this.command = command
+        this.args = args
         this.main = main
 
-//        if (!commandRegister.containsKey(command)) {
-//            throw new PrankException("Invalid command: " + command)
-//        }
-//
-//        //if (command in ['traineval', 'ploop', 'hopt']) {
-//        prepareDatasets(main)
-//        //}
+
     }
 
+    @CompileDynamic
+    void execute() {
+
+        String subCommand = args.unnamedArgs[0]
+
+        log.info "executing bench $subCommand command"
+
+        this."$subCommand"()
+
+    }
+
+//===========================================================================================================//
+
+    /**
+     * Benchmark FasterNumericalSurface against NumericalSurface
+     */
+    void faster_surface() {
+
+        String structFile = args.get("f") ?: "$main.installDir/test_data/2W83.pdb"
+
+        log.info "Benchmarking faster surface o file [$structFile]"
+
+        Protein protein = Protein.load(structFile)
+
+
+        IAtomContainer cdkAtoms = CdkUtils.toAtomContainer(protein.proteinAtoms)
+
+
+        double solventRadius = 1.6
+        int outerReps = 5
+        int reps = 16
+
+        for(int tesslevel in 2..4) {
+            double oldTime = Bench.timeitLogWithHeatup("OLD tess:" + tesslevel, outerReps, {
+                reps.times {
+                    NumericalSurface numericalSurface = new NumericalSurface(cdkAtoms, solventRadius, tesslevel)
+                    numericalSurface.getAllSurfacePoints()
+                }
+            })
+
+            double newTime = Bench.timeitLogWithHeatup("NEW tess:" + tesslevel, outerReps, {
+                reps.times {
+                    FasterNumericalSurface numericalSurface = new FasterNumericalSurface(cdkAtoms, solventRadius, tesslevel)
+                    numericalSurface.getAllSurfacePoints()
+                }
+            })
+
+            double timeMult = oldTime / newTime
+            log.info("Tessellation $tesslevel SPEEDUP: {}", Math.round(timeMult * 1000)/1000 )
+        }
+
+    }
+
+//===========================================================================================================//
 
     /**
      * for jvm profiler

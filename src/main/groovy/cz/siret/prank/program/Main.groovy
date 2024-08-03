@@ -10,6 +10,7 @@ import cz.siret.prank.program.routines.Routine
 import cz.siret.prank.program.routines.analyze.AnalyzeRoutine
 import cz.siret.prank.program.routines.analyze.PrintRoutine
 import cz.siret.prank.program.routines.analyze.TransformRoutine
+import cz.siret.prank.program.routines.benchmark.Benchmarks
 import cz.siret.prank.program.routines.predict.PredictPocketsRoutine
 import cz.siret.prank.program.routines.predict.PredictResiduesRoutine
 import cz.siret.prank.program.routines.predict.RescorePocketsRoutine
@@ -357,6 +358,10 @@ class Main implements Parametrized, Writable {
         new PrintRoutine(args, this).execute()
     }
 
+    private runBenchmark() {
+        new Benchmarks(args, this).execute()
+    }
+
     void runHelp() {
         println Futils.readResource('/help.txt')
     }
@@ -411,7 +416,7 @@ class Main implements Parametrized, Writable {
                 break
             case 'print':         runPrint()
                 break
-            case 'run':           runExperiment(args.unnamedArgs[0])
+            case 'bench':         runBenchmark()
                 break
             default:
                 runExperiment(command)
