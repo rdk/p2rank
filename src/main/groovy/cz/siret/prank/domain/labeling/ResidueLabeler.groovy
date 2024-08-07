@@ -21,12 +21,16 @@ abstract class ResidueLabeler<L> {
     @Nullable
     abstract ResidueLabeling<Double> getDoubleLabeling()
 
-    BinaryLabeling getBinaryLabeling(Residues residues, Protein protein, Dataset.Item item) {
+    BinaryLabeling getBinaryLabeling(Residues residues, Protein protein, @Nullable Dataset.Item item) {
         if (isBinary()) {
             (BinaryLabeling) labelResidues(residues, protein, item)
         } else {
             throw new PrankException("Residue labeler not binary!")
         }
+    }
+
+    BinaryLabeling getBinaryLabeling(Residues residues, Protein protein) {
+        return getBinaryLabeling(residues, protein, null)
     }
 
     BinaryLabeling getBinaryLabeling(Protein protein) {

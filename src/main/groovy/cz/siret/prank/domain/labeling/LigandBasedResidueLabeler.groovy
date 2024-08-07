@@ -1,6 +1,6 @@
 package cz.siret.prank.domain.labeling
 
-
+import cz.siret.prank.domain.Dataset
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.domain.Residue
 import cz.siret.prank.domain.Residues
@@ -22,7 +22,7 @@ class LigandBasedResidueLabeler extends ResidueLabeler<Boolean> implements Param
     ResidueLabeling<Double> lastLigandDistanceLabeling
 
     @Override
-    ResidueLabeling<Boolean> labelResidues(Residues residues, Protein protein) {
+    ResidueLabeling<Boolean> labelResidues(Residues residues, Protein protein, Dataset.Item item) {
 
         ResidueLabeling<Double> ligandDistanceLabeling = new ResidueLabeling<>(residues.count)
         for (Residue res : residues) {
