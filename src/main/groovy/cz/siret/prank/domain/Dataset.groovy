@@ -68,6 +68,7 @@ class Dataset implements Parametrized, Writable, Failable {
     static final String COLUMN_CONSERVATION_FILES_PATTERN = "conservation_files_pattern"
     static final String COLUMN_APO_PROTEIN = "apo_protein"
     static final String COLUMN_APO_CHAINS = "apo_chains"
+    static final String COLUMN_POSITIVE_RESIDUES = "positive_residues"
 
     static final List<String> DEFAULT_HEADER = [ COLUMN_PROTEIN ]
 
@@ -423,7 +424,7 @@ class Dataset implements Parametrized, Writable, Failable {
      * @return true if explicit residue labeling is defined a as a part of th dataset
      */
     boolean hasExplicitResidueLabeling() {
-        return attributes.containsKey(PARAM_RESIDUE_LABELING_FORMAT)
+        return attributes.containsKey(PARAM_RESIDUE_LABELING_FORMAT) || header.contains(COLUMN_POSITIVE_RESIDUES)
     }
 
     /**
@@ -438,9 +439,16 @@ class Dataset implements Parametrized, Writable, Failable {
      */
     @Nullable
     ResidueLabeler getResidueLabeler() {
+
         if (residueLabeler == null && hasExplicitResidueLabeling()) {
-            String labelingFile = dir + "/" + attributes.get(PARAM_RESIDUE_LABELING_FILE)
-            residueLabeler = ResidueLabeler.loadFromFile(attributes.get(PARAM_RESIDUE_LABELING_FORMAT), labelingFile)
+
+            if (header.contains(COLUMN_POSITIVE_RESIDUES)) {
+
+            } else {
+                String labelingFile = dir + "/" + attributes.get(PARAM_RESIDUE_LABELING_FILE)
+                residueLabeler = ResidueLabeler.loadFromFile(attributes.get(PARAM_RESIDUE_LABELING_FORMAT), labelingFile)
+            }
+
         }
         return  residueLabeler
     }
@@ -883,7 +891,7 @@ class Dataset implements Parametrized, Writable, Failable {
         @Nullable
         BinaryLabeling getExplicitBinaryLabeling() {
             if (originDataset.hasExplicitResidueLabeling()) {
-                return originDataset.explicitBinaryResidueLabeler.getBinaryLabeling(protein.residues, protein)
+                return originDataset.explicitBinaryResidueLabeler.getBinaryLabeling(protein.residues, protein, this)
             }
             return null
         }
@@ -893,7 +901,7 @@ class Dataset implements Parametrized, Writable, Failable {
          */
         @Nullable
         BinaryLabeling getBinaryLabeling() {
-            return originDataset.binaryResidueLabeler.getBinaryLabeling(protein.residues, protein)
+            return originDataset.binaryResidueLabeler.getBinaryLabeling(protein.residues, protein, this)
         }
 
         ProcessedItemContext getContext() {

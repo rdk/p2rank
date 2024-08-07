@@ -1,6 +1,6 @@
 package cz.siret.prank.domain.labeling
 
-
+import cz.siret.prank.domain.Dataset
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.domain.Residues
 import cz.siret.prank.program.PrankException
@@ -14,23 +14,23 @@ import javax.annotation.Nullable
 @CompileStatic
 abstract class ResidueLabeler<L> {
 
-    abstract ResidueLabeling<L> labelResidues(Residues residues, Protein protein)
+    abstract ResidueLabeling<L> labelResidues(Residues residues, Protein protein, Dataset.Item item)
 
     abstract boolean isBinary()
 
     @Nullable
     abstract ResidueLabeling<Double> getDoubleLabeling()
 
-    BinaryLabeling getBinaryLabeling(Residues residues, Protein protein) {
+    BinaryLabeling getBinaryLabeling(Residues residues, Protein protein, Dataset.Item item) {
         if (isBinary()) {
-            (BinaryLabeling) labelResidues(residues, protein)
+            (BinaryLabeling) labelResidues(residues, protein, item)
         } else {
             throw new PrankException("Residue labeler not binary!")
         }
     }
 
     BinaryLabeling getBinaryLabeling(Protein protein) {
-        getBinaryLabeling(protein.residues, protein)
+        getBinaryLabeling(protein.residues, protein, null)
     }
 
     static ResidueLabeler loadFromFile(String format, String fname) {
