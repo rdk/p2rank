@@ -54,7 +54,7 @@ abstract class StaticResidueLabeler extends ResidueLabeler<Boolean> implements W
         }
 
         @Override
-        ResidueLabeling<Boolean> labelResidues(Residues residues, Protein protein) {
+        ResidueLabeling<Boolean> labelResidues(Residues residues, Protein protein, Dataset.Item item) {
 
             Map<String, Double> scores = new HashMap<>()
             for (String line : Futils.readLines(path).tail()) {

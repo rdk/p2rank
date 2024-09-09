@@ -1,5 +1,6 @@
 package cz.siret.prank.domain.labeling
 
+import cz.siret.prank.domain.Dataset
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.domain.Residue
 import cz.siret.prank.domain.Residues
@@ -83,7 +84,7 @@ class ModelBasedResidueLabeler extends ResidueLabeler<Boolean> implements Parame
     }
 
     @Override
-    ResidueLabeling<Boolean> labelResidues(Residues residues, Protein protein) {
+    ResidueLabeling<Boolean> labelResidues(Residues residues, Protein protein, Dataset.Item item) {
 
         ModelBasedPointLabeler predictor = new ModelBasedPointLabeler(model, context).withObserved(observedPoints)
 

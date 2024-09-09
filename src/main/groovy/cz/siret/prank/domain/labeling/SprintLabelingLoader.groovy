@@ -47,10 +47,9 @@ class SprintLabelingLoader extends ResidueLabeler<Boolean> implements Writable {
     }
 
     @Override
-    ResidueLabeling<Boolean> labelResidues(Residues residues, Protein protein) {
+    ResidueLabeling<Boolean> labelResidues(Residues residues, Protein protein, Dataset.Item item) {
 
         Map<Residue.Key, Boolean> labelMap = new HashMap<>()
-
 
 
         boolean foundOneChain = false
