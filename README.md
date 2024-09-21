@@ -13,6 +13,7 @@ Ligand-binding site prediction based on machine learning.
 [![License: MIT](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](/LICENSE.txt)
 ![GitHub all releases](https://img.shields.io/github/downloads/rdk/p2rank/total)
 
+
 ### Description
 
 P2Rank is a stand-alone command line program that predicts ligand-binding pockets from a protein structure. It achieves high prediction success rates without relying on an external software for computation of complex features or on a database of known protein-ligand templates. 

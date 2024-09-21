@@ -7,7 +7,7 @@ import groovy.util.logging.Slf4j
 import org.slf4j.Logger
 
 /**
- *
+ * Static methods related to program execution and shutdown.
  */
 @Slf4j
 @CompileStatic
