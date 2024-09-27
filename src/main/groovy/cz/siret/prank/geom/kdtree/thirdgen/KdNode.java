@@ -75,7 +75,7 @@ class KdNode<T> {
         if (size == points.length - 1) {
             // If the node is getting too large
             if (calculateSplit()) {
-                // If the node successfully had it's split value calculated, split node
+                // If the node successfully had its split value calculated, split node
                 splitLeafNode();
             } else {
                 // If the node could not be split, enlarge node

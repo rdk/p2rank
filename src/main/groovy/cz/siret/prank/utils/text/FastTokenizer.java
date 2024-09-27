@@ -1,9 +1,5 @@
 package cz.siret.prank.utils.text;
 
-/**
- *
- */
-
 import com.google.common.base.CharMatcher;
 
 import java.io.BufferedReader;

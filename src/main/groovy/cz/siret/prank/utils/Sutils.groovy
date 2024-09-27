@@ -206,7 +206,7 @@ class Sutils {
                 tokenStart = i + 1
             }
             if (str.charAt(i).equals(leftParenthese)) {
-                i = findClosingParenthese(str, i, leftParenthese, rightParenthese)
+                i = findClosingParenthesis(str, i, leftParenthese, rightParenthese)
             }
             i++
         }
@@ -220,14 +220,14 @@ class Sutils {
     /**
      * @return index of a closing ')' for opening '(' at start (recursively respects inner parentheses) or str.length if not found
      */
-    static int findClosingParenthese(String str, int start, char leftParenthese, char rightParenthese) {
+    static int findClosingParenthesis(String str, int start, char leftParenthesis, char rightParenthesis) {
         int i = start + 1
         while (i < str.size()) {
-            if (str.charAt(i).equals(rightParenthese)) {
+            if (str.charAt(i).equals(rightParenthesis)) {
                 return i
             }
-            if (str.charAt(i).equals(leftParenthese)) {
-                i = findClosingParenthese(str, i, leftParenthese, rightParenthese)
+            if (str.charAt(i).equals(leftParenthesis)) {
+                i = findClosingParenthesis(str, i, leftParenthesis, rightParenthesis)
             }
             i++
         }

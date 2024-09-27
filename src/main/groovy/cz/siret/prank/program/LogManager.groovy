@@ -16,7 +16,7 @@ import org.apache.logging.log4j.core.layout.PatternLayout
 import org.slf4j.bridge.SLF4JBridgeHandler
 
 /**
- *
+ * Manages logging configuration
  */
 @CompileStatic
 class LogManager implements Writable {

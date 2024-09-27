@@ -64,7 +64,7 @@ class PredictPocketsRoutine extends Routine {
         }
 
         Model model = Model.load(modelf)
-        model.disableParalelism()
+        model.disableParallelism()
 
         String visDir = "$outdir/visualizations"
         String predDir = "$outdir"

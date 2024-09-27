@@ -177,9 +177,9 @@ We run `ploop` comand to try different combination of parameter values and to pr
 ~~~
 
 Notes:
-* `-hopt_train_only_once 1` causes that only one RF model is trained in the beginning and then it is simply evaluated for every point (parameter values).
+* `-hopt_train_only_once 1` causes that only one RF model is trained in the beginning, and then it is simply evaluated for every point (parameter values).
 * Ideally, it should be executed with `-hopt_train_only_once 0 -loop 10` but that would be computationally very expensive.
-* Now, the results also capure peculiarties of the one particular trained RF model, but for illustration it is hopefully sufficient.
+* Now, the results also capture peculiarities of the one particular trained RF model, but for illustration it is hopefully sufficient.
 
 Results:
 

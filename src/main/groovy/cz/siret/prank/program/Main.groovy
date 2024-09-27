@@ -324,7 +324,7 @@ class Main implements Parametrized, Writable {
         configureLoggers(outdir)
 
         Model model = Model.load(findModel())
-        model.disableParalelism()
+        model.disableParallelism()
 
         EvalRoutine evalRoutine = EvalRoutine.create(params.predict_residues, dataset, model, outdir)
         EvalResults res = evalRoutine.execute()

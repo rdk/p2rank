@@ -6,7 +6,7 @@ import groovy.util.logging.Slf4j
 import static cz.siret.prank.utils.ATimer.startTimer
 
 /**
- *
+ * Simple timer for benchmarking
  */
 @Slf4j
 @CompileStatic
@@ -41,7 +41,7 @@ class Bench {
 
     static long timeitLog(String label, int reps, boolean doHeatup, Closure c) {
         if (doHeatup) {
-            doTimeit("    " + label + " (heatup)", c, true)
+            doTimeit("    " + label + " (heat-up)", c, true)
         }
 
         boolean doLog = reps>1 || doHeatup

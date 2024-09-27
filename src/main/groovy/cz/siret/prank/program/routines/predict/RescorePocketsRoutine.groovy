@@ -49,7 +49,7 @@ class RescorePocketsRoutine extends Routine {
         log.info "outdir: $outdir"
 
         Model model = Model.load(modelf)
-        model.disableParalelism()
+        model.disableParallelism()
 
         if (params.rf_flatten && !params.delete_models) {
             model.saveToFile("$outdir/${model.label}_flattened.model")

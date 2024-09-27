@@ -97,7 +97,7 @@ Additional notes:
 (This section should be moved to historical notes as soon as there will be a new default P2Rank model.)
 
 Parameter `-sample_negatives_from_decoys` determines how points are sampled from the proteins in a training dataset. 
-If `sample_negatives_from_decoys = false` all of the points from the protein surface are used. 
+If `sample_negatives_from_decoys = false` all the points from the protein surface are used. 
 If `sample_negatives_from_decoys = true` only points from decoy pockets (false-positives ligand binding sites found by other methods like Fpocket) are used. 
 For that **you need to supply a training dataset that contains pocket predictions by another method** (i.e. for predictions of Fpocket use `joined-fpocket.ds` instead of `joined.ds`). 
 
@@ -132,7 +132,7 @@ Ways to deal with class imbalances:
     - `-subsample`
     - `-supersample`
     - use in combination with `-target_class_ratio`
-    - can sbstantially influence the size of the training vactor dataset and consequentially the required memory
+    - can substantially influence the size of the training vector dataset and consequentially the required memory
 * using different density of points on Solvent Accessible Surface for positives and negatives. It is also possible to use different density for training and evaluation.
     - `-tessellation`, `-train_tessellation`, `-train_tessellation_negatives` 
     - by default `tessellation = train_tessellation = train_tessellation_negatives = 2`

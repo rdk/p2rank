@@ -94,7 +94,7 @@ class GridOptimizerRoutine extends ParamLooper {
 
         IterativeParam first = listParams[0]
 
-        // if first iteretive param is generative
+        // if first iterative param is generative
         boolean generative = listParams.size() == 1 && !(first instanceof ListParam)
 
         if (generative) {

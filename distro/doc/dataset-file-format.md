@@ -47,7 +47,7 @@ HEADER: <column_names>
 
 Following examples are valid multi-column dataset files. See other examples in `test_data` folder.
 Ligands can be specified by a group name (e.g. `PHI`) in which case all ligands with this name will be considered relevant. 
-To specify particular molecules you can optionally use `atom_id` and `group_id` specifiers.
+To target specific molecules, you can optionally use `atom_id` and `group_id` specifiers.
 No whitespace in the column value is allowed.
 
 ##### Example 2: Dataset with explicitly specified relevant ligands 
@@ -72,5 +72,5 @@ HEADER: protein prediction
 liganated/1a82a.pdb   predictions/fpocket/1a82a_out/1a82a_out.pdb  
 liganated/1aaxa.pdb   predictions/fpocket/1aaxa_out/1aaxa_out.pdb  
 ~~~  
-A dataset that defines pairs of liganated protein and binding site pedictions for this protein made by some prediction method, in this case, Fpocket. 
+A dataset that defines pairs of liganated protein and binding site predictions for this protein made by some prediction method, in this case, Fpocket. 
 It is used for rescoring and evaluating predictions of other methods (using `prank rescore <dataset-whih-pairs.ds>`). 

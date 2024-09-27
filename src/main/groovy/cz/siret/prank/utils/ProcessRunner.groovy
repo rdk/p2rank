@@ -83,12 +83,12 @@ class ProcessRunner {
             log.info "killing process $process"
             process.destroy()
         } catch (Exception e) {
-            log.warn("failed to kill proecss", e)
+            log.warn("failed to kill process", e)
             try {
-                log.info("killing process forciblly", e)
+                log.info("killing process forcibly", e)
                 process.destroyForcibly().waitFor()
             } catch (Exception e2) {
-                log.warn("failed to kill proecss forcibly", e)
+                log.warn("failed to kill process forcibly", e2)
             }
         }
     }

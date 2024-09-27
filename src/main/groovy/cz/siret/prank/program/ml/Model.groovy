@@ -29,7 +29,7 @@ class Model {
         this.classifier = Objects.requireNonNull(classifier)
     }
 
-    void disableParalelism() {
+    void disableParallelism() {
         WekaUtils.disableParallelism(classifier)
     }
 
