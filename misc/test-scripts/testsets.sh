@@ -145,21 +145,22 @@ predict() {
 }
 
 # test prediction with flattened forest
-predict_flattened() {
-
-   title PREDICTIONS WITH FLATTENED FOREST
-
-   test ./prank.sh predict joined.ds          -c config/test-default  -rf_flatten 1   -out_subdir TEST/PREDICT_FLATTENED
-   test ./prank.sh predict holo4k.ds          -c config/test-default  -rf_flatten 1   -out_subdir TEST/PREDICT_FLATTENED
-   test ./prank.sh predict coach420.ds        -c config/test-default  -rf_flatten 1   -out_subdir TEST/PREDICT_FLATTENED
-   test ./prank.sh predict ah4h.holoraw.ds    -c config/test-default  -rf_flatten 1   -out_subdir TEST/PREDICT_FLATTENED
-   
-   test ./prank.sh predict chen11.ds          -c config/test-default  -rf_flatten 1   -out_subdir TEST/PREDICT_FLATTENED
-   test ./prank.sh predict fptrain.ds         -c config/test-default  -rf_flatten 1   -out_subdir TEST/PREDICT_FLATTENED
-   test ./prank.sh predict 'joined(mlig).ds'  -c config/test-default  -rf_flatten 1   -out_subdir TEST/PREDICT_FLATTENED
-   test ./prank.sh predict 'holo4k(mlig).ds'  -c config/test-default  -rf_flatten 1   -out_subdir TEST/PREDICT_FLATTENED
-
-}
+# doesn't make sense since default is already flat
+#predict_flattened() {
+#
+#   title PREDICTIONS WITH FLATTENED FOREST
+#
+#   test ./prank.sh predict joined.ds          -c config/test-default  -rf_flatten 1   -out_subdir TEST/PREDICT_FLATTENED
+#   test ./prank.sh predict holo4k.ds          -c config/test-default  -rf_flatten 1   -out_subdir TEST/PREDICT_FLATTENED
+#   test ./prank.sh predict coach420.ds        -c config/test-default  -rf_flatten 1   -out_subdir TEST/PREDICT_FLATTENED
+#   test ./prank.sh predict ah4h.holoraw.ds    -c config/test-default  -rf_flatten 1   -out_subdir TEST/PREDICT_FLATTENED
+#
+#   test ./prank.sh predict chen11.ds          -c config/test-default  -rf_flatten 1   -out_subdir TEST/PREDICT_FLATTENED
+#   test ./prank.sh predict fptrain.ds         -c config/test-default  -rf_flatten 1   -out_subdir TEST/PREDICT_FLATTENED
+#   test ./prank.sh predict 'joined(mlig).ds'  -c config/test-default  -rf_flatten 1   -out_subdir TEST/PREDICT_FLATTENED
+#   test ./prank.sh predict 'holo4k(mlig).ds'  -c config/test-default  -rf_flatten 1   -out_subdir TEST/PREDICT_FLATTENED
+#
+#}
 
 conservation() {
 

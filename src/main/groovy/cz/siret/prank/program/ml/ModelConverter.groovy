@@ -12,6 +12,7 @@ import cz.siret.prank.utils.SysUtils
 import cz.siret.prank.utils.Writable
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
 import groovyx.gpars.GParsPool
 import hr.irb.fastRandomForest.FastRandomForest
 import weka.classifiers.Classifier
@@ -21,6 +22,7 @@ import javax.annotation.Nullable
 /**
  *
  */
+@Slf4j
 @CompileStatic
 class ModelConverter implements Parametrized, Writable {
 
@@ -60,7 +62,8 @@ class ModelConverter implements Parametrized, Writable {
 
             return new Model("FlatBinaryForest_from_${model.label}", fbf)
         } else {
-            throw new PrankException("Cannot flatten classifier of type ${c.class.simpleName}. Flattable classifiers: ${FLATTABLE_CLASSIFIER_NAMES}")
+            log.warn "Cannot flatten classifier of type ${c.class.simpleName}. Flattable classifiers: ${FLATTABLE_CLASSIFIER_NAMES}"
+            return model
         }
     }
 

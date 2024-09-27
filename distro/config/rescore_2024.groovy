@@ -112,8 +112,6 @@ import cz.siret.prank.program.params.Params
      */
     rf_threads = 0
 
-    rf_flatten = true
-
 
     //=== Distances and thresholds =================
 

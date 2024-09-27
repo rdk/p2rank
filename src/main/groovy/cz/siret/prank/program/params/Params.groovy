@@ -364,7 +364,7 @@ class Params {
     int rf_bagsize = 100
 
     /**
-     * Flatten random forest if possible
+     * Flatten random forest after loading if possible
      */
     @RuntimeParam
     @ModelParam // training

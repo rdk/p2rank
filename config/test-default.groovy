@@ -19,9 +19,7 @@ import cz.siret.prank.program.params.Params
     log_to_console = false
 
 
-    rf_flatten = true
-
-    rf_flatten_as_legacy = true
+    rf_flatten = false
 
     rf_batch_prediction = true
 
