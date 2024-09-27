@@ -101,11 +101,13 @@ class PrintRoutine extends Routine {
 
         Model.Info info = model.info
 
+        String classifierFile = Futils.isDirectory(modelf) ? "$modelf/model.zst" : modelf
+
         write "Model Info"
         write ""
-        write "File: ${Futils.absPath(modelf)}"
+        write "Path: ${Futils.absPath(modelf)}"
         write "Class: $model.classifier.class.simpleName ($model.classifier.class.name)"
-        write "Size: ${Futils.sizeMBFormatted(modelf)} MB"
+        write "Size: ${Futils.sizeMBFormatted(classifierFile)} MB"
         write "Loading time: ${Formatter.formatSeconds(loadingTime)} s"
         write ""
         write "Num. features: $info.numFeatures"

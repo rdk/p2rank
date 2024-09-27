@@ -124,7 +124,7 @@ import cz.siret.prank.program.params.Params
     ignore_het_groups = ["HOH","DOD","WAT","NAG","MAN","UNK","GLC","ABA","MPD","GOL","SO4","PO4"]
 
     /**
-     * positive podefining ligand types acceped values: "relevant", "ignored", "small", "distant"
+     * positive point defining ligand types, accepted values: "relevant", "ignored", "small", "distant"
      */
     positive_def_ligtypes = ["relevant"]
 
