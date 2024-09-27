@@ -62,14 +62,14 @@ abstract class ScoreTransformer {
     }
 
     /**
-     * Load transformer from json in P2Rank install dir subdir (/models/score/)
+     * Load transformer from json in P2Rank install dir subdir (/models/_score_transformations/)
      */
     static ScoreTransformer load(String paramVal) {
         try {
             if (StringUtils.isEmpty(paramVal)) {
                 return null
             }
-            String path = Params.inst.installDir + "/models/score/" + paramVal
+            String path = Params.inst.installDir + "/models/_score_transformations/" + paramVal
             return ScoreTransformer.loadFromJson(Futils.readFile(path))
 
         } catch (Exception e) {

@@ -203,9 +203,14 @@ class TransformRoutine extends Routine {
         model.saveToDirectoryV3(newModelDir)
 
         write "Original model: $modelFile"
-        write "Original size:" + Futils.sizeMBFormatted(modelFile)
+        write "Original size: " + Futils.sizeMBFormatted(modelFile) + " MB"
         write "New model: $newModelDir"
-        write "New size:" + Futils.sizeMBFormatted(newModelDir)
+        write "New size: " + Futils.sizeMBFormatted("$newModelDir/model.zst") + " MB"
+
+        write "Test loading new model"
+
+        Model.loadFromDirectoryV3(newModelDir)
+
     }
 
     private void cmdFlattenRfModel() {

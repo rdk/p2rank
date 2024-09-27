@@ -6,7 +6,7 @@ import cz.siret.prank.program.params.Params
  */
 (params as Params).with {
 
-    model = "alphafold.model"
+    model = "alphafold"
 
     features = ["chem","volsite","protrusion"]
 

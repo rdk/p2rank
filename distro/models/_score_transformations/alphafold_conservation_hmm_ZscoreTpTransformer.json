@@ -1,0 +1,7 @@
+{
+  "name": "ZscoreTpTransformer",
+  "params": {
+    "mean": 30.47575362106044,
+    "stdev": 26.3062726519314
+  }
+}

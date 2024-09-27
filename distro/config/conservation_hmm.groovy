@@ -5,7 +5,7 @@ import cz.siret.prank.program.params.Params
  */
 (params as Params).with {
 
-    model = "conservation_hmm.model"
+    model = "conservation_hmm"
 
     features = ["chem","volsite","protrusion","bfactor","conservation"]
 

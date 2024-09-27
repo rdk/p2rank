@@ -1,6 +1,10 @@
 package cz.siret.prank.program.ml
 
+import cz.siret.prank.features.FeatureExtractor
+import cz.siret.prank.features.FeatureSetup
+import cz.siret.prank.features.PrankFeatureExtractor
 import cz.siret.prank.fforest.FasterForest
+import cz.siret.prank.fforest.api.FlatBinaryForest
 import cz.siret.prank.fforest2.FasterForest2
 import cz.siret.prank.program.params.Params
 import cz.siret.prank.utils.Console
@@ -106,6 +110,11 @@ class Model {
         Futils.serializeToZstd(fname, classifier, zstd_level)
 
         Console.write "model saved to file $fname (${Futils.sizeMBFormatted(fname)} MB)"
+
+        PrankFeatureExtractor fe = (PrankFeatureExtractor) FeatureExtractor.createFactory()
+        List<String> subFeatureHeader = fe.vectorHeader
+
+        Futils.writeFile(dir + "/features.txt", subFeatureHeader.join("\n"))
     }
 
 //===========================================================================================================//
@@ -174,8 +183,12 @@ class Model {
             info.numTrees    = rf.numTrees
             info.numFeatures = rf.@m_Info?.enumerateAttributes()?.toList()?.size()
             info.maxDepth    = rf.maxDepth
-        } else {
-            // nothing
+        } else if (classifier instanceof FlatBinaryForest) {
+            FlatBinaryForest rf = (FlatBinaryForest)classifier
+            info.isForest    = true
+            info.numTrees    = rf.numTrees
+            info.numFeatures = rf.numAttributes
+            info.maxDepth    = rf.maxDepth
         }
 
         return info
