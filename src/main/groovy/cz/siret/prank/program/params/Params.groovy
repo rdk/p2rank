@@ -52,7 +52,7 @@ class Params {
      * (set path relative to install_dir/models/)
      */
     @RuntimeParam
-    String model = "default.model"
+    String model = "default"
 
     /**
      * Random seed

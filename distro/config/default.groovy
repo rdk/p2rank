@@ -23,7 +23,7 @@ import cz.siret.prank.program.params.Params
      * default model
      * (set path relative to install_dir/models/)
      */
-    model = "default.model"
+    model = "default"
 
     /**
      * Random seed
