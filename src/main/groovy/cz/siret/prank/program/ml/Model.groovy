@@ -9,6 +9,7 @@ import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.WekaUtils
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
 import hr.irb.fastRandomForest.FastRandomForest
 import weka.classifiers.Classifier
 import weka.classifiers.trees.RandomForest
@@ -18,6 +19,7 @@ import javax.annotation.Nullable
 /**
  * Machine learning prediction model
  */
+@Slf4j
 @CompileStatic
 class Model {
 
@@ -55,24 +57,71 @@ class Model {
         return res
     }
 
+    /**
+     * Load from file (v1 and v2 formats) or directory (v3) and apply conversions.
+     *
+     * @param fileOrDir
+     * @return
+     */
+    static Model load(String fileOrDir) {
+        Model model = loadFromFileOrDir(fileOrDir)
+        model = new ModelConverter().applyConversions(model)
+        return model
+    }
+
+    /**
+     * Load from file (v1 and v2 formats) or directory (v3).
+     *
+     * No conversions applied.
+     *
+     * @param fileOrDir
+     * @return
+     */
+    static Model loadFromFileOrDir(String fileOrDir) {
+        Model model
+
+        if (Futils.isDirectory(fileOrDir)) {
+            model = loadFromDirectoryV3(fileOrDir)
+        } else {
+            model = loadFromFileV1V2(fileOrDir)
+        }
+
+        return model
+    }
+
     void saveToFile(String fname) {
         WekaUtils.saveClassifier((Classifier)classifier, fname)
         Console.write "model saved to file $fname (${Futils.sizeMBFormatted(fname)} MB)"
     }
 
+    void saveToDirectoryV3(String dir) {
+        log.info "Saving model to directory (v3 format): $dir"
 
-    /**
-     * Load from file and apply conversions
-     * @param fname
-     * @return
-     */
-    static Model load(String fname) {
-        Model model = loadFromFile(fname)
-        model = new ModelConverter().applyConversions(model)
-        return model
+        Futils.mkdirs(dir)
+
+        String fname = dir + "/model.zst"
+        int zstd_level = 16  // 16 seems to be fastest to load using zstd benchmark (for flattened models)
+
+        log.info "Serializing model to $fname (zstd level: $zstd_level)"
+        Futils.serializeToZstd(fname, classifier, zstd_level)
+
+        Console.write "model saved to file $fname (${Futils.sizeMBFormatted(fname)} MB)"
     }
 
-    static Model loadFromFile(String fname) {
+//===========================================================================================================//
+
+    /**
+     * Model V3 format is a directory with classifier in model.zst file
+     */
+    static Model loadFromDirectoryV3(String dir) {
+        log.info "Loading model from directory (v3 format): $dir"
+        Classifier classifier = WekaUtils.loadClassifier(Futils.inputStream(dir + "/model.zst"))
+        return new Model(Futils.shortName(dir), classifier)
+    }
+
+//===========================================================================================================//
+
+    static Model loadFromFileV1V2(String fname) {
         if (fname.contains(".model2")) {
             return loadFromFileV2(fname)
         } else {

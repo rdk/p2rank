@@ -426,6 +426,10 @@ class Futils {
         return new File(dir).listFiles().toList()
     }
 
+    static boolean isDirectory(String dir) {
+        new File(dir).isDirectory()
+    }
+
     static boolean isDirEmpty(String dir) {
         listFiles(dir).isEmpty()    
     }
@@ -433,7 +437,7 @@ class Futils {
 
     static boolean exists(@Nullable String name) {
         if (name==null) return false
-        return new File((String)name).exists()
+        return new File(name).exists()
     }
 
     static boolean exists(@Nullable File file) {

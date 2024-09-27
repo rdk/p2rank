@@ -75,6 +75,7 @@ class TransformRoutine extends Routine {
         "reduce-to-chains" : { cmdReduceToChains() },
         "aaindex1-to-csv" : { cmdAAIndex1ToCsv() },
         "flatten-rf-model" : { cmdFlattenRfModel() },
+        "model-to-v3-format" : { cmdModelToV3Format() },
         "loop-flatten-rf-model" : { cmdLoopFlattenRfModel() },
         "bench-flatten-optimizers" : { cmdBenchFlattenOptimizers() }
     ])
@@ -184,6 +185,29 @@ class TransformRoutine extends Routine {
 
 //===========================================================================================================//
 
+    void cmdModelToV3Format() {
+        mkdirs(outdir)
+        writeParams(outdir)
+
+
+        String modelFile = main.findModel()
+        Model model = Model.loadFromFileOrDir(modelFile)
+        model = new ModelConverter().applyConversions(model)
+
+        write "Converting model $modelFile ($model.label) to v3 format"
+        write "params.rf_flatten: $params.rf_flatten"
+        write "params.rf_flatten_as_legacy: $params.rf_flatten_as_legacy"
+
+        String newModelDir = outdir + '/' + Futils.baseName(modelFile)
+
+        model.saveToDirectoryV3(newModelDir)
+
+        write "Original model: $modelFile"
+        write "Original size:" + Futils.sizeMBFormatted(modelFile)
+        write "New model: $newModelDir"
+        write "New size:" + Futils.sizeMBFormatted(newModelDir)
+    }
+
     private void cmdFlattenRfModel() {
         mkdirs(outdir)
         writeParams(outdir)
@@ -193,7 +217,7 @@ class TransformRoutine extends Routine {
 
         String modelFile = main.findModel()
 
-        Model model = Model.loadFromFile(modelFile)
+        Model model = Model.loadFromFileOrDir(modelFile)
         model = new ModelConverter().applyConversions(model)
 
         String newModelFile = "$outdir/$model.label"
@@ -213,7 +237,7 @@ class TransformRoutine extends Routine {
         params.rf_flatten = true
 
         String modelFile = main.findModel()
-        Model model = Model.loadFromFile(modelFile)
+        Model model = Model.loadFromFileOrDir(modelFile)
 
         while (true) {
             new ModelConverter().applyConversions(model)
@@ -224,5 +248,6 @@ class TransformRoutine extends Routine {
     private void cmdBenchFlattenOptimizers() {
         // TODO
     }
-    
+
+
 }

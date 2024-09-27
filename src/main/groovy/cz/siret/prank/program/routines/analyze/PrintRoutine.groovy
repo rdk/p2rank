@@ -96,7 +96,7 @@ class PrintRoutine extends Routine {
         Model model = null
 
         long loadingTime = timeit {
-            model = Model.loadFromFile(modelf)
+            model = Model.load(modelf)
         }
 
         Model.Info info = model.info
@@ -118,12 +118,12 @@ class PrintRoutine extends Routine {
 
     void transform_model() {
         String modelf = main.findModel()
-        Model model = Model.loadFromFile(modelf)
+        Model model = Model.load(modelf)
 
         def newf = modelf+".model2.zst"
         Futils.serializeToZstd(newf, model.classifier, 3)
 
-        Model.loadFromFile(newf)
+        Model.load(newf)
         
         write "Transformed model saved to file ${Futils.absPath(newf)}"
     }

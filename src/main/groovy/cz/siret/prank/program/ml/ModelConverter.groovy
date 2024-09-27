@@ -5,8 +5,10 @@ import cz.siret.prank.fforest.FasterTree
 import cz.siret.prank.fforest.api.FlatBinaryForest
 import cz.siret.prank.fforest.api.FlatBinaryForestBuilder
 import cz.siret.prank.fforest2.FasterForest2
+import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.ATimer
+import cz.siret.prank.utils.SysUtils
 import cz.siret.prank.utils.Writable
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
@@ -22,31 +24,48 @@ import javax.annotation.Nullable
 @CompileStatic
 class ModelConverter implements Parametrized, Writable {
 
+
     Model applyConversions(Model model) {
         if (params.rf_flatten) {
-            def c = model.classifier
-            if (c instanceof FastRandomForest || c instanceof FasterForest || c instanceof FasterForest2) {
-                ATimer timer = ATimer.startTimer()
-
-                write "Converting ${c.class.simpleName} to FlatBinaryForest"
-
-                FlatBinaryForest fbf
-                if (c instanceof FastRandomForest) {
-                    fbf = frfToFlatForest((FastRandomForest)c)
-                } else if (c instanceof FasterForest) {
-                    fbf = ((FasterForest)c).toFlatBinaryForest(params.rf_flatten_as_legacy)
-                } else { // FF2
-                    fbf = ((FasterForest2)c).toFlatBinaryForest(params.rf_flatten_as_legacy)
-                }
-                write " - flattened in:  $timer.formatted"
-
-                return new Model("FlatBinaryForest_from_${model.label}", fbf)
-            }
+            model = flattenRandomForest(model)
         }
         return model
     }
 
 //===========================================================================================================//
+
+    static List<Class> FLATTABLE_CLASSIFIERS = (List) [FastRandomForest, FasterForest, FasterForest2]
+    static List<String> FLATTABLE_CLASSIFIER_NAMES = FLATTABLE_CLASSIFIERS*.simpleName
+
+    static boolean isFlattableClassifier(Classifier c) {
+        return SysUtils.isInstanceOfAny(c, FLATTABLE_CLASSIFIERS)
+    }
+
+    Model flattenRandomForest(Model model) {
+        def c = model.classifier
+        if (isFlattableClassifier(c)) {
+            ATimer timer = ATimer.startTimer()
+
+            write "Converting ${c.class.simpleName} to FlatBinaryForest"
+
+            FlatBinaryForest fbf
+            if (c instanceof FastRandomForest) {
+                fbf = frfToFlatForest((FastRandomForest)c)
+            } else if (c instanceof FasterForest) {
+                fbf = ((FasterForest)c).toFlatBinaryForest(params.rf_flatten_as_legacy)
+            } else { // FF2
+                fbf = ((FasterForest2)c).toFlatBinaryForest(params.rf_flatten_as_legacy)
+            }
+            write " - flattened in:  $timer.formatted"
+
+            return new Model("FlatBinaryForest_from_${model.label}", fbf)
+        } else {
+            throw new PrankException("Cannot flatten classifier of type ${c.class.simpleName}. Flattable classifiers: ${FLATTABLE_CLASSIFIER_NAMES}")
+        }
+    }
+
+//===========================================================================================================//
+
 
     @CompileDynamic
     FlatBinaryForest frfToFlatForest(FastRandomForest forest) {
@@ -88,5 +107,6 @@ class ModelConverter implements Parametrized, Writable {
 
         return new FasterTree(childLeft, childRight, attribute, splitPoint, classProbs)
     }
+
 
 }
