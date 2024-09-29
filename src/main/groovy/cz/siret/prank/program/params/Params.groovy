@@ -641,6 +641,24 @@ class Params {
     @RuntimeParam
     boolean collect_only_once = true
 
+//    /**
+//     * export vectors describing SAS points used during prediction
+//     * export is a table file containing: SAS point 3D coordinates, calculated features, predicted raw point ligandability score
+//     * see export_points_format
+//     */
+//    @RuntimeParam
+//    boolean export_points = false
+
+//    /**
+//     * format of the point export file
+//     *
+//     * relevant only if export_points=true
+//     *
+//     * Available options: "csv", "csv.gz"
+//     */
+//    @RuntimeParam
+//    boolean export_points_format = "csv"
+
     /**
      * number of random seed iterations
      *

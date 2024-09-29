@@ -576,6 +576,7 @@ print_env() {
     printcmd hostname
     printcmd uname -a
     printcmd java -version
+    printcmd echo $JAVA_HOME
     printcmd lscpu
     printcmd WMIC CPU Get /Format:List
 }

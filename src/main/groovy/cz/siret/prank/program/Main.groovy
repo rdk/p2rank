@@ -229,7 +229,7 @@ class Main implements Parametrized, Writable {
         }
     }
 
-    String findInstallDir() {
+    static String findInstallDir() {
         String path = Main.class.getProtectionDomain().getCodeSource().getLocation().getPath()
         String decodedPath = URLDecoder.decode(path, "UTF-8")
 
@@ -438,6 +438,16 @@ class Main implements Parametrized, Writable {
         }
     }
 
+    private static cmdVersion() {
+        System.out.println getVersionName()
+        System.out.println ""
+        System.out.println "Home: " + findInstallDir()
+        System.out.println "JVM: " + SysUtils.getJavaRuntimeNameVersionVendor()
+        System.out.println "OS: " + SysUtils.getOsInfo()
+        System.out.println "CPUs: " + SysUtils.getAvailableProcessors()
+        System.out.println "Max Memory: ${SysUtils.getMaxMemoryGB()} GiB"
+    }
+
 //===========================================================================================================//
 
     Main(CmdLineArgs args) {
@@ -461,7 +471,7 @@ class Main implements Parametrized, Writable {
         CmdLineArgs parsedArgs = CmdLineArgs.parse(args)
 
         if (parsedArgs.hasSwitch("v", "version")) {
-            write "$versionName"
+            cmdVersion()
             return
         }
 

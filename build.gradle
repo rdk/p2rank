@@ -22,7 +22,7 @@ apply plugin: "com.github.ben-manes.versions"   //  ./gradlew dependencyUpdates
 
 
 group = 'cz.siret'
-version = '2.5-dev.11'
+version = '2.5-dev.12'
 
 description = 'Ligand binding site prediction based on machine learning.'
 
@@ -186,7 +186,7 @@ dependencies {
 
     implementation 'org.slf4j:slf4j-api:2.0.16'
     implementation 'org.slf4j:jul-to-slf4j:2.0.16'         // for netlib logging messages
-    implementation 'org.apache.logging.log4j:log4j-core:2.24.0'
+    implementation 'org.apache.logging.log4j:log4j-core:2.24.0' // 2.24.1 causes messy output at startup
     implementation 'org.apache.logging.log4j:log4j-slf4j2-impl:2.24.0'
 
     implementation 'org.biojava:biojava-core:7.1.3'
