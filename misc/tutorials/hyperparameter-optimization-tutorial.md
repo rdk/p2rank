@@ -69,7 +69,7 @@ Quick test run:
 ~~~sh   
 ./prank.sh ploop 
     -c config/train-new-default     \      # override default config with config/train-new-default.groovy config file
-    -t chen11-fpocket.ds            \      # crossvalidate on chen11 datsest
+    -t chen11-fpocket.ds            \      # crossvalidate on chen11 datasest
     -loop 1 -rf_trees 5 -rf_depth 5 \      # make it quick (1 pass, small model)
     -features '((protrusion,bfactor),(protrusion,bfactor,new_feature))'` 
 ~~~

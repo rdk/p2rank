@@ -90,7 +90,7 @@ Analyze a dataset with an explicitly specified residue labeling.
 * `-out_format` optional, default value is `keep` -- use the same format as the input 
   * possible values: `keep|pdb|pdb.gz|cif|cif.gz`
 * `-out_file` optional, output structure file name, path relative to the shell working directory
-  * if specified, redced strucdure is saved under secified name and no other output is produced
+  * if specified, reduced structure is saved under given name and no other output is produced
   * if not specified, default name is generated (see examples) and file is saved in the output directory specified with parameters `-o`, `-output_base_dir`, `-out_subdir`
      
 Examples:

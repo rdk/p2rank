@@ -23,7 +23,7 @@ Composition of feature vector is influenced by parameters:
               
 * `-features` 
     * lists enabled feature calculators    
-    * deafult: `(chem,volsite,protrusion,bfactor)` 
+    * default: `(chem,volsite,protrusion,bfactor)` 
     * `atom_table` and `residue_table`features are implicitly enabled by default
 * `-atom_table_features` and `-residue_table_features` 
     * determine which columns from atom type and residue type tables are enabled   

@@ -42,7 +42,7 @@ See 'Feature importances' section in [training tutorial](training-tutorial.md).
 
 _(this section is work in progress)_
 
-How to evaluate wheather the new feature is useful?
+How to evaluate whether the new feature is useful?
 Is it helping to predict more binding sites, and/or more precisely predict their shape? 
                                                    
 This question is more complicated that it may seem. 
@@ -50,9 +50,9 @@ This question is more complicated that it may seem.
 * Short answer: If it improves `point_AUPRC`, it is discriminative, and it has a potential to help P2Rank to make better predictions.
 * Slightly longer answer: Better way to compare models is using `DCA` metrics (`DCA_4_0`,`DCA_4_2`...) in combination with some metric 
   that takes into account pocket shapes, like `LIGAND_COVERAGE` or `DSWO_05_0` metric. 
-* More complete answer: Even if `point_AUPRC` is improved, DCA and other pocket matrics may stay roughly the same, or even get worse. 
+* More complete answer: Even if `point_AUPRC` is improved, DCA and other pocket metrics may stay roughly the same, or even get worse. 
   The reason is that adding new feature can substantially change the distribution of predicted SAS point scores.
-  `DCA` and other pocket metrics then depend on some parameters that were optimized on a diffrent score distribution.
+  `DCA` and other pocket metrics then depend on some parameters that were optimized on a different score distribution.
   To get a meaningful comparison of `DCA` metrics, it is necessary to perform optimization of at least some basic parameters (`pred_point_threshold`, `point_score_pow`).
              
       
@@ -72,7 +72,7 @@ Details and a case study follows.
     - `point_AUPRC`
     - `point_AUC`
     - `point_MCC`  
-* resdue metrics
+* residue metrics
     - `residue_AUPRC`
     - `residue_AUC`
     - `residue_MCC`
@@ -96,12 +96,12 @@ Default P2Rank models are not optimized for residue metrics.
 
 ### Case study - conservation feature
 
-#### First, we run training and evaluation for models with and without conservaion to illustrate mentioned poits.
+#### First, we run training and evaluation for models with and without conservation to illustrate mentioned points.
                                      
 Notes: 
 * The default model was trained with `-sample_negatives_from_decoys 1` and the default conservation model with `-sample_negatives_from_decoys 0`.
-  Here we need to use the same value: otherwise the distribution of positve and negative instances (SAS points) would be different 
-  and `point_AUPRC` and `point_AUC` would be uncomparable.
+  Here we need to use the same value: otherwise the distribution of positive and negative instances (SAS points) would be different 
+  and `point_AUPRC` and `point_AUC` would be incomparable.
 * Training on `chen11-fpocket.ds` because we are using `sample_negatives_from_decoys 1`.                   
 * `-loop 10` does 10 runs with different random seed and averages results.
 
@@ -147,7 +147,7 @@ Conclusions:
 * `point_SCORE_*` metrics show that predicted SAS point scores have somewhat different distributions.
 * `point_AUPRC` and `point_AUC` suggest that conservation helps to train better classifier
 * however, `DCA` metrics for conservation are slightly worse (although, for `DCA_4_0` only by 1 pocket)
-* `LIGAND_COVERAGE` furthermore sugest that conservation helps to make better predictions (pockets better covering the ligands)
+* `LIGAND_COVERAGE` furthermore suggest that conservation helps to make better predictions (pockets better covering the ligands)
 
 
 #### Next, we take a look how 2 parameters influence `DCA` metrics.
@@ -156,10 +156,10 @@ Parameters:
 * `pred_point_threshold`:  if predicted score of SAS point is >= `pred_point_threshold`, 
   the point is classified as positive (=ligand binding) and such points are clustered to form pockets.  
 * `point_score_pow`: exponent applied to the point score before it is included in the cumulative score of the pocket. 
-  Values higher than 1 give unlinearly higher "weight" to the points whith a higher predicted scores. Helps to give higher pocket
+  Values higher than 1 give non-linearly higher "weight" to the points with a higher predicted scores. Helps to give higher pocket
   score to a smaller pockets which are predicted with higher "certainty".
         
-We run `ploop` comand to try different combination of parameter values and to produce 2D heatmap charts.
+We run `ploop` command to try different combination of parameter values and to produce 2D heatmap charts.
 
 ~~~bash
 ./prank.sh ploop -t chen11-fpocket.ds -e joined.ds -c config/train-default -out_subdir CASE -label GRID_DEFA \
@@ -197,7 +197,7 @@ Conclusions:
                                                                                          
 We can try to optimize those 2 parameters with bayesian optimization. For the instructions how to set it up see [optimization tutorial](hyperparameter-optimization-tutorial.md).
 
-This time, we can afford to properly evaluate the average results of 5 runs with different random seed for each ponint. 
+This time, we can afford to properly evaluate the average results of 5 runs with different random seed for each point. 
 
 
 ~~~bash

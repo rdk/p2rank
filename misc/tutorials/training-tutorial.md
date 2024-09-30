@@ -41,7 +41,7 @@ Training and optimization runs can be run from the project directory (repo root)
 * clone dataset repo (https://github.com/rdk/p2rank-datasets) or prepare your datasets 
 * copy `misc/local-env.sh` to root directory of the project and edit it according to your machine (the file is then included by `prank.sh`)
   * `cd p2rank; cp misc/local-env.sh .` 
-* set available memory with `-Xmx32G` parameter. You will need a lot of memory: at least to store the whole training dataset of feature vectors and a trained model and then some (see _Raquired memory and memory/time trade-offs_) 
+* set available memory with `-Xmx32G` parameter. You will need a lot of memory: at least to store the whole training dataset of feature vectors and a trained model and then some (see _Required memory and memory/time trade-offs_) 
     
 Note: for continuous work/experimentation it is better to clone the git repo, have a local java config in `local-env.sh`, and use `prank.sh` for running experiments (as described here).
 The reason is that this way it will be easy to download updates (`git pull`) ot switch to a different P2Rank version (`git checkout`) while config will stay put in `local-env.sh`. 
@@ -64,7 +64,7 @@ Related parameters:
 * `-feature_importances <bool>`: calculate feature importances (works only if `-classifier` supports it, examples: `RandomForest`, `FastRandomForest`, `FasterForest`)
 * `-fail_fast <bool>`: stop processing the dataset on the first unrecoverable error with a dataset item
 
-### Raquired memory and memory/time trade-offs
+### Required memory and memory/time trade-offs
 
 Memory consumption can be drastically influenced by some parameters.
 
@@ -79,7 +79,7 @@ Parameters that influence memory/time trade-off:
     - `-clear_sec_caches` clear secondary caches (protein surfaces etc.) between runs (when iterating params or seed)
 * `-rf_threads` number of trees trained in parallel 
 * `-rf_trees`, `-fr_depth` influence the size of the model in memory      
-* `-rf_bagsize` influences memory needed for training and training time (defualt is `100`% but good results can be achieved with `55` or less)
+* `-rf_bagsize` influences memory needed for training and training time (default is `100`% but good results can be achieved with `55` or less)
 * `-crossval_threads` when running crossvalidation it determines how many models are trained at the same time. Set to `1` if you don't have enough memory.
 
 * `-cache_datasets <bool>`: keep datasets (structures and SAS points) in memory between crossval/traineval iterations. 
@@ -136,7 +136,7 @@ Ways to deal with class imbalances:
 * using different density of points on Solvent Accessible Surface for positives and negatives. It is also possible to use different density for training and evaluation.
     - `-tessellation`, `-train_tessellation`, `-train_tessellation_negatives` 
     - by default `tessellation = train_tessellation = train_tessellation_negatives = 2`
-    - higher tesselation equals higher density = more datapoints
+    - higher tesselation equals higher density = more points
 * class weight balancing
     - use `-balance_class_weights 1` in combination with `-target_class_weight_ratio`
     - works only with weight sensitive classifiers (`RandomForest`, `FastRandomForest`, `FasterForest`, `FasterForest2`)
@@ -175,15 +175,15 @@ The location of the output directory for any given run is influenced by several 
 P2Rank can use different ML algorithms by changing value of `-classifter` parameter (e.g. `-classifter FasterForest`). 
 
 Random Forests implementations:
-* `RandomForest`: Original implementation from Weka. Slow and memory consuming but can have marginally better predictive permormance. Uses entropy. 
+* `RandomForest`: Original implementation from Weka. Slow and memory consuming but can have marginally better predictive performance. Uses entropy. 
 * `FastRandomForest`: New faster implementation by Dan Supek. Uses entropy.
-* `FasterForest`: Streamlined implementation of `FastRandomForest`. It s faster and uses leess memory, should have the same predictive preformance. Uses entropy.
-* `FasterForest2`: Even faster version. Can have slightly lower predictive performnce. Uses GINI. 
+* `FasterForest`: Streamlined implementation of `FastRandomForest`. It s faster and uses less memory, should have the same predictive performance. Uses entropy.
+* `FasterForest2`: Even faster version. Can have slightly lower predictive performance. Uses GINI. 
      
 Notes:
 * `FastRandomForest` and `FasterForest` use basically the same algorithm, `FasterForest` is just more optimized.
 * the differences in predictive performance are low, but the difference in consumed time and memory are high (0.5-4x).        
-* (for developers) to integrate new algotithms start in `ClassifierFactory.groovy`.
+* (for developers) to integrate new algorithms start in `ClassifierFactory.groovy`.
        
 
 #### Comparing training time
@@ -203,7 +203,7 @@ Value in cells is training time in minutes.
 
 ## Feature importances
      
-Some classifiers can calculate feature importences during training using `-feature_importances 1` parameter.
+Some classifiers can calculate feature importances during training using `-feature_importances 1` parameter.
 Output will be saved to `feature_importances_sorted.csv` or `feature_importances.txt` (in case of `RandomForest`).
 Training time will be impacted.
 
