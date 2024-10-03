@@ -35,8 +35,9 @@ class Model {
         this.classifier = Objects.requireNonNull(classifier)
     }
 
-    void disableParallelism() {
+    Model disableParallelism() {
         WekaUtils.disableParallelism(classifier)
+        return this
     }
 
     boolean hasFeatureImportances() {
@@ -63,6 +64,7 @@ class Model {
 
     /**
      * Load from file (v1 and v2 formats) or directory (v3) and apply conversions.
+     * Disable model parallelism if available.
      *
      * @param fileOrDir
      * @return
@@ -70,6 +72,9 @@ class Model {
     static Model load(String fileOrDir) {
         Model model = loadFromFileOrDir(fileOrDir)
         model = new ModelConverter().applyConversions(model)
+
+        model.disableParallelism()
+
         return model
     }
 

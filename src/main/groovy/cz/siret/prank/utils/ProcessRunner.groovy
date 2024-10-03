@@ -12,6 +12,8 @@ import groovy.util.logging.Slf4j
 @CompileStatic
 class ProcessRunner {
 
+    static Splitter CMD_SPLITTER = Splitter.on(CharMatcher.whitespace()).omitEmptyStrings()
+
     String command
     String dir
 
@@ -27,7 +29,7 @@ class ProcessRunner {
             this.dir = System.getProperty('java.io.tmpdir')
         }
 
-        List<String> cmdList = Splitter.on(CharMatcher.whitespace()).splitToList(command)
+        List<String> cmdList = CMD_SPLITTER.splitToList(command)
 
         processBuilder = new ProcessBuilder(cmdList)
         processBuilder.directory(new File(this.dir))
@@ -49,13 +51,16 @@ class ProcessRunner {
         return this
     }
 
+    /**
+     * Redirects error stream to output stream
+     */
     ProcessRunner redirectErrorStream() {
         processBuilder.redirectErrorStream()
         return this
     }
 
-    ProcessRunner redirectOutput(File file) {
-        processBuilder.redirectOutput(file)
+    ProcessRunner redirectOutput(String file) {
+        processBuilder.redirectOutput(new File(file))
         return this
     }
 

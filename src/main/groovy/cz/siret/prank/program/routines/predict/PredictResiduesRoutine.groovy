@@ -55,7 +55,6 @@ class PredictResiduesRoutine extends Routine {
         }
 
         Model model = Model.load(modelf)
-        model.disableParallelism()
 
         String visDir = "$outdir/visualizations"
         String predDir = "$outdir"

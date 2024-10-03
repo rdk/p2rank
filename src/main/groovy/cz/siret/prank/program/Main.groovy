@@ -305,6 +305,20 @@ class Main implements Parametrized, Writable {
         finalizeDatasetResult(result)
     }
 
+    void runFpocketRescore() {
+        initRescoreDefaultParams()
+        Dataset dataset = loadDatasetOrFile()
+        String outdir = findOutdir("fpocket_rescore_$dataset.label")
+        configureLoggers(outdir)
+
+        Dataset.Result result = new RescorePocketsRoutine(
+                dataset,
+                findModel(),
+                outdir, true).execute()
+
+        finalizeDatasetResult(result)
+    }
+
     void runEvalRescore() {
         initRescoreDefaultParams()
         Dataset dataset = loadDataset()
@@ -324,7 +338,6 @@ class Main implements Parametrized, Writable {
         configureLoggers(outdir)
 
         Model model = Model.load(findModel())
-        model.disableParallelism()
 
         EvalRoutine evalRoutine = EvalRoutine.create(params.predict_residues, dataset, model, outdir)
         EvalResults res = evalRoutine.execute()
@@ -398,25 +411,27 @@ class Main implements Parametrized, Writable {
 
 
         switch (command) {
-            case 'predict':       runPredict()
+            case 'predict':         runPredict()
                 break
-            case 'eval-predict':  runEvalPredict()
+            case 'eval-predict':    runEvalPredict()
                 break
-            case 'rescore':       runRescore()
+            case 'rescore':         runRescore()
                 break
-            case 'eval-rescore':  runEvalRescore()
+            case 'fpocket-rescore': runFpocketRescore()
                 break
-            case 'crossval':      runCrossvalidation()
+            case 'eval-rescore':    runEvalRescore()
                 break
-            case 'eval':          runEval()
+            case 'crossval':        runCrossvalidation()
                 break
-            case 'analyze':       runAnalyze()
+            case 'eval':            runEval()
                 break
-            case 'transform':     runTransform()
+            case 'analyze':         runAnalyze()
                 break
-            case 'print':         runPrint()
+            case 'transform':       runTransform()
                 break
-            case 'bench':         runBenchmark()
+            case 'print':           runPrint()
+                break
+            case 'bench':           runBenchmark()
                 break
             default:
                 runExperiment(command)

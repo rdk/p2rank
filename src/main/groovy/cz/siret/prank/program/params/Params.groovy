@@ -1321,19 +1321,23 @@ class Params {
     @RuntimeParam
     int loaded_pockets_limit = 0
 
-
     /**
      * Add random rotations of each protein (from training dataset) to the training dataset
      */
     @RuntimeParam // training
     int train_random_rotated_copies = 0
 
-
     /**
      * Use optimized library for solvent accessible surface calculation
      */
     @RuntimeParam
     boolean use_optimized_surface = true
+
+    /**
+     * Command used to run fpocket when running 'prank fpocket-rescore'. Can contain custom fpocket arguments.
+     */
+    @RuntimeParam
+    String fpocket_command = "fpocket"
 
 //===========================================================================================================//
 // Derived parameters

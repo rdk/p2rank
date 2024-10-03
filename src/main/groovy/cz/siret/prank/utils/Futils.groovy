@@ -8,6 +8,7 @@ import org.apache.commons.compress.compressors.CompressorStreamFactory
 import org.apache.commons.compress.compressors.zstandard.ZstdCompressorInputStream
 import org.apache.commons.compress.compressors.zstandard.ZstdCompressorOutputStream
 import org.apache.commons.io.FileUtils
+import org.apache.commons.io.IOUtils
 import org.tukaani.xz.LZMA2Options
 import org.tukaani.xz.LZMAInputStream
 import org.tukaani.xz.LZMAOutputStream
@@ -203,6 +204,8 @@ class Futils {
         return Futils.class.getResourceAsStream(path).newReader().getText()
     }
 
+    public static List<String> SUPPORTED_DECOMPRESS_EXTENSIONS = ["gz", "zst", "zstd", "lzma"]
+
     /**
      * Opens buffered decompressing (if needed) file stream.
      */
@@ -220,6 +223,22 @@ class Futils {
         }
 
         return is
+    }
+
+    /**
+     * Decompresses file to output stream.
+     */
+    static void decompressFile(String compressedFname, String decompressedFname) {
+        String ext = lastExt(compressedFname)
+        if (!(ext in SUPPORTED_DECOMPRESS_EXTENSIONS)) {
+            throw new RuntimeException("Compressed file extension $ext not supported for file [$compressedFname]. Supported extensions: $SUPPORTED_DECOMPRESS_EXTENSIONS")
+        }
+
+        InputStream is = inputStream(compressedFname)
+        OutputStream os = bufferedOutputStream(decompressedFname)
+        IOUtils.copy(is, os)
+        is.close()
+        os.close()
     }
 
     /**
@@ -451,7 +470,7 @@ class Futils {
     static void delete(String fname) {
         if (fname==null) return
 
-        log.info "deleting " + fname
+        log.debug "deleting " + fname
 
         File f = new File(fname)
         if (f.exists()) {
@@ -474,6 +493,15 @@ class Futils {
     static void copy(String from, String to) {
         log.debug "copying [{}] to [{}]", from, to
         Files.copy(new File(from), new File(to))
+    }
+
+    static void moveDir(String from, String to) {
+        log.debug "moving [{}] to [{}]", from, to
+        try {
+            FileUtils.moveDirectory(new File(from), new File(to))
+        } catch (Exception e) {
+            throw new RuntimeException("Error moving file/dir from [$from] to [$to]: " + e.message, e)
+        }
     }
 
 

@@ -63,7 +63,7 @@ class HSpearmintOptimizer extends HExternalOptimizerBase {
         write "Starting mongodb"
         String mcmd = "$mongodbCommand --fork --smallfiles --logpath $mongoLogFile --dbpath $mongoDataDir"
         write "  executing '$mcmd' in '$mongoDir'"
-        mongoProc = process(mcmd, mongoDir).redirectErrorStream().redirectOutput(new File(mongoOutFile))
+        mongoProc = process(mcmd, mongoDir).redirectErrorStream().redirectOutput(mongoOutFile)
         int exitCode = mongoProc.executeAndWait()
         if (exitCode != 0) {
             log.error("Mongodb log: \n " + readFile(mongoLogFile))

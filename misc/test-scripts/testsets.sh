@@ -282,6 +282,17 @@ eval_rescore() {
     test ./prank.sh eval-rescore 'holo4k(mlig)-fpocket.ds'   -c config/test-default  -fail_fast 0  -out_subdir TEST/EVAL
 }
 
+fpocket_rescore() {
+
+    title "EVALUATING FPOCKT-RESCORE (RUNNING FPOCKET AD-HOC)"
+
+    test ./prank.sh fpocket-rescore joined.ds           -c config/test-default  -out_subdir TEST/RESCORE
+    test ./prank.sh fpocket-rescore coach420.ds         -c config/test-default  -out_subdir TEST/RESCORE
+    test ./prank.sh fpocket-rescore holo4k.ds           -c config/test-default  -out_subdir TEST/RESCORE
+    test ./prank.sh fpocket-rescore chen11.ds           -c config/test-default  -out_subdir TEST/RESCORE
+
+}
+
 # train and evaluate new model/settings on main datasets
 eval_train() {
 
@@ -291,7 +302,6 @@ eval_train() {
     test ./prank.sh traineval -t chen11-fpocket.ds -e joined.ds    -c config/train-default  -loop 1 -cache_datasets 0  -out_subdir TEST/EVAL_TRAIN
     test ./prank.sh traineval -t chen11-fpocket.ds -e coach420.ds  -c config/train-default  -loop 1 -cache_datasets 0  -out_subdir TEST/EVAL_TRAIN
     test ./prank.sh traineval -t chen11-fpocket.ds -e holo4k.ds    -c config/train-default  -loop 1 -cache_datasets 0  -out_subdir TEST/EVAL_TRAIN
-
 
 }
 

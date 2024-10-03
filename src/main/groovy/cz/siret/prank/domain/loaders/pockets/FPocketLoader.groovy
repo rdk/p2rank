@@ -22,7 +22,7 @@ import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 /**
- * Loader for predictions produced by Fpocket (1.0 - 4.2).
+ * Loader for predictions produced by Fpocket (1.0 - 4.2.2).
  */
 @Slf4j
 @CompileStatic
@@ -246,6 +246,7 @@ HETATM55930 APOL STP C   2      -2.407 -22.341  -6.002  0.00  0.00          Ve
      */
     private List<Atoms> loadPocketGroupsFromCif(String resultCifFile) {
         // Biojava parser fails, missing many columns
+
         List<String> lines = Futils.readPossiblyCompressedFile(resultCifFile).readLines()
 
         Map<Integer, Atoms> groups = new HashMap<>()

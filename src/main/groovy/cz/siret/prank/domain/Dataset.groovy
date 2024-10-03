@@ -128,6 +128,20 @@ class Dataset implements Parametrized, Writable, Failable {
 
 //===========================================================================================================//
 
+    boolean hasColumn(String col) {
+        header.contains(col)
+    }
+
+    boolean hasProteinColumn() {
+        hasColumn(COLUMN_PROTEIN)
+    }
+
+    boolean hasPredictionColumn() {
+        hasColumn(COLUMN_PREDICTION)
+    }
+
+//===========================================================================================================//
+
     /**
      * Process all dataset items.
      * Runs in parallel or serially depending on configuration.
@@ -443,7 +457,7 @@ class Dataset implements Parametrized, Writable, Failable {
         if (residueLabeler == null && hasExplicitResidueLabeling()) {
 
             if (header.contains(COLUMN_POSITIVE_RESIDUES)) {
-
+                // TODO: implement
             } else {
                 String labelingFile = dir + "/" + attributes.get(PARAM_RESIDUE_LABELING_FILE)
                 residueLabeler = ResidueLabeler.loadFromFile(attributes.get(PARAM_RESIDUE_LABELING_FORMAT), labelingFile)
@@ -883,6 +897,11 @@ class Dataset implements Parametrized, Writable, Failable {
         @Nullable
         List<String> getApoChains() {
             apoChains
+        }
+
+        void setPocketPredictionFile(String predictionFile) {
+            pocketPredictionFile = predictionFile
+            columnValues.put(COLUMN_PREDICTION, predictionFile)
         }
 
         /**
