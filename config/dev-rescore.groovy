@@ -10,7 +10,7 @@ import cz.siret.prank.program.params.Params
      * default model
      * (set path relative to install_dir/models/)
      */
-    model = "default_rescore.model"
+    model = "default_rescore"
 
     delete_models = true
 

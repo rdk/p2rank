@@ -18,7 +18,7 @@ import cz.siret.prank.program.params.Params
 
 //===========================================================================================================//
 
-    model = "alphafold.model"
+    model = "alphafold"
 
     features = ["chem","volsite","protrusion"]
 

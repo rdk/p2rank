@@ -25,7 +25,7 @@ import cz.siret.prank.program.params.Params
 
 //===========================================================================================================//
 
-    model = "conservation_hmm.model"
+    model = "conservation_hmm"
 
     features = ["chem","volsite","protrusion","bfactor","conservation"]
 
