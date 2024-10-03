@@ -66,19 +66,20 @@ If you use P2Rank, please cite relevant papers:
  Jendele L, Krivak R, Skoda P, Novotny M, Hoksza D. ***PrankWeb: a web server for ligand binding site prediction and visualization.*** Nucleic Acids Research, Volume 47, Issue W1, 02 July 2019, Pages W345-W349 
 * [Conference paper](https://doi.org/10.1007/978-3-319-21233-3_4) introducing P2Rank prediction algorithm  
  Krivak R, Hoksza D. ***P2RANK: Knowledge-Based Ligand Binding Site Prediction Using Aggregated Local Features.*** International Conference on Algorithms for Computational Biology 2015 Aug 4 (pp. 41-52). Springer
-* [Research article](https://doi.org/10.1186/s13321-015-0059-5) about PRANK rescoring algorithm  
+* [Research article](https://doi.org/10.1186/s13321-015-0059-5) about PRANK rescoring algorithm (now included in P2Rank) 
  Krivak R, Hoksza D. ***Improving protein-ligand binding site prediction accuracy by classification of inner pocket points using local features.*** Journal of Cheminformatics. 2015 Dec.
 
 
 Usage Examples
 --------------
 
-Following commands can be executed in the installation directory.
+Following commands can be executed in the installation directory. 
 
-### Print help
+### Help and version
 
 ~~~bash
-prank help
+prank help   # print help for main commands and parameters
+prank -v     # print version and some system info
 ~~~
 
 ### Predict ligand binding sites (P2Rank algorithm)
@@ -130,7 +131,7 @@ prank predict                   -visualizations 0 -threads 8  test.ds   #  turn 
 prank predict -c example.groovy -visualizations 0 -threads 8  test.ds   #  overrides defaults as well as values from example.groovy
 ~~~     
 
-P2Rank has numerous configurable parameters. 
+P2Rank has many configurable parameters. 
 To see the list of standard parameters look into `config/default.groovy` and other example config files in this directory.
 To see the complete commented list of all (including undocumented)
 parameters see [Params.groovy](https://github.com/rdk/p2rank/blob/develop/src/main/groovy/cz/siret/prank/program/params/Params.groovy) in the source code.
