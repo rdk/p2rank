@@ -1,4 +1,4 @@
-# Dataset for rescoring PUResNet predictions.
+# Dataset for rescoring PUResNetV2.0 predictions.
 
 
 # Note: 'prank rescore' expects 2 columns: prediction, protein
