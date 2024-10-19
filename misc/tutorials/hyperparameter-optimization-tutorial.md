@@ -2,7 +2,7 @@
 
 P2Rank has routines for optimizing arbitrary parameters with Grid and Bayesian optimization. 
 
-Here by hyper-parameters we mean actual hyper-parameters of the machine learning models (e.g. number of trees in RF) but also any arbitrary parameter ot the whole algorithm.
+Here, by hyper-parameters we mean actual hyper-parameters of the machine learning models (e.g. number of trees in RF), and also any arbitrary parameters of the algorithm as a whole.
 
 To see the complete commented list of all (including undocumented) 
 parameters see [Params.groovy](https://github.com/rdk/p2rank/blob/develop/src/main/groovy/cz/siret/prank/program/params/Params.groovy) in the source code.

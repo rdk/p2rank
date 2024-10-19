@@ -25,7 +25,7 @@ Multi-column datasets need to declare a header (see `test_data/fpocket-pairs.ds`
 * `"ligand_codes"` same as "ligands" (for backward compatibility)
 * `"conservation"` contains link to sequence conservation data
 
-If the header is not specified, the default implicit header is `HEADER: protein` i.e. dataset contains just a list of protein files.
+If the header is not specified by line starting with `HEADER:`, the default implicit header is `HEADER: protein` i.e. dataset contains just a list of protein files.
 
 Additionally, it is possible to specify global dataset parameters.
 
@@ -51,6 +51,7 @@ To target specific molecules, you can optionally use `atom_id` and `group_id` sp
 No whitespace in the column value is allowed.
 
 ##### Example 2: Dataset with explicitly specified relevant ligands 
+
 ~~~sh
 HEADER:  protein  ligands
 
@@ -63,7 +64,10 @@ liganated/2ck3b.pdb   ANP
 A dataset with explicitly specified ligands. Useful only for training and evaluation datasets. 
 
 ##### Example 3: Dataset of protein/prediction pairs
+
 ~~~sh
+# Dataset with list of proteins and corresponding fpocket predictions
+
 PARAM.PREDICTION_METHOD=fpocket     # specifies the method that was used to create predictions 
 PARAM.LIGANDS_SEPARATED_BY_TER=true # specifies that ligands are separated by TER record (relevant only for legacy CHEN11 dataset)
 
@@ -71,6 +75,7 @@ HEADER: protein prediction
 
 liganated/1a82a.pdb   predictions/fpocket/1a82a_out/1a82a_out.pdb  
 liganated/1aaxa.pdb   predictions/fpocket/1aaxa_out/1aaxa_out.pdb  
-~~~  
+~~~ 
+
 A dataset that defines pairs of liganated protein and binding site predictions for this protein made by some prediction method, in this case, Fpocket. 
 It is used for rescoring and evaluating predictions of other methods (using `prank rescore <dataset-whih-pairs.ds>`). 

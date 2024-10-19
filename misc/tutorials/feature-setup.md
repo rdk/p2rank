@@ -4,7 +4,7 @@
 This file describes feature vector configuration and provides introduction to adding new features.
 Useful only for training and evaluating new models.
 
-P2Rank version: 2.4-dev.1
+P2Rank version: 2.4
 
 ## Introduction
 
@@ -22,9 +22,9 @@ We will use the term *feature* for feature calculator (e.g. `chem`) and *sub-fea
 Composition of feature vector is influenced by parameters:
               
 * `-features` 
-    * lists enabled feature calculators    
+    * list of enabled feature calculators    
     * default: `(chem,volsite,protrusion,bfactor)` 
-    * `atom_table` and `residue_table`features are implicitly enabled by default
+    * `atom_table` and `residue_table` features are implicitly enabled by default
 * `-atom_table_features` and `-residue_table_features` 
     * determine which columns from atom type and residue type tables are enabled   
 * `-feature_filters`
@@ -34,7 +34,7 @@ Composition of feature vector is influenced by parameters:
 
 Note that the syntax for list-of-strings parameter value is different on the command line and in a `*.groovy` config file:
 * command line: `-features '(chem,volsite,protrusion,bfactor)'`
-* config file: `features = ['chem','volsite','protrusion','bfactor']`
+* config file: `features = ['chem','volsite','protrusion','bfactor']` (Groovy syntax)
 
 #### Check enabled features
 
@@ -46,7 +46,7 @@ To check which features are enabled for a particular configuration run `print fe
 <details>
   <summary>Example: Default feature setup:  (click to expand)</summary>
   
-  ```bash
+```bash
 $ ./prank print features
 ----------------------------------------------------------------------------------------------
  P2Rank 2.3-dev.1
@@ -101,7 +101,7 @@ Effective feature vector header (i.e. enabled sub-features):
 ----------------------------------------------------------------------------------------------
  finished successfully in 0 hours 0 minutes 1.044 seconds
 ----------------------------------------------------------------------------------------------
-  ```
+```
 </details>
 
 
@@ -117,7 +117,7 @@ If you want to add new features that are not implemented in P2Rank you have 3 op
         * atom types are: (ALA.C,ALA.CA,ALA.CB,...)
     * useful only if the values are the same for all proteins in the dataset (for example: hydrophobicity index of amino acids).
     * see example tables: `aa-propensities.csv` and `atomic-properties.csv`
-    * NOTE: providing custom tables is not implemented yet (planned for 2.3-dev.2)
+    * NOTE: providing custom tables is not implemented yet (as for P2Rank 2.4.2)
 * Use `csv` feature
     * allows defining values for every protein residue and/or every protein atom (for each protein separately) via external csv files
     * disadvantage: csv files must be manually calculated for each dataset  
@@ -195,7 +195,7 @@ Effective feature vector header (i.e. enabled sub-features):
 #### Filtering and grid optimization
 
 You can use `-feature_filters` param in combination with grid optimization (`ploop` command).
-For datails see [hyperparameter optimization tutorial](hyperparameter-optimization-tutorial.md).
+For details see [hyperparameter optimization tutorial](hyperparameter-optimization-tutorial.md).
 
 Example:
 ```
