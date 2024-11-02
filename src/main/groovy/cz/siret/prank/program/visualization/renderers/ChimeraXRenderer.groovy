@@ -18,9 +18,9 @@ import static cz.siret.prank.utils.Futils.writeFile
 class ChimeraXRenderer {
 
     String bgColor = "#242455"
-    String proteinColor = "#d9d9ff"
+    String proteinColor = "#bdbdde" // "#d9d9ff"
     String ligandColor = "magenta"
-    String transparency = "0"  // 0-100(full transparency)
+    String transparency = "35"  // 0-100(full transparency)
 
 //===========================================================================================================//
 
@@ -42,8 +42,7 @@ class ChimeraXRenderer {
 //===========================================================================================================//
 
     private String renderMainScript(String proteinFile, String pointsFileRelative, PredictionPair pair) {
-"""
-open $proteinFile
+"""open $proteinFile
 surf
 hide solvent
 color protein $proteinColor
@@ -52,15 +51,15 @@ color ligand $ligandColor
 
 ${colorPockets(pair)}
 
-
 open $pointsFileRelative
 color by bfactor #2 palette lime:red  range 0,0.7
 
 
 set bgcolor $bgColor
 transparency $transparency
-graphics silhouettes false
-lighting soft
+graphics silhouettes true
+lighting full
+view
 """
     }
 

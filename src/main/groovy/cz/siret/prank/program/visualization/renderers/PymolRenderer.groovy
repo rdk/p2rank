@@ -40,8 +40,7 @@ class PymolRenderer implements Parametrized {
 
     private String renderMainScript(String proteinFile, String pointsFileRelative, PredictionPair pair) {
 // language=python
-"""
-from pymol import cmd,stored
+"""from pymol import cmd,stored
 
 set depth_cue, 1
 set fog_start, 0.4
