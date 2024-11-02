@@ -5,7 +5,6 @@ import cz.siret.prank.fforest.FasterTree
 import cz.siret.prank.fforest.api.FlatBinaryForest
 import cz.siret.prank.fforest.api.FlatBinaryForestBuilder
 import cz.siret.prank.fforest2.FasterForest2
-import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.ATimer
 import cz.siret.prank.utils.SysUtils

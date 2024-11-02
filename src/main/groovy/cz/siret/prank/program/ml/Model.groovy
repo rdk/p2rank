@@ -1,7 +1,6 @@
 package cz.siret.prank.program.ml
 
 import cz.siret.prank.features.FeatureExtractor
-import cz.siret.prank.features.FeatureSetup
 import cz.siret.prank.features.PrankFeatureExtractor
 import cz.siret.prank.fforest.FasterForest
 import cz.siret.prank.fforest.api.FlatBinaryForest
