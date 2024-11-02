@@ -1,5 +1,5 @@
 version: 2.5-dev.12
-git head: aae633f5
+git head: 0c543696
 
 Params[
   apoholo_use_for_eval = false
@@ -183,6 +183,7 @@ Params[
   vis_copy_proteins = true
   vis_generate_proteins = true
   vis_highlight_ligands = false
+  vis_renderers = [pymol, chimerax]
   visualizations = true
   weight_dist_param = 4.5
   weight_function = INV

@@ -7,9 +7,9 @@ import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.samplers.SampledPoints
 import cz.siret.prank.prediction.metrics.ClassifierStats
 import cz.siret.prank.program.ml.Model
-import cz.siret.prank.program.rendering.PymolRenderer
-import cz.siret.prank.program.rendering.RenderingModel
 import cz.siret.prank.program.routines.results.EvalResults
+import cz.siret.prank.program.visualization.RenderingModel
+import cz.siret.prank.program.visualization.renderers.NewPymolRenderer
 import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
 
@@ -90,7 +90,7 @@ class EvalResiduesRoutine extends EvalRoutine {
             }
 
             if (params.visualizations) {
-                new PymolRenderer("$outdir/visualizations", new RenderingModel(
+                new NewPymolRenderer("$outdir/visualizations", new RenderingModel(
                         proteinFile: item.proteinFile,
                         label: item.label,
                         protein: item.protein,

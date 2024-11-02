@@ -8,6 +8,12 @@ import java.util.List
 @CompileStatic
 class ColorUtils {
 
+    static String colorToHex(Color color) {
+        return "#" + Integer.toHexString(color.getRGB()).substring(2);
+    }
+
+//===========================================================================================================//
+
     /**
      Generates a series of colors such that the
      distribution of the colors is (fairly) evenly spaced

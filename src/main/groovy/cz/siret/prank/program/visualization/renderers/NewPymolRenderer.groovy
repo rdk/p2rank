@@ -1,17 +1,18 @@
-package cz.siret.prank.program.rendering
+package cz.siret.prank.program.visualization.renderers
 
 import cz.siret.prank.domain.labeling.BinaryLabeling
-import cz.siret.prank.domain.labeling.LabeledPoint
 import cz.siret.prank.domain.labeling.LabeledResidue
 import cz.siret.prank.domain.labeling.ResidueLabeling
 import cz.siret.prank.program.params.Parametrized
+import cz.siret.prank.program.visualization.RenderingModel
 import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-import org.biojava.nbio.structure.Atom
 
 import java.awt.*
 import java.util.List
+
+import static cz.siret.prank.program.visualization.PredictionVisualizer.writeLabeledPointsPdb
 
 /**
  * Generates PyMol visualization of RenderingModel.
@@ -20,7 +21,7 @@ import java.util.List
  */
 @Slf4j
 @CompileStatic
-class PymolRenderer implements Parametrized {
+class NewPymolRenderer implements Parametrized {
 
     String outdir
     RenderingModel model
@@ -29,7 +30,7 @@ class PymolRenderer implements Parametrized {
     String pmlFile
     String dataDir
 
-    PymolRenderer(String outdir, RenderingModel model) {
+    NewPymolRenderer(String outdir, RenderingModel model) {
         this.outdir = outdir
         this.model = model
     }
@@ -218,7 +219,7 @@ cmd.spectrum("b", "rainbow", selection="protein", minimum=0, maximum=1)
         String pointsfAbs = "$dataDir/${label}_points.pdb.gz"
         String pointsfRel = "data/" + Futils.shortName(pointsfAbs)
 
-        writeLabeledPoints(pointsfAbs, model.labeledPoints)
+        writeLabeledPointsPdb(pointsfAbs, model.labeledPoints)
 
 """
 load "$pointsfRel", points
@@ -244,19 +245,6 @@ cmd.set("sphere_scale","0.3","rest")
 #for my_index in range(1,int(lastSTP)+1): cmd.set("sphere_transparency","0.1","pocket"+str(my_index))
 """
 
-    }
-
-    void writeLabeledPoints(String fname, List<LabeledPoint> labeledPoints) {
-        Writer pdb = Futils.getGzipWriter(fname)
-        int i = 0
-        for (LabeledPoint lp : labeledPoints) {
-            double beta = lp.score
-            Atom p = lp.point
-            def lab = "STP"
-            pdb.printf "HETATM%5d H    %3s 1  %2d    %8.3f%8.3f%8.3f  0.50%6.3f\n", i, lab, lp.pocket, p.x, p.y, p.z, beta
-            i++
-        }
-        pdb.close()
     }
 
 //===========================================================================================================//

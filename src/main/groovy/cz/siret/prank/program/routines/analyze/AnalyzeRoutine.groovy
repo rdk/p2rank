@@ -11,9 +11,9 @@ import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Struct
 import cz.siret.prank.program.Main
 import cz.siret.prank.program.PrankException
-import cz.siret.prank.program.rendering.PymolRenderer
-import cz.siret.prank.program.rendering.RenderingModel
 import cz.siret.prank.program.routines.Routine
+import cz.siret.prank.program.visualization.RenderingModel
+import cz.siret.prank.program.visualization.renderers.NewPymolRenderer
 import cz.siret.prank.utils.*
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
@@ -282,7 +282,7 @@ class AnalyzeRoutine extends Routine {
             csv << "${item.label}, $nchains, $chainIds, $nres, $nlabres, ${s.positives}, ${s.negatives}, ${s.unlabeled}\n"
 
             if (params.visualizations) {
-                new PymolRenderer("$outdir/visualizations", new RenderingModel(
+                new NewPymolRenderer("$outdir/visualizations", new RenderingModel(
                         proteinFile: item.proteinFile,
                         label: item.label,
                         protein: item.protein,
@@ -313,7 +313,7 @@ class AnalyzeRoutine extends Routine {
                 }
 
                 if (params.visualizations) {
-                    new PymolRenderer("$outdir/visualizations", new RenderingModel(
+                    new NewPymolRenderer("$outdir/visualizations", new RenderingModel(
                             proteinFile: item.proteinFile,
                             label: item.label,
                             protein: item.protein,

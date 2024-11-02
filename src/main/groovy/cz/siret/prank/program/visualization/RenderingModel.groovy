@@ -1,4 +1,4 @@
-package cz.siret.prank.program.rendering
+package cz.siret.prank.program.visualization
 
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.domain.labeling.BinaryLabeling
@@ -43,9 +43,7 @@ class RenderingModel implements Parametrized {
 
         //Color fnColor = new Color(109, 186, 192)  // cyan
 
-
-
-        //Color tpColor = Color.BLUE     
+        //Color tpColor = Color.BLUE
         //Color fpColor = Color.MAGENTA
         //Color fnColor = Color.CYAN
 

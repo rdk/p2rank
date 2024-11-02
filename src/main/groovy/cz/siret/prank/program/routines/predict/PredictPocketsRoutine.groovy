@@ -11,9 +11,9 @@ import cz.siret.prank.prediction.pockets.rescorers.PocketRescorer
 import cz.siret.prank.prediction.pockets.results.PredictionSummary
 import cz.siret.prank.prediction.transformation.ScoreTransformer
 import cz.siret.prank.program.ml.Model
-import cz.siret.prank.program.rendering.OldPymolRenderer
 import cz.siret.prank.program.routines.Routine
 import cz.siret.prank.program.routines.results.PredictResults
+import cz.siret.prank.program.visualization.PredictionVisualizer
 import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
@@ -95,7 +95,7 @@ class PredictPocketsRoutine extends Routine {
             rescorer.reorderPockets(pair.prediction, item.context) // in this context reorderPockets() makes predictions
 
             if (produceVisualizations) {
-                new OldPymolRenderer(visDir).render(item, rescorer, pair)
+                new PredictionVisualizer(outdir).generateVisualizations(item, rescorer, pair)
             }
 
             if (outputPredictionFiles) {

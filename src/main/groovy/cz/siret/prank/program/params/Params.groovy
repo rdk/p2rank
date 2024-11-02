@@ -684,10 +684,16 @@ class Params {
     boolean feature_importances = false
 
     /**
-     * produce pymol visualisations
+     * produce visualisations
      */
     @RuntimeParam
     boolean visualizations = true
+
+    /**
+     * Renderers used to produce visualizations. Available renderers: [pymol, chimerax]
+     */
+    @RuntimeParam
+    List<String> vis_renderers = ["pymol", "chimerax"]
 
     /**
      * visualize all surface points (not just inner pocket points)
