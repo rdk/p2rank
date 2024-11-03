@@ -12,6 +12,7 @@ import cz.siret.prank.geom.Atoms
 import cz.siret.prank.prediction.metrics.ClassifierStats
 import cz.siret.prank.prediction.pockets.PocketPredictor
 import cz.siret.prank.prediction.pockets.PointScoreCalculator
+import cz.siret.prank.prediction.transformation.ScoreTransformer
 import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.params.Parametrized
 import groovy.transform.CompileStatic
@@ -132,38 +133,52 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
 
         proteinExtractor.prepareProteinPrototypeForPockets()
 
+        // pocket score transformers
+        ScoreTransformer probaTpTransformer = ScoreTransformer.load(params.probatp_transformer)
+
         for (Pocket pocket : prediction.pockets) {
             FeatureExtractor extractor = proteinExtractor.createInstanceForPocket(pocket)
 
             double sum = 0
             double rawSum = 0
 
+            List<LabeledPoint> pocketLabeledPoints = new ArrayList<>(extractor.sampledPoints.points.count)
+
             for (Atom point : extractor.sampledPoints.points) {
 
                 FeatureVector vector = extractor.calcFeatureVector(point)
 
                 // not all classifiers give histogram that sums up to 1
-                double predictedScore = instancePredictor.predictPositive(vector)
-                boolean predicted = applyPointScoreThreshold(predictedScore)
+                double pointScore = instancePredictor.predictPositive(vector)
+                boolean predicted = applyPointScoreThreshold(pointScore)
                 boolean observed = false
 
                 if (collectStats) {
                     observed = isPositivePoint(point, ligandAtoms)
-                    stats.addPrediction(observed, predicted, predictedScore)
-                }
-                if (collectPoints) {
-                    labeledPoints.add(new LabeledPoint(point, observed, predicted))
+                    stats.addPrediction(observed, predicted, pointScore)
                 }
 
-                sum += calculator.transformScore(predictedScore)
+                pocketLabeledPoints.add(new LabeledPoint(point, observed, predicted, pointScore))
 
-                rawSum += predictedScore // ~ P(ligandable)
+                sum += calculator.transformScore(pointScore)
+
+                rawSum += pointScore // ~ P(ligandable)
             }
 
-            double score = sum
-            pocket.newScore = score
+            if (collectPoints) {
+                labeledPoints.addAll(pocketLabeledPoints)
+            }
+
+            double pocketScore = sum
+            pocket.newScore = pocketScore
+            pocket.sasPoints = extractor.sampledPoints.points
+            pocket.labeledPoints = pocketLabeledPoints
             pocket.auxInfo.rawNewScore = rawSum / extractor.sampledPoints.points.count // ratio of predicted ligandable points
             pocket.auxInfo.samplePoints = extractor.sampledPoints.points.count
+
+            if (probaTpTransformer!=null) {
+                pocket.auxInfo.probaTP = probaTpTransformer.transformScore(pocketScore)
+            }
         }
 
     }

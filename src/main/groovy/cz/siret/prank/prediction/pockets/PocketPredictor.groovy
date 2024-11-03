@@ -110,7 +110,7 @@ class PocketPredictor implements Parametrized {
         log.info "CLUSTERS: {}", clusters.size()
         log.info "FILTERED CLUSTERS: {}", filteredClusters.size()
 
-        // score transformers
+        // pocket score transformers
         ScoreTransformer zscoreTpTransformer = ScoreTransformer.load(params.zscoretp_transformer)
         ScoreTransformer probaTpTransformer = ScoreTransformer.load(params.probatp_transformer)
 
@@ -152,9 +152,9 @@ class PocketPredictor implements Parametrized {
             i++
 
             for (LabeledPoint lp : it.labeledPoints) {
-                if (lp.score > 0.2) { // TODO XXX this is temporary to fix pymol visualization esthetics
+                //if (lp.score > 0.2) { // TODO XXX this is temporary to fix pymol visualization esthetics
                     lp.pocket = i
-                }
+                //}
             }
 
             it.name = "pocket" + i

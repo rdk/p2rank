@@ -3,6 +3,7 @@ package cz.siret.prank.prediction.pockets.rescorers
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Prediction
 import cz.siret.prank.domain.Protein
+import cz.siret.prank.domain.labeling.LabeledPoint
 import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.program.params.Parametrized
@@ -53,12 +54,20 @@ abstract class PocketRescorer implements Parametrized {
         }
 
         setNewRanks(prediction)
+
     }
 
     private void setNewRanks(Prediction prediction) {
         int i = 1
         for (Pocket pocket : prediction.reorderedPockets) {
             pocket.newRank = i++
+        }
+
+        // label SAS points with pocket new ranks
+        for (Pocket pocket : prediction.reorderedPockets) {
+            for (LabeledPoint lp : pocket.labeledPoints) {
+                lp.pocket = pocket.newRank
+            }
         }
     }
 

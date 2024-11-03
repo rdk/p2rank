@@ -31,6 +31,10 @@ class ProbabilityScoreTransformer extends ScoreTransformer implements Writable {
 
         double res =  tpx / (tpx + fpx)
 
+        if (res <= 0.0d) {
+            res = 0.0d
+        }
+
         return res
     }
 

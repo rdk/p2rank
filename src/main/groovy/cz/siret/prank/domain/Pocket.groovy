@@ -1,5 +1,6 @@
 package cz.siret.prank.domain
 
+import cz.siret.prank.domain.labeling.LabeledPoint
 import cz.siret.prank.geom.Atoms
 import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
@@ -10,6 +11,8 @@ abstract class Pocket {
     String name = "pocket"
     Atoms surfaceAtoms = new Atoms()
     Atom centroid
+    Atoms sasPoints = null
+    List<LabeledPoint> labeledPoints = null  // labeled SAS points
 
     /**
      * original rank of predicted pocket, starting with 1
@@ -24,6 +27,8 @@ abstract class Pocket {
     int newRank
     double newScore
 
+    private List<Residue> residues = null
+
     PocketStats stats = new PocketStats()
     AuxInfo auxInfo = new AuxInfo()
     Map<String, Object> cache = new HashMap<>() // cache for various data
@@ -33,7 +38,7 @@ abstract class Pocket {
      * By default returns null. Defined only for some pocket types (PrankPocket, FpocketPocket).
      */
     Atoms getSasPoints() {
-        return null
+        return sasPoints
     }
 
     @Override
@@ -47,6 +52,17 @@ abstract class Pocket {
 
     void setCentroid(Atom centroid) {
         this.centroid = centroid
+    }
+
+    List<Residue> getResidues() {
+        if (residues==null) {
+            if (surfaceAtoms==null || surfaceAtoms.empty) {
+                residues = Collections.emptyList()
+            } else {
+                residues = surfaceAtoms.distinctGroupsSorted.collect { new Residue(it) }.toList()
+            }
+        }
+        residues
     }
 
     static class AuxInfo {

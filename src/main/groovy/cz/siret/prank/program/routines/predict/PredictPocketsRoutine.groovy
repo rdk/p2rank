@@ -38,6 +38,8 @@ class PredictPocketsRoutine extends Routine {
     boolean collectStats = false
     boolean produceVisualizations = params.visualizations
     boolean produceFilesystemOutput = true
+    boolean outputPredictionFiles = produceFilesystemOutput && !params.output_only_stats
+
 
     PredictPocketsRoutine(Dataset dataset, String modelf, String outdir) {
         super(outdir)
@@ -83,40 +85,25 @@ class PredictPocketsRoutine extends Routine {
             LoaderParams.ignoreLigandsSwitch = true
         }
 
-        boolean outputPredictionFiles = produceFilesystemOutput && !params.output_only_stats
-
         Dataset.Result result = dataset.processItems { Dataset.Item item ->
 
             PredictionPair pair = item.predictionPair
-            PocketRescorer rescorer = new ModelBasedRescorer(model, extractor)
+            ModelBasedRescorer rescorer = new ModelBasedRescorer(model, extractor)
             if (collectStats) {
                 rescorer.collectStatsForProtein(pair.protein)
             }
             rescorer.reorderPockets(pair.prediction, item.context) // in this context reorderPockets() makes predictions
 
-            if (produceVisualizations) {
-                new PredictionVisualizer(outdir).generateVisualizations(item, rescorer, pair)
-            }
 
-            if (outputPredictionFiles) {
-                PredictionSummary psum = new PredictionSummary(pair.prediction)
-                String outf = "$predDir/${item.label}_predictions.csv"
-                writeFile(outf, psum.toCSV().toString())
+            generatePredictionOutputFiles(pair, item, rescorer, predDir)
 
-                if (params.label_residues && pair.prediction.residueLabelings!=null) {
-                    String resf = "$predDir/${item.label}_residues.csv"
-                    writeFile(resf, pair.prediction.residueLabelings.toCSV())
-                }
-            }
 
             if (collectStats) {  // do eval, expects dataset with liganated proteins
-
                 // add observed binary labeling for residues (only in eval-predict)
                 if (params.label_residues && pair.prediction.residueLabelings!=null) {
                     BinaryLabeling observed = new LigandBasedResidueLabeler().getBinaryLabeling(pair.protein)
                     pair.prediction.residueLabelings.observed = observed
                 }
-
                 stats.evaluation.addPrediction(pair, pair.prediction.pockets)
                 synchronized (stats.classStats) {
                     stats.classStats.addAll(rescorer.stats)
@@ -148,6 +135,22 @@ class PredictPocketsRoutine extends Routine {
         }
 
         return result
+    }
+
+    private generatePredictionOutputFiles(PredictionPair pair, Dataset.Item item, ModelBasedRescorer rescorer, String outdir) {
+
+        if (outputPredictionFiles) {
+            PredictionSummary psum = new PredictionSummary(pair.prediction)
+            writeFile"$outdir/${item.label}_predictions.csv", psum.toCSV()
+
+            if (params.label_residues && pair.prediction.residueLabelings != null) {
+                writeFile "$outdir/${item.label}_residues.csv", pair.prediction.residueLabelings.toCSV()
+            }
+        }
+
+        if (produceVisualizations) {
+            new PredictionVisualizer(outdir).generateVisualizations(item, rescorer, pair)
+        }
     }
 
     private trainPocketScoreTransformers(PredictResults stats) {

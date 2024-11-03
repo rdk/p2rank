@@ -6,11 +6,13 @@ import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.prediction.pockets.rescorers.ModelBasedRescorer
 import cz.siret.prank.prediction.pockets.rescorers.PocketRescorer
+import cz.siret.prank.prediction.pockets.results.PredictionSummary
 import cz.siret.prank.prediction.pockets.results.RescoringSummary
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.routines.Routine
 import cz.siret.prank.program.routines.predict.external.FpocketRunner
+import cz.siret.prank.program.visualization.PredictionVisualizer
 import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
@@ -29,6 +31,11 @@ class RescorePocketsRoutine extends Routine {
     Dataset dataset
     String modelf
     boolean runFpocketAdHoc
+
+    boolean produceVisualizations = params.visualizations
+    boolean produceFilesystemOutput = true
+    boolean outputPredictionFiles = produceFilesystemOutput && !params.output_only_stats
+
 
     RescorePocketsRoutine(Dataset dataSet, String modelf, String outdir, boolean runFpocketAdHoc = false) {
         super(outdir)
@@ -85,8 +92,12 @@ class RescorePocketsRoutine extends Routine {
             PocketRescorer rescorer = new  ModelBasedRescorer(model, extractor)
             rescorer.reorderPockets(prediction, item.context)
 
-            RescoringSummary rsum = new RescoringSummary(prediction)
-            writeFile "$outdir/${item.label}_rescored.csv", rsum.toCSV()
+            RescoringSummary rsum = new RescoringSummary(pair.prediction)
+
+
+            generatePredictionOutputFiles(rsum, pair, item, rescorer, outdir)
+
+
             log.info "\n\nRescored pockets for [$item.label]: \n\n" + rsum.toTable() + "\n"
 
         }
@@ -95,6 +106,28 @@ class RescorePocketsRoutine extends Routine {
         write "results saved to directory [${Futils.absPath(outdir)}]"
 
         return result
+    }
+
+    private generatePredictionOutputFiles(RescoringSummary rsum, PredictionPair pair, Dataset.Item item, ModelBasedRescorer rescorer, String outdir) {
+
+
+        if (outputPredictionFiles) {
+            writeFile "$outdir/${item.label}_rescored.csv", rsum.toCSV()
+
+            PredictionSummary psum = new PredictionSummary(pair.prediction)
+            writeFile "$outdir/${item.label}_predictions.csv", psum.toCSV()
+
+            // residues can't be always calculated when rescoring since we don't cover all the surface with SAS points
+            //
+            //if (params.label_residues && pair.prediction.residueLabelings != null) {
+            //    String resf = "$predDir/${item.label}_residues.csv"
+            //    writeFile(resf, pair.prediction.residueLabelings.toCSV())
+            //}
+        }
+
+        if (produceVisualizations) {
+            new PredictionVisualizer(outdir).generateVisualizations(item, rescorer, pair)
+        }
     }
 
     private adHocRunFpocketForItem(Dataset.Item item) {

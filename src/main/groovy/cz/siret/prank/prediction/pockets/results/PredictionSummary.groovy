@@ -1,5 +1,6 @@
 package cz.siret.prank.prediction.pockets.results
 
+import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Prediction
 import cz.siret.prank.prediction.pockets.PrankPocket
 import cz.siret.prank.utils.csv.CSV
@@ -41,9 +42,7 @@ class PredictionSummary {
 
         sb << HEADER << "\n"
 
-        for (pp in prediction.reorderedPockets) {
-
-            PrankPocket p = (PrankPocket) pp
+        for (Pocket p : prediction.reorderedPockets) {
 
             String score = formatScore(p.newScore)
             String proba = formatProbScore(p.auxInfo.probaTP)

@@ -33,6 +33,13 @@ public class LabeledPoint implements Atom {
         this.observed = observed;
     }
 
+    public LabeledPoint(Atom point, boolean observed, boolean predicted, double score) {
+        this.point = point;
+        this.predicted = predicted;
+        this.observed = observed;
+        this.score = score;
+    }
+
     public LabeledPoint(Atom point) {
         this.point = point;
         this.predicted = false;

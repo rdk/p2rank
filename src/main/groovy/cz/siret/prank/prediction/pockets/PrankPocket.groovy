@@ -10,10 +10,6 @@ import org.biojava.nbio.structure.Atom
 @CompileStatic
 class PrankPocket extends Pocket {
 
-    Atoms sasPoints
-    List<LabeledPoint> labeledPoints
-    private List<Residue> residues
-
     PrankPocket(Atom centroid, double score, Atoms sasPoints, List<LabeledPoint> labeledPoints) {
         this.centroid = centroid
         this.score = score
@@ -22,20 +18,4 @@ class PrankPocket extends Pocket {
         this.labeledPoints = labeledPoints
     }
 
-    @Override
-    Atoms getSasPoints() {
-        return sasPoints
-    }
-
-    List<Residue> getResidues() {
-        if (residues==null) {
-            if (surfaceAtoms==null || surfaceAtoms.empty) {
-                residues = Collections.emptyList()
-            } else {
-                residues = surfaceAtoms.distinctGroupsSorted.collect { new Residue(it) }.toList()
-            }
-        }
-        residues
-    }
-    
 }

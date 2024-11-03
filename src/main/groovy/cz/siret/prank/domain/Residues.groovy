@@ -17,6 +17,9 @@ import java.util.function.Function
 @CompileStatic
 class Residues implements Iterable<Residue> {
 
+    private static Residues EMPTY = new Residues([])
+
+
     private List<Residue> list
     private Atoms atoms
     private Map<Residue.Key, Residue> indexByKey
@@ -32,6 +35,10 @@ class Residues implements Iterable<Residue> {
 
     static Residues of(List<Residue> list) {
         return new Residues(list)
+    }
+
+    static Residues empty() {
+        EMPTY
     }
 
     List<Residue> getList() {
