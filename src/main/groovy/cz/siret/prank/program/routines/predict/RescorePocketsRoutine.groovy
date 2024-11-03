@@ -85,7 +85,7 @@ class RescorePocketsRoutine extends Routine {
 
             String fpocketOutDir
             if (runFpocketAdHoc) {
-                fpocketOutDir = adHocRunFpocketForItem(item)
+                fpocketOutDir = adHocRunFpocketForItem(item, fpocketOutBaseDir, fpocketTmpDir)
             }
 
             PredictionPair pair = item.predictionPair
@@ -99,7 +99,7 @@ class RescorePocketsRoutine extends Routine {
 
             generatePredictionOutputFiles(rsum, pair, item, rescorer, outdir)
 
-            
+
             if (runFpocketAdHoc && !params.fpocket_keep_output) {
                 Futils.delete(fpocketOutDir)
             }
