@@ -97,14 +97,14 @@ class RescorePocketsRoutine extends Routine {
 
             generatePredictionOutputFiles(rsum, pair, item, rescorer, outdir)
 
-            if (!params.fpocket_keep_output) {
+            if (runFpocketAdHoc && !params.fpocket_keep_output) {
                 Futils.delete(fpocketOutDir)
             }
 
             log.info "\n\nRescored pockets for [$item.label]: \n\n" + rsum.toTable() + "\n"
         }
 
-        if (!params.fpocket_keep_output) {
+        if (runFpocketAdHoc && !params.fpocket_keep_output) {
             Futils.delete("$outdir/fpocket")
         }
 
