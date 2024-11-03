@@ -18,7 +18,7 @@ import static cz.siret.prank.utils.Futils.writeFile
 class ChimeraXRenderer {
 
     String bgColor = "#242455"
-    String proteinColor = "#bdbdde" // "#d9d9ff"
+    String proteinColor = "#bdbdde"  // less purple: "#c1c0db"
     String ligandColor = "magenta"
     String transparency = "35"  // 0-100(full transparency)
 
