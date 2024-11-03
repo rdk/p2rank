@@ -140,9 +140,10 @@ class Main implements Parametrized, Writable {
                 dir = "$relativePrefixDir/$dir"
             }
         }
-        assert dir != null
+
+        dir = dir.replace("{version}", version)
+
         dir = Futils.absPath(Futils.normalize(dir))
-        assert dir != null
         return dir
     }
 

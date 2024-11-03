@@ -43,6 +43,7 @@ class Params {
     /**
      * all output of the program will be stored in subdirectories of this directory
      * (set absolute path or path relative to install dir, null defaults to working dir)
+     * {version} is replaced by program version
      */
     @RuntimeParam
     String output_base_dir = null
