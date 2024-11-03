@@ -1346,6 +1346,12 @@ class Params {
     @RuntimeParam
     String fpocket_command = "fpocket"
 
+    /**
+     * Keep fpocket output when running 'prank fpocket-rescore'.
+     */
+    @RuntimeParam
+    boolean fpocket_keep_output = true
+
 //===========================================================================================================//
 // Derived parameters
 //===========================================================================================================//

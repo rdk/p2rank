@@ -81,8 +81,9 @@ class RescorePocketsRoutine extends Routine {
 
         Dataset.Result result = dataset.processItems { Dataset.Item item ->
 
+            String fpocketOutDir
             if (runFpocketAdHoc) {
-                adHocRunFpocketForItem(item)
+                fpocketOutDir = adHocRunFpocketForItem(item)
             }
 
             PredictionPair pair = item.predictionPair
@@ -96,9 +97,15 @@ class RescorePocketsRoutine extends Routine {
 
             generatePredictionOutputFiles(rsum, pair, item, rescorer, outdir)
 
+            if (!params.fpocket_keep_output) {
+                Futils.delete(fpocketOutDir)
+            }
 
             log.info "\n\nRescored pockets for [$item.label]: \n\n" + rsum.toTable() + "\n"
+        }
 
+        if (!params.fpocket_keep_output) {
+            Futils.delete("$outdir/fpocket")
         }
 
         write "rescoring finished in $timer.formatted"
@@ -130,13 +137,13 @@ class RescorePocketsRoutine extends Routine {
         }
     }
 
-    private adHocRunFpocketForItem(Dataset.Item item) {
+    private String adHocRunFpocketForItem(Dataset.Item item) {
         log.info "Running Fpocket ad-hoc for item [${item.label}]"
         try {
             item.columnValues.put(Dataset.COLUMN_PREDICTION, '') // reset in case fpocket run fails
 
             String structFileName = Futils.shortName(item.proteinFile)
-            String fpocketOutDir = "$outdir/fpocket_${structFileName}_out"
+            String fpocketOutDir = "$outdir/fpocket/${structFileName}_out"
             String tmpDir = "$outdir/tmp_fpocket_runs"
             String fpocketPredFile = "$fpocketOutDir/${fpocketPredictionFileName(structFileName)}"
 
@@ -145,6 +152,8 @@ class RescorePocketsRoutine extends Routine {
             log.info "Fpocket run finished successfully for [$structFileName] - output in [$fpocketOutDir] (${Futils.shortName(fpocketPredFile)})"
 
             item.setPocketPredictionFile(fpocketPredFile)
+
+            return fpocketOutDir
 
         } catch (Exception e) {
             throw new PrankException("Fpocket run failed for ${item.label}: ${e.message}", e)
