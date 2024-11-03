@@ -26,8 +26,8 @@ class ProbabilityScoreTransformer extends ScoreTransformer implements Writable {
     @Override
     double transformScore(double rawScore) {
 
-        double tpx = getInterpoletedVal(tp_cumul_hist, rawScore) // true pockets with score lower or equal to rawScore
-        double fpx = getInterpoletedVal(fp_cumul_hist, rawScore)  // false pockets with score higher or equal to rawScore
+        double tpx = getInterpolatedVal(tp_cumul_hist, rawScore) // true pockets with score lower or equal to rawScore
+        double fpx = getInterpolatedVal(fp_cumul_hist, rawScore)  // false pockets with score higher or equal to rawScore
 
         double res =  tpx / (tpx + fpx)
 
@@ -41,7 +41,7 @@ class ProbabilityScoreTransformer extends ScoreTransformer implements Writable {
     /**
      * linear interpolation between 2 histogram values
      */
-    private double getInterpoletedVal(int[] hist, double x) {
+    private double getInterpolatedVal(int[] hist, double x) {
         double step = (max-min) / nbins
         int idx = (int)((x-min) / step)
 
@@ -129,7 +129,6 @@ class ProbabilityScoreTransformer extends ScoreTransformer implements Writable {
         Sutils.GSON.fromJson(json, ProbabilityScoreTransformer.class)
     }
 
-
     @Override
     String toString() {
         return "ProbabilityScoreTransformer{" +
@@ -140,4 +139,5 @@ class ProbabilityScoreTransformer extends ScoreTransformer implements Writable {
                 ", fp_cumul_hist=" + Arrays.toString(fp_cumul_hist) +
                 '}'
     }
+
 }
