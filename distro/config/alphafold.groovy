@@ -10,12 +10,12 @@ import cz.siret.prank.program.params.Params
 
     features = ["chem","volsite","protrusion"]
 
-    zscoretp_transformer = "alphafold_ZscoreTpTransformer.json"
+    zscoretp_transformer = "{models_dir}/_score_transform/alphafold_ZscoreTpTransformer.json"
 
-    probatp_transformer = "alphafold_ProbabilityScoreTransformer.json"
+    probatp_transformer = "{models_dir}/_score_transform/alphafold_ProbabilityScoreTransformer.json"
 
-    zscoretp_res_transformer = "residue/alphafold_ZscoreTpTransformer.json"
+    zscoretp_res_transformer = "{models_dir}/_score_transform/residue/alphafold_ZscoreTpTransformer.json"
 
-    probatp_res_transformer = "residue/alphafold_ProbabilityScoreTransformer.json"
+    probatp_res_transformer = "{models_dir}/_score_transform/residue/alphafold_ProbabilityScoreTransformer.json"
 
 }

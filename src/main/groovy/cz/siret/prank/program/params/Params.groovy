@@ -1164,31 +1164,31 @@ class Params {
 
     /**
      * Path to a JSON file that contains parameters of a transformer from raw score to "z-score calculated from the distribution of true pockets" (pocket.auxInfo.zScoreTP).
-     * Use path relative to distro/models/_score_transformations.
+     * {models_dir} resolves the directory with models "{install_dir}/models". {model} resolves to the directory of the current model.
      */
     @RuntimeParam
-    String zscoretp_transformer = "default_zscoretp.json"
+    String zscoretp_transformer = null
 
     /**
      * Path to a JSON file that contains parameters of a transformer from raw score to "probability that pocket with a given score is true pocket" (pocket.auxInfo.probaTP).
-     * Use path relative to distro/models/_score_transformations.
+     * {models_dir} resolves the directory with models "{install_dir}/models". {model} resolves to the directory of the current model.
      */
     @RuntimeParam
-    String probatp_transformer = "default_probatp.json"
+    String probatp_transformer = null
 
     /**
      * Path to a JSON file that contains parameters of a transformer from raw score to "z-score calculated from the distribution of all residue scores".
-     * Use path relative to distro/models/_score_transformations.
+     * {models_dir} resolves the directory with models "{install_dir}/models". {model} resolves to the directory of the current model.
      */
     @RuntimeParam
-    String zscoretp_res_transformer = "residue/p2rank_default_zscore.json"
+    String zscoretp_res_transformer = null
 
     /**
      * Path to a JSON file that contains parameters of a transformer from raw score to "probability that residue with a given score is true (binding) residue".
-     * Use path relative to distro/models/_score_transformations.
+     * {models_dir} resolves the directory with models "{install_dir}/models". {model} resolves to the directory of the current model.
      */
     @RuntimeParam
-    String probatp_res_transformer = "residue/p2rank_default_proba.json"
+    String probatp_res_transformer = null
 
     /**
      * List of pocket score transformers that should be trained (i.e. fitted / inferred) during predict-eval.
@@ -1412,7 +1412,8 @@ class Params {
             'config', 'c',
             'train','t',
             'eval', 'e',
-            'label', 'l'
+            'label', 'l',
+            'v'
     )
 
     /**

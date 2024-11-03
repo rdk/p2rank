@@ -210,4 +210,29 @@ import cz.siret.prank.program.params.Params
      */
     sample_negatives_from_decoys = false
 
+
+    /**
+     * Path to a JSON file that contains parameters of a transformer from raw score to "z-score calculated from the distribution of true pockets" (pocket.auxInfo.zScoreTP).
+     * {models_dir} resolves the directory with models "{install_dir}/models". {model} resolves to the directory of the current model.
+     */
+    zscoretp_transformer = "{model}/score_transform/pocket/ZscoreTpTransformer.json"
+
+    /**
+     * Path to a JSON file that contains parameters of a transformer from raw score to "probability that pocket with a given score is true pocket" (pocket.auxInfo.probaTP).
+     * {models_dir} resolves the directory with models "{install_dir}/models". {model} resolves to the directory of the current model.
+     */
+    probatp_transformer = "{model}/score_transform/pocket/ProbabilityScoreTransformer.json"
+
+    /**
+     * Path to a JSON file that contains parameters of a transformer from raw score to "z-score calculated from the distribution of all residue scores".
+     * {models_dir} resolves the directory with models "{install_dir}/models". {model} resolves to the directory of the current model.
+     */
+    zscoretp_res_transformer = null
+
+    /**
+     * Path to a JSON file that contains parameters of a transformer from raw score to "probability that residue with a given score is true (binding) residue".
+     * {models_dir} resolves the directory with models "{install_dir}/models". {model} resolves to the directory of the current model.
+     */
+    probatp_res_transformer = null
+
 }

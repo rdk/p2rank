@@ -20,6 +20,16 @@ To train transformers for a new model defined in `newmodel.groovy` execute the f
 ~~~
 Output: Parameters of the trained transformers will be stored in `score` and `residue-score` subdirectories of the output directory.
 
+It is also possible to train pocket score transformers for rescoring models:
+~~~sh
+./prank.sh eval-rescore -c rescore_2024.groovy ../p2rank-datasets/holo4k.ds \
+    -visualizations 0 \
+    -train_score_transformers '(ProbabilityScoreTransformer,ZscoreTpTransformer)' \
+    -train_score_transformers_for_residues 0  # not possible for rescoring models yet   
+~~~
+
+
+
 After transformers are trained, they should be adequately renamed to reflect an association with the new model and configured in `newmodel.groovy`:
 ~~~groovy
 /**

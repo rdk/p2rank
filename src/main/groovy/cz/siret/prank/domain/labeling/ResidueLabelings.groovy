@@ -14,6 +14,7 @@ import cz.siret.prank.program.routines.results.Evaluation
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
+import javax.annotation.Nonnull
 import javax.annotation.Nullable
 
 import static cz.siret.prank.utils.Futils.mkdirs
@@ -112,17 +113,21 @@ class ResidueLabelings implements Parametrized {
         res
     }
 
-    static ResidueLabeling<Double> transformLabeling(ResidueLabeling<Double> orig, ScoreTransformer transformer) {
+    static ResidueLabeling<Double> transformLabeling(ResidueLabeling<Double> orig, @Nullable ScoreTransformer transformer) {
         ResidueLabeling<Double> res = new ResidueLabeling<>(orig.size)
         for (LabeledResidue<Double> lr : orig.labeledResidues) {
-            res.add(lr.residue, transformer.transformScore(lr.label))
+            if (transformer==null) {
+                res.add(lr.residue, Double.NaN)
+            } else {
+                res.add(lr.residue, transformer.transformScore(lr.label))
+            }
         }
         return res
     }
 
     String toCSV() {
         StringBuilder s = new StringBuilder()
-        // TODO add chain_name and chain_id colmuns instead of chain (after adding mmcif support)
+        // TODO add chain_name and chain_id columns instead of chain (after adding mmcif support)
         s << "chain, residue_label, residue_name, " << (labelings*.name).join(", ") << "\n"
         for (Residue r : residues) {
             s << r.chainAuthorId << ", " << r.residueNumber.toString().padLeft(4) << ", " << r.code << ","

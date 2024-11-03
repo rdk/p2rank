@@ -351,27 +351,27 @@ import cz.siret.prank.program.params.Params
 
     /**
      * Path to a JSON file that contains parameters of a transformer from raw score to "z-score calculated from the distribution of true pockets" (pocket.auxInfo.zScoreTP).
-     * Use path relative to distro/models/_score_transformations.
+     * {models_dir} resolves the directory with models "{install_dir}/models". {model} resolves to the directory of the current model.
      */
-    zscoretp_transformer = "default_ZscoreTpTransformer.json"
+    zscoretp_transformer = "{models_dir}/_score_transform/default_ZscoreTpTransformer.json"
 
     /**
      * Path to a JSON file that contains parameters of a transformer from raw score to "probability that pocket with a given score is true pocket" (pocket.auxInfo.probaTP).
-     * Use path relative to distro/models/_score_transformations.
+     * {models_dir} resolves the directory with models "{install_dir}/models". {model} resolves to the directory of the current model.
      */
-    probatp_transformer = "default_ProbabilityScoreTransformer.json"
+    probatp_transformer = "{models_dir}/_score_transform/default_ProbabilityScoreTransformer.json"
 
     /**
      * Path to a JSON file that contains parameters of a transformer from raw score to "z-score calculated from the distribution of all residue scores".
-     * Use path relative to distro/models/_score_transformations.
+     * {models_dir} resolves the directory with models "{install_dir}/models". {model} resolves to the directory of the current model.
      */
-    zscoretp_res_transformer = "residue/default_ZscoreTpTransformer.json"
+    zscoretp_res_transformer = "{models_dir}/_score_transform/residue/default_ZscoreTpTransformer.json"
 
     /**
      * Path to a JSON file that contains parameters of a transformer from raw score to "probability that residue with a given score is true (binding) residue".
-     * Use path relative to distro/models/_score_transformations.
+     * {models_dir} resolves the directory with models "{install_dir}/models". {model} resolves to the directory of the current model.
      */
-    probatp_res_transformer = "residue/default_ProbabilityScoreTransformer.json"
+    probatp_res_transformer = "{models_dir}/_score_transform/residue/default_ProbabilityScoreTransformer.json"
 
 
     /**
