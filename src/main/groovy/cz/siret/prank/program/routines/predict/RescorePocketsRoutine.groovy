@@ -75,6 +75,8 @@ class RescorePocketsRoutine extends Routine {
         if (runFpocketAdHoc) {
             dataset.attributes.put(Dataset.PARAM_PREDICTION_METHOD, 'fpocket')
         }
+        String fpocketOutBaseDir = "$outdir/fpocket"
+        String fpocketTmpDir = "$outdir/tmp_fpocket_runs"
 
 
         FeatureExtractor extractor = FeatureExtractor.createFactory()
@@ -97,6 +99,7 @@ class RescorePocketsRoutine extends Routine {
 
             generatePredictionOutputFiles(rsum, pair, item, rescorer, outdir)
 
+            
             if (runFpocketAdHoc && !params.fpocket_keep_output) {
                 Futils.delete(fpocketOutDir)
             }
@@ -104,9 +107,7 @@ class RescorePocketsRoutine extends Routine {
             log.info "\n\nRescored pockets for [$item.label]: \n\n" + rsum.toTable() + "\n"
         }
 
-        if (runFpocketAdHoc && !params.fpocket_keep_output) {
-            Futils.delete("$outdir/fpocket")
-        }
+        cleanAfterFpocket(fpocketOutBaseDir, fpocketTmpDir)
 
         write "rescoring finished in $timer.formatted"
         write "results saved to directory [${Futils.absPath(outdir)}]"
@@ -137,14 +138,28 @@ class RescorePocketsRoutine extends Routine {
         }
     }
 
-    private String adHocRunFpocketForItem(Dataset.Item item) {
+    private void cleanAfterFpocket(String fpocketOutBaseDir, String fpocketTmpDir) {
+        if (runFpocketAdHoc) {
+            if (!params.fpocket_keep_output) {
+                Futils.delete(fpocketOutBaseDir)
+            }
+            if (Futils.isDirEmpty(fpocketTmpDir)) {  // if not empty keep to debug failed runs
+                try {
+                    Futils.delete(fpocketTmpDir)
+                } catch (Exception e) {
+                    log.warn "Failed to delete tmp fpocket directory [$fpocketTmpDir]: ${e.message}"
+                }
+            }
+        }
+    }
+
+    private String adHocRunFpocketForItem(Dataset.Item item, String fpocketOutBaseDir, String tmpDir) {
         log.info "Running Fpocket ad-hoc for item [${item.label}]"
         try {
             item.columnValues.put(Dataset.COLUMN_PREDICTION, '') // reset in case fpocket run fails
 
             String structFileName = Futils.shortName(item.proteinFile)
-            String fpocketOutDir = "$outdir/fpocket/${structFileName}_out"
-            String tmpDir = "$outdir/tmp_fpocket_runs"
+            String fpocketOutDir = "$fpocketOutBaseDir/${structFileName}_out"
             String fpocketPredFile = "$fpocketOutDir/${fpocketPredictionFileName(structFileName)}"
 
             FpocketRunner.runFpocket(item.proteinFile, fpocketOutDir, tmpDir)
