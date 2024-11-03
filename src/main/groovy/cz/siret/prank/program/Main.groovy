@@ -27,6 +27,7 @@ import java.text.SimpleDateFormat
 
 import static cz.siret.prank.utils.ATimer.startTimer
 import static cz.siret.prank.utils.Console.write
+import static cz.siret.prank.utils.Console.write
 import static cz.siret.prank.utils.Console.writeError
 import static cz.siret.prank.utils.Futils.mkdirs
 import static cz.siret.prank.utils.Futils.writeFile
@@ -107,13 +108,12 @@ class Main implements Parametrized, Writable {
         params.output_base_dir = evalDirParam(params.output_base_dir, Futils.dir(lastConfigPath))
 
         params.updateFromCommandLine(args)
-        if (args.namedArgs.contains("dataset_base_dir")) {
+        if (args.hasNamedArg("dataset_base_dir")) {
             params.dataset_base_dir = evalDirParam(params.dataset_base_dir, ".")
         }
-        if (args.namedArgs.contains("output_base_dir")) {
+        if (args.hasNamedArg("output_base_dir")) {
             params.output_base_dir = evalDirParam(params.output_base_dir, ".")
         }
-
 
         String mod = args.get('m')
         if (mod != null) {
@@ -141,7 +141,11 @@ class Main implements Parametrized, Writable {
             }
         }
 
+        write "DIR: $dir"
+
         dir = dir.replace("{version}", version)
+
+        write "DIR2: $dir"
 
         dir = Futils.absPath(Futils.normalize(dir))
         return dir

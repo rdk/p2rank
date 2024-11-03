@@ -30,7 +30,7 @@ class CmdLineArgs {
     String[] argList
 
     /** "-count 7" .... maps to count->7 */
-    Map<String,String> namedArgMap = new TreeMap<>()
+    Map<String, String> namedArgMap = new TreeMap<>()
 
     /** arguments with '-' or '--' prefix */
     List<NamedArg> namedArgs = new ArrayList<>()
@@ -96,6 +96,10 @@ class CmdLineArgs {
             }
         }
         return null
+    }
+
+    boolean hasNamedArg(String argName) {
+        return namedArgMap.containsKey(argName)
     }
 
     /**
