@@ -11,6 +11,7 @@ import cz.siret.prank.prediction.pockets.rescorers.PocketRescorer
 import cz.siret.prank.prediction.pockets.results.PredictionSummary
 import cz.siret.prank.prediction.transformation.ScoreTransformer
 import cz.siret.prank.program.ml.Model
+import cz.siret.prank.program.params.Params
 import cz.siret.prank.program.routines.Routine
 import cz.siret.prank.program.routines.results.PredictResults
 import cz.siret.prank.program.visualization.PredictionVisualizer
@@ -38,7 +39,6 @@ class PredictPocketsRoutine extends Routine {
     boolean collectStats = false
     boolean produceVisualizations = params.visualizations
     boolean produceFilesystemOutput = true
-    boolean outputPredictionFiles = produceFilesystemOutput && !params.output_only_stats
 
 
     PredictPocketsRoutine(Dataset dataset, String modelf, String outdir) {
@@ -122,7 +122,7 @@ class PredictPocketsRoutine extends Routine {
             stats.logMainResults(outdir, modelLabel)
 
             if (params.train_score_transformers != null) {
-                trainPocketScoreTransformers(stats)
+                trainPocketScoreTransformers(outdir, stats)
             }
             if (params.label_residues && params.train_score_transformers_for_residues) {
                 trainResidueScoreTransformers(outdir, stats.evaluation)
@@ -138,31 +138,33 @@ class PredictPocketsRoutine extends Routine {
     }
 
     private generatePredictionOutputFiles(PredictionPair pair, Dataset.Item item, ModelBasedRescorer rescorer, String outdir) {
+        if (produceFilesystemOutput) {
+            boolean outputPredictionFiles = produceFilesystemOutput && !params.output_only_stats
+            if (outputPredictionFiles) {
+                PredictionSummary psum = new PredictionSummary(pair.prediction)
+                writeFile"$outdir/${item.label}_predictions.csv", psum.toCSV()
 
-        if (outputPredictionFiles) {
-            PredictionSummary psum = new PredictionSummary(pair.prediction)
-            writeFile"$outdir/${item.label}_predictions.csv", psum.toCSV()
-
-            if (params.label_residues && pair.prediction.residueLabelings != null) {
-                writeFile "$outdir/${item.label}_residues.csv", pair.prediction.residueLabelings.toCSV()
+                if (params.label_residues && pair.prediction.residueLabelings != null) {
+                    writeFile "$outdir/${item.label}_residues.csv", pair.prediction.residueLabelings.toCSV()
+                }
             }
-        }
 
-        if (produceVisualizations) {
-            new PredictionVisualizer(outdir).generateVisualizations(item, rescorer, pair)
+            if (produceVisualizations) {
+                new PredictionVisualizer(outdir).generateVisualizations(item, rescorer, pair)
+            }
         }
     }
 
-    private trainPocketScoreTransformers(PredictResults stats) {
+    static trainPocketScoreTransformers(String outdir, PredictResults stats) {
         String scoreDir = "$outdir/score"
         mkdirs(scoreDir)
-        for (String name : params.train_score_transformers) {
+        for (String name : Params.inst.train_score_transformers) {
             try {
                 ScoreTransformer transformer = ScoreTransformer.create(name)
                 transformer.trainForPockets(stats.evaluation)
                 String fname = "$scoreDir/${name}.json"
                 writeFile(fname, ScoreTransformer.saveToJson(transformer))
-                write "Trained score transformer '$name' written to: $fname"
+                log.info "Trained score transformer '$name' written to: $fname"
             } catch (Exception e) {
                 log.error("Failed to train score transformer '$name'", e)
             }

@@ -25,6 +25,11 @@ class PredictResults extends ResultsBase {
         classStats = new ClassifierStats()
     }
 
+    PredictResults(Evaluation evaluation, ClassifierStats classStats) {
+        this.evaluation = evaluation
+        this.classStats = classStats
+    }
+
     Map getStats() {
         Map m = evaluation.stats
         m.putAll( classStats.getMetricsMap("point_") )

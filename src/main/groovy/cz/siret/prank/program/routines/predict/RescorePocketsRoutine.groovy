@@ -34,7 +34,6 @@ class RescorePocketsRoutine extends Routine {
 
     boolean produceVisualizations = params.visualizations
     boolean produceFilesystemOutput = true
-    boolean outputPredictionFiles = produceFilesystemOutput && !params.output_only_stats
 
 
     RescorePocketsRoutine(Dataset dataSet, String modelf, String outdir, boolean runFpocketAdHoc = false) {
@@ -109,24 +108,25 @@ class RescorePocketsRoutine extends Routine {
     }
 
     private generatePredictionOutputFiles(RescoringSummary rsum, PredictionPair pair, Dataset.Item item, ModelBasedRescorer rescorer, String outdir) {
+        if (produceFilesystemOutput) {
+            boolean outputPredictionFiles = produceFilesystemOutput && !params.output_only_stats
+            if (outputPredictionFiles) {
+                writeFile "$outdir/${item.label}_rescored.csv", rsum.toCSV()
 
+                PredictionSummary psum = new PredictionSummary(pair.prediction)
+                writeFile "$outdir/${item.label}_predictions.csv", psum.toCSV()
 
-        if (outputPredictionFiles) {
-            writeFile "$outdir/${item.label}_rescored.csv", rsum.toCSV()
+                // residues can't be always calculated when rescoring since we don't cover all the surface with SAS points
+                //
+                //if (params.label_residues && pair.prediction.residueLabelings != null) {
+                //    String resf = "$predDir/${item.label}_residues.csv"
+                //    writeFile(resf, pair.prediction.residueLabelings.toCSV())
+                //}
+            }
 
-            PredictionSummary psum = new PredictionSummary(pair.prediction)
-            writeFile "$outdir/${item.label}_predictions.csv", psum.toCSV()
-
-            // residues can't be always calculated when rescoring since we don't cover all the surface with SAS points
-            //
-            //if (params.label_residues && pair.prediction.residueLabelings != null) {
-            //    String resf = "$predDir/${item.label}_residues.csv"
-            //    writeFile(resf, pair.prediction.residueLabelings.toCSV())
-            //}
-        }
-
-        if (produceVisualizations) {
-            new PredictionVisualizer(outdir).generateVisualizations(item, rescorer, pair)
+            if (produceVisualizations) {
+                new PredictionVisualizer(outdir).generateVisualizations(item, rescorer, pair)
+            }
         }
     }
 

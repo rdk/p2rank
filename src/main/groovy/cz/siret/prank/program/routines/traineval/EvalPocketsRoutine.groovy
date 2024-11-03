@@ -6,12 +6,15 @@ import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.prediction.pockets.rescorers.*
 import cz.siret.prank.program.ml.Model
+import cz.siret.prank.program.routines.predict.PredictPocketsRoutine
 import cz.siret.prank.program.routines.results.EvalResults
+import cz.siret.prank.program.routines.results.PredictResults
 import cz.siret.prank.program.visualization.PredictionVisualizer
 import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
+import static cz.siret.prank.program.routines.predict.PredictPocketsRoutine.trainPocketScoreTransformers
 import static cz.siret.prank.utils.ATimer.startTimer
 import static cz.siret.prank.utils.Futils.mkdirs
 
@@ -110,6 +113,10 @@ class EvalPocketsRoutine extends EvalRoutine {
             if (!dataset.cached) {
                 item.cachedPair = null
             }
+        }
+
+        if (params.train_score_transformers != null) {
+            trainPocketScoreTransformers(outdir, new PredictResults(results.eval, results.classifierStats))
         }
 
         results.logAndStore(outdir, model.classifier.class.simpleName)
