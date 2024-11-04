@@ -111,7 +111,8 @@ prank predict -c alphafold   test.ds     # use alphafold config and model (confi
    mapping to predicted pockets, and a calibrated probability of being a ligand-binding residue
    * PyMol and ChimeraX visualizations in `visualizations/` directory (`.pml` and `.cxc` scripts with data files in `data/`) 
      * generating visualizations can be turned off by `-visualizations 0` parameter
-     * coordinates of the SAS points can be found in `visualizations/data/<struct_file>_points.pdb.gz`. There the "Residue sequence number" (23-26 of HETATM record)
+     * `-vis_renderers 'pymol,chimerax'` parameter can be used to turn individual visualization renderers on/off 
+     * coordinates of SAS points can be found in `visualizations/data/<struct_file>_points.pdb.gz`. There the "Residue sequence number" (23-26 of HETATM record)
        corresponds to the rank of the corresponding pocket (points with value 0 don't belong to any pocket)
      * `-vis_copy_proteins 0` parameter can be used to turn off copying of protein structures to the visualizations directory (faster but visualizations won't be portable)
 
@@ -163,19 +164,21 @@ are supported at the moment).
 Rescoring output:
 * `<struct_file>_rescored.csv`: list of pockets sorted by the new score
 * `<struct_file>_predictions.csv`: same as with `prank predict` (since 2.5)
+  * Note: probability column is calibrated for rescoring fpocket predictions
 * visualizations
-
-Note: probability column in `predictions.csv` is calibrated for rescoring fpocket predictions.
 
 ~~~bash
 prank rescore fpocket.ds                   
 prank rescore fpocket.ds -o output_here   # explicitly specify output directory
-prank rescore fpocket.ds -c rescore_2024  # use a new experimental rescoring model
+prank rescore fpocket.ds -c rescore_2024  # use new experimental rescoring model (recommended for alphafold models)
    
 prank eval-rescore fpocket.ds             # evaluate rescoring model on a dataset with known ligands
 ~~~
 
 For rescoring the dataset file needs to have a specific 2-column format. See examples in `test_data/`: `fpocket.ds`, `concavity.ds`, `puresnet.ds`.
+
+New experimental rescoring model `-c rescore_2024` shows promising result but hasn't been fully evaluated yet. It is recommended for AlphaFold models, NMR and cryo-EM structures since it doesn't depend on b-factor as a feature.
+
 
 
 #### Run fpocket and rescore in one command

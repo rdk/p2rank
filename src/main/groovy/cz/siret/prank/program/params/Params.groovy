@@ -726,6 +726,7 @@ class Params {
     /**
      * zip PyMol visualizations to save space
      */
+    @Deprecated
     @RuntimeParam
     boolean zip_visualizations = false
 
