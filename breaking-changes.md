@@ -16,10 +16,13 @@ All changes of that type should be rare and should be all listed here.
 ## List of changes
 
 
-### 2.4.2
+### 2.5
 
 none
 
+### 2.4.2
+
+none
 
 ### 2.4.1
 
