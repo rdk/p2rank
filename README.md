@@ -8,7 +8,7 @@ Ligand-binding site prediction based on machine learning.
     <img src="https://github.com/rdk/p2rank/blob/develop/misc/img/p2rank_sas_points.png?raw=true" width="600" alt="P2Rank illustration">
 </p>
 
-[![version 2.4.2](https://img.shields.io/badge/version-2.4.2-green.svg)](/build.gradle)
+[![version 2.5](https://img.shields.io/badge/version-2.5-green.svg)](/build.gradle)
 [![Build Status](https://github.com/rdk/p2rank/actions/workflows/develop.yml/badge.svg)](https://github.com/rdk/p2rank/actions/workflows/develop.yml)
 [![License: MIT](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](/LICENSE.txt)
 ![GitHub all releases](https://img.shields.io/github/downloads/rdk/p2rank/total)
@@ -20,13 +20,14 @@ P2Rank is a stand-alone command line program that predicts ligand-binding pocket
            
 ### What's new?
   
+* Version 2.5 brings speed optimizations (~2x faster prediction), ChimeraX visualizations and improvements to rescoring (`fpocket-rescore` command).
 * Version 2.4.2 adds support for BinaryCIF (`.bcif`) input and rescoring of fpocket predictions in `.cif` format.          
 * Version 2.4 adds support for mmCIF (`.cif`) input and contains a special profile for predictions on AlphaFold models and NMR/cryo-EM structures.  
 
 ### Requirements
 
-* Java 11 to 21
-* PyMOL 1.7 (or newer) for viewing visualizations (optional)
+* Java 17 to 23
+* PyMOL/ChimeraX for viewing visualizations (optional)
 
 P2Rank is tested on Linux, macOS, and Windows. 
 
@@ -108,10 +109,11 @@ prank predict -c alphafold   test.ds     # use alphafold config and model (confi
    of their centers together with a list of adjacent residues, list of adjacent protein surface atoms, and a calibrated probability of being a ligand-binding site
    * `<struct_file>_residues.csv`: contains list of all residues from the input protein with their scores, 
    mapping to predicted pockets, and a calibrated probability of being a ligand-binding residue
-   * `visualizations/<struct_file>.pml`: PyMol visualization (`.pml` script with data files in `data/`) 
+   * PyMol and ChimeraX visualizations in `visualizations/` directory (`.pml` and `.cxc` scripts with data files in `data/`) 
      * generating visualizations can be turned off by `-visualizations 0` parameter
-     * coordinates of the SAS points can be found in `visualizations/data/<struct_file>_points.pdb.gz`. There the "Residue sequence number" (23-26) of HETATM record
-       corresponds to the rank of the corresponding pocket (points with value 0 do not belong to any pocket).
+     * coordinates of the SAS points can be found in `visualizations/data/<struct_file>_points.pdb.gz`. There the "Residue sequence number" (23-26 of HETATM record)
+       corresponds to the rank of the corresponding pocket (points with value 0 don't belong to any pocket)
+     * `-vis_copy_proteins 0` parameter can be used to turn off copying of protein structures to the visualizations directory (faster but visualizations won't be portable)
 
 
 ### Configuration
@@ -158,14 +160,37 @@ DeepSite,
 and PUResNetV2.0
 are supported at the moment).
 
+Rescoring output:
+* `<struct_file>_rescored.csv`: list of pockets sorted by the new score
+* `<struct_file>_predictions.csv`: same as with `prank predict` (since 2.5)
+* visualizations
+
+Note: probability column in `predictions.csv` is calibrated for rescoring fpocket predictions.
+
 ~~~bash
-prank rescore test_data/fpocket.ds
-prank rescore fpocket.ds                 # test_data/ is default 'dataset_base_dir'
-prank rescore fpocket.ds -o output_dir   # test_output/ is default 'output_base_dir'       
-prank eval-rescore fpocket.ds            # evaluate rescoring model
+prank rescore fpocket.ds                   
+prank rescore fpocket.ds -o output_here   # explicitly specify output directory
+prank rescore fpocket.ds -c rescore_2024  # use a new experimental rescoring model
+   
+prank eval-rescore fpocket.ds             # evaluate rescoring model on a dataset with known ligands
 ~~~
-           
-Note: for rescoring the dataset file needs to have a specific 2-column format. See examples in `test_data/fpocket.ds`.
+
+For rescoring the dataset file needs to have a specific 2-column format. See examples in `test_data/`: `fpocket.ds`, `concavity.ds`, `puresnet.ds`.
+
+
+#### Run fpocket and rescore in one command
+
+You can use `fpocket-rescore` command to run fpocket and then rescore its predictions automatically.
+
+~~~bash
+prank fpocket-rescore test.ds
+prank fpocket-rescore test.ds -fpocket_command "/bin/fpocket -w m"  # specify custom fpocket command (optionally with arguments)
+prank fpocket-rescore test.ds -fpocket_keep_output 0                # don't keep fpocket output files
+~~~
+
+In this case dataset file doesn't need to have the 2-column format.
+`prank fpocket-rescore` can be used as in-place replacement of `prank predict` command.
+Note: if you use `fpocket-rescore`, please cite fpocket paper as well.
 
 ## Build from sources
 
