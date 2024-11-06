@@ -16,13 +16,15 @@ Ligand-binding site prediction based on machine learning.
 
 ### Description
 
-P2Rank is a stand-alone command line program that predicts ligand-binding pockets from a protein structure. It achieves high prediction success rates without relying on an external software for computation of complex features or on a database of known protein-ligand templates. 
+P2Rank is a stand-alone command line program that predicts ligand-binding pockets from a protein structure. 
+It achieves high prediction success rates without relying on an external software for computation of complex features 
+or on a database of known protein-ligand templates. 
            
 ### What's new?
   
-* Version 2.5 brings speed optimizations (~2x faster prediction), ChimeraX visualizations and improvements to rescoring (`fpocket-rescore` command).
-* Version 2.4.2 adds support for BinaryCIF (`.bcif`) input and rescoring of fpocket predictions in `.cif` format.          
-* Version 2.4 adds support for mmCIF (`.cif`) input and contains a special profile for predictions on AlphaFold models and NMR/cryo-EM structures.  
+* Version **2.5** brings speed optimizations (~2x faster prediction), ChimeraX visualizations, and improvements to rescoring (`fpocket-rescore` command).
+* Version **2.4.2** adds support for BinaryCIF (`.bcif`) input and rescoring of fpocket predictions in `.cif` format.          
+* Version **2.4** adds support for mmCIF (`.cif`) input and contains a special profile for predictions on AlphaFold models and NMR/cryo-EM structures.  
 
 ### Requirements
 
@@ -62,7 +64,7 @@ If you use P2Rank, please cite relevant papers:
 * [Software article](https://doi.org/10.1186/s13321-018-0285-8) about P2Rank pocket prediction tool  
  Krivak R, Hoksza D. ***P2Rank: machine learning based tool for rapid and accurate prediction of ligand binding sites from protein structure.*** Journal of Cheminformatics. 2018 Aug.
 * [A new web-server article](https://doi.org/10.1093/nar/gkac389) about updates in the web interface [prankweb.cz](https://prankweb.cz)  
- Jakubec D, Skoda P, Krivak R, Novotny M, Hoksza D ***PrankWeb 3: accelerated ligand-binding site predictions for experimental and modelled protein structures.*** Nucleic Acids Research, Volume 50, Issue W1, 5 July 2022, Pages W593–W597
+ Jakubec D, Skoda P, Krivak R, Novotny M, Hoksza D. ***PrankWeb 3: accelerated ligand-binding site predictions for experimental and modelled protein structures.*** Nucleic Acids Research, Volume 50, Issue W1, 5 July 2022, Pages W593–W597
 * [Web-server article](https://doi.org/10.1093/nar/gkz424) introducing the web interface at [prankweb.cz](https://prankweb.cz)  
  Jendele L, Krivak R, Skoda P, Novotny M, Hoksza D. ***PrankWeb: a web server for ligand binding site prediction and visualization.*** Nucleic Acids Research, Volume 47, Issue W1, 02 July 2019, Pages W345-W349 
 * [Conference paper](https://doi.org/10.1007/978-3-319-21233-3_4) introducing P2Rank prediction algorithm  
@@ -104,17 +106,17 @@ prank predict -c alphafold   test.ds     # use alphafold config and model (confi
 
 ### Prediction output 
 
-   For each structure file `<struct_file>` in the dataset P2Rank produces several output files:
-   * `<struct_file>_predictions.csv`: contains an ordered list of predicted pockets, their scores, coordinates 
-   of their centers together with a list of adjacent residues, list of adjacent protein surface atoms, and a calibrated probability of being a ligand-binding site
-   * `<struct_file>_residues.csv`: contains list of all residues from the input protein with their scores, 
-   mapping to predicted pockets, and a calibrated probability of being a ligand-binding residue
+   For each structure file `{struct_file}` in the dataset P2Rank produces several output files:
+   * `{struct_file}_predictions.csv`: contains an ordered list of predicted pockets, their scores, coordinates 
+   of their centers together with a list of adjacent residues, list of adjacent protein surface atoms, and a calibrated probability of being a ligand-binding site.
+   * `{struct_file}_residues.csv`: contains a list of all residues from the input protein with their scores, 
+   mapping to predicted pockets, and a calibrated probability of being a ligand-binding residue.
    * PyMol and ChimeraX visualizations in `visualizations/` directory (`.pml` and `.cxc` scripts with data files in `data/`) 
-     * generating visualizations can be turned off by `-visualizations 0` parameter
-     * `-vis_renderers 'pymol,chimerax'` parameter can be used to turn individual visualization renderers on/off 
-     * coordinates of SAS points can be found in `visualizations/data/<struct_file>_points.pdb.gz`. There the "Residue sequence number" (23-26 of HETATM record)
-       corresponds to the rank of the corresponding pocket (points with value 0 don't belong to any pocket)
-     * `-vis_copy_proteins 0` parameter can be used to turn off copying of protein structures to the visualizations directory (faster but visualizations won't be portable)
+     * Generating visualizations can be turned off with the `-visualizations 0` parameter
+     * `-vis_renderers 'pymol,chimerax'` parameter can be used to turn individual visualization renderers on/off. 
+     * `-vis_copy_proteins 0` parameter can be used to turn off copying of protein structures to the visualizations directory (faster, but visualizations won't be portable).
+     * Coordinates and ligandability scores of SAS points can be found in `visualizations/data/{struct_file}_points.pdb.gz`. Here, the "Residue sequence number" (23-26 of HETATM record)
+       is the rank of the corresponding pocket (0 means the point doesn't belong to any pocket) and the b-factor column corresponds to the ligandability score.
 
 
 ### Configuration
@@ -162,8 +164,8 @@ and PUResNetV2.0
 are supported at the moment).
 
 Rescoring output:
-* `<struct_file>_rescored.csv`: list of pockets sorted by the new score
-* `<struct_file>_predictions.csv`: same as with `prank predict` (since 2.5)
+* `{struct_file}_rescored.csv`: list of pockets sorted by the new score
+* `{struct_file}_predictions.csv`: same as with `prank predict` (since 2.5)
   * Note: probability column is calibrated for rescoring fpocket predictions
 * visualizations
 
@@ -175,25 +177,26 @@ prank rescore fpocket.ds -c rescore_2024  # use new experimental rescoring model
 prank eval-rescore fpocket.ds             # evaluate rescoring model on a dataset with known ligands
 ~~~
 
-For rescoring the dataset file needs to have a specific 2-column format. See examples in `test_data/`: `fpocket.ds`, `concavity.ds`, `puresnet.ds`.
+For rescoring, the dataset file needs to have a specific 2-column format. See examples in `test_data/`: `fpocket.ds`, `concavity.ds`, `puresnet.ds`.
 
 New experimental rescoring model `-c rescore_2024` shows promising result but hasn't been fully evaluated yet. It is recommended for AlphaFold models, NMR and cryo-EM structures since it doesn't depend on b-factor as a feature.
 
 
-
 #### Run fpocket and rescore in one command
 
-You can use `fpocket-rescore` command to run fpocket and then rescore its predictions automatically.
+You can use `fpocket-rescore` command to run [Fpocket](https://github.com/Discngine/fpocket) and then rescore its predictions automatically.
 
 ~~~bash
-prank fpocket-rescore test.ds
+prank fpocket-rescore test.ds                                       # expects 'fpocket' command in PATH
 prank fpocket-rescore test.ds -fpocket_command "/bin/fpocket -w m"  # specify custom fpocket command (optionally with arguments)
-prank fpocket-rescore test.ds -fpocket_keep_output 0                # don't keep fpocket output files
+prank fpocket-rescore test.ds -fpocket_keep_output 0                # delete fpocket output files
 ~~~
 
-In this case dataset file doesn't need to have the 2-column format.
-`prank fpocket-rescore` can be used as in-place replacement of `prank predict` command.
-Note: if you use `fpocket-rescore`, please cite fpocket paper as well.
+In this case, the dataset file can be a simple list of pdb/cif files since Fpocket predictions will pe calculated ad-hoc.
+`prank fpocket-rescore` will produce `predictions.csv` as well, so it can be used as an in-place replacement for `prank predict` in most scenarios.
+Note: if you use `fpocket-rescore`, please cite Fpocket paper as well.
+
+
 
 ## Build from sources
 
