@@ -106,13 +106,13 @@ prank predict -c alphafold   test.ds     # use alphafold config and model (confi
 
 ### Prediction output 
 
-   For each structure file `{struct_file}` in the dataset P2Rank produces several output files:
+   For each structure file `{struct_file}` in the dataset, P2Rank produces several output files:
    * `{struct_file}_predictions.csv`: contains an ordered list of predicted pockets, their scores, coordinates 
    of their centers together with a list of adjacent residues, list of adjacent protein surface atoms, and a calibrated probability of being a ligand-binding site.
    * `{struct_file}_residues.csv`: contains a list of all residues from the input protein with their scores, 
    mapping to predicted pockets, and a calibrated probability of being a ligand-binding residue.
-   * PyMol and ChimeraX visualizations in `visualizations/` directory (`.pml` and `.cxc` scripts with data files in `data/`) 
-     * Generating visualizations can be turned off with the `-visualizations 0` parameter
+   * PyMol and ChimeraX visualizations in `visualizations/` directory (`.pml` and `.cxc` scripts with data files in `data/`).
+     * Generating visualizations can be turned off with the `-visualizations 0` parameter.
      * `-vis_renderers 'pymol,chimerax'` parameter can be used to turn individual visualization renderers on/off. 
      * `-vis_copy_proteins 0` parameter can be used to turn off copying of protein structures to the visualizations directory (faster, but visualizations won't be portable).
      * Coordinates and ligandability scores of SAS points can be found in `visualizations/data/{struct_file}_points.pdb.gz`. Here, the "Residue sequence number" (23-26 of HETATM record)
@@ -194,7 +194,7 @@ prank fpocket-rescore test.ds -fpocket_keep_output 0                # delete fpo
 
 In this case, the dataset file can be a simple list of pdb/cif files since Fpocket predictions will pe calculated ad-hoc.
 `prank fpocket-rescore` will produce `predictions.csv` as well, so it can be used as an in-place replacement for `prank predict` in most scenarios.
-Note: if you use `fpocket-rescore`, please cite Fpocket paper as well.
+Note: if you use `fpocket-rescore`, please cite Fpocket as well.
 
 
 
