@@ -121,7 +121,7 @@ prank predict -c alphafold   test.ds     # use alphafold config and model (confi
 
 ### Configuration
 
-You can override the default parameters values in a custom config file:
+You can override the default parameter values in a custom config file:
 
 ~~~bash
 prank predict -c config/example.groovy  test.ds
@@ -192,7 +192,7 @@ prank fpocket-rescore test.ds -fpocket_command "/bin/fpocket -w m"  # specify cu
 prank fpocket-rescore test.ds -fpocket_keep_output 0                # delete fpocket output files
 ~~~
 
-In this case, the dataset file can be a simple list of pdb/cif files since Fpocket predictions will pe calculated ad-hoc.
+In this case, the dataset file can be a simple list of pdb/cif files since Fpocket predictions will be calculated ad-hoc.
 `prank fpocket-rescore` will produce `predictions.csv` as well, so it can be used as an in-place replacement for `prank predict` in most scenarios.
 Note: if you use `fpocket-rescore`, please cite Fpocket as well.
 
@@ -201,7 +201,7 @@ Note: if you use `fpocket-rescore`, please cite Fpocket as well.
 ## Build from sources
 
 This project uses [Gradle](https://gradle.org/) build system via included Gradle wrapper.
-On Windows use `bash` to execute build commands (`bash` is installed as a part of [Git for Windows](https://git-scm.com/download/win)).
+On Windows, use `bash` to run build commands (installed by default with [Git for Windows](https://git-scm.com/download/win)).
 
 ```bash
 git clone https://github.com/rdk/p2rank.git && cd p2rank
@@ -220,15 +220,14 @@ To use `./prank.sh` (development/training mode) first you need to copy and edit 
 ## Comparison with Fpocket
 
 [Fpocket](https://github.com/Discngine/fpocket) is a widely used open source ligand binding site prediction program.
-It is fast, easy to use and well documented. As such, it was a great inspiration for this project.
-Fpocket is written in C, and it is based on a different geometric algorithm.
+It is fast, easy to use and well documented. As such, it served as a great inspiration for this project.
 
 Some practical differences:
 
 * **Fpocket**
     - has a much smaller memory footprint 
     - runs faster when executed on a single protein
-    - produces a high number of less relevant pockets (and since the default scoring function isn't very effective the most relevant pockets often don't get to the top)
+    - produces a high number of less relevant pockets (and since the default scoring function isn't very effective, the most relevant pockets often don't get to the top)
     - contains MDpocket algorithm for pocket predictions from molecular trajectories 
     - still better documented
 * **P2Rank** 
