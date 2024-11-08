@@ -41,7 +41,7 @@ P2Rank requires no installation. Binary packages are available as GitHub Release
 * Source code: https://github.com/rdk/p2rank
 * Datasets: https://github.com/rdk/p2rank-datasets
 
-### 👨‍💻 Usage
+### Usage
 
 <pre>
 <b>prank</b> predict -f test_data/1fbl.pdb         # predict pockets on a single pdb file 
