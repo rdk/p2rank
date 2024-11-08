@@ -198,7 +198,7 @@ Note: if you use `fpocket-rescore`, please cite Fpocket as well.
 
 
 
-## Build from sources
+## 🏗️ Build from sources
 
 This project uses [Gradle](https://gradle.org/) build system via included Gradle wrapper.
 On Windows, use `bash` to run build commands (installed by default with [Git for Windows](https://git-scm.com/download/win)).
@@ -217,7 +217,7 @@ distro/prank       # standard mode that is run in production
 ``` 
 To use `./prank.sh` (development/training mode) first you need to copy and edit `misc/locval-env.sh` into repo root directory (see [training tutorial](https://github.com/rdk/p2rank/blob/develop/misc/tutorials/training-tutorial.md#preparing-the-environment)).
 
-## Comparison with Fpocket
+## ⚖️ Comparison with Fpocket
 
 [Fpocket](https://github.com/Discngine/fpocket) is a widely used open source ligand binding site prediction program.
 It is fast, easy to use and well documented. As such, it served as a great inspiration for this project.
@@ -252,6 +252,6 @@ This program builds upon software written by other people, either through librar
 * Chemistry Development Kit (https://github.com/cdk)
 * Weka (http://www.cs.waikato.ac.nz/ml/weka/)
 
-## Contributing
+## 🤝 Contributing
 
 We welcome any bug reports, enhancement requests, and other contributions. To submit a bug report or enhancement request, please use the [GitHub issues tracker](https://github.com/rdk/p2rank/issues). For more substantial contributions, please fork this repo, push your changes to your fork, and submit a pull request with a good commit message. 
