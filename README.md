@@ -41,7 +41,7 @@ P2Rank requires no installation. Binary packages are available as GitHub Release
 * Source code: https://github.com/rdk/p2rank
 * Datasets: https://github.com/rdk/p2rank-datasets
 
-### Usage
+### 👨‍💻 Usage
 
 <pre>
 <b>prank</b> predict -f test_data/1fbl.pdb         # predict pockets on a single pdb file 
@@ -73,7 +73,7 @@ If you use P2Rank, please cite relevant papers:
  Krivak R, Hoksza D. ***Improving protein-ligand binding site prediction accuracy by classification of inner pocket points using local features.*** Journal of Cheminformatics. 2015 Dec.
 
 
-Usage Examples
+👨‍💻 Usage Examples
 --------------
 
 Following commands can be executed in the installation directory. 
