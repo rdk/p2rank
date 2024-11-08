@@ -80,14 +80,14 @@ Following commands can be executed in the installation directory.
 
 ### Help and version
 
-~~~bash
+~~~ruby
 prank help   # print help for main commands and parameters
 prank -v     # print version and some system info
 ~~~
 
 ### Predict ligand binding sites (P2Rank algorithm)
 
-~~~bash
+~~~ruby
 prank predict test.ds                    # run on dataset containing a list of pdb/cif files
 
 prank predict -f test_data/1fbl.pdb      # run on a single pdb file
@@ -123,7 +123,7 @@ prank predict -c alphafold   test.ds     # use alphafold config and model (confi
 
 You can override the default parameter values in a custom config file:
 
-~~~bash
+~~~ruby
 prank predict -c config/example.groovy  test.ds
 prank predict -c example                test.ds # same effect, config/ is default location and .groovy implicit extension
 ~~~
@@ -131,7 +131,7 @@ prank predict -c example                test.ds # same effect, config/ is defaul
 
 It is also possible to override parameters on the command line using their full name after `-` (not `--`).
 
-~~~bash
+~~~ruby
 prank predict                   -visualizations 0 -threads 8  test.ds   #  turn off visualizations and set the number of threads
 prank predict -c example.groovy -visualizations 0 -threads 8  test.ds   #  overrides defaults as well as values from example.groovy
 ~~~     
@@ -145,7 +145,7 @@ parameters see [Params.groovy](https://github.com/rdk/p2rank/blob/develop/src/ma
 ### Evaluate prediction model
 ...on a file or a dataset with known ligands.
 
-~~~bash
+~~~ruby
 prank eval-predict -f test_data/1fbl.pdb
 prank eval-predict test.ds
 ~~~
@@ -169,7 +169,7 @@ Rescoring output:
   * Note: probability column is calibrated for rescoring fpocket predictions
 * visualizations
 
-~~~bash
+~~~ruby
 prank rescore fpocket.ds                   
 prank rescore fpocket.ds -o output_here   # explicitly specify output directory
 prank rescore fpocket.ds -c rescore_2024  # use new experimental rescoring model (recommended for alphafold models)
@@ -186,7 +186,7 @@ New experimental rescoring model `-c rescore_2024` shows promising result but ha
 
 You can use `fpocket-rescore` command to run [Fpocket](https://github.com/Discngine/fpocket) and then rescore its predictions automatically.
 
-~~~bash
+~~~ruby
 prank fpocket-rescore test.ds                                       # expects 'fpocket' command in PATH
 prank fpocket-rescore test.ds -fpocket_command "/bin/fpocket -w m"  # specify custom fpocket command (optionally with arguments)
 prank fpocket-rescore test.ds -fpocket_keep_output 0                # delete fpocket output files
@@ -203,7 +203,7 @@ Note: if you use `fpocket-rescore`, please cite Fpocket as well.
 This project uses [Gradle](https://gradle.org/) build system via included Gradle wrapper.
 On Windows, use `bash` to run build commands (installed by default with [Git for Windows](https://git-scm.com/download/win)).
 
-```bash
+```ruby
 git clone https://github.com/rdk/p2rank.git && cd p2rank
 ./make.sh       
 
@@ -211,7 +211,7 @@ git clone https://github.com/rdk/p2rank.git && cd p2rank
 ./tests.sh quick   # runs further tests
 ```    
 Now you can run the program via:
-```bash
+```ruby
 distro/prank       # standard mode that is run in production
 ./prank.sh         # development/training mode 
 ``` 
