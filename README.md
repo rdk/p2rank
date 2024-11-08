@@ -55,7 +55,7 @@ P2Rank makes predictions by scoring and clustering points on the protein's solve
 Ligandability score of individual points is determined by a machine learning based model trained on the dataset of known protein-ligand complexes. 
 For more details see the slides and publications.
 
-Presentation slides introducing the original version of the algorithm: [Slides (pdf)](http://bit.ly/p2rank_slides)  
+Presentation slides introducing the original version of the algorithm: [Slides (pdf)](https://bit.ly/p2rank-slides)  
 
 ### Publications
 
