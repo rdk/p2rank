@@ -28,12 +28,14 @@ class PdbUtils {
 
     static final FileParsingParameters PARSING_PARAMS = new FileParsingParameters()
     static {
-        PARSING_PARAMS.setAlignSeqRes(false);  // should the ATOM and SEQRES residues be aligned when creating the internal data model?
-        PARSING_PARAMS.setParseSecStruc(false);  // should secondary structure getByID parsed from the file
+        PARSING_PARAMS.setAlignSeqRes(false)  // should the ATOM and SEQRES residues be aligned when creating the internal data model?
+        PARSING_PARAMS.setParseSecStruc(false)  // should secondary structure getByID parsed from the file
 
         PARSING_PARAMS.setCreateAtomBonds(false)
         PARSING_PARAMS.setCreateAtomCharges(false)
         PARSING_PARAMS.setParseBioAssembly(false)
+
+        PARSING_PARAMS.parseSites = false  // using custom forked build with new parseSites param
 
         disableBiojavaFetching()
         //PARSING_PARAMS.setLoadChemCompInfo(Params.inst.biojava_load_chem_info); // info about modified amino acid residues, not available in BioJava4
