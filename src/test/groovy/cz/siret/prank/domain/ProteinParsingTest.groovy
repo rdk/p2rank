@@ -25,8 +25,8 @@ class ProteinParsingTest {
 
         PdbUtils.PARSING_PARAMS.parseSites = false  // using custom forked build with new parseSites param
 
-        //Protein protein2 = Protein.load("$DIR/4gqq_updated.cif")   // fails in 2.5, still fails with BioJava 7.1.4 and 7.2.2
-        Protein protein2 = Protein.load("$DIR/4gqq_updated_2025.cif")  // fails in 2.5, still fails with BioJava 7.1.4 and 7.2.2
+        protein = Protein.load("$DIR/4gqq_updated.cif")   // fails in 2.5, still fails with BioJava 7.1.4 and 7.2.2
+        protein = Protein.load("$DIR/4gqq_updated_2025.cif")   // fails in 2.5, still fails with BioJava 7.1.4 and 7.2.2
     }
 
     @Test
