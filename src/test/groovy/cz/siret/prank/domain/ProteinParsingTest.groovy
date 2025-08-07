@@ -32,4 +32,14 @@ class ProteinParsingTest {
         Protein protein2 = Protein.load("$DIR/1fbl_updated.cif")  // OK in in 2.5
     }
 
+    /**
+     * https://github.com/rdk/p2rank/issues/77
+     *
+     * 2.5 supposedly fails with org.rcsb.cif.EmptyColumnException: column pdbx_PDB_id_code is undefined
+     */
+    @Test
+    void testParse8zz7Cif() {
+        Protein protein = Protein.load("$DIR/8zz7.cif")
+    }
+
 }
