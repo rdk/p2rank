@@ -26,7 +26,7 @@ It achieves high prediction success rates without relying on external software f
 
 ### Requirements
 
-* Java 17 to 23
+* Java 17 to 24
 * PyMOL/ChimeraX for viewing visualizations (optional)
 
 P2Rank is tested on Linux, macOS, and Windows. 
