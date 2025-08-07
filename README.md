@@ -8,7 +8,7 @@ Ligand-binding site prediction based on machine learning.
     <img src="https://github.com/rdk/p2rank/blob/develop/misc/img/p2rank_sas_points.png?raw=true" width="600" alt="P2Rank illustration">
 </p>
 
-<a href="https://github.com/rdk/p2rank/releases" title="go to the release page"><img src="https://img.shields.io/badge/release-2.5-green.svg"></img></a>
+<a href="https://github.com/rdk/p2rank/releases" title="go to the release page"><img src="https://img.shields.io/badge/release-2.5.1-green.svg"></img></a>
 [![Build Status](https://github.com/rdk/p2rank/actions/workflows/develop.yml/badge.svg)](https://github.com/rdk/p2rank/actions)
 [![License: MIT](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](/LICENSE.txt)
 ![GitHub all releases](https://img.shields.io/github/downloads/rdk/p2rank/total)
@@ -254,7 +254,6 @@ This program builds upon software written by other people, either through librar
 * KDTree by Rednaxela (http://robowiki.net/wiki/User:Rednaxela/kD-Tree)
 * BioJava (https://github.com/biojava)
 * Chemistry Development Kit (https://github.com/cdk)
-* Weka (http://www.cs.waikato.ac.nz/ml/weka/)
 
 ## 🤝 Contributing
 

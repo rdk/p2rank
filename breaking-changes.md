@@ -15,6 +15,9 @@ All changes of that type should be rare and should be all listed here.
 
 ## List of changes
 
+### 2.5.1
+
+none
 
 ### 2.5
 
