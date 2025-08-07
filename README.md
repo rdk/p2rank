@@ -171,7 +171,7 @@ prank rescore fpocket.ds -c rescore_2024  # use new experimental rescoring model
 
 For rescoring, the dataset file needs to have a specific 2-column format. See examples in `test_data/`: `fpocket.ds`, `concavity.ds`, `puresnet.ds`.
 
-New experimental rescoring model `-c rescore_2024` shows promising result but hasn't been fully evaluated yet. It is recommended for AlphaFold models, NMR and cryo-EM structures since it doesn't depend on b-factor as a feature.
+New experimental rescoring model `-c rescore_2024` shows promising results but hasn't been fully evaluated yet. It is recommended for AlphaFold models, NMR and cryo-EM structures since it doesn't depend on b-factor as a feature.
 
 
 #### Run fpocket and rescore in one command
@@ -214,7 +214,7 @@ git clone https://github.com/rdk/p2rank.git && cd p2rank
 ./unit-tests.sh    # optionally you can run tests to check everything works fine on your machine        
 ./tests.sh quick   # runs further tests
 ```    
-Now you can run the program via:
+You can now run the program using:
 ```ruby
 distro/prank       # standard mode that is run in production
 ./prank.sh         # development/training mode 
