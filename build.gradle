@@ -22,7 +22,7 @@ apply plugin: "com.github.ben-manes.versions"   //  ./gradlew dependencyUpdates
 
 
 group = 'cz.siret'
-version = '2.5.1-dev.5'
+version = '2.5.1-rc.1'
 
 description = 'Ligand binding site prediction based on machine learning.'
 
@@ -167,20 +167,20 @@ tasks.named("dependencyUpdates").configure {
 
 dependencies {
 
-    implementation 'org.apache.groovy:groovy:4.0.27'
+    implementation 'org.apache.groovy:groovy:4.0.28'
 
     implementation 'org.codehaus.gpars:gpars:1.2.1'
-    implementation 'org.apache.commons:commons-lang3:3.17.0'
+    implementation 'org.apache.commons:commons-lang3:3.18.0'
     implementation 'org.apache.commons:commons-math3:3.6.1'
-    implementation 'commons-io:commons-io:2.19.0'
+    implementation 'commons-io:commons-io:2.20.0'
     implementation 'com.google.guava:guava:33.4.8-jre'
     implementation 'com.google.code.gson:gson:2.13.1'
     implementation 'com.univocity:univocity-parsers:2.9.1' // csv parser
-    implementation 'org.apache.commons:commons-csv:1.14.0'
+    implementation 'org.apache.commons:commons-csv:1.14.1'
     implementation 'org.zeroturnaround:zt-zip:1.17'
-    implementation 'org.apache.commons:commons-compress:1.27.1'
+    implementation 'org.apache.commons:commons-compress:1.28.0'
     implementation 'org.tukaani:xz:1.10'
-    implementation 'com.github.luben:zstd-jni:1.5.7-3'
+    implementation 'com.github.luben:zstd-jni:1.5.7-4'
     implementation 'com.github.dpaukov:combinatoricslib3:3.4.0'
     implementation 'us.ihmc:euclid:0.22.5'
 
@@ -202,7 +202,7 @@ dependencies {
 
     implementation fileTree(dir: 'lib', include: '*.jar')
 
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.13.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.13.4'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
 }
