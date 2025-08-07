@@ -22,11 +22,7 @@ apply plugin: "com.github.ben-manes.versions"   //  ./gradlew dependencyUpdates
 
 
 group = 'cz.siret'
-<<<<<<< HEAD
-version = '2.5.1-rc.1'
-=======
-version = '2.5.1-dev.3-parsFix'
->>>>>>> 2e40ef0e (fix pdbe's updated cifs parsing problem using forked biojava with new parseSites parsing param)
+version = '2.5.1-rc.2'
 
 description = 'Ligand binding site prediction based on machine learning.'
 
@@ -195,7 +191,7 @@ dependencies {
 
     implementation 'org.biojava:biojava-core:7.2.2'
     implementation 'org.biojava:biojava-alignment:7.2.2'
-    implementation 'org.biojava:biojava-structure:7.2.2'
+    implementation 'org.biojava:biojava-structure:7.2.2-rdk.1' // forked version with new parseSites param
 
     implementation 'org.openscience.cdk:cdk-qsarmolecular:2.11'    // for NumericalSurface class
     implementation 'org.openscience.cdk:cdk-silent:2.11'           // for Atom class

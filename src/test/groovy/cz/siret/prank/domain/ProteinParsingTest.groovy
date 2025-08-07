@@ -18,7 +18,7 @@ class ProteinParsingTest {
     /**
      * Test parsing PDBe specific "updates cifs"
      */
-    @Disabled // until solved in BioJava
+    //@Disabled // until solved in BioJava
     @Test
     void testParsePdbeUpdatedCif() {
         Protein protein = Protein.load("$DIR/4gqq.cif")
