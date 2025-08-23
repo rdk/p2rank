@@ -16,7 +16,7 @@ class ProteinParsingTest {
     static final String DIR = 'src/test/resources/data/tricky_cases/parsing'
 
     /**
-     * Test parsing PDBe specific "updates cifs"
+     * Test parsing PDBe specific "updated cifs"
      */
     //@Disabled // until solved in BioJava
     @Test
@@ -40,7 +40,7 @@ class ProteinParsingTest {
      * https://github.com/rdk/p2rank/issues/77
      *
      * P2Rank 2.5 (using BioJava 7.1.3) fails with org.rcsb.cif.EmptyColumnException: column pdbx_PDB_id_code is undefined
-     * Already fixed in BioJava 7.2.2
+     * Fixed in BioJava 7.2.2
      */
     @Test
     void testParse8zz7Cif() {
