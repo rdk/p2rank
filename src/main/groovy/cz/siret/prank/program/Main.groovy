@@ -104,8 +104,9 @@ class Main implements Parametrized, Writable {
             lastConfigPath = fcustom.absolutePath
         }
 
-        params.dataset_base_dir = evalDirParam(params.dataset_base_dir, Futils.dir(lastConfigPath))
-        params.output_base_dir = evalDirParam(params.output_base_dir, Futils.dir(lastConfigPath))
+        String lastConfigDir = Futils.dir(lastConfigPath)
+        params.dataset_base_dir = evalDirParam(params.dataset_base_dir, lastConfigDir)
+        params.output_base_dir = evalDirParam(params.output_base_dir, lastConfigDir)
 
         params.updateFromCommandLine(args)
         if (args.hasNamedArg("dataset_base_dir")) {
@@ -132,23 +133,23 @@ class Main implements Parametrized, Writable {
         log.debug "CMD LINE ARGS: " + args
     }
 
-    String evalDirParam(String dir, String relativePrefixDir) {
-        if (dir == null) {
-            dir = "."
+    String evalDirParam(String dirParam, String relativePrefixDir) {
+        if (dirParam == null) {
+            dirParam = "."
         } else {
-            if (!new File(dir).isAbsolute()) {
-                dir = "$relativePrefixDir/$dir"
+            if (!Futils.isAbsolute(dirParam)) {
+                dirParam = "$relativePrefixDir/$dirParam"
             }
         }
 
-        write "DIR: $dir"
+        write "DIR: $dirParam"
 
-        dir = dir.replace("{version}", version)
+        dirParam = dirParam.replace("{version}", version)
 
-        write "DIR2: $dir"
+        write "DIR2: $dirParam"
 
-        dir = Futils.absPath(Futils.normalize(dir))
-        return dir
+        dirParam = Futils.absPath(Futils.normalize(dirParam))
+        return dirParam
     }
 
     static String findModel(String installDir, Params params) {
@@ -174,11 +175,16 @@ class Main implements Parametrized, Writable {
             throw new PrankException('dataset not specified!')
         }
 
-        if (!Futils.exists(dataf)) {
-            log.info "looking for dataset in working dir [${Futils.absPath(dataf)}]... failed"
-            dataf = "${Params.inst.dataset_base_dir}/$dataf"
+        if (Futils.isAbsolute(dataf)) {
+            log.info "using provided absolute path to the dataset [${dataf}]"
+            return dataf
         }
-        log.info "looking for dataset in dataset_base_dir [${Futils.absPath(dataf)}]..."
+
+        if (!Futils.exists(dataf)) {
+            log.info "looking for the dataset in working dir [${Futils.absPath(dataf)}] failed"
+            dataf = "${Params.inst.dataset_base_dir}/$dataf"
+            log.info "looking for the dataset in dataset_base_dir [${Futils.absPath(dataf)}]..."
+        }
         return dataf
     }
 
