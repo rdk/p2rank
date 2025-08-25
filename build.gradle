@@ -22,7 +22,7 @@ apply plugin: "com.github.ben-manes.versions"   //  ./gradlew dependencyUpdates
 
 
 group = 'cz.siret'
-version = '2.5.1'
+version = '2.5.2-pept.1'
 
 description = 'Ligand binding site prediction based on machine learning.'
 
