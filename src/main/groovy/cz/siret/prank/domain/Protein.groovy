@@ -465,7 +465,16 @@ class Protein implements Parametrized {
 
         transformation.applyToStructure(newStructure)
 
-        return fromStructure(newStructure, newName, name, fileName, loaderParams)
+        Structure newFullStructure = newStructure
+        if (!(structure === fullStructure)) {
+            // structure was reduced, apply transformation to full structure too
+            newFullStructure = PdbUtils.deepCopyStructure(fullStructure)
+            transformation.applyToStructure(newFullStructure)
+        }
+
+        Protein res = fromStructure(newStructure, newName, name, fileName, loaderParams)
+        res.fullStructure = newFullStructure
+        return res
     }
 
     Protein transformed(@Nullable GeometricTransformation transformation) {

@@ -72,6 +72,10 @@ class DatasetItemLoader implements Parametrized, Writable {
 
 //===========================================================================================================//
 
+    /**
+     * Loads peptides (chains not in the main=reduced structure) that are likely to be binding according to provided residue labeling.
+     * Adds them to protein structure and to protein.peptides list.
+     */
     private loadPeptidesFromLabeling(Protein prot, ProcessedItemContext ctx) {
         log.info 'loading peptides for {}', prot.name
         if (!ctx.dataset.hasExplicitResidueLabeling()) {
@@ -84,7 +88,7 @@ class DatasetItemLoader implements Parametrized, Writable {
             log.info 'checking chain {} (len:{})', rc.authorId, rc.length
 
             if (rc.authorId in ctx.item.chains) {
-                log.info 'is among selected chains in the dataset, skipping'
+                log.info 'chain {} is among specified chains in the dataset, skipping', rc.authorId
                 continue
             }
 

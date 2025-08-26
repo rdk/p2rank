@@ -74,7 +74,6 @@ class CollectVectorsRoutine extends Routine {
 
         List<Dataset.Item> newItems = new ArrayList<>()
 
-        newItems.addAll( dataset.items.collect { it.copy() } )
 
         for (int i=1; i<=numRotations; ++i) {
             String nameSuffix = "rotation." + i
@@ -88,12 +87,14 @@ class CollectVectorsRoutine extends Routine {
 
             List<Dataset.Item> rotItems = dataset.items.collect { it.cleanCopy() }
             for (Dataset.Item item : rotItems) {
-                item.label += nameSuffix
+                item.label += "-" + nameSuffix
                 item.transformation = rotation
             }
 
             newItems.addAll(rotItems)
         }
+
+        newItems.addAll( dataset.items.collect { it.copy() } ) // add original items at the end for easier debugging
 
         return dataset.copyWithNewItems(newItems, dataset.name + "-with-rotations")
     }

@@ -57,6 +57,7 @@ class SprintLabelingLoader extends ResidueLabeler<Boolean> implements Writable {
         for (ResidueChain chain : protein.residueChains) {
             String chainCode = toElementCode(protein, chain)
 
+            log.info "Looking for labels for chain [{}] under label [{}] in labeling file", chain.authorId, chainCode
             LabeledChain element = elementsByCode.get(chainCode)
 
             if (element == null) {
