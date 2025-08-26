@@ -39,6 +39,14 @@ class Protein implements Parametrized {
     String shortFileName
     Structure structure
 
+    /**
+     * name before any transformation (e.g. random rotation)
+     * null for non-transformed proteins
+     * use getOriginalName() to access
+     **/
+    @Nullable
+    String originalName
+
     LoaderParams loaderParams
     
     /**
@@ -104,6 +112,10 @@ class Protein implements Parametrized {
     Map<String, Object> secondaryData = new HashMap<>()
 
 //===========================================================================================================//
+
+    String getOriginalName() {
+        return originalName != null ? originalName : name
+    }
 
     /**
      * relevant ligand count
@@ -425,9 +437,10 @@ class Protein implements Parametrized {
     }
 
 
-    static Protein fromStructure(Structure structure, String name, String pdbFileName, @Nullable List<String> onlyChains, LoaderParams loaderParams) {
+    static Protein fromStructure(Structure structure, String name, String originalName, String pdbFileName, @Nullable List<String> onlyChains, LoaderParams loaderParams) {
         Protein res = new Protein()
         res.name = name
+        res.originalName = originalName
         res.fileName = pdbFileName
         res.shortFileName = Futils.shortName(pdbFileName)
 
@@ -436,8 +449,8 @@ class Protein implements Parametrized {
         return res
     }
 
-    static Protein fromStructure(Structure structure, String name, String pdbFileName, LoaderParams loaderParams) {
-        return fromStructure(structure, name, pdbFileName, null, loaderParams)
+    static Protein fromStructure(Structure structure, String name, String originalName, String pdbFileName, LoaderParams loaderParams) {
+        return fromStructure(structure, name, originalName, pdbFileName, null, loaderParams)
     }
 
     /**
@@ -452,7 +465,7 @@ class Protein implements Parametrized {
 
         transformation.applyToStructure(newStructure)
 
-        return fromStructure(newStructure, newName, fileName, loaderParams)
+        return fromStructure(newStructure, newName, name, fileName, loaderParams)
     }
 
     Protein transformed(@Nullable GeometricTransformation transformation) {

@@ -39,8 +39,9 @@ class SprintLabelingLoader extends ResidueLabeler<Boolean> implements Writable {
     }
 
     String toElementCode(Protein protein, ResidueChain chain) {
-        String protCode = Futils.baseName(protein.name)
-//        String protCode = protein.name.substring(0, 4)
+        // using original name singe transformed/rotated proteins
+        // have a different name but same labeling
+        String protCode = Futils.baseName(protein.originalName)
         String chainId = chain.authorId
 
         return protCode + chainId
