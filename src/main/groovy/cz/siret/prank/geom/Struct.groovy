@@ -246,7 +246,7 @@ class Struct {
                 //    break // this is done so amino acid ligands at the end are excluded
                 //}
             } else {
-                log.warn "group {} ({}) considered non-protein", i, g.getPDBName()
+                log.debug "group {} ({}) considered non-protein", i, g.getPDBName()
             }
         }
 
