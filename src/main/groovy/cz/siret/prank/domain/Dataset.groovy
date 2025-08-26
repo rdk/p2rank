@@ -852,8 +852,8 @@ class Dataset implements Parametrized, Writable, Failable {
         }
 
         void cleanCaches() {
-            chains = null
-            apoChains = null
+            //chains = null
+            //apoChains = null
             cachedPair = null
         }
 
