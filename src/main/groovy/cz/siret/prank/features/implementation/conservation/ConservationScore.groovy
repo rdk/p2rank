@@ -111,8 +111,7 @@ class ConservationScore implements Parametrized {
         return result
     }
 
-    static ConservationScore loadForProtein(Protein protein, ProcessedItemContext itemContext)
-            throws FileNotFoundException {
+    static ConservationScore loadForProtein(Protein protein, ProcessedItemContext itemContext) {
         return loadForProtein(protein, itemContext, ScoreFormat.JSDFormat)
     }
 
@@ -239,17 +238,24 @@ class ConservationScore implements Parametrized {
      * @param format Score format (JSD or ConCavity), default: JSD
      * @return new instance of ConservationScore (map from residual numbers to conservation scores)
      */
-    static ConservationScore loadForProtein(Protein protein, ProcessedItemContext itemContext, ScoreFormat format) throws FileNotFoundException {
+    static ConservationScore loadForProtein(Protein protein, ProcessedItemContext itemContext, ScoreFormat format) {
         Map<ResidueNumberWrapper, Double> scores = new HashMap<>()
 
-
         // TODO use protein.getResidueChains() instead and compare, masked sequences should give better match
-        
+
+        Set<String> residueChainIds = protein.getResidueChains().collect { it.authorId }.toSet()
+        log.debug "Loading conservation only for residue chains: {}", residueChainIds.toSorted()
+
         for (Chain chain : protein.structure.getChains()) {
             String chainId = Struct.getAuthorId(chain) // authorId == chain letter in old PDB model
+
+            if (!residueChainIds.contains(chainId)) {
+                log.debug "Skip chain '{}': not in residueChains", chainId
+                continue
+            }
             if (chain.getAtomGroups(GroupType.AMINOACID).size() <= 0) {       // TODO this also includes some ligand chains
-                log.debug "Skip chain '{}': no amino acids", chainId
-                continue // skip non-amino acid chains
+                log.debug "Skip chain '{}': no amino acid groups", chainId
+                continue
             }
             chainId = Struct.maskEmptyChainId(chainId)
 
