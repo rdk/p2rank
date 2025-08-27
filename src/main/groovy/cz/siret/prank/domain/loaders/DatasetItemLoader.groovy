@@ -109,7 +109,7 @@ class DatasetItemLoader implements Parametrized, Writable {
         Residues labeledRes = new Residues(toProtein.residues.findAll { labeling.getLabel((Residue)it) }.asList() as List<Residue>)
 
         Atoms chainAtoms = Atoms.allFromChain(chain).withoutHydrogens()
-        Atoms contactChainAtoms = chainAtoms.cutoutShell(protAtoms, 3.5d)
+        Atoms contactChainAtoms = chainAtoms.cutoutShell(protAtoms, 4.5d)
 
         if (contactChainAtoms.empty) {
             log.info 'no chain contact atoms'
@@ -117,10 +117,10 @@ class DatasetItemLoader implements Parametrized, Writable {
         }
         int permissible = 0
         for (Atom a : contactChainAtoms) {
-            if (labeledRes.atoms.areWithinDistance(a, 3.5d)) {
+            if (labeledRes.atoms.areWithinDistance(a, 5.5d)) {
                 permissible++
             } else {
-                log.info 'found contact atom not close to contact res'
+                log.debug 'found contact atom {} that is far from positively labeled residues', a.PDBserial
             }
         }
         int n = contactChainAtoms.count
