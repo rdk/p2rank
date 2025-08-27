@@ -211,7 +211,7 @@ class ClassifierStats implements Parametrized, Writable {
         return sb.toString()
     }
 
-    TextBox makeBasicMatricsBox(@Nullable String matricNamePrefix = null) {
+    TextBox basicMatricsBox(@Nullable String matricNamePrefix = null) {
         Metrics m = metrics
         String p = matricNamePrefix ? matricNamePrefix : ""
 

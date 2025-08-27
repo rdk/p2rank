@@ -26,7 +26,12 @@ class TextBox {
         return w
     }
 
-    TextBox joinWith(@Nullable TextBox other, String delimiter) {
+    /**
+     * Joins this box with another box horizontally with given delimiter.
+     * Returns new box, this and other are not modified.
+     * If other is null, returns this box.
+     */
+    TextBox joinedWith(@Nullable TextBox other, String delimiter) {
         if (other == null) {
             return this
         }

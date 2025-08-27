@@ -239,14 +239,14 @@ class EvalResults extends ResultsBase {
         write "\n"
         def pst = logClassifierStats("point_classification", classifierName,  classifierStats, outdir)
         write CSV.tabulate(pst)
-        TextBox basicMetrics = classifierStats.makeBasicMatricsBox("pt_")
+        TextBox basicMetrics = classifierStats.basicMatricsBox("pt_")
         if (mode_residues) {
             def rst = logClassifierStats("residue_classification", "Residue classification",  residuePredictionStats, outdir)
             write  CSV.tabulate(rst)
-            basicMetrics.joinWith(residuePredictionStats.makeBasicMatricsBox("res_"), " | ")
+            basicMetrics = basicMetrics.joinedWith(residuePredictionStats.basicMatricsBox("res_"), " | ")
         }
+        write "BASIC METRICS\n\n" + basicMetrics + "\n"
         write "\n"
-        write "BASIC METRICS\n" + basicMetrics + "\n"
 
         if (mode_pockets) {
             List<Integer> tolerances = params.eval_tolerances
