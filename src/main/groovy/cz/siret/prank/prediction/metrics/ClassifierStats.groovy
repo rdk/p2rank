@@ -2,9 +2,11 @@ package cz.siret.prank.prediction.metrics
 
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Writable
+import cz.siret.prank.utils.console.TextBox
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
+import javax.annotation.Nullable
 import java.text.DecimalFormat
 
 import static cz.siret.prank.utils.Cutils.prefixMapKeys
@@ -207,6 +209,21 @@ class ClassifierStats implements Parametrized, Writable {
         }
         
         return sb.toString()
+    }
+
+    TextBox makeBasicMatricsBox(@Nullable String matricNamePrefix = null) {
+        Metrics m = metrics
+        String p = matricNamePrefix ? matricNamePrefix : ""
+
+        List lines = new ArrayList<>()
+        lines.add "${p}AUC:   ${format(m.AUC)}"
+        lines.add "${p}AUPRC: ${format(m.AUPRC)}"
+        lines.add "${p}P:     ${format(m.p)}"
+        lines.add "${p}R:     ${format(m.r)}"
+        lines.add "${p}MCC:   ${format(m.MCC)}"
+        lines.add "${p}TPX:   ${format(m.TPX)}"
+
+        return TextBox.of(lines as List<String>)
     }
 
 }

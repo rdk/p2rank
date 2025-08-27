@@ -3,6 +3,7 @@ package cz.siret.prank.program.routines.results
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.prediction.metrics.ClassifierStats
 import cz.siret.prank.utils.Formatter
+import cz.siret.prank.utils.console.TextBox
 import cz.siret.prank.utils.csv.CSV
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
@@ -235,16 +236,17 @@ class EvalResults extends ResultsBase {
             writeFile "$outdir/stats_runs.csv", multiStats.toCSV()
         }
 
-
         write "\n"
         def pst = logClassifierStats("point_classification", classifierName,  classifierStats, outdir)
         write CSV.tabulate(pst)
+        TextBox basicMetrics = classifierStats.makeBasicMatricsBox("pt_")
         if (mode_residues) {
             def rst = logClassifierStats("residue_classification", "Residue classification",  residuePredictionStats, outdir)
             write  CSV.tabulate(rst)
+            basicMetrics.joinWith(residuePredictionStats.makeBasicMatricsBox("res_"), " | ")
         }
         write "\n"
-
+        write "BASIC METRICS\n" + basicMetrics + "\n"
 
         if (mode_pockets) {
             List<Integer> tolerances = params.eval_tolerances
