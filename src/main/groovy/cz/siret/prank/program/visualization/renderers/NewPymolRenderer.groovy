@@ -103,8 +103,8 @@ remove solvent
 color white, elem c
 color bluewhite, protein
 
-#show surface, protein
-show wire, protein
+show surface, protein
+#show wire, protein
 
 #show sticks, ligands
 #set stick_color, magenta
@@ -238,12 +238,14 @@ hide lines, resn STP
 cmd.select("rest", "resn STP and resi 0")
 cmd.set("sphere_scale","0.3","rest")
 
-# pockets (old)
-#for my_index in range(1,int(lastSTP)+1): cmd.select("pocket"+str(my_index), "resn STP and resi "+str(my_index))
-#for my_index in range(1,int(lastSTP)+1): cmd.show("spheres","pocket"+str(my_index))
-#for my_index in range(1,int(lastSTP)+1): cmd.set("sphere_scale","0.4","pocket"+str(my_index))
-#for my_index in range(1,int(lastSTP)+1): cmd.set("sphere_transparency","0.1","pocket"+str(my_index))
+
 """
+
+// # pockets (old)
+// #for my_index in range(1,int(lastSTP)+1): cmd.select("pocket"+str(my_index), "resn STP and resi "+str(my_index))
+// #for my_index in range(1,int(lastSTP)+1): cmd.show("spheres","pocket"+str(my_index))
+// #for my_index in range(1,int(lastSTP)+1): cmd.set("sphere_scale","0.4","pocket"+str(my_index))
+// #for my_index in range(1,int(lastSTP)+1): cmd.set("sphere_transparency","0.1","pocket"+str(my_index))
 
     }
 
