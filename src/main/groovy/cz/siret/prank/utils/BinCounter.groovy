@@ -13,8 +13,8 @@ class BinCounter<K> {
     Map<K, Bin> table = new HashMap<>()
 
     static class Bin {
-        long positives
-        long negatives
+        long positives = 0
+        long negatives = 0
 
         void add(Bin bin) {
             positives += bin.positives
@@ -55,17 +55,18 @@ class BinCounter<K> {
     static <T> BinCounter<T> join(List<BinCounter<T>> counters) {
         BinCounter<T> res = new BinCounter<>()
 
-        for (BinCounter c : counters) {
-            res.count += c.count
-            for (Map.Entry<T, Bin> it : c.table.entrySet()) {
-                Bin rbin = res.table.get(it.key)
-                if (rbin == null) {
-                    res.table.put(it.key, it.value)
-                } else {
-                    rbin.add(it.value)
+        for (BinCounter<T> c : counters) {
+            for (Map.Entry<T, Bin> e : c.table.entrySet()) {
+                Bin bin = res.table.get(e.key)
+                if (bin == null) {
+                    bin = new Bin()
+                    res.table.put(e.key, bin)
                 }
+                bin.add(e.value)
             }
+            res.count += c.count
         }
+
 
         return res
     }

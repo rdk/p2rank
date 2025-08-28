@@ -1,4 +1,4 @@
-package cz.siret.prank.features.implementation.sequence
+package cz.siret.prank.features.implementation.propensity
 
 import cz.siret.prank.domain.Residue
 import cz.siret.prank.features.api.ResidueFeatureCalculationContext
@@ -13,7 +13,7 @@ import javax.annotation.Nullable
 import static cz.siret.prank.utils.Futils.readResource
 
 /**
- * Sequence triplet propensities for closest residue
+ * Sequence triplet propensities for residue
  *
  * For propensity calculation
  * @see cz.siret.prank.program.routines.analyze.AnalyzeRoutine#cmdAaSurfSeqTriplets()

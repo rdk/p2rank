@@ -1,4 +1,4 @@
-package cz.siret.prank.features.implementation.sequence
+package cz.siret.prank.features.implementation.propensity
 
 import cz.siret.prank.domain.Residue
 import cz.siret.prank.features.api.ResidueFeatureCalculationContext
@@ -11,10 +11,10 @@ import groovy.util.logging.Slf4j
 import static cz.siret.prank.utils.Futils.readResource
 
 /**
- * Sequence duplet propensities for closest residue
+ * Sequence duplet propensities for residue
  *
- * For propensity calculation see
- * cz.siret.prank.program.routines.AnalyzeRoutine#cmdAaSurfSeqDuplets()
+ * For propensity calculation
+ * @see cz.siret.prank.program.routines.analyze.AnalyzeRoutine#cmdAaSurfSeqDuplets()
  */
 @Slf4j
 @CompileStatic
@@ -23,8 +23,8 @@ class DupletsPropensityFeature extends ResidueFeatureCalculator implements Param
     static final String PROPERTY = 'propensity'
     PropertyTable table
 
-//    static List<String> HEADER = ['product', 'sum', 'max']
-    static List<String> HEADER = ['product']
+//    static List<String> HEADER = ['product']
+      static List<String> HEADER = ['avg', 'max', 'product']
 
 //===========================================================================================================//
 
@@ -61,11 +61,11 @@ class DupletsPropensityFeature extends ResidueFeatureCalculator implements Param
         } else if (val2 == 0d) {
             product = val1*val1
         }
-        double sum = val1 + val2
+        double avg = (val1 + val2) / 2d
         double max = Math.max(val1, val2)
 
-        return [product] as double[]
-//        return [product, sum, max] as double[]
+//        return [product] as double[]
+        return [avg, max, product] as double[]
     }
 
 }

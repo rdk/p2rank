@@ -231,6 +231,13 @@ class PdbUtils {
     }
 
     /**
+     * @return e.g. "ASP.CA"
+     */
+    static String getAtomTypeInResidueCode(Atom a) {
+        return getCorrectedAtomResidueCode(a) + "." + a.name
+    }
+
+    /**
      * @return three letter residue code (e.g. "ASP")
      */
     @Nullable

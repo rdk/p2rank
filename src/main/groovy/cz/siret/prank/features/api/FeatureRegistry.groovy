@@ -19,12 +19,13 @@ import cz.siret.prank.features.implementation.csv.CsvFileFeature
 import cz.siret.prank.features.implementation.electrostatics.ElectrostaticsTempAtomFeature
 import cz.siret.prank.features.implementation.electrostatics.ElectrostaticsTempSasFeature
 import cz.siret.prank.features.implementation.histogram.PairHistogramFeature
+import cz.siret.prank.features.implementation.propensity.AtomTypePropensityFeature
 import cz.siret.prank.features.implementation.secstruct.SecStructCloudSF
 import cz.siret.prank.features.implementation.secstruct.SecStructRF
 import cz.siret.prank.features.implementation.secstruct.SecStructSimpleMotifRF
 import cz.siret.prank.features.implementation.secstruct.SecStructSimpleRF
-import cz.siret.prank.features.implementation.sequence.DupletsPropensityFeature
-import cz.siret.prank.features.implementation.sequence.TripletsPropensityFeature
+import cz.siret.prank.features.implementation.propensity.DupletsPropensityFeature
+import cz.siret.prank.features.implementation.propensity.TripletsPropensityFeature
 import cz.siret.prank.features.implementation.structmotif.StructMotifFeature
 import cz.siret.prank.features.implementation.table.AAIndexAtomFeature
 import cz.siret.prank.features.implementation.table.AAIndexFeature
@@ -94,10 +95,14 @@ class FeatureRegistry {
         register new ResidueToSasFeatWrapper(new AAIndexFeature())
         register new ResidueToAtomicFeatWrapper(new AAIndexFeature())
 
+        // propensity
         register new ResidueToSasFeatWrapper(new DupletsPropensityFeature())
         register new ResidueToAtomicFeatWrapper(new DupletsPropensityFeature())
         register new ResidueToSasFeatWrapper(new TripletsPropensityFeature())
         register new ResidueToAtomicFeatWrapper(new TripletsPropensityFeature())
+        register new AtomTypePropensityFeature()
+        register new AtomicToSasFeatWrapper(new AtomTypePropensityFeature())
+
 
         register new ResidueToSasFeatWrapper(new SecStructRF())
         register new ResidueToAtomicFeatWrapper(new SecStructRF())

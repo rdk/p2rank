@@ -17,6 +17,7 @@ import cz.siret.prank.program.visualization.renderers.NewPymolRenderer
 import cz.siret.prank.utils.*
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+import org.biojava.nbio.structure.Atom
 import org.biojava.nbio.structure.ResidueNumber
 
 import javax.annotation.Nullable
@@ -75,8 +76,10 @@ class AnalyzeRoutine extends Routine {
         "binding-residues" : { cmdBindingResidues() },
         "labeled-residues" : { cmdLabeledResidues() },
         "aa-propensities" : { cmdAaPropensities() },
+        "atomtype-propensities" : { cmdAtomTypePropensities() },
         "aa-surf-seq-duplets" : { cmdAaSurfSeqDuplets() },
         "aa-surf-seq-triplets" : { cmdAaSurfSeqTriplets() },
+        "all-propensities" : { cmdAllPropensities() },
         "conservation" : { cmdConservation() },
         "chains" : { cmdChains() },
         "chains-residues" : { cmdChainsResidues() },
@@ -408,9 +411,35 @@ class AnalyzeRoutine extends Routine {
         }
 
         BinCounter<AA> counter = BinCounter.join(counters)
-        savePropensities("$outdir/aa-propensities.csv", counter)
+        savePropensities("$outdir/aa-propensity.csv", counter)
     }
 
+    private void cmdAtomTypePropensities() {
+        List<BinCounter<String>> counters = newSynchronizedList()
+
+        boolean exposedOnly = true // TODO make a configurable param for ions
+
+        dataset.processItems { Dataset.Item item ->
+            Protein prot = item.protein
+            ResidueLabeler<Boolean> labeler = dataset.binaryResidueLabeler
+
+            Atoms atoms = exposedOnly ? prot.exposedAtoms : prot.proteinAtoms
+            Atoms ligandAtoms = prot.allRelevantLigandAtoms.withKdTree()
+
+            def counter = new BinCounter<String>()
+
+            atoms.each { Atom atom ->
+                String atomCode = PdbUtils.getAtomTypeInResidueCode(atom)
+                boolean isBinding = ligandAtoms.areWithinDistance(atom, params.ligand_protein_contact_distance)
+                counter.add(atomCode, isBinding)
+            }
+
+            counters.add(counter)
+        }
+
+        BinCounter<String> counter = BinCounter.join(counters)
+        savePropensities("$outdir/atomtype-propensity.csv", counter)
+    }
 
 
     /**
@@ -464,6 +493,20 @@ class AnalyzeRoutine extends Routine {
         }
 
         savePropensities("$outdir/triplets.csv", BinCounter.join(counters))
+    }
+
+    /**
+     * Runs all propensity calculations
+     *   - aa-propensities
+     *   - atomtype-propensities
+     *   - aa-surf-seq-duplets
+     *   - aa-surf-seq-triplets
+     */
+    private void cmdAllPropensities() {
+        cmdAaPropensities()
+        cmdAtomTypePropensities()
+        cmdAaSurfSeqDuplets()
+        cmdAaSurfSeqTriplets()
     }
 
     private void savePropensities(String fname, BinCounter counter) {

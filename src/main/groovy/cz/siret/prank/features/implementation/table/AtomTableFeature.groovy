@@ -52,7 +52,7 @@ class AtomTableFeature extends AtomFeatureCalculator implements Parametrized {
         double ATOM_POW = params.atom_table_feat_pow
         boolean KEEP_SGN = params.atom_table_feat_keep_sgn
 
-        String atomName = PdbUtils.getCorrectedAtomResidueCode(proteinSurfaceAtom) + "." + proteinSurfaceAtom.name
+        String atomName = PdbUtils.getAtomTypeInResidueCode(proteinSurfaceAtom)
 
         double[] res = new double[header.size()]
 
