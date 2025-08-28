@@ -19,6 +19,7 @@ import cz.siret.prank.features.implementation.csv.CsvFileFeature
 import cz.siret.prank.features.implementation.electrostatics.ElectrostaticsTempAtomFeature
 import cz.siret.prank.features.implementation.electrostatics.ElectrostaticsTempSasFeature
 import cz.siret.prank.features.implementation.histogram.PairHistogramFeature
+import cz.siret.prank.features.implementation.propensity.AaPropensityFeature
 import cz.siret.prank.features.implementation.propensity.AtomTypePropensityFeature
 import cz.siret.prank.features.implementation.secstruct.SecStructCloudSF
 import cz.siret.prank.features.implementation.secstruct.SecStructRF
@@ -96,6 +97,8 @@ class FeatureRegistry {
         register new ResidueToAtomicFeatWrapper(new AAIndexFeature())
 
         // propensity
+        register new ResidueToSasFeatWrapper(new AaPropensityFeature())
+        register new ResidueToAtomicFeatWrapper(new AaPropensityFeature())
         register new ResidueToSasFeatWrapper(new DupletsPropensityFeature())
         register new ResidueToAtomicFeatWrapper(new DupletsPropensityFeature())
         register new ResidueToSasFeatWrapper(new TripletsPropensityFeature())
@@ -103,12 +106,12 @@ class FeatureRegistry {
         register new AtomTypePropensityFeature()
         register new AtomicToSasFeatWrapper(new AtomTypePropensityFeature())
 
-
         register new ResidueToSasFeatWrapper(new SecStructRF())
         register new ResidueToAtomicFeatWrapper(new SecStructRF())
         register new SecStructCloudSF()
         register new ResidueToSasFeatWrapper(new SecStructSimpleRF())
         register new ResidueToAtomicFeatWrapper(new SecStructSimpleRF())
+        
         // ss motifs
         register new ResidueToSasFeatWrapper(new SecStructSimpleMotifRF(true))
         register new ResidueToAtomicFeatWrapper(new SecStructSimpleMotifRF(true))
