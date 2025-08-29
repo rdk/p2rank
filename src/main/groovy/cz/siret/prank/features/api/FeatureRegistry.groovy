@@ -111,7 +111,7 @@ class FeatureRegistry {
         register new SecStructCloudSF()
         register new ResidueToSasFeatWrapper(new SecStructSimpleRF())
         register new ResidueToAtomicFeatWrapper(new SecStructSimpleRF())
-        
+
         // ss motifs
         register new ResidueToSasFeatWrapper(new SecStructSimpleMotifRF(true))
         register new ResidueToAtomicFeatWrapper(new SecStructSimpleMotifRF(true))

@@ -10,6 +10,7 @@ import cz.siret.prank.utils.Writable
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
+import org.biojava.nbio.structure.Structure
 import org.biojava.nbio.structure.StructureTools
 import org.biojava.nbio.structure.asa.AsaCalculator
 
@@ -44,16 +45,14 @@ class AsaFeature extends SasFeatureCalculator implements Parametrized, Writable 
     static ProtAsa calcProtAsa(Protein protein, double probeRadius) {
         int nSpherePoints = AsaCalculator.DEFAULT_N_SPHERE_POINTS
         int threads = 1
-        boolean hetAtoms = false
 
-        Atom[] protAtoms = StructureTools.getAllNonHAtomArray(protein.structure, hetAtoms)
-        AsaCalculator asaCalculator = new AsaCalculator(protein.structure, probeRadius, nSpherePoints, threads, hetAtoms)
+        Atom[] protAtoms = protein.proteinAtoms.asArray()
+        AsaCalculator asaCalculator = new AsaCalculator(protAtoms, probeRadius, nSpherePoints, threads)
         double[] atomAsas = asaCalculator.calculateAsas()
-        protAtoms[0].getPDBserial()
 
-        Map<Integer, Double> asaByAtom = new HashMap<>()
-        for (int i=0; i!= protAtoms.length; ++i) {
-            asaByAtom.put protAtoms[i].PDBserial, atomAsas[i]
+        Map<Integer, Double> asaByAtom = new HashMap<>(protAtoms.length)
+        for (int i=0; i!=protAtoms.length; ++i) {
+            asaByAtom.put(protAtoms[i].PDBserial, atomAsas[i])
         }
 
         return new ProtAsa(protein, asaByAtom)

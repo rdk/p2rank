@@ -71,6 +71,10 @@ public final class Atoms implements Iterable<Atom> {
         return (List<T>)list;
     }
 
+    public Atom[] asArray() {
+        return list.toArray(new Atom[0]);
+    }
+
     /**
      * @return Atom objects with Points (all have unit C mass)
      */
