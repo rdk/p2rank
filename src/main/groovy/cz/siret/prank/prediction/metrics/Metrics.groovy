@@ -248,6 +248,26 @@ class Metrics implements Parametrized {
         getAdvanced().positiveScoreAvg
     }
 
+    double getRatP02() {
+        getAdvanced().RatP02
+    }
+
+    double getRatP04() {
+        getAdvanced().RatP04
+    }
+
+    double getRatP05() {
+        getAdvanced().RatP05
+    }
+
+    double getRatP06() {
+        getAdvanced().RatP06
+    }
+
+    double getRatP08() {
+        getAdvanced().RatP08
+    }
+
 //===========================================================================================================//
 
     /**
