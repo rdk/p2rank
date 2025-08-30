@@ -1,5 +1,7 @@
 package cz.siret.prank.prediction.metrics;
 
+import java.util.Comparator;
+
 /**
  * Point prediction of scoring binary classifier
  */
@@ -28,5 +30,8 @@ public class PPred {
     public void setScore(double score) {
         this.score = score;
     }
+
+
+    public static Comparator<PPred> COMPARATOR_DESC = (o1, o2) -> Double.compare(o2.score, o1.score);
 
 }

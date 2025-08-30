@@ -309,6 +309,13 @@ class Metrics implements Parametrized {
         double scoreVariance = Double.NaN
         double scoreSkewness = Double.NaN
         double scoreKurtosis = Double.NaN
+
+
+        double RatP02 = Double.NaN
+        double RatP04 = Double.NaN
+        double RatP05 = Double.NaN
+        double RatP06 = Double.NaN
+        double RatP08 = Double.NaN
     }
 
     Advanced getAdvanced() {
@@ -337,7 +344,7 @@ class Metrics implements Parametrized {
     Advanced calculateAdvanced(@Nonnull ArrayList<PPred> predictions) {
         Advanced res = new Advanced()
 
-        res.logLoss = calcLogLoss(stats.predictions)
+        res.logLoss = calcLogLoss(predictions)
 
         // AUC, AUPRC
 
@@ -354,6 +361,13 @@ class Metrics implements Parametrized {
         res.positiveScoreAvg = meanScoreObserved(predictions)
 
         calcScoreStatMoments(res)
+
+        double[] recalls = calcMaxRecallForGivenPrecisions(predictions, [0.2d, 0.4d, 0.5d, 0.6d, 0.8d] as double[])
+        res.RatP02 = recalls[0]
+        res.RatP04 = recalls[1]
+        res.RatP05 = recalls[2]
+        res.RatP06 = recalls[3]
+        res.RatP08 = recalls[4]
 
         return res
     }
@@ -421,6 +435,57 @@ class Metrics implements Parametrized {
         }
 
         return sum
+    }
+
+    /**
+     * Calculates recall values at given precision thresholds for binary classification predictions.
+     *
+     * @param preds List of predictions with observed outcomes and predicted scores
+     * @param precisions Array of precision thresholds sorted in ascending order
+     * @return Array of recall values corresponding to each precision threshold
+     */
+    private static double[] calcMaxRecallForGivenPrecisions(List<PPred> preds, double[] precisions) {
+        double[] results = new double[precisions.length]
+
+        if (!preds || preds.empty) {
+            return results // All zeros
+        }
+
+        // Inplace sort predictions by score in descending order (highest score first)
+       preds.sort(PPred.COMPARATOR_DESC)
+
+        // Count total actual positives in the dataset
+        int totalPositives = preds.count { it.observed }.toInteger()
+        if (totalPositives == 0) {
+            return results // All zeros - no positives to recall
+        }
+
+        int truePositives = 0
+        int processed = 0
+
+        // Single pass through sorted predictions (from highest to lowest score)
+        // As we include more predictions, precision will generally trend downward
+        // because we're adding lower-scoring predictions which are less likely to be true positives
+        for (PPred pred : preds) {
+            processed++
+            if (pred.observed) {
+                truePositives++
+            }
+
+            double currentPrecision = (double) truePositives / processed
+            double currentRecall = (double) truePositives / totalPositives
+
+            // For each precision threshold, record the highest recall achieved
+            // when precision is >= threshold
+            for (int i = 0; i < precisions.length; i++) {
+                if (currentPrecision >= precisions[i]) {
+                    // Update result only if this recall is higher than previously recorded
+                    results[i] = Math.max(results[i], currentRecall)
+                }
+            }
+        }
+
+        return results
     }
 
 }
