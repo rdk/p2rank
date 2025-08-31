@@ -79,6 +79,13 @@ class FeatureSetup {
 
     }
 
+    List<String> getFixedSubFeatureNames() {
+        if (!filteringEnabled) {
+            throw new IllegalStateException("Feature filtering is not enabled.")
+        }
+        return filteredSubFeatures.findAll { !it.filterable }*.name.toList()
+    }
+
     List<String> getFilterableSubFeatureNames() {
         if (!filteringEnabled) {
             throw new IllegalStateException("Feature filtering is not enabled.")

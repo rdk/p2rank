@@ -299,6 +299,9 @@ class Experiments extends Routine {
 
     private runPloopWithFeatureFilters(List<List<String>> filters) {
 
+        filters = noneIfOk() + [["*"]] + filters
+        filters = filters.unique()
+
         List<String> sFilters = filters.collect {toListLiteral(it) }
 
         write "Generated feature filters: " + sFilters
@@ -314,13 +317,24 @@ class Experiments extends Routine {
         params.extra_features
     }
 
+    /** conditionally return list with none filter if there is at least one fixed sub-feature in current config */
+    private List<List<String>> noneIfOk() {
+        boolean hasFixedSubfeature = !currentFeatureSetup.fixedSubFeatureNames.empty
+
+        if (hasFixedSubfeature) {
+            return [["-*"]] // none filter is ok
+        } else {
+            return []
+        }
+    }
+
     public ploop_features_tryeach() {
         checkNoListParams()
 
         List<String> names = filterableFeatureNames
         List<String> all = names.collect { it + ".*" }
 
-        List<List<String>> filters = [["*"]] + all.collect { [it] }
+        List<List<String>> filters = all.collect { [it] }
 
         runPloopWithFeatureFilters(filters)
     }
@@ -331,7 +345,7 @@ class Experiments extends Routine {
         List<String> names = filterableFeatureNames
         List<String> all = names.collect { it + ".*" }
 
-        List<List<String>> filters = [["*"]] + all.collect { [it] } + generatePairs(all)
+        List<List<String>> filters = all.collect { [it] } + generatePairs(all)
 
         runPloopWithFeatureFilters(filters)
     }
@@ -342,7 +356,9 @@ class Experiments extends Routine {
         List<String> names = filterableFeatureNames
         List<String> all = names.collect { it + ".*" }
 
-        List<List<String>> filters = [["*"]] + generateMiddleSubsets(all)
+
+
+        List<List<String>> filters = generateMiddleSubsets(all)
 
         runPloopWithFeatureFilters(filters)
     }
@@ -353,7 +369,7 @@ class Experiments extends Routine {
 
         List<String> names = currentFeatureSetup.filterableSubFeatureNames
 
-        List<List<String>> filters = [["*"]] + names.collect { [it] }
+        List<List<String>> filters = names.collect { [it] }
 
         runPloopWithFeatureFilters(filters)
     }
@@ -364,7 +380,7 @@ class Experiments extends Routine {
         List<String> names = filterableFeatureNames
         List<String> all = names.collect { it + ".*" }
 
-        List<List<String>> filters = [["*"]] + all.collect { ["-$it" as String] }
+        List<List<String>> filters = all.collect { ["-$it" as String] }
 
         runPloopWithFeatureFilters(filters)
     }
@@ -374,7 +390,7 @@ class Experiments extends Routine {
 
         List<String> names = currentFeatureSetup.filterableSubFeatureNames
 
-        List<List<String>> filters = [["*"]] + names.collect { ["-$it" as String] }
+        List<List<String>> filters = names.collect { ["-$it" as String] }
 
         runPloopWithFeatureFilters(filters)
     }
