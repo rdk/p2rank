@@ -130,7 +130,7 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
             }
         }
 
-        featureSetup = new FeatureSetup(enabledFeatures, params.feature_filters)
+        featureSetup = new FeatureSetup(enabledFeatures, params.extra_features, params.feature_filters)
         calculatedFeatureVectorHeader = new GenericHeader(featureSetup.subFeaturesHeader)
         finalFeatureVectorHeader = calculatedFeatureVectorHeader
         if (featureSetup.filteringEnabled) {
@@ -411,7 +411,7 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
 
         int i = 0
         for (FeatureSetup.SubFeature subFeature : featureSetup.filteredSubFeatures) {
-            filtered[i++] = calculated[subFeature.oldIdx]
+            filtered[i++] = calculated[subFeature.fullFeatureVectorOffset]
         }
 
         return res

@@ -312,6 +312,10 @@ class Experiments extends Routine {
         new PrankFeatureExtractor().featureSetup
     }
 
+    private getEnabledFeatureNames() {
+        currentFeatureSetup.enabledFeatures
+    }
+
     public ploop_features_tryeach() {
         checkNoListParams()
 

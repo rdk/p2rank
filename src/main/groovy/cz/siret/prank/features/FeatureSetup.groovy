@@ -9,8 +9,9 @@ import groovy.util.logging.Slf4j
 import javax.annotation.Nonnull
 import javax.annotation.Nullable
 
+import static cz.siret.prank.features.FeatureSetup.Calculator.*
 import static cz.siret.prank.utils.Cutils.empty
-import static cz.siret.prank.utils.Sutils.partBefore
+import static cz.siret.prank.utils.Cutils.mapWithIndex
 import static cz.siret.prank.utils.Sutils.removeSuffix
 
 /**
@@ -33,6 +34,8 @@ class FeatureSetup {
      */
     List<String> subFeaturesHeader
 
+    // Filtering related
+
     List<String> featureFilters
     boolean filteringEnabled = false
 
@@ -45,159 +48,101 @@ class FeatureSetup {
     /**
      *
      * @param enabledFeatureNames  names of enabled feature sets, e.g. "chem", "bfactor"
+     * @param filterableFeatureNames names of features for which filters will be applied to, others will be fixed
      * @param featureFilters list of filters applied to sub-features, see Params.feature_filters
      */
-    FeatureSetup(List<String> enabledFeatureNames, @Nullable List<String> featureFilters) {
-        this.enabledFeatureNames = enabledFeatureNames
-        this.featureFilters = featureFilters
+    FeatureSetup(List<String> enabledFeatureNames, List<String> filterableFeatureNames, @Nullable List<String> featureFilters) {
 
-        initEnabledFeatures(enabledFeatureNames)
+        boolean doFiltering = !empty(filterableFeatureNames) && !empty(featureFilters)
 
-        if (!empty(featureFilters)) {
-            filteringEnabled = true
+        enabledFeatureNames = filterOutEmptyFeatures(enabledFeatureNames)
 
-            log.info "filtering features"
-            log.info "enabled features (before filter): {}", enabledFeatureNames
+        if (doFiltering) {
+            log.info "filtering features using filters: {}", featureFilters
 
-            filteredSubFeatures = filterSubFeatures(subFeaturesHeader, featureFilters)
-            filteredSubFeaturesHeader = filteredSubFeatures*.name
-            enabledFeatureNames = collectFeatureNames(filteredSubFeaturesHeader)
+            this.filteringEnabled = true
+            this.featureFilters = featureFilters
+            this.filteredSubFeatures = calculateEffectiveSubFeatures(enabledFeatureNames, filterableFeatureNames, featureFilters)
+            this.filteredSubFeaturesHeader = new ArrayList<>(filteredSubFeatures*.name.toList())
 
-            // here we want to disable features that were filtered out completely
-            // init again so we don't calculate features needlessly
-            initEnabledFeatures(enabledFeatureNames)
+            List<String> effectiveFeatureNames = filteredSubFeatures*.featureName.unique() // feature names left after filtering
 
-            filteredSubFeatures = filterSubFeatures(subFeaturesHeader, featureFilters) // finally apply filters again so we get proper oldIdx in case some features were filtered out
-            filteredSubFeaturesHeader = filteredSubFeatures*.name
+            initEnabledFeatures(effectiveFeatureNames)
+
+            setSubFeatureOffsets(filteredSubFeatures, enabledFeatures) // set offsets in calculated vector
 
         } else {
-            enabledFeatureNames = collectFeatureNames(subFeaturesHeader)
-            initEnabledFeatures(enabledFeatureNames)                     // re-initialize to throw away features that have zero length
+            initEnabledFeatures(enabledFeatureNames)
         }
 
-        log.info "enabledFeatures: {}", enabledFeatures*.name
+        log.info "effectively enabled features: {}", enabledFeatures*.name
+
     }
+
+
 
 
     private void initEnabledFeatures(List<String> enabledFeatureNames) {
+        this.enabledFeatureNames = enabledFeatureNames
 
-        enabledFeatures = new ArrayList<>()
-        enabledAtomFeatures = new ArrayList<>()
-        enabledSasFeatures = new ArrayList<>()
+        enabledFeatures = toFeatures(enabledFeatureNames)
+        enabledAtomFeatures = enabledFeatures.findAll { it.calculator.type == FeatureCalculator.Type.ATOM }.toList()
+        enabledSasFeatures = enabledFeatures.findAll { it.calculator.type == FeatureCalculator.Type.SAS_POINT }.toList()
 
-        for (String name : enabledFeatureNames) {
-            FeatureCalculator calculator = FeatureRegistry.featureImplementations.get(name)
-
-            if (calculator!=null) {
-                Feature entry = new Feature(calculator)
-                if (FeatureCalculator.Type.ATOM.equals(calculator.type)) {
-                    enabledAtomFeatures.add(entry)
-                } else if (FeatureCalculator.Type.SAS_POINT.equals(calculator.type)) {
-                    enabledSasFeatures.add(entry)
-                } else {
-                    throw new IllegalStateException("Invalid feature: $name. Only ATOM and SAS_POINT features ca be used directly.")
-                }
-                enabledFeatures.add(entry)
-            } else {
-                throw new IllegalStateException("Feature implementation not found: " + name)
-            }
-        }
-
-        subFeaturesHeader = new ArrayList<>(64)
-        int start = 0
-        for (Feature feat : enabledFeatures) {
-            List<String> header = feat.calculator.header
-
-            subFeaturesHeader.addAll header.collect { feat.name + '.' + it  } // prefix with "feature_name."
-
-            feat.startIndex = start
-            start += feat.length
-        }
+        subFeaturesHeader = collectSubFeatures(enabledFeatures)*.name
     }
 
-    private List<String> collectFeatureNames(List<String> subFeaturesHeader) {
-        subFeaturesHeader.collect { partBefore(it, ".") }.unique()
-    }
 
-    private List<SubFeature> filterSubFeatures(List<String> subFeaturesHeader, @Nonnull List<String> featureFilters) {
-
-        // add implicit include-all wildcard if first filter starts with "-"
-        if (featureFilters[0].startsWith("-")) {
-            featureFilters.add(0, "*")
-        }
-
-        List<SubFeature> subFeatures = subFeaturesHeader.withIndex().collect { name, idx ->
-            new SubFeature(name as String, false, idx as int)
-        }
-
-        for (String filter : featureFilters) {
-            applyFilter(filter, subFeatures)
-        }
-
-        List<SubFeature> filtered = subFeatures.findAll { it.enabled }.toList()
-
-        return filtered
-    }
-
-    /**
-     *
-     * @param filter see {@link cz.siret.prank.program.params.Params#feature_filters}
-     * @param filtered
-     * @return
-     */
-    private applyFilter(@Nonnull String filter, @Nonnull List<SubFeature> filtered) {
-        log.debug "applying feature filter {}", filter // debug
-
-        if (filter == "*") {
-            filtered.each { it.enabled = true }
-        }
-
-        boolean enable = true
-        if (filter.startsWith("-")) {
-            enable = false
-            filter = filter.substring(1)
-        }
-
-        if (filter.endsWith("*")) {
-            filter = removeSuffix(filter, "*")
-            filtered.findAll {it.name.startsWith(filter) }.each {it.enabled = enable }
-        } else {
-            filtered.findAll {it.name == filter }.each {it.enabled = enable }
-        }
-    }
 
 
     static class SubFeature {
-        String name
-        boolean enabled = false
+        final String name
+        final String featureName
+        final String subFeatureName
+
 
         /**
-         * index of sub-feature in calculated vector (= index in subFeaturesHeader)
+         * index of this sub-feature in single feature vector (output of single feature calculation)
          */
-        int oldIdx
+        final int featureOffset
 
-        SubFeature(String name, boolean enabled, int oldIdx) {
-            this.name = name
-            this.enabled = enabled
-            this.oldIdx = oldIdx
+        /**
+         * index of this sub-feature in full calculated feature vector
+         */
+        int fullFeatureVectorOffset
+
+        boolean enabled = true
+
+        SubFeature(String featureName, String subFeatureName, int featureOffset) {
+            this.featureName = featureName
+            this.subFeatureName = subFeatureName
+            this.featureOffset = featureOffset
+            this.name = featureName + '.' + subFeatureName
         }
     }
 
     static class Feature {
         FeatureCalculator calculator
-        /**
-         * start index in calculated feature vector
-         */
-        int startIndex
+
         int length
 
-        Feature(FeatureCalculator calculator) {
+        /**
+         * start index (offset) in calculated feature vector
+         */
+        int startIndex
+
+        Feature(FeatureCalculator calculator, int startIndex) {
             this.calculator = calculator
             this.length = calculator.header.size()
+            this.startIndex = startIndex
         }
 
         String getName() {
             return calculator.name
+        }
+
+        List<String> getHeader() {
+            return calculator.header
         }
 
         void checkCorrectLength(double[] calculatedValues) throws PrankException {
@@ -206,6 +151,128 @@ class FeatureSetup {
                         + "Should be ${length} according to the feature header.")
             }
         }
+    }
+
+    static class Calculator {
+
+
+        private static List<SubFeature> calculateEffectiveSubFeatures(List<String> enabledFeatureNames, List<String> filterableFeatureNames, @Nonnull List<String> featureFilters) {
+
+            log.info "filtering features"
+
+            List<String> fixedFeatureNames = enabledFeatureNames - filterableFeatureNames
+            filterableFeatureNames = enabledFeatureNames - fixedFeatureNames
+
+            log.info "enabled features (before filter): {}", enabledFeatureNames
+            log.info "fixed features: {}", fixedFeatureNames
+            log.info "filterable features: {}", filterableFeatureNames
+
+
+            List<SubFeature> fixedSubFeatures = collectSubFeatures(toFeatures(fixedFeatureNames))
+            List<SubFeature> filterableSubFeatures = collectSubFeatures(toFeatures(filterableFeatureNames))
+
+            applyFilters(filterableSubFeatures, featureFilters)
+
+            List<SubFeature> filteredSubFeatures = filterableSubFeatures.findAll { it.enabled }.toList()
+
+            List<SubFeature> effectiveSubFeatures = fixedSubFeatures + filteredSubFeatures
+
+            return new ArrayList<>(effectiveSubFeatures)
+        }
+
+        private static List<String> filterOutEmptyFeatures(List<String> featureNames) {
+            List<String> filtered =  toFeatures(featureNames).findAll { it.length > 0 }*.name
+
+            if (filtered.size() != featureNames.size()) {
+                List<String> removed = featureNames - filtered
+                log.warn "features were removed because they have no values (empty header): {}", removed
+            }
+
+            return filtered
+        }
+
+        private static void setSubFeatureOffsets(List<SubFeature> subFeatures, List<Feature> features) {
+            Map<String, Feature> featureMap = mapWithIndex(features, { it.name })
+
+            for (SubFeature subFeature : subFeatures) {
+                Feature feature = featureMap.get(subFeature.featureName)
+                subFeature.fullFeatureVectorOffset = feature.startIndex + subFeature.featureOffset
+            }
+        }
+
+
+        private static List<SubFeature> collectSubFeatures(List<Feature> features) {
+            List<SubFeature> res = new ArrayList<>(64)
+            for (Feature feat : features) {
+                List<String> header = feat.header
+
+                for (int i = 0; i != header.size(); i++) {
+                    res.add(new SubFeature(feat.name, header[i], i))
+                }
+            }
+            return res
+        }
+
+        private static List<Feature> toFeatures(List<String> featureNames) {
+            List<Feature> res = new ArrayList<>()
+
+            int startIndex = 0
+            for (String name : featureNames) {
+                FeatureCalculator calculator = FeatureRegistry.featureImplementations.get(name)
+                if (calculator == null) {
+                    throw new IllegalStateException("Feature implementation not found: " + name)
+                }
+
+                res.add(new Feature(calculator, startIndex))
+
+                startIndex += calculator.header.size()
+            }
+            return res
+        }
+
+        private static void applyFilters(List<SubFeature> subFeatures, @Nonnull List<String> featureFilters) {
+
+            // add implicit include-all wildcard if first filter starts with "-"
+            if (featureFilters[0].startsWith("-")) {
+                featureFilters.add(0, "*")
+            }
+
+            subFeatures.each { it.enabled = false } // start with all disabled
+
+            for (String filter : featureFilters) {
+                applyFilter(filter, subFeatures)
+            }
+        }
+
+        /**
+         *
+         * @param filter see {@link cz.siret.prank.program.params.Params#feature_filters}
+         * @param filtered
+         * @return
+         */
+        private static applyFilter(@Nonnull String filter, @Nonnull List<SubFeature> filtered) {
+            log.debug "applying feature filter {}", filter // debug
+
+
+            if (filter == "*") {
+                filtered.each { it.enabled = true }
+                return
+            }
+
+            boolean enable = true
+            if (filter.startsWith("-")) {
+                enable = false
+                filter = filter.substring(1)
+            }
+
+            if (filter.endsWith("*")) {
+                String prefix = removeSuffix(filter, "*")
+                filtered.findAll {it.name.startsWith(prefix) }.each {it.enabled = enable }
+            } else {
+                filtered.findAll {it.name == filter }.each {it.enabled = enable }
+            }
+        }
+
     }
 
 }

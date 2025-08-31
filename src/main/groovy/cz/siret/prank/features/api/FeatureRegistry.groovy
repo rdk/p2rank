@@ -21,12 +21,12 @@ import cz.siret.prank.features.implementation.electrostatics.ElectrostaticsTempS
 import cz.siret.prank.features.implementation.histogram.PairHistogramFeature
 import cz.siret.prank.features.implementation.propensity.AaPropensityFeature
 import cz.siret.prank.features.implementation.propensity.AtomTypePropensityFeature
+import cz.siret.prank.features.implementation.propensity.DupletsPropensityFeature
+import cz.siret.prank.features.implementation.propensity.TripletsPropensityFeature
 import cz.siret.prank.features.implementation.secstruct.SecStructCloudSF
 import cz.siret.prank.features.implementation.secstruct.SecStructRF
 import cz.siret.prank.features.implementation.secstruct.SecStructSimpleMotifRF
 import cz.siret.prank.features.implementation.secstruct.SecStructSimpleRF
-import cz.siret.prank.features.implementation.propensity.DupletsPropensityFeature
-import cz.siret.prank.features.implementation.propensity.TripletsPropensityFeature
 import cz.siret.prank.features.implementation.structmotif.StructMotifFeature
 import cz.siret.prank.features.implementation.table.AAIndexAtomFeature
 import cz.siret.prank.features.implementation.table.AAIndexFeature
@@ -47,14 +47,18 @@ class FeatureRegistry {
     /**
      *
      * @param key unique feature key. Add this key to Params.features to enable this feature.
-     * @param featureCalculator
+     * @param calculator
      */
-    static void register(FeatureCalculator featureCalculator) {
-        if (features.containsKey(featureCalculator.name)) {
-            throw new PrankException("Trying to register 2 Features with the same name: " + featureCalculator.name)
+    static void register(FeatureCalculator calculator) {
+        if (features.containsKey(calculator.name)) {
+            throw new PrankException("Trying to register 2 Features with the same name: " + calculator.name)
         }
 
-        features.put(featureCalculator.name, featureCalculator)
+        if (!(calculator.type in [FeatureCalculator.Type.ATOM, FeatureCalculator.Type.SAS_POINT]))  {
+            throw new IllegalStateException("Invalid feature: $calculator.name. Only ATOM and SAS_POINT features ca be used directly.")
+        }
+
+        features.put(calculator.name, calculator)
     }
 
     static Map<String, FeatureCalculator> getFeatureImplementations() {
