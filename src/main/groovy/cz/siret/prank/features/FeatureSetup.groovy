@@ -36,6 +36,8 @@ class FeatureSetup {
 
     // Filtering related
 
+    List<String> fixedFeatureNames
+
     List<String> featureFilters
     boolean filteringEnabled = false
 
@@ -67,16 +69,20 @@ class FeatureSetup {
 
             List<String> effectiveFeatureNames = filteredSubFeatures*.featureName.unique() // feature names left after filtering
 
-            initEnabledFeatures(effectiveFeatureNames)
+            initEnabledFeatures(effectiveFeatureNames, filterableFeatureNames)
 
             setSubFeatureOffsets(filteredSubFeatures, enabledFeatures) // set offsets in calculated vector
 
         } else {
-            initEnabledFeatures(enabledFeatureNames)
+            initEnabledFeatures(enabledFeatureNames, filterableFeatureNames)
         }
 
         log.info "effectively enabled features: {}", enabledFeatures*.name
 
+    }
+
+    boolean hasNonemptyFixedFeature() {
+        !fixedFeatureNames.empty
     }
 
     List<String> getFixedSubFeatureNames() {
@@ -93,8 +99,9 @@ class FeatureSetup {
         return filteredSubFeatures.findAll { it.filterable }*.name.toList()
     }
 
-    private void initEnabledFeatures(List<String> enabledFeatureNames) {
+    private void initEnabledFeatures(List<String> enabledFeatureNames, List<String> filterableFeatureNames) {
         this.enabledFeatureNames = enabledFeatureNames
+        this.fixedFeatureNames = enabledFeatureNames - filterableFeatureNames
 
         enabledFeatures = toFeatures(enabledFeatureNames)
         enabledAtomFeatures = enabledFeatures.findAll { it.calculator.type == FeatureCalculator.Type.ATOM }.toList()

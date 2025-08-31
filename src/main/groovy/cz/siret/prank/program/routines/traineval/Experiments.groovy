@@ -14,6 +14,7 @@ import cz.siret.prank.program.routines.optimize.GridOptimizerRoutine
 import cz.siret.prank.program.routines.optimize.HyperOptimizerRoutine
 import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.utils.CmdLineArgs
+import cz.siret.prank.utils.Cutils
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.Sutils
 import cz.siret.prank.utils.Writable
@@ -25,6 +26,7 @@ import org.paukov.combinatorics3.Generator
 import javax.annotation.Nonnull
 import java.util.stream.Collectors
 
+import static cz.siret.prank.utils.Cutils.empty
 import static cz.siret.prank.utils.Futils.safe
 import static cz.siret.prank.utils.Futils.writeFile
 import static cz.siret.prank.utils.ThreadUtils.async
@@ -319,7 +321,7 @@ class Experiments extends Routine {
 
     /** conditionally return list with none filter if there is at least one fixed sub-feature in current config */
     private List<List<String>> noneIfOk() {
-        boolean hasFixedSubfeature = !currentFeatureSetup.fixedSubFeatureNames.empty
+        boolean hasFixedSubfeature = currentFeatureSetup.hasNonemptyFixedFeature()
 
         if (hasFixedSubfeature) {
             return [["-*"]] // none filter is ok
