@@ -287,8 +287,6 @@ class Experiments extends Routine {
         }
     }
 
-
-
 //===========================================================================================================//
 
     private checkNoListParams() {
@@ -312,14 +310,14 @@ class Experiments extends Routine {
         new PrankFeatureExtractor().featureSetup
     }
 
-    private getEnabledFeatureNames() {
-        currentFeatureSetup.enabledFeatures
+    private List<String> getFilterableFeatureNames() {
+        params.extra_features
     }
 
     public ploop_features_tryeach() {
         checkNoListParams()
 
-        List<String> names = currentFeatureSetup.enabledFeatures*.name
+        List<String> names = filterableFeatureNames
         List<String> all = names.collect { it + ".*" }
 
         List<List<String>> filters = [["*"]] + all.collect { [it] }
@@ -330,7 +328,7 @@ class Experiments extends Routine {
     public ploop_features_tryeach_pairs() {
         checkNoListParams()
 
-        List<String> names = currentFeatureSetup.enabledFeatures*.name
+        List<String> names = filterableFeatureNames
         List<String> all = names.collect { it + ".*" }
 
         List<List<String>> filters = [["*"]] + all.collect { [it] } + generatePairs(all)
@@ -341,7 +339,7 @@ class Experiments extends Routine {
     public ploop_features_subsets() {
         checkNoListParams()
 
-        List<String> names = currentFeatureSetup.enabledFeatures*.name
+        List<String> names = filterableFeatureNames
         List<String> all = names.collect { it + ".*" }
 
         List<List<String>> filters = [["*"]] + generateMiddleSubsets(all)
@@ -353,7 +351,7 @@ class Experiments extends Routine {
     public ploop_subfeatures_tryeach() {
         checkNoListParams()
 
-        List<String> names = currentFeatureSetup.subFeaturesHeader
+        List<String> names = currentFeatureSetup.filterableSubFeatureNames
 
         List<List<String>> filters = [["*"]] + names.collect { [it] }
 
@@ -363,7 +361,7 @@ class Experiments extends Routine {
     public ploop_features_leaveoneout() {
         checkNoListParams()
 
-        List<String> names = currentFeatureSetup.enabledFeatures*.name
+        List<String> names = filterableFeatureNames
         List<String> all = names.collect { it + ".*" }
 
         List<List<String>> filters = [["*"]] + all.collect { ["-$it" as String] }
@@ -374,14 +372,14 @@ class Experiments extends Routine {
     public ploop_subfeatures_leaveoneout() {
         checkNoListParams()
 
-        List<String> names = currentFeatureSetup.subFeaturesHeader
+        List<String> names = currentFeatureSetup.filterableSubFeatureNames
 
         List<List<String>> filters = [["*"]] + names.collect { ["-$it" as String] }
 
         runPloopWithFeatureFilters(filters)
     }
 
-    private List<List<String>> generatePairs(List<String> list) {
+    private static List<List<String>> generatePairs(List<String> list) {
         if (list.size() < 2) return []
 
         return Generator.combination(list)
@@ -390,7 +388,7 @@ class Experiments extends Routine {
                 .collect(Collectors.toList())
     }
 
-    private List<List<String>> generateSubsets(List<String> list) {
+    private static List<List<String>> generateSubsets(List<String> list) {
         return Generator.subset(list)
                 .simple()
                 .stream()
@@ -400,7 +398,7 @@ class Experiments extends Routine {
     /**
      * subsets except all and empty
      */
-    private List<List<String>> generateMiddleSubsets(List<String> list) {
+    private static List<List<String>> generateMiddleSubsets(List<String> list) {
         generateSubsets(list).findAll { it.size()>0 && it.size()<list.size() }
     }
 
@@ -409,7 +407,7 @@ class Experiments extends Routine {
     public ploop_features_random() {
         checkNoListParams()
 
-        List<String> features = currentFeatureSetup.enabledFeatureNames
+        List<String> features = filterableFeatureNames
         features = features.collect { it + ".*" }
 
 
@@ -419,7 +417,7 @@ class Experiments extends Routine {
     public ploop_subfeatures_random() {
         checkNoListParams()
 
-        List<String> subFeatureNames = currentFeatureSetup.subFeaturesHeader
+        List<String> subFeatureNames = currentFeatureSetup.filterableSubFeatureNames
 
         gridOptimize([new RandomSublistGenerator("feature_filters", subFeatureNames)])
     }

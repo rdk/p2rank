@@ -79,8 +79,12 @@ class FeatureSetup {
 
     }
 
-
-
+    List<String> getFilterableSubFeatureNames() {
+        if (!filteringEnabled) {
+            throw new IllegalStateException("Feature filtering is not enabled.")
+        }
+        return filteredSubFeatures.findAll { it.filterable }*.name.toList()
+    }
 
     private void initEnabledFeatures(List<String> enabledFeatureNames) {
         this.enabledFeatureNames = enabledFeatureNames
@@ -111,6 +115,7 @@ class FeatureSetup {
          */
         int fullFeatureVectorOffset
 
+        boolean filterable = false
         boolean enabled = true
 
         SubFeature(String featureName, String subFeatureName, int featureOffset) {
@@ -170,6 +175,7 @@ class FeatureSetup {
 
             List<SubFeature> fixedSubFeatures = collectSubFeatures(toFeatures(fixedFeatureNames))
             List<SubFeature> filterableSubFeatures = collectSubFeatures(toFeatures(filterableFeatureNames))
+            filterableSubFeatures.each { it.filterable = true }
 
             applyFilters(filterableSubFeatures, featureFilters)
 
