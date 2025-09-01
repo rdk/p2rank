@@ -25,6 +25,7 @@ import cz.siret.prank.features.implementation.propensity.DupletsPropensityFeatur
 import cz.siret.prank.features.implementation.propensity.TripletsPropensityFeature
 import cz.siret.prank.features.implementation.secstruct.SecStructCloudSF
 import cz.siret.prank.features.implementation.secstruct.SecStructRF
+import cz.siret.prank.features.implementation.secstruct.SecStructSimpleCloudSF
 import cz.siret.prank.features.implementation.secstruct.SecStructSimpleMotifRF
 import cz.siret.prank.features.implementation.secstruct.SecStructSimpleRF
 import cz.siret.prank.features.implementation.sidechain.IsSidechainAtomFeature
@@ -116,6 +117,7 @@ class FeatureRegistry {
         register new ResidueToSasFeatWrapper(new SecStructRF())
         register new ResidueToAtomicFeatWrapper(new SecStructRF())
         register new SecStructCloudSF()
+        register new SecStructSimpleCloudSF()
         register new ResidueToSasFeatWrapper(new SecStructSimpleRF())
         register new ResidueToAtomicFeatWrapper(new SecStructSimpleRF())
 
