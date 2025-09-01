@@ -41,6 +41,13 @@ class PdbUtils {
         //PARSING_PARAMS.setLoadChemCompInfo(Params.inst.biojava_load_chem_info); // info about modified amino acid residues, not available in BioJava4
     }
 
+    static final Set<String> BACKBONE_HEAVY_ATOM_NAMES = new HashSet<>([
+        "N", "CA", "C", "O", "OXT",      // standard + C-terminus OXT
+        "OT1", "OT2"                     // legacy C-terminal oxygens
+    ])
+
+//===========================================================================================================//
+
     /**
      * Tries to disable BioJava fetching external information since it leads to inconsistent protein parsing.
      */
@@ -134,6 +141,10 @@ class PdbUtils {
     }
 
 //===========================================================================================================//
+
+    static boolean isBackboneHeavyAtom(Atom a) {
+        return BACKBONE_HEAVY_ATOM_NAMES.contains(a.name)
+    }
 
     /**
      * Masking for internal P2Rank representation

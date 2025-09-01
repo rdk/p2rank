@@ -27,6 +27,9 @@ import cz.siret.prank.features.implementation.secstruct.SecStructCloudSF
 import cz.siret.prank.features.implementation.secstruct.SecStructRF
 import cz.siret.prank.features.implementation.secstruct.SecStructSimpleMotifRF
 import cz.siret.prank.features.implementation.secstruct.SecStructSimpleRF
+import cz.siret.prank.features.implementation.sidechain.IsSidechainAtomFeature
+import cz.siret.prank.features.implementation.sidechain.IsSidechainCloudFeature
+import cz.siret.prank.features.implementation.sidechain.IsSidechainSasFeature
 import cz.siret.prank.features.implementation.structmotif.StructMotifFeature
 import cz.siret.prank.features.implementation.table.AAIndexAtomFeature
 import cz.siret.prank.features.implementation.table.AAIndexFeature
@@ -143,6 +146,10 @@ class FeatureRegistry {
 
         register new StructMotifFeature()
         register new SasToAtomicFeatWrapper(new StructMotifFeature())
+
+        register new IsSidechainAtomFeature()
+        register new IsSidechainSasFeature()
+        register new IsSidechainCloudFeature()
 
         // Register new feature implementations here
 

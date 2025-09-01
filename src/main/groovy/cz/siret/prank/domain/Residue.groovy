@@ -31,10 +31,11 @@ class Residue {
     @Nonnull
     private Group group
 
+    private Atoms allAtoms
     private Atoms atoms
 
-    private Atoms headAtoms
-    private Atoms sideChainAtoms
+    private Atoms backboneAtoms
+    private Atoms sidechainAtoms
 
     /** marks solvent exposed residues (may not be filled!) */
     boolean exposed
@@ -110,36 +111,49 @@ class Residue {
         return group
     }
 
+    /**
+     * Heavy atoms only (no hydrogens)
+     */
     Atoms getAtoms() {
-        if (atoms==null) {
-            atoms =  Atoms.allFromGroup(group) //.withoutHydrogens()
+        if (atoms == null) {
+            atoms = getAllAtoms().withoutHydrogens()
         }
         atoms
+    }
+
+    /**
+     * All atoms including hydrogens
+     */
+    Atoms getAllAtoms() {
+        if (allAtoms == null) {
+            allAtoms = Atoms.allFromGroup(group)
+        }
+        allAtoms
     }
 
     private splitAtoms() {
         getAtoms()
 
-        headAtoms = new Atoms(4)
-        sideChainAtoms = new Atoms(Math.max(atoms.count - 4, 0))
+        backboneAtoms = new Atoms(5)
+        sidechainAtoms = new Atoms(Math.max(atoms.count - 4, 0))
 
         for (Atom a : atoms) {
-            if (a.name in ['CA', 'C', 'O', 'N']) {
-                headAtoms.add(a)
+            if (PdbUtils.isBackboneHeavyAtom(a)) {
+                backboneAtoms.add(a)
             } else {
-                sideChainAtoms.add(a)
+                sidechainAtoms.add(a)
             }
         }
     }
 
-    Atoms getHeadAtoms() {
-        if (headAtoms==null) splitAtoms()
-        return headAtoms
+    Atoms getBackboneAtoms() {
+        if (backboneAtoms == null) splitAtoms()
+        return backboneAtoms
     }
 
-    Atoms getSideChainAtoms() {
-        if (headAtoms==null) splitAtoms()
-        return sideChainAtoms
+    Atoms getSidechainAtoms() {
+        if (backboneAtoms == null) splitAtoms()
+        return sidechainAtoms
     }
 
     /**
