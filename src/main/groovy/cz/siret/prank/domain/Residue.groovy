@@ -121,7 +121,7 @@ class Residue {
         getAtoms()
 
         headAtoms = new Atoms(4)
-        sideChainAtoms = new Atoms(atoms.count - 4)
+        sideChainAtoms = new Atoms(Math.max(atoms.count - 4, 0))
 
         for (Atom a : atoms) {
             if (a.name in ['CA', 'C', 'O', 'N']) {
