@@ -80,9 +80,10 @@ class PropertyTable {
 
                     if (value != null) {
                         if (value.isNaN()) {
-                            throw new PrankException("NaN value in property table for item '$itemName' property '$propName'!")
+                            log.debug "NaN value in property table for item '$itemName' property '$propName'"
+                            value = null
                         } else if (value.isInfinite()) {
-                            throw new PrankException("Infinite value in property table for item '$itemName' property '$propName'!")
+                            throw new PrankException("Infinite value in property table for item '$itemName' property '$propName'")
                         }
                     }
 
@@ -95,14 +96,40 @@ class PropertyTable {
 
         //log.info res.toCSV()
 
-        return res // res.immutabilize()
+        res.immutabilize()
+        res.checkNulls()
+        return res
     }
 
     static PropertyTable parseResource(String resourcePath) {
         try {
-            return parse(Futils.readResource("/tables/atomic-properties.csv"))
+            log.debug "loading property table from resource: $resourcePath"
+            return parse(Futils.readResource(resourcePath))
         } catch (Exception e) {
             throw new PrankException("Failed to load property table from resource: $resourcePath", e)
+        }
+    }
+
+    private checkNulls() {
+        if (log.isDebugEnabled()) {
+            // collect number of null values for each propertyName
+            Map<String, Integer> nullCounts = new TreeMap<>()
+            for (String propName : propertyNames) {
+                for (String itemName : itemNames) {
+                    if (getValue(itemName, propName) == null) {
+                        nullCounts.put(propName, nullCounts.getOrDefault(propName, 0) + 1)
+                    }
+                }
+            }
+
+            int n = itemNames.size()
+            log.debug "property table null value counts by property:"
+            for (String propName : nullCounts.keySet()) {
+                int count = nullCounts.get(propName)
+                if (count > 0) {
+                    log.debug "  $propName: $count / $n (${((double)count*100)/n}%) null values"
+                }
+            }
         }
     }
 

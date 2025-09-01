@@ -1,8 +1,6 @@
 package cz.siret.prank.features.implementation.table
 
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test
 
 /**
  *
@@ -17,7 +15,8 @@ class PropertyTableTest {
     @Test
     void parseCsvPropertyTables() throws Exception {
         doTestParseTableFromResource("/tables/atomic-properties.csv")
-        doTestParseTableFromResource("/tables/aa-properties.csv")
+        doTestParseTableFromResource("/tables/aa-propensities.csv")
+        doTestParseTableFromResource("/tables/aa-5factors.csv")
         doTestParseTableFromResource("/tables/aa-index-full.csv")
     }
 
