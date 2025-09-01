@@ -42,8 +42,7 @@ class AaPropensityFeature extends ResidueFeatureCalculator implements Parametriz
 
     PropertyTable getTable() {
         if (table == null) {
-            table = PropertyTable.parse(
-                    readResource("/tables/propensities/$params.feat_propensity_tables/aa-propensity.csv"))
+            table = PropertyTable.parseResource("/tables/propensities/$params.feat_propensity_tables/aa-propensity.csv")
         }
         table
     }

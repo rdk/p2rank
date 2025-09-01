@@ -15,7 +15,7 @@ import org.biojava.nbio.structure.Atom
 @CompileStatic
 class AAIndexAtomFeature extends AtomFeatureCalculator implements Parametrized {
     
-    static final PropertyTable aaIndex   = PropertyTable.parse(Futils.readResource("/tables/aa-index-full.csv")).reverse()
+    static final PropertyTable aaIndex   = PropertyTable.parseResource("/tables/aa-index-full.csv").reverse()
 
     static final List<String> allPropertyNames = aaIndex.propertyNames.toList().toSorted()
 

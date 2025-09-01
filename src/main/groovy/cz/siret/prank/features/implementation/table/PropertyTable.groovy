@@ -2,6 +2,7 @@ package cz.siret.prank.features.implementation.table
 
 import com.google.common.base.Splitter
 import cz.siret.prank.program.PrankException
+import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.StringUtils
@@ -95,6 +96,15 @@ class PropertyTable {
         //log.info res.toCSV()
 
         return res // res.immutabilize()
+    }
+
+    static PropertyTable parseResource(String resourcePath) {
+        try {
+            String csvText = Futils.readResource("/tables/atomic-properties.csv")
+            return parse(csvText)
+        } catch (Exception e) {
+            throw new PrankException("Failed to load property table from resource: $resourcePath", e)
+        }
     }
 
     private PropertyTable immutabilize() {

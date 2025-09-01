@@ -32,7 +32,7 @@ class AtomTableFeature extends AtomFeatureCalculator implements Parametrized {
 
 //===========================================================================================================//
 
-    static final PropertyTable atomPropertyTable = PropertyTable.parse(Futils.readResource("/tables/atomic-properties.csv"))
+    static final PropertyTable atomPropertyTable = PropertyTable.parseResource("/tables/atomic-properties.csv")
 
 
     private static Double getAtomTableValue(String atomName, String property) {

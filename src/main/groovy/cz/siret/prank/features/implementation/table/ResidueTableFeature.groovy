@@ -33,8 +33,8 @@ class ResidueTableFeature extends AtomFeatureCalculator implements Parametrized 
 
 //===========================================================================================================//
 
-    static final PropertyTable aa5FactorsTable      = PropertyTable.parse(readResource("/tables/aa-5factors.csv"))
-    static final PropertyTable aa5PropensitiesTable = PropertyTable.parse(readResource("/tables/aa-propensities.csv"))
+    static final PropertyTable aa5FactorsTable      = PropertyTable.parseResource("/tables/aa-5factors.csv")
+    static final PropertyTable aa5PropensitiesTable = PropertyTable.parseResource("/tables/aa-propensities.csv")
     static final PropertyTable aaPropertyTable      = aa5FactorsTable.join(aa5PropensitiesTable)
 
     

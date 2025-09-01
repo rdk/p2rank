@@ -20,7 +20,7 @@ import org.biojava.nbio.structure.Group
 @CompileStatic
 class PLBIndexRescorer extends PocketRescorer {
 
-    static final PropertyTable aaPropensitiesTable   = PropertyTable.parse(Futils.readResource("/tables/aa-propensities.csv"))
+    static final PropertyTable aaPropensitiesTable   = PropertyTable.parseResource("/tables/aa-propensities.csv")
 
     @Override
     void rescorePockets(Prediction prediction, ProcessedItemContext context) {

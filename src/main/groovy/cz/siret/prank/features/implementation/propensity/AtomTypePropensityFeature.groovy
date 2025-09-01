@@ -44,8 +44,7 @@ class AtomTypePropensityFeature extends AtomFeatureCalculator implements Paramet
 
     PropertyTable getTable() {
         if (table == null) {
-            table = PropertyTable.parse(
-                    readResource("/tables/propensities/$params.feat_propensity_tables/atomtype-propensity.csv"))
+            table = PropertyTable.parseResource("/tables/propensities/$params.feat_propensity_tables/atomtype-propensity.csv")
         }
         table
     }
