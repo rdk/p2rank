@@ -1,5 +1,6 @@
 package cz.siret.prank.features.implementation.table
 
+
 import org.junit.jupiter.api.Test
 
 /**

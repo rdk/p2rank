@@ -35,16 +35,28 @@ class AtomTableFeature extends AtomFeatureCalculator implements Parametrized {
     static final PropertyTable atomPropertyTable = PropertyTable.parseResource("/tables/atomic-properties.csv")
 
 
-    private static Double getAtomTableValue(String atomName, String property) {
+    private static double getAtomTableValue(String atomName, String property) {
 
         Double val = atomPropertyTable.getValue(atomName, property)
         // TODO return avg if atomName not found in table
         return val==null ? 0d : val
     }
 
+    static double transformValue(double val, double power, boolean keepSgn) {
+        if (power != 1d) {
+            if (keepSgn) {
+                val = Math.signum(val) *  Math.pow(Math.abs(val), power)
+            } else {
+                val = Math.pow(val, power)
+            }
+        }
+        return val
+    }
+
 
     @Override
     double[] calculateForAtom(Atom proteinSurfaceAtom, AtomFeatureCalculationContext context) {
+        List<String> header = this.header
         if (header.size() == 0) {
             return EMPTY
         }
@@ -60,13 +72,7 @@ class AtomTableFeature extends AtomFeatureCalculator implements Parametrized {
         for (String property : header) {
             double val = getAtomTableValue(atomName, property)
 
-            if (ATOM_POW != 1d) {
-                if (KEEP_SGN) {
-                    val = Math.signum(val) * Math.abs( Math.pow(val, ATOM_POW) )
-                } else {
-                    val = Math.pow(val, ATOM_POW)
-                }
-            }
+            val = transformValue(val, ATOM_POW, KEEP_SGN)
 
             res[i] = val
             i++
