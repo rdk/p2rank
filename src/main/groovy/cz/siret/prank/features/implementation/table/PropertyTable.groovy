@@ -75,7 +75,7 @@ class PropertyTable {
                     try {
                         value = Double.valueOf(s)
                     } catch (NumberFormatException e) {
-                        log.warn "can't parse number [$s]!"
+                        log.warn "can't parse number [$s]: " + e.message
                     }
 
                     if (value != null) {
@@ -100,8 +100,7 @@ class PropertyTable {
 
     static PropertyTable parseResource(String resourcePath) {
         try {
-            String csvText = Futils.readResource("/tables/atomic-properties.csv")
-            return parse(csvText)
+            return parse(Futils.readResource("/tables/atomic-properties.csv"))
         } catch (Exception e) {
             throw new PrankException("Failed to load property table from resource: $resourcePath", e)
         }
