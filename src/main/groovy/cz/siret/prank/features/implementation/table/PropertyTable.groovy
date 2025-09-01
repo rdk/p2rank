@@ -1,9 +1,13 @@
 package cz.siret.prank.features.implementation.table
 
 import com.google.common.base.Splitter
+import cz.siret.prank.program.PrankException
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.StringUtils
+
+import javax.annotation.Nonnull
+import javax.annotation.Nullable
 
 import static java.util.Collections.unmodifiableMap
 import static java.util.Collections.unmodifiableSet
@@ -73,6 +77,14 @@ class PropertyTable {
                         log.warn "can't parse number [$s]!"
                     }
 
+                    if (value != null) {
+                        if (value.isNaN()) {
+                            throw new PrankException("NaN value in property table for item '$itemName' property '$propName'!")
+                        } else if (value.isInfinite()) {
+                            throw new PrankException("Infinite value in property table for item '$itemName' property '$propName'!")
+                        }
+                    }
+
                     res.addValue(itemName, propName, value)
 
                     i++
@@ -129,12 +141,14 @@ class PropertyTable {
 
 //===========================================================================================================//
 
+    @Nullable
     Double getValue(String itemName, String propertyName) {
         return values.get(new PropertyTableKey(itemName, propertyName))
     }
 
+    @Nonnull
     double getValueOrDefault(String itemName, String propertyName, double defaultVal) {
-        return values.get(new PropertyTableKey(itemName, propertyName)) ?: defaultVal
+        return getValue(itemName,propertyName) ?: defaultVal
     }
 
     public String toCSV() {
