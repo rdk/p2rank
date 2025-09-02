@@ -3,6 +3,7 @@ package cz.siret.prank.features.implementation.contactres
 import com.google.common.collect.ArrayListMultimap
 import com.google.common.collect.Multimap
 import cz.siret.prank.domain.AA
+import cz.siret.prank.domain.Residue
 import cz.siret.prank.features.api.SasFeatureCalculationContext
 import cz.siret.prank.features.api.SasFeatureCalculator
 import cz.siret.prank.geom.Atoms
@@ -58,21 +59,21 @@ class ContactResiduesPositionFeature extends SasFeatureCalculator implements Par
     @Override
     double[] calculateForSasPoint(Atom sasPoint, SasFeatureCalculationContext context) {
 
-        Atoms contactAtoms = context.neighbourhoodAtoms.cutoutSphere(sasPoint, contactDist)
-        List<AminoAcid> contactResidues = (List<AminoAcid>)(List)contactAtoms.getDistinctGroupsSorted().findAll{ it instanceof AminoAcid }.toList()
+        Atoms contactAtoms = context.protein.exposedAtoms.cutoutSphere(sasPoint, contactDist)
+        List<Residue> contactResidues = context.protein.residues.getDistinctForAtoms(contactAtoms)
 
         log.debug 'contact residues: ' + contactResidues.size()
 
         // TODO: this can be optimized
 
-        Multimap<AA, AminoAcid> contactResIndex = ArrayListMultimap.create(20, 3);
-        for (AminoAcid res : contactResidues) {
-            AA aa = AA.forName(PdbUtils.getCorrectedResidueCode(res))
+        Multimap<AA, Residue> contactResIndex = ArrayListMultimap.create(20, 3);
+        for (Residue res : contactResidues) {
+            AA aa = res.getAa()
             if (aa!=null) {
                 contactResIndex.put(aa, res)
             }
         }
-        Map<AA, Collection<AminoAcid>> cresmap = (Map<AA, Collection<AminoAcid>>) contactResIndex.asMap()
+        Map<AA, Collection<Residue>> cresmap = (Map<AA, Collection<Residue>>) contactResIndex.asMap()
 
         double[] vect = new double[HEADER.size()]
 
@@ -83,16 +84,16 @@ class ContactResiduesPositionFeature extends SasFeatureCalculator implements Par
             double distca = MAX_DIST
             double distcenter = MAX_DIST
 
-            Collection<AminoAcid> residues = (Collection<AminoAcid>) cresmap.get(aa)
+            Collection<Residue> residues = (Collection<Residue>) cresmap.get(aa)
             if (residues!=null && !residues.empty) {
 
-                AminoAcid closestResOfType = residues.min { Atoms.allFromGroup(it).dist(sasPoint)  }
-                Atoms ratoms = Atoms.allFromGroup(closestResOfType)
+                Residue closestResOfType = residues.min { it.atoms.dist(sasPoint)  }
+                Atoms ratoms = closestResOfType.atoms
 
                 count = residues.size()
                 distclosest = ratoms.dist(sasPoint)
                 distcenter = Struct.dist ratoms.centroid, sasPoint
-                distca = (closestResOfType.CA==null) ? distcenter : Struct.dist(closestResOfType.CA, sasPoint)
+                distca = (closestResOfType.aminoAcid.getCA()==null) ? distcenter : Struct.dist(closestResOfType.aminoAcid.getCA(), sasPoint)
             }
 
             vect[i] = count

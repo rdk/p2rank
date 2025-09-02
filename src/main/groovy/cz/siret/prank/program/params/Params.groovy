@@ -1059,7 +1059,7 @@ class Params {
      * Contact residues distance cutoff (see ContactResiduesPositionFeature)
      */
     @ModelParam
-    double feat_crang_contact_dist = 3
+    double feat_crang_contact_dist = 4.0
 
     /**
      * probe radius for calculating accessible surface area for asa feature

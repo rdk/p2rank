@@ -31,13 +31,13 @@ class ContactResiduesRF extends ResidueFeatureCalculator {
     double[] calculateForResidue(Residue residue, ResidueFeatureCalculationContext context) {
 
         Atoms contactAtoms = context.protein.proteinAtoms.cutoutShell(residue.atoms, CONTACT_ATOM_DIST).without(residue.atoms)
-        Atoms headCa = contactAtoms.cutoutShell(residue.backboneAtoms, CONTACT_ATOM_DIST)
-        Atoms sideCa = contactAtoms.cutoutShell(residue.sidechainAtoms, CONTACT_ATOM_DIST)
+        Atoms backboneContactAtoms = contactAtoms.cutoutShell(residue.backboneAtoms, CONTACT_ATOM_DIST)
+        Atoms sidechainContactAtoms = contactAtoms.cutoutShell(residue.sidechainAtoms, CONTACT_ATOM_DIST)
 
         double n = context.protein.residues.getDistinctForAtoms(contactAtoms).size()
         double n_atoms = contactAtoms.count
-        double n_head = context.protein.residues.getDistinctForAtoms(headCa).size()
-        double n_side = context.protein.residues.getDistinctForAtoms(sideCa).size()
+        double n_head = context.protein.residues.getDistinctForAtoms(backboneContactAtoms).size()
+        double n_side = context.protein.residues.getDistinctForAtoms(sidechainContactAtoms).size()
 
         return [n, n_atoms, n_head, n_side] as double[]
     }

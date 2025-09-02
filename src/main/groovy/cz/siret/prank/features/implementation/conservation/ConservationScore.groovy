@@ -243,8 +243,11 @@ class ConservationScore implements Parametrized {
 
         // TODO use protein.getResidueChains() instead and compare, masked sequences should give better match
 
-        Set<String> residueChainIds = protein.getResidueChains().collect { it.authorId }.toSet()
+        Set<String> residueChainIds = protein.residueChains*.authorId.toSet()
         log.debug "Loading conservation only for residue chains: {}", residueChainIds.toSorted()
+
+
+        List<Chain> conservationChains = new ArrayList<>()
 
         for (Chain chain : protein.structure.getChains()) {
             String chainId = Struct.getAuthorId(chain) // authorId == chain letter in old PDB model
@@ -253,10 +256,19 @@ class ConservationScore implements Parametrized {
                 log.debug "Skip chain '{}': not in residueChains", chainId
                 continue
             }
-            if (chain.getAtomGroups(GroupType.AMINOACID).size() <= 0) {       // TODO this also includes some ligand chains
+            if (chain.getAtomGroups(GroupType.AMINOACID).size() <= 0) {
                 log.debug "Skip chain '{}': no amino acid groups", chainId
                 continue
             }
+
+            conservationChains.add(chain)
+        }
+
+        log.info("loading conservation for {} chains in protein [{}]: {}", conservationChains.size(),
+                protein.name, conservationChains.collect { Struct.getAuthorId(it) })
+
+        for (Chain chain : conservationChains) {
+            String chainId = Struct.getAuthorId(chain)
             chainId = Struct.maskEmptyChainId(chainId)
 
             try {

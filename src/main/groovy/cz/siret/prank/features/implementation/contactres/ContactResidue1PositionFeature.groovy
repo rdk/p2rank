@@ -1,5 +1,6 @@
 package cz.siret.prank.features.implementation.contactres
 
+import cz.siret.prank.domain.AA
 import cz.siret.prank.domain.Residue
 import cz.siret.prank.features.api.SasFeatureCalculationContext
 import cz.siret.prank.features.api.SasFeatureCalculator
@@ -42,7 +43,7 @@ class ContactResidue1PositionFeature extends SasFeatureCalculator implements Par
         Atom center = res.atoms.centroid
         Atom ca = center
         Atom cb = center
-        if (aa!=null) {
+        if (aa != null) {
             ca = aa.getCA()
             cb = aa.getCB()    
         }
@@ -60,17 +61,19 @@ class ContactResidue1PositionFeature extends SasFeatureCalculator implements Par
             dca = Struct.dist(sasPoint, ca)
             CAdClosest = dca / dclosest
             CAdCenter = dca / dcenter
-            if (cb != null) {
-                CAmCB = dca - dcb
-            }
         } else {
             log.debug "WARN: CA atom not found in residue [{}]!", res
         }
         if (cb != null) {
             dcb = Struct.dist(sasPoint, cb)
         } else {
-            log.debug "WARN: CB atom not found in residue [{}]!", res
+            if (log.debugEnabled) {
+                if (res.aa != AA.GLY) {
+                    log.debug "WARN: CB atom not found in residue [{}]!", res
+                }
+            }
         }
+        CAmCB = dca - dcb
 
         return [dca, dcb, dcenter, dclosest, CAmCB, CAdClosest, CAdCenter] as double[]
     }
