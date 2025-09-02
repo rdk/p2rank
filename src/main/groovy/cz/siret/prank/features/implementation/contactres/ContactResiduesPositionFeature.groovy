@@ -32,11 +32,7 @@ class ContactResiduesPositionFeature extends SasFeatureCalculator implements Par
 
 //===========================================================================================================//
 
-    double contactDist
-
     ContactResiduesPositionFeature() {
-        contactDist = params.feat_crang_contact_dist
-
         for (AA aa : AATYPES) {
             String prefix = NAME + '.' + aa.name().toLowerCase() + '.'
             HEADER.add prefix + 'count'
@@ -58,11 +54,17 @@ class ContactResiduesPositionFeature extends SasFeatureCalculator implements Par
 
     @Override
     double[] calculateForSasPoint(Atom sasPoint, SasFeatureCalculationContext context) {
+        double contactDist = params.feat_crang_contact_dist
 
         Atoms contactAtoms = context.protein.exposedAtoms.cutoutSphere(sasPoint, contactDist)
         List<Residue> contactResidues = context.protein.residues.getDistinctForAtoms(contactAtoms)
 
-        log.debug 'contact residues: ' + contactResidues.size()
+        int n = contactResidues.size()
+        if (n == 0) {
+            log.debug "no contact residues found for SAS point using contact dist {}!", contactDist
+        } else {
+            log.trace 'contact residues: {}', contactResidues.size()
+        }
 
         // TODO: this can be optimized
 
@@ -89,11 +91,12 @@ class ContactResiduesPositionFeature extends SasFeatureCalculator implements Par
 
                 Residue closestResOfType = residues.min { it.atoms.dist(sasPoint)  }
                 Atoms ratoms = closestResOfType.atoms
+                Atom Ca = closestResOfType.aminoAcid.getCA()
 
                 count = residues.size()
                 distclosest = ratoms.dist(sasPoint)
                 distcenter = Struct.dist ratoms.centroid, sasPoint
-                distca = (closestResOfType.aminoAcid.getCA()==null) ? distcenter : Struct.dist(closestResOfType.aminoAcid.getCA(), sasPoint)
+                distca = (Ca==null) ? distcenter : Struct.dist(Ca, sasPoint)
             }
 
             vect[i] = count
