@@ -76,13 +76,14 @@ class DatasetItemLoader implements Parametrized, Writable {
      * Loads peptides (chains not in the main=reduced structure) that are likely to be binding according to provided residue labeling.
      * Adds them to protein structure and to protein.peptides list.
      */
-    private loadPeptidesFromLabeling(Protein prot, ProcessedItemContext ctx) {
+    private static void loadPeptidesFromLabeling(Protein prot, ProcessedItemContext ctx) {
         log.info 'loading peptides for {}', prot.name
         if (!ctx.dataset.hasExplicitResidueLabeling()) {
             throw new PrankException("No labeling provided for identify_peptides_by_labeling!")
         }
         BinaryLabeling labeling = ctx.dataset.explicitBinaryResidueLabeler.getBinaryLabeling(prot.residues, prot)
 
+        prot.peptides = new ArrayList<>()
         for (Chain ch in prot.fullStructure.chains) {
             ResidueChain rc = Struct.toResidueChain(ch)
             log.info 'checking chain {} (len:{})', rc.authorId, rc.length
@@ -100,24 +101,25 @@ class DatasetItemLoader implements Parametrized, Writable {
             } else {
                 log.info 'refused peptide {} as non binding', rc.authorId
             }
-
         }
     }
 
-    boolean isBindingPeptide(Chain chain, Protein toProtein, BinaryLabeling labeling, ProcessedItemContext ctx) {
-        Atoms protAtoms = toProtein.getResidueChain(ctx.item.chains.first()).atoms
-        Residues labeledRes = new Residues(toProtein.residues.findAll { labeling.getLabel((Residue)it) }.asList() as List<Residue>)
+    static boolean isBindingPeptide(Chain candidateChain, Protein toProtein, BinaryLabeling labeling, ProcessedItemContext ctx) {
+        double proteinPeptideBindingDist = 4.5d
 
-        Atoms chainAtoms = Atoms.allFromChain(chain).withoutHydrogens()
-        Atoms contactChainAtoms = chainAtoms.cutoutShell(protAtoms, 4.5d)
+        Atoms protAtoms = toProtein.proteinAtoms
+        Residues positiveResidues = Residues.of(toProtein.residues.findAll { Residue it -> labeling.getLabel(it) })
+
+        Atoms chainAtoms = Atoms.allFromChain(candidateChain).withoutHydrogens()
+        Atoms contactChainAtoms = chainAtoms.cutoutShell(protAtoms, proteinPeptideBindingDist)
 
         if (contactChainAtoms.empty) {
             log.info 'no chain contact atoms'
             return false
         }
-        int permissible = 0
+        int permissible = 0  // contact atoms near positive residues
         for (Atom a : contactChainAtoms) {
-            if (labeledRes.atoms.areWithinDistance(a, 5.5d)) {
+            if (positiveResidues.atoms.areWithinDistance(a, proteinPeptideBindingDist + 1.0d)) {
                 permissible++
             } else {
                 log.debug 'found contact atom {} that is far from positively labeled residues', a.PDBserial
@@ -125,7 +127,7 @@ class DatasetItemLoader implements Parametrized, Writable {
         }
         int n = contactChainAtoms.count
         double ratio = ((double)permissible) / n
-        log.info 'permissible_a:{} contact_a:{} ratio:{}', permissible, n, ratio
+        log.info 'contact_atoms_near_positive_res:{} contact_atoms:{} ratio:{}', permissible, n, ratio
 
         return ratio >= 0.5
     }

@@ -191,7 +191,7 @@ class Protein implements Parametrized {
         trainSurface = null
         trainNegativesSurface = null
         secondaryData.clear()
-        ligands.relevantLigands.each { it.sasPoints = null; it.predictedPocket = null }
+        ligands.allIncludingIgnored.each { it.sasPoints = null; it.predictedPocket = null }
         clearResidues()
     }
 
@@ -285,7 +285,9 @@ class Protein implements Parametrized {
     }
 
     private void calculateResidues() {
-        residueChains = residueChainsFromStructure(structure)
+        List<String> paptideIds = peptides*.authorId  // peptides are kept when clearing secondary caches
+
+        residueChains = residueChainsFromStructure(structure).findAll {!(it.authorId in paptideIds) }.toList()
         residues = new Residues( (List<Residue>) residueChains.collect { it.residues }.asList().flatten() )
         residueChainsByAuthorId = buildChainIndexByAuthorId(residueChains)
     }

@@ -40,6 +40,13 @@ class Ligands implements Parametrized, Writable, Failable {
         return ignoredLigands + smallLigands + distantLigands
     }
 
+    /**
+     * @return relevantLigands + getAllIgnoredLigands()
+     */
+    List<Ligand> getAllIncludingIgnored() {
+        return relevantLigands + getAllIgnoredLigands()
+    }
+
     int getRelevantLigandCount() {
         relevantLigands.size()
     }
