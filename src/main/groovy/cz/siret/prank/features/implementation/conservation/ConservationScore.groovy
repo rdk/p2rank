@@ -9,6 +9,7 @@ import cz.siret.prank.domain.loaders.ConservationLoader
 import cz.siret.prank.export.FastaExporter
 import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.geom.Struct
+import cz.siret.prank.prediction.transformation.ZscoreTpTransformer
 import cz.siret.prank.program.P2Rank
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.params.Params
@@ -20,6 +21,8 @@ import org.biojava.nbio.structure.Chain
 import org.biojava.nbio.structure.Group
 import org.biojava.nbio.structure.GroupType
 import org.biojava.nbio.structure.ResidueNumber
+
+import javax.annotation.Nullable
 
 @Slf4j
 @CompileStatic
@@ -36,34 +39,41 @@ class ConservationScore implements Parametrized {
     }
 
     private static class AAScore {
-        public String letter
-        public double score
-        public int index
+        String chainId
+        String letter
+        double score
+        int index
 
-        AAScore(String letter, double score, int index) {
+        AAScore(String chainId, String letter, double score, int index) {
+            this.chainId = chainId
             this.letter = letter
             this.score = score
             this.index = index
         }
     }
 
-    double getScoreForResidue(ResidueNumber residueNum) {
-        return getScoreForResidue(new ResidueNumberWrapper(residueNum))
+//===========================================================================================================//
+
+    @Nullable
+    private Double getScoreForResidueW(ResidueNumberWrapper residueNum) {
+        return scores.get(residueNum)
     }
 
-    double getScoreForResidue(ResidueNumberWrapper residueNum) {
-        Double res = this.scores.get(residueNum)
-        if (res == null) {
-            return 0
-        } else {
-            return res.doubleValue()
-        }
+    @Nullable
+    Double getScoreForResidue(ResidueNumber residueNum) {
+        return getScoreForResidueW(new ResidueNumberWrapper(residueNum))
     }
+
+    double getScoreForResidueSafe(ResidueNumber residueNum) {
+        return getScoreForResidue(residueNum) ?: 0d
+    }
+
+//===========================================================================================================//
 
     ResidueLabeling<Double> toDoubleLabeling(Protein p) {
         ResidueLabeling<Double> labeling = new ResidueLabeling<>(p.residues.size())
         for (Residue r : p.residues) {
-            labeling.add(r, getScoreForResidue(r.residueNumber))
+            labeling.add(r, getScoreForResidueSafe(r.residueNumber))
         }
         return labeling
     }
@@ -76,12 +86,38 @@ class ConservationScore implements Parametrized {
         return this.scores.size()
     }
 
+//===========================================================================================================//
+
+    private ConservationScore zScores = null
+
+    private ConservationScore calculateZScores() {
+        List<Double> vals = new ArrayList<>(scores.values())
+        ZscoreTpTransformer transformer = new ZscoreTpTransformer()
+        transformer.doTrain(vals)
+
+        Map<ResidueNumberWrapper, Double> zscores = new HashMap<>()
+        for (Map.Entry<ResidueNumberWrapper, Double> e : scores.entrySet()) {
+            double z = transformer.transformScore(e.value)
+            zscores.put(e.key, z)
+        }
+        return new ConservationScore(zscores)
+    }
+
+    ConservationScore getZScores() {
+        if (zScores == null) {
+            zScores = calculateZScores()
+        }
+        return zScores
+    }
+
+//===========================================================================================================//
+
     static enum ScoreFormat {
         ConCavityFormat,
         JSDFormat
     }
 
-    private static List<AAScore> loadScoreFile(File scoreFile, ScoreFormat format) {
+    private static List<AAScore> loadScoreFile(File scoreFile, ScoreFormat format, String chainId) {
         TsvParserSettings settings = new TsvParserSettings()
         settings.setLineSeparatorDetectionEnabled(true)
         TsvParser parser = new TsvParser(settings)
@@ -105,7 +141,7 @@ class ConservationScore implements Parametrized {
             }
             score = score < 0 ? 0 : score
             if (letter != "-") {
-                result.add(new AAScore(letter, score, index))
+                result.add(new AAScore(chainId, letter, score, index))
             }
         }
         return result
@@ -275,7 +311,7 @@ class ConservationScore implements Parametrized {
                 File scoreFile = ConservationLoader.instance.findConservationFile(itemContext, protein.fileName, chainId)
                 log.info "Loading conservation scores from file [{}]", scoreFile
                 if (scoreFile!=null && scoreFile.exists()) {
-                    List<AAScore> chainScores = loadScoreFile(scoreFile, format)
+                    List<AAScore> chainScores = loadScoreFile(scoreFile, format, chainId)
 
                     if (log.traceEnabled) {
                         log.trace "loaded chain scores:\n  {}", chainScores.collect { "$it.index $it.letter $it.score" }.join("\n")

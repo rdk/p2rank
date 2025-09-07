@@ -13,6 +13,7 @@ import org.biojava.nbio.structure.GroupType
 
 /**
  * Simple single value Conservation feature that adds conservation from evolution from HSSP database or conservation pipeline to Atom feature vector.
+ * (Old conservation feature.)
  */
 @Slf4j
 @CompileStatic
@@ -39,7 +40,7 @@ class ConservationFeature extends AtomFeatureCalculator implements Parametrized 
         if (score == null) {
             return [0.0] as double[]
         } else {
-            double value = score.getScoreForResidue(parentAA.getResidueNumber())
+            double value = score.getScoreForResidueSafe(parentAA.getResidueNumber())
             return [value] as double[]
         }
     }

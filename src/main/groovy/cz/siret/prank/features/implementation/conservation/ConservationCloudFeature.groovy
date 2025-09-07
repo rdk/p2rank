@@ -38,7 +38,7 @@ class ConservationCloudFeature extends SasFeatureCalculator implements Parametri
         double value = 0
         if (!groups.empty) {
             value = groups.stream().mapToDouble({ Group group ->
-                score.getScoreForResidue(group.getResidueNumber())
+                score.getScoreForResidueSafe(group.getResidueNumber())
             }).average().getAsDouble();
         }
         if (value==Double.NaN) value = 0d

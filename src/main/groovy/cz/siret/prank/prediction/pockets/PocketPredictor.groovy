@@ -74,7 +74,7 @@ class PocketPredictor implements Parametrized {
                 if (conservationScore != null) {
                     double avgConservation = pocketSurfaceAtoms.distinctGroupsSorted.stream()
                             .mapToDouble({
-                        group -> conservationScore.getScoreForResidue(group.getResidueNumber())
+                        group -> conservationScore.getScoreForResidueSafe(group.getResidueNumber())
                     }).average().getAsDouble()
                     if (params.score_pockets_by == "conservation") {
                         score = avgConservation

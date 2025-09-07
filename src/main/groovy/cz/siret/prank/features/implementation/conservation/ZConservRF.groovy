@@ -12,11 +12,11 @@ import groovy.transform.CompileStatic
  * (New conservation feature.)
  */
 @CompileStatic
-class ConservRF extends ResidueFeatureCalculator {
+class ZConservRF extends ResidueFeatureCalculator {
     
     @Override
     String getName() {
-        return 'conserv'
+        return 'z-conserv'
     }
 
     @Override
@@ -26,17 +26,17 @@ class ConservRF extends ResidueFeatureCalculator {
 
     @Override
     double[] calculateForResidue(Residue residue, ResidueFeatureCalculationContext context) {
-        double score = getScoreForResidue(residue, context.protein)
+        double score = getZScoreForResidue(residue, context.protein)
 
         return [score] as double[]
     }
 
-    static double getScoreForResidue(Residue residue, Protein protein) {
+    static double getZScoreForResidue(Residue residue, Protein protein) {
         ConservationScore score = protein.conservationScore
         if (score == null) {
             return 0d
         } else {
-            return score.getScoreForResidueSafe(residue.residueNumber)
+            return score.getZScores().getScoreForResidueSafe(residue.residueNumber)
         } 
     }
 

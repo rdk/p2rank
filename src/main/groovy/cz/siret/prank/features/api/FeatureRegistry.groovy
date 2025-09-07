@@ -129,6 +129,7 @@ class FeatureRegistry {
 
         register new ResidueToSasFeatWrapper(new ContactResiduesRF())
 
+        // conservation
         register new ConservationFeature()
         register new ConservationCloudFeature()
         register new ConservationCloudScaledFeature()
@@ -136,6 +137,11 @@ class FeatureRegistry {
         register new ResidueToAtomicFeatWrapper(new ConservRF())
         register new ConservCloudSF()
         register new ConservCloud2SF()
+        // z-score conservation
+        register new ResidueToSasFeatWrapper(new ZConservRF())
+        register new ResidueToAtomicFeatWrapper(new ZConservRF())
+        register new ZConservCloudSF()
+        register new ZConservCloud2SF()
 
         register new CsvFileFeature()
 

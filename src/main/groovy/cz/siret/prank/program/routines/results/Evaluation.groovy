@@ -95,7 +95,7 @@ class Evaluation implements Parametrized {
             return 0.0
         }
         return atoms.distinctGroupsSorted.stream().mapToDouble( {
-            group->score.getScoreForResidue(group.getResidueNumber())})
+            group->score.getScoreForResidueSafe(group.getResidueNumber())})
                 .average().getAsDouble()
     }
 
@@ -278,10 +278,10 @@ class Evaluation implements Parametrized {
 
             if (!protein.params.log_scores_to_file.isEmpty()) {
                 bindingScrs = bindingAtoms.distinctGroupsSorted.collect { it ->
-                    score.getScoreForResidue(it.getResidueNumber())
+                    score.getScoreForResidueSafe(it.getResidueNumber())
                 }
                 nonBindingScrs = nonBindingAtoms.distinctGroupsSorted.collect { it ->
-                    score.getScoreForResidue(it.getResidueNumber())
+                    score.getScoreForResidueSafe(it.getResidueNumber())
                 }
             }
         }

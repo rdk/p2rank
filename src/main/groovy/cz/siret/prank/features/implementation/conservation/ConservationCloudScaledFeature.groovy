@@ -38,7 +38,7 @@ class ConservationCloudScaledFeature extends SasFeatureCalculator implements Par
         double value = 0.0;
         for (Atom atom : surroundingAtoms) {
             double scale = 1.0 / PerfUtils.sqrDist(sasPoint.coords, atom.coords);
-            value += scale * score.getScoreForResidue(atom.getGroup().getResidueNumber());
+            value += scale * score.getScoreForResidueSafe(atom.getGroup().getResidueNumber());
         }
         
         return [value] as double[]
