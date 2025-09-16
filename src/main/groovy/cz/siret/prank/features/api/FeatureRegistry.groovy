@@ -37,6 +37,7 @@ import cz.siret.prank.features.implementation.table.AAIndexFeature
 import cz.siret.prank.features.implementation.table.AtomTableFeature
 import cz.siret.prank.features.implementation.table.ResidueTableFeature
 import cz.siret.prank.features.implementation.volsite.VolsiteFeature
+import cz.siret.prank.features.implementation.energy.MethylEnergyFeature
 import cz.siret.prank.program.PrankException
 import groovy.transform.CompileStatic
 
@@ -158,6 +159,8 @@ class FeatureRegistry {
         register new IsSidechainAtomFeature()
         register new IsSidechainSasFeature()
         register new IsSidechainCloudFeature()
+
+        register new MethylEnergyFeature()
 
         // Register new feature implementations here
 

@@ -1299,6 +1299,60 @@ class Params {
     @ModelParam
     double feat_stmotif_radius = 4d
 
+//===========================================================================================================//
+// vdW Methyl Energy Feature Parameters
+//===========================================================================================================//
+
+    /**
+     * Lennard-Jones cutoff radius for vdW methyl energy feature (Angstrom)
+     */
+    @ModelParam
+    double energy_rc = 9.0
+
+    /**
+     * Lennard-Jones switch-on radius for vdW methyl energy feature (Angstrom)
+     */
+    @ModelParam
+    double energy_ron = 7.0
+
+    /**
+     * Methyl probe sigma parameter for vdW energy feature (Angstrom)
+     */
+    @ModelParam
+    double energy_probe_sigma = 3.75
+
+    /**
+     * Methyl probe epsilon parameter for vdW energy feature (kcal/mol)
+     */
+    @ModelParam
+    double energy_probe_epsilon = 0.12
+
+    /**
+     * Minimum allowed distance to avoid singularities in vdW energy calculation (Angstrom)
+     */
+    @ModelParam
+    double energy_min_r = 1.8
+
+    /**
+     * Policy for handling missing element parameters: skip | error | fallback
+     */
+    @ModelParam
+    String energy_missing_elem_policy = "skip"
+
+    /**
+     * Fallback sigma parameter for missing elements (Angstrom)
+     */
+    @ModelParam
+    double energy_fallback_sigma = 3.5
+
+//===========================================================================================================//
+
+    /**
+     * Fallback epsilon parameter for missing elements (kcal/mol)
+     */
+    @ModelParam
+    double energy_fallback_epsilon = 0.10
+
     /**
      *
      */
