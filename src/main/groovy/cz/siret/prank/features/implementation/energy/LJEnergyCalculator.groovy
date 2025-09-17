@@ -93,7 +93,7 @@ class LJEnergyCalculator implements Parametrized {
 
         csvText.eachLine { line, lineNum ->
             // Skip header line
-            if (lineNum == 1) return
+            if (lineNum == 0) return
 
             // Skip comments and empty lines
             line = line.trim()

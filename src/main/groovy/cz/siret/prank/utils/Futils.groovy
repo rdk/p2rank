@@ -201,7 +201,11 @@ class Futils {
      * reads text file from classpath
      */
     static String readResource(String path) {
-        return Futils.class.getResourceAsStream(path).newReader().getText()
+        try {
+            return Futils.class.getResourceAsStream(path).newReader().getText()
+        } catch (Exception e) {
+            throw new RuntimeException("Error reading resource: $path", e)
+        }
     }
 
     public static List<String> SUPPORTED_DECOMPRESS_EXTENSIONS = ["gz", "zst", "zstd", "lzma"]
