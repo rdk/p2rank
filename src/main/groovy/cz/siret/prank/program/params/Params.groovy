@@ -128,6 +128,12 @@ class Params {
     List<String> extra_features = []
 
     /**
+     * List of fixed sub-features that are always included (even if filtered out by feature_filters).
+     */
+    @ModelParam
+    List<String> ploop_fixed_subfeatures = []
+
+    /**
      * List of features that come directly from atom type tables
      * see atomic-properties.csv
      */

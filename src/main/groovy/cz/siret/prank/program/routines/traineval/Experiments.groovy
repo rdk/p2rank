@@ -14,7 +14,6 @@ import cz.siret.prank.program.routines.optimize.GridOptimizerRoutine
 import cz.siret.prank.program.routines.optimize.HyperOptimizerRoutine
 import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.utils.CmdLineArgs
-import cz.siret.prank.utils.Cutils
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.Sutils
 import cz.siret.prank.utils.Writable
@@ -375,6 +374,8 @@ class Experiments extends Routine {
 
         List<List<String>> filters = names.collect { [it] }
 
+        filters = addFixedSubfeatures(filters)
+
         runPloopWithFeatureFilters(filters)
     }
 
@@ -420,6 +421,16 @@ class Experiments extends Routine {
      */
     private static List<List<String>> generateMiddleSubsets(List<String> list) {
         generateSubsets(list).findAll { it.size()>0 && it.size()<list.size() }
+    }
+
+    private List<List<String>> addFixedSubfeatures(List<List<String>> filters) {
+        List<String> fixed = params.ploop_fixed_subfeatures
+
+        if (empty(fixed)) {
+            return filters
+        }
+
+        return filters.collect { (it + fixed).unique()  }.toList()
     }
 
 //===========================================================================================================//
