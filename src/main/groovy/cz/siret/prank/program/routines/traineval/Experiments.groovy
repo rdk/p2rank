@@ -371,6 +371,8 @@ class Experiments extends Routine {
 
         List<String> names = currentFeatureSetup.filterableSubFeatureNames
 
+        log.info "Sub-features: " + names
+
         List<List<String>> filters = names.collect { [it] }
 
         runPloopWithFeatureFilters(filters)

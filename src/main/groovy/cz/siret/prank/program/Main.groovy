@@ -142,11 +142,11 @@ class Main implements Parametrized, Writable {
             }
         }
 
-        write "DIR: $dirParam"
+        //write "DIR: $dirParam"
 
         dirParam = dirParam.replace("{version}", version)
 
-        write "DIR2: $dirParam"
+        //write "DIR2: $dirParam"
 
         dirParam = Futils.absPath(Futils.normalize(dirParam))
         return dirParam

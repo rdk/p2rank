@@ -3,6 +3,7 @@ package cz.siret.prank.features
 import cz.siret.prank.features.api.FeatureCalculator
 import cz.siret.prank.features.api.FeatureRegistry
 import cz.siret.prank.program.PrankException
+import cz.siret.prank.program.params.Params
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
@@ -28,6 +29,7 @@ class FeatureSetup {
     List<Feature> enabledFeatures
     List<Feature> enabledAtomFeatures
     List<Feature> enabledSasFeatures
+    List<SubFeature> enabledSubFeatures
 
     /**
      * Sub-feature names for calculated vector (before filtering)
@@ -86,28 +88,23 @@ class FeatureSetup {
     }
 
     List<String> getFixedSubFeatureNames() {
-        if (!filteringEnabled) {
-            throw new IllegalStateException("Feature filtering is not enabled.")
-        }
-        return filteredSubFeatures.findAll { !it.filterable }*.name.toList()
+        return enabledSubFeatures.findAll { !it.filterable }*.name.toList()
     }
 
     List<String> getFilterableSubFeatureNames() {
-        if (!filteringEnabled) {
-            throw new IllegalStateException("Feature filtering is not enabled.")
-        }
-        return filteredSubFeatures.findAll { it.filterable }*.name.toList()
+        return enabledSubFeatures.findAll { it.filterable }*.name.toList()
     }
 
     private void initEnabledFeatures(List<String> enabledFeatureNames, List<String> filterableFeatureNames) {
         this.enabledFeatureNames = enabledFeatureNames
         this.fixedFeatureNames = enabledFeatureNames - filterableFeatureNames
 
-        enabledFeatures = toFeatures(enabledFeatureNames)
-        enabledAtomFeatures = enabledFeatures.findAll { it.calculator.type == FeatureCalculator.Type.ATOM }.toList()
-        enabledSasFeatures = enabledFeatures.findAll { it.calculator.type == FeatureCalculator.Type.SAS_POINT }.toList()
+        this.enabledFeatures = toFeatures(enabledFeatureNames)
+        this.enabledAtomFeatures = enabledFeatures.findAll { it.calculator.type == FeatureCalculator.Type.ATOM }.toList()
+        this.enabledSasFeatures = enabledFeatures.findAll { it.calculator.type == FeatureCalculator.Type.SAS_POINT }.toList()
 
-        subFeaturesHeader = collectSubFeatures(enabledFeatures)*.name
+        this.enabledSubFeatures = collectSubFeatures(enabledFeatures)
+        this.subFeaturesHeader = enabledSubFeatures*.name
     }
 
 
@@ -230,7 +227,19 @@ class FeatureSetup {
                     res.add(new SubFeature(feat.name, header[i], i))
                 }
             }
+
+            assignFilterableFlags(res, Params.inst.extra_features)
+
             return res
+        }
+
+        private static void assignFilterableFlags(List<SubFeature> subFeatures, List<String> filterableFeatureNames) {
+            Set<String> filterableSet = new HashSet<>(filterableFeatureNames)
+            for (SubFeature sf : subFeatures) {
+                if (filterableSet.contains(sf.featureName)) {
+                    sf.filterable = true
+                }
+            }
         }
 
         private static List<Feature> toFeatures(List<String> featureNames) {
