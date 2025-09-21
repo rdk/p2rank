@@ -32,17 +32,17 @@ import cz.siret.prank.program.params.Params
 
     //
 
-    classifier="FasterForest"
+    classifier="FasterForest2"
     rf_trees = 500
     rf_bagsize = 55
 
     atom_table_feat_keep_sgn = true
     residue_table_features = ["RAx"]
     atom_table_features = ["atomicHydrophobicity"]
-    features = ["chem","volsite","bfactor","protrusion","pmass","cr1pos","ss_atomic","ss_sas","ss_cloud","conserv_cloud","conserv_atomic","conserv_sas"]
+    features = ["chem", "volsite", "protrusion", "pmass", "cr1pos", "ss_atomic", "ss_sas", "ss_cloud", "conserv_atomic", "conserv_cloud"]
 
     load_conservation = 1
-    conservation_dirs = 'conservation/train_test/e5i1'
+    conservation_dirs = 'conservation/hmm/scores'
     conserv_cloud_radius = 13
     conservation_exponent = 1
 
