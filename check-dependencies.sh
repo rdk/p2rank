@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-./gradlew dependencyUpdates 
+./gradlew dependencyUpdates --no-parallel
