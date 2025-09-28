@@ -1351,13 +1351,43 @@ class Params {
     @ModelParam
     double energy_fallback_sigma = 3.5
 
-//===========================================================================================================//
-
     /**
      * Fallback epsilon parameter for missing elements (kcal/mol)
      */
     @ModelParam
     double energy_fallback_epsilon = 0.10
+
+    /**
+     * Energy cloud radius for averaging energy feature on the surface (Angstrom)
+     */
+    @ModelParam
+    double energy_cloud_radius = 3.5
+
+        /**
+     * Energy cloud radius for averaging energy feature on the surface (Angstrom)
+     */
+    @ModelParam
+    double energy_cloud_radius2 = 6
+
+    @ModelParam
+    boolean xenegy_cloud2_layered = true
+
+    @ModelParam
+    int xenergy_tessellation = 2
+
+    /**
+     * 0 - no stdev, 1 - abs stdev, 2 - relative stdev
+     */
+    @ModelParam
+    int xenergy_cloud_stdev_type = 0
+
+    /**
+     * solvent radius for energy probes
+     */
+    @ModelParam
+    double xenergy_solvent_radius = 1.6
+
+//===========================================================================================================//
 
     /**
      *

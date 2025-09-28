@@ -2,6 +2,7 @@ package cz.siret.prank.utils
 
 import groovy.transform.CompileStatic
 
+import static cz.siret.prank.utils.MathUtils.safeDiv
 import static java.lang.Math.sqrt
 
 /**
@@ -41,6 +42,8 @@ class StatSample {
     }
 
     double getVariance() {
+        if (size < 1) return 0
+
         double mean = mean
         double xx = 0
         for (double a : sample)
@@ -53,7 +56,7 @@ class StatSample {
     }
     
     double getRelativeStdev() {
-        (100*stddev) / mean
+       safeDiv((100*stddev), mean)
     }
 
     double getMin() {

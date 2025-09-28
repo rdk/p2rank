@@ -18,6 +18,15 @@ import cz.siret.prank.features.implementation.contactres.ContactResiduesRF
 import cz.siret.prank.features.implementation.csv.CsvFileFeature
 import cz.siret.prank.features.implementation.electrostatics.ElectrostaticsTempAtomFeature
 import cz.siret.prank.features.implementation.electrostatics.ElectrostaticsTempSasFeature
+import cz.siret.prank.features.implementation.energy.MethylEnergyCloudSF
+import cz.siret.prank.features.implementation.energy.MethylEnergyCloudX2FullSF
+import cz.siret.prank.features.implementation.energy.MethylEnergyCloudX2SF
+import cz.siret.prank.features.implementation.energy.MethylEnergyCloudXSF
+import cz.siret.prank.features.implementation.energy2.AromaticRingProbeEnergyFeature
+import cz.siret.prank.features.implementation.energy2.CationProbeEnergyFeature
+import cz.siret.prank.features.implementation.energy2.HBAcceptorProbeEnergyFeature
+import cz.siret.prank.features.implementation.energy2.HBDonorProbeEnergyFeature
+import cz.siret.prank.features.implementation.energy2.NeutralApolarProbeEnergyFeature
 import cz.siret.prank.features.implementation.histogram.PairHistogramFeature
 import cz.siret.prank.features.implementation.propensity.AaPropensityFeature
 import cz.siret.prank.features.implementation.propensity.AtomTypePropensityFeature
@@ -161,6 +170,19 @@ class FeatureRegistry {
         register new IsSidechainCloudFeature()
 
         register new MethylEnergyFeature()
+        register new MethylEnergyCloudSF()
+        register new MethylEnergyCloudXSF()
+        register new MethylEnergyCloudX2SF()
+        register new MethylEnergyCloudX2FullSF()
+
+
+        register new NeutralApolarProbeEnergyFeature()
+        register new HBAcceptorProbeEnergyFeature()
+        register new HBDonorProbeEnergyFeature()
+        register new AromaticRingProbeEnergyFeature()
+        register new CationProbeEnergyFeature()
+
+
 
         // Register new feature implementations here
 

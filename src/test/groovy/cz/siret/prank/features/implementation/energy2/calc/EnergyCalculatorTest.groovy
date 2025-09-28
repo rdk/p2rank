@@ -1,0 +1,268 @@
+package cz.siret.prank.features.implementation.energy2.calc
+
+import cz.siret.prank.geom.Atoms
+import groovy.transform.CompileStatic
+import org.biojava.nbio.structure.Atom
+import org.biojava.nbio.structure.AtomImpl
+import org.biojava.nbio.structure.Element
+import org.biojava.nbio.structure.Group
+import org.biojava.nbio.structure.AminoAcidImpl
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.BeforeEach
+
+import static org.junit.jupiter.api.Assertions.*
+
+/**
+ * Unit tests for EnergyCalculator - validates each energy term independently
+ * and with synthetic geometry according to the spec requirements.
+ */
+@CompileStatic
+class EnergyCalculatorTest {
+
+    EnergyCalculator calculator
+    EnergyCalculatorConfig config
+
+    @BeforeEach
+    void setup() {
+        config = new EnergyCalculatorConfig()
+        calculator = new EnergyCalculator(config)
+    }
+
+    @Test
+    void testConfigurationValidation() {
+        assertThrows(IllegalArgumentException.class, {
+            new EnergyCalculatorConfig.Builder()
+                .rOn(8.0)
+                .rCutoff(7.0)  // ron >= rc, should fail
+                .build()
+        })
+    }
+
+    @Test
+    void testEmptyNeighborListReturnsZeros() {
+        Atom point = createAtom("C", 0, 0, 0)
+        Atoms neighbors = new Atoms()
+
+        List<Double> energies = calculator.computeEnergyForPoint(point, neighbors)
+
+        assertEquals(ProbeType.values().length, energies.size())
+        for (Double energy : energies) {
+            assertEquals(0.0, energy, 1e-10)
+        }
+    }
+
+    @Test
+    void testNeighborsBeyondCutoffAreIgnored() {
+        Atom point = createAtom("C", 0, 0, 0)
+        Atom farNeighbor = createAtom("C", 15, 0, 0)  // 15 Å away, beyond 9 Å cutoff
+        Atoms neighbors = new Atoms([farNeighbor])
+
+        List<Double> energies = calculator.computeEnergyForPoint(point, neighbors)
+
+        for (Double energy : energies) {
+            assertEquals(0.0, energy, 1e-10)
+        }
+    }
+
+    @Test
+    void testHydrogenAtomsAreIgnored() {
+        Atom point = createAtom("C", 0, 0, 0)
+        Atom hydrogen = createAtom("H", 2, 0, 0)
+        Atoms neighbors = new Atoms([hydrogen])
+
+        List<Double> energies = calculator.computeEnergyForPoint(point, neighbors)
+
+        for (Double energy : energies) {
+            assertEquals(0.0, energy, 1e-10)
+        }
+    }
+
+    @Test
+    void testDistanceClampingPreventsSignularities() {
+        Atom point = createAtom("C", 0, 0, 0)
+        Atom closeNeighbor = createAtom("C", 0.5, 0, 0)  // 0.5 Å, below rMin=1.8
+        Atoms neighbors = new Atoms([closeNeighbor])
+
+        List<Double> energies = calculator.computeEnergyForPoint(point, neighbors)
+
+        for (Double energy : energies) {
+            assertFalse(energy.isNaN())
+            assertFalse(energy.isInfinite())
+        }
+    }
+
+    @Test
+    void testSmoothSwitchingFunction() {
+        Atom point = createAtom("C", 0, 0, 0)
+
+        // At rOn: should have full weight (s=1)
+        Atom neighborAtROn = createAtom("C", config.rOn, 0, 0)
+
+        // At rCutoff: should have zero weight (s=0)
+        Atom neighborAtRCutoff = createAtom("C", config.rCutoff - 0.01, 0, 0)
+
+        List<Double> energiesAtROn = calculator.computeEnergyForPoint(point, new Atoms([neighborAtROn]))
+        List<Double> energiesAtRCutoff = calculator.computeEnergyForPoint(point, new Atoms([neighborAtRCutoff]))
+
+        // Energy at rOn should be stronger (more negative) than near rCutoff
+        assertTrue(energiesAtROn[0] < energiesAtRCutoff[0])
+    }
+
+    @Test
+    void testLJEnergyHasCorrectMinimum() {
+        config = new EnergyCalculatorConfig.Builder()
+            .selectedProbes(EnumSet.of(ProbeType.NEUTRAL_APOLAR_SP))
+            .build()
+        calculator = new EnergyCalculator(config)
+
+        Atom point = createAtom("C", 0, 0, 0)
+
+        List<Double> distances = [2.5, 3.0, 3.5, 4.0, 4.5, 5.0] as List<Double>
+        List<Double> energies = distances.collect { d ->
+            Atom neighbor = createAtom("C", d, 0, 0)
+            calculator.computeEnergyForPoint(point, new Atoms([neighbor]))[0]
+        }
+
+        double minEnergy = energies.min()
+        assertEquals(1, energies.count { it == minEnergy })  // Single minimum
+        assertTrue(minEnergy < 0)  // Attractive minimum
+    }
+
+    @Test
+    void testAromaticRingEnergyCap() {
+        config = new EnergyCalculatorConfig.Builder()
+            .selectedProbes(EnumSet.of(ProbeType.AROMATIC_RING_SP))
+            .build()
+        calculator = new EnergyCalculator(config)
+
+        Atom point = createAtom("C", 0, 0, 0)
+        Atom closeNeighbor = createAtom("C", 2.0, 0, 0)  // Very close to get strong interaction
+
+        List<Double> energies = calculator.computeEnergyForPoint(point, new Atoms([closeNeighbor]))
+
+        double aromaticEnergy = energies[0]
+        double energyCap = config.probeParams[ProbeType.AROMATIC_RING_SP].energyMinCap
+        assertTrue(aromaticEnergy >= energyCap)
+    }
+
+    @Test
+    void testHBAcceptorProbeOnlyInteractsWithDonors() {
+        config = new EnergyCalculatorConfig.Builder()
+            .selectedProbes(EnumSet.of(ProbeType.HB_ACCEPTOR_SP))
+            .build()
+        calculator = new EnergyCalculator(config)
+
+        Atom point = createAtom("C", 0, 0, 0)
+
+        // Donor atom (backbone N)
+        Atom donorAtom = createAtom("N", 3.0, 0, 0, "GLY", "N")
+
+        // Non-donor atom (aliphatic C)
+        Atom nonDonorAtom = createAtom("C", 3.0, 0, 0, "ALA", "CB")
+
+        List<Double> energiesWithDonor = calculator.computeEnergyForPoint(point, new Atoms([donorAtom]))
+        List<Double> energiesWithNonDonor = calculator.computeEnergyForPoint(point, new Atoms([nonDonorAtom]))
+
+        // Should interact with donor but not with non-donor
+        assertNotEquals(0.0, energiesWithDonor[0], 1e-10)
+        assertEquals(0.0, energiesWithNonDonor[0], 1e-10)
+    }
+
+    @Test
+    void testHBDonorProbeOnlyInteractsWithAcceptors() {
+        config = new EnergyCalculatorConfig.Builder()
+            .selectedProbes(EnumSet.of(ProbeType.HB_DONOR_SP))
+            .build()
+        calculator = new EnergyCalculator(config)
+
+        Atom point = createAtom("C", 0, 0, 0)
+
+        // Acceptor atom (backbone O)
+        Atom acceptorAtom = createAtom("O", 3.0, 0, 0, "GLY", "O")
+
+        // Non-acceptor atom (aliphatic C)
+        Atom nonAcceptorAtom = createAtom("C", 3.0, 0, 0, "ALA", "CB")
+
+        List<Double> energiesWithAcceptor = calculator.computeEnergyForPoint(point, new Atoms([acceptorAtom]))
+        List<Double> energiesWithNonAcceptor = calculator.computeEnergyForPoint(point, new Atoms([nonAcceptorAtom]))
+
+        // Should interact with acceptor but not with non-acceptor
+        assertNotEquals(0.0, energiesWithAcceptor[0], 1e-10)
+        assertEquals(0.0, energiesWithNonAcceptor[0], 1e-10)
+    }
+
+    @Test
+    void testCationProbeIncludesBothLJAndCoulombTerms() {
+        config = new EnergyCalculatorConfig.Builder()
+            .selectedProbes(EnumSet.of(ProbeType.CATION_SP))
+            .enableCoulomb(true)
+            .build()
+        calculator = new EnergyCalculator(config)
+
+        Atom point = createAtom("C", 0, 0, 0)
+        Atom neighbor = createAtom("O", 4.0, 0, 0)
+
+        List<Double> energies = calculator.computeEnergyForPoint(point, new Atoms([neighbor]))
+
+        // Should have non-zero energy from LJ (Coulomb will be zero since atom charges are 0)
+        assertNotEquals(0.0, energies[0], 1e-10)
+    }
+
+    @Test
+    void testConsistencyBatchEqualsSumOfIndividualProbes() {
+        Atom point = createAtom("C", 0, 0, 0)
+        Atoms neighbors = new Atoms([
+            createAtom("N", 3.0, 0, 0, "GLY", "N"),
+            createAtom("O", 0, 3.0, 0, "GLY", "O"),
+            createAtom("C", 0, 0, 4.0, "ALA", "CB")
+        ])
+
+        List<Double> batchEnergies = calculator.computeEnergyForPoint(point, neighbors)
+
+        List<Double> individualEnergies = []
+        for (ProbeType probe : ProbeType.values()) {
+            EnergyCalculatorConfig singleProbeConfig = new EnergyCalculatorConfig.Builder()
+                .selectedProbes(EnumSet.of(probe))
+                .build()
+            EnergyCalculator singleProbeCalculator = new EnergyCalculator(singleProbeConfig)
+            List<Double> singleResult = singleProbeCalculator.computeEnergyForPoint(point, neighbors)
+            individualEnergies.add(singleResult[0])
+        }
+
+        assertEquals(individualEnergies.size(), batchEnergies.size())
+        for (int i = 0; i < batchEnergies.size(); i++) {
+            assertEquals(individualEnergies[i], batchEnergies[i], 1e-10)
+        }
+    }
+
+    @Test
+    void testAtomRoleClassification() {
+        AtomRole backboneN = AtomRole.classify(createAtom("N", 0, 0, 0, "GLY", "N"))
+        AtomRole backboneO = AtomRole.classify(createAtom("O", 0, 0, 0, "GLY", "O"))
+        AtomRole argNH1 = AtomRole.classify(createAtom("N", 0, 0, 0, "ARG", "NH1"))
+        AtomRole aspOD1 = AtomRole.classify(createAtom("O", 0, 0, 0, "ASP", "OD1"))
+        AtomRole alaCB = AtomRole.classify(createAtom("C", 0, 0, 0, "ALA", "CB"))
+
+        assertTrue(backboneN.isDonor && !backboneN.isAcceptor)
+        assertTrue(!backboneO.isDonor && backboneO.isAcceptor)
+        assertTrue(argNH1.isDonor && !argNH1.isAcceptor)
+        assertTrue(!aspOD1.isDonor && aspOD1.isAcceptor)
+        assertTrue(!alaCB.isDonor && !alaCB.isAcceptor)
+    }
+
+    // Helper method to create test atoms
+    private Atom createAtom(String element, double x, double y, double z, String resName = "GLY", String atomName = "CA") {
+        Atom atom = new AtomImpl()
+        atom.setElement(Element.valueOfIgnoreCase(element))
+        atom.setX(x)
+        atom.setY(y)
+        atom.setZ(z)
+        atom.setName(atomName)
+
+        Group group = new AminoAcidImpl()
+        group.setPDBName(resName)
+        atom.setGroup(group)
+
+        return atom
+    }
+}

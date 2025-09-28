@@ -449,6 +449,49 @@ public final class Atoms implements Iterable<Atom> {
         }
     }
 
+
+    public SphereLayers cutoutLayers(Atom center, double radiusInner, double radiusOuter) {
+        Atoms outerSphere = cutoutSphere(center, radiusOuter);
+        List<Atom> outerLayer = new ArrayList<>(outerSphere.getCount());
+        List<Atom> innerSphere = new ArrayList<>(outerSphere.getCount());
+
+        double sqrBorder = radiusInner*radiusInner;
+        for (Atom a : outerSphere) {
+            if (Struct.sqrDist(a, center) <= sqrBorder) {
+                innerSphere.add(a);
+            } else {
+                outerLayer.add(a);
+            }
+        }
+
+        return new SphereLayers(new Atoms(innerSphere), outerSphere, new Atoms(outerLayer));
+    }
+
+    public static class SphereLayers {
+        public final Atoms outerSphere;
+        public final Atoms innerSphere;
+        public final Atoms outerLater;
+
+        public SphereLayers(Atoms innerSphere, Atoms outerSphere, Atoms outerLater) {
+            this.outerSphere = outerSphere;
+            this.innerSphere = innerSphere;
+            this.outerLater = outerLater;
+        }
+
+        public Atoms getOuterSphere() {
+            return outerSphere;
+        }
+
+        public Atoms getInnerSphere() {
+            return innerSphere;
+        }
+
+        public Atoms getOuterLater() {
+            return outerLater;
+        }
+    }
+
+
     public Atoms cutoutBox(Box box) {
         return new Atoms(Struct.cutoffAtomsInBox(this.list, box));
     }

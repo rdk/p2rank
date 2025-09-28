@@ -1,0 +1,9 @@
+roleClass,r0_A,eps_hb
+# Optional H-bond parameter overrides by role class
+# Role classes: 1=backbone N, 2=backbone O, 3=Arg guanidinium, 4=Asn ND2, 5=Asn OD1
+#              6=Asp carboxylate, 7=Cys SG, 8=Gln NE2, 9=Gln OE1, 10=Glu carboxylate
+#              11=His ring N, 12=Lys NZ, 13=Ser OG, 14=Thr OG1, 15=Trp NE1, 16=Tyr OH
+# Example overrides (currently using defaults for all):
+# 3,2.9,1.0
+# 6,2.8,0.9
+# 12,3.1,0.7

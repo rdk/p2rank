@@ -1,0 +1,25 @@
+resname,atomname,roleClass
+# Residue and atom name to role class mapping
+# This file is for reference - role classification is hardcoded in AtomRole.groovy
+# Role classes correspond to those used in hb-overrides.csv
+GLY,N,1
+GLY,O,2
+ARG,NE,3
+ARG,NH1,3
+ARG,NH2,3
+ASN,ND2,4
+ASN,OD1,5
+ASP,OD1,6
+ASP,OD2,6
+CYS,SG,7
+GLN,NE2,8
+GLN,OE1,9
+GLU,OE1,10
+GLU,OE2,10
+HIS,ND1,11
+HIS,NE2,11
+LYS,NZ,12
+SER,OG,13
+THR,OG1,14
+TRP,NE1,15
+TYR,OH,16
