@@ -828,6 +828,15 @@ class Params {
     double pred_point_threshold = 0.4
 
     /**
+     * clustering strategy for clustering ligandable points into pockets
+     * <p>
+     * possible values: SingleLinkage
+     */
+    @ModelParam
+    String clustering_strategy = "SingleLinkage"
+
+
+    /**
      * minimum cluster size (of ligandable points) for initial clustering
      */
     @ModelParam

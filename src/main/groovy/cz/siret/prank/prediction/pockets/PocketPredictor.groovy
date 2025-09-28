@@ -6,6 +6,7 @@ import cz.siret.prank.domain.labeling.LabeledPoint
 import cz.siret.prank.features.implementation.conservation.ConservationScore
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Struct
+import cz.siret.prank.prediction.pockets.clustering.ClusteringStrategy
 import cz.siret.prank.prediction.transformation.ScoreTransformer
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Cutils
@@ -20,20 +21,22 @@ import groovy.util.logging.Slf4j
 @CompileStatic
 class PocketPredictor implements Parametrized {
 
-    private final PointScoreCalculator pointScoreCalculator = new PointScoreCalculator()
-
     private double POCKET_PROT_SURFACE_CUTOFF = params.pred_protein_surface_cutoff
-    private int MIN_CLUSTER_SIZE = params.pred_min_cluster_size
     private double EXTENDED_POCKET_CUTOFF = params.extended_pocket_cutoff
-    private double CLUSTERING_DIST = params.pred_clustering_dist
-    private double POINT_THRESHOLD = params.pred_point_threshold
     private boolean BALANCE_POINT_DENSITY = params.balance_density
     private double BALANCE_RADIUS = params.balance_density_radius
     private int SCORE_POINT_LIMIT = params.score_point_limit
 
+    private ClusteringStrategy clusteringStrategy = ClusteringStrategy.create(params.clustering_strategy)
+
+    // pocket score transformers
+    private ScoreTransformer zscoreTpTransformer = ScoreTransformer.load(params.zscoretp_transformer)
+    private ScoreTransformer probaTpTransformer = ScoreTransformer.load(params.probatp_transformer)
+
+//===========================================================================================================//
+
     private double scorePoint(LabeledPoint point, Atoms surfacePoints) {
 
-        //double score = pointScoreCalculator.transformScore(point.score)
         double score = point.transformedScore
 
         if (BALANCE_POINT_DENSITY) {
@@ -42,12 +45,6 @@ class PocketPredictor implements Parametrized {
         }
 
         return score
-    }
-
-    private boolean admitPoint(LabeledPoint point) {
-//        double p = PointScoreCalculator.predictedScore(point.hist)
-//        return p > POINT_THRESHOLD
-        point.predicted
     }
 
     double pocketScore(Atoms pocketPoints, Atoms allSasPoints, Protein protein, Atoms pocketSurfaceAtoms)  {
@@ -99,22 +96,12 @@ class PocketPredictor implements Parametrized {
 
         Atoms labeledPoints = new Atoms(allLabeledPoints).withKdTree()
 
-        // filter
-        List<LabeledPoint> ligandablePoints = allLabeledPoints.findAll { admitPoint(it) }.toList()
-        List<Atoms> clusters = Struct.clusterAtoms(new Atoms(ligandablePoints), CLUSTERING_DIST)
-        List<Atoms> filteredClusters = clusters.findAll { it.count >= MIN_CLUSTER_SIZE  }.toList()
-
         log.info "PREDICTING POCKETS.... ===================================="
         log.info "SAS POINTS: {}", labeledPoints.count
-        log.info "LIGANDABLE POINTS: {}", ligandablePoints.size()
-        log.info "CLUSTERS: {}", clusters.size()
-        log.info "FILTERED CLUSTERS: {}", filteredClusters.size()
 
-        // pocket score transformers
-        ScoreTransformer zscoreTpTransformer = ScoreTransformer.load(params.zscoretp_transformer)
-        ScoreTransformer probaTpTransformer = ScoreTransformer.load(params.probatp_transformer)
+        List<Atoms> clusters = clusteringStrategy.clusterPointsIntoPockets(allLabeledPoints)
 
-        List<PrankPocket> pockets = filteredClusters.collect { Atoms clusterPoints ->
+        List<PrankPocket> pockets = clusters.collect { Atoms clusterPoints ->
 
             Atoms pocketPoints = clusterPoints
             if (EXTENDED_POCKET_CUTOFF > 0d) {
@@ -122,13 +109,12 @@ class PocketPredictor implements Parametrized {
                 pocketPoints = extendedPocketPoints
             }
             
-//          double score = (double) pocketPoints.collect { scorePoint((LabeledPoint)it, allSasPoints) }.sum(0)
             Atoms pocketSurfaceAtoms = protein.exposedAtoms.cutoutShell(pocketPoints, POCKET_PROT_SURFACE_CUTOFF)
             double score = pocketScore(pocketPoints, labeledPoints, protein, pocketSurfaceAtoms)
 
             Atoms pocketSasPoints = new Atoms( pocketPoints.collect { ((LabeledPoint)it).point }.toList() )  // we want exact objects from protein.accessibleSurface
 
-            PrankPocket p = new PrankPocket(clusterPoints.centroid, score, pocketSasPoints, (List<LabeledPoint>) pocketPoints.list)
+            PrankPocket p = new PrankPocket(clusterPoints.centroid, score, pocketSasPoints, (List<LabeledPoint>)pocketPoints.list)
             p.surfaceAtoms = pocketSurfaceAtoms
             p.auxInfo.samplePoints = clusterPoints.count
             p.cache.count = clusterPoints.count
@@ -152,7 +138,7 @@ class PocketPredictor implements Parametrized {
             i++
 
             for (LabeledPoint lp : it.labeledPoints) {
-                //if (lp.score > 0.2) { // TODO XXX this is temporary to fix pymol visualization esthetics
+                //if (lp.score > 0.2) { // TODO XXX this is temporary to fix pymol visualization aesthetics
                     lp.pocket = i
                 //}
             }
