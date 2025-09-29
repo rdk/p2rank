@@ -828,9 +828,15 @@ class Params {
     double pred_point_threshold = 0.4
 
     /**
+     * minimum z-score for SAS point to be considered ligandable (used in clustering)
+     */
+    @ModelParam
+    double xpoint_zscore_threshold = 0.0
+
+    /**
      * clustering strategy for clustering ligandable points into pockets
      * <p>
-     * possible values: SingleLinkage
+     * possible values: SingleLinkage, ZScore
      */
     @ModelParam
     String clustering_strategy = "SingleLinkage"

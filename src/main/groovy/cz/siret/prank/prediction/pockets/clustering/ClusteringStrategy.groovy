@@ -16,7 +16,9 @@ abstract class ClusteringStrategy {
     static ClusteringStrategy create(String strategyName) {
         switch (strategyName) {
             case "SingleLinkage":
-                return new SingleLinkageClusteringStrategy()
+                return new SingleLinkageClustering()
+            case "ZScore":
+                return new ZScoreSingleLinkageClustering()
             default:
                 throw new IllegalArgumentException("Unknown clustering strategy: $strategyName")
         }

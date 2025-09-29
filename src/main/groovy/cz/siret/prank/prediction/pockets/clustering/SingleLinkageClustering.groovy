@@ -12,7 +12,7 @@ import groovy.util.logging.Slf4j
  */
 @Slf4j
 @CompileStatic
-class SingleLinkageClusteringStrategy extends ClusteringStrategy implements Parametrized {
+class SingleLinkageClustering extends ClusteringStrategy implements Parametrized {
 
     final double clusteringDist = params.pred_clustering_dist
     final int minClusterSize = params.pred_min_cluster_size
