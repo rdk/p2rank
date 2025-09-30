@@ -32,6 +32,7 @@ class LigandabilityPointVectorCollector extends VectorCollector implements Param
     /** distance from the point to the ligand that identifies positive point */
     final double POSITIVE_VC_LIGAND_DISTANCE = params.positive_point_ligand_distance
     final double NEGATIVES_DIST = params.positive_point_ligand_distance + params.neutral_points_margin
+    final boolean COLLECT_NEGATIVES_FROM_TRUE_POCKETS = params.collect_negatives_from_true_pockets
 
     final FeatureExtractor extractorFactory
     final PocketCriterium positivePocketCriterion = DEFAULT_POSITIVE_POCKET_CRITERION
@@ -226,9 +227,17 @@ class LigandabilityPointVectorCollector extends VectorCollector implements Param
                 
                 if (closestLigandDistance <= POSITIVE_VC_LIGAND_DISTANCE) {
                     return PointClass.POSITIVE
-                } else if (!ligPocket && closestLigandDistance > NEGATIVES_DIST) {  // GAP ... helps
-                    // so we are skipping points in gap and negative points in positive pockets
-                    return PointClass.NEGATIVE
+                } else if (closestLigandDistance > NEGATIVES_DIST) {  // GAP ... helps
+                    if (ligPocket) {
+                        if (COLLECT_NEGATIVES_FROM_TRUE_POCKETS) {
+                            return PointClass.NEGATIVE
+                        } else {
+                            // skipping negative points in positive pockets
+                            return PointClass.IGNORE
+                        }
+                    } else {
+                        return PointClass.NEGATIVE
+                    }
                 } else {
                     return PointClass.IGNORE
                 }

@@ -425,6 +425,13 @@ class Params {
     double neutral_points_margin = 5.5
 
     /**
+     * if true, negative points will be collected also from true pockets (but outside positive_point_ligand_distance)
+     * otherwise only points from outside true pockets are considered negatives
+     */
+    @ModelParam // training
+    boolean collect_negatives_from_true_pockets = false
+
+    /**
      * Neighbourhood radius (A) used for calculating most of the features.
      */
     @ModelParam
