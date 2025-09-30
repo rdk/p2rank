@@ -736,6 +736,21 @@ class Params {
     @RuntimeParam
     boolean vis_highlight_ligands = false
 
+
+    /**
+     * PyMol color gradient for coloring points by their score
+     * see https://pymolwiki.org/index.php/Spectrum
+     */
+    @RuntimeParam
+    String vis_point_gradient_pymol = "green_red"
+
+    /**
+     * max score for coloring points by their score
+     * (points with higher score will be colored by the max color)
+     */
+    @RuntimeParam
+    double vis_point_gradient_max = 0.7
+
     /**
      * zip PyMol visualizations to save space
      */

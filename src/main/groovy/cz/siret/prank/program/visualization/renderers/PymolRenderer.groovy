@@ -79,7 +79,7 @@ load "$pointsFileRelative", points
 hide nonbonded, points
 show nb_spheres, points
 set sphere_scale, 0.2, points
-cmd.spectrum("b", "green_red", selection="points", minimum=0, maximum=0.7)
+cmd.spectrum("b", "$params.vis_point_gradient_pymol", selection="points", minimum=0, maximum=$params.vis_point_gradient_max)
 
 
 stored.list=[]
