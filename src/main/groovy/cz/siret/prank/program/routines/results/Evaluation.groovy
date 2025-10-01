@@ -344,12 +344,44 @@ class Evaluation implements Parametrized {
         nonBindingScores.addAll(eval.nonBindingScores)
     }
 
+//===========================================================================================================//
+
+    /**
+     * Top-(n+T) mode: Top-(n+0), Top-(n+2) ...
+     *   n ... number of ligands in given protein
+     *   T ... supplied tolerance
+     */
     double calcSuccessRate(int criteriumIndex, int tolerance) {
+        return _calcSuccessRate(criteriumIndex, tolerance, true)
+    }
+
+    /**
+     * Top-N mode: Top-1, Top-3, ...
+     * without considering number of ligands in the protein
+     */
+    double calcSuccessRateTopN(int criteriumIndex, int topN) {
+        return _calcSuccessRate(criteriumIndex, topN, false)
+    }
+
+    /**
+     *
+     * @param criteriumIndex
+     * @param tolerance
+     * @param topKplusNmode if true, then number of ligands is added to tolerance for each protein
+     * @return
+     */
+    private double _calcSuccessRate(int criteriumIndex, int tolerance, boolean topNplusKmode) {
         int identified = 0
 
         for (LigRow ligRow in ligandRows) {
-            int rankForAssessor = ligRow.ranks[criteriumIndex]
-            if ((rankForAssessor > 0) && (rankForAssessor <= ligRow.ligCount + tolerance)) {
+            int rankForCriterium = ligRow.ranks[criteriumIndex]
+
+            int rowTolerance = tolerance
+            if (topNplusKmode) {
+                rowTolerance += ligRow.ligCount  // Top-(n+T) mode
+            }
+
+            if ((rankForCriterium > 0) && (rankForCriterium <= rowTolerance)) {  // pocked is found and is within tolerance
                 identified += 1
             }
         }
@@ -361,6 +393,12 @@ class Evaluation implements Parametrized {
 
         return res
     }
+
+
+
+
+//===========================================================================================================//
+
 
     double calcSuccessRateProteinCentric(int criteriumIndex, int tolerance) {
         double identified = 0
@@ -382,6 +420,10 @@ class Evaluation implements Parametrized {
 
     double calcSuccessRate(String criteriumName, int tolerance) {
         return calcSuccessRate(criteria.getCriteriumIndexForName(criteriumName), tolerance)
+    }
+
+    double calcSuccessRateTopN(String criteriumName, int topN) {
+        return calcSuccessRateTopN(criteria.getCriteriumIndexForName(criteriumName), topN)
     }
 
     double calcSuccessRateProteinCentric(String criteriumName, int tolerance) {
@@ -618,13 +660,24 @@ class Evaluation implements Parametrized {
         m.DCC_12_0 = calcSuccessRate("DCC_12",0)
         m.DCC_12_2 = calcSuccessRate("DCC_12",2)
 
+        m.DCC_4_T1 = calcSuccessRateTopN("DCC_4",1)
+        m.DCC_4_T3 = calcSuccessRateTopN("DCC_4",3)
+        m.DCC_4_T5 = calcSuccessRateTopN("DCC_4",5)
+        m.DCC_4_T7 = calcSuccessRateTopN("DCC_4",7)
+
         m.DCC_10_0_PC = calcSuccessRateProteinCentric("DCC_10", 0)
         m.DCC_10_2_PC = calcSuccessRateProteinCentric("DCC_10", 2)
 
-        m.DSOR_01_0 = calcSuccessRate("DSO_0.1",0)
-        m.DSOR_01_2 = calcSuccessRate("DSO_0.1",2)
+        m.DSO_02_0 = calcSuccessRate("DSO_0.2",0)
+        m.DSO_02_2 = calcSuccessRate("DSO_0.2",2)
+        m.DSO_02_4 = calcSuccessRate("DSO_0.2",4)
         m.DSWO_05_0 = calcSuccessRate("DSWO_0.5",0)
         m.DSWO_05_2 = calcSuccessRate("DSWO_0.5",2)
+
+        m.DSO_02_T1 = calcSuccessRateTopN("DSO_0.2",1)
+        m.DSO_02_T3 = calcSuccessRateTopN("DSO_0.2",3)
+        m.DSO_02_T5 = calcSuccessRateTopN("DSO_0.2",5)
+        m.DSO_02_T7 = calcSuccessRateTopN("DSO_0.2",7)
 
         m.OPT1 = 100*m.DCA_4_0 + 100*m.DCA_4_2 + 50*m.DCA_4_4 + 10*m.AVG_LIGCOV_SUCC + 5*m.AVG_DSO_SUCC
         m.OPT2 = 100*m.DCA_4_0_PC + 50*m.DCA_4_2_PC + 5*m.AVG_LIGCOV_SUCC + 3*m.AVG_DSO_SUCC
@@ -863,7 +916,7 @@ class Evaluation implements Parametrized {
         double avgMaxHalfPointScore
 
         List<Integer> atomIds
-        List<Integer> ranks // of identified pocket for given criterion (-1=not identified)
+        List<Integer> ranks // of identified pocket for given criterion starting with 1 (-1 = not identified)
     }
 
     static class PocketRow {

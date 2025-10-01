@@ -11,6 +11,8 @@ import java.util.function.Function
 
 /**
  * discretized surface overlap ratio (similar to DeepSite DVO criterion)
+ * Defined as Jaccard/Tanimoto coefficient of SAS points of ligand and pocket.
+ *
  * |intersection|/|union| of SAS points induced by ligand and defined by pocket
  *
  * TODO unfinished
