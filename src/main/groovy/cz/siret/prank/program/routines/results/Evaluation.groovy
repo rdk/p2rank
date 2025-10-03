@@ -668,21 +668,25 @@ class Evaluation implements Parametrized {
         m.DCC_10_0_PC = calcSuccessRateProteinCentric("DCC_10", 0)
         m.DCC_10_2_PC = calcSuccessRateProteinCentric("DCC_10", 2)
 
-
-
-
         m.DSO_005_0 = calcSuccessRate("DSO_0.05",0)
         m.DSO_005_2 = calcSuccessRate("DSO_0.05",2)
         m.DSO_005_4 = calcSuccessRate("DSO_0.05",4)
         m.DSO_005_6 = calcSuccessRate("DSO_0.05",6)
+
         m.DSO_01_0 = calcSuccessRate("DSO_0.1",0)
         m.DSO_01_2 = calcSuccessRate("DSO_0.1",2)
         m.DSO_01_4 = calcSuccessRate("DSO_0.1",4)
         m.DSO_01_6 = calcSuccessRate("DSO_0.1",6)
+
         m.DSO_02_0 = calcSuccessRate("DSO_0.2",0)
         m.DSO_02_2 = calcSuccessRate("DSO_0.2",2)
         m.DSO_02_4 = calcSuccessRate("DSO_0.2",4)
         m.DSO_02_6 = calcSuccessRate("DSO_0.2",6)
+
+        m.DPA_1_0 = calcSuccessRate("DPA_1",0)
+        m.DPA_1_2 = calcSuccessRate("DPA_1",2)
+        m.DPA_1_4 = calcSuccessRate("DPA_1",4)
+
         m.DSWO_05_0 = calcSuccessRate("DSWO_0.5",0)
         m.DSWO_05_2 = calcSuccessRate("DSWO_0.5",2)
 
@@ -748,6 +752,10 @@ class Evaluation implements Parametrized {
                 new DSO("DSO_0.1",  0.1),
                 new DSO("DSO_0.1",  0.1),
                 new DSO("DSO_0.05", 0.05),
+
+                new DPA("DPA_1", 1),
+                new DPA("DPA_2", 2),
+                new DPA("DPA_3", 3),
 
                 new DSWO("DSWO_1.0", 1.0, REQUIRED_POCKET_COVERAGE),
                 new DSWO("DSWO_0.9", 0.9, REQUIRED_POCKET_COVERAGE),
