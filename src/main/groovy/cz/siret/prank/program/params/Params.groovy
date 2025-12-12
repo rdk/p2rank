@@ -1480,6 +1480,13 @@ class Params {
     @RuntimeParam
     boolean fpocket_keep_output = true
 
+
+    /**
+     * accepted values: "sas_pts_getcleft_pdb", "grid_pts_getcleft_pdb"
+     */
+    @RuntimeParam // training
+    List<String> extra_output = []
+
 //===========================================================================================================//
 // Derived parameters
 //===========================================================================================================//
