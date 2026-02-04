@@ -15,6 +15,7 @@ import cz.siret.prank.prediction.pockets.PointScoreCalculator
 import cz.siret.prank.prediction.transformation.ScoreTransformer
 import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.params.Parametrized
+import cz.siret.prank.program.routines.predict.output.PointExportData
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
@@ -23,7 +24,7 @@ import static cz.siret.prank.prediction.pockets.PointScoreCalculator.applyPointS
 
 /**
  * rescorer and predictor
- * 
+ *
  * Not thread safe!
  *
  * This is the main rescore used by P2RANK to make predictions based on machine learning
@@ -46,6 +47,9 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
 
     // SAS points with ligandability score for prediction and visualization
     List<LabeledPoint> labeledPoints = new ArrayList<>()
+
+    // Data for point export (null if export disabled)
+    PointExportData exportData = null
 
 
     ModelBasedRescorer(Model model, FeatureExtractor extractorFactory) {
@@ -87,6 +91,11 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
 
             // classification
             double[] scores = instancePredictor.predictBatch(vectors)
+
+            // Capture export data if enabled
+            if (params.export_points) {
+                exportData = PointExportData.create(labeledPoints, vectors, extractor.vectorHeader)
+            }
 
             // TODO refactor: use ModelBasedPointLabeler instead of this loop
             for (int i=0; i!=n_points; ++i) {
@@ -136,8 +145,17 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
         // pocket score transformers
         ScoreTransformer probaTpTransformer = ScoreTransformer.load(params.probatp_transformer)
 
+        // Initialize export builder if enabled (for rescore mode, exports pocket points only)
+        boolean doExport = params.export_points
+        PointExportData.Builder exportBuilder = null
+
         for (Pocket pocket : prediction.pockets) {
             FeatureExtractor extractor = proteinExtractor.createInstanceForPocket(pocket)
+
+            // Initialize export builder with header from first extractor
+            if (doExport && exportBuilder == null) {
+                exportBuilder = PointExportData.builder(extractor.vectorHeader)
+            }
 
             double sum = 0
             double rawSum = 0
@@ -158,7 +176,13 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
                     stats.addPrediction(observed, predicted, pointScore)
                 }
 
-                pocketLabeledPoints.add(new LabeledPoint(point, observed, predicted, pointScore))
+                LabeledPoint labeledPoint = new LabeledPoint(point, observed, predicted, pointScore)
+                pocketLabeledPoints.add(labeledPoint)
+
+                // Capture export data
+                if (doExport) {
+                    exportBuilder.add(labeledPoint, vector)
+                }
 
                 sum += calculator.transformScore(pointScore)
 
@@ -181,10 +205,14 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
             }
         }
 
+        // Finalize export data
+        if (doExport && exportBuilder != null) {
+            exportData = exportBuilder.build()
+        }
     }
 
     ClassifierStats getStats() {
         return stats
     }
-    
+
 }

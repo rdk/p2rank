@@ -14,6 +14,7 @@ import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.params.Params
 import cz.siret.prank.program.routines.Routine
 import cz.siret.prank.program.routines.predict.output.GetcleftOutputCalculator
+import cz.siret.prank.program.routines.predict.output.PointsExporter
 import cz.siret.prank.program.routines.results.PredictResults
 import cz.siret.prank.program.visualization.PredictionVisualizer
 import cz.siret.prank.utils.Futils
@@ -149,6 +150,8 @@ class PredictPocketsRoutine extends Routine {
                     writeFile "$outdir/${item.label}_residues.csv", pair.prediction.residueLabelings.toCSV()
                 }
 
+                // Export SAS points with feature vectors and scores
+                PointsExporter.tryExportPoints(rescorer.exportData, outdir, item.label)
 
                 if (params.extra_output.contains("sas_pts_getcleft_pdb")) {
                     new GetcleftOutputCalculator().generateGetcleftSasPdbFiles(pair.prediction, outdir)

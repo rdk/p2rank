@@ -12,6 +12,7 @@ import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.routines.Routine
 import cz.siret.prank.program.routines.predict.external.FpocketRunner
+import cz.siret.prank.program.routines.predict.output.PointsExporter
 import cz.siret.prank.program.visualization.PredictionVisualizer
 import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
@@ -130,6 +131,9 @@ class RescorePocketsRoutine extends Routine {
                 //    String resf = "$predDir/${item.label}_residues.csv"
                 //    writeFile(resf, pair.prediction.residueLabelings.toCSV())
                 //}
+
+                // Export SAS points with feature vectors and scores (pocket points only in rescore mode)
+                PointsExporter.tryExportPoints(rescorer.exportData, outdir, item.label)
             }
 
             if (produceVisualizations) {

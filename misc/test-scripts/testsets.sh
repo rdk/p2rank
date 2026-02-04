@@ -106,6 +106,11 @@ quick() {
     test ./prank.sh ploop -t fpocket.ds -e test.ds -loop 1 -fail_fast 1 -r_generate_plots 0 -feature_filters '((-chem.*),(-chem.*,chem.atoms),(protrusion.*,bfactor.*))' -out_subdir TEST/TESTS
     # test different tessellation
     test ./prank.sh traineval -t fpocket.ds -e test.ds -loop 1 -fail_fast 1 -tessellation 1 -train_tessellation 3 -out_subdir TEST/TESTS
+
+    # test export_points feature
+    test ./prank.sh predict -f distro/test_data/1fbl.pdb                        -export_points 1 -export_points_format csv     -out_subdir TEST/TESTS
+    test ./prank.sh predict -f distro/test_data/1fbl.pdb                        -export_points 1 -export_points_format csv.gz  -out_subdir TEST/TESTS
+
 }
 
 quick_train() {
@@ -388,7 +393,25 @@ transform() {
   test ./prank.sh transform reduce-to-chains  -f distro/test_data/1fbl.cif     -chains A    -out_format keep
   test ./prank.sh transform reduce-to-chains  -f distro/test_data/1fbl.cif.gz  -chains A    -out_format pdb.gz
   test ./prank.sh transform reduce-to-chains  -f distro/test_data/1fbl.pdb.gz  -chains A,B  -out_format cif
-  
+
+}
+
+export_points() {
+
+    title EXPORT POINTS FEATURE
+
+    # predict mode - all formats
+    test ./prank.sh predict -f distro/test_data/1fbl.pdb -c config/test-default -export_points 1 -export_points_format csv     -out_subdir TEST/EXPORT_POINTS
+    test ./prank.sh predict -f distro/test_data/1fbl.pdb -c config/test-default -export_points 1 -export_points_format csv.gz  -out_subdir TEST/EXPORT_POINTS
+    test ./prank.sh predict -f distro/test_data/1fbl.pdb -c config/test-default -export_points 1 -export_points_format csv.zst -out_subdir TEST/EXPORT_POINTS
+
+    # predict on dataset
+    test ./prank.sh predict coach420.ds                  -c config/test-default -export_points 1 -export_points_format csv     -out_subdir TEST/EXPORT_POINTS
+
+    # rescore mode (exports pocket points only)
+    test ./prank.sh rescore chen11-fpocket.ds            -c config/test-default -export_points 1 -export_points_format csv.gz  -out_subdir TEST/EXPORT_POINTS
+    test ./prank.sh rescore joined-fpocket.ds            -c config/test-default -export_points 1 -export_points_format csv.zst -out_subdir TEST/EXPORT_POINTS
+
 }
 
 classifiers() {
@@ -565,6 +588,7 @@ all() {
     eval_ploop
     analyze
     transform
+    export_points
     speed
 }
 
