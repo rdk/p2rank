@@ -6,13 +6,17 @@ import groovy.transform.CompileStatic
 
 /**
  * Encapsulates data needed for exporting SAS points with their feature vectors and scores.
+ * Implements TableData for generic export via TableExporter.
  */
 @CompileStatic
-class PointExportData {
+class PointExportData implements TableData {
 
     final List<LabeledPoint> labeledPoints
     final List<FeatureVector> featureVectors
     final List<String> featureHeader
+
+    /** Cached full header: [x, y, z, score, ...featureHeader] */
+    private List<String> cachedHeader
 
     private PointExportData(List<LabeledPoint> labeledPoints,
                             List<FeatureVector> featureVectors,
@@ -22,9 +26,44 @@ class PointExportData {
         this.featureHeader = featureHeader
     }
 
-    int size() {
+    // --- TableData Implementation ---
+
+    @Override
+    List<String> getHeader() {
+        if (cachedHeader == null) {
+            cachedHeader = ["x", "y", "z", "score"] + featureHeader
+        }
+        return cachedHeader
+    }
+
+    @Override
+    int getRowCount() {
         return labeledPoints.size()
     }
+
+    @Override
+    double[] getRow(int index) {
+        LabeledPoint lp = labeledPoints.get(index)
+        double[] coords = lp.getCoords()
+        double[] features = featureVectors.get(index).getArray()
+
+        double[] row = new double[4 + features.length]
+        row[0] = coords[0]
+        row[1] = coords[1]
+        row[2] = coords[2]
+        row[3] = lp.score
+        System.arraycopy(features, 0, row, 4, features.length)
+        return row
+    }
+
+    // --- Convenience ---
+
+    /** Alias for getRowCount() for backward compatibility */
+    int size() {
+        return getRowCount()
+    }
+
+    // --- Factory Methods ---
 
     /**
      * Creates export data from pre-collected lists.

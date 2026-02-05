@@ -108,6 +108,9 @@ test {
 
     // set heap size for the test JVM(s)
     maxHeapSize = "2g"
+
+    // required for Apache Arrow memory access on Java 17+
+    jvmArgs '--add-opens=java.base/java.nio=ALL-UNNAMED'
     
 
     inputs.dir "$distroDir/test_data"
@@ -183,6 +186,9 @@ dependencies {
     implementation 'com.github.luben:zstd-jni:1.5.7-6'
     implementation 'com.github.dpaukov:combinatoricslib3:3.4.0'
     implementation 'us.ihmc:euclid:0.22.5'
+
+    implementation 'org.apache.arrow:arrow-vector:18.1.0'
+    implementation 'org.apache.arrow:arrow-memory-netty:18.1.0'
 
     implementation 'org.slf4j:slf4j-api:2.0.17'
     implementation 'org.slf4j:jul-to-slf4j:2.0.17'         // for netlib logging messages

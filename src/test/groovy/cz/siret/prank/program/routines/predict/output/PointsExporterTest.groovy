@@ -116,7 +116,47 @@ class PointsExporterTest {
 
         PointsExporter.exportPoints(data, tempDir.toString(), "fallback")
 
-        assertTrue(new File("$tempDir/fallback_points.csv").exists())
+        // Unknown format gets the specified extension but CSV content
+        def file = new File("$tempDir/fallback_points.parquet")
+        assertTrue(file.exists())
+        def content = file.text
+        assertTrue(content.startsWith("x,y,z,score,f1"))
+    }
+
+    @Test
+    void supportsArrowFormat() {
+        Params.inst.export_points_format = "arrow"
+        def data = exportData([point(1, 2, 3, 0.5)], [vector(0.1, 0.2)], ["f1", "f2"])
+
+        PointsExporter.exportPoints(data, tempDir.toString(), "arrow_test")
+
+        def arrowFile = new File("$tempDir/arrow_test_points.arrow")
+        assertTrue(arrowFile.exists())
+        assertTrue(arrowFile.length() > 0)
+    }
+
+    @Test
+    void supportsCompressedArrowGzip() {
+        Params.inst.export_points_format = "arrow.gz"
+        def data = exportData([point(1, 2, 3, 0.5)], [vector(0.1)], ["f1"])
+
+        PointsExporter.exportPoints(data, tempDir.toString(), "arrow_gz")
+
+        def file = new File("$tempDir/arrow_gz_points.arrow.gz")
+        assertTrue(file.exists())
+        assertTrue(file.length() > 0)
+    }
+
+    @Test
+    void supportsCompressedArrowZstd() {
+        Params.inst.export_points_format = "arrow.zst"
+        def data = exportData([point(1, 2, 3, 0.5)], [vector(0.1)], ["f1"])
+
+        PointsExporter.exportPoints(data, tempDir.toString(), "arrow_zst")
+
+        def file = new File("$tempDir/arrow_zst_points.arrow.zst")
+        assertTrue(file.exists())
+        assertTrue(file.length() > 0)
     }
 
     // --- Helpers ---

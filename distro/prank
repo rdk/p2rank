@@ -6,6 +6,13 @@
 export JAVA_OPTS="$JAVA_OPTS -Xmx2048m"
 
 #
+# Required for Apache Arrow memory access on Java 17+
+#
+export JAVA_OPTS="$JAVA_OPTS --add-opens=java.base/java.nio=ALL-UNNAMED"
+export JAVA_OPTS="$JAVA_OPTS --add-opens=java.base/sun.nio.ch=ALL-UNNAMED"
+export JAVA_OPTS="$JAVA_OPTS --add-opens=java.base/jdk.internal.misc=ALL-UNNAMED"
+
+#
 # Set this to change the Java installation that will be used to run the program:
 #
 #JAVA_HOME="/opt/java8"
