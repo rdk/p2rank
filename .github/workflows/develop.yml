@@ -6,16 +6,21 @@ on:
   pull_request:
     branches: [ develop ]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 
 jobs:
   build: 
 
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
 
     strategy:
       matrix:
         os: [ ubuntu-latest, windows-latest, macos-latest ]
-        java-version: [ '17', '20', '21', '22', '23', '24', '25' ]
+        java-version: [ '17', '21', '23', '24', '25' ]
 
     steps:
     - uses: actions/checkout@v5
@@ -24,19 +29,10 @@ jobs:
       with:
         java-version: ${{ matrix.java-version }}
         distribution: 'temurin'
-
-    - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v5
-      with:
-        build-scan-publish: true
-        build-scan-terms-of-use-url: "https://gradle.com/terms-of-service"
-        build-scan-terms-of-use-agree: "yes"
+        cache: 'gradle'
 
     - name: Check dependencies
       run: ./gradlew dependencies
 
-    - name: Build with Gradle
-      run: ./gradlew assemble
-      
-    - name: Run unit tests
-      run: ./gradlew test
+    - name: Build and test
+      run: ./gradlew build
