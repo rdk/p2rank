@@ -189,6 +189,7 @@ dependencies {
 
     implementation 'org.apache.arrow:arrow-vector:18.1.0'
     implementation 'org.apache.arrow:arrow-memory-netty:18.1.0'
+    implementation 'blue.strategic.parquet:parquet-floor:1.58'
 
     implementation 'org.slf4j:slf4j-api:2.0.17'
     implementation 'org.slf4j:jul-to-slf4j:2.0.17'         // for netlib logging messages

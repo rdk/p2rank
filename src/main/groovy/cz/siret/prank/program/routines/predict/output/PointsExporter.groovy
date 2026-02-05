@@ -8,7 +8,7 @@ import groovy.util.logging.Slf4j
  * Exports SAS points with their feature vectors and predicted scores.
  * Delegates to TableExporter for format-specific logic.
  *
- * Supported formats: csv, csv.gz, csv.zst, arrow, arrow.gz, arrow.zst
+ * Supported formats: csv, csv.gz, csv.zst, arrow, arrow.gz, arrow.zst, parquet
  */
 @Slf4j
 @CompileStatic
@@ -37,9 +37,11 @@ class PointsExporter {
         String format = Params.inst.export_points_format
         String filepath = "${outdir}/${label}_points.${format}"
 
-        log.info("Exporting {} points to {}", data.rowCount, filepath)
+        long start = System.currentTimeMillis()
         TableExporter.export(data, filepath, format)
-        log.info("Points export completed: {}", filepath)
+        long elapsed = System.currentTimeMillis() - start
+
+        log.info("Exported {} points to {} ({}ms)", data.rowCount, filepath, elapsed)
     }
 
 }

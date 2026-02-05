@@ -668,7 +668,7 @@ class Params {
      *
      * relevant only if export_points=true
      *
-     * Available options: "csv", "csv.gz", "csv.zst", "arrow", "arrow.gz", "arrow.zst"
+     * Available options: "csv", "csv.gz", "csv.zst", "arrow", "arrow.gz", "arrow.zst", "parquet"
      */
     @RuntimeParam
     String export_points_format = "csv"

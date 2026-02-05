@@ -111,16 +111,34 @@ class PointsExporterTest {
 
     @Test
     void fallsBackToCsvForUnknownFormat() {
-        Params.inst.export_points_format = "parquet"
+        Params.inst.export_points_format = "xyz123"
         def data = exportData([point(1, 2, 3, 0.5)], [vector(0.1)], ["f1"])
 
         PointsExporter.exportPoints(data, tempDir.toString(), "fallback")
 
         // Unknown format gets the specified extension but CSV content
-        def file = new File("$tempDir/fallback_points.parquet")
+        def file = new File("$tempDir/fallback_points.xyz123")
         assertTrue(file.exists())
         def content = file.text
         assertTrue(content.startsWith("x,y,z,score,f1"))
+    }
+
+    @Test
+    void supportsParquetFormat() {
+        Params.inst.export_points_format = "parquet"
+        def data = exportData([point(1, 2, 3, 0.5)], [vector(0.1, 0.2)], ["f1", "f2"])
+
+        PointsExporter.exportPoints(data, tempDir.toString(), "parquet_test")
+
+        def parquetFile = new File("$tempDir/parquet_test_points.parquet")
+        assertTrue(parquetFile.exists())
+        assertTrue(parquetFile.length() > 0)
+        // Verify Parquet magic bytes (PAR1)
+        def bytes = parquetFile.bytes
+        assertEquals((byte)0x50, bytes[0])  // P
+        assertEquals((byte)0x41, bytes[1])  // A
+        assertEquals((byte)0x52, bytes[2])  // R
+        assertEquals((byte)0x31, bytes[3])  // 1
     }
 
     @Test

@@ -21,6 +21,10 @@ class PointExportData implements TableData {
     private PointExportData(List<LabeledPoint> labeledPoints,
                             List<FeatureVector> featureVectors,
                             List<String> featureHeader) {
+        if (labeledPoints.size() != featureVectors.size()) {
+            throw new IllegalArgumentException(
+                "Size mismatch: ${labeledPoints.size()} points but ${featureVectors.size()} feature vectors")
+        }
         this.labeledPoints = labeledPoints
         this.featureVectors = featureVectors
         this.featureHeader = featureHeader
@@ -56,9 +60,39 @@ class PointExportData implements TableData {
         return row
     }
 
+    /**
+     * Optimized column access for columnar formats (Arrow, Parquet).
+     * Avoids per-row array allocation overhead.
+     */
+    @Override
+    double[] getColumn(int colIndex) {
+        int n = labeledPoints.size()
+        double[] column = new double[n]
+
+        if (colIndex < 3) {
+            // Coordinate columns: x, y, z
+            for (int i = 0; i < n; i++) {
+                column[i] = labeledPoints.get(i).getCoords()[colIndex]
+            }
+        } else if (colIndex == 3) {
+            // Score column
+            for (int i = 0; i < n; i++) {
+                column[i] = labeledPoints.get(i).score
+            }
+        } else {
+            // Feature columns
+            int featureIndex = colIndex - 4
+            for (int i = 0; i < n; i++) {
+                column[i] = featureVectors.get(i).getArray()[featureIndex]
+            }
+        }
+        return column
+    }
+
     // --- Convenience ---
 
-    /** Alias for getRowCount() for backward compatibility */
+    /** @deprecated Use {@link #getRowCount()} instead */
+    @Deprecated
     int size() {
         return getRowCount()
     }

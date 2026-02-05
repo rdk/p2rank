@@ -1,5 +1,8 @@
 package cz.siret.prank.program.routines.predict.output
 
+import blue.strategic.parquet.Dehydrator
+import blue.strategic.parquet.ParquetWriter
+import blue.strategic.parquet.ValueWriter
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.apache.arrow.memory.RootAllocator
@@ -11,28 +14,44 @@ import org.apache.arrow.vector.types.pojo.ArrowType
 import org.apache.arrow.vector.types.pojo.Field
 import org.apache.arrow.vector.types.pojo.Schema
 import org.apache.commons.compress.compressors.zstandard.ZstdCompressorOutputStream
+import org.apache.parquet.schema.MessageType
+import org.apache.parquet.schema.PrimitiveType
+import org.apache.parquet.schema.Types
 
 import java.nio.channels.Channels
+import java.util.zip.Deflater
 import java.util.zip.GZIPOutputStream
 
 import static cz.siret.prank.utils.Formatter.format
 
 /**
- * Exports tabular double data to CSV or Arrow format with optional compression.
+ * Exports tabular double data to CSV, Arrow, or Parquet format with optional compression.
  *
- * Supported format strings: csv, csv.gz, csv.zst, arrow, arrow.gz, arrow.zst
+ * Supported format strings:
+ *   CSV: csv, csv.gz, csv.zst
+ *   Arrow: arrow, arrow.gz, arrow.zst
+ *   Parquet: parquet (uses SNAPPY compression internally)
  */
 @Slf4j
 @CompileStatic
 class TableExporter {
 
     /** Supported base formats */
-    enum Format { CSV, ARROW }
+    enum Format { CSV, ARROW, PARQUET }
 
-    /** Supported compression methods */
+    /** Supported compression methods (for CSV and Arrow) */
     enum Compression { NONE, GZIP, ZSTD }
 
     private static final int BUFFER_SIZE = 65536
+
+    /** GZIP compression level (1-9, where 1=fastest, 9=best compression, 6=default) */
+    private static final int GZIP_LEVEL = Deflater.DEFAULT_COMPRESSION
+
+    /** Zstd compression level (1-22, where 1=fastest, 22=best compression, 3=default) */
+    private static final int ZSTD_LEVEL = 16
+
+    /** Decimal places for formatting doubles in CSV output */
+    private static final int CSV_DECIMAL_PLACES = 7
 
     private TableExporter() {}
 
@@ -41,7 +60,7 @@ class TableExporter {
      *
      * @param data      the table data to export
      * @param filepath  output file path
-     * @param format    format string: "csv", "csv.gz", "csv.zst", "arrow", "arrow.gz", "arrow.zst"
+     * @param format    format string: "csv", "csv.gz", "csv.zst", "arrow", "arrow.gz", "arrow.zst", "parquet"
      */
     static void export(TableData data, String filepath, String format) {
         if (data == null) {
@@ -49,12 +68,18 @@ class TableExporter {
         }
 
         Format baseFormat = parseBaseFormat(format)
-        Compression compression = parseCompression(format)
 
-        if (baseFormat == Format.ARROW) {
-            writeArrow(data, filepath, compression)
-        } else {
-            writeCsv(data, filepath, compression)
+        switch (baseFormat) {
+            case Format.PARQUET:
+                writeParquet(data, filepath)
+                break
+            case Format.ARROW:
+                Compression compression = parseCompression(format)
+                writeArrow(data, filepath, compression)
+                break
+            default:
+                Compression compression = parseCompression(format)
+                writeCsv(data, filepath, compression)
         }
     }
 
@@ -63,6 +88,7 @@ class TableExporter {
     private static Format parseBaseFormat(String format) {
         if (format == null) return Format.CSV
         String lower = format.toLowerCase()
+        if (lower.startsWith("parquet")) return Format.PARQUET
         if (lower.startsWith("arrow")) return Format.ARROW
         if (lower.startsWith("csv")) return Format.CSV
         log.warn("Unknown format '{}', falling back to CSV", format)
@@ -88,7 +114,7 @@ class TableExporter {
                 if (c > 0) writer.print(",")
                 writer.print(header.get(c))
             }
-            writer.println()
+            writer.print("\n")  // Explicit newline for cross-platform consistency
 
             // Data rows
             int rowCount = data.getRowCount()
@@ -98,7 +124,7 @@ class TableExporter {
                     if (c > 0) writer.print(",")
                     writer.print(formatDouble(row[c]))
                 }
-                writer.println()
+                writer.print("\n")
             }
             writer.flush()
         }
@@ -135,19 +161,56 @@ class TableExporter {
         int rowCount = data.getRowCount()
         int colCount = header.size()
 
-        // Get all vectors
-        List<Float8Vector> vectors = header.collect { String name ->
-            (Float8Vector) root.getVector(name)
-        }
-
-        // Populate row by row
-        for (int i = 0; i < rowCount; i++) {
-            double[] row = data.getRow(i)
-            for (int c = 0; c < colCount; c++) {
-                vectors.get(c).setSafe(i, row[c])
+        // Populate column by column (more efficient for columnar format)
+        for (int c = 0; c < colCount; c++) {
+            Float8Vector vector = (Float8Vector) root.getVector(header.get(c))
+            double[] column = data.getColumn(c)
+            for (int i = 0; i < rowCount; i++) {
+                vector.setSafe(i, column[i])
             }
         }
         root.setRowCount(rowCount)
+    }
+
+    // --- Parquet Writer (uses SNAPPY compression) ---
+
+    private static void writeParquet(TableData data, String filepath) {
+        MessageType schema = buildParquetSchema(data.getHeader())
+        File outputFile = new File(filepath)
+
+        List<String> header = data.getHeader()
+        Dehydrator<double[]> dehydrator = new RowDehydrator(header)
+
+        ParquetWriter.writeFile(schema, outputFile, dehydrator).withCloseable { ParquetWriter<double[]> writer ->
+            int rowCount = data.getRowCount()
+            for (int i = 0; i < rowCount; i++) {
+                writer.write(data.getRow(i))
+            }
+        }
+    }
+
+    private static MessageType buildParquetSchema(List<String> header) {
+        Types.MessageTypeBuilder builder = Types.buildMessage()
+        for (String colName : header) {
+            builder.required(PrimitiveType.PrimitiveTypeName.DOUBLE).named(colName)
+        }
+        return builder.named("table")
+    }
+
+    @CompileStatic
+    private static class RowDehydrator implements Dehydrator<double[]> {
+        private final List<String> header
+
+        RowDehydrator(List<String> header) {
+            this.header = header
+        }
+
+        @Override
+        void dehydrate(double[] row, ValueWriter valueWriter) {
+            for (int i = 0; i < header.size(); i++) {
+                valueWriter.write(header.get(i), row[i])
+            }
+        }
     }
 
     // --- I/O Helpers ---
@@ -157,9 +220,9 @@ class TableExporter {
         try {
             switch (compression) {
                 case Compression.GZIP:
-                    return new GZIPOutputStream(base, BUFFER_SIZE)
+                    return new ConfigurableGzipOutputStream(base, BUFFER_SIZE, GZIP_LEVEL)
                 case Compression.ZSTD:
-                    return new ZstdCompressorOutputStream(base)
+                    return new ZstdCompressorOutputStream(base, ZSTD_LEVEL)
                 default:
                     return base
             }
@@ -169,8 +232,18 @@ class TableExporter {
         }
     }
 
+    /**
+     * GZIPOutputStream with configurable compression level.
+     */
+    private static class ConfigurableGzipOutputStream extends GZIPOutputStream {
+        ConfigurableGzipOutputStream(OutputStream out, int bufferSize, int level) throws IOException {
+            super(out, bufferSize)
+            this.@def.setLevel(level)  // 'def' is a Groovy keyword, use @ to access field directly
+        }
+    }
+
     private static String formatDouble(double d) {
-        return format(d, 7)
+        return format(d, CSV_DECIMAL_PLACES)
     }
 
 }

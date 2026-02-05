@@ -8,6 +8,7 @@ import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import java.util.zip.GZIPInputStream
 
+import static cz.siret.prank.program.routines.predict.output.ArrayTableData.row
 import static org.junit.jupiter.api.Assertions.*
 
 @CompileStatic
@@ -18,7 +19,7 @@ class TableExporterTest {
 
     @Test
     void exportsCsvWithHeaderAndData() {
-        def data = table(["a", "b"], [row(1.0d, 2.0d), row(3.0d, 4.0d)])
+        def data = ArrayTableData.of(["a", "b"], [row(1.0d, 2.0d), row(3.0d, 4.0d)])
         def filepath = "$tempDir/test.csv"
 
         TableExporter.export(data, filepath, "csv")
@@ -32,7 +33,7 @@ class TableExporterTest {
 
     @Test
     void exportsCsvGzipCompressed() {
-        def data = table(["col"], [row(1.5d)])
+        def data = ArrayTableData.of(["col"], [row(1.5d)])
         def filepath = "$tempDir/test.csv.gz"
 
         TableExporter.export(data, filepath, "csv.gz")
@@ -45,7 +46,7 @@ class TableExporterTest {
 
     @Test
     void exportsCsvZstdCompressed() {
-        def data = table(["col"], [row(2.5d)])
+        def data = ArrayTableData.of(["col"], [row(2.5d)])
         def filepath = "$tempDir/test.csv.zst"
 
         TableExporter.export(data, filepath, "csv.zst")
@@ -58,7 +59,7 @@ class TableExporterTest {
 
     @Test
     void exportsArrowFormat() {
-        def data = table(["x", "y"], [row(1.0d, 2.0d), row(3.0d, 4.0d)])
+        def data = ArrayTableData.of(["x", "y"], [row(1.0d, 2.0d), row(3.0d, 4.0d)])
         def filepath = "$tempDir/test.arrow"
 
         TableExporter.export(data, filepath, "arrow")
@@ -70,7 +71,7 @@ class TableExporterTest {
 
     @Test
     void exportsArrowGzipCompressed() {
-        def data = table(["val"], [row(1.0d)])
+        def data = ArrayTableData.of(["val"], [row(1.0d)])
         def filepath = "$tempDir/test.arrow.gz"
 
         TableExporter.export(data, filepath, "arrow.gz")
@@ -82,7 +83,7 @@ class TableExporterTest {
 
     @Test
     void exportsArrowZstdCompressed() {
-        def data = table(["val"], [row(1.0d)])
+        def data = ArrayTableData.of(["val"], [row(1.0d)])
         def filepath = "$tempDir/test.arrow.zst"
 
         TableExporter.export(data, filepath, "arrow.zst")
@@ -101,7 +102,7 @@ class TableExporterTest {
 
     @Test
     void handlesEmptyTable() {
-        def data = table(["a", "b"], [])
+        def data = ArrayTableData.of(["a", "b"], [])
         def filepath = "$tempDir/empty.csv"
 
         TableExporter.export(data, filepath, "csv")
@@ -113,7 +114,7 @@ class TableExporterTest {
 
     @Test
     void preservesNumericPrecision() {
-        def data = table(["value"], [row(0.1234567d)])
+        def data = ArrayTableData.of(["value"], [row(0.1234567d)])
         def filepath = "$tempDir/precision.csv"
 
         TableExporter.export(data, filepath, "csv")
@@ -122,34 +123,33 @@ class TableExporterTest {
         assertTrue(content.contains("0.1234567"))
     }
 
-    // --- Helpers ---
+    @Test
+    void exportsParquetFormat() {
+        def data = ArrayTableData.of(["x", "y"], [row(1.0d, 2.0d), row(3.0d, 4.0d)])
+        def filepath = "$tempDir/test.parquet"
 
-    private static TableData table(List<String> header, List<double[]> rows) {
-        new SimpleTableData(header, rows)
+        TableExporter.export(data, filepath, "parquet")
+
+        def file = new File(filepath)
+        assertTrue(file.exists())
+        assertTrue(file.length() > 0)
+        // Verify Parquet magic bytes (PAR1)
+        def bytes = file.bytes
+        assertEquals((byte)0x50, bytes[0])  // P
+        assertEquals((byte)0x41, bytes[1])  // A
+        assertEquals((byte)0x52, bytes[2])  // R
+        assertEquals((byte)0x31, bytes[3])  // 1
     }
 
-    private static double[] row(double... values) {
-        return values
-    }
+    @Test
+    void parquetHandlesEmptyTable() {
+        def data = ArrayTableData.of(["a", "b"], [])
+        def filepath = "$tempDir/empty.parquet"
 
-    @CompileStatic
-    private static class SimpleTableData implements TableData {
-        final List<String> header
-        final List<double[]> rows
+        TableExporter.export(data, filepath, "parquet")
 
-        SimpleTableData(List<String> header, List<double[]> rows) {
-            this.header = header
-            this.rows = rows
-        }
-
-        @Override
-        List<String> getHeader() { header }
-
-        @Override
-        int getRowCount() { rows.size() }
-
-        @Override
-        double[] getRow(int index) { rows[index] }
+        def file = new File(filepath)
+        assertTrue(file.exists())
     }
 
 }

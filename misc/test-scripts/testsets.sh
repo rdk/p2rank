@@ -108,8 +108,8 @@ quick() {
     test ./prank.sh traineval -t fpocket.ds -e test.ds -loop 1 -fail_fast 1 -tessellation 1 -train_tessellation 3 -out_subdir TEST/TESTS
 
     # test export_points feature
-    test ./prank.sh predict -f distro/test_data/1fbl.pdb -export_points 1 -export_points_format csv       -out_subdir TEST/TESTS
-    test ./prank.sh predict -f distro/test_data/1fbl.pdb -export_points 1 -export_points_format arrow     -out_subdir TEST/TESTS
+    test ./prank.sh predict -f distro/test_data/1fbl.pdb -export_points 1 -export_points_format csv.gz     -out_subdir TEST/TESTS
+
 }
 
 quick_train() {
@@ -399,20 +399,20 @@ export_points() {
 
     title EXPORT POINTS FEATURE
 
-    # predict mode - CSV formats
     test ./prank.sh predict -f distro/test_data/1fbl.pdb -export_points 1 -export_points_format csv     -out_subdir TEST/EXPORT_POINTS
     test ./prank.sh predict -f distro/test_data/1fbl.pdb -export_points 1 -export_points_format csv.gz  -out_subdir TEST/EXPORT_POINTS
     test ./prank.sh predict -f distro/test_data/1fbl.pdb -export_points 1 -export_points_format csv.zst -out_subdir TEST/EXPORT_POINTS
 
-    # predict mode - Arrow formats
     test ./prank.sh predict -f distro/test_data/1fbl.pdb -export_points 1 -export_points_format arrow     -out_subdir TEST/EXPORT_POINTS
     test ./prank.sh predict -f distro/test_data/1fbl.pdb -export_points 1 -export_points_format arrow.gz  -out_subdir TEST/EXPORT_POINTS
     test ./prank.sh predict -f distro/test_data/1fbl.pdb -export_points 1 -export_points_format arrow.zst -out_subdir TEST/EXPORT_POINTS
 
+    test ./prank.sh predict -f distro/test_data/1fbl.pdb -export_points 1 -export_points_format parquet -out_subdir TEST/EXPORT_POINTS
+
     # predict/rescore on datasets
     test ./prank.sh predict chen11.ds            -c config/test-default  -export_points 1 -export_points_format arrow.zst -out_subdir TEST/EXPORT_POINTS
     test ./prank.sh rescore coach420-fpocket.ds  -c config/test-default  -export_points 1 -export_points_format csv.zst   -out_subdir TEST/EXPORT_POINTS
-    test ./prank.sh rescore chen11-fpocket.ds    -c config/test-default  -export_points 1 -export_points_format arrow.zst -out_subdir TEST/EXPORT_POINTS
+    test ./prank.sh rescore chen11-fpocket.ds    -c config/test-default  -export_points 1 -export_points_format parquet   -out_subdir TEST/EXPORT_POINTS
 
 }
 

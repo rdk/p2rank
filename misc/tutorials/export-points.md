@@ -8,6 +8,7 @@ Export SAS points with feature vectors and ligandability scores.
 prank predict -f protein.pdb -export_points 1
 prank predict -f protein.pdb -export_points 1 -export_points_format csv.gz
 prank predict -f protein.pdb -export_points 1 -export_points_format arrow
+prank predict -f protein.pdb -export_points 1 -export_points_format parquet
 prank predict dataset.ds     -export_points 1 -export_points_format arrow.zst
 ```
 
@@ -37,17 +38,29 @@ x,y,z,score,chem.hydrophobic,chem.aromatic,protrusion,...
 | Parameter | Default | Values |
 |-----------|---------|--------|
 | `export_points` | `false` | `true` / `false` |
-| `export_points_format` | `csv` | `csv`, `csv.gz`, `csv.zst`, `arrow`, `arrow.gz`, `arrow.zst` |
+| `export_points_format` | `csv` | `csv`, `csv.gz`, `csv.zst`, `arrow`, `arrow.gz`, `arrow.zst`, `parquet` |
 
-**Arrow format** preserves precision. Theoretically it offers faster loading and lower memory usage compared to CSV. 
+**Arrow format** preserves full double precision. Offers faster loading and lower memory usage compared to CSV.
+
+**Parquet format** is a columnar storage format widely supported by data analysis tools (pandas, polars, DuckDB, Spark). Uses SNAPPY compression internally.
+
+## Format Recommendations
+
+| Use Case | Recommended Format |
+|----------|-------------------|
+| Smallest file size | `csv.zst` or `arrow.zst` |
+| Python/R analysis | `parquet` or `csv.gz` |
+| Streaming/pipes | `arrow` (uncompressed) |
+| Maximum compatibility | `csv` |
 
 ## Notes
 
 - `predict` exports all SAS points; `rescore` exports only pocket points
 - CSV format uses 7 decimal places for all numeric values
-- Arrow uses IPC streaming format with 64-bit floats, allowing direct reading from compressed streams
+- Arrow uses IPC streaming format with 64-bit floats
+- Parquet uses SNAPPY compression (not configurable)
+- Zstd compression uses level 16 for good compression ratio
 - Export is disabled when using `-output_only_stats 1`
-- `.csv.gz` files are often smaller than `.arrow.gz` files in practice
 
 ## Example Analysis
 
@@ -75,4 +88,29 @@ with gzip.open('protein_points.arrow.gz', 'rb') as f:
 import zstandard as zstd
 with open('protein_points.arrow.zst', 'rb') as f:
     df = pa.ipc.open_stream(zstd.ZstdDecompressor().stream_reader(f)).read_pandas()
+~~~
+
+**Python (Parquet):**
+~~~python
+import pandas as pd
+df = pd.read_parquet('protein_points.parquet')
+
+# Or with PyArrow directly
+import pyarrow.parquet as pq
+table = pq.read_table('protein_points.parquet')
+df = table.to_pandas()
+~~~
+
+**Python (Polars):**
+~~~python
+import polars as pl
+
+# Parquet (fastest)
+df = pl.read_parquet('protein_points.parquet')
+
+# CSV with compression
+df = pl.read_csv('protein_points.csv.gz')
+
+# Filter high-scoring points
+high_score = df.filter(pl.col('score') > 0.5)
 ~~~
