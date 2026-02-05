@@ -103,7 +103,8 @@ clean {
 test {
     useJUnitPlatform()
 
-    // Ensure test doesn't run concurrently with distro file operations
+    // Gradle detects overlap: test inputs (distro/test_data, models, config) vs copyDocumentation output (distro/).
+    // mustRunAfter establishes ordering without forcing copyDocumentation to run for local test-only builds.
     mustRunAfter copyDocumentation
 
     // show standard out and standard error of the test JVM(s) on the console
