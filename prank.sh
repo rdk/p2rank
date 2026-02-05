@@ -16,6 +16,11 @@
 export JAVA_OPTS="$JAVA_OPTS"
 export JAVA_OPTS="$JAVA_OPTS $JAVA_LOCALENV_PARAMS"
 
+# Required for Apache Arrow memory access on Java 17+
+export JAVA_OPTS="$JAVA_OPTS --add-opens=java.base/java.nio=ALL-UNNAMED"
+export JAVA_OPTS="$JAVA_OPTS --add-opens=java.base/sun.nio.ch=ALL-UNNAMED"
+export JAVA_OPTS="$JAVA_OPTS --add-opens=java.base/jdk.internal.misc=ALL-UNNAMED"
+
 
 THIS_SCRIPT_DIR_REL_PATH="$( dirname "${BASH_SOURCE[0]}" )"
 export POCKET_RANK_BASE_DIR="$THIS_SCRIPT_DIR_REL_PATH/distro"

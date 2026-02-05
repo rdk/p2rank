@@ -39,7 +39,7 @@ x,y,z,score,chem.hydrophobic,chem.aromatic,protrusion,...
 | `export_points` | `false` | `true` / `false` |
 | `export_points_format` | `csv` | `csv`, `csv.gz`, `csv.zst`, `arrow`, `arrow.gz`, `arrow.zst` |
 
-**Arrow format** is recommended for large datasets. It offers faster loading and lower memory usage compared to CSV.
+**Arrow format** preserves precision. Theoretically it offers faster loading and lower memory usage compared to CSV. 
 
 ## Notes
 
@@ -47,6 +47,7 @@ x,y,z,score,chem.hydrophobic,chem.aromatic,protrusion,...
 - CSV format uses 7 decimal places for all numeric values
 - Arrow uses IPC streaming format with 64-bit floats, allowing direct reading from compressed streams
 - Export is disabled when using `-output_only_stats 1`
+- `.csv.gz` files are often smaller than `.arrow.gz` files in practice
 
 ## Example Analysis
 

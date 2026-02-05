@@ -409,12 +409,10 @@ export_points() {
     test ./prank.sh predict -f distro/test_data/1fbl.pdb -export_points 1 -export_points_format arrow.gz  -out_subdir TEST/EXPORT_POINTS
     test ./prank.sh predict -f distro/test_data/1fbl.pdb -export_points 1 -export_points_format arrow.zst -out_subdir TEST/EXPORT_POINTS
 
-    # predict on dataset
-    test ./prank.sh predict chen11-fpocket.ds            -export_points 1 -export_points_format arrow.zst -out_subdir TEST/EXPORT_POINTS
-
-    # rescore mode (exports pocket points only)
-    test ./prank.sh rescore coach420-fpocket.ds          -export_points 1 -export_points_format csv.zst   -out_subdir TEST/EXPORT_POINTS
-    test ./prank.sh rescore chen11-fpocket.ds            -export_points 1 -export_points_format arrow.zst -out_subdir TEST/EXPORT_POINTS
+    # predict/rescore on datasets
+    test ./prank.sh predict chen11.ds            -c config/test-default  -export_points 1 -export_points_format arrow.zst -out_subdir TEST/EXPORT_POINTS
+    test ./prank.sh rescore coach420-fpocket.ds  -c config/test-default  -export_points 1 -export_points_format csv.zst   -out_subdir TEST/EXPORT_POINTS
+    test ./prank.sh rescore chen11-fpocket.ds    -c config/test-default  -export_points 1 -export_points_format arrow.zst -out_subdir TEST/EXPORT_POINTS
 
 }
 
