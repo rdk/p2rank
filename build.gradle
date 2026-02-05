@@ -103,6 +103,9 @@ clean {
 test {
     useJUnitPlatform()
 
+    // Ensure test doesn't run concurrently with distro file operations
+    mustRunAfter copyDocumentation
+
     // show standard out and standard error of the test JVM(s) on the console
     // testLogging.showStandardStreams = true
 
@@ -111,7 +114,7 @@ test {
 
     // required for Apache Arrow memory access on Java 17+
     jvmArgs '--add-opens=java.base/java.nio=ALL-UNNAMED'
-    
+
 
     inputs.dir "$distroDir/test_data"
     inputs.files("$distroDir/models", "$distroDir/config/default.groovy")
