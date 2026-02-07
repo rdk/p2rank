@@ -1,0 +1,157 @@
+# Amino acid mappings from OpenMM pdbfixer
+# Source: https://github.com/openmm/pdbfixer/blob/master/pdbfixer/pdbfixer.py
+# Format: MODIFIED_CODE,STANDARD_CODE
+#
+# See README.md in this directory for data provenance and modification history.
+
+# Existing P2Rank mappings (minimal mode)
+MSE,MET
+MEN,ASN
+
+# Selenocysteine and selenomethionine
+SEC,CYS
+CSE,CYS
+
+# Modified lysines
+LLP,LYS
+KCX,LYS
+LYZ,LYS
+MLY,LYS
+M3L,LYS
+ALY,LYS
+DM0,LYS
+KPI,LYS
+MLZ,LYS
+
+# Modified arginines
+AGM,ARG
+MMA,ARG
+ARO,ARG
+
+# Phosphorylated residues
+SEP,SER
+TPO,THR
+PTR,TYR
+
+# Methylated residues
+MVA,VAL
+MLE,LEU
+NLE,LEU
+MME,MET
+
+# Modified histidines
+HIC,HIS
+HID,HIS
+HIE,HIS
+HIP,HIS
+HSD,HIS
+HSE,HIS
+HSP,HIS
+
+# Modified cysteines
+CSD,CYS
+CME,CYS
+CAS,CYS
+CSO,CYS
+CSS,CYS
+CSX,CYS
+OCS,CYS
+CSW,CYS
+CCS,CYS
+
+# Hydroxyproline and modified prolines
+HYP,PRO
+4HY,PRO
+
+# Modified tryptophans
+TQP,TRP
+TRO,TRP
+
+# Modified tyrosines
+TYS,TYR
+TPQ,TYR
+
+# Modified phenylalanines
+PHI,PHE
+PHL,PHE
+
+# Modified aspartates
+BHD,ASP
+
+# Modified glutamates
+CGU,GLU
+PCA,GLU
+5HP,GLU
+
+# Modified asparagines
+MHS,ASN
+
+# Modified glutamines
+MEQ,GLN
+MGN,GLN
+
+# Modified alanines
+AYA,ALA
+ABA,ALA
+AIB,ALA
+
+# Modified glycines
+GL3,GLY
+SAR,GLY
+MPQ,GLY
+
+# Modified isoleucines
+IIL,ILE
+
+# Modified threonines
+BMT,THR
+ALO,THR
+
+# Modified serines
+SAC,SER
+OAS,SER
+SVA,SER
+
+# D-amino acids (mirror-image forms)
+DAL,ALA
+DAR,ARG
+DSG,ASN
+DSP,ASP
+DCY,CYS
+DVA,VAL
+DGL,GLU
+DGN,GLN
+DHI,HIS
+DIL,ILE
+DLE,LEU
+DLY,LYS
+DPN,PHE
+DPR,PRO
+DSN,SER
+DTH,THR
+DTR,TRP
+DTY,TYR
+
+# Other modified residues
+MED,MET
+
+# Pyrrolysine
+PYL,LYS
+
+# N-formyl methionine
+FME,MET
+
+# =============================================================================
+# EXCLUDED MAPPINGS (from original pdbfixer, intentionally omitted)
+# =============================================================================
+#
+# ACE (acetyl capping group) - NOT mapped
+#   Original pdbfixer: ACE -> ALA
+#   Reason for exclusion: ACE is an N-terminal capping group (acetyl), not a
+#   modified amino acid. In PDB files, ACE typically appears as a separate
+#   HETATM record representing the acetyl moiety, not as a residue in the
+#   peptide chain. Mapping it to ALA would incorrectly treat capping groups
+#   as alanine residues, potentially affecting pocket predictions near termini.
+#
+# NME (N-methylamide capping group) - NOT in pdbfixer, not added
+#   Similar to ACE, NME is a C-terminal capping group, not an amino acid.

@@ -451,6 +451,22 @@ class Params {
     List<String> positive_def_ligtypes = ["relevant"]
 
     /**
+     * Amino acid mapping mode for non-canonical residues.
+     *
+     * Controls how modified amino acid residue codes (e.g., MSE, LLP, TQP) are mapped
+     * to standard 20 amino acids for feature calculation.
+     *
+     * Available modes:
+     * - "minimal": Only MSE→MET, MEN→ASN (default, backward compatible)
+     * - "pdbfixer": ~100 mappings from OpenMM pdbfixer
+     * - "/path/to/file.csv": Custom mapping file (2-column CSV: FROM,TO)
+     *
+     * Example: aa_mapping = "pdbfixer"
+     */
+    @RuntimeParam
+    String aa_mapping = "minimal"
+
+    /**
      * Minimal heavy atom count for relevant ligands, other ligands are considered too small and ignored
      */
     @ModelParam // training

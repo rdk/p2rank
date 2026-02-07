@@ -1,5 +1,6 @@
 package cz.siret.prank.program
 
+import cz.siret.prank.domain.AminoAcidMapper
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.domain.loaders.LoaderParams
 import cz.siret.prank.program.ml.Model
@@ -132,6 +133,9 @@ class Main implements Parametrized, Writable {
         }
 
         log.debug "CMD LINE ARGS: " + args
+
+        // Initialize amino acid mapper based on aa_mapping parameter
+        AminoAcidMapper.initialize(params.aa_mapping)
     }
 
     String evalDirParam(String dirParam, String relativePrefixDir) {

@@ -1,6 +1,7 @@
 package cz.siret.prank.utils
 
 import cz.siret.prank.domain.AA
+import cz.siret.prank.domain.AminoAcidMapper
 import cz.siret.prank.program.PrankException
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
@@ -147,19 +148,13 @@ class PdbUtils {
     }
 
     /**
-     * Masking for internal P2Rank representation
+     * Masking for internal P2Rank representation.
+     * Maps non-canonical amino acid codes to standard 20 AAs using AminoAcidMapper.
      */
     @Nullable
     static String correctResidueCode(String residueCode) {
-        //MSE is only found as a molecular replacement for MET
-        //'non-standard', genetically encoded
-        if ("MSE".equals(residueCode)) {
-            residueCode = "MET"
-        } else if ("MEN".equals(residueCode)) {  // N-METHYL ASPARAGINE present only in cca. 60 entries in the PDB but also in one in CHEN11 training dataset
-            residueCode = "ASN"
-        }
-
-        return residueCode
+        if (residueCode == null) return null
+        return AminoAcidMapper.getInstance().map(residueCode)
     }
 
     /**
