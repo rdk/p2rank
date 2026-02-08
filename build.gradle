@@ -37,7 +37,6 @@ def distroDir = "$projectDir/distro"
 repositories {
     mavenCentral()
     mavenLocal()
-    maven {url = "https://repository.jboss.org/nexus/content/repositories/thirdparty-releases/" }
     maven {
         url = file('lib/local-mvn-repo')
     }
@@ -113,11 +112,10 @@ test {
     // set heap size for the test JVM(s)
     maxHeapSize = "2g"
 
-    // required for Apache Arrow memory access on Java 17+
-    jvmArgs '--add-opens=java.base/java.nio=ALL-UNNAMED',
-            '--enable-native-access=ALL-UNNAMED',
-            '--sun-misc-unsafe-memory-access=allow'  // suppress parquet-hadoop CleanUtil warning (upstream unfixed)
-
+    // JVM flags for test compatibility with Java 17+
+    jvmArgs '--add-opens=java.base/java.nio=ALL-UNNAMED',       // Apache Arrow memory access
+            '--enable-native-access=ALL-UNNAMED',                // zstd-jni native loading
+            '--sun-misc-unsafe-memory-access=allow'              // parquet-hadoop CleanUtil (upstream unfixed)
 
     inputs.dir "$distroDir/test_data"
     inputs.files("$distroDir/models", "$distroDir/config/default.groovy")
@@ -177,7 +175,6 @@ tasks.named("dependencyUpdates").configure {
 dependencies {
 
     implementation 'org.apache.groovy:groovy:4.0.30'
-
     implementation 'org.apache.commons:commons-lang3:3.20.0'
     implementation 'org.apache.commons:commons-math3:3.6.1'
     implementation 'commons-io:commons-io:2.21.0'
