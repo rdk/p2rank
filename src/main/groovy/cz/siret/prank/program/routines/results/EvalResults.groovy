@@ -111,11 +111,11 @@ class EvalResults extends ResultsBase {
     }
 
     int getAvgTrainPositives() {
-        (double)train_positives / runs
+        (int) ((double)train_positives / runs)
     }
 
     int getAvgTrainNegatives() {
-        (double)train_negatives / runs
+        (int) ((double)train_negatives / runs)
     }
 
     double getTrainPositivesRatio() {

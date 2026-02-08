@@ -300,7 +300,7 @@ class Experiments extends Routine {
 
     private runPloopWithFeatureFilters(List<List<String>> filters) {
 
-        filters = noneIfOk() + [["*"]] + filters
+        filters = noneIfOk() + [(List<String>)["*"]] + filters
         filters = filters.unique()
 
         List<String> sFilters = filters.collect {toListLiteral(it) }
@@ -335,7 +335,7 @@ class Experiments extends Routine {
         List<String> names = filterableFeatureNames
         List<String> all = names.collect { it + ".*" }
 
-        List<List<String>> filters = all.collect { [it] }
+        List<List<String>> filters = all.collect { (List<String>) [it] }
 
         runPloopWithFeatureFilters(filters)
     }
@@ -346,7 +346,7 @@ class Experiments extends Routine {
         List<String> names = filterableFeatureNames
         List<String> all = names.collect { it + ".*" }
 
-        List<List<String>> filters = all.collect { [it] } + generatePairs(all)
+        List<List<String>> filters = all.collect { (List<String>) [it] } + generatePairs(all)
 
         runPloopWithFeatureFilters(filters)
     }
@@ -372,7 +372,7 @@ class Experiments extends Routine {
 
         log.info "Sub-features: " + names
 
-        List<List<String>> filters = names.collect { [it] }
+        List<List<String>> filters = names.collect { (List<String>) [it] }
 
         filters = addFixedSubfeatures(filters)
 
@@ -385,7 +385,7 @@ class Experiments extends Routine {
         List<String> names = filterableFeatureNames
         List<String> all = names.collect { it + ".*" }
 
-        List<List<String>> filters = all.collect { ["-$it" as String] }
+        List<List<String>> filters = all.collect { (List<String>) ["-$it" as String] }
 
         runPloopWithFeatureFilters(filters)
     }
@@ -395,7 +395,7 @@ class Experiments extends Routine {
 
         List<String> names = currentFeatureSetup.filterableSubFeatureNames
 
-        List<List<String>> filters = names.collect { ["-$it" as String] }
+        List<List<String>> filters = names.collect { (List<String>) ["-$it" as String] }
 
         runPloopWithFeatureFilters(filters)
     }

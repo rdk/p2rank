@@ -40,22 +40,26 @@ class Model {
     }
 
     boolean hasFeatureImportances() {
-        return (classifier instanceof FastRandomForest)
-                || (classifier instanceof FasterForest)
-                || (classifier instanceof FasterForest2)
+        // Use Class.isInstance() instead of instanceof to avoid Groovy 5 union type issue (GROOVY-11289)
+        Classifier c = classifier
+        return FastRandomForest.isInstance(c)
+                || FasterForest.isInstance(c)
+                || FasterForest2.isInstance(c)
     }
 
     @Nullable
     List<Double> getFeatureImportances() {
+        // Use local variable to avoid Groovy 5 field type narrowing with union types
+        Classifier c = classifier
         List<Double> res = null
-        if (classifier instanceof FastRandomForest) {
-            res = (classifier as FastRandomForest).featureImportances.toList()
+        if (c instanceof FastRandomForest) {
+            res = (c as FastRandomForest).featureImportances.toList()
             res = Cutils.head(res.size()-1, res)                 // random forest returns column for class
-        } else if (classifier instanceof FasterForest) {
-            res = (classifier as FasterForest).featureImportances.toList()
+        } else if (c instanceof FasterForest) {
+            res = (c as FasterForest).featureImportances.toList()
             res = Cutils.head(res.size()-1, res)
-        }  else if (classifier instanceof FasterForest2) {
-            res = (classifier as FasterForest2).featureDropoutImportance.toList()
+        }  else if (c instanceof FasterForest2) {
+            res = (c as FasterForest2).featureDropoutImportance.toList()
             res = Cutils.head(res.size()-1, res)
         }
         return res
