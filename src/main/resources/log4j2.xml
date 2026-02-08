@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration status="INFO">
+<configuration status="WARN">
 	<!--<ThresholdFilter level="all"/>-->
 	<appenders>
 		<Console name="Console" target="SYSTEM_ERR" > <!-- target="SYSTEM_ERR" -->

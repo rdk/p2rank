@@ -195,8 +195,8 @@ dependencies {
 
     implementation 'org.slf4j:slf4j-api:2.0.17'
     implementation 'org.slf4j:jul-to-slf4j:2.0.17'         // for netlib logging messages
-    implementation 'org.apache.logging.log4j:log4j-core:2.24.0' // 2.24.1-3 causes messy output at startup
-    implementation 'org.apache.logging.log4j:log4j-slf4j2-impl:2.24.0'
+    implementation 'org.apache.logging.log4j:log4j-core:2.25.3'
+    implementation 'org.apache.logging.log4j:log4j-slf4j2-impl:2.25.3'
 
     implementation 'org.biojava:biojava-core:7.2.2'
     implementation 'org.biojava:biojava-alignment:7.2.2'
