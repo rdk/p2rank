@@ -185,13 +185,13 @@ dependencies {
     implementation 'org.zeroturnaround:zt-zip:1.17'
     implementation 'org.apache.commons:commons-compress:1.28.0'
     implementation 'org.tukaani:xz:1.11'
-    implementation 'com.github.luben:zstd-jni:1.5.7-6'
+    implementation 'com.github.luben:zstd-jni:1.5.7-7'
     implementation 'com.github.dpaukov:combinatoricslib3:3.4.0'
     implementation 'us.ihmc:euclid:0.22.5'
 
-    implementation 'org.apache.arrow:arrow-vector:18.1.0'
-    implementation 'org.apache.arrow:arrow-memory-netty:18.1.0'
-    implementation 'blue.strategic.parquet:parquet-floor:1.58'
+    implementation 'org.apache.arrow:arrow-vector:18.3.0'
+    implementation 'org.apache.arrow:arrow-memory-netty:18.3.0'
+    implementation 'blue.strategic.parquet:parquet-floor:1.60'
 
     implementation 'org.slf4j:slf4j-api:2.0.17'
     implementation 'org.slf4j:jul-to-slf4j:2.0.17'         // for netlib logging messages
