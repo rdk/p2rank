@@ -36,22 +36,6 @@ class RPlotter implements Parametrized {
         this.outdir = outdir
     }
 
-//    void plot1DAll(int threads) {
-//        plot1DVariables(header, threads)
-//    }
-//
-//    @Deprecated
-//    @CompileStatic(TypeCheckingMode.SKIP)
-//    void plot1DVariables(List<String> variables, int threads) {
-//        GParsPool.withPool(threads) {
-//            variables.eachParallel {
-//                plot1DVariableOld(it as String)
-//            }
-//        }
-//
-//        cleanup()
-//    }
-
     String PALETTE = """ c("#1a9850", "#90ce60", "#d9ef8b",  "#ffffbe", "#fee08b", "#fc8c58", "#d73027") """
     //String PALETTE = """ c("#d73027", "#ffffbe", "#1a9850") """
     // String PALETTE = """ c("green4","green3","yellow","gold","red3") """

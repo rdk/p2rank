@@ -15,7 +15,6 @@ import cz.siret.prank.geom.transform.GeometricTransformation
 import cz.siret.prank.program.Failable
 import cz.siret.prank.program.P2Rank
 import cz.siret.prank.program.PrankException
-import cz.siret.prank.program.ThreadPoolFactory
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.ErrorUtils
 import cz.siret.prank.utils.Futils
@@ -189,7 +188,7 @@ class Dataset implements Parametrized, Writable, Failable {
         Result result = new Result()
 
         if (parallel) {
-            int nt = ThreadPoolFactory.pool.poolSize
+            int nt = params.threads
 
             if (!quiet) {
                 log.info "processing dataset [$name] using $nt threads"

@@ -9,7 +9,7 @@ import cz.siret.prank.utils.WekaUtils
 import groovy.transform.CompileStatic
 import groovy.transform.TypeCheckingMode
 import groovy.util.logging.Slf4j
-import groovyx.gpars.GParsPool
+import cz.siret.prank.utils.Parallel
 import weka.core.Instances
 
 import static cz.siret.prank.utils.ATimer.startTimer
@@ -51,17 +51,14 @@ class CrossValidation extends EvalRoutine {
         init()
         prepareFolds()
 
-        List<EvalResults> resultsList
-        GParsPool.withPool(params.crossval_threads) {
-            resultsList = folds.collectParallel { Fold fold ->
+        List<EvalResults> resultsList = Parallel.collectParallel(folds, params.crossval_threads) { Fold fold ->
 
-                String label = "fold.${numFolds}.${fold.num}"
-                TrainEvalRoutine iter = new TrainEvalRoutine("$outdir/$label", fold.data.trainset, fold.data.evalset)
-                iter.trainVectors = FeatureVectors.fromInstances(fold.trainVectors) // pre-collected vectors
+            String label = "fold.${numFolds}.${fold.num}"
+            TrainEvalRoutine iter = new TrainEvalRoutine("$outdir/$label", fold.data.trainset, fold.data.evalset)
+            iter.trainVectors = FeatureVectors.fromInstances(fold.trainVectors) // pre-collected vectors
 
-                return iter.trainAndEvalModel()
-            } as List<EvalResults>
-        }
+            return iter.trainAndEvalModel()
+        } as List<EvalResults>
 
         resultsList.each { results.addSubResults(it) }
 

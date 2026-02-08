@@ -10,7 +10,7 @@ import cz.siret.prank.utils.rlang.RPlotter
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-import groovyx.gpars.GParsPool
+import cz.siret.prank.utils.Parallel
 
 import static cz.siret.prank.utils.ATimer.startTimer
 import static cz.siret.prank.utils.Futils.mkdirs
@@ -188,35 +188,24 @@ class GridOptimizerRoutine extends ParamLooper {
 
     @CompileDynamic
     private make1DPlots() {
-        GParsPool.withPool(numRThreads) {
-            tablesToPlot.eachParallel { TableToPlot tp ->
-                if (plotVariable(tp.label)) {
-                    //new RPlotter(tp.plotDir).plot1DVariable(tp.tableFile, tp.label)
-                    new RPlotter(tp.plotDir).plot1DVariableHorizontal(tp.tableFile, tp.label)
-                }
+        Parallel.eachParallel(tablesToPlot, numRThreads) { TableToPlot tp ->
+            if (plotVariable(tp.label)) {
+                //new RPlotter(tp.plotDir).plot1DVariable(tp.tableFile, tp.label)
+                new RPlotter(tp.plotDir).plot1DVariableHorizontal(tp.tableFile, tp.label)
             }
         }
     }
 
     @CompileDynamic
     private make2DPlots() {
-        GParsPool.withPool(numRThreads) {
-            tablesToPlot.eachParallel { TableToPlot tp ->
-                if (plotVariable(tp.label)) {
-                    String labelX = listParams[1].name
-                    String labelY = listParams[0].name
-                    new RPlotter(tp.plotDir).plotHeatMapTable(tp.tableFile, tp.label, labelX, labelY)
-                }
+        Parallel.eachParallel(tablesToPlot, numRThreads) { TableToPlot tp ->
+            if (plotVariable(tp.label)) {
+                String labelX = listParams[1].name
+                String labelY = listParams[0].name
+                new RPlotter(tp.plotDir).plotHeatMapTable(tp.tableFile, tp.label, labelX, labelY)
             }
         }
     }
-
-//    @Deprecated
-//    private make1DPlotsOld() {
-//        def plotter = new RPlotter(statsTableFile, plotsDir)
-//        def vars = plotter.header.findAll { plotVariable(it) }.asList()
-//        plotter.plot1DVariables(vars, numRThreads)
-//    }
 
     private make2DTable(String statName) {
         IterativeParam paramX = listParams[0]

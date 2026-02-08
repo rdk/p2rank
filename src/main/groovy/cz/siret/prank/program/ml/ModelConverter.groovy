@@ -12,7 +12,7 @@ import cz.siret.prank.utils.Writable
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-import groovyx.gpars.GParsPool
+import cz.siret.prank.utils.Parallel
 import hr.irb.fastRandomForest.FastRandomForest
 import weka.classifiers.Classifier
 
@@ -76,10 +76,7 @@ class ModelConverter implements Parametrized, Writable {
         int numAttributes = forest.@m_Info.numAttributes();
         List<Classifier> mTrees = Arrays.asList(forest.@m_bagger.@m_Classifiers)
 
-        List<FasterTree> trees
-        GParsPool.withPool(params.threads * 2) {
-            trees = mTrees.collectParallel { frfTreeToFasterTree(it) }
-        }
+        List<FasterTree> trees = Parallel.collectParallel(mTrees, params.threads * 2) { frfTreeToFasterTree(it) }
 
         write " - faster trees converted in:  $timer.formatted"
 
