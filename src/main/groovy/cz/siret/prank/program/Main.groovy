@@ -11,6 +11,7 @@ import cz.siret.prank.program.routines.analyze.AnalyzeRoutine
 import cz.siret.prank.program.routines.analyze.PrintRoutine
 import cz.siret.prank.program.routines.analyze.TransformRoutine
 import cz.siret.prank.program.routines.benchmark.Benchmarks
+import cz.siret.prank.program.routines.predict.ExportPointsRoutine
 import cz.siret.prank.program.routines.predict.PredictPocketsRoutine
 import cz.siret.prank.program.routines.predict.PredictResiduesRoutine
 import cz.siret.prank.program.routines.predict.RescorePocketsRoutine
@@ -298,6 +299,15 @@ class Main implements Parametrized, Writable {
         doRunPredict("predict", false)
     }
 
+    void runExportPoints() {
+        Dataset dataset = loadDatasetOrFile()
+        String outdir = findOutdir("export_points_$dataset.label")
+        configureLoggers(outdir)
+
+        Dataset.Result result = new ExportPointsRoutine(dataset, outdir).execute()
+        finalizeDatasetResult(result)
+    }
+
     void runEvalPredict() {
         doRunPredict("eval_predict", true)
     }
@@ -423,6 +433,8 @@ class Main implements Parametrized, Writable {
 
         switch (command) {
             case 'predict':         runPredict()
+                break
+            case 'export-points':   runExportPoints()
                 break
             case 'eval-predict':    runEvalPredict()
                 break

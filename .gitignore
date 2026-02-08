@@ -27,6 +27,7 @@ out/*
 
 venv/
 tmp
+pastebin.txt
 
 # P2Rank distro
 distro/bin/

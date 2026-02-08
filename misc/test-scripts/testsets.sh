@@ -110,6 +110,9 @@ quick() {
     # test export_points feature
     test ./prank.sh predict -f distro/test_data/1fbl.pdb -export_points 1 -export_points_format csv.gz     -out_subdir TEST/TESTS
 
+    # test export-points command (no model)
+    test ./prank.sh export-points -f distro/test_data/1fbl.pdb -export_points_format csv.gz                -out_subdir TEST/TESTS
+
 }
 
 quick_train() {
@@ -399,21 +402,33 @@ export_points() {
 
     title EXPORT POINTS FEATURE
 
-    test ./prank.sh predict -f distro/test_data/1fbl.pdb -export_points 1 -export_points_format csv     -out_subdir TEST/EXPORT_POINTS
-    test ./prank.sh predict -f distro/test_data/1fbl.pdb -export_points 1 -export_points_format csv.gz  -out_subdir TEST/EXPORT_POINTS
-    test ./prank.sh predict -f distro/test_data/1fbl.pdb -export_points 1 -export_points_format csv.zst -out_subdir TEST/EXPORT_POINTS
-
+    test ./prank.sh predict -f distro/test_data/1fbl.pdb -export_points 1 -export_points_format csv       -out_subdir TEST/EXPORT_POINTS
+    test ./prank.sh predict -f distro/test_data/1fbl.pdb -export_points 1 -export_points_format csv.gz    -out_subdir TEST/EXPORT_POINTS
+    test ./prank.sh predict -f distro/test_data/1fbl.pdb -export_points 1 -export_points_format csv.zst   -out_subdir TEST/EXPORT_POINTS
     test ./prank.sh predict -f distro/test_data/1fbl.pdb -export_points 1 -export_points_format arrow     -out_subdir TEST/EXPORT_POINTS
     test ./prank.sh predict -f distro/test_data/1fbl.pdb -export_points 1 -export_points_format arrow.gz  -out_subdir TEST/EXPORT_POINTS
     test ./prank.sh predict -f distro/test_data/1fbl.pdb -export_points 1 -export_points_format arrow.zst -out_subdir TEST/EXPORT_POINTS
+    test ./prank.sh predict -f distro/test_data/1fbl.pdb -export_points 1 -export_points_format parquet   -out_subdir TEST/EXPORT_POINTS
 
-    test ./prank.sh predict -f distro/test_data/1fbl.pdb -export_points 1 -export_points_format parquet -out_subdir TEST/EXPORT_POINTS
+    # export-points command (no model needed)
+    test ./prank.sh export-points -f distro/test_data/2W83.cif -extra_features 'surface_protrusion' -export_points_format arrow -out_subdir TEST/EXPORT_POINTS
+    test ./prank.sh export-points -f distro/test_data/1fbl.pdb                                              -out_subdir TEST/EXPORT_POINTS
+    test ./prank.sh export-points -f distro/test_data/1fbl.pdb -export_points_format csv.gz                 -out_subdir TEST/EXPORT_POINTS
+    test ./prank.sh export-points -f distro/test_data/1fbl.pdb -export_points_format csv.zst                -out_subdir TEST/EXPORT_POINTS
+    test ./prank.sh export-points -f distro/test_data/1fbl.pdb -export_points_format arrow                  -out_subdir TEST/EXPORT_POINTS
+    test ./prank.sh export-points -f distro/test_data/1fbl.pdb -export_points_format arrow.gz               -out_subdir TEST/EXPORT_POINTS
+    test ./prank.sh export-points -f distro/test_data/1fbl.pdb -export_points_format arrow.zst              -out_subdir TEST/EXPORT_POINTS
+    test ./prank.sh export-points -f distro/test_data/1fbl.pdb -export_points_format parquet                -out_subdir TEST/EXPORT_POINTS
 
     # predict/rescore on datasets
     test ./prank.sh predict chen11.ds            -c config/test-default  -export_points 1 -export_points_format arrow.zst -out_subdir TEST/EXPORT_POINTS
     test ./prank.sh rescore coach420-fpocket.ds  -c config/test-default  -export_points 1 -export_points_format csv.zst   -out_subdir TEST/EXPORT_POINTS
     test ./prank.sh rescore chen11-fpocket.ds    -c config/test-default  -export_points 1 -export_points_format parquet   -out_subdir TEST/EXPORT_POINTS
 
+    # export-points command  on datasets
+    test ./prank.sh export-points chen11.ds            -c config/test-default  -export_points_format arrow.zst -out_subdir TEST/EXPORT_POINTS
+    test ./prank.sh export-points coach420-fpocket.ds  -c config/test-default  -export_points_format csv.zst   -out_subdir TEST/EXPORT_POINTS
+    test ./prank.sh export-points chen11-fpocket.ds    -c config/test-default  -export_points_format parquet   -out_subdir TEST/EXPORT_POINTS
 }
 
 classifiers() {
