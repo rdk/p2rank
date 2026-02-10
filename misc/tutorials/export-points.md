@@ -1,8 +1,23 @@
 # Exporting SAS Points with Feature Vectors
 
-Export SAS points with feature vectors and ligandability scores.
+Export SAS points with feature vectors and (optionally) predicted ligandability scores.
 
-## Usage
+## Commands
+
+There are two ways to export SAS points:
+
+### `export-points` - standalone export (no model needed)
+
+```bash
+prank export-points -f protein.pdb
+prank export-points -f protein.pdb -export_points_format parquet
+prank export-points dataset.ds     -export_points_format arrow.zst
+```
+
+The `export-points` command calculates SAS surface points with feature vectors and exports them directly - **no model is loaded and no prediction is made**.
+This means the output does **not** contain a `score` column, but you are free to use any custom feature setup via `-features` and `-extra_features` parameters.
+
+### `predict` / `rescore` - export alongside prediction
 
 ```bash
 prank predict -f protein.pdb -export_points 1
@@ -17,20 +32,38 @@ The `rescore` command also supports export (pocket points only):
 prank rescore joined-fpocket.ds -export_points 1 -export_points_format arrow.zst
 ```
 
+With `predict`/`rescore`, the output includes a `score` column with predicted ligandability.
+However, because prediction relies on a pre-trained model that expects a particular set and order of features,
+you **cannot** customize the feature setup (changing `-features` or `-extra_features` would break the model).
+
+### Which command to use?
+
+| | `export-points` | `predict -export_points 1` |
+|---|---|---|
+| Custom feature setup | Yes | No (must match the model) |
+| Predicted `score` column | No | Yes |
+| Requires a model | No | Yes |
+
 ## Output
 
 For each protein file, a `{protein_file}_points.{format}` file is generated:
 
-| Column | Description                                                                                          |
-|--------|------------------------------------------------------------------------------------------------------|
-| `x`, `y`, `z` | SAS point coordinates                                                                                |
-| `score` | Predicted ligandability [0-1]                                                                        |
-| `feature1`, ... | Feature values calculated by P2Rank based on effective feature setup (`-features`,`-extra_features`) |
+| Column | Description |
+|--------|-------------|
+| `x`, `y`, `z` | SAS point coordinates |
+| `score` | Predicted ligandability [0-1] (`predict`/`rescore` only) |
+| `feature1`, ... | Feature values based on effective feature setup (`-features`, `-extra_features`) |
 
-Example (CSV):
+Example - `predict -export_points 1` (CSV):
 ```csv
 x,y,z,score,chem.hydrophobic,chem.aromatic,protrusion,...
 12.3456,23.4567,34.5678,0.8234,0.5123,-0.2345,15.0000,...
+```
+
+Example - `export-points` (CSV):
+```csv
+x,y,z,chem.hydrophobic,chem.aromatic,protrusion,...
+12.3456,23.4567,34.5678,0.5123,-0.2345,15.0000,...
 ```
 
 ## Parameters
@@ -55,7 +88,8 @@ x,y,z,score,chem.hydrophobic,chem.aromatic,protrusion,...
 
 ## Notes
 
-- `predict` exports all SAS points; `rescore` exports only pocket points
+- `export-points` and `predict` export all SAS points; `rescore` exports only pocket points
+- `export-points` does not require `-export_points 1` - exporting is always on
 - CSV format uses 7 decimal places for all numeric values
 - Arrow uses IPC streaming format with 64-bit floats
 - Parquet uses SNAPPY compression (not configurable)
