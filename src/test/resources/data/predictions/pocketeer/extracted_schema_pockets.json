@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Pocketeer Pockets",
+  "type": "array",
+  "items": {
+    "$ref": "#/$defs/Pocket"
+  },
+  "$defs": {
+    "Pocket": {
+      "type": "object",
+      "required": ["pocket_id", "spheres", "centroid", "volume", "score", "residues", "n_spheres", "n_residues"],
+      "properties": {
+        "pocket_id": { "type": "integer" },
+        "spheres": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/AlphaSphere" }
+        },
+        "centroid": {
+          "type": "array",
+          "items": { "type": "number" },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "volume": { "type": "number" },
+        "score": { "type": "number" },
+        "residues": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/Residue" }
+        },
+        "n_spheres": { "type": "integer" },
+        "n_residues": { "type": "integer" }
+      }
+    },
+    "AlphaSphere": {
+      "type": "object",
+      "required": ["sphere_id", "center", "radius", "mean_sasa", "atom_indices"],
+      "properties": {
+        "sphere_id": { "type": "integer" },
+        "center": {
+          "type": "array",
+          "items": { "type": "number" },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "radius": { "type": "number" },
+        "mean_sasa": { "type": "number" },
+        "atom_indices": {
+          "type": "array",
+          "items": { "type": "integer" },
+          "minItems": 4,
+          "maxItems": 4
+        }
+      }
+    },
+    "Residue": {
+      "type": "object",
+      "required": ["chain_id", "res_id", "res_name"],
+      "properties": {
+        "chain_id": { "type": "string" },
+        "res_id": { "type": "integer" },
+        "res_name": { "type": "string" }
+      }
+    }
+  }
+}

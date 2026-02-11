@@ -1,0 +1,70 @@
+Pocketeer Pocket Detection Summary
+============================================================
+
+Input: 1aaxa.pdb
+Found 8 pocket(s)
+
+Pocket 4:
+  Score: 6.35
+  Volume: 1624.2 A³
+  Spheres: 55
+  Residues: 11
+    SERA146, GLUA147, ASPA148, VALA155, ARGA156, GLNA157, LEUA172, PHEA174, LYSA197, GLUA200 ... (1 more)
+  Centroid: (37.8, 30.9, 23.8)
+
+Pocket 6:
+  Score: 6.04
+  Volume: 1182.0 A³
+  Spheres: 84
+  Residues: 16
+    TYRA46, ASPA48, VALA49, GLUA115, LYSA120, ASPA181, PHEA182, SERA215, SERA216, ALAA217 ... (6 more)
+  Centroid: (45.8, 15.3, 3.2)
+
+Pocket 1:
+  Score: 5.51
+  Volume: 1127.2 A³
+  Spheres: 63
+  Residues: 14
+    ALAA77, GLNA78, ARGA79, SERA80, SERA203, LEUA204, SERA205, PROA206, HISA208, GLYA209 ... (4 more)
+  Centroid: (44.2, 13.5, 27.6)
+
+Pocket 2:
+  Score: 5.28
+  Volume: 1180.8 A³
+  Spheres: 46
+  Residues: 11
+    HISA60, GLNA61, ASPA63, GLUA97, TRPA100, GLUA101, ASPA137, THRA138, LEUA140, ASNA162 ... (1 more)
+  Centroid: (23.5, 8.3, 19.7)
+
+Pocket 8:
+  Score: 5.07
+  Volume: 997.1 A³
+  Spheres: 54
+  Residues: 10
+    LYSA73, META74, GLUA75, GLUA76, ALAA77, THRA230, LEUA234, LYSA248, VALA249, GLUA252
+  Centroid: (55.7, 6.8, 23.5)
+
+Pocket 5:
+  Score: 4.64
+  Volume: 950.2 A³
+  Spheres: 37
+  Residues: 9
+    SERA187, PROA188, ALAA189, LEUA272, ILEA275, GLUA276, LYSA279, TRPA291, LEUA294
+  Centroid: (61.6, 29.0, 16.4)
+
+Pocket 7:
+  Score: 2.33
+  Volume: 734.2 A³
+  Spheres: 43
+  Residues: 11
+    LEUA110, ASNA111, ARGA112, GLUA115, LYSA116, TYRA176, THRA177, THRA178, TRPA179, PROA180 ... (1 more)
+  Centroid: (44.2, 25.8, 4.0)
+
+Pocket 3:
+  Score: 2.02
+  Volume: 650.4 A³
+  Spheres: 36
+  Residues: 10
+    GLUA2, META3, GLUA4, META235, PROA241, SERA242, VALA244, VALA274, ILEA275, ALAA278
+  Centroid: (65.8, 19.2, 22.5)
+

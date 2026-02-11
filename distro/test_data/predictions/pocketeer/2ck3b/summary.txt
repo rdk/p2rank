@@ -1,0 +1,30 @@
+Pocketeer Pocket Detection Summary
+============================================================
+
+Input: 2ck3b.pdb
+Found 3 pocket(s)
+
+Pocket 2:
+  Score: 5.02
+  Volume: 1031.8 A³
+  Spheres: 48
+  Residues: 12
+    VALB129, GLYB130, LEUB131, LYSB132, ALAB133, TYRB248, TYRB300, SERB303, ARGB304, LEUB305 ... (2 more)
+  Centroid: (117.0, 17.5, 34.8)
+
+Pocket 3:
+  Score: 4.76
+  Volume: 1028.0 A³
+  Spheres: 35
+  Residues: 13
+    GLNB172, THRB173, GLYB174, LYSB175, THRB176, SERB177, GLNB208, THRB212, ASPB269, ASPB270 ... (3 more)
+  Centroid: (100.9, 5.2, 49.3)
+
+Pocket 1:
+  Score: 4.11
+  Volume: 692.8 A³
+  Spheres: 36
+  Residues: 12
+    SERB272, ALAB275, GLUB292, TYRB294, ILEB327, GLUB328, THRB329, GLNB330, ASPB333, ALAB336 ... (2 more)
+  Centroid: (104.3, 18.3, 50.4)
+

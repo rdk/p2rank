@@ -1,0 +1,126 @@
+Pocketeer Pocket Detection Summary
+============================================================
+
+Input: 2W83.cif
+Found 15 pocket(s)
+
+Pocket 4:
+  Score: 6.08
+  Volume: 1190.8 A³
+  Spheres: 85
+  Residues: 16
+    ASPA22, ALAA23, ALAA24, GLYA25, LYSA26, THRA27, THRA28, THRA41, ILEA42, PROA43 ... (6 more)
+  Centroid: (46.8, -1.4, 21.5)
+
+Pocket 1:
+  Score: 5.95
+  Volume: 1562.6 A³
+  Spheres: 41
+  Residues: 11
+    THRA27, TYRA31, LEUA35, VALA39, THRA40, THRA41, ILEA42, PROA43, THRA44, VALA45 ... (1 more)
+  Centroid: (41.4, -1.2, 29.1)
+
+Pocket 14:
+  Score: 5.90
+  Volume: 1398.5 A³
+  Spheres: 55
+  Residues: 10
+    ASPA68, ARGA71, PROA72, TRPA74, ARGA75, TYRA78, GLUA102, ARGA105, ILEA106, ASPA109
+  Centroid: (62.1, -9.3, 20.9)
+
+Pocket 11:
+  Score: 5.74
+  Volume: 1281.9 A³
+  Spheres: 59
+  Residues: 11
+    GLUB13, METB14, ARGB15, LYSB58, ASNB60, GLYB80, GLNB82, ALAC422, ASPC425, GLUC426 ... (1 more)
+  Centroid: (45.5, -3.0, 47.3)
+
+Pocket 3:
+  Score: 5.74
+  Volume: 1459.1 A³
+  Spheres: 41
+  Residues: 11
+    THRE27, TYRE31, LEUE35, VALE39, THRE40, THRE41, ILEE42, PROE43, THRE44, VALE45 ... (1 more)
+  Centroid: (40.3, -30.2, -24.9)
+
+Pocket 8:
+  Score: 5.58
+  Volume: 1060.8 A³
+  Spheres: 73
+  Residues: 15
+    ASPB22, ALAB23, ALAB24, GLYB25, LYSB26, THRB27, THRB28, THRB41, ILEB42, PROB43 ... (5 more)
+  Centroid: (56.3, -21.1, 57.2)
+
+Pocket 5:
+  Score: 5.36
+  Volume: 959.4 A³
+  Spheres: 72
+  Residues: 15
+    ASPE22, ALAE23, ALAE24, GLYE25, LYSE26, THRE27, THRE28, THRE41, ILEE42, PROE43 ... (5 more)
+  Centroid: (39.8, -31.8, -16.0)
+
+Pocket 12:
+  Score: 4.78
+  Volume: 689.1 A³
+  Spheres: 70
+  Residues: 12
+    PROA132, HISA133, GLNA136, LEUA141, THRA142, TRPA149, VALA151, PROE132, HISE133, GLNE136 ... (2 more)
+  Centroid: (47.5, -18.3, 3.7)
+
+Pocket 9:
+  Score: 4.74
+  Volume: 998.9 A³
+  Spheres: 37
+  Residues: 9
+    HISA104, ILEA107, ASNA108, ARGA113, ARGA143, ILEA144, ARGA145, ASPA146, ARGA147
+  Centroid: (61.1, -22.4, 14.4)
+
+Pocket 10:
+  Score: 4.55
+  Volume: 853.8 A³
+  Spheres: 42
+  Residues: 10
+    GLNA124, LYSA131, PROA132, HISA133, PROA153, GLNE124, LYSE131, PROE132, HISE133, PROE153
+  Centroid: (41.0, -14.3, 1.2)
+
+Pocket 13:
+  Score: 4.46
+  Volume: 869.0 A³
+  Spheres: 36
+  Residues: 12
+    ASNA148, TRPA149, TYRA150, TRPA168, SERA171, ASNA172, GLNE136, GLUE137, GLYE140, LEUE141 ... (2 more)
+  Centroid: (46.6, -27.0, 9.6)
+
+Pocket 6:
+  Score: 4.43
+  Volume: 745.1 A³
+  Spheres: 47
+  Residues: 8
+    GLUA13, META14, ARGA15, LYSA58, ASNA60, GLNA82, ASPD425, CYSD429
+  Centroid: (45.3, -22.0, 31.8)
+
+Pocket 2:
+  Score: 2.44
+  Volume: 638.1 A³
+  Spheres: 58
+  Residues: 12
+    LEUB21, ASPB22, ALAB23, ALAB24, PHEB86, VALB87, VALB88, ASPB89, ASPB92, ARGB95 ... (2 more)
+  Centroid: (61.8, -16.1, 64.6)
+
+Pocket 7:
+  Score: 2.41
+  Volume: 663.5 A³
+  Spheres: 54
+  Residues: 12
+    LEUE21, ASPE22, ALAE23, ALAE24, PHEE86, VALE87, VALE88, ASPE89, ASPE92, ARGE95 ... (2 more)
+  Centroid: (39.6, -30.8, -5.8)
+
+Pocket 15:
+  Score: 2.37
+  Volume: 655.4 A³
+  Spheres: 53
+  Residues: 12
+    LEUA21, ASPA22, ALAA23, ALAA24, PHEA86, VALA87, VALA88, ASPA89, ASPA92, ARGA95 ... (2 more)
+  Centroid: (50.6, -3.9, 12.3)
+

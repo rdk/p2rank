@@ -1,0 +1,38 @@
+Pocketeer Pocket Detection Summary
+============================================================
+
+Input: 1nlu.pdb
+Found 4 pocket(s)
+
+Pocket 3:
+  Score: 6.87
+  Volume: 1724.2 A³
+  Spheres: 71
+  Residues: 13
+    ASPA170, TRPA220, GLUA222, GLYA223, LEUA224, ASPA225, TRPA231, ALAA266, GLNA268, GLNA282 ... (3 more)
+  Centroid: (24.4, 7.9, 22.0)
+
+Pocket 1:
+  Score: 5.32
+  Volume: 1282.2 A³
+  Spheres: 38
+  Residues: 13
+    THRA218, VALA219, ASNA221, SERA331, GLYA332, ASNA333, GLYA335, TYRA336, GLYA337, GLYA338 ... (3 more)
+  Centroid: (36.0, -2.0, 22.3)
+
+Pocket 4:
+  Score: 4.05
+  Volume: 546.4 A³
+  Spheres: 48
+  Residues: 12
+    SERA133, LEUA134, GLYA135, SERA167, GLYA169, ASPA170, GLUA171, GLUA175, ARGA179, SERA190 ... (2 more)
+  Centroid: (28.4, 11.3, 10.7)
+
+Pocket 2:
+  Score: 1.74
+  Volume: 518.4 A³
+  Spheres: 35
+  Residues: 10
+    GLUA138, VALA173, TYRA187, SERA188, VALA189, GLYA235, GLYA236, TYRA237, VALA239, TYRA341
+  Centroid: (38.0, 1.2, 6.7)
+

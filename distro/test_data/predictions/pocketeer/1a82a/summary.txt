@@ -1,0 +1,30 @@
+Pocketeer Pocket Detection Summary
+============================================================
+
+Input: 1a82a.pdb
+Found 3 pocket(s)
+
+Pocket 1:
+  Score: 8.83
+  Volume: 2244.9 A³
+  Spheres: 117
+  Residues: 28
+    THRA11, GLUA12, VALA13, GLYA14, LYSA15, THRA16, VALA17, LYSA37, VALA39, ALAA40 ... (18 more)
+  Centroid: (5.1, 21.1, 11.6)
+
+Pocket 2:
+  Score: 7.00
+  Volume: 1499.8 A³
+  Spheres: 100
+  Residues: 14
+    VALA147, LYSA148, LEUA149, ASPA176, VALA177, THRA178, PROA179, PROA180, GLYA181, LYSA182 ... (4 more)
+  Centroid: (13.7, 20.2, -2.5)
+
+Pocket 3:
+  Score: 4.65
+  Volume: 922.8 A³
+  Spheres: 40
+  Residues: 9
+    THRA11, SERA41, PROA79, THRA80, SERA81, PROA82, ALAA117, GLYA118, THRA122
+  Centroid: (-5.2, 25.0, 10.7)
+

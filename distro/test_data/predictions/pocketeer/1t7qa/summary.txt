@@ -1,0 +1,22 @@
+Pocketeer Pocket Detection Summary
+============================================================
+
+Input: 1t7qa.pdb
+Found 2 pocket(s)
+
+Pocket 1:
+  Score: 3.23
+  Volume: 1112.5 A³
+  Spheres: 50
+  Residues: 13
+    GLNA438, TYRA441, TYRA442, GLNA447, ALAA448, CYSA449, ALAA471, SERA472, ILEA473, SERA475 ... (3 more)
+  Centroid: (66.7, 19.6, -18.9)
+
+Pocket 2:
+  Score: 2.04
+  Volume: 620.8 A³
+  Spheres: 40
+  Residues: 10
+    LEUA407, ILEA409, META411, ALAA565, PHEA566, GLYA567, GLYA575, SERA588, VALA589, SERA590
+  Centroid: (51.2, 8.0, -8.4)
+

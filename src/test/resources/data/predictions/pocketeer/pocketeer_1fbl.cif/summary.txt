@@ -1,0 +1,54 @@
+Pocketeer Pocket Detection Summary
+============================================================
+
+Input: 1fbl.cif
+Found 6 pocket(s)
+
+Pocket 2:
+  Score: 7.52
+  Volume: 1901.2 A³
+  Spheres: 86
+  Residues: 17
+    GLYA179, ASNA180, LEUA181, ALAA182, HISA183, ALAA184, TYRA210, ARGA214, VALA215, HISA218 ... (7 more)
+  Centroid: (73.1, 82.5, -7.1)
+
+Pocket 1:
+  Score: 6.43
+  Volume: 1344.9 A³
+  Spheres: 87
+  Residues: 16
+    LEUA290, ARGA291, GLUA293, LEUA294, META295, ARGA304, PHEA320, TRPA321, GLUA333, ALAA335 ... (6 more)
+  Centroid: (91.9, 97.1, 10.5)
+
+Pocket 3:
+  Score: 5.54
+  Volume: 1248.5 A³
+  Spheres: 52
+  Residues: 7
+    TYRA437, GLNA444, GLNA446, THRA456, GLNA458, SERA462, TRPA463
+  Centroid: (89.5, 117.6, 3.0)
+
+Pocket 6:
+  Score: 5.27
+  Volume: 1236.1 A³
+  Spheres: 40
+  Residues: 10
+    THRA283, PHEA284, ASPA285, LEUA328, GLNA329, ILEA377, ASPA378, LYSA425, VALA426, ASPA427
+  Centroid: (74.1, 109.4, 14.1)
+
+Pocket 4:
+  Score: 4.72
+  Volume: 759.0 A³
+  Spheres: 60
+  Residues: 14
+    ILEA287, THRA288, THRA289, ALAA331, TYRA332, GLUA333, ALAA335, ALAA380, VALA381, PHEA382 ... (4 more)
+  Centroid: (91.7, 107.8, 15.1)
+
+Pocket 5:
+  Score: 1.80
+  Volume: 528.9 A³
+  Spheres: 37
+  Residues: 10
+    VALA277, ASPA279, SERA280, LEUA282, PHEA284, THRA442, LYSA459, ALAA460, ASNA461, PHEA464
+  Centroid: (78.5, 114.2, 0.3)
+

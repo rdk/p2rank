@@ -1,0 +1,18 @@
+# Dataset for rescoring Pocketeer predictions.
+# (predictions generated with Pocketeer v0.3.0 on "./clean" structures)
+
+# Note: 'prank rescore' expects 2 columns: prediction, protein
+# Providing protein (with or without ligands) that was used to calculate the prediction is required.
+# Proteins have to be liganated only if you want to calculate metrics by running 'prank eval-rescore'.
+
+
+PARAM.PREDICTION_METHOD=pocketeer
+
+
+HEADER: prediction protein
+
+predictions/pocketeer/1a82a/pockets.json  clean/1a82a.pdb
+predictions/pocketeer/1aaxa/pockets.json  clean/1aaxa.pdb
+predictions/pocketeer/1nlu/pockets.json   clean/1nlu.pdb
+predictions/pocketeer/1t7qa/pockets.json  clean/1t7qa.pdb
+predictions/pocketeer/2ck3b/pockets.json  clean/2ck3b.pdb
