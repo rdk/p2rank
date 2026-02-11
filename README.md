@@ -147,15 +147,17 @@ parameters see [Params.groovy](https://github.com/rdk/p2rank/blob/develop/src/ma
 ### Rescoring (PRANK algorithm)
 
 In addition to predicting new ligand binding sites, 
-P2Rank is also able to rescore pockets predicted by other methods 
-(Fpocket, 
-ConCavity, 
-SiteHound, 
-MetaPocket2, 
-LISE, 
+P2Rank is also able to rescore pockets predicted by other methods
+(Fpocket,
+Pocketeer,
+ConCavity,
+SiteHound,
+MetaPocket2,
+LISE,
 DeepSite,
 and PUResNetV2.0
 are supported at the moment).
+See [rescoring documentation](documentation/rescoring.md) for details.
 
 Rescoring output:
 * `{protein_file}_rescored.csv`: list of pockets sorted by the new score
@@ -219,7 +221,7 @@ You can now run the program using:
 distro/prank       # standard mode that is run in production
 ./prank.sh         # development/training mode 
 ``` 
-To use `./prank.sh` (development/training mode) first you need to copy and edit `misc/locval-env.sh` into repo root directory (see [training tutorial](https://github.com/rdk/p2rank/blob/develop/misc/tutorials/training-tutorial.md#preparing-the-environment)).
+To use `./prank.sh` (development/training mode) first you need to copy and edit `misc/local-env.sh` into repo root directory (see [training tutorial](https://github.com/rdk/p2rank/blob/develop/documentation/training-tutorial.md#preparing-the-environment)).
 
 ## ⚖️ Comparison with Fpocket
 

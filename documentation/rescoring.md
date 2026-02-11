@@ -3,6 +3,16 @@
 P2Rank can rescore pocket predictions from other binding site prediction tools,
 re-ranking their pockets using its own ML model.
 
+## Quick Start
+
+```bash
+prank rescore test_data/fpocket.ds                            # rescore fpocket predictions
+prank rescore test_data/pocketeer.ds -o rescore_pocketeer     # rescore pocketeer, output to specific dir
+prank eval-rescore test_data/fpocket.ds                       # rescore and evaluate against known ligands
+prank fpocket-rescore test_data/basic.ds                      # run fpocket and rescore in one step
+prank rescore test_data/pocketeer.ds -c rescore_2024          # use new experimental rescoring model
+```
+
 ## Commands
 
 | Command | Description                                                                                                                    |
@@ -13,17 +23,17 @@ re-ranking their pockets using its own ML model.
 
 ## Supported Methods
 
-| Method | `PREDICTION_METHOD` | Prediction column points to | URL |
-|--------|--------------------|-----------------------------|-----|
-| Fpocket | `fpocket` | Fpocket output file (`.pdb`/`.cif`) | [GitHub](https://github.com/Discngine/fpocket) |
+| Method | `PREDICTION_METHOD` | Prediction column points to | Links |
+|--------|--------------------|-----------------------------|-------|
+| Fpocket | `fpocket` | Fpocket output file (`.pdb`/`.cif`) | [GitHub](https://github.com/Discngine/fpocket), [paper](https://doi.org/10.1186/1471-2105-10-168) |
 | Pocketeer | `pocketeer` | `pockets.json` file | [GitHub](https://github.com/cch1999/pocketeer) |
-| PUResNetV2.0 | `puresnet` | Directory with `*.pkt.pdb` files | [GitHub](https://github.com/jivankandel/PUResNetV2.0) |
-| ConCavity | `concavity` | `*_pocket.pdb` grid file | [project page](https://compbio.cs.princeton.edu/concavity/) |
+| PUResNetV2.0 | `puresnet` | Directory with `*.pkt.pdb` files | [GitHub](https://github.com/jivankandel/PUResNetV2.0), [paper](https://doi.org/10.1186/s13321-024-00865-6) |
+| ConCavity | `concavity` | `*_pocket.pdb` grid file | [project page](https://compbio.cs.princeton.edu/concavity/), [paper](https://doi.org/10.1371/journal.pcbi.1000585) |
 | SiteHound | `sitehound` | `*_summary.dat` file | [paper](https://pmc.ncbi.nlm.nih.gov/articles/PMC2703923/) |
-| DeepSite | `deepsite` | Results PDB file | [web app](https://playmolecule.org/deepsite/) |
+| DeepSite | `deepsite` | Results PDB file | [paper](https://doi.org/10.1093/bioinformatics/btx350) |
 | MetaPocket2 | `metapocket2` | PDB file with MPT residues | [paper](https://academic.oup.com/bioinformatics/article/27/15/2083/402380) |
 | LISE | `lise` | PDB file with HETATM records | [paper](https://academic.oup.com/nar/article/41/W1/W292/1094035) |
-| P2Rank | `p2rank` | `*_predictions.csv` file | [GitHub](https://github.com/rdk/p2rank) |
+| P2Rank | `p2rank` | `*_predictions.csv` file | [GitHub](https://github.com/rdk/p2rank), [paper](https://doi.org/10.1186/s13321-018-0285-8) |
 
 ## Dataset File Format
 
