@@ -114,8 +114,10 @@ test {
 
     // JVM flags for test compatibility with Java 17+
     jvmArgs '--add-opens=java.base/java.nio=ALL-UNNAMED',       // Apache Arrow memory access
-            '--enable-native-access=ALL-UNNAMED',                // zstd-jni native loading
-            '--sun-misc-unsafe-memory-access=allow'              // parquet-hadoop CleanUtil (upstream unfixed)
+            '--enable-native-access=ALL-UNNAMED'                 // zstd-jni native loading
+    if (JavaVersion.current() >= JavaVersion.VERSION_23) {
+        jvmArgs '--sun-misc-unsafe-memory-access=allow'          // parquet-hadoop CleanUtil (upstream unfixed)
+    }
 
     inputs.dir "$distroDir/test_data"
     inputs.files("$distroDir/models", "$distroDir/config/default.groovy")
