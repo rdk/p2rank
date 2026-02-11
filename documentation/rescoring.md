@@ -154,3 +154,17 @@ prank rescore dataset.ds -o output_dir -threads 4 -visualizations 0
 | `-visualizations` | `true` | Generate PyMOL visualization files |
 | `-fail_fast` | `false` | Stop on first error |
 | `-model` | `default_rescore` | ML model to use for rescoring |
+
+## Experimental Rescoring Model (`rescore_2024`)
+
+An alternative rescoring model is available via `-c rescore_2024`. It uses a different feature set
+that does not depend on B-factor, making it suitable for AlphaFold models, NMR, and cryo-EM structures.
+
+```bash
+prank rescore fpocket.ds -c rescore_2024
+prank fpocket-rescore test.ds -c rescore_2024
+prank eval-rescore fpocket.ds -c rescore_2024
+```
+
+This model shows promising results but has not been fully evaluated yet.
+
