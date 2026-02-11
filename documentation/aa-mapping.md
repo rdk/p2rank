@@ -2,23 +2,23 @@
 
 PDB structures often contain modified amino acid residues (e.g., selenomethionine MSE,
 phosphoserine SEP). P2Rank maps these to standard amino acids for feature calculation.
-The `aa_mapping` parameter controls which mappings are used.
+The `-aa_mapping` parameter controls which mappings are used.
 
 ## Modes
 
-| Mode | Description | Mappings |
-|------|-------------|----------|
-| `minimal` | Default, backward-compatible (MSE→MET, MEN→ASN only) | 2 |
-| `pdbfixer` | Extended set from [OpenMM pdbfixer](https://github.com/openmm/pdbfixer) | 87 |
-| `/path/to/file.csv` | Custom user-provided mapping file | User-defined |
+| Mode | Description                                                                                                                                                                                 | Mappings |
+|------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------|
+| `minimal` | Default, backward-compatible (MSE→MET, MEN→ASN only)                                                                                                                                        | 2 |
+| `pdbfixer` | Extended set from [pdbfixer](https://github.com/openmm/pdbfixer) ([source code](https://github.com/openmm/pdbfixer/blob/94cfa4c0ca551cdc5f13320f9a658efd59f2b881/pdbfixer/pdbfixer.py#L66)) | 87 |
+| `/path/to/file.csv` | Custom user-provided mapping file                                                                                                                                                           | User-defined |
 
 Residue codes not in the active mapping pass through unchanged.
 
-**`minimal`** preserves original P2Rank behavior. Sufficient for most X-ray/cryo-EM structures.
+**`minimal`** preserves original P2Rank behavior. 
 
-**`pdbfixer`** covers phosphorylated, methylated, and acetylated residues, selenocysteine,
-histidine protonation variants, D-amino acids, and other modifications. Recommended when
-structures contain many modified residues.
+**`pdbfixer`** covers comprehensive set of phosphorylated, methylated, and acetylated residues, selenocysteine, 
+histidine protonation variants, D-amino acids, and other modifications. 
+Derived from pdbfixer 1.12 (2025-10-01) , with one mapping ommited.
 
 ## Usage
 
@@ -36,10 +36,9 @@ prank predict -f protein.pdb -aa_mapping /path/to/my-mappings.csv
 ## Custom Mapping Files
 
 Any value other than `minimal` or `pdbfixer` is treated as a file path.
-To load a file literally named "minimal" or "pdbfixer", use a path: `./minimal`.
 
 A custom file **replaces** all built-in mappings (it does not extend them).
-To add entries on top of the pdbfixer set, copy the bundled `aa-mapping-pdbfixer.csv`
+To add entries on top of the pdbfixer set, copy the bundled [`aa-mapping-pdbfixer.csv`](src/main/resources/mappings/aa-mapping-pdbfixer.csv)
 and append your entries.
 
 Format — two-column CSV:
