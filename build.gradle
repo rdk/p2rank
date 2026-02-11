@@ -113,10 +113,14 @@ test {
     maxHeapSize = "2g"
 
     // JVM flags for test compatibility with Java 17+
-    jvmArgs '--add-opens=java.base/java.nio=ALL-UNNAMED',       // Apache Arrow memory access
-            '--enable-native-access=ALL-UNNAMED'                 // zstd-jni native loading
+    // --add-opens: required by Apache Arrow and Netty for direct memory access via sun.misc.Unsafe
+    // --enable-native-access: required by zstd-jni for native library loading
+    jvmArgs '--add-opens=java.base/java.nio=ALL-UNNAMED',
+            '--enable-native-access=ALL-UNNAMED'
+    // --sun-misc-unsafe-memory-access: suppresses warnings from parquet-hadoop CleanUtil
+    // which uses sun.misc.Unsafe (upstream unfixed). Only available in Java 23+.
     if (JavaVersion.current() >= JavaVersion.VERSION_23) {
-        jvmArgs '--sun-misc-unsafe-memory-access=allow'          // parquet-hadoop CleanUtil (upstream unfixed)
+        jvmArgs '--sun-misc-unsafe-memory-access=allow'
     }
 
     inputs.dir "$distroDir/test_data"
