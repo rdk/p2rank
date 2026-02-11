@@ -338,6 +338,9 @@ class Dataset implements Parametrized, Writable, Failable {
             case "puresnet":
                 res = new PUResNetLoader()
                 break
+            case "pocketeer":
+                res = new PocketeerLoader()
+                break
             default:
                 throw new PrankException("Unknown prediction method specified in the dataset: $predictionMethod")
         }
