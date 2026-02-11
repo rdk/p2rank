@@ -211,17 +211,21 @@ On Windows, use `bash` to run build commands (installed by default with [Git for
 
 ```ruby
 git clone https://github.com/rdk/p2rank.git && cd p2rank
-./make.sh       
+./make.sh          # after this, you can use the program by running ./prank.sh or ./distro/prank
+
+./make-disro.sh    # creates a tar.gz archive with the program in .build/
+                   # which can be used as a portable binary package
 
 ./unit-tests.sh    # optionally you can run tests to check everything works fine on your machine        
-./tests.sh quick   # runs further tests
+./tests.sh quick   # script that runs further tests
+
 ```    
 You can now run the program using:
 ```ruby
 distro/prank       # standard mode that is run in production
 ./prank.sh         # development/training mode 
 ``` 
-To use `./prank.sh` (development/training mode) first you need to copy and edit `misc/local-env.sh` into repo root directory (see [training tutorial](https://github.com/rdk/p2rank/blob/develop/documentation/training-tutorial.md#preparing-the-environment)).
+To use `./prank.sh` (development/training mode) first you should copy and edit `misc/local-env.sh` into repo root directory (see [training tutorial](https://github.com/rdk/p2rank/blob/develop/documentation/training-tutorial.md#preparing-the-environment)).
 
 ## ⚖️ Comparison with Fpocket
 
