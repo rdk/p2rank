@@ -8,7 +8,7 @@ The `-aa_mapping` parameter controls which mappings are used.
 
 | Mode | Description                                                                                                                                                                                 | Mappings |
 |------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------|
-| `minimal` | Default, backward-compatible (MSE→MET, MEN→ASN only)                                                                                                                                        | 2 |
+| `minimal` | Default, backward-compatible (MSE->MET, MEN->ASN only)                                                                                                                                        | 2 |
 | `pdbfixer` | Extended set from [pdbfixer](https://github.com/openmm/pdbfixer) ([source code](https://github.com/openmm/pdbfixer/blob/94cfa4c0ca551cdc5f13320f9a658efd59f2b881/pdbfixer/pdbfixer.py#L66)) | 87 |
 | `/path/to/file.csv` | Custom user-provided mapping file                                                                                                                                                           | User-defined |
 
@@ -38,10 +38,10 @@ prank predict -f protein.pdb -aa_mapping /path/to/my-mappings.csv
 Any value other than `minimal` or `pdbfixer` is treated as a file path.
 
 A custom file **replaces** all built-in mappings (it does not extend them).
-To add entries on top of the pdbfixer set, copy the bundled [`aa-mapping-pdbfixer.csv`](src/main/resources/mappings/aa-mapping-pdbfixer.csv)
+To add entries on top of the pdbfixer set, copy the bundled [`aa-mapping-pdbfixer.csv`](../src/main/resources/mappings/aa-mapping-pdbfixer.csv)
 and append your entries.
 
-Format — two-column CSV:
+Format - two-column CSV:
 
 ```csv
 # Custom mappings
@@ -49,11 +49,9 @@ MSE,MET
 LLP,LYS
 SEC,CYS
 ```
-
+Format notes:
 - Lines starting with `#` and empty lines are ignored
-- Codes are case-insensitive, 1-4 alphanumeric characters
+- Codes are case-insensitive
 - Whitespace around codes and commas is trimmed
 - Duplicate source codes: warned, first mapping wins
-- Self-mappings (e.g., `ALA,ALA`): skipped
-- Invalid lines: warned and skipped
 - File not found or not readable: P2Rank exits with an error
