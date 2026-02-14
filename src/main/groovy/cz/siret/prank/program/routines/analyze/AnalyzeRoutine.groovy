@@ -170,22 +170,22 @@ class AnalyzeRoutine extends Routine {
      */
     void cmdChains() {
         LoaderParams.ignoreLigandsSwitch = true
-        
-        StringBuffer csv = new StringBuffer("protein, n_chains, chain_id, mmcif_id, n_residues, residue_string\n")
+
+        List<String> csvRows = newSynchronizedList()
         def res = dataset.processItems { Dataset.Item item ->
             Protein p = item.protein
 
             int nchains = p.residueChains.size()
-            String rows = ""
             p.residueChains.each {
                 String chainId = it.authorId
                 String mmcifId = it.mmcifId
                 int nres = it.length
                 String chars = it.biojavaCodeCharString
-                rows += "${item.label}, $nchains, $chainId, $mmcifId, $nres, $chars \n"
+                csvRows.add("${item.label}, $nchains, $chainId, $mmcifId, $nres, $chars ")
             }
-            csv << rows
         }
+        String csv = "protein, n_chains, chain_id, mmcif_id, n_residues, residue_string\n" +
+                csvRows.toSorted().collect { it + "\n" }.join("")
         writeFile "$outdir/chains.csv", csv
 
         res.writeItemErrorsToCsv("$outdir/errors.csv")
@@ -207,12 +207,14 @@ class AnalyzeRoutine extends Routine {
             int idx = 1
             for (ResidueChain chain : p.residueChains) {
 
-                StringBuffer csv = new StringBuffer("chain_name, seq_num, ins_code, key, chain_mmcif_id, atoms, sec_struct_type\n")
+                List<String> csvRows = []
                 for (Residue res : chain.residues) {
                     ResidueNumber rn = res.residueNumber
-                    csv << "$rn.chainName, $rn.seqNum, $rn.insCode, $res.key, $res.chainMmcifId, $res.atoms.count, $res.secStruct \n"
+                    csvRows.add("$rn.chainName, $rn.seqNum, $rn.insCode, $res.key, $res.chainMmcifId, $res.atoms.count, $res.secStruct " as String)
                 }
 
+                String csv = "chain_name, seq_num, ins_code, key, chain_mmcif_id, atoms, sec_struct_type\n" +
+                        csvRows.toSorted().collect { it + "\n" }.join("")
                 String strIdx = String.format("%02d", idx++)
                 writeFile "$outdir/${item.label}_${strIdx}_${chain.authorId}_${chain.mmcifId}_residues.csv", csv
             }
@@ -272,12 +274,12 @@ class AnalyzeRoutine extends Routine {
         LoaderParams.ignoreLigandsSwitch = true
 
         def labeler = dataset.binaryResidueLabeler
-        StringBuffer csv = new StringBuffer("protein, n_chains, chain_ids, n_residues, n_residues_in_labeling, positives, negatives, unlabeled\n")
 
         if (labeler instanceof SprintLabelingLoader) {
             printSprintChains((SprintLabelingLoader)labeler)
         }
 
+        List<String> csvRows = newSynchronizedList()
         dataset.processItems { Dataset.Item item ->
             Protein p = item.protein
 
@@ -288,7 +290,7 @@ class AnalyzeRoutine extends Routine {
             String chainIds = p.residueChains.collect { it.authorId }.join(" ")
             int nres = p.residues.size()
             int nlabres = s.total
-            csv << "${item.label}, $nchains, $chainIds, $nres, $nlabres, ${s.positives}, ${s.negatives}, ${s.unlabeled}\n"
+            csvRows.add("${item.label}, $nchains, $chainIds, $nres, $nlabres, ${s.positives}, ${s.negatives}, ${s.unlabeled}")
 
             if (params.visualizations) {
                 new NewPymolRenderer("$outdir/visualizations", new RenderingModel(
@@ -300,6 +302,8 @@ class AnalyzeRoutine extends Routine {
             }
         }
 
+        String csv = "protein, n_chains, chain_ids, n_residues, n_residues_in_labeling, positives, negatives, unlabeled\n" +
+                csvRows.toSorted().collect { it + "\n" }.join("")
         writeFile "$outdir/residue_stats.csv", csv
     }
 
