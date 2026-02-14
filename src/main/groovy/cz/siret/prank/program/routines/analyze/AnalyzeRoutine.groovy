@@ -181,7 +181,7 @@ class AnalyzeRoutine extends Routine {
                 String mmcifId = it.mmcifId
                 int nres = it.length
                 String chars = it.biojavaCodeCharString
-                csvRows.add("${item.label}, $nchains, $chainId, $mmcifId, $nres, $chars ")
+                csvRows.add("${item.label}, $nchains, $chainId, $mmcifId, $nres, $chars " as String)
             }
         }
         String csv = "protein, n_chains, chain_id, mmcif_id, n_residues, residue_string\n" +
@@ -290,7 +290,7 @@ class AnalyzeRoutine extends Routine {
             String chainIds = p.residueChains.collect { it.authorId }.join(" ")
             int nres = p.residues.size()
             int nlabres = s.total
-            csvRows.add("${item.label}, $nchains, $chainIds, $nres, $nlabres, ${s.positives}, ${s.negatives}, ${s.unlabeled}")
+            csvRows.add("${item.label}, $nchains, $chainIds, $nres, $nlabres, ${s.positives}, ${s.negatives}, ${s.unlabeled}" as String)
 
             if (params.visualizations) {
                 new NewPymolRenderer("$outdir/visualizations", new RenderingModel(
