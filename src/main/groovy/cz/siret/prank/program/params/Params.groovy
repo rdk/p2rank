@@ -378,9 +378,24 @@ class Params {
     boolean rf_flatten = false
 
     /**
+     * Flattening target type for random forest. Only relevant if rf_flatten=true.
+     *
+     * Available options:
+     *  - LegacyFlatBinaryForest
+     *  - FlatBinaryForest
+     *  - ShortFlatBinaryForest
+     *  - SuperShortLegacyFlatBinaryForest
+     *  - InterleavedBfsForest
+     */
+    @RuntimeParam
+    @ModelParam // training
+    String rf_flatten_target = "LegacyFlatBinaryForest"
+
+    /**
      * Flatten random forest in a way that has exactly the same output
      * by preserving weird way tree results are aggregated in FastRandomForest.
      */
+    @Deprecated
     @RuntimeParam
     @ModelParam // training
     boolean rf_flatten_as_legacy = true

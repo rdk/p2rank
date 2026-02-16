@@ -3,7 +3,7 @@ package cz.siret.prank.program.ml
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.features.PrankFeatureExtractor
 import cz.siret.prank.fforest.FasterForest
-import cz.siret.prank.fforest.api.FlatBinaryForest
+import cz.siret.prank.fforest.api.BinaryForest
 import cz.siret.prank.fforest2.FasterForest2
 import cz.siret.prank.program.params.Params
 import cz.siret.prank.utils.Console
@@ -27,9 +27,9 @@ import javax.annotation.Nullable
 class Model {
 
     String label
-    Classifier classifier
+    Object classifier  // Classifier or BinaryForest (flattened random forest)
 
-    Model(String label, Classifier classifier) {
+    Model(String label, Object classifier) {
         this.label = label
         this.classifier = Objects.requireNonNull(classifier)
     }
@@ -39,9 +39,21 @@ class Model {
         return this
     }
 
+    boolean isTrainable() {
+        return classifier instanceof Classifier
+    }
+
+    Classifier asWekaClassifier() {
+        if (classifier instanceof Classifier) {
+            return (Classifier) classifier
+        } else {
+            throw new IllegalStateException("Model classifier is not a trainable Classifier: ${classifier.class.name}")
+        }
+    }
+
     boolean hasFeatureImportances() {
         // Use Class.isInstance() instead of instanceof to avoid Groovy 5 union type issue (GROOVY-11289)
-        Classifier c = classifier
+        Object c = classifier
         return FastRandomForest.isInstance(c)
                 || FasterForest.isInstance(c)
                 || FasterForest2.isInstance(c)
@@ -50,7 +62,7 @@ class Model {
     @Nullable
     List<Double> getFeatureImportances() {
         // Use local variable to avoid Groovy 5 field type narrowing with union types
-        Classifier c = classifier
+        Object c = classifier
         List<Double> res = null
         if (c instanceof FastRandomForest) {
             res = (c as FastRandomForest).featureImportances.toList()
@@ -102,7 +114,7 @@ class Model {
     }
 
     void saveToFile(String fname) {
-        WekaUtils.saveClassifier((Classifier)classifier, fname)
+        WekaUtils.saveClassifier(classifier, fname)
         Console.write "model saved to file $fname (${Futils.sizeMBFormatted(fname)} MB)"
     }
 
@@ -132,7 +144,7 @@ class Model {
      */
     static Model loadFromDirectoryV3(String dir) {
         log.info "Loading model from directory (v3 format): $dir"
-        Classifier classifier = WekaUtils.loadClassifier(Futils.inputStream(dir + "/model.zst"))
+        Object classifier = WekaUtils.loadClassifier(Futils.inputStream(dir + "/model.zst"))
         return new Model(Futils.shortName(dir), classifier)
     }
 
@@ -148,7 +160,7 @@ class Model {
 
     private static Model loadFromFileV2(String fname) {
         //fname += ".zst"
-        Classifier classifier = WekaUtils.loadClassifier(Futils.inputStream(fname))
+        Object classifier = WekaUtils.loadClassifier(Futils.inputStream(fname))
         return new Model(Futils.shortName(fname), classifier)
     }
 
@@ -191,8 +203,8 @@ class Model {
             info.numTrees    = rf.numTrees
             info.numFeatures = rf.@m_Info?.enumerateAttributes()?.toList()?.size()
             info.maxDepth    = rf.maxDepth
-        } else if (classifier instanceof FlatBinaryForest) {
-            FlatBinaryForest rf = (FlatBinaryForest)classifier
+        } else if (classifier instanceof BinaryForest) {
+            BinaryForest rf = (BinaryForest)classifier
             info.isForest    = true
             info.numTrees    = rf.numTrees
             info.numFeatures = rf.numAttributes

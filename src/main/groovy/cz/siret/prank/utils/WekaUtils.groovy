@@ -48,7 +48,7 @@ class WekaUtils {
 
     // == classifiers ===
 
-    static void saveClassifier(Classifier classifier, String fileName) {
+    static void saveClassifier(Object classifier, String fileName) {
 
         ZipOutputStream zos = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(fileName), BUFFER_SIZE))
         //zos.setLevel(9)
@@ -67,7 +67,7 @@ class WekaUtils {
         oos.close()
     }
 
-    static Classifier loadClassifier(String fileName) {
+    static Object loadClassifier(String fileName) {
         InputStream zis = null
         try {
             zis = new ZipInputStream(new BufferedInputStream(new FileInputStream(fileName), BUFFER_SIZE))
@@ -81,9 +81,9 @@ class WekaUtils {
         }
     }
 
-    static Classifier loadClassifier(InputStream ins) {
+    static Object loadClassifier(InputStream ins) {
         try {
-            return (Classifier) SerializationHelper.read(ins)
+            return SerializationHelper.read(ins)
         } finally {
             ins.close()
         }
@@ -94,19 +94,12 @@ class WekaUtils {
      * @param classifier
      */
     @CompileDynamic
-    static void disableParallelism(Classifier classifier) {
+    static void disableParallelism(Object classifier) {
         String[] threadPropNames = ["numThreads","numExecutionSlots"]   // names used for num.threads property by different classifiers
         threadPropNames.each { String name ->
             if (classifier.hasProperty(name))
                 classifier."$name" = 1 // params.threads
         }
-    }
-
-    /**
-     * load from jar
-     */
-    static Classifier loadClassifierFromPath(String path) {
-        return (Classifier) SerializationHelper.read(path.class.getResourceAsStream(path));
     }
 
     static void trainClassifier(Classifier classifier, FeatureVectors data) {

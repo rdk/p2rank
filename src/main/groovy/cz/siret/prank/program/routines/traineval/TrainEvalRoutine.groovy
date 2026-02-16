@@ -1,10 +1,10 @@
 package cz.siret.prank.program.routines.traineval
 
 import cz.siret.prank.domain.Dataset
-import cz.siret.prank.fforest.api.FlattableForest
 import cz.siret.prank.prediction.metrics.ClassifierStats
 import cz.siret.prank.program.ml.FeatureVectors
 import cz.siret.prank.program.ml.Model
+import cz.siret.prank.program.ml.ModelConverter
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.program.routines.results.FeatureImportances
@@ -106,17 +106,22 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
         Futils.delete(evalVectorFile)
     }
 
-    ClassifierStats calculateTrainStats(Classifier classifier, FeatureVectors trainVectors) {
+    ClassifierStats calculateTrainStats(Object classifier, FeatureVectors trainVectors) {
         if (params.classifier_train_stats) {
             ClassifierStats trainStats = new ClassifierStats()
-            for (Instance inst : trainVectors.instances) {
-                double[] hist = classifier.distributionForInstance(inst)
-                double score = normalizedScore(hist)
-                boolean predicted = applyPointScoreThreshold(score)
-                boolean observed = inst.classValue() > 0
+//            for (Instance inst : trainVectors.instances) {
+//                double[] hist = classifier.distributionForInstance(inst)
+//                double score = normalizedScore(hist)
+//                boolean predicted = applyPointScoreThreshold(score)
+//                boolean observed = inst.classValue() > 0
+//
+//                trainStats.addPrediction(observed, predicted, score)
+//            }
 
-                trainStats.addPrediction(observed, predicted, score)
-            }
+            // TODO: implementation needs reconsidering since classifier can be of various types
+            //       and not all of them support distributionForInstance() method (e.g. flat BinaryForest)
+            log.warn("Calculating training stats for classifier of type ${classifier.class.simpleName} is not implemented. Returning empty stats.")
+
             return trainStats
         } else {
             return null
@@ -199,18 +204,15 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
 
 
     void trainModel(Model model, FeatureVectors data) {
-        WekaUtils.trainClassifier(model.classifier, data)
+        WekaUtils.trainClassifier(model.asWekaClassifier(), data)
 
         if (params.rf_flatten) {
-            if (model.classifier instanceof FlattableForest) {
-                log.info "Flattening random forest"
-                def timer = startTimer()
-                model.classifier = ((FlattableForest)model.classifier).toFlatBinaryForest()
-                logTime "model flattened in " + timer.formatted
-
-                model.label = model.label + "_flat"
+            if (ModelConverter.isFlattableClassifier(model.classifier)) {
+                Model flattenedModel = new ModelConverter().applyConversions(model)
+                model.classifier = flattenedModel.classifier
+                model.label = flattenedModel.label
             } else {
-                log.warn("Trying to flatten classifier that does not support it: " + model.classifier.class.simpleName)
+                throw new IllegalStateException("Trying to flatten classifier that does not support it: " + model.classifier.class.simpleName)
             }
         }
     }

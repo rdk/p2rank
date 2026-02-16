@@ -157,17 +157,18 @@ predict() {
 #
 #   title PREDICTIONS WITH FLATTENED FOREST
 #
-#   test ./prank.sh predict joined.ds          -c config/test-default  -rf_flatten 1   -out_subdir TEST/PREDICT_FLATTENED
-#   test ./prank.sh predict holo4k.ds          -c config/test-default  -rf_flatten 1   -out_subdir TEST/PREDICT_FLATTENED
-#   test ./prank.sh predict coach420.ds        -c config/test-default  -rf_flatten 1   -out_subdir TEST/PREDICT_FLATTENED
-#   test ./prank.sh predict ah4h.holoraw.ds    -c config/test-default  -rf_flatten 1   -out_subdir TEST/PREDICT_FLATTENED
+#   test ./prank.sh predict joined.ds         -c config/test-default  -rf_flatten 1  -rf_flatten_target FlatBinaryForest -out_subdir TEST/PREDICT_FLATTENED
+#   test ./prank.sh predict holo4k.ds         -c config/test-default  -rf_flatten 1  -rf_flatten_target LegacyFlatBinaryForest -out_subdir TEST/PREDICT_FLATTENED
+#   test ./prank.sh predict coach420.ds       -c config/test-default  -rf_flatten 1  -rf_flatten_target ShortFlatBinaryForest -out_subdir TEST/PREDICT_FLATTENED
+#   test ./prank.sh predict ah4h.holoraw.ds   -c config/test-default  -rf_flatten 1  -rf_flatten_target SuperShortLegacyFlatBinaryForest -out_subdir TEST/PREDICT_FLATTENED
 #
-#   test ./prank.sh predict chen11.ds          -c config/test-default  -rf_flatten 1   -out_subdir TEST/PREDICT_FLATTENED
-#   test ./prank.sh predict fptrain.ds         -c config/test-default  -rf_flatten 1   -out_subdir TEST/PREDICT_FLATTENED
-#   test ./prank.sh predict 'joined(mlig).ds'  -c config/test-default  -rf_flatten 1   -out_subdir TEST/PREDICT_FLATTENED
-#   test ./prank.sh predict 'holo4k(mlig).ds'  -c config/test-default  -rf_flatten 1   -out_subdir TEST/PREDICT_FLATTENED
+#   test ./prank.sh predict chen11.ds         -c config/test-default  -rf_flatten 1  -rf_flatten_target FlatBinaryForest -out_subdir TEST/PREDICT_FLATTENED
+#   test ./prank.sh predict fptrain.ds        -c config/test-default  -rf_flatten 1  -rf_flatten_target FlatBinaryForest -out_subdir TEST/PREDICT_FLATTENED
+#   test ./prank.sh predict 'joined(mlig).ds' -c config/test-default  -rf_flatten 1  -rf_flatten_target InterleavedBfsForest -out_subdir TEST/PREDICT_FLATTENED
+#   test ./prank.sh predict 'holo4k(mlig).ds' -c config/test-default  -rf_flatten 1  -rf_flatten_target InterleavedBfsForest -out_subdir TEST/PREDICT_FLATTENED
 #
 #}
+
 
 conservation() {
 

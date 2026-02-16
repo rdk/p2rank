@@ -3,6 +3,7 @@ package cz.siret.prank.prediction.pockets.rescorers;
 import cz.siret.prank.features.FeatureExtractor;
 import cz.siret.prank.features.FeatureVector;
 import cz.siret.prank.fforest.FasterForest;
+import cz.siret.prank.fforest.api.BinaryForest;
 import cz.siret.prank.fforest.api.FlatBinaryForest;
 import cz.siret.prank.fforest2.FasterForest2;
 import cz.siret.prank.program.ml.Model;
@@ -60,7 +61,7 @@ public interface InstancePredictor {
 
 
     static InstancePredictor create(Model model, FeatureExtractor<?> proteinExtractor) {
-        Classifier classifier = model.getClassifier();
+        Object classifier = model.getClassifier();
 
         InstancePredictor res = null;
 
@@ -119,9 +120,9 @@ public interface InstancePredictor {
                     return ff.distributionForAttributes(vect.getArray(), 2);
                 }
             };
-        } else if (classifier instanceof FlatBinaryForest) {
+        } else if (classifier instanceof BinaryForest) {
             res = new InstancePredictor() { // predictor using faster distributionForAttributes()
-                final FlatBinaryForest ff = (FlatBinaryForest) classifier;
+                final BinaryForest ff = (BinaryForest) classifier;
 
                 @Override
                 public double predictPositive(FeatureVector vect) {
@@ -143,7 +144,7 @@ public interface InstancePredictor {
 
         if (res == null) {
             log.info("Creating WekaInstancePredictor");
-            res = new WekaInstancePredictor(model.getClassifier(), proteinExtractor);
+            res = new WekaInstancePredictor(model.asWekaClassifier(), proteinExtractor);
         }
 
         return res;

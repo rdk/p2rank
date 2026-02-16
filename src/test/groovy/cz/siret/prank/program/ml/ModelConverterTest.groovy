@@ -1,5 +1,7 @@
 package cz.siret.prank.program.ml
 
+import cz.siret.prank.fforest.api.FasterForestConverter
+import cz.siret.prank.fforest.api.TrainableFasterForest
 import groovy.transform.CompileStatic
 import hr.irb.fastRandomForest.FastRandomForest
 import org.junit.jupiter.api.Disabled
@@ -20,7 +22,11 @@ class ModelConverterTest {
         Model model = Model.load("distro/models/default.model")
         assert model.classifier instanceof FastRandomForest
 
-        new ModelConverter().frfToFlatForest((FastRandomForest)model.classifier)
+        TrainableFasterForest trainableForest = new ModelConverter().frfToTrainableBinaryForest((FastRandomForest)model.classifier)
+
+        FasterForestConverter.convertFasterForest(trainableForest, FasterForestConverter.ForestType.FlatBinaryForest)
+        FasterForestConverter.convertFasterForest(trainableForest, FasterForestConverter.ForestType.LegacyFlatBinaryForest)
+        FasterForestConverter.convertFasterForest(trainableForest, FasterForestConverter.ForestType.InterleavedBfsForest)
     }
 
 }
