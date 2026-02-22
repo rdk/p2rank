@@ -105,6 +105,8 @@ class EvalResiduesRoutine extends EvalRoutine {
             }
         }
 
+        results.addEvalTime(timer.time)
+
         results.logAndStore(outdir, model?.label)
         //logSummaryResults(dataset.label, model.label, results)
 
@@ -112,7 +114,6 @@ class EvalResiduesRoutine extends EvalRoutine {
         logTime "model evaluation finished in $timer.formatted"
         write "results saved to directory [${Futils.absPath(outdir)}]"
 
-        results.firstEvalTime = timer.time
 
         return results
     }

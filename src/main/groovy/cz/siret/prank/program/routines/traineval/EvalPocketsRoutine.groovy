@@ -119,6 +119,8 @@ class EvalPocketsRoutine extends EvalRoutine {
             trainPocketScoreTransformers(outdir, new PredictResults(results.eval, results.classifierStats))
         }
 
+        results.addEvalTime(timer.time)
+
         results.logAndStore(outdir, model.classifier.class.simpleName)
         logSummaryResults(dataset.label, model.label, results)
 
@@ -126,12 +128,10 @@ class EvalPocketsRoutine extends EvalRoutine {
         logTime "model evaluation finished in $timer.formatted"
         write "results saved to directory [${Futils.absPath(outdir)}]"
 
-        results.firstEvalTime = timer.time
-
         return results
     }
 
-    private writeOriginalPocketStats(PredictionPair pair, String dir) {
+    private static writeOriginalPocketStats(PredictionPair pair, String dir) {
         String originalPocketsStr = pair.prediction.pockets.collect { Pocket p ->
             "$p.rank  $p.score  $p.name  $p.centroid.x  $p.centroid.y  $p.centroid.z".replace("  ", "\t")
         }.join("\n")

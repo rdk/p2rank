@@ -3,6 +3,7 @@ package cz.siret.prank.program.routines.results
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.prediction.metrics.ClassifierStats
 import cz.siret.prank.utils.Formatter
+import cz.siret.prank.utils.StatSample2
 import cz.siret.prank.utils.console.TextBox
 import cz.siret.prank.utils.csv.CSV
 import groovy.transform.CompileStatic
@@ -38,6 +39,7 @@ class EvalResults extends ResultsBase {
     /** time of first evaluation, may be longer than subsequent ones in seedloop due to caching */
     Long firstEvalTime = null
     Long lastEvalTime = null
+    List<Long> evalTimes = new ArrayList<>()
 
     long train_positives = 0
     long train_negatives = 0
@@ -61,6 +63,14 @@ class EvalResults extends ResultsBase {
         }
 
         residuePredictionStats = new ClassifierStats()
+    }
+
+    void addEvalTime(long time) {
+        evalTimes.add(time)
+        if (firstEvalTime == null) {
+            firstEvalTime = time
+        }
+        lastEvalTime = time
     }
 
     private static List<Double> repeat(Double value, int times) {
@@ -97,8 +107,10 @@ class EvalResults extends ResultsBase {
         residuePredictionStats.addAll(results.residuePredictionStats)
 
         totalTrainingTime += results.totalTrainingTime
-        if (firstEvalTime==null) firstEvalTime = results.firstEvalTime  // set only once for first run because of various caching mechanisms
-        lastEvalTime = results.firstEvalTime                            // overwrite every time to have time of last run
+
+        for (Long time : results.evalTimes) {
+            this.addEvalTime(time)
+        }
 
         train_negatives += results.train_negatives
         train_positives += results.train_positives
@@ -137,16 +149,42 @@ class EvalResults extends ResultsBase {
     }
 
     double getAvgTrainingTimeMinutes() {
-        (double)(avgTrainingTime ?: 0d) / 60000d
+        return msToMinutes(avgTrainingTime)
     }
 
     double getEvalTimeMinutes() {
-        (double)(firstEvalTime ?: 0d) / 60000d
+        return msToMinutes(firstEvalTime)
     }
 
     double getLastEvalTimeMinutes() {
-        (double)(lastEvalTime ?: 0d) / 60000d
+        return msToMinutes(lastEvalTime)
     }
+
+    /**
+     * returns average evaluation time, excluding first eval time (which may be longer due to caching)
+     */
+    double getAvgEvalTime() {
+        if (evalTimes.isEmpty()) return 0
+        if (evalTimes.size() == 1) {
+            return evalTimes[0] as double
+        }
+
+        return ((double)evalTimes.subList(1, evalTimes.size()).sum()) / (evalTimes.size() - 1)
+    }
+
+    double getAvgEvalTimeMinutes() {
+        return msToMinutes(avgEvalTime)
+    }
+
+//===========================================================================================================//
+
+    private static double msToMinutes(Double ms) {
+        if (ms==null) return Double.NaN
+
+        return ms / 60000d
+    }
+
+//===========================================================================================================//
 
     Map<String, Double> getStats() {
         Map<String, Double> m = new TreeMap<>()
@@ -164,7 +202,8 @@ class EvalResults extends ResultsBase {
         m.TIME_TRAIN_M = avgTrainingTimeMinutes
         m.TIME_EVAL_M = evalTimeMinutes
         m.TIME_EVAL_LAST_M = lastEvalTimeMinutes
-        m.TIME_M = avgTrainingTimeMinutes + evalTimeMinutes
+        m.TIME_EVAL_AVG_M = avgEvalTimeMinutes
+        m.TIME_TRAINEVAL_AVG_M = avgTrainingTimeMinutes + avgEvalTimeMinutes
 
         m.TRAIN_VECTORS = avgTrainVectors
         m.TRAIN_POSITIVES = avgTrainPositives

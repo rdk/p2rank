@@ -1236,7 +1236,7 @@ class Params {
                                    'AVG_POCKETS',
                                    'AVG_POCKET_SAS_POINTS',
                                    'AVG_POCKET_SAS_POINTS_TRUE_POCKETS',
-                                   'TIME_MINUTES']
+                                   'TIME_TRAINEVAL_AVG_M']
 
     /**
      * Path to a JSON file that contains parameters of a transformer from raw score to "z-score calculated from the distribution of true pockets" (pocket.auxInfo.zScoreTP).

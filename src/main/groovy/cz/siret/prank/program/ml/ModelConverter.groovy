@@ -7,6 +7,8 @@ import cz.siret.prank.fforest.api.FasterForestConverter
 import cz.siret.prank.fforest.api.FlatBinaryForest
 import cz.siret.prank.fforest.api.FlatBinaryForestBuilder
 import cz.siret.prank.fforest.api.LegacyFlatBinaryForest
+import cz.siret.prank.fforest.api.NativePanamaForest
+import cz.siret.prank.fforest.api.NativePanamaForestAvx2
 import cz.siret.prank.fforest.api.TrainableFasterForest
 import cz.siret.prank.fforest2.FasterForest2
 import cz.siret.prank.program.params.Parametrized
@@ -68,33 +70,46 @@ class ModelConverter implements Parametrized, Writable {
                 throw new IllegalArgumentException("Unknown target forest type '$targetType'. Supported types: ${FasterForestConverter.ForestType.values()*.name()}.")
             }
 
+            if (forestType == FasterForestConverter.ForestType.NativePanamaForest) {
+                if (!NativePanamaForest.isAvailable()) {
+                    throw new IllegalStateException("NativePanamaForest is not available on this platform. Cannot flatten to NativePanamaForest.")
+                }
+            } else if (forestType == FasterForestConverter.ForestType.NativePanamaForestAvx2) {
+                if (!NativePanamaForestAvx2.isAvx2Available()) {
+                    throw new IllegalStateException("NativePanamaForestAvx2 is not available on this platform. Cannot flatten to NativePanamaForestAvx2.")
+                }
+            }
+
             BinaryForest flatForest
+            TrainableFasterForest trainableForest
+
+            // prepare trainable forest for flattening, if needed (e.g. FastRandomForest needs to be converted to TrainableFasterForest first)
             if (c instanceof TrainableFasterForest) {
 
-                flatForest = FasterForestConverter.convertFasterForest((TrainableFasterForest) c, forestType)
+                trainableForest = (TrainableFasterForest) c
 
             } else if (c instanceof FastRandomForest) {
 
-                TrainableFasterForest trainableForest = frfToTrainableBinaryForest((FastRandomForest) c)
-                flatForest = FasterForestConverter.convertFasterForest(trainableForest, forestType)
+                trainableForest = frfToTrainableBinaryForest((FastRandomForest) c)
 
             } else if (c instanceof LegacyFlatBinaryForest) {
                 // LegacyFlatBinaryForest must go first since it extends FlatBinaryForest and allows for lossless conversions (keeps probabilities of both classes)
 
-                TrainableFasterForest trainableForest = FlatBinaryForestBuilder.toFasterTreeForest((LegacyFlatBinaryForest) c)
-                flatForest = FasterForestConverter.convertFasterForest(trainableForest, forestType)
+                trainableForest = FlatBinaryForestBuilder.toFasterTreeForest((LegacyFlatBinaryForest) c)
 
             } else if (c instanceof FlatBinaryForest) {
 
-                TrainableFasterForest trainableForest = FlatBinaryForestBuilder.toFasterTreeForest((FlatBinaryForest) c)
-                flatForest = FasterForestConverter.convertFasterForest(trainableForest, forestType)
+                trainableForest = FlatBinaryForestBuilder.toFasterTreeForest((FlatBinaryForest) c)
 
             } else {
                 throw new IllegalStateException("Unexpected flattable forest type: ${c.class.simpleName}")
             }
-            write " - flattened in:  $timer.formatted"
+
+            // convert to target flat forest type
+            flatForest = FasterForestConverter.convertFasterForest(trainableForest, forestType)
 
             String newClassName = flatForest.getClass().simpleName
+            write " - flattened to ${newClassName} in:  $timer.formatted"
 
             return new Model("${newClassName}_from_${model.label}", flatForest)
         } else {
