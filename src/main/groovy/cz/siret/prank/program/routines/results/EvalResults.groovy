@@ -37,6 +37,7 @@ class EvalResults extends ResultsBase {
     long totalTrainingTime = 0
     /** time of first evaluation, may be longer than subsequent ones in seedloop due to caching */
     Long firstEvalTime = null
+    Long lastEvalTime = null
 
     long train_positives = 0
     long train_negatives = 0
@@ -96,7 +97,8 @@ class EvalResults extends ResultsBase {
         residuePredictionStats.addAll(results.residuePredictionStats)
 
         totalTrainingTime += results.totalTrainingTime
-        if (firstEvalTime==null) firstEvalTime = results.firstEvalTime  // set only once for first run because of varoius caching mechanisms
+        if (firstEvalTime==null) firstEvalTime = results.firstEvalTime  // set only once for first run because of various caching mechanisms
+        lastEvalTime = results.firstEvalTime                            // overwrite every time to have time of last run
 
         train_negatives += results.train_negatives
         train_positives += results.train_positives
@@ -142,6 +144,10 @@ class EvalResults extends ResultsBase {
         (double)(firstEvalTime ?: 0d) / 60000d
     }
 
+    double getLastEvalTimeMinutes() {
+        (double)(lastEvalTime ?: 0d) / 60000d
+    }
+
     Map<String, Double> getStats() {
         Map<String, Double> m = new TreeMap<>()
 
@@ -157,6 +163,7 @@ class EvalResults extends ResultsBase {
 
         m.TIME_TRAIN_M = avgTrainingTimeMinutes
         m.TIME_EVAL_M = evalTimeMinutes
+        m.TIME_EVAL_LAST_M = lastEvalTimeMinutes
         m.TIME_M = avgTrainingTimeMinutes + evalTimeMinutes
 
         m.TRAIN_VECTORS = avgTrainVectors
