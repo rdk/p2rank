@@ -211,10 +211,11 @@ eval_predict_flattened() {
 
     title EVALUATING PREDICTIONS WITH FLATTENED FOREST
 
-    test ./prank.sh eval-predict joined.ds       -c config/test-default  -rf_flatten 1  -out_subdir TEST/EVAL_FLATTENED
-    test ./prank.sh eval-predict coach420.ds     -c config/test-default  -rf_flatten 1  -out_subdir TEST/EVAL_FLATTENED
-    test ./prank.sh eval-predict holo4k.ds       -c config/test-default  -rf_flatten 1  -out_subdir TEST/EVAL_FLATTENED
+    test ./prank.sh eval-predict joined.ds       -c config/test-default  -rf_flatten 1 -rf_flatten_target FlatBinaryForest  -out_subdir TEST/EVAL_FLATTENED
+    test ./prank.sh eval-predict coach420.ds     -c config/test-default  -rf_flatten 1 -rf_flatten_target FlatBinaryForest  -out_subdir TEST/EVAL_FLATTENED
+    test ./prank.sh eval-predict holo4k.ds       -c config/test-default  -rf_flatten 1 -rf_flatten_target FlatBinaryForest  -out_subdir TEST/EVAL_FLATTENED -l FlatBinaryForest
 
+    test ./prank.sh eval-predict holo4k.ds       -c config/test-default  -rf_flatten 1 -rf_flatten_target NativePanamaForest  -out_subdir TEST/EVAL_FLATTENED_NATIVE
 }
 
 
