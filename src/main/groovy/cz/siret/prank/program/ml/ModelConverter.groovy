@@ -4,6 +4,9 @@ import cz.siret.prank.fforest.FasterForest
 import cz.siret.prank.fforest.FasterTree
 import cz.siret.prank.fforest.api.BinaryForest
 import cz.siret.prank.fforest.api.FasterForestConverter
+import cz.siret.prank.fforest.api.FlatBinaryForest
+import cz.siret.prank.fforest.api.FlatBinaryForestBuilder
+import cz.siret.prank.fforest.api.LegacyFlatBinaryForest
 import cz.siret.prank.fforest.api.TrainableFasterForest
 import cz.siret.prank.fforest2.FasterForest2
 import cz.siret.prank.program.params.Parametrized
@@ -44,7 +47,7 @@ class ModelConverter implements Parametrized, Writable {
 
 //===========================================================================================================//
 
-    static List<Class> FLATTABLE_CLASSIFIERS = [FastRandomForest, FasterForest, FasterForest2] as List
+    static List<Class> FLATTABLE_CLASSIFIERS = [FastRandomForest, FasterForest, FasterForest2, LegacyFlatBinaryForest, FlatBinaryForest] as List<Class>
     static List<String> FLATTABLE_CLASSIFIER_NAMES = FLATTABLE_CLASSIFIERS*.simpleName
 
     static boolean isFlattableClassifier(Object c) {
@@ -67,16 +70,33 @@ class ModelConverter implements Parametrized, Writable {
 
             BinaryForest flatForest
             if (c instanceof TrainableFasterForest) {
+
                 flatForest = FasterForestConverter.convertFasterForest((TrainableFasterForest) c, forestType)
+
             } else if (c instanceof FastRandomForest) {
+
                 TrainableFasterForest trainableForest = frfToTrainableBinaryForest((FastRandomForest) c)
                 flatForest = FasterForestConverter.convertFasterForest(trainableForest, forestType)
+
+            } else if (c instanceof LegacyFlatBinaryForest) {
+                // LegacyFlatBinaryForest must go first since it extends FlatBinaryForest and allows for lossless conversions (keeps probabilities of both classes)
+
+                TrainableFasterForest trainableForest = FlatBinaryForestBuilder.toFasterTreeForest((LegacyFlatBinaryForest) c)
+                flatForest = FasterForestConverter.convertFasterForest(trainableForest, forestType)
+
+            } else if (c instanceof FlatBinaryForest) {
+
+                TrainableFasterForest trainableForest = FlatBinaryForestBuilder.toFasterTreeForest((FlatBinaryForest) c)
+                flatForest = FasterForestConverter.convertFasterForest(trainableForest, forestType)
+
             } else {
                 throw new IllegalStateException("Unexpected flattable forest type: ${c.class.simpleName}")
             }
             write " - flattened in:  $timer.formatted"
 
-            return new Model("FlatBinaryForest_from_${model.label}", flatForest)
+            String newClassName = flatForest.getClass().simpleName
+
+            return new Model("${newClassName}_from_${model.label}", flatForest)
         } else {
             log.warn "Cannot flatten classifier of type ${c.class.simpleName}. Flattable classifiers: ${FLATTABLE_CLASSIFIER_NAMES}"
             return model
