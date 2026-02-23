@@ -6,10 +6,10 @@
 # copy to project root dir and edit
 #
 
-# For training, it id best to use the garbage collector with highest throughput for particular JVM. For Java 8 it is the default one.
-# Other options:
-# -XX:+UseConcMarkSweepGC
-# -XX:+UseG1GC
-export JAVA_LOCALENV_PARAMS="-Xmx6G"
+# -Xmx31G             max heap 31G (not 32G, to keep compressed oops enabled)
+# -XX:+UseParallelGC   throughput-oriented GC (better than G1 for batch workloads)
+# -XX:+AlwaysPreTouch  pre-fault heap pages at startup to avoid page faults later
+# -XX:+EagerJVMCI      initialize Graal JIT at startup for faster warmup (only with GraalVM)
+export JAVA_LOCALENV_PARAMS="-Xmx31G -XX:+UseParallelGC"
 
-export PRANK_LOCALENV_PARAMS="-threads 4"
+export PRANK_LOCALENV_PARAMS="-threads 8"
