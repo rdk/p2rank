@@ -40,14 +40,14 @@ class ClassifierStats implements Parametrized, Writable {
     Metrics metrics = new Metrics(this)
 
     boolean collecting = false      // if true collect individual predictions
-    ArrayList<PPred> predictions
+    PredictedScores predictions
 
     ClassifierStats() {
         nclasses = 2
         op = new int[nclasses][nclasses]
         collecting = params.stats_collect_predictions
         if (collecting) {
-            predictions = new ArrayList<>()
+            predictions = new PredictedScores()
         }
     }
 
@@ -109,7 +109,7 @@ class ClassifierStats implements Parametrized, Writable {
         }
 
         if (collecting) {
-            predictions.add(new PPred(observed, score))
+            predictions.add(observed, score)
         }
 
         op[observed?1:0][predicted?1:0]++

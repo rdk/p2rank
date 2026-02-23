@@ -15,27 +15,28 @@ import weka.core.Instances
 @CompileStatic
 class WekaStatsHelper {
 
-    List<PPred> preds
     Instances wekaPreds
 
     /**
      *
      * @param preds
      */
-    WekaStatsHelper(List<PPred> preds) {
-        if (preds == null || preds.empty) {
+    WekaStatsHelper(PredictedScores preds) {
+        if (preds == null || preds.isEmpty()) {
             throw new PrankException("Predictions cannot be empty!")
         }
 
-        this.preds = preds
         wekaPreds = new ThresholdCurve().getCurve(toWekaNominalPredictions(preds), 1)
     }
 
-    private ArrayList<Prediction> toWekaNominalPredictions(List<PPred> preds) {
-        ArrayList<Prediction> res = new ArrayList<>(preds.size())
-        for (PPred p : preds) {
-            double actual = p.observed ? 1d : 0d
-            double[] distribution = [1-p.score, p.score] as double[]
+    private ArrayList<Prediction> toWekaNominalPredictions(PredictedScores preds) {
+        int size = preds.size()
+        double[] scores = preds.getScoresArray()
+        boolean[] observed = preds.getObservedArray()
+        ArrayList<Prediction> res = new ArrayList<>(size)
+        for (int i = 0; i < size; i++) {
+            double actual = observed[i] ? 1d : 0d
+            double[] distribution = [1-scores[i], scores[i]] as double[]
             res.add(new NominalPrediction(actual, distribution))
         }
         return res

@@ -16,16 +16,16 @@ class Curves {
      *
      * see ranking.py:424 from sklearn
      */
-    static Curve roc(ArrayList<PPred> predictions) {
-        assert predictions!=null && !predictions.empty
+    static Curve roc(PredictedScores predictions) {
+        assert predictions!=null && !predictions.isEmpty()
 
-        predictions.sort { -it.score }  // by descending score, sort in place
+        predictions.sortDescendingByScore()
 
         int n = predictions.size()
         double[] tps = cumsum(predictions, true)   // true positives
         double[] fps = cumsum(predictions, false)  // false positives
 
-        double[] thresholds = predictions.collect { it.score }.toArray() as double[]
+        double[] thresholds = predictions.toScoresArray()
 
         List<Integer> distinct_threshold_indices = distinctValueIndices(thresholds)
         if (distinct_threshold_indices.last() != n-1)
@@ -78,12 +78,13 @@ class Curves {
         res
     }
 
-    private static double[] cumsum(ArrayList<PPred> pred, boolean value) {
+    private static double[] cumsum(PredictedScores pred, boolean value) {
         int n = pred.size()
-        double[] cumsum = new double[pred.size()]
+        boolean[] observed = pred.getObservedArray()
+        double[] cumsum = new double[n]
         int sum = 0
         for (int i=0; i!=n; ++i) {
-            if (pred[i].observed == value)
+            if (observed[i] == value)
                 sum++
             cumsum[i] = sum
         }

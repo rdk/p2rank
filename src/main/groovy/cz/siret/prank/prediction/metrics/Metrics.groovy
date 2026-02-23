@@ -347,7 +347,8 @@ class Metrics implements Parametrized {
         if (this.advanced == null) {
             advanced = new Advanced() // empty
             if (stats.collecting && stats.predictions!=null) {
-                if (!stats.predictions.empty)  {
+                if (!stats.predictions.isEmpty())  {
+                    stats.predictions.trimToSize()
                     advanced = calculateAdvanced(stats.predictions)
                 } else {
                     log.error "Predictions are empty! Cannot calculate AUC and AUPRC stats."
@@ -361,7 +362,7 @@ class Metrics implements Parametrized {
      * @param predictions  non-null non-empty
      * @return
      */
-    Advanced calculateAdvanced(@Nonnull ArrayList<PPred> predictions) {
+    Advanced calculateAdvanced(@Nonnull PredictedScores predictions) {
         Advanced res = new Advanced()
 
         res.logLoss = calcLogLoss(predictions)
@@ -380,7 +381,7 @@ class Metrics implements Parametrized {
         res.scoreAvg = meanScore(predictions)
         res.positiveScoreAvg = meanScoreObserved(predictions)
 
-        calcScoreStatMoments(res)
+        calcScoreStatMoments(res, predictions)
 
         double[] recalls = calcMaxRecallForGivenPrecisions(predictions, [0.2d, 0.4d, 0.5d, 0.6d, 0.8d] as double[])
         res.RatP02 = recalls[0]
@@ -392,17 +393,16 @@ class Metrics implements Parametrized {
         return res
     }
 
-    /**
-     * TODO optimize
-     */
-    private calcScoreStatMoments(Advanced res) {
+    private calcScoreStatMoments(Advanced res, PredictedScores predictions) {
         try {
             Variance variance = new Variance()
             Skewness skewness = new Skewness()
             Kurtosis kurtosis = new Kurtosis()
 
-            for (PPred pred : stats.predictions) {
-                double score = pred.score
+            double[] scores = predictions.getScoresArray()
+            int n = predictions.size()
+            for (int i = 0; i < n; i++) {
+                double score = scores[i]
                 variance.increment(score)
                 skewness.increment(score)
                 kurtosis.increment(score)
@@ -416,24 +416,28 @@ class Metrics implements Parametrized {
         }
     }
 
-    private double meanScore(List<PPred> preds) {
+    private double meanScore(PredictedScores preds) {
         double n = preds.size()
         double sum = 0d
 
-        for (PPred pred : preds) {
-            sum += pred.score/n
+        double[] scores = preds.getScoresArray()
+        for (int i = 0; i < (int) n; i++) {
+            sum += scores[i]/n
         }
 
         return sum
     }
 
-    private double meanScoreObserved(List<PPred> preds) {
+    private double meanScoreObserved(PredictedScores preds) {
         int n = 0
         double sum = 0d
 
-        for (PPred pred : preds) {
-            if (pred.observed) {
-                sum += pred.score
+        double[] scores = preds.getScoresArray()
+        boolean[] observed = preds.getObservedArray()
+        int size = preds.size()
+        for (int i = 0; i < size; i++) {
+            if (observed[i]) {
+                sum += scores[i]
                 n++
             }
         }
@@ -441,13 +445,16 @@ class Metrics implements Parametrized {
         return (double)sum / (double)n
     }
 
-    private double calcLogLoss(List<PPred> preds) {
+    private double calcLogLoss(PredictedScores preds) {
         final double LOG_LOSS_EPSILON = 0.01
         double n = preds.size()
         double sum = 0d
 
-        for (PPred pred : preds) {
-            double pCorrect = pred.observed ? pred.score : 1d-pred.score
+        double[] scores = preds.getScoresArray()
+        boolean[] observed = preds.getObservedArray()
+        int size = preds.size()
+        for (int i = 0; i < size; i++) {
+            double pCorrect = observed[i] ? scores[i] : 1d-scores[i]
             if (pCorrect < LOG_LOSS_EPSILON) {
                 pCorrect = LOG_LOSS_EPSILON
             }
@@ -464,31 +471,32 @@ class Metrics implements Parametrized {
      * @param precisions Array of precision thresholds sorted in ascending order
      * @return Array of recall values corresponding to each precision threshold
      */
-    private static double[] calcMaxRecallForGivenPrecisions(List<PPred> preds, double[] precisions) {
+    private static double[] calcMaxRecallForGivenPrecisions(PredictedScores preds, double[] precisions) {
         double[] results = new double[precisions.length]
 
-        if (!preds || preds.empty) {
+        if (preds == null || preds.isEmpty()) {
             return results // All zeros
         }
 
         // Inplace sort predictions by score in descending order (highest score first)
-       preds.sort(PPred.COMPARATOR_DESC)
+        preds.sortDescendingByScore()
 
-        // Count total actual positives in the dataset
-        int totalPositives = preds.count { it.observed }.toInteger()
+        int totalPositives = preds.getObservedPositiveCount()
         if (totalPositives == 0) {
             return results // All zeros - no positives to recall
         }
 
+        boolean[] observed = preds.getObservedArray()
+        int size = preds.size()
         int truePositives = 0
         int processed = 0
 
         // Single pass through sorted predictions (from highest to lowest score)
         // As we include more predictions, precision will generally trend downward
         // because we're adding lower-scoring predictions which are less likely to be true positives
-        for (PPred pred : preds) {
+        for (int idx = 0; idx < size; idx++) {
             processed++
-            if (pred.observed) {
+            if (observed[idx]) {
                 truePositives++
             }
 
