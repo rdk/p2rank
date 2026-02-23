@@ -140,7 +140,9 @@ class ModelConverterTest {
 
         for (ForestType type : ForestType.values()) {
             if (type == ForestType.NativePanamaForest && !NativePanamaForest.isAvailable()) continue
+            if (type == ForestType.NativePanamaFloatForest && !NativePanamaForest.isAvailable()) continue
             if (type == ForestType.NativePanamaForestAvx2) continue  // skip AVX2
+            if (type == ForestType.NativePanamaFloatForestAvx2) continue  // skip AVX2
 
             BinaryForest converted = FasterForestConverter.convertFasterForest(trainable, type)
             assertNotNull(converted, "Conversion to $type returned null")
@@ -166,7 +168,9 @@ class ModelConverterTest {
 
         for (ForestType type : ForestType.values()) {
             if (type == ForestType.NativePanamaForest && !NativePanamaForest.isAvailable()) continue
+            if (type == ForestType.NativePanamaFloatForest && !NativePanamaForest.isAvailable()) continue
             if (type == ForestType.NativePanamaForestAvx2) continue
+            if (type == ForestType.NativePanamaFloatForestAvx2) continue
 
             BinaryForest converted = FasterForestConverter.convertFasterForest(trainable, type)
             assertNotNull(converted, "Conversion to $type returned null")
