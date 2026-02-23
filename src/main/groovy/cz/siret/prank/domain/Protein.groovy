@@ -153,6 +153,9 @@ class Protein implements Parametrized {
         }
     }
 
+    /**
+     * solvent accessible surface (SAS) points
+     */
     Surface getAccessibleSurface() {
         if (accessibleSurface == null) {
             accessibleSurface = Surface.computeAccessibleSurface(proteinAtoms, params.solvent_radius, params.tessellation)

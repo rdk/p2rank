@@ -408,8 +408,11 @@ class Params {
 
 
     /**
-     * Fix bug in RF libraries where class probabilities on leaves were not properly normalized.
+     * Old: Fix bug in RF libraries where class probabilities on leaves were not properly normalized.
      * Valid for FasterForest and FasterForest2. FastRandomForest has the bug (but not the fix).
+     *
+     * Note: this is not a bug but feature of these models! classProbs[] on leaves are weighted
+     *       (by a number of instances and also by weights passed from weka)
      */
     @ModelParam // training
     boolean rf_ensure_leaves_normalized = false

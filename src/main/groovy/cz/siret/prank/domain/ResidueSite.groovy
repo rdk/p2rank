@@ -8,44 +8,62 @@ import org.biojava.nbio.structure.Atom
 
 /**
  * Binding site defined as a set of residues.
- * Used as ground truth for site-based evaluation.
+ * Used as ground truth for site-based evaluation (other alternative is binding site defined by ligand).
  */
 @Slf4j
 @CompileStatic
 class ResidueSite implements BindingSite, Parametrized {
 
     String name
+    Atom centroid
     List<Residue> residues
     Protein protein
 
     private Atoms cachedAtoms
     private Atoms sasPoints
 
-    ResidueSite(String name, List<Residue> residues, Protein protein) {
+    ResidueSite(String name, Atom centroid, List<Residue> residues, Protein protein) {
         assert !residues.isEmpty(), "ResidueSite must have at least one residue"
 
         this.name = name
+        this.centroid = centroid
         this.residues = residues
         this.protein = protein
     }
 
+    /**
+     * Returns all atoms of the residues in this site.
+     */
     @Override
     Atoms getAtoms() {
         if (cachedAtoms == null) {
-            cachedAtoms = Atoms.union((List<Atoms>) residues.collect { Residue r -> r.atoms })
+            cachedAtoms = Atoms.union((List<Atoms>) residues*.atoms)
         }
         return cachedAtoms
     }
 
+    /**
+     * Predefined centroid of the site (from input)
+     */
     @Override
     Atom getCentroid() {
-        return getAtoms().centerOfMass
+        return centroid
+    }
+
+    /**
+     * Returns the centroid of the site, calculated from site residues as a center of mass of the SAS points defined by the residues.
+     *
+     * This is more consistent with ligand-based centroid definition than calculating center of mass of all residue atoms which is
+     * (in majority of cases) in the empty space around protein surface.
+     */
+    Atom calcCentroidFromResidues() {
+        return getSasPoints().centerOfMass
     }
 
     @Override
     Atoms getSasPoints() {
         if (sasPoints == null) {
-            sasPoints = protein.accessibleSurface.points.cutoutShell(getAtoms(), params.ligand_induced_volume_cutoff)
+            sasPoints = protein.accessibleSurface.points.cutoutShell(getAtoms(), params.getSasCutoffDist())
         }
         return sasPoints
     }

@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import cz.siret.prank.geom.kdtree.AtomKdTree;
 import cz.siret.prank.program.params.Params;
 import cz.siret.prank.utils.ATimer;
+import cz.siret.prank.utils.Cutils;
 import cz.siret.prank.utils.CutoffAtomsCallLog;
 import cz.siret.prank.utils.PerfUtils;
 import org.biojava.nbio.structure.*;
@@ -14,6 +15,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static cz.siret.prank.utils.ATimer.startTimer;
+import static cz.siret.prank.utils.Cutils.nonNullValues;
 
 /**
  * list of atoms with additional properties
@@ -347,11 +349,12 @@ public final class Atoms implements Iterable<Atom> {
     }
 
     public static Atoms union(Collection<Atoms> aa) {
-        Set<Atom> res = new HashSet<>(100);
-        for (Atoms a : aa) {
-            if (a != null) {
-                res.addAll(a.list);
-            }
+        List<Atoms> aaa = nonNullValues(aa);
+        int total = aaa.stream().mapToInt(Atoms::getCount).sum();
+
+        Set<Atom> res = new HashSet<>(total);
+        for (Atoms a : aaa) {
+            res.addAll(a.list);
         }
 
         return new Atoms(res);
@@ -359,7 +362,7 @@ public final class Atoms implements Iterable<Atom> {
 
     public static Atoms intersection(Atoms aa, Atoms bb) {
         Set<Atom> bset = new HashSet<>(bb.list);
-        List<Atom> res = new ArrayList<>(aa.getCount());
+        List<Atom> res = new ArrayList<>(Math.min(aa.getCount(), bb.getCount()));
         for (Atom a : aa) {
             if (bset.contains(a)) {
                 res.add(a);

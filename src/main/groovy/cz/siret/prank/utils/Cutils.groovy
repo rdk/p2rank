@@ -94,6 +94,16 @@ class Cutils {
         }
     }
 
+    static <E> List<E> nonNullValues(Collection<E> values) {
+        List<E> res = new ArrayList<>(values.size())
+        for (E v : values) {
+            if (v != null) {
+                res.add(v)
+            }
+        }
+        return res
+    }
+
     static <E> List<E> findDuplicates(Iterable<E> values) {
         values.groupBy{ it }.values().findAll { it.size() > 1}.collect { it[0] }.toList()
     }
