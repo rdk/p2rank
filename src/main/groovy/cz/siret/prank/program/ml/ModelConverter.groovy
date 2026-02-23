@@ -10,6 +10,7 @@ import cz.siret.prank.fforest.api.LegacyFlatBinaryForest
 import cz.siret.prank.fforest.api.NativePanamaForest
 import cz.siret.prank.fforest.api.NativePanamaForestAvx2
 import cz.siret.prank.fforest.api.TrainableFasterForest
+import cz.siret.prank.fforest.api.WekaRandomForestConverter
 import cz.siret.prank.fforest2.FasterForest2
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.ATimer
@@ -22,6 +23,7 @@ import cz.siret.prank.utils.Parallel
 import hr.irb.fastRandomForest.FastRandomForest
 import org.apache.commons.lang3.StringUtils
 import weka.classifiers.Classifier
+import weka.classifiers.trees.RandomForest
 import weka.core.Instances
 
 import javax.annotation.Nullable
@@ -49,7 +51,7 @@ class ModelConverter implements Parametrized, Writable {
 
 //===========================================================================================================//
 
-    static List<Class> FLATTABLE_CLASSIFIERS = [FastRandomForest, FasterForest, FasterForest2, LegacyFlatBinaryForest, FlatBinaryForest] as List<Class>
+    static List<Class> FLATTABLE_CLASSIFIERS = [RandomForest, FastRandomForest, FasterForest, FasterForest2, LegacyFlatBinaryForest, FlatBinaryForest] as List<Class>
     static List<String> FLATTABLE_CLASSIFIER_NAMES = FLATTABLE_CLASSIFIERS*.simpleName
 
     static boolean isFlattableClassifier(Object c) {
@@ -61,7 +63,7 @@ class ModelConverter implements Parametrized, Writable {
         if (isFlattableClassifier(c)) {
             ATimer timer = ATimer.startTimer()
 
-            write "Flattening ${c.class.simpleName} to $targetType"
+            write "Converting ${c.class.simpleName} to $targetType"
 
             FasterForestConverter.ForestType forestType
             try {
@@ -100,6 +102,10 @@ class ModelConverter implements Parametrized, Writable {
             } else if (c instanceof FlatBinaryForest) {
 
                 trainableForest = FlatBinaryForestBuilder.toFasterTreeForest((FlatBinaryForest) c)
+
+            } else if (c instanceof RandomForest) {
+
+                trainableForest = WekaRandomForestConverter.toFasterTreeForest((RandomForest) c)
 
             } else {
                 throw new IllegalStateException("Unexpected flattable forest type: ${c.class.simpleName}")

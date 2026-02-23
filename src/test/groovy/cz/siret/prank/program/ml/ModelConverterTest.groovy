@@ -9,12 +9,14 @@ import cz.siret.prank.fforest.api.FlatBinaryForestBuilder
 import cz.siret.prank.fforest.api.LegacyFlatBinaryForest
 import cz.siret.prank.fforest.api.NativePanamaForest
 import cz.siret.prank.fforest.api.TrainableFasterForest
+import cz.siret.prank.fforest.api.WekaRandomForestConverter
 import cz.siret.prank.fforest2.FasterForest2
 import cz.siret.prank.program.params.Params
 import cz.siret.prank.utils.WekaUtils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import hr.irb.fastRandomForest.FastRandomForest
+import weka.classifiers.trees.RandomForest
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -210,6 +212,32 @@ class ModelConverterTest {
         }
     }
 
+    @Test
+    void testConvertRandomForest() {
+        Model model = trainSmallModel("RandomForest")
+        assert model.classifier instanceof RandomForest
+
+        TrainableFasterForest trainable = WekaRandomForestConverter.toFasterTreeForest((RandomForest) model.classifier)
+
+        assertNotNull(trainable)
+        assertEquals(NUM_TREES, trainable.trees.size())
+        assertEquals(NUM_FEATURES + 1, trainable.numAttributes)
+
+        double[][] testVectors = createTestVectors(50)
+
+        // convert to several types
+        for (ForestType type : [ForestType.FlatBinaryForest, ForestType.LegacyFlatBinaryForest, ForestType.InterleavedBfsForest]) {
+            BinaryForest converted = FasterForestConverter.convertFasterForest(trainable, type)
+            assertNotNull(converted)
+            assertEquals(NUM_TREES, converted.numTrees)
+
+            for (double[] vec : testVectors) {
+                double pred = converted.predict(vec)
+                assertTrue(pred >= 0.0d && pred <= 1.0d, "Prediction out of range for $type: $pred")
+            }
+        }
+    }
+
 //===========================================================================================================//
 
     @Test
@@ -221,6 +249,35 @@ class ModelConverterTest {
             Params.inst.threads = 1
 
             Model model = trainSmallModel("FasterForest")
+            Model flattened = new ModelConverter().applyConversions(model)
+
+            assertTrue(flattened.classifier instanceof FlatBinaryForest)
+            assertTrue(flattened.label.contains("FlatBinaryForest"))
+
+            BinaryForest forest = (BinaryForest) flattened.classifier
+            assertEquals(NUM_TREES, forest.numTrees)
+
+            // verify predictions work
+            double[][] testVectors = createTestVectors(20)
+            double[] batch = forest.predictForBatch(testVectors)
+            assertEquals(testVectors.length, batch.length)
+            for (double p : batch) {
+                assertTrue(p >= 0.0d && p <= 1.0d)
+            }
+        } finally {
+            Params.INSTANCE = originalParams
+        }
+    }
+
+    @Test
+    void testFlattenRandomForestViaModelConverter() {
+        Params originalParams = (Params) Params.inst.clone()
+        try {
+            Params.inst.rf_flatten = true
+            Params.inst.rf_flatten_target = "FlatBinaryForest"
+            Params.inst.threads = 1
+
+            Model model = trainSmallModel("RandomForest")
             Model flattened = new ModelConverter().applyConversions(model)
 
             assertTrue(flattened.classifier instanceof FlatBinaryForest)
@@ -387,6 +444,7 @@ class ModelConverterTest {
         assertTrue(ModelConverter.isFlattableClassifier(new FasterForest()))
         assertTrue(ModelConverter.isFlattableClassifier(new FasterForest2()))
         assertTrue(ModelConverter.isFlattableClassifier(new FastRandomForest()))
+        assertTrue(ModelConverter.isFlattableClassifier(new RandomForest()))
 
         assertFalse(ModelConverter.isFlattableClassifier("not a classifier"))
         assertFalse(ModelConverter.isFlattableClassifier(42))
@@ -428,8 +486,8 @@ class ModelConverterTest {
 
     @Test
     void testNonFlattableClassifierIsIgnored() {
-        Model model = trainSmallModel("RandomForest")
-        // RandomForest is not in FLATTABLE_CLASSIFIERS
+        // Use a non-forest classifier that is not in FLATTABLE_CLASSIFIERS
+        Model model = new Model("NonFlattable", new weka.classifiers.trees.J48())
         assertFalse(ModelConverter.isFlattableClassifier(model.classifier))
 
         Model result = new ModelConverter().flattenRandomForest(model, "FlatBinaryForest")
