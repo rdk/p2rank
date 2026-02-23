@@ -1,6 +1,6 @@
 package cz.siret.prank.prediction.pockets.criteria
 
-import cz.siret.prank.domain.Ligand
+import cz.siret.prank.domain.BindingSite
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.program.routines.results.EvalContext
@@ -28,16 +28,16 @@ class DSO extends PocketCriterium {
         this.threshold = threshold
     }
 
-    static Tuple2<Atoms, Atoms> getUnionAndIntersection(Ligand ligand, Pocket pocket, EvalContext context) {
-        def cahe = (Map<Tuple2<Ligand, Pocket>, Tuple2<Atoms, Atoms>>) context.cache.get('sas_set_cache', new HashMap())
+    static Tuple2<Atoms, Atoms> getUnionAndIntersection(BindingSite site, Pocket pocket, EvalContext context) {
+        def cahe = (Map<Tuple2<BindingSite, Pocket>, Tuple2<Atoms, Atoms>>) context.cache.get('sas_set_cache', new HashMap())
 
-        def key = new Tuple2(ligand, pocket)
+        def key = new Tuple2(site, pocket)
 
-        def sets = cahe.computeIfAbsent(key, new Function<Tuple2<Ligand, Pocket>, Tuple2<Atoms, Atoms>>() {
+        def sets = cahe.computeIfAbsent(key, new Function<Tuple2<BindingSite, Pocket>, Tuple2<Atoms, Atoms>>() {
             @Override
-            Tuple2<Atoms, Atoms> apply(Tuple2<Ligand, Pocket> t) {
-                Atoms union =  Atoms.union(ligand.sasPoints, pocket.sasPoints)
-                Atoms inter = (union.empty) ? new Atoms() : Atoms.intersection(ligand.sasPoints, pocket.sasPoints)
+            Tuple2<Atoms, Atoms> apply(Tuple2<BindingSite, Pocket> t) {
+                Atoms union =  Atoms.union(site.sasPoints, pocket.sasPoints)
+                Atoms inter = (union.empty) ? new Atoms() : Atoms.intersection(site.sasPoints, pocket.sasPoints)
                 new Tuple2(union, inter)
             }
         })
@@ -45,12 +45,12 @@ class DSO extends PocketCriterium {
     }
 
     @Override
-    boolean isIdentified(Ligand ligand, Pocket pocket, EvalContext context) {
+    boolean isIdentified(BindingSite site, Pocket pocket, EvalContext context) {
         if (pocket.sasPoints == null) { // pocket does not define sas points
             return false
         }
 
-        def sets = getUnionAndIntersection(ligand, pocket, context)
+        def sets = getUnionAndIntersection(site, pocket, context)
         int union = sets.first.count
         int inter = sets.second.count
 
@@ -68,7 +68,7 @@ class DSO extends PocketCriterium {
     }
 
     @Override
-    double score(Ligand ligand, Pocket pocket) {
+    double score(BindingSite site, Pocket pocket) {
         return Double.NaN
     }
 

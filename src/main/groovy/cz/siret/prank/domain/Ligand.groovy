@@ -13,7 +13,7 @@ import org.biojava.nbio.structure.Group
  */
 @Slf4j
 @CompileStatic
-class Ligand implements Parametrized {
+class Ligand implements BindingSite, Parametrized {
 
     /**
      * pdb group name
@@ -88,6 +88,11 @@ class Ligand implements Parametrized {
 
     String getNameCode() {
         name + "_" + code
+    }
+
+    @Override
+    String getLabel() {
+        return getNameCode()
     }
 
     int getSize() {

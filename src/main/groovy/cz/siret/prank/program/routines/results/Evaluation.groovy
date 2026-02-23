@@ -73,14 +73,14 @@ class Evaluation implements Parametrized {
     /**
      * considering DCA measure
      */
-    private Pocket closestPocket(Ligand lig, List<Pocket> pockets) {
+    private Pocket closestPocket(BindingSite site, List<Pocket> pockets) {
         if (pockets.empty) return null
 
         Pocket res = pockets.first()
-        double minDist = lig.atoms.dist(res.centroid)
+        double minDist = site.atoms.dist(res.centroid)
 
         for (Pocket p : pockets) {
-            double dist = lig.atoms.dist(p.centroid)
+            double dist = site.atoms.dist(p.centroid)
             if (dist<minDist) {
                 minDist = dist
                 res = p
@@ -99,10 +99,10 @@ class Evaluation implements Parametrized {
                 .average().getAsDouble()
     }
 
-    private Pocket findPocketForLigand(Ligand ligand, List<Pocket> pockets,
-                                       PocketCriterium criterium, EvalContext context) {
+    private Pocket findPocketForSite(BindingSite site, List<Pocket> pockets,
+                                     PocketCriterium criterium, EvalContext context) {
         for (Pocket pocket in pockets) {
-            if (criterium.isIdentified(ligand, pocket, context)) {
+            if (criterium.isIdentified(site, pocket, context)) {
                 return pocket
             }
         }
@@ -111,14 +111,24 @@ class Evaluation implements Parametrized {
 
     private void assignPocketsToLigands(List<Ligand> ligands, List<Pocket> pockets, EvalContext context) {
         for (Ligand ligand : ligands) {
-            ligand.predictedPocket = findPocketForLigand(ligand, pockets, standardCriterium, context)
+            ligand.predictedPocket = findPocketForSite(ligand, pockets, standardCriterium, context)
+        }
+    }
+
+    void addPrediction(PredictionPair pair, List<Pocket> pockets) {
+        EvalContext context = new EvalContext()
+        // Note: sites is populated before evaluation starts so safe to read from parallel threads
+        List<ResidueSite> sites = pair.holoProtein.sites
+
+        if (!sites.isEmpty()) {
+            addSitesPrediction(pair, pockets, sites, context)
+        } else {
+            addLigandPrediction(pair, pockets, context)
         }
     }
 
     @SuppressWarnings("GroovyAssignabilityCheck")
-    void addPrediction(PredictionPair pair, List<Pocket> pockets) {
-        EvalContext context = new EvalContext()
-
+    private void addLigandPrediction(PredictionPair pair, List<Pocket> pockets, EvalContext context) {
         Ligands ligands = pair.ligands
 
         ligands.relevantLigands.each { it.sasPoints = null } // clear sas points cache
@@ -130,7 +140,7 @@ class Evaluation implements Parametrized {
         Protein protein = pair.protein
         Atoms sasPoints = pair.prediction.protein.accessibleSurface.points
         Atoms labeledPoints = new Atoms(pair.prediction.labeledPoints ?: emptyList())
-        
+
         ProteinRow protRow = new ProteinRow()
         protRow.name = pair.name
         protRow.atoms = protein.allAtoms.count
@@ -262,6 +272,130 @@ class Evaluation implements Parametrized {
                 bindingScores.addAll(bindingScrs)
                 nonBindingScores.addAll(nonBindingScrs)
             }
+        }
+    }
+
+    /**
+     * Find which site (if any) identifies the given pocket using the standard criterium.
+     */
+    private String findSiteForPocket(List<? extends BindingSite> sites, Pocket pocket, EvalContext context) {
+        for (BindingSite site : sites) {
+            if (standardCriterium.isIdentified(site, pocket, context)) {
+                return site.label
+            }
+        }
+        return ""
+    }
+
+    private void addSitesPrediction(PredictionPair pair, List<Pocket> pockets, List<ResidueSite> sites, EvalContext context) {
+        sites.each { it.@sasPoints = null } // clear SAS points cache (cachedAtoms not cleared — residues don't change within a run)
+
+        List<LigRow> tmpLigRows = new ArrayList<>()
+        List<PocketRow> tmpPockets = new ArrayList<>()
+
+        Protein protein = pair.protein
+
+        // Build ProteinRow
+        ProteinRow protRow = new ProteinRow()
+        protRow.name = pair.name
+        protRow.atoms = protein.allAtoms.count
+        protRow.protAtoms = protein.proteinAtoms.count
+        protRow.exposedAtoms = pair.prediction.protein.exposedAtoms.count
+        protRow.chains = protein.residueChains.size()
+        protRow.chainNames = protein.residueChains.collect { it.authorId }.join(" ")
+        protRow.ligands = sites.size()
+        protRow.pockets = pair.prediction.pocketCount
+        protRow.ligNames = sites.collect { it.label }.join(" ")
+        protRow.ignoredLigands = 0
+        protRow.ignoredLigNames = ""
+        protRow.smallLigands = 0
+        protRow.smallLigNames = ""
+        protRow.distantLigands = 0
+        protRow.distantLigNames = ""
+        protRow.sasPoints = pair.prediction.protein.accessibleSurface.points.count
+        // TODO: coverage stats (ligandCoverageN0, surfOverlapN0, etc.) not yet implemented for site-based evaluation
+
+        // TODO: residueRows not populated for site-based evaluation (no ResidueLabelings handling)
+
+        // Per-site LigRows
+        for (ResidueSite site : sites) {
+            LigRow row = new LigRow()
+
+            row.protName = pair.name
+            row.ligName = site.label
+            row.ligCode = ""
+            row.chainCode = site.residues.collect { it.chainAuthorId }.unique().join(" ")
+            row.ligCount = sites.size()
+
+            row.ranks = criteria.list.collect { criterium -> PredictionPair.rankOfIdentifiedPocket(site, pockets, criterium, context) }
+            row.dca4rank = PredictionPair.rankOfIdentifiedPocket(site, pockets, standardCriterium, context)
+            row.atoms = site.atoms.count
+
+            Pocket closest = closestPocket(site, pockets)
+            if (closest != null) {
+                row.closestPocketDist = site.atoms.dist(closest.centroid)
+            } else {
+                row.closestPocketDist = Double.NaN
+            }
+
+            // Not applicable for sites
+            row.contactAtoms = 0
+            row.centerToProtDist = Double.NaN
+            row.proteinDist = Double.NaN
+            row.sasDist = Double.NaN
+            row.avgPointScore = Double.NaN
+            row.maxPointScore = Double.NaN
+            row.avgMax3PointScore = Double.NaN
+            row.avgMaxHalfPointScore = Double.NaN
+            row.atomIds = Collections.<Integer>emptyList()
+
+            tmpLigRows.add(row)
+        }
+
+        // Per-pocket PocketRows
+        ConservationScore score = protein.conservationScore
+        for (Pocket pocket in pockets) {
+            PocketRow prow = new PocketRow()
+            prow.protName = pair.name
+            prow.pocketName = pocket.name
+            prow.pocketVolume = pocket.stats.realVolumeApprox
+            prow.surfaceAtomCount = pocket.surfaceAtoms.count
+            prow.ligCount = sites.size()
+            prow.pocketCount = pair.prediction.pocketCount
+
+            prow.ligName = findSiteForPocket(sites, pocket, context)
+
+            prow.oldScore = pocket.stats.pocketScore
+            prow.score = pocket.newScore
+            prow.rank = pocket.rank
+            prow.newRank = pocket.newRank
+
+            prow.auxInfo = pocket.auxInfo
+
+            if (score != null) {
+                prow.avgConservation = getAvgConservationForAtoms(pocket.surfaceAtoms, score)
+            }
+
+            tmpPockets.add(prow)
+        }
+        // Pocket conservation ranking (pocket-intrinsic, same as ligand path)
+        List<PocketRow> conservationSorted = tmpPockets.toSorted { it.avgConservation }.reverse(true)
+        List<PocketRow> combiSorted = tmpPockets.toSorted { (Math.pow(it.avgConservation, protein.params.conservation_exponent) * it.score) }.reverse(true)
+        for (PocketRow prow : tmpPockets) {
+            prow.conservationRank = conservationSorted.indexOf(prow) + 1
+            prow.combinedRank = combiSorted.indexOf(prow) + 1
+        }
+
+        synchronized (this) {
+            ligandCount += sites.size()
+            // Note: ignoredLigandCount, smallLigandCount, distantLigandCount not applicable for sites
+            // Note: ligSASPointsCount, ligSASPointsCoveredCount, ligSASPointsScoreSum not yet implemented for sites
+            // Note: bindingScores/nonBindingScores (log_scores_to_file) not yet implemented for sites
+            pocketCount += tmpPockets.size()
+            proteinCount += 1
+            proteinRows.add(protRow)
+            ligandRows.addAll(tmpLigRows)
+            pocketRows.addAll(tmpPockets)
         }
     }
 
@@ -589,8 +723,6 @@ class Evaluation implements Parametrized {
         m.LIGANDS_IGNORED = ignoredLigandCount
         m.LIGANDS_SMALL = smallLigandCount
         m.LIGANDS_DISTANT = distantLigandCount
-
-        if (pocketCount==0) pocketCount=1 // to avoid undefined division in calculations
 
         m.AVG_LIGAND_ATOMS = avgLigandAtoms
         m.AVG_PROT_ATOMS =  avgProteinAtoms

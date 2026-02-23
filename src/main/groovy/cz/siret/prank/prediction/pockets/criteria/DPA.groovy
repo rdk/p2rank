@@ -1,6 +1,6 @@
 package cz.siret.prank.prediction.pockets.criteria
 
-import cz.siret.prank.domain.Ligand
+import cz.siret.prank.domain.BindingSite
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.prediction.pockets.PrankPocket
 import cz.siret.prank.program.routines.results.EvalContext
@@ -20,21 +20,21 @@ class DPA extends PocketCriterium {
     }
 
     @Override
-    boolean isIdentified(Ligand ligand, Pocket pocket, EvalContext context) {
+    boolean isIdentified(BindingSite site, Pocket pocket, EvalContext context) {
 
         if (!(pocket instanceof PrankPocket)) return false
         PrankPocket pp = (PrankPocket) pocket
 
-        return ligand.atoms.areWithinDistance(pp.sasPoints, cutoff)
+        return site.atoms.areWithinDistance(pp.sasPoints, cutoff)
     }
 
     @Override
-    double score(Ligand ligand, Pocket pocket) {
+    double score(BindingSite site, Pocket pocket) {
 
         if (!(pocket instanceof PrankPocket)) return 0
         PrankPocket pp = (PrankPocket) pocket
 
-        return cutoff - ligand.atoms.dist(pp.sasPoints)
+        return cutoff - site.atoms.dist(pp.sasPoints)
     }
 
     @Override

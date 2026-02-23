@@ -1,6 +1,6 @@
 package cz.siret.prank.prediction.pockets.criteria
 
-import cz.siret.prank.domain.Ligand
+import cz.siret.prank.domain.BindingSite
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.program.routines.results.EvalContext
 import groovy.transform.CompileStatic
@@ -19,15 +19,15 @@ class DSA extends PocketCriterium {
     }
 
     @Override
-    boolean isIdentified(Ligand ligand, Pocket pocket, EvalContext context) {
+    boolean isIdentified(BindingSite site, Pocket pocket, EvalContext context) {
 
-        return ligand.atoms.areWithinDistance(pocket.surfaceAtoms, cutoff)
+        return site.atoms.areWithinDistance(pocket.surfaceAtoms, cutoff)
     }
 
     @Override
-    double score(Ligand ligand, Pocket pocket) {
+    double score(BindingSite site, Pocket pocket) {
 
-        return cutoff - ligand.atoms.dist(pocket.surfaceAtoms)
+        return cutoff - site.atoms.dist(pocket.surfaceAtoms)
     }
 
     @Override

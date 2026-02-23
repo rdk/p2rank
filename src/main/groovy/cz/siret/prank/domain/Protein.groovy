@@ -90,6 +90,11 @@ class Protein implements Parametrized {
     Ligands ligands = new Ligands()
 
     /**
+     * Binding sites defined as sets of residues (for site-based evaluation).
+     */
+    List<ResidueSite> sites = new ArrayList<>()
+
+    /**
      * Original ligands from the structure if this structure is APO.
      */
     @Nullable Ligands apoLigands = null
@@ -192,6 +197,7 @@ class Protein implements Parametrized {
         trainNegativesSurface = null
         secondaryData.clear()
         ligands.allIncludingIgnored.each { it.sasPoints = null; it.predictedPocket = null }
+        sites.each { it.@sasPoints = null; it.@cachedAtoms = null }
         clearResidues()
     }
 

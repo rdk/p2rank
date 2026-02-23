@@ -1,6 +1,6 @@
 package cz.siret.prank.prediction.pockets.criteria
 
-import cz.siret.prank.domain.Ligand
+import cz.siret.prank.domain.BindingSite
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.program.routines.results.EvalContext
 import groovy.transform.CompileStatic
@@ -28,18 +28,18 @@ class DSWO extends PocketCriterium {
     }
 
     @Override
-    boolean isIdentified(Ligand ligand, Pocket pocket, EvalContext context) {
+    boolean isIdentified(BindingSite site, Pocket pocket, EvalContext context) {
         if (pocket.sasPoints == null) { // pocket does not define sas points
             return false
         }
 
-        def sets = DSO.getUnionAndIntersection(ligand, pocket, context)
+        def sets = DSO.getUnionAndIntersection(site, pocket, context)
         int inter = sets.second.count
 
         if (inter==0)
             return false
 
-        int nlig = ligand.sasPoints.count
+        int nlig = site.sasPoints.count
         int npoc = pocket.sasPoints.count
 
         double ligCov = inter / nlig
@@ -49,7 +49,7 @@ class DSWO extends PocketCriterium {
     }
 
     @Override
-    double score(Ligand ligand, Pocket pocket) {
+    double score(BindingSite site, Pocket pocket) {
         return Double.NaN
     }
 

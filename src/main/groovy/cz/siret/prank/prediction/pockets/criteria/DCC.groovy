@@ -1,6 +1,6 @@
 package cz.siret.prank.prediction.pockets.criteria
 
-import cz.siret.prank.domain.Ligand
+import cz.siret.prank.domain.BindingSite
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.geom.Struct
 import cz.siret.prank.program.routines.results.EvalContext
@@ -19,16 +19,17 @@ class DCC extends PocketCriterium {
         this.cutoff = cutoff
     }
 
-    @Override
-    boolean isIdentified(Ligand ligand, Pocket pocket, EvalContext context) {
+    // Uses geometric center (Atoms.centroid — unweighted arithmetic mean of coordinates).
+    // Note: BindingSite.getCentroid() returns mass-weighted center (Atoms.centerOfMass), not geometric center.
 
-//        return cutoff >= Struct.dist(ligand.centroid, pocket.centroid)
-        return cutoff >= Struct.dist(ligand.atoms.toPoints().centerOfMass, pocket.centroid)
+    @Override
+    boolean isIdentified(BindingSite site, Pocket pocket, EvalContext context) {
+        return cutoff >= Struct.dist(site.atoms.centroid, pocket.centroid)
     }
 
     @Override
-    double score(Ligand ligand, Pocket pocket) {
-        return cutoff - Struct.dist(ligand.centroid, pocket.centroid)
+    double score(BindingSite site, Pocket pocket) {
+        return cutoff - Struct.dist(site.atoms.centroid, pocket.centroid)
     }
 
     @Override

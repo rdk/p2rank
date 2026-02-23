@@ -1,6 +1,6 @@
 package cz.siret.prank.prediction.pockets.criteria;
 
-import cz.siret.prank.domain.Ligand;
+import cz.siret.prank.domain.BindingSite;
 import cz.siret.prank.domain.Pocket;
 import cz.siret.prank.program.routines.results.EvalContext;
 
@@ -19,11 +19,11 @@ public abstract class PocketCriterium {
         return name;
     }
 
-    public abstract boolean isIdentified(Ligand ligand, Pocket pocket, EvalContext context);
+    public abstract boolean isIdentified(BindingSite site, Pocket pocket, EvalContext context);
 
     /**
      * higher score = better identified (eg. closer to ligand/ better overlap etc.)
      */
-    public abstract double score(Ligand ligand, Pocket pocket);
+    public abstract double score(BindingSite site, Pocket pocket);
 
 }
