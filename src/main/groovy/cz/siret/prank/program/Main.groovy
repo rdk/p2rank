@@ -16,6 +16,8 @@ import cz.siret.prank.program.routines.predict.ExportPointsRoutine
 import cz.siret.prank.program.routines.predict.PredictPocketsRoutine
 import cz.siret.prank.program.routines.predict.PredictResiduesRoutine
 import cz.siret.prank.program.routines.predict.RescorePocketsRoutine
+import cz.siret.prank.features.implementation.conservation.provider.ConservationProviderFactory
+import cz.siret.prank.program.routines.PreloadConservationRoutine
 import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.program.routines.traineval.*
 import cz.siret.prank.utils.*
@@ -269,6 +271,7 @@ class Main implements Parametrized, Writable {
         Dataset dataset = loadDatasetOrFile()
         String outdir = findOutdir("${label}_$dataset.label")
         configureLoggers(outdir)
+        ConservationProviderFactory.checkProviderHealthIfConfigured()
 
         Routine predictRoutine
 
@@ -321,6 +324,7 @@ class Main implements Parametrized, Writable {
         Dataset dataset = loadDatasetOrFile()
         String outdir = findOutdir("rescore_$dataset.label")
         configureLoggers(outdir)
+        ConservationProviderFactory.checkProviderHealthIfConfigured()
 
         Dataset.Result result = new RescorePocketsRoutine(
                 dataset,
@@ -349,6 +353,7 @@ class Main implements Parametrized, Writable {
         Dataset dataset = loadDataset()
         String outdir = findOutdir("eval_rescore_$dataset.label")
         configureLoggers(outdir)
+        ConservationProviderFactory.checkProviderHealthIfConfigured()
 
         new EvalPocketsRoutine(
                 dataset,
@@ -361,6 +366,7 @@ class Main implements Parametrized, Writable {
         Dataset dataset = loadDatasetOrFile()
         String outdir = findOutdir("eval_$dataset.label")
         configureLoggers(outdir)
+        ConservationProviderFactory.checkProviderHealthIfConfigured()
 
         Model model = Model.load(findModel())
 
@@ -375,6 +381,7 @@ class Main implements Parametrized, Writable {
         String outdir = findOutdir("crossval_" + dataset.label)
 
         configureLoggers(outdir)
+        ConservationProviderFactory.checkProviderHealthIfConfigured()
 
         CrossValidation routine = new CrossValidation(outdir, dataset)
         new SeedLoop(routine, outdir).execute()
@@ -398,6 +405,15 @@ class Main implements Parametrized, Writable {
 
     private runBenchmark() {
         new Benchmarks(args, this).execute()
+    }
+
+    void runPreloadConservation() {
+        Dataset dataset = loadDatasetOrFile()
+        String outdir = findOutdir("preload_conservation_$dataset.label")
+        configureLoggers(outdir)
+        ConservationProviderFactory.checkProviderHealthIfConfigured()
+
+        new PreloadConservationRoutine(dataset).execute()
     }
 
     void runHelp() {
@@ -459,6 +475,8 @@ class Main implements Parametrized, Writable {
             case 'print':           runPrint()
                 break
             case 'bench':           runBenchmark()
+                break
+            case 'preload-conservation': runPreloadConservation()
                 break
             default:
                 runExperiment(command)

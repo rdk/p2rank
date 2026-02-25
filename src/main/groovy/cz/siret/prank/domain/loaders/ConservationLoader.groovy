@@ -2,7 +2,10 @@ package cz.siret.prank.domain.loaders
 
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.features.api.ProcessedItemContext
+import cz.siret.prank.features.implementation.conservation.provider.ConservationProvider
+import cz.siret.prank.features.implementation.conservation.provider.ConservationProviderException
 import cz.siret.prank.program.PrankException
+import cz.siret.prank.program.params.Params
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Cutils
 import cz.siret.prank.utils.Futils
@@ -90,6 +93,80 @@ class ConservationLoader implements Parametrized {
             String pattern = conservColumn
 
             return parentDir.resolve(pattern.replaceAll("%chainID%", chainId)).toFile()
+        }
+    }
+
+    /**
+     * Get the cache file path for a conservation score file.
+     * When conservation_cache_dir is set: {conservation_cache_dir}/{conservationType}/{baseName}_{chainId}.hom
+     * Otherwise: {protein_dir}/.p2rank-cache/conservation/{conservationType}/{baseName}_{chainId}.hom
+     */
+    static File getCacheFile(String proteinFile, String chainId, String conservationType) {
+        String cacheBaseDir
+        String conservationCacheDir = Params.inst.conservation_cache_dir
+        if (conservationCacheDir != null && !conservationCacheDir.isEmpty()) {
+            cacheBaseDir = conservationCacheDir
+        } else {
+            String normalizedProteinFile = Futils.absPath(proteinFile)
+            cacheBaseDir = Futils.dir(normalizedProteinFile) + "/.p2rank-cache/conservation"
+        }
+        String baseName = Futils.baseName(proteinFile)
+        String cachePath = cacheBaseDir + "/" + conservationType + "/" + baseName + "_" + chainId + ".hom"
+        return new File(cachePath)
+    }
+
+    /**
+     * Find conservation file using the standard lookup, then cache, then provider.
+     * Returns the file to load, or null if not found and no provider is configured.
+     */
+    @Nullable
+    File findOrFetchConservationFile(ProcessedItemContext itemContext, String proteinFile,
+                                      String chainId, @Nullable String sequence,
+                                      @Nullable ConservationProvider provider) {
+        // 1. Standard file-based lookup (conservation_dirs / conservation_files_pattern)
+        File file = findConservationFile(itemContext, proteinFile, chainId)
+        if (file != null && file.exists()) {
+            return file
+        }
+
+        // If no provider configured, return whatever findConservationFile returned (legacy behavior)
+        if (provider == null || params.conservation_type == null) {
+            return file
+        }
+
+        String conservationType = params.conservation_type
+        boolean disableCache = params.conservation_disable_cache
+
+        // 2. Check local cache (skip if cache disabled)
+        if (!disableCache) {
+            File cacheFile = getCacheFile(proteinFile, chainId, conservationType)
+            if (cacheFile.exists()) {
+                log.info "Found cached conservation file for [{}]: {}",
+                    Futils.baseName(proteinFile) + "_" + chainId, cacheFile.absolutePath
+                return cacheFile
+            }
+        }
+
+        // 3. Fetch from provider
+        String baseName = Futils.baseName(proteinFile)
+        String label = baseName + "_" + chainId
+        try {
+            String content = provider.fetchScores(sequence, label)
+            if (disableCache) {
+                File tmpFile = File.createTempFile("conserv_", ".hom")
+                tmpFile.deleteOnExit()
+                tmpFile.text = content
+                log.info "Fetched conservation for [{}] (cache disabled, using temp file)", label
+                return tmpFile
+            } else {
+                File cacheFile = getCacheFile(proteinFile, chainId, conservationType)
+                Futils.writeFile(cacheFile.absolutePath, content)
+                log.info "Fetched and cached conservation for [{}]: {}", label, cacheFile.absolutePath
+                return cacheFile
+            }
+        } catch (ConservationProviderException e) {
+            log.warn "Failed to fetch conservation for [{}]: {}", label, e.message
+            return null
         }
     }
 

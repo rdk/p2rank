@@ -316,14 +316,12 @@ class AnalyzeRoutine extends Routine {
         dataset.processItems { Dataset.Item item ->
             Protein p = item.protein
             ResidueLabeling<Double> labeling = p.getConservationLabeling()
-            if (labeling!=null) {
+            if (labeling != null) {
 
-                if (log.isDebugEnabled()) {
-                    labeling.labeledResidues.each {
-                        log.debug "conserv. for residue {}: {}", it.residue, it.label
-                    }
-                    log.debug "score map:" + p.getConservationScore().getScoreMap()
+                labeling.labeledResidues.each {
+                    write "conservation for residue $it.residue: $it.label"
                 }
+                write "score map: " + p.getConservationScore().getScoreMap()
 
                 if (params.visualizations) {
                     new NewPymolRenderer("$outdir/visualizations", new RenderingModel(
@@ -335,7 +333,7 @@ class AnalyzeRoutine extends Routine {
                 }
 
             } else {
-                log.error "Failed to load score for [{}]", item.label
+                log.error "Failed to load conservation scores for [{}]", item.label
             }
         }
     }

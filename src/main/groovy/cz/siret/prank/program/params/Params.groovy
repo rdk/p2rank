@@ -295,6 +295,55 @@ class Params {
     @RuntimeParam
     List<String> conservation_dirs = []
 
+    /**
+     * Type/format of conservation scores. Determines cache subdirectory.
+     * Currently supported: "hmm"
+     */
+    @RuntimeParam
+    String conservation_type = null
+
+    /**
+     * Directory for conservation score cache files.
+     * When set, all cached files are stored/searched here instead of per-protein .p2rank-cache dirs.
+     * Layout: {conservation_cache_dir}/{conservation_type}/{baseName}_{chainId}.hom
+     */
+    @RuntimeParam
+    String conservation_cache_dir = null
+
+    /**
+     * When true, conservation cache is neither read nor written.
+     * Provider still fetches scores on every call, but results are not persisted to disk.
+     */
+    @RuntimeParam
+    boolean conservation_disable_cache = false
+
+    /**
+     * Provider for external conservation scores. Currently supported: "hmm_server".
+     * When null, falls back to existing conservation_dirs behavior.
+     */
+    @RuntimeParam
+    String conservation_provider = null
+
+    /**
+     * Base URL of the conservation server (without endpoint path).
+     * Required when conservation_provider is set.
+     */
+    @RuntimeParam
+    String conservation_provider_url = null
+
+    /**
+     * Per-request timeout in seconds for conservation provider HTTP requests.
+     */
+    @RuntimeParam
+    int conservation_provider_timeout = 600
+
+    /**
+     * Max concurrent requests to the conservation server. 0 = use 'threads' param.
+     * Controls concurrency for both predict (via semaphore throttling) and preload-conservation (thread pool size).
+     */
+    @RuntimeParam
+    int conservation_provider_threads = 0
+
     @RuntimeParam
     List<String> electrostatics_dirs = []
 

@@ -3,11 +3,14 @@ package cz.siret.prank.features.implementation.conservation
 import com.univocity.parsers.tsv.TsvParser
 import com.univocity.parsers.tsv.TsvParserSettings
 import cz.siret.prank.domain.Protein
+import cz.siret.prank.domain.ResidueChain
 import cz.siret.prank.domain.Residue
 import cz.siret.prank.domain.labeling.ResidueLabeling
 import cz.siret.prank.domain.loaders.ConservationLoader
 import cz.siret.prank.export.FastaExporter
 import cz.siret.prank.features.api.ProcessedItemContext
+import cz.siret.prank.features.implementation.conservation.provider.ConservationProvider
+import cz.siret.prank.features.implementation.conservation.provider.ConservationProviderFactory
 import cz.siret.prank.geom.Struct
 import cz.siret.prank.prediction.transformation.ZscoreTpTransformer
 import cz.siret.prank.program.P2Rank
@@ -267,7 +270,7 @@ class ConservationScore implements Parametrized {
     }
 
     /**
-     * Parses conservation scores created from HSSP database and Jensen-Shannon divergence.
+     * Load conservation scores and map them to residues in the given protein structure.
      *
      * @param structure Protein BioJava structure
      * @param scoreFiles Map from chain ids to files
@@ -303,12 +306,34 @@ class ConservationScore implements Parametrized {
         log.info("loading conservation for {} chains in protein [{}]: {}", conservationChains.size(),
                 protein.name, conservationChains.collect { Struct.getAuthorId(it) })
 
+        // Resolve provider once for all chains (singleton with semaphore)
+        ConservationProvider provider = ConservationProviderFactory.getOrCreateProvider()
+
         for (Chain chain : conservationChains) {
             String chainId = Struct.getAuthorId(chain)
             chainId = Struct.maskEmptyChainId(chainId)
 
             try {
-                File scoreFile = ConservationLoader.instance.findConservationFile(itemContext, protein.fileName, chainId)
+                File scoreFile
+                if (provider != null) {
+                    ResidueChain residueChain = protein.getResidueChain(chainId)
+                    if (residueChain == null) {
+                        P2Rank.failStatic("No residue chain found for chainId '$chainId' in protein '${protein.name}'", log)
+                        continue
+                    }
+
+                    // Note: sending masked sequence to provider as per previous convention where hmm conservation
+                    //       scores were generated for masked sequences (see https://github.com/cusbg/p2rank-framework/wiki/Large-scale-Predictions).
+                    //       We might need to change it in the future for different provider types,
+                    //       or move masking to HmmServerConservationProvider.
+                    String sequence = FastaExporter.maskFastaChain(residueChain.standardCodeCharString)
+                    scoreFile = ConservationLoader.instance.findOrFetchConservationFile(
+                        itemContext, protein.fileName, chainId, sequence, provider)
+                } else {
+                    scoreFile = ConservationLoader.instance.findConservationFile(
+                        itemContext, protein.fileName, chainId)
+                }
+
                 log.info "Loading conservation scores from file [{}]", scoreFile
                 if (scoreFile!=null && scoreFile.exists()) {
                     List<AAScore> chainScores = loadScoreFile(scoreFile, format, chainId)
