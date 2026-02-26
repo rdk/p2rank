@@ -1610,6 +1610,16 @@ class Params {
         }
     }
 
+
+    /**
+     * If we are logging to console, we don't want to write to stdout to avoid duplicate
+     * messages (as raw string and [INFO] log line).
+     */
+    boolean writeToStdOut() {
+        return !log_to_console
+    }
+
+
 //===========================================================================================================//
 
     /**
