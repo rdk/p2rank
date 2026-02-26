@@ -3,10 +3,12 @@ package cz.siret.prank.program
 import cz.siret.prank.domain.AminoAcidMapper
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.domain.loaders.LoaderParams
+import cz.siret.prank.features.implementation.conservation.provider.ConservationProviderFactory
 import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.params.ConfigLoader
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.params.Params
+import cz.siret.prank.program.routines.PreloadConservationRoutine
 import cz.siret.prank.program.routines.Routine
 import cz.siret.prank.program.routines.analyze.AnalyzeRoutine
 import cz.siret.prank.program.routines.analyze.PrintRoutine
@@ -16,8 +18,6 @@ import cz.siret.prank.program.routines.predict.ExportPointsRoutine
 import cz.siret.prank.program.routines.predict.PredictPocketsRoutine
 import cz.siret.prank.program.routines.predict.PredictResiduesRoutine
 import cz.siret.prank.program.routines.predict.RescorePocketsRoutine
-import cz.siret.prank.features.implementation.conservation.provider.ConservationProviderFactory
-import cz.siret.prank.program.routines.PreloadConservationRoutine
 import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.program.routines.traineval.*
 import cz.siret.prank.utils.*
@@ -30,7 +30,6 @@ import java.text.DateFormat
 import java.text.SimpleDateFormat
 
 import static cz.siret.prank.utils.ATimer.startTimer
-import static cz.siret.prank.utils.Console.write
 import static cz.siret.prank.utils.Console.write
 import static cz.siret.prank.utils.Console.writeError
 import static cz.siret.prank.utils.Futils.mkdirs

@@ -22,7 +22,6 @@ import cz.siret.prank.utils.Sutils
 import cz.siret.prank.utils.Writable
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-import org.apache.commons.lang3.exception.ExceptionUtils
 import org.biojava.nbio.structure.Atom
 import org.biojava.nbio.structure.Group
 

@@ -1,7 +1,6 @@
 package cz.siret.prank.prediction.pockets
 
 import cz.siret.prank.domain.Pocket
-import cz.siret.prank.domain.Residue
 import cz.siret.prank.domain.labeling.LabeledPoint
 import cz.siret.prank.geom.Atoms
 import groovy.transform.CompileStatic

@@ -2,13 +2,12 @@ package cz.siret.prank.features.implementation.energy
 
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Struct
+import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 import org.biojava.nbio.structure.Element
-
-import cz.siret.prank.program.params.Parametrized
 
 /**
  * Energy calculator for vdW methyl-probe scoring.

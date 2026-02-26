@@ -8,8 +8,6 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 
-import static cz.siret.prank.utils.Futils.readResource
-
 /**
  *
  */

@@ -10,8 +10,6 @@ import groovy.util.logging.Slf4j
 
 import javax.annotation.Nullable
 
-import static cz.siret.prank.utils.Futils.readResource
-
 /**
  * Sequence triplet propensities for residue
  *

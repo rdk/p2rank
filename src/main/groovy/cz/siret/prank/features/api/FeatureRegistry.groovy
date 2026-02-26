@@ -18,25 +18,14 @@ import cz.siret.prank.features.implementation.contactres.ContactResiduesRF
 import cz.siret.prank.features.implementation.csv.CsvFileFeature
 import cz.siret.prank.features.implementation.electrostatics.ElectrostaticsTempAtomFeature
 import cz.siret.prank.features.implementation.electrostatics.ElectrostaticsTempSasFeature
-import cz.siret.prank.features.implementation.energy.MethylEnergyCloudSF
-import cz.siret.prank.features.implementation.energy.MethylEnergyCloudX2FullSF
-import cz.siret.prank.features.implementation.energy.MethylEnergyCloudX2SF
-import cz.siret.prank.features.implementation.energy.MethylEnergyCloudXSF
-import cz.siret.prank.features.implementation.energy2.AromaticRingProbeEnergyFeature
-import cz.siret.prank.features.implementation.energy2.CationProbeEnergyFeature
-import cz.siret.prank.features.implementation.energy2.HBAcceptorProbeEnergyFeature
-import cz.siret.prank.features.implementation.energy2.HBDonorProbeEnergyFeature
-import cz.siret.prank.features.implementation.energy2.NeutralApolarProbeEnergyFeature
+import cz.siret.prank.features.implementation.energy.*
+import cz.siret.prank.features.implementation.energy2.*
 import cz.siret.prank.features.implementation.histogram.PairHistogramFeature
 import cz.siret.prank.features.implementation.propensity.AaPropensityFeature
 import cz.siret.prank.features.implementation.propensity.AtomTypePropensityFeature
 import cz.siret.prank.features.implementation.propensity.DupletsPropensityFeature
 import cz.siret.prank.features.implementation.propensity.TripletsPropensityFeature
-import cz.siret.prank.features.implementation.secstruct.SecStructCloudSF
-import cz.siret.prank.features.implementation.secstruct.SecStructRF
-import cz.siret.prank.features.implementation.secstruct.SecStructSimpleCloudSF
-import cz.siret.prank.features.implementation.secstruct.SecStructSimpleMotifRF
-import cz.siret.prank.features.implementation.secstruct.SecStructSimpleRF
+import cz.siret.prank.features.implementation.secstruct.*
 import cz.siret.prank.features.implementation.sidechain.IsSidechainAtomFeature
 import cz.siret.prank.features.implementation.sidechain.IsSidechainCloudFeature
 import cz.siret.prank.features.implementation.sidechain.IsSidechainSasFeature
@@ -46,7 +35,6 @@ import cz.siret.prank.features.implementation.table.AAIndexFeature
 import cz.siret.prank.features.implementation.table.AtomTableFeature
 import cz.siret.prank.features.implementation.table.ResidueTableFeature
 import cz.siret.prank.features.implementation.volsite.VolsiteFeature
-import cz.siret.prank.features.implementation.energy.MethylEnergyFeature
 import cz.siret.prank.program.PrankException
 import groovy.transform.CompileStatic
 

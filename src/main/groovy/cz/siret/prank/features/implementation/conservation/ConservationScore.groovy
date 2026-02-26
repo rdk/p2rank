@@ -3,8 +3,8 @@ package cz.siret.prank.features.implementation.conservation
 import com.univocity.parsers.tsv.TsvParser
 import com.univocity.parsers.tsv.TsvParserSettings
 import cz.siret.prank.domain.Protein
-import cz.siret.prank.domain.ResidueChain
 import cz.siret.prank.domain.Residue
+import cz.siret.prank.domain.ResidueChain
 import cz.siret.prank.domain.labeling.ResidueLabeling
 import cz.siret.prank.domain.loaders.ConservationLoader
 import cz.siret.prank.export.FastaExporter

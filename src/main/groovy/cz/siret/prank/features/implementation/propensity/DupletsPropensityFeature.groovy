@@ -8,8 +8,6 @@ import cz.siret.prank.program.params.Parametrized
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
-import static cz.siret.prank.utils.Futils.readResource
-
 /**
  * Sequence duplet propensities for residue
  *

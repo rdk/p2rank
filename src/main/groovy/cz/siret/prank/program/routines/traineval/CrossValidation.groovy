@@ -5,11 +5,11 @@ import cz.siret.prank.domain.Dataset
 import cz.siret.prank.program.ml.FeatureVectors
 import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.utils.Futils
+import cz.siret.prank.utils.Parallel
 import cz.siret.prank.utils.WekaUtils
 import groovy.transform.CompileStatic
 import groovy.transform.TypeCheckingMode
 import groovy.util.logging.Slf4j
-import cz.siret.prank.utils.Parallel
 import weka.core.Instances
 
 import static cz.siret.prank.utils.ATimer.startTimer

@@ -3,7 +3,6 @@ package cz.siret.prank.program.routines.results
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.prediction.metrics.ClassifierStats
 import cz.siret.prank.utils.Formatter
-import cz.siret.prank.utils.StatSample2
 import cz.siret.prank.utils.console.TextBox
 import cz.siret.prank.utils.csv.CSV
 import groovy.transform.CompileStatic

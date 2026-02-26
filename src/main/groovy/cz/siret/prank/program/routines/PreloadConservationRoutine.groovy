@@ -4,7 +4,6 @@ import cz.siret.prank.domain.Dataset
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.domain.ResidueChain
 import cz.siret.prank.domain.loaders.ConservationLoader
-import cz.siret.prank.domain.loaders.LoaderParams
 import cz.siret.prank.export.FastaExporter
 import cz.siret.prank.features.implementation.conservation.provider.ConservationProvider
 import cz.siret.prank.features.implementation.conservation.provider.ConservationProviderException

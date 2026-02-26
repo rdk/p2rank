@@ -1,6 +1,5 @@
 package cz.siret.prank.features.implementation.propensity
 
-
 import cz.siret.prank.features.api.AtomFeatureCalculationContext
 import cz.siret.prank.features.api.AtomFeatureCalculator
 import cz.siret.prank.features.implementation.table.PropertyTable
@@ -11,8 +10,6 @@ import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 
 import javax.annotation.Nonnull
-
-import static cz.siret.prank.utils.Futils.readResource
 
 /**
  * Atom type propensity

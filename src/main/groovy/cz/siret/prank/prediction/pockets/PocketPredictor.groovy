@@ -5,7 +5,6 @@ import cz.siret.prank.domain.Protein
 import cz.siret.prank.domain.labeling.LabeledPoint
 import cz.siret.prank.features.implementation.conservation.ConservationScore
 import cz.siret.prank.geom.Atoms
-import cz.siret.prank.geom.Struct
 import cz.siret.prank.prediction.pockets.clustering.ClusteringStrategy
 import cz.siret.prank.prediction.transformation.ScoreTransformer
 import cz.siret.prank.program.params.Parametrized

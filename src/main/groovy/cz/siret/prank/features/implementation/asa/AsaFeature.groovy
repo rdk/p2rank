@@ -10,8 +10,6 @@ import cz.siret.prank.utils.Writable
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
-import org.biojava.nbio.structure.Structure
-import org.biojava.nbio.structure.StructureTools
 import org.biojava.nbio.structure.asa.AsaCalculator
 
 /**

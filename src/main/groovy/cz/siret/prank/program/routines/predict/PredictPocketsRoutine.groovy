@@ -7,7 +7,6 @@ import cz.siret.prank.domain.labeling.LigandBasedResidueLabeler
 import cz.siret.prank.domain.loaders.LoaderParams
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.prediction.pockets.rescorers.ModelBasedRescorer
-import cz.siret.prank.prediction.pockets.rescorers.PocketRescorer
 import cz.siret.prank.prediction.pockets.results.PredictionSummary
 import cz.siret.prank.prediction.transformation.ScoreTransformer
 import cz.siret.prank.program.ml.Model

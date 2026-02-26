@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import cz.siret.prank.geom.kdtree.AtomKdTree;
 import cz.siret.prank.program.params.Params;
 import cz.siret.prank.utils.ATimer;
-import cz.siret.prank.utils.Cutils;
 import cz.siret.prank.utils.CutoffAtomsCallLog;
 import cz.siret.prank.utils.PerfUtils;
 import org.biojava.nbio.structure.*;

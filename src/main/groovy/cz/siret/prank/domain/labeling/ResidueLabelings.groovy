@@ -14,7 +14,6 @@ import cz.siret.prank.program.routines.results.Evaluation
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
-import javax.annotation.Nonnull
 import javax.annotation.Nullable
 
 import static cz.siret.prank.utils.Futils.mkdirs

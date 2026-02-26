@@ -6,11 +6,11 @@ import cz.siret.prank.program.params.ListParam
 import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.utils.Cutils
 import cz.siret.prank.utils.Futils
+import cz.siret.prank.utils.Parallel
 import cz.siret.prank.utils.rlang.RPlotter
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-import cz.siret.prank.utils.Parallel
 
 import static cz.siret.prank.utils.ATimer.startTimer
 import static cz.siret.prank.utils.Futils.mkdirs

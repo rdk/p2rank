@@ -1,7 +1,6 @@
 package cz.siret.prank.features.implementation.energy
 
-import cz.siret.prank.domain.Protein
-import cz.siret.prank.features.api.ProcessedItemContext
+
 import cz.siret.prank.features.api.SasFeatureCalculationContext
 import cz.siret.prank.features.api.SasFeatureCalculator
 import cz.siret.prank.geom.Atoms

@@ -9,7 +9,6 @@ import cz.siret.prank.geom.Atoms
 import cz.siret.prank.program.params.Parametrized
 import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
-import org.biojava.nbio.structure.secstruc.SecStrucType
 
 /**
  * Secondary structure cloud SAS Feature

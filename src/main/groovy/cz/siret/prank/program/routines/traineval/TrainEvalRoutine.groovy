@@ -13,15 +13,11 @@ import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.WekaUtils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-import weka.classifiers.Classifier
 import weka.classifiers.trees.RandomForest
-import weka.core.Instance
 
 import javax.annotation.Nonnull
 import javax.annotation.Nullable
 
-import static cz.siret.prank.prediction.pockets.PointScoreCalculator.applyPointScoreThreshold
-import static cz.siret.prank.prediction.pockets.PointScoreCalculator.normalizedScore
 import static cz.siret.prank.utils.ATimer.startTimer
 import static cz.siret.prank.utils.Formatter.formatTime
 import static cz.siret.prank.utils.Futils.mkdirs

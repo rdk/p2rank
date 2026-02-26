@@ -8,8 +8,6 @@ import cz.siret.prank.features.api.SasFeatureCalculator
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Surface
 import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.utils.MathUtils
-import cz.siret.prank.utils.StatSample
 import cz.siret.prank.utils.StatSample2
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j

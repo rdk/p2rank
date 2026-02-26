@@ -6,7 +6,6 @@ import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.prediction.pockets.rescorers.*
 import cz.siret.prank.program.ml.Model
-import cz.siret.prank.program.routines.predict.PredictPocketsRoutine
 import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.program.routines.results.PredictResults
 import cz.siret.prank.program.visualization.PredictionVisualizer

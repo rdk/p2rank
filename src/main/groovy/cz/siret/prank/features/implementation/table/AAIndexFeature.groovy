@@ -4,7 +4,6 @@ import cz.siret.prank.domain.Residue
 import cz.siret.prank.features.api.ResidueFeatureCalculationContext
 import cz.siret.prank.features.api.ResidueFeatureCalculator
 import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
 
 /**
