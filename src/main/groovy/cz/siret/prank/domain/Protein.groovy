@@ -547,10 +547,11 @@ class Protein implements Parametrized {
         //Struct.getGroups(structure).each { ConsoleWriter.write "group: chid:$it.chainId pdbname:$it.PDBName ishet:" + Struct.isHetGroup(it) }
 
         if (proteinAtoms.empty) {
+            String msg = "Structure with no protein chain atoms! [$name]"
             if (params.fail_fast) {
-                throw new PrankException("Protein with no chain atoms! [$name]")
+                throw new PrankException(msg)
             } else {
-                log.error("Protein with no chain atoms! [$name]")
+                log.error(msg)
             }
         }
 

@@ -81,6 +81,8 @@ class AnalyzeRoutine extends Routine {
         "aa-surf-seq-triplets" : { cmdAaSurfSeqTriplets() },
         "all-propensities" : { cmdAllPropensities() },
         "conservation" : { cmdConservation() },
+        "proteins" : { cmdProteins() },
+        "parse-proteins" : { cmdParseProteins() },
         "chains" : { cmdChains() },
         "chains-residues" : { cmdChainsResidues() },
         "fasta-raw" : { cmdFastaRaw() },
@@ -163,6 +165,63 @@ class AnalyzeRoutine extends Routine {
         }
         writeFile "$outdir/peptides.csv", csv
         write csv.toString()
+    }
+
+    /**
+     * Protein-level statistics
+     */
+    void cmdProteins() {
+        DataTable dt = new DataTable("protein",
+                "n_chains_total", "n_poly_chains", "n_protein_chains",
+                "n_residues", "n_protein_atoms", "n_all_atoms",
+                "n_relevant_ligands", "n_other_ligands", "n_peptides",
+                "protein_chain_ids"
+        )
+
+        def res = dataset.processItems { Dataset.Item item ->
+            Protein p = item.protein
+
+            dt.newRow(item.label)
+                .put("n_chains_total",     p.structure.chains.size())
+                .put("n_poly_chains",      p.structure.polyChains.size())
+                .put("n_protein_chains",   p.residueChains.size())
+                .put("n_residues",         p.residues.size())
+                .put("n_protein_atoms",    p.proteinAtoms.count)
+                .put("n_all_atoms",        p.allAtoms.count)
+                .put("n_relevant_ligands", p.relevantLigands.size())
+                .put("n_other_ligands",    p.allIgnoredLigands.size())
+                .put("n_peptides",         p.peptides.size())
+                .put("protein_chain_ids",  p.residueChains.collect { it.authorId }.join(" "))
+        }
+
+        writeFile "$outdir/proteins.csv", dt.toCsv()
+
+        res.writeItemErrorsToCsv("$outdir/errors.csv")
+        res.writeFullItemErrorsToFile("$outdir/errors_full.txt.gz")
+
+        String summary = dt.formatSummaryTable("Protein Dataset Summary",
+                ["No protein chains:": dt.countWhere("n_protein_chains", 0),
+                 "Errors:": res.errorCount] as Map<String, Object>)
+        write summary
+        writeFile "$outdir/proteins_summary.txt", summary
+
+        write "Processed ${dataset.size} items"
+        write res.errorSummary
+    }
+
+    /**
+     * Parse all proteins in the dataset and report errors.
+     */
+    void cmdParseProteins() {
+        def res = dataset.processItems { Dataset.Item item ->
+            item.protein
+        }
+
+        res.writeItemErrorsToCsv("$outdir/errors.csv")
+        res.writeFullItemErrorsToFile("$outdir/errors_full.txt.gz")
+
+        write "Processed ${dataset.size} items"
+        write res.errorSummary
     }
 
     /**
