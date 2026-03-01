@@ -212,6 +212,8 @@ class AnalyzeRoutine extends Routine {
      * Parse all proteins in the dataset and report errors.
      */
     void cmdParseProteins() {
+        LoaderParams.ignoreLigandsSwitch = true  // no need to load ligands for this
+
         def res = dataset.processItems { Dataset.Item item ->
             item.protein
         }
