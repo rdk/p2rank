@@ -196,8 +196,7 @@ class AnalyzeRoutine extends Routine {
 
         writeFile "$outdir/proteins.csv", dt.toCsv()
 
-        res.writeItemErrorsToCsv("$outdir/errors.csv")
-        res.writeFullItemErrorsToFile("$outdir/errors_full.txt.gz")
+        res.writeErrorCsvs(outdir)
 
         String summary = dt.formatSummaryTable("Protein Dataset Summary",
                 ["No protein chains:": dt.countWhere("n_protein_chains", 0),
@@ -217,8 +216,7 @@ class AnalyzeRoutine extends Routine {
             item.protein
         }
 
-        res.writeItemErrorsToCsv("$outdir/errors.csv")
-        res.writeFullItemErrorsToFile("$outdir/errors_full.txt.gz")
+        res.writeErrorCsvs(outdir)
 
         write "Processed ${dataset.size} items"
         write res.errorSummary
@@ -247,8 +245,7 @@ class AnalyzeRoutine extends Routine {
                 csvRows.toSorted().collect { it + "\n" }.join("")
         writeFile "$outdir/chains.csv", csv
 
-        res.writeItemErrorsToCsv("$outdir/errors.csv")
-        res.writeFullItemErrorsToFile("$outdir/errors_full.txt.gz")
+        res.writeErrorCsvs(outdir)
 
         write "Processed ${dataset.size} items"
         write res.errorSummary

@@ -1050,9 +1050,38 @@ class Dataset implements Parametrized, Writable, Failable {
             StringBuilder sb = new StringBuilder()
             sb.append("Failed items: ${errorCount}\n")
 
-            // TODO show most frequent errors / messages
+            if (hasErrors()) {
+                List<Map.Entry<String, Integer>> sorted = getAggregatedErrors()
+                sb.append("\n")
+                sb.append(String.format("  %-8s %s\n", "count", "error"))
+                sb.append("  " + "-" * 72 + "\n")
+                for (Map.Entry<String, Integer> entry : sorted) {
+                    sb.append(String.format("  %-8d %s\n", entry.value, entry.key))
+                }
+            }
 
             return sb.toString()
+        }
+
+        private static String formatErrorMessage(Exception e) {
+            String messages = ErrorUtils.getAllCauseMessagesWithClasses(e).join(" | ")
+            messages = messages.replace("\n", " ")
+            messages = messages.replace(",", " ")
+            return messages
+        }
+
+        /**
+         * @return aggregated error messages sorted by count descending
+         */
+        private List<Map.Entry<String, Integer>> getAggregatedErrors() {
+            Map<String, Integer> counts = new LinkedHashMap<>()
+            for (ItemError ie : errorItems) {
+                String msg = formatErrorMessage(ie.exception)
+                counts.merge(msg, 1) { Integer a, Integer b -> a + b }
+            }
+            List<Map.Entry<String, Integer>> sorted = counts.entrySet().toList()
+            sorted.sort { Map.Entry<String, Integer> a, Map.Entry<String, Integer> b -> b.value <=> a.value }
+            return sorted
         }
 
         void writeItemErrorsToCsv(String csvFile) {
@@ -1063,11 +1092,20 @@ class Dataset implements Parametrized, Writable, Failable {
             StringBuilder sb = new StringBuilder()
             sb.append("file (dataset.item.label), error (exception.message)\n")
             for (ItemError ie : errorItems) {
-                String messages = ErrorUtils.getAllCauseMessagesWithClasses(ie.exception).join(" | ")
-                messages = messages.replace("\n", " ")
-                messages = messages.replace(",", " ")
+                sb.append(ie.item.label).append(", ").append(formatErrorMessage(ie.exception)).append("\n")
+            }
+            Futils.writeFile(csvFile, sb.toString())
+        }
 
-                sb.append(ie.item.label).append(", ").append(messages).append("\n")
+        void writeAggregatedItemErrorsToCsv(String csvFile) {
+            if (!hasErrors()) {
+                return
+            }
+
+            StringBuilder sb = new StringBuilder()
+            sb.append("count, error\n")
+            for (Map.Entry<String, Integer> entry : getAggregatedErrors()) {
+                sb.append(entry.value).append(", ").append(entry.key).append("\n")
             }
             Futils.writeFile(csvFile, sb.toString())
         }
@@ -1084,6 +1122,15 @@ class Dataset implements Parametrized, Writable, Failable {
                     out.write("\n\n")
                 }
             }
+        }
+
+        /**
+         * Writes all error files: per-item CSV, aggregated CSV, and full stack traces.
+         */
+        void writeErrorCsvs(String outdir) {
+            writeItemErrorsToCsv("$outdir/errors.csv")
+            writeAggregatedItemErrorsToCsv("$outdir/errors_aggregated.csv")
+            writeFullItemErrorsToFile("$outdir/errors_full.txt.gz")
         }
 
     }
