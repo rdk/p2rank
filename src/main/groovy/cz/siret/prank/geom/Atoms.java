@@ -165,7 +165,7 @@ public final class Atoms implements Iterable<Atom> {
     }
 
     public double dist(Atom a) {
-        if (kdTree!=null && getCount() > KD_TREE_THRESHOLD) {
+        if (kdTree != null) {
             return kdTree.nearestDist(a);
         } else {
             return Struct.dist(a, list);
@@ -173,7 +173,7 @@ public final class Atoms implements Iterable<Atom> {
     }
 
     public double sqrDist(Atom a) {
-        if (kdTree!=null && getCount() > KD_TREE_THRESHOLD) {
+        if (kdTree != null) {
             return kdTree.nearestSqrDist(a);
         } else {
             return Struct.sqrDist(a, list);
@@ -424,21 +424,19 @@ public final class Atoms implements Iterable<Atom> {
         return res;
     }
 
-    public Atoms cutoutSphereSerial(Atom center, double radius) {
+    public Atoms cutoutSphereSerial(final Atom center, double radius) {
         List<Atom> res = new ArrayList<>();
         double sqrDist = radius*radius;
 
-        double[] toCoords = center.getCoords();
-
         for (Atom a : list) {
-            if (PerfUtils.sqrDist(a.getCoords(), toCoords) <= sqrDist) {
+            if (PerfUtils.sqrDist(a, center) <= sqrDist) {
                 res.add(a);
             }
         }
         return new Atoms(res);
     }
 
-    public Atoms cutoutSphereKD(Atom center, double radius) {
+    public Atoms cutoutSphereKD(final Atom center, double radius) {
         withKdTree();
         return kdTree.findAtomsWithinRadius(center, radius, false);
     }

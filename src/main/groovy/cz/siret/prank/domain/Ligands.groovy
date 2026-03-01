@@ -147,6 +147,8 @@ class Ligands implements Parametrized, Writable, Failable {
     private List<Ligand> makeLigands(List<Atoms> ligAtomGroups, Protein protein) {
         log.info "loading ${ligAtomGroups.size()} ligands"
 
+        protein.proteinAtoms.buildKdTree()
+
         List<Ligand> res = new ArrayList<>()
 
         for (Atoms ligAtoms in ligAtomGroups) {

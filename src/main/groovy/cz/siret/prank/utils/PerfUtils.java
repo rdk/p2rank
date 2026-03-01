@@ -43,28 +43,55 @@ public class PerfUtils {
         return x*x + y*y + z*z;
     }
 
+
+    public static double dist(double[] a, double[] b) {
+        final double d = sqrDist(a, b);
+        return Math.sqrt(d);
+    }
+
+    public static double sqrDist(Atom a, Atom b) {
+        final double x = a.getX() - b.getX();
+        final double y = a.getY() - b.getY();
+        final double z = a.getZ() - b.getZ();
+        return x*x + y*y + z*z;
+    }
+
+    public static double dist(Atom a, Atom b) {
+        final double x = a.getX() - b.getX();
+        final double y = a.getY() - b.getY();
+        final double z = a.getZ() - b.getZ();
+        return Math.sqrt(x*x + y*y + z*z);
+    }
+
     public static double sqrDistL(Atom a, List<Atom> list) {
         if (list==null || list.isEmpty()) {
             //log.debug "!! dist to empty list of atoms"
             return Double.MAX_VALUE;
         }
 
-        final double[] acoords = a.getCoords();
+        final double ax = a.getX();
+        final double ay = a.getY();
+        final double az = a.getZ();
+
+        double dx;
+        double dy;
+        double dz;
 
         double minDist = Double.MAX_VALUE;
         for (Atom b : list) {
-            double next = sqrDist(acoords, b.getCoords());
-            if (next<minDist) {
+            dx = ax - b.getX();
+            dy = ay - b.getY();
+            dz = az - b.getZ();
+
+
+            double next = dx*dx + dy*dy + dz*dz;
+
+            if (next < minDist) {
                 minDist = next;
             }
         }
 
         return minDist;
-    }
-
-    public static double dist(double[] a, double[] b) {
-        final double d = sqrDist(a, b);
-        return Math.sqrt(d);
     }
 
     public static String formatDouble(Double d) {
@@ -126,13 +153,11 @@ public class PerfUtils {
         List<Atom> res = new ArrayList<>();
         double sqrDist = dist*dist;
 
-        double[] toCoords = distanceTo.getCoords();
-
         for (Atom a : atoms.list) {     // this line was causing slow casting in groovy
                                         // at org.codehaus.groovy.runtime.ScriptBytecodeAdapter.castToType(ScriptBytecodeAdapter.java:599)
                                         // at rdk.pockets.geom.Atoms.cutoffAroundAtom(Atoms.groovy:219)
 
-            if (PerfUtils.sqrDist(a.getCoords(), toCoords) <= sqrDist) {
+            if (PerfUtils.sqrDist(a, distanceTo) <= sqrDist) {
                 res.add(a);
             }
         }

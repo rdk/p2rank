@@ -15,25 +15,27 @@ import java.util.List;
  */
 public final class Point implements Atom {
 
-    public final double[] coords;
+    private double x;
+    private double y;
+    private double z;
+
 
     public Point() {
-        coords = new double[3];
+        //
     }
 
     public Point(double x, double y, double z) {
-        coords = new double[3];
-        coords[0] = x;
-        coords[1] = y;
-        coords[2] = z;
+        this.x = x;
+        this.y = y;
+        this.z = z;
     }
 
     public Point(double[] coords) {
-        this.coords = coords;
+        setCoords(coords);
     }
 
     public Point copy() {
-        return new Point(Arrays.copyOf(coords, 3));
+        return new Point(x, y, z);
     }
 
     @Override
@@ -42,7 +44,7 @@ public final class Point implements Atom {
     }
 
     public double dist(Atom a) {
-        return PerfUtils.dist(coords, a.getCoords());
+        return PerfUtils.dist(this, a);
     }
 
     public static Point of(double x, double y, double z) {
@@ -50,14 +52,14 @@ public final class Point implements Atom {
     }
 
     public static Point copyOf(Atom a) {
-        return new Point(Arrays.copyOf(a.getCoords(), 3));
+        return new Point(a.getX(), a.getY(), a.getZ());
     }
 
 //===============================================================================================//
 
     @Override
     public Point3d getCoordsAsPoint3d() {
-        return new Point3d(coords[0],coords[1],coords[2]);
+        return new Point3d(x, y, z);
     }
 
     @Override
@@ -86,44 +88,54 @@ public final class Point implements Atom {
     }
 
     @Override
-    public void setCoords(double[] c) {
-
+    public void setCoords(final double[] c) {
+        x = c[0];
+        y = c[1];
+        z = c[2];
     }
 
     @Override
     public double[] getCoords() {
+        double[] coords = new double[3];
+        coords[0] = x;
+        coords[1] = y;
+        coords[2] = z;
         return coords;
     }
 
     public void setXYZ(double x, double y, double z) {
-        coords[0] = x;
-        coords[1] = y;
-        coords[2] = z;
+        this.x = x;
+        this.y = y;
+        this.z = z;
     }
 
     public double getX() {
-        return coords[0];
+        return x;
     }
 
     public void setX(double x) {
-        coords[0] = x;
+        this.x = x;
     }
 
     public double getY() {
-        return coords[1];
+        return y;
     }
 
     public void setY(double y) {
-        coords[1] = y;
+        this.y = y;
     }
 
     public double getZ() {
-        return coords[2];
+        return z;
+    }
+
+    public void setZ(double z) {
+        this.z = z;
     }
 
     @Override
     public void setAltLoc(Character character) {
-
+        //
     }
 
     @Override
@@ -195,11 +207,6 @@ public final class Point implements Atom {
     public void setCharge(short i) {
 
     }
-
-    public void setZ(double z) {
-        coords[2] = z;
-    }
-
 
     @Override
     public String toPDB() {

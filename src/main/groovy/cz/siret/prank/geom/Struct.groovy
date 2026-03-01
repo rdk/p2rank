@@ -26,16 +26,16 @@ import static cz.siret.prank.utils.Cutils.previousInList
 class Struct {
 
     static double dist(Atom a, Atom b) {
-        return PerfUtils.dist(a.coords, b.coords)
+        return PerfUtils.dist(a, b)
     }
 
     static double sqrDist(Atom a, Atom b) {
-        return PerfUtils.sqrDist(a.coords, b.coords)
+        return PerfUtils.sqrDist(a, b)
     }
 
     static double dist(Atom a, List<Atom> list) {
         if (list==null || list.isEmpty()) {
-            //log.debug "! dist to empty list of atoms"  // TODO: analyze this reccuring situation
+            //log.debug "! dist to empty list of atoms"  // TODO: analyze this reoccurring situation
             return Double.MAX_VALUE
         }
 
