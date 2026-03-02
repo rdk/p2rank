@@ -1080,15 +1080,20 @@ class Dataset implements Parametrized, Writable, Failable {
         /**
          * @return aggregated error messages sorted by count descending
          */
+        private List<Map.Entry<String, Integer>> aggregatedErrors
+
         private List<Map.Entry<String, Integer>> getAggregatedErrors() {
-            Map<String, Integer> counts = new LinkedHashMap<>()
-            for (ItemError ie : errorItems) {
-                String msg = formatErrorMessage(ie.exception)
-                counts.merge(msg, 1) { Integer a, Integer b -> a + b }
+            if (aggregatedErrors == null) {
+                Map<String, Integer> counts = new LinkedHashMap<>()
+                for (ItemError ie : errorItems) {
+                    String msg = formatErrorMessage(ie.exception)
+                    counts.merge(msg, 1) { Integer a, Integer b -> a + b }
+                }
+                List<Map.Entry<String, Integer>> sorted = counts.entrySet().toList()
+                sorted.sort { Map.Entry<String, Integer> a, Map.Entry<String, Integer> b -> b.value <=> a.value }
+                aggregatedErrors = sorted
             }
-            List<Map.Entry<String, Integer>> sorted = counts.entrySet().toList()
-            sorted.sort { Map.Entry<String, Integer> a, Map.Entry<String, Integer> b -> b.value <=> a.value }
-            return sorted
+            return aggregatedErrors
         }
 
         void writeItemErrorsToCsv(String csvFile) {

@@ -58,7 +58,7 @@ public final class Atoms implements Iterable<Atom> {
     public static Atoms copyPoints(Atom... atoms) {
         Atoms res = new Atoms(atoms.length);
         for (Atom a: atoms) {
-            res.add(new Point(a.getCoords()));
+            res.add(new Point(a.getX(), a.getY(), a.getZ()));
         }
         return res;
     }

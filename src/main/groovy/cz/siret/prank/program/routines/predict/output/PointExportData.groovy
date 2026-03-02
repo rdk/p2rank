@@ -58,13 +58,12 @@ class PointExportData implements TableData {
     @Override
     double[] getRow(int index) {
         LabeledPoint lp = labeledPoints.get(index)
-        double[] coords = lp.getCoords()
         double[] features = featureVectors.get(index).getArray()
 
         double[] row = new double[fixedColumns + features.length]
-        row[0] = coords[0]
-        row[1] = coords[1]
-        row[2] = coords[2]
+        row[0] = lp.getX()
+        row[1] = lp.getY()
+        row[2] = lp.getZ()
         if (includeScore) {
             row[3] = lp.score
         }
@@ -84,7 +83,8 @@ class PointExportData implements TableData {
         if (colIndex < 3) {
             // Coordinate columns: x, y, z
             for (int i = 0; i < n; i++) {
-                column[i] = labeledPoints.get(i).getCoords()[colIndex]
+                LabeledPoint p = labeledPoints.get(i)
+                column[i] = colIndex == 0 ? p.getX() : colIndex == 1 ? p.getY() : p.getZ()
             }
         } else if (includeScore && colIndex == 3) {
             // Score column (only when included)
