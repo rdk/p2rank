@@ -319,11 +319,12 @@ public final class KdTree3D {
      * Resolves the split-axis array once (keys = xs/ys/zs based on dim) to avoid
      * per-comparison branching in the inner partition loop.
      *
-     * Implementation: Sedgewick-style partition with sentinels.
-     * After median-of-three: keys[lo] <= keys[mid] <= keys[hi].
-     * keys[lo] is left sentinel, keys[hi] is right sentinel, pivot parked at hi-1.
-     * IMPORTANT: must re-read values from arrays after each swap (not cache in locals)
-     * to maintain the sentinel property correctly.
+     * Implementation: Sedgewick-style partition with sentinels (fast for random data),
+     * plus post-partition equal-range scan to skip duplicate regions. This prevents O(N²)
+     * degeneration when many elements share the same coordinate value (common for surface
+     * points on flat protein regions where many atoms align along one axis). With many
+     * duplicates, the equal range around the pivot is large → the scan catches most of them
+     * and skips the entire region in one step.
      */
     private static void quickselect(double[] xs, double[] ys, double[] zs, Atom[] atoms,
                                     int lo, int hi, int k, int dim) {
@@ -340,14 +341,10 @@ public final class KdTree3D {
             }
 
             // Median-of-three: sort keys[lo], keys[mid], keys[hi] to select pivot.
-            // Re-read from keys[] after each swap to avoid stale sentinel values.
             int mid = lo + (hi - lo) / 2;
-            if (keys[lo] > keys[mid])
-                swap(xs, ys, zs, atoms, lo, mid);
-            if (keys[lo] > keys[hi])
-                swap(xs, ys, zs, atoms, lo, hi);
-            if (keys[mid] > keys[hi])
-                swap(xs, ys, zs, atoms, mid, hi);
+            if (keys[lo] > keys[mid]) swap(xs, ys, zs, atoms, lo, mid);
+            if (keys[lo] > keys[hi])  swap(xs, ys, zs, atoms, lo, hi);
+            if (keys[mid] > keys[hi]) swap(xs, ys, zs, atoms, mid, hi);
             // Now: keys[lo] <= keys[mid] <= keys[hi].
             // keys[lo] is left sentinel (<=pivot), keys[hi] is right sentinel (>=pivot).
 
@@ -367,9 +364,19 @@ public final class KdTree3D {
             }
             swap(xs, ys, zs, atoms, i, hi - 1); // restore pivot to final position
 
-            // Narrow search to the half containing k
-            if (k <= i) hi = i - 1;
-            else        lo = i + 1;
+            // After partition: keys[lo..i-1] <= pivot, keys[i] == pivot, keys[i+1..hi] >= pivot.
+            // Expand the equal region around position i to skip duplicates.
+            // For random data: region is [i, i] (2 extra comparisons, negligible).
+            // For all-equal data: region is [lo, hi] → return immediately, O(N) total.
+            int eqLo = i;
+            while (eqLo > lo && keys[eqLo - 1] == pivot) eqLo--;
+            int eqHi = i;
+            while (eqHi < hi && keys[eqHi + 1] == pivot) eqHi++;
+
+            // Narrow search to the region containing k
+            if (k >= eqLo && k <= eqHi) return; // k in equal region — done
+            if (k < eqLo) hi = eqLo - 1;
+            else           lo = eqHi + 1;
         }
     }
 

@@ -1376,6 +1376,12 @@ class Params {
     boolean identify_peptides_by_labeling = false
 
     /**
+     * KD-tree implementation: "KdTree3D" (immutable, SoA) or "AtomKdTree" (Rednaxela, mutable, generic)
+     */
+    @RuntimeParam
+    String kdtree_implementation = "KdTree3D"
+
+    /**
      * Atoms size threshold for using KD-tree in cutoutSphere routine
      */
     @RuntimeParam
