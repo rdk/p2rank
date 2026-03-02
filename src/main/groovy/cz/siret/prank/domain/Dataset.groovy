@@ -205,7 +205,7 @@ class Dataset implements Parametrized, Writable, Failable {
                             return null
                         }
 
-                        processssItem(item, num, processor, result, quiet)
+                        processItem(item, num, processor, result, quiet)
                         return null
                     }
                 })
@@ -220,14 +220,14 @@ class Dataset implements Parametrized, Writable, Failable {
 
             int counter = 1
             for (Item item : items) {
-                processssItem(item, counter++, processor, result, quiet)
+                processItem(item, counter++, processor, result, quiet)
             }
         }
 
         return result
     }
 
-    private void processssItem(Item item, int num, Processor processor, Result result, boolean quiet) {
+    private void processItem(Item item, int num, Processor processor, Result result, boolean quiet) {
 
         if (!quiet) {
             String msg = "processing [$item.label] ($num/$size)"
@@ -243,8 +243,10 @@ class Dataset implements Parametrized, Writable, Failable {
 
             processor.processItem(item)
 
+            item.clearCacheConditionally()
+
         } catch (Exception e) {
-            item.cleanCaches()  // clear caches to free memory
+            item.clearCache()  // clear caches to free memory
             result.addItemError(item, e)
 
             fail("error processing dataset item [$item.label]", e, log)
@@ -848,14 +850,38 @@ class Dataset implements Parametrized, Writable, Failable {
 
         Item cleanCopy() {
             Item res = copy()
-            res.cleanCaches()
+            res.clearCache()
             return res
         }
 
-        void cleanCaches() {
-            //chains = null
-            //apoChains = null
+        void clearCache() {
+            clearSecondaryCache()
+            clearPrimaryCache()
+        }
+
+        /**
+         * Conditionally clear cached structures and secondary data of cached proteins based on dataset caching settings and parameters.
+         * Called after processing each item to free memory. If dataset is cached and clear_prim_caches is false, primary caches are kept.
+         */
+        void clearCacheConditionally() {
+            if (!currentDataset.cached || params.clear_prim_caches) {
+                clearCache()
+            } else {
+                if (params.clear_sec_caches) {
+                    clearSecondaryCache()
+                }
+            }
+        }
+
+        void clearPrimaryCache() {
             cachedPair = null
+        }
+
+        void clearSecondaryCache() {
+            if (cachedPair != null) {
+                cachedPair.prediction?.protein?.clearSecondaryData()
+                cachedPair.protein?.clearSecondaryData()
+            }
         }
 
         PredictionPair getPredictionPair() {
