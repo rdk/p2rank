@@ -28,7 +28,7 @@ class BinCounter<K> {
         double getPosRatio() {
             if (count == 0) return 0
 
-            return positives / count
+            return (double) positives / count
         }
     }
 

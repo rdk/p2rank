@@ -470,12 +470,12 @@ public final class Atoms implements Iterable<Atom> {
     public static class SphereLayers {
         public final Atoms outerSphere;
         public final Atoms innerSphere;
-        public final Atoms outerLater;
+        public final Atoms outerLayer;
 
-        public SphereLayers(Atoms innerSphere, Atoms outerSphere, Atoms outerLater) {
+        public SphereLayers(Atoms innerSphere, Atoms outerSphere, Atoms outerLayer) {
             this.outerSphere = outerSphere;
             this.innerSphere = innerSphere;
-            this.outerLater = outerLater;
+            this.outerLayer = outerLayer;
         }
 
         public Atoms getOuterSphere() {
@@ -487,7 +487,7 @@ public final class Atoms implements Iterable<Atom> {
         }
 
         public Atoms getOuterLater() {
-            return outerLater;
+            return outerLayer;
         }
     }
 

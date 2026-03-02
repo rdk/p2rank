@@ -270,7 +270,7 @@ class Dataset implements Parametrized, Writable, Failable {
             }
             if (checkApoProtein) {
                 if (!Futils.exists(it.apoProteinFile)) {
-                    log.error "apo_protein file doesn't exist: $it.proteinFile"
+                    log.error "apo_protein file doesn't exist: $it.apoProteinFile"
                     allOk.set(false)
                 }
             }

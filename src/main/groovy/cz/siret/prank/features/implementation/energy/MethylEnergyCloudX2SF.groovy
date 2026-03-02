@@ -111,7 +111,7 @@ class MethylEnergyCloudX2SF extends SasFeatureCalculator implements Parametrized
 
         Atoms.SphereLayers layers = probePoints.points.cutoutLayers(sasPoint, params.energy_cloud_radius, params.energy_cloud_radius2)
         Atoms cloudPoints = layers.innerSphere
-        Atoms cloudPoints2 = params.xenegy_cloud2_layered ? layers.outerLater : layers.outerSphere
+        Atoms cloudPoints2 = params.xenergy_cloud2_layered ? layers.outerLayer : layers.outerSphere
 
 
         if (cloudPoints.size() == 0) {

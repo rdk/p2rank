@@ -41,7 +41,7 @@ class ConservationCloudFeature extends SasFeatureCalculator implements Parametri
                 score.getScoreForResidueSafe(group.getResidueNumber())
             }).average().getAsDouble();
         }
-        if (value==Double.NaN) value = 0d
+        if (Double.isNaN(value)) value = 0d
 
         return [value] as double[]
     }

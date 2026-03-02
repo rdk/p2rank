@@ -104,7 +104,7 @@ class AnalyzeRoutine extends Routine {
 
         double residueCutoff = params.ligand_protein_contact_distance
 
-        dataset.processItems { Dataset.Item item ->
+        def res = dataset.processItems { Dataset.Item item ->
             Protein p = item.protein
             p.assignSecondaryStructure()
 
@@ -125,6 +125,7 @@ class AnalyzeRoutine extends Routine {
             writeFile outf, csv.toString()
         }
 
+        res.writeErrorCsvs(outdir)
     }
 
 
@@ -137,7 +138,7 @@ class AnalyzeRoutine extends Routine {
 
         StringBuffer summary = new StringBuffer()
 
-        dataset.processItems { Dataset.Item item ->
+        def res = dataset.processItems { Dataset.Item item ->
             Protein p = item.protein
 
             Atoms bindingAtoms = p.proteinAtoms.cutoutShell(p.allRelevantLigandAtoms, bindingCutoff)
@@ -151,6 +152,7 @@ class AnalyzeRoutine extends Routine {
             writeFile outf, bindingResidueCodes.join("\n")
         }
 
+        res.writeErrorCsvs(outdir)
         write "\n" + summary.toString()
 
     }
@@ -159,12 +161,13 @@ class AnalyzeRoutine extends Routine {
         LoaderParams.ignoreLigandsSwitch = true
 
         StringBuffer csv = new StringBuffer("protein, pept_count, peptides\n")
-        dataset.processItems { Dataset.Item item ->
+        def res = dataset.processItems { Dataset.Item item ->
             Protein p = item.protein
             String ps = p.peptides.collect { "($it.authorId,$it.length)" }.join(" ")
             csv << "$p.name, ${p.peptides.size()}, $ps\n"
         }
         writeFile "$outdir/peptides.csv", csv
+        res.writeErrorCsvs(outdir)
         write csv.toString()
     }
 
@@ -291,7 +294,7 @@ class AnalyzeRoutine extends Routine {
     void cmdChainsResidues() {
         cmdChains()
 
-        dataset.processItems { Dataset.Item item ->
+        def res = dataset.processItems { Dataset.Item item ->
             Protein p = item.protein
 
             int idx = 1
@@ -309,6 +312,8 @@ class AnalyzeRoutine extends Routine {
                 writeFile "$outdir/${item.label}_${strIdx}_${chain.authorId}_${chain.mmcifId}_residues.csv", csv
             }
         }
+
+        res.writeErrorCsvs(outdir)
     }
 
     /**
@@ -331,11 +336,12 @@ class AnalyzeRoutine extends Routine {
     }
 
     private doCmdFasta(boolean masked) {
+        LoaderParams.ignoreLigandsSwitch = true
         FastaExporter exporter = FastaExporter.getInstance()
 
         write "exporting fasta (masked: $masked)"
 
-        dataset.processItems { Dataset.Item item ->
+        def res = dataset.processItems { Dataset.Item item ->
             Protein p = item.protein
 
             for (ResidueChain chain : p.residueChains) {
@@ -348,12 +354,14 @@ class AnalyzeRoutine extends Routine {
                 String fasta = exporter.formatFastaFile(header, codes)
 
                 fname = "$outdir/$fname"
-                
+
                 write "$p.name: exporting chain $chain.authorId to $fname"
 
                 writeFile(fname, fasta)
             }
         }
+
+        res.writeErrorCsvs(outdir)
     }
 
     /**
@@ -370,7 +378,7 @@ class AnalyzeRoutine extends Routine {
         }
 
         List<String> csvRows = newSynchronizedList()
-        dataset.processItems { Dataset.Item item ->
+        def res = dataset.processItems { Dataset.Item item ->
             Protein p = item.protein
 
             BinaryLabeling labeling = labeler.getBinaryLabeling(p.residues, p)
@@ -395,6 +403,7 @@ class AnalyzeRoutine extends Routine {
         String csv = "protein, n_chains, chain_ids, n_residues, n_residues_in_labeling, positives, negatives, unlabeled\n" +
                 csvRows.toSorted().collect { it + "\n" }.join("")
         writeFile "$outdir/residue_stats.csv", csv
+        res.writeErrorCsvs(outdir)
     }
 
     /**
@@ -403,7 +412,7 @@ class AnalyzeRoutine extends Routine {
     void cmdConservation() {
         LoaderParams.ignoreLigandsSwitch = true
 
-        dataset.processItems { Dataset.Item item ->
+        def res = dataset.processItems { Dataset.Item item ->
             Protein p = item.protein
             ResidueLabeling<Double> labeling = p.getConservationLabeling()
             if (labeling != null) {
@@ -426,6 +435,8 @@ class AnalyzeRoutine extends Routine {
                 log.error "Failed to load conservation scores for [{}]", item.label
             }
         }
+
+        res.writeErrorCsvs(outdir)
     }
 
     /**
@@ -485,7 +496,7 @@ class AnalyzeRoutine extends Routine {
     private void cmdAaPropensities() {
         List<BinCounter<AA>> counters = newSynchronizedList()
 
-        dataset.processItems { Dataset.Item item ->
+        def res = dataset.processItems { Dataset.Item item ->
             Protein prot = item.protein
             ResidueLabeler<Boolean> labeler = dataset.binaryResidueLabeler
             BinaryLabeling labeling = labeler.getBinaryLabeling(prot.exposedResidues, prot)   // TODO not always only exposed!
@@ -502,6 +513,7 @@ class AnalyzeRoutine extends Routine {
             counters.add(counter)
         }
 
+        res.writeErrorCsvs(outdir)
         BinCounter<AA> counter = BinCounter.join(counters)
         savePropensities("$outdir/aa-propensity.csv", counter)
     }
@@ -511,7 +523,7 @@ class AnalyzeRoutine extends Routine {
 
         boolean exposedOnly = true // TODO make a configurable param for ions
 
-        dataset.processItems { Dataset.Item item ->
+        def res = dataset.processItems { Dataset.Item item ->
             Protein prot = item.protein
             ResidueLabeler<Boolean> labeler = dataset.binaryResidueLabeler
 
@@ -529,6 +541,7 @@ class AnalyzeRoutine extends Routine {
             counters.add(counter)
         }
 
+        res.writeErrorCsvs(outdir)
         BinCounter<String> counter = BinCounter.join(counters)
         savePropensities("$outdir/atomtype-propensity.csv", counter)
     }
@@ -540,7 +553,7 @@ class AnalyzeRoutine extends Routine {
     private void cmdAaSurfSeqDuplets() {
         List<BinCounter<String>> counters = newSynchronizedList()
 
-        dataset.processItems { Dataset.Item item ->
+        def res = dataset.processItems { Dataset.Item item ->
             Protein prot = item.protein
             ResidueLabeler<Boolean> labeler = dataset.binaryResidueLabeler
             BinaryLabeling labeling = labeler.getBinaryLabeling(prot.exposedResidues, prot)    // TODO not always only exposed!
@@ -548,18 +561,19 @@ class AnalyzeRoutine extends Routine {
             def counter = new BinCounter<String>()
 
             labeling.labeledResidues.each { LabeledResidue<Boolean> lres ->
-                def res = lres.residue
-                def prev = res.previousInChain
-                def next = res.nextInChain
+                def r = lres.residue
+                def prev = r.previousInChain
+                def next = r.nextInChain
 
                 // in each direction
-                counter.add(Residue.safeOrderedCode2(res, prev), lres.label)
-                counter.add(Residue.safeOrderedCode2(res, next), lres.label)
+                counter.add(Residue.safeOrderedCode2(r, prev), lres.label)
+                counter.add(Residue.safeOrderedCode2(r, next), lres.label)
             }
 
             counters.add(counter)
         }
 
+        res.writeErrorCsvs(outdir)
         savePropensities("$outdir/duplets.csv", BinCounter.join(counters))
     }
 
@@ -569,7 +583,7 @@ class AnalyzeRoutine extends Routine {
     private void cmdAaSurfSeqTriplets() {
         List<BinCounter<String>> counters = newSynchronizedList()
 
-        dataset.processItems { Dataset.Item item ->
+        def res = dataset.processItems { Dataset.Item item ->
             Protein prot = item.protein
             ResidueLabeler<Boolean> labeler = dataset.binaryResidueLabeler
             BinaryLabeling labeling = labeler.getBinaryLabeling(prot.exposedResidues, prot)       // TODO not always only exposed!
@@ -584,6 +598,7 @@ class AnalyzeRoutine extends Routine {
             counters.add(counter)
         }
 
+        res.writeErrorCsvs(outdir)
         savePropensities("$outdir/triplets.csv", BinCounter.join(counters))
     }
 
@@ -622,8 +637,7 @@ class AnalyzeRoutine extends Routine {
         List<String> newItems = Cutils.newSynchronizedList(dataset.size)
         List<String> nonMatchingItems = Cutils.newSynchronizedList(dataset.size)
 
-
-        dataset.processItems { Dataset.Item item ->
+        def res = dataset.processItems { Dataset.Item item ->
             Protein prot = item.protein
 
             List<String> ligDefs = new ArrayList<>()
@@ -659,6 +673,7 @@ class AnalyzeRoutine extends Routine {
 
         writeFile "$outdir/${dataset.label}_converted.ds", newDsText
         writeFile "$outdir/non_matching_items.txt", nonMatchingText
+        res.writeErrorCsvs(outdir)
     }
 
     

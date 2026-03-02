@@ -133,7 +133,7 @@ abstract class AbstractProbeEnergyFeature extends SasFeatureCalculator implement
         )
 
         Atoms cloudPoints = layers.innerSphere
-        Atoms cloudPoints2 = params.xenegy_cloud2_layered ? layers.outerLater : layers.outerSphere
+        Atoms cloudPoints2 = params.xenergy_cloud2_layered ? layers.outerLayer : layers.outerSphere
 
         if (cloudPoints.size() == 0) {
             log.warn("No ${getProbeType()} probe points found in cloud for SAS point, returning zero features")

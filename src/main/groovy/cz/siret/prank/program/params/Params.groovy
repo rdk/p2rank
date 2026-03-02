@@ -1490,7 +1490,7 @@ class Params {
     double energy_cloud_radius2 = 6
 
     @ModelParam
-    boolean xenegy_cloud2_layered = true
+    boolean xenergy_cloud2_layered = true
 
     @ModelParam
     int xenergy_tessellation = 2
