@@ -1,7 +1,8 @@
 package cz.siret.prank.geom;
 
 import com.google.common.collect.Lists;
-import cz.siret.prank.geom.kdtree.AtomKdTree;
+import cz.siret.prank.geom.kdtree.v2.AtomKdTree;
+import cz.siret.prank.geom.kdtree.v2.KdTree3D;
 import cz.siret.prank.program.params.Params;
 import cz.siret.prank.utils.ATimer;
 import cz.siret.prank.utils.CutoffAtomsCallLog;
@@ -302,16 +303,13 @@ public final class Atoms implements Iterable<Atom> {
 
     public void add(Atom a) {
         list.add(a);
-        if (kdTree!=null) {
-            kdTree.add(a);
-        }
+        // KdTree3D is immutable — invalidate, rebuilt lazily via withKdTree()/buildKdTree()
+        kdTree = null;
     }
 
     public Atoms addAll(Atoms atoms) {
         list.addAll(atoms.list);
-        if (kdTree!=null) {
-            kdTree.addAll(atoms);
-        }
+        kdTree = null; // invalidate immutable tree
         return this;
     }
 
@@ -515,22 +513,56 @@ public final class Atoms implements Iterable<Atom> {
 //===========================================================================================================//
 
     /**
-     * delete atoms that are too close together
+     * Remove points that are within dist of an already-accepted point.
+     *
+     * Since KdTree3D is immutable, we can't incrementally add points to a live tree.
+     * Instead: periodic tree rebuilds with linear gap scan.
+     * - Tree covers accepted[0..lastBuild)
+     * - Points accepted[lastBuild..size) are checked by linear scan (at most CONSOLIDATE_BATCH)
+     * - Rebuild tree every CONSOLIDATE_BATCH new acceptances
+     *
+     * Cost: O(N × BATCH) for linear scans + O(N/BATCH) rebuilds of growing tree.
+     * For typical N=5000, BATCH=64: ~320K comparisons + ~80 rebuilds.
      */
-    public static Atoms consolidate(Atoms atoms, double dist) {
-        Atoms res = new Atoms().buildKdTree();
+    private static final int CONSOLIDATE_BATCH = 64;
 
-        dist = dist*dist;
+    public static Atoms consolidate(Atoms atoms, double dist) {
+        List<Atom> result = new ArrayList<>();
+        KdTree3D tree = null;
+        int lastBuild = 0;
+        double sqrDist = dist * dist;
 
         for (Atom a : atoms) {
-            Atom nearest = res.kdTree.findNearest(a);
+            boolean tooClose = false;
 
-            if (nearest==null || Struct.sqrDist(a, nearest) > dist) {
-                res.add(a);
+            // Check against tree (covers result[0..lastBuild))
+            if (tree != null) {
+                if (tree.nearestSqrDist(a.getX(), a.getY(), a.getZ()) <= sqrDist) {
+                    tooClose = true;
+                }
+            }
+
+            // Linear scan of gap since last rebuild — at most CONSOLIDATE_BATCH points
+            if (!tooClose) {
+                for (int i = lastBuild, n = result.size(); i < n; i++) {
+                    if (PerfUtils.sqrDist(a, result.get(i)) <= sqrDist) {
+                        tooClose = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!tooClose) {
+                result.add(a);
+                // Rebuild tree when gap grows to batch size
+                if (result.size() - lastBuild >= CONSOLIDATE_BATCH) {
+                    tree = KdTree3D.build(result);
+                    lastBuild = result.size();
+                }
             }
         }
 
-        return res;
+        return new Atoms(result);
     }
 
     public static Atoms allFromStructure(Structure struc) {
