@@ -154,7 +154,10 @@ public final class KdTree3D {
     /**
      * Core build from pre-extracted SoA arrays.
      * Uses balanced median-based partitioning via quickselect.
-     * O(N log N) expected time.
+     * O(N log N) expected time (dominated by quickselect).
+     * Bounding boxes: O(N) via bottom-up propagation from leaf scans.
+     * Axis selection: O(1) per internal node using approximate parent bounds passed down
+     * (single O(N) scan at root, then narrowed by split values at each level).
      */
     private static KdTree3D buildFromArrays(double[] xs, double[] ys, double[] zs, Atom[] atoms, int n) {
         // Calculate max tree depth for the implicit heap.
@@ -167,7 +170,6 @@ public final class KdTree3D {
             tmp = (tmp + 1) / 2; // ceiling division simulates median split
         }
         int maxNodes = (1 << (maxDepth + 1)) - 1;
-        // Safety: ensure at least 1 node even for very small inputs
         if (maxNodes < 1) maxNodes = 1;
 
         // Allocate node arrays
@@ -182,28 +184,24 @@ public final class KdTree3D {
         int[] leafStartArr = new int[maxNodes];
         int[] leafEndArr = new int[maxNodes];
 
-        // Mark all as uninitialized
         java.util.Arrays.fill(leafStartArr, -1);
 
-        // Build recursively
-        buildNode(0, 0, n,
+        // Single O(N) scan for root bounding box — passed down for axis selection.
+        double xMin = xs[0], yMin = ys[0], zMin = zs[0];
+        double xMax = xs[0], yMax = ys[0], zMax = zs[0];
+        for (int i = 1; i < n; i++) {
+            if (xs[i] < xMin) xMin = xs[i]; else if (xs[i] > xMax) xMax = xs[i];
+            if (ys[i] < yMin) yMin = ys[i]; else if (ys[i] > yMax) yMax = ys[i];
+            if (zs[i] < zMin) zMin = zs[i]; else if (zs[i] > zMax) zMax = zs[i];
+        }
+
+        // Build recursively. Returns highest node index used (= nodeCount).
+        int nodeCount = buildNode(0, 0, n,
                 xs, ys, zs, atoms,
                 splitDims, splitVals,
                 minXs, minYs, minZs, maxXArr, maxYArr, maxZArr,
-                leafStartArr, leafEndArr);
-
-        // Count actual nodes used (trim trailing unused slots)
-        int nodeCount = 0;
-        for (int i = maxNodes - 1; i >= 0; i--) {
-            if (leafStartArr[i] >= 0 || (i > 0 && (leafStartArr[(i-1)/2] == -1))) {
-                // This is a valid node if it's a leaf (leafStart >= 0)
-                // or it's a child of a valid internal node
-                nodeCount = i + 1;
-                break;
-            }
-        }
-        // Simpler: just find the highest used index
-        nodeCount = findNodeCount(leafStartArr, splitDims, maxNodes, 0, 0, n);
+                leafStartArr, leafEndArr,
+                xMin, yMin, zMin, xMax, yMax, zMax);
 
         return new KdTree3D(xs, ys, zs, atoms, n,
                 splitDims, splitVals,
@@ -211,56 +209,55 @@ public final class KdTree3D {
                 leafStartArr, leafEndArr, nodeCount);
     }
 
-    /** Count nodes by traversing the built tree structure. */
-    private static int findNodeCount(int[] leafStart, byte[] splitDims, int maxNodes,
-                                     int nodeIdx, int from, int to) {
-        if (nodeIdx >= maxNodes) return 0;
-        if (to - from <= BUCKET_SIZE) {
-            return nodeIdx + 1; // this leaf is the highest index so far
-        }
-        int mid = from + (to - from) / 2;
-        int left = findNodeCount(leafStart, splitDims, maxNodes, 2 * nodeIdx + 1, from, mid);
-        int right = findNodeCount(leafStart, splitDims, maxNodes, 2 * nodeIdx + 2, mid, to);
-        return Math.max(nodeIdx + 1, Math.max(left, right));
-    }
-
     /**
-     * Recursively build a node.
+     * Recursively build a node. Returns the highest node index used in this subtree (1-based count).
+     *
+     * Axis selection uses approximate parent bounds (pMin/pMax) passed down from the root.
+     * These are narrowed by split values at each level — O(1) per node vs O(range) scanning.
+     * The approximation only affects axis choice, not correctness: child ranges are ≤ parent
+     * ranges, so the widest-axis heuristic occasionally picks a suboptimal axis. In practice
+     * this rarely matters for 3D protein data (roughly spherical distribution, similar axis widths).
+     *
+     * Bounding boxes stored for query pruning are exact — computed bottom-up from leaf scans.
+     * Leaves scan their bucket points (each point visited exactly once → O(N) total).
+     * Internal nodes take the union of their children's boxes (O(1) per node).
      *
      * @param nodeIdx  index in the implicit heap
      * @param from     start of data range (inclusive)
      * @param to       end of data range (exclusive)
+     * @param pMinX..pMaxZ  approximate parent bounds for axis selection
+     * @return highest node index + 1 (i.e. nodeCount for this subtree)
      */
-    private static void buildNode(int nodeIdx, int from, int to,
-                                  double[] xs, double[] ys, double[] zs, Atom[] atoms,
-                                  byte[] splitDims, double[] splitVals,
-                                  double[] minXs, double[] minYs, double[] minZs,
-                                  double[] maxXs, double[] maxYs, double[] maxZs,
-                                  int[] leafStart, int[] leafEnd) {
-        // Compute bounding box for this node's data range
-        double xMin = Double.POSITIVE_INFINITY, yMin = Double.POSITIVE_INFINITY, zMin = Double.POSITIVE_INFINITY;
-        double xMax = Double.NEGATIVE_INFINITY, yMax = Double.NEGATIVE_INFINITY, zMax = Double.NEGATIVE_INFINITY;
-        for (int i = from; i < to; i++) {
-            if (xs[i] < xMin) xMin = xs[i]; if (xs[i] > xMax) xMax = xs[i];
-            if (ys[i] < yMin) yMin = ys[i]; if (ys[i] > yMax) yMax = ys[i];
-            if (zs[i] < zMin) zMin = zs[i]; if (zs[i] > zMax) zMax = zs[i];
-        }
-        minXs[nodeIdx] = xMin; minYs[nodeIdx] = yMin; minZs[nodeIdx] = zMin;
-        maxXs[nodeIdx] = xMax; maxYs[nodeIdx] = yMax; maxZs[nodeIdx] = zMax;
-
+    private static int buildNode(int nodeIdx, int from, int to,
+                                 double[] xs, double[] ys, double[] zs, Atom[] atoms,
+                                 byte[] splitDims, double[] splitVals,
+                                 double[] minXs, double[] minYs, double[] minZs,
+                                 double[] maxXs, double[] maxYs, double[] maxZs,
+                                 int[] leafStart, int[] leafEnd,
+                                 double pMinX, double pMinY, double pMinZ,
+                                 double pMaxX, double pMaxY, double pMaxZ) {
         int count = to - from;
 
-        // Leaf: data range fits in bucket
+        // Leaf: data range fits in bucket — scan bucket for exact bounds
         if (count <= BUCKET_SIZE) {
+            double xMin = xs[from], yMin = ys[from], zMin = zs[from];
+            double xMax = xs[from], yMax = ys[from], zMax = zs[from];
+            for (int i = from + 1; i < to; i++) {
+                if (xs[i] < xMin) xMin = xs[i]; else if (xs[i] > xMax) xMax = xs[i];
+                if (ys[i] < yMin) yMin = ys[i]; else if (ys[i] > yMax) yMax = ys[i];
+                if (zs[i] < zMin) zMin = zs[i]; else if (zs[i] > zMax) zMax = zs[i];
+            }
+            minXs[nodeIdx] = xMin; minYs[nodeIdx] = yMin; minZs[nodeIdx] = zMin;
+            maxXs[nodeIdx] = xMax; maxYs[nodeIdx] = yMax; maxZs[nodeIdx] = zMax;
             leafStart[nodeIdx] = from;
             leafEnd[nodeIdx] = to;
-            return;
+            return nodeIdx + 1;
         }
 
-        // Internal node: split on widest axis at median
-        double xWidth = xMax - xMin;
-        double yWidth = yMax - yMin;
-        double zWidth = zMax - zMin;
+        // Internal node: pick split axis from approximate parent bounds (O(1), no scanning)
+        double xWidth = pMaxX - pMinX;
+        double yWidth = pMaxY - pMinY;
+        double zWidth = pMaxZ - pMinZ;
 
         byte dim;
         if (xWidth >= yWidth && xWidth >= zWidth) dim = 0;
@@ -273,17 +270,41 @@ public final class KdTree3D {
         int mid = from + count / 2;
         quickselect(xs, ys, zs, atoms, from, to - 1, mid, dim);
 
+        double splitVal = getCoord(xs, ys, zs, mid, dim);
         splitDims[nodeIdx] = dim;
-        splitVals[nodeIdx] = getCoord(xs, ys, zs, mid, dim);
+        splitVals[nodeIdx] = splitVal;
         // leafStart stays -1 (internal node marker)
 
+        // Narrow parent bounds along the split axis for each child
+        // Left child: split-axis max clamped to splitVal
+        // Right child: split-axis min clamped to splitVal
+        double lMaxX = pMaxX, lMaxY = pMaxY, lMaxZ = pMaxZ;
+        double rMinX = pMinX, rMinY = pMinY, rMinZ = pMinZ;
+        if (dim == 0)      { lMaxX = splitVal; rMinX = splitVal; }
+        else if (dim == 1) { lMaxY = splitVal; rMinY = splitVal; }
+        else               { lMaxZ = splitVal; rMinZ = splitVal; }
+
         // Recurse into children
-        buildNode(2 * nodeIdx + 1, from, mid, xs, ys, zs, atoms,
+        int leftCount = buildNode(2 * nodeIdx + 1, from, mid, xs, ys, zs, atoms,
                 splitDims, splitVals, minXs, minYs, minZs, maxXs, maxYs, maxZs,
-                leafStart, leafEnd);
-        buildNode(2 * nodeIdx + 2, mid, to, xs, ys, zs, atoms,
+                leafStart, leafEnd,
+                pMinX, pMinY, pMinZ, lMaxX, lMaxY, lMaxZ);
+        int rightCount = buildNode(2 * nodeIdx + 2, mid, to, xs, ys, zs, atoms,
                 splitDims, splitVals, minXs, minYs, minZs, maxXs, maxYs, maxZs,
-                leafStart, leafEnd);
+                leafStart, leafEnd,
+                rMinX, rMinY, rMinZ, pMaxX, pMaxY, pMaxZ);
+
+        // Bottom-up bounding box: union of children's exact boxes (O(1) per internal node)
+        int l = 2 * nodeIdx + 1;
+        int r = 2 * nodeIdx + 2;
+        minXs[nodeIdx] = Math.min(minXs[l], minXs[r]);
+        minYs[nodeIdx] = Math.min(minYs[l], minYs[r]);
+        minZs[nodeIdx] = Math.min(minZs[l], minZs[r]);
+        maxXs[nodeIdx] = Math.max(maxXs[l], maxXs[r]);
+        maxYs[nodeIdx] = Math.max(maxYs[l], maxYs[r]);
+        maxZs[nodeIdx] = Math.max(maxZs[l], maxZs[r]);
+
+        return Math.max(nodeIdx + 1, Math.max(leftCount, rightCount));
     }
 
     // ==================== Quickselect ====================
@@ -295,46 +316,52 @@ public final class KdTree3D {
      * Swaps all 4 parallel arrays (xs, ys, zs, atoms) in sync.
      * Expected O(N) per call. Uses median-of-3 pivot selection to avoid worst-case.
      *
-     * Implementation: Sedgewick-style 3-way partition with sentinels.
-     * After median-of-three: arr[lo] <= arr[mid] <= arr[hi].
-     * arr[lo] is left sentinel, arr[hi] is right sentinel, pivot parked at hi-1.
+     * Resolves the split-axis array once (keys = xs/ys/zs based on dim) to avoid
+     * per-comparison branching in the inner partition loop.
+     *
+     * Implementation: Sedgewick-style partition with sentinels.
+     * After median-of-three: keys[lo] <= keys[mid] <= keys[hi].
+     * keys[lo] is left sentinel, keys[hi] is right sentinel, pivot parked at hi-1.
      * IMPORTANT: must re-read values from arrays after each swap (not cache in locals)
      * to maintain the sentinel property correctly.
      */
     private static void quickselect(double[] xs, double[] ys, double[] zs, Atom[] atoms,
                                     int lo, int hi, int k, int dim) {
+        // Resolve split-axis array once — inner loop uses keys[] directly, no branching on dim.
+        double[] keys = dim == 0 ? xs : dim == 1 ? ys : zs;
+
         while (lo < hi) {
             // Base case: 2 elements — just sort them
             if (hi - lo == 1) {
-                if (getCoord(xs, ys, zs, lo, dim) > getCoord(xs, ys, zs, hi, dim)) {
+                if (keys[lo] > keys[hi]) {
                     swap(xs, ys, zs, atoms, lo, hi);
                 }
                 return;
             }
 
-            // Median-of-three: sort arr[lo], arr[mid], arr[hi] to select pivot.
-            // Re-read from arrays after each swap to avoid stale sentinel values.
+            // Median-of-three: sort keys[lo], keys[mid], keys[hi] to select pivot.
+            // Re-read from keys[] after each swap to avoid stale sentinel values.
             int mid = lo + (hi - lo) / 2;
-            if (getCoord(xs, ys, zs, lo, dim) > getCoord(xs, ys, zs, mid, dim))
+            if (keys[lo] > keys[mid])
                 swap(xs, ys, zs, atoms, lo, mid);
-            if (getCoord(xs, ys, zs, lo, dim) > getCoord(xs, ys, zs, hi, dim))
+            if (keys[lo] > keys[hi])
                 swap(xs, ys, zs, atoms, lo, hi);
-            if (getCoord(xs, ys, zs, mid, dim) > getCoord(xs, ys, zs, hi, dim))
+            if (keys[mid] > keys[hi])
                 swap(xs, ys, zs, atoms, mid, hi);
-            // Now: arr[lo] <= arr[mid] <= arr[hi].
-            // arr[lo] is left sentinel (<=pivot), arr[hi] is right sentinel (>=pivot).
+            // Now: keys[lo] <= keys[mid] <= keys[hi].
+            // keys[lo] is left sentinel (<=pivot), keys[hi] is right sentinel (>=pivot).
 
-            // Park pivot (arr[mid]) at hi-1
+            // Park pivot (keys[mid]) at hi-1
             swap(xs, ys, zs, atoms, mid, hi - 1);
-            double pivot = getCoord(xs, ys, zs, hi - 1, dim);
+            double pivot = keys[hi - 1];
 
             // Partition: scan inward from lo+1 and hi-2.
             // Sentinels guarantee: left scan stops at or before hi, right scan stops at or after lo.
             int i = lo;
             int j = hi - 1;
             while (true) {
-                while (getCoord(xs, ys, zs, ++i, dim) < pivot) {} // stops at arr[hi] sentinel (>=pivot)
-                while (getCoord(xs, ys, zs, --j, dim) > pivot) {} // stops at arr[lo] sentinel (<=pivot)
+                while (keys[++i] < pivot) {} // stops at keys[hi] sentinel (>=pivot)
+                while (keys[--j] > pivot) {} // stops at keys[lo] sentinel (<=pivot)
                 if (i >= j) break;
                 swap(xs, ys, zs, atoms, i, j);
             }
