@@ -123,6 +123,12 @@ test {
         jvmArgs '--sun-misc-unsafe-memory-access=allow'
     }
 
+    // Forward kdtree benchmark properties to test JVM
+    systemProperties System.properties.subMap([
+        'kdtree.benchmark', 'kdtree.points', 'kdtree.queries',
+        'kdtree.iterations', 'kdtree.seed', 'kdtree.radii'
+    ])
+
     inputs.dir "$distroDir/test_data"
     inputs.files("$distroDir/models", "$distroDir/config/default.groovy")
 
