@@ -933,7 +933,14 @@ class Dataset implements Parametrized, Writable, Failable {
         ProcessedItemContext getContext() {
             new ProcessedItemContext(this, columnValues)
         }
-        
+
+        /**
+         * Reconstruct dataset row string from column values.
+         */
+        String getRow() {
+            originDataset.header.collect { columnValues.get(it) }.join("  ")
+        }
+
     }
 
     Item createNewItemForSingleFileDs(String proteinFile, Map<String, String> columnValues) {

@@ -21,6 +21,7 @@ import org.biojava.nbio.structure.Atom
 import org.biojava.nbio.structure.ResidueNumber
 
 import javax.annotation.Nullable
+import java.util.concurrent.ConcurrentLinkedQueue
 
 import static cz.siret.prank.geom.SecondaryStructureUtils.assignSecondaryStructure
 import static cz.siret.prank.utils.Cutils.newSynchronizedList
@@ -178,6 +179,9 @@ class AnalyzeRoutine extends Routine {
                 "protein_chain_ids"
         )
 
+        Queue<String> withProteinChains = new ConcurrentLinkedQueue<>()
+        Queue<String> withoutProteinChains = new ConcurrentLinkedQueue<>()
+
         def res = dataset.processItems { Dataset.Item item ->
             Protein p = item.protein
 
@@ -192,11 +196,39 @@ class AnalyzeRoutine extends Routine {
                 .put("n_other_ligands",    p.allIgnoredLigands.size())
                 .put("n_peptides",         p.peptides.size())
                 .put("protein_chain_ids",  p.residueChains.collect { it.authorId }.join(" "))
+
+            if (p.residueChains.empty) {
+                withoutProteinChains.add(item.row)
+            } else {
+                withProteinChains.add(item.row)
+            }
         }
 
         writeFile "$outdir/proteins.csv", dt.toCsv()
 
         res.writeErrorCsvs(outdir)
+
+        // Write split dataset files if some structures have no protein chains
+        if (!withoutProteinChains.empty) {
+            String headerLine = dataset.header.size() > 1 ? "HEADER: " + dataset.header.join(" ") + "\n\n" : ""
+
+            String withFile = "$outdir/${dataset.label}_with_protein_chains.ds"
+            writeFile withFile,
+                    "# Structures from ${dataset.name} that contain protein chains\n\n" +
+                    headerLine +
+                    withProteinChains.toSorted().join("\n") + "\n"
+
+            String withoutFile = "$outdir/${dataset.label}_without_protein_chains.ds"
+            writeFile withoutFile,
+                    "# Structures from ${dataset.name} that have no protein chains\n\n" +
+                    headerLine +
+                    withoutProteinChains.toSorted().join("\n") + "\n"
+
+            write ""
+            write "NOTE: ${withoutProteinChains.size()} of ${dataset.size} structures have no protein chains. Split dataset files have been written to:\n"
+            write "  Structures with protein chains:    $withFile"
+            write "  Structures without protein chains: $withoutFile"
+        }
 
         String summary = dt.formatSummaryTable("Protein Dataset Summary",
                 ["No protein chains:": dt.countWhere("n_protein_chains", 0),
