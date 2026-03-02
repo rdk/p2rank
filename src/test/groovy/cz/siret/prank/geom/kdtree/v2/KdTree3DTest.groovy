@@ -3,7 +3,6 @@ package cz.siret.prank.geom.kdtree.v2
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Point
-import cz.siret.prank.geom.Struct
 import cz.siret.prank.utils.PerfUtils
 import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
@@ -15,7 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger
 import static org.junit.jupiter.api.Assertions.*
 
 /**
- * Tests for KdTree3D and v2.AtomKdTree.
+ * Tests for KdTree3D and v2.AtomKdTreeV2.
  *
  * Parity tests compare v2 results against brute-force serial computation
  * on real protein data to catch any algorithmic bugs.
@@ -37,7 +36,7 @@ class KdTree3DTest {
         double RADIUS = 6d
 
         Atoms atoms = p.proteinAtoms
-        AtomKdTree kdTree = AtomKdTree.build(atoms)
+        AtomKdTreeV2 kdTree = AtomKdTreeV2.build(atoms)
 
         for (Atom a : atoms) {
             // Brute-force serial scan
@@ -54,7 +53,7 @@ class KdTree3DTest {
     void findWithinRadius_multipleRadii() {
         Protein p = Protein.load('distro/test_data/2W83.pdb')
         Atoms atoms = p.proteinAtoms
-        AtomKdTree kdTree = AtomKdTree.build(atoms)
+        AtomKdTreeV2 kdTree = AtomKdTreeV2.build(atoms)
 
         // Test with different radii to exercise different pruning paths
         for (double radius : [2d, 6d, 10d, 15d]) {
@@ -71,7 +70,7 @@ class KdTree3DTest {
     void findNearest_parity() {
         Protein p = Protein.load('distro/test_data/2W83.pdb')
         Atoms atoms = p.proteinAtoms
-        AtomKdTree kdTree = AtomKdTree.build(atoms)
+        AtomKdTreeV2 kdTree = AtomKdTreeV2.build(atoms)
 
         for (Atom a : atoms) {
             // Brute-force: find nearest by scanning all
@@ -97,7 +96,7 @@ class KdTree3DTest {
     void findNearestNAtoms_parity() {
         Protein p = Protein.load('distro/test_data/2W83.pdb')
         Atoms atoms = p.proteinAtoms
-        AtomKdTree kdTree = AtomKdTree.build(atoms)
+        AtomKdTreeV2 kdTree = AtomKdTreeV2.build(atoms)
 
         int k = 9 // same as PyramidFeature usage
 
@@ -129,7 +128,7 @@ class KdTree3DTest {
     @Test
     void emptyTree() {
         Atoms empty = new Atoms(0)
-        AtomKdTree tree = AtomKdTree.build(empty)
+        AtomKdTreeV2 tree = AtomKdTreeV2.build(empty)
 
         assertEquals(0, tree.size())
         assertNull(tree.findNearest(new Point(0, 0, 0)))
@@ -139,7 +138,7 @@ class KdTree3DTest {
     @Test
     void singlePoint() {
         Point p = new Point(1, 2, 3)
-        AtomKdTree tree = AtomKdTree.build(new Atoms(p))
+        AtomKdTreeV2 tree = AtomKdTreeV2.build(new Atoms(p))
 
         assertEquals(1, tree.size())
         assertSame(p, tree.findNearest(new Point(0, 0, 0)))
@@ -155,7 +154,7 @@ class KdTree3DTest {
     void twoPoints() {
         Point p1 = new Point(0, 0, 0)
         Point p2 = new Point(10, 0, 0)
-        AtomKdTree tree = AtomKdTree.build(new Atoms([p1, p2] as List<Atom>))
+        AtomKdTreeV2 tree = AtomKdTreeV2.build(new Atoms([p1, p2] as List<Atom>))
 
         assertEquals(2, tree.size())
         assertSame(p1, tree.findNearest(new Point(1, 0, 0)))
@@ -169,7 +168,7 @@ class KdTree3DTest {
         for (int i = 0; i < 100; i++) {
             points.add(new Point(i as double, 0, 0))
         }
-        AtomKdTree tree = AtomKdTree.build(new Atoms(points))
+        AtomKdTreeV2 tree = AtomKdTreeV2.build(new Atoms(points))
         assertEquals(100, tree.size())
 
         // Nearest to (50.4, 0, 0) should be the point at x=50
@@ -184,7 +183,7 @@ class KdTree3DTest {
         for (int i = 0; i < 50; i++) {
             points.add(new Point(5, 5, 5))
         }
-        AtomKdTree tree = AtomKdTree.build(new Atoms(points))
+        AtomKdTreeV2 tree = AtomKdTreeV2.build(new Atoms(points))
         assertEquals(50, tree.size())
 
         // All should be within any radius
@@ -197,7 +196,7 @@ class KdTree3DTest {
         Point p1 = new Point(0, 0, 0)
         Point p2 = new Point(1, 0, 0)
         Point p3 = new Point(10, 0, 0)
-        AtomKdTree tree = AtomKdTree.build(new Atoms([p1, p2, p3] as List<Atom>))
+        AtomKdTreeV2 tree = AtomKdTreeV2.build(new Atoms([p1, p2, p3] as List<Atom>))
 
         // findNearestDifferent(p1) should return p2, not p1 itself
         Atom different = tree.findNearestDifferent(p1)
@@ -246,7 +245,7 @@ class KdTree3DTest {
         // v1 KdTree would fail here due to mutable node.status field.
         Protein p = Protein.load('distro/test_data/2W83.pdb')
         Atoms atoms = p.proteinAtoms
-        AtomKdTree kdTree = AtomKdTree.build(atoms)
+        AtomKdTreeV2 kdTree = AtomKdTreeV2.build(atoms)
 
         double RADIUS = 6d
         int THREADS = 8

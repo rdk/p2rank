@@ -1,8 +1,7 @@
 package cz.siret.prank.geom;
 
 import com.google.common.collect.Lists;
-import cz.siret.prank.geom.kdtree.v2.AtomKdTree;
-import cz.siret.prank.geom.kdtree.v2.KdTree3D;
+import cz.siret.prank.geom.kdtree.AtomKdTree;
 import cz.siret.prank.program.params.Params;
 import cz.siret.prank.utils.ATimer;
 import cz.siret.prank.utils.CutoffAtomsCallLog;
@@ -303,13 +302,13 @@ public final class Atoms implements Iterable<Atom> {
 
     public void add(Atom a) {
         list.add(a);
-        // KdTree3D is immutable — invalidate, rebuilt lazily via withKdTree()/buildKdTree()
+        // invalidate, rebuilt lazily via withKdTree()/buildKdTree()
         kdTree = null;
     }
 
     public Atoms addAll(Atoms atoms) {
         list.addAll(atoms.list);
-        kdTree = null; // invalidate immutable tree
+        kdTree = null; // invalidate
         return this;
     }
 
@@ -528,7 +527,7 @@ public final class Atoms implements Iterable<Atom> {
 
     public static Atoms consolidate(Atoms atoms, double dist) {
         List<Atom> result = new ArrayList<>();
-        KdTree3D tree = null;
+        AtomKdTree tree = null;
         int lastBuild = 0;
         double sqrDist = dist * dist;
 
@@ -537,7 +536,7 @@ public final class Atoms implements Iterable<Atom> {
 
             // Check against tree (covers result[0..lastBuild))
             if (tree != null) {
-                if (tree.nearestSqrDist(a.getX(), a.getY(), a.getZ()) <= sqrDist) {
+                if (tree.nearestSqrDist(a) <= sqrDist) {
                     tooClose = true;
                 }
             }
@@ -556,7 +555,7 @@ public final class Atoms implements Iterable<Atom> {
                 result.add(a);
                 // Rebuild tree when gap grows to batch size
                 if (result.size() - lastBuild >= CONSOLIDATE_BATCH) {
-                    tree = KdTree3D.build(result);
+                    tree = AtomKdTree.build(new Atoms(result));
                     lastBuild = result.size();
                 }
             }

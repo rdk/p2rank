@@ -2,8 +2,7 @@ package cz.siret.prank.geom.kdtree.v2
 
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Point
-import cz.siret.prank.geom.kdtree.AtomKdTree as AtomKdTreeV1
-import cz.siret.prank.geom.kdtree.v2.AtomKdTree as AtomKdTreeV2
+import cz.siret.prank.geom.kdtree.v1.AtomKdTreeV1
 import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
 import org.junit.jupiter.api.BeforeAll

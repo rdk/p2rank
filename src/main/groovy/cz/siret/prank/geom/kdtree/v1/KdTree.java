@@ -1,4 +1,4 @@
-package cz.siret.prank.geom.kdtree;
+package cz.siret.prank.geom.kdtree.v1;
 
 /**
  * Copyright 2009 Rednaxela
