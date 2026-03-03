@@ -1552,6 +1552,12 @@ class Params {
     int train_random_rotated_copies = 0
 
     /**
+     * Remove near-duplicate points from computed solvent accessible surface.
+     */
+    @RuntimeParam
+    boolean surface_sparsify = true
+
+    /**
      * Use optimized library for solvent accessible surface calculation
      */
     @RuntimeParam

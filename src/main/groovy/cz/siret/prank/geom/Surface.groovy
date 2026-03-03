@@ -18,7 +18,7 @@ import javax.vecmath.Point3d
 @CompileStatic
 class Surface implements Parametrized {
 
-    public static final double CONSOLIDATE_DIST = 0.05
+    public static final double SPARSIFY_DIST = 0.05
     public final double VAN_DER_WAALS_COMPENSATION = params.surface_additional_cutoff
 
     Atoms points
@@ -66,9 +66,11 @@ class Surface implements Parametrized {
         Atoms surfacePoints = CdkUtils.toAtomPoints(allSurfacePoints)
 
         log.debug "numerical surface: {} points", surfacePoints.count
-        // CDK returns lots of duplicate or too-close atoms (bug in the implementation?)
-        surfacePoints = Atoms.consolidate(surfacePoints, CONSOLIDATE_DIST)
-        log.debug "surface after consolidation: {} points", surfacePoints.count
+        if (Params.inst.surface_sparsify) {
+            // CDK returns lots of duplicate or too-close atoms (bug in the implementation?)
+            surfacePoints = Atoms.sparsify(surfacePoints, SPARSIFY_DIST)
+            log.debug "surface after sparsification: {} points", surfacePoints.count
+        }
 
         Surface res = new Surface(totalSurfaceArea, surfacePoints, solventRadius, tesselationLevel)
 

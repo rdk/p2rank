@@ -105,25 +105,19 @@ class Dataset implements Parametrized, Writable, Failable {
         items.size()
     }
 
-
     /**
      * clear cached properties of cached proteins
      * (clears generated surfaces and secondary data calculated by feature implementations)
      */
     void clearSecondaryCaches() {
-        items.each { Item it ->
-            if (it.cachedPair != null) {
-                it.cachedPair.prediction.protein.clearSecondaryData()
-                it.cachedPair.protein.clearSecondaryData()
-            }
-        }
+        items.each {it.clearSecondaryCache() }
     }
 
     /**
      * clear cached structures
      */
     void clearPrimaryCaches() {
-        items.each { it.cachedPair = null }
+        items.each {it.clearPrimaryCache() }
     }
 
 //===========================================================================================================//

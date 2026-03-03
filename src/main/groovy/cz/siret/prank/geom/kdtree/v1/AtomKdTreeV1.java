@@ -10,15 +10,13 @@ import java.util.List;
 
 public class AtomKdTreeV1 extends KdTree.SqrEuclid3D<Atom> implements AtomKdTree {
 
-    AtomKdTreeV1(int sizeLimit) {
+    public AtomKdTreeV1(int sizeLimit) {
         super(sizeLimit);
     }
 
     public static AtomKdTreeV1 build(Atoms atoms) {
         AtomKdTreeV1 res = new AtomKdTreeV1(Integer.MAX_VALUE);
-        List<Atom> list = atoms.list;
-        for (int i = 0, n = list.size(); i < n; i++) {
-            Atom a = list.get(i);
+        for (Atom a : atoms.list) {
             res.addPoint(a.getCoords(), a);
         }
         return res;

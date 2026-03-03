@@ -129,7 +129,7 @@ public final class KdTree3D {
     }
 
     /**
-     * Build from List of Atoms. Convenience overload for consolidate().
+     * Build from List of Atoms. Convenience overload for sparsify().
      */
     public static KdTree3D build(List<? extends Atom> atoms) {
         int n = atoms.size();

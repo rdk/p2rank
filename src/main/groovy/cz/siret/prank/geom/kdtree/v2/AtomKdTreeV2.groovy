@@ -36,7 +36,7 @@ class AtomKdTreeV2 implements AtomKdTree {
         return tree.nearestSqrDist(a.getX(), a.getY(), a.getZ())
     }
 
-    /** Raw-coordinate variant for hot paths (e.g. consolidate). */
+    /** Raw-coordinate variant for hot paths (e.g. sparsify). */
     double nearestSqrDist(double x, double y, double z) {
         return tree.nearestSqrDist(x, y, z)
     }
