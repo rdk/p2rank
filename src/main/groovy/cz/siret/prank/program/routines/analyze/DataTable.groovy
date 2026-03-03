@@ -115,9 +115,10 @@ class DataTable {
     /**
      * Returns indices of columns that have at least one numeric value.
      */
-    private List<Integer> getNumericColumnIndices() {
+    private List<Integer> getNumericColumnIndices(Set<String> exclude = Collections.emptySet()) {
         List<Integer> result = new ArrayList<>()
         for (int i = 0; i < columns.length; i++) {
+            if (exclude.contains(columns[i])) continue
             int ci = i
             if (getRows().any { Row row -> row.values[ci] instanceof Number }) {
                 result.add(i)
@@ -142,8 +143,8 @@ class DataTable {
         return result
     }
 
-    String formatSummaryTable(String title = "Dataset Summary", Map<String, Object> extraInfo = [:]) {
-        List<Integer> numColIndices = getNumericColumnIndices()
+    String formatSummaryTable(String title = "Dataset Summary", Map<String, Object> extraInfo = [:], Set<String> excludeFromSummary = Collections.emptySet()) {
+        List<Integer> numColIndices = getNumericColumnIndices(excludeFromSummary)
         int n = size()
 
         StringBuilder table = new StringBuilder()

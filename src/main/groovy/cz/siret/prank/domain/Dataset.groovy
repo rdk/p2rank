@@ -450,12 +450,15 @@ class Dataset implements Parametrized, Writable, Failable {
     }
 
     ExplicitSitesIndex getExplicitSitesIndex() {
-        if (explicitSitesIndex == null && hasExplicitSites()) {
+        return explicitSitesIndex
+    }
+
+    private void loadExplicitSitesIndex() {
+        if (hasExplicitSites()) {
             String format = attributes.get(PARAM_EXPLICIT_SITES_FORMAT)
             String file = dir + "/" + attributes.get(PARAM_EXPLICIT_SITES_FILE)
             explicitSitesIndex = ExplicitSitesIndex.loadFromFile(format, file)
         }
-        return explicitSitesIndex
     }
 
     /**
@@ -577,6 +580,8 @@ class Dataset implements Parametrized, Writable, Failable {
         if (!dataset.checkFilesExist()) {
             throw new PrankException("dataset contains invalid files")
         }
+
+        dataset.loadExplicitSitesIndex()
 
         return dataset
     }

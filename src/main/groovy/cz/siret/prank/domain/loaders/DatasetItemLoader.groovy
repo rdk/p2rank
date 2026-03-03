@@ -65,7 +65,6 @@ class DatasetItemLoader implements Parametrized, Writable {
             ExplicitSitesIndex index = item.originDataset.explicitSitesIndex
             res.holoProtein.sites = index.resolveForProtein(res.holoProtein, item.proteinFile)
             log.info "Loaded {} explicit sites for [{}]", res.holoProtein.sites.size(), item.label
-            write "  sites: ${res.holoProtein.sites.size()}"
         }
 
         ProcessedItemContext itemContext = item.context

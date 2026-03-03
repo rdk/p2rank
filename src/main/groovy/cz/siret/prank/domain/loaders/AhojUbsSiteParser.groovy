@@ -21,10 +21,16 @@ class AhojUbsSiteParser {
         Map<String, List<ExplicitSitesIndex.SiteDef>> byFilename = new LinkedHashMap<>()
 
         int totalSites = 0
+        int skippedEmpty = 0
         for (String line : lines.tail()) {
             if (StringUtils.isBlank(line)) continue
 
             String[] cols = line.split(",", -1)
+
+            if (StringUtils.isBlank(cols[5])) {
+                skippedEmpty++
+                continue
+            }
 
             String siteId = cols[1]
             String filename = cols[4]
@@ -39,6 +45,9 @@ class AhojUbsSiteParser {
             totalSites++
         }
 
+        if (skippedEmpty > 0) {
+            log.warn "Skipped {} rows with empty residue/coordinate fields in [{}]", skippedEmpty, filePath
+        }
         log.info "Loaded explicit sites index: {} sites for {} proteins from [{}]",
                 totalSites, byFilename.size(), filePath
 

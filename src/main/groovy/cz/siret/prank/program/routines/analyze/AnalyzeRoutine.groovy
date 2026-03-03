@@ -167,7 +167,7 @@ class AnalyzeRoutine extends Routine {
     void cmdBindingSites() {
         DataTable dt = new DataTable("protein",
                 "site_label", "site_type",
-                "n_atoms", "n_residues", "residue_ids",
+                "n_atoms", "n_residues", "site_radius", "residue_ids",
                 "center_x", "center_y", "center_z",
                 "lig_name", "lig_code", "lig_chain",
                 "contact_dist", "center_to_prot_dist"
@@ -183,8 +183,8 @@ class AnalyzeRoutine extends Routine {
         // Explicit-site-specific counters
         AtomicInteger totalSkippedSites = new AtomicInteger()
         AtomicInteger totalUnresolvedResidues = new AtomicInteger()
-        AtomicInteger proteinsWithSites = new AtomicInteger()
-        AtomicInteger proteinsWithoutSites = new AtomicInteger()
+
+        Queue<String> itemsWithoutSites = new ConcurrentLinkedQueue<>()
 
         def res = dataset.processItems { Dataset.Item item ->
             Protein p = item.protein
@@ -195,9 +195,7 @@ class AnalyzeRoutine extends Routine {
                 List<ResidueSite> sites = p.sites ?: []
 
                 if (sites.isEmpty()) {
-                    proteinsWithoutSites.incrementAndGet()
-                } else {
-                    proteinsWithSites.incrementAndGet()
+                    itemsWithoutSites.add(item.row)
                 }
 
                 // Track unresolved: compare defs vs resolved sites
@@ -226,12 +224,16 @@ class AnalyzeRoutine extends Routine {
                             .put("site_type", "explicit")
                             .put("n_atoms", site.atoms.count)
                             .put("n_residues", site.residues.size())
+                            .put("site_radius", siteRadius(c, site.atoms))
                             .put("residue_ids", formatResidueIds(site.residues))
                             .put("center_x", c.x)
                             .put("center_y", c.y)
                             .put("center_z", c.z)
                 }
             } else {
+                if (p.relevantLigands.isEmpty()) {
+                    itemsWithoutSites.add(item.row)
+                }
                 double cutoff = params.ligand_protein_contact_distance
                 for (Ligand lig : p.relevantLigands) {
                     Atom c = lig.centroid
@@ -243,6 +245,7 @@ class AnalyzeRoutine extends Routine {
                             .put("site_type", "ligand")
                             .put("n_atoms", lig.size)
                             .put("n_residues", contactResidues.size())
+                            .put("site_radius", siteRadius(c, lig.atoms))
                             .put("residue_ids", formatResidueIds(contactResidues))
                             .put("center_x", c.x)
                             .put("center_y", c.y)
@@ -258,30 +261,51 @@ class AnalyzeRoutine extends Routine {
                 totalSmall.addAndGet(p.ligands.smallLigandCount)
                 totalDistant.addAndGet(p.ligands.distantLigandCount)
             }
+
+            if (params.visualizations) {
+                BinaryLabeling labeling = item.binaryLabeling
+                if (labeling != null) {
+                    new NewPymolRenderer("$outdir/visualizations", new RenderingModel(
+                            proteinFile: item.proteinFile,
+                            label: item.label,
+                            protein: p,
+                            observedLabeling: labeling
+                    )).render()
+                }
+            }
         }
 
         writeFile "$outdir/binding_sites.csv", dt.toCsv()
 
         Map<String, Object> extraInfo = new LinkedHashMap<>()
+        int noSiteCount = itemsWithoutSites.size()
         if (hasExplicitSites) {
             extraInfo.put("Site source:", "explicit")
             extraInfo.put("Sites format:", dataset.attributes.get(Dataset.PARAM_EXPLICIT_SITES_FORMAT))
             extraInfo.put("Sites file:", dataset.attributes.get(Dataset.PARAM_EXPLICIT_SITES_FILE))
-            extraInfo.put("Proteins with sites:", proteinsWithSites.get())
-            extraInfo.put("Proteins without sites:", proteinsWithoutSites.get())
+            extraInfo.put("Proteins with sites:", dataset.size - noSiteCount - res.errorCount)
+            extraInfo.put("Proteins without sites:", noSiteCount)
             extraInfo.put("Sites skipped (no residues):", totalSkippedSites.get())
             extraInfo.put("Unresolved residues:", totalUnresolvedResidues.get())
         } else {
             extraInfo.put("Site source:", "ligands")
+            extraInfo.put("Proteins without ligands:", noSiteCount)
             extraInfo.put("Ignored ligands:", totalIgnored.get())
             extraInfo.put("Small ligands:", totalSmall.get())
             extraInfo.put("Distant ligands:", totalDistant.get())
         }
         extraInfo.put("Errors:", res.errorCount)
 
-        String summary = dt.formatSummaryTable("Binding Sites Summary", extraInfo)
+        Set<String> noSummary = ["center_x", "center_y", "center_z"] as Set
+        String summary = dt.formatSummaryTable("Binding Sites Summary", extraInfo, noSummary)
         write summary
         writeFile "$outdir/binding_sites_summary.txt", summary
+
+        if (!itemsWithoutSites.isEmpty()) {
+            String noSitesFile = "$outdir/items_without_sites.txt"
+            writeFile noSitesFile, itemsWithoutSites.toSorted().join("\n") + "\n"
+            write "NOTE: $noSiteCount of ${dataset.size} items have no binding sites. List written to [$noSitesFile]"
+        }
 
         write "Processed ${dataset.size} items"
         write res.errorSummary
@@ -293,6 +317,15 @@ class AnalyzeRoutine extends Routine {
         residues.collect { Residue r ->
             r.chain.authorId + "_" + r.residueNumber.seqNum + (r.residueNumber.insCode ?: "")
         }.join(" ")
+    }
+
+    private static double siteRadius(Atom centroid, Atoms atoms) {
+        double maxDist = 0
+        for (Atom a : atoms) {
+            double d = Struct.dist(centroid, a)
+            if (d > maxDist) maxDist = d
+        }
+        return maxDist
     }
 
     void cmdPeptides() {
