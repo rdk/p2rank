@@ -9,6 +9,7 @@ import cz.siret.prank.utils.ATimer;
 import cz.siret.prank.utils.CutoffAtomsCallLog;
 import cz.siret.prank.utils.PerfUtils;
 import org.biojava.nbio.structure.*;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +32,7 @@ public final class Atoms implements Iterable<Atom> {
 
     // lazy fields
     private Map<Integer, Atom> index;
-    private AtomKdTreeV1 kdTree;
+    private AtomKdTree kdTree;
     private Atom centroid;
     private Atom centerOfMass;
 
@@ -130,8 +131,7 @@ public final class Atoms implements Iterable<Atom> {
      * @return builds KDTree
      */
     public Atoms buildKdTree() {
-//        kdTree = AtomKdTree.build(this);
-        kdTree = AtomKdTreeV1.build(this);
+        kdTree = AtomKdTree.build(this);
         return this;
     }
 
@@ -139,6 +139,7 @@ public final class Atoms implements Iterable<Atom> {
         return kdTree;
     }
 
+    @NonNull
     @Override
     public Iterator<Atom> iterator() {
         return list.iterator();
@@ -156,7 +157,7 @@ public final class Atoms implements Iterable<Atom> {
      * @param id pdb serial (PDBserial) of the atom
      */
     public Atom getByID(int id) {
-        return this.index.get(id);
+        return index.get(id);
     }
 
     public int getCount() {
@@ -199,7 +200,7 @@ public final class Atoms implements Iterable<Atom> {
     }
 
     public boolean areWithinDistance(Atom a, double dist) {
-        if (kdTree!=null && getCount() > KD_TREE_THRESHOLD) {
+        if (kdTree != null && getCount() > KD_TREE_THRESHOLD) {
             return kdTree.nearestDist(a) <= dist;
         } else {
             return Struct.areWithinDistance(a, this.list, dist);
@@ -542,7 +543,7 @@ public final class Atoms implements Iterable<Atom> {
     }
 
     public static Atoms allFromStructure(Structure struc) {
-        List<Atom> list = new ArrayList<>(3000);
+        List<Atom> list = new ArrayList<>(4096);
         AtomIterator atomIterator = new AtomIterator(struc);
 
         while (atomIterator.hasNext()) {
@@ -568,7 +569,7 @@ public final class Atoms implements Iterable<Atom> {
     }
 
     public static Atoms allFromGroups(List<? extends Group> groups) {
-        Atoms res = new Atoms();
+        Atoms res = new Atoms(groups.size() * 10);
         for (Group g : groups) {
             res.list.addAll(g.getAtoms());
         }
