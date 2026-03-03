@@ -6,6 +6,7 @@ import cz.siret.prank.domain.labeling.BinaryLabeling
 import cz.siret.prank.domain.labeling.LigandBasedResidueLabeler
 import cz.siret.prank.domain.labeling.ResidueLabeler
 import cz.siret.prank.domain.loaders.DatasetItemLoader
+import cz.siret.prank.domain.loaders.ExplicitSitesIndex
 import cz.siret.prank.domain.loaders.ExtendedResidueId
 import cz.siret.prank.domain.loaders.LoaderParams
 import cz.siret.prank.domain.loaders.pockets.*
@@ -56,6 +57,8 @@ class Dataset implements Parametrized, Writable, Failable {
     static final String PARAM_LIGANDS_SEPARATED_BY_TER = "LIGANDS_SEPARATED_BY_TER"
     static final String PARAM_RESIDUE_LABELING_FORMAT = "RESIDUE_LABELING_FORMAT"
     static final String PARAM_RESIDUE_LABELING_FILE = "RESIDUE_LABELING_FILE"
+    static final String PARAM_EXPLICIT_SITES_FORMAT = "EXPLICIT_SITES_FORMAT"
+    static final String PARAM_EXPLICIT_SITES_FILE = "EXPLICIT_SITES_FILE"
 
     /*
      * dataset column names
@@ -84,6 +87,7 @@ class Dataset implements Parametrized, Writable, Failable {
     boolean forTraining = false
 
     private ResidueLabeler residueLabeler
+    private ExplicitSitesIndex explicitSitesIndex
 
 //===========================================================================================================//
 
@@ -439,6 +443,19 @@ class Dataset implements Parametrized, Writable, Failable {
      */
     boolean hasExplicitResidueLabeling() {
         return attributes.containsKey(PARAM_RESIDUE_LABELING_FORMAT) || header.contains(COLUMN_POSITIVE_RESIDUES)
+    }
+
+    boolean hasExplicitSites() {
+        return attributes.containsKey(PARAM_EXPLICIT_SITES_FORMAT)
+    }
+
+    ExplicitSitesIndex getExplicitSitesIndex() {
+        if (explicitSitesIndex == null && hasExplicitSites()) {
+            String format = attributes.get(PARAM_EXPLICIT_SITES_FORMAT)
+            String file = dir + "/" + attributes.get(PARAM_EXPLICIT_SITES_FILE)
+            explicitSitesIndex = ExplicitSitesIndex.loadFromFile(format, file)
+        }
+        return explicitSitesIndex
     }
 
     /**

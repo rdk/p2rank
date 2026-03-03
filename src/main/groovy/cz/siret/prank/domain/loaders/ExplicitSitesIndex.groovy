@@ -1,0 +1,100 @@
+package cz.siret.prank.domain.loaders
+
+import cz.siret.prank.domain.Protein
+import cz.siret.prank.domain.Residue
+import cz.siret.prank.domain.ResidueSite
+import cz.siret.prank.geom.Point
+import cz.siret.prank.program.PrankException
+import cz.siret.prank.utils.Futils
+import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
+import org.biojava.nbio.structure.Atom
+import org.biojava.nbio.structure.ResidueNumber
+
+/**
+ * Index of explicit site definitions loaded from an external CSV file.
+ * Keyed by filename for O(1) lookup per protein.
+ * Pluggable via format string dispatched in {@link #loadFromFile}.
+ */
+@Slf4j
+@CompileStatic
+class ExplicitSitesIndex {
+
+    @CompileStatic
+    static class SiteDef {
+        String siteId
+        String filename
+        List<String> residueIds
+        double centerX
+        double centerY
+        double centerZ
+
+        SiteDef(String siteId, String filename, List<String> residueIds,
+                double centerX, double centerY, double centerZ) {
+            this.siteId = siteId
+            this.filename = filename
+            this.residueIds = residueIds
+            this.centerX = centerX
+            this.centerY = centerY
+            this.centerZ = centerZ
+        }
+    }
+
+    private final Map<String, List<SiteDef>> byFilename
+
+    ExplicitSitesIndex(Map<String, List<SiteDef>> byFilename) {
+        this.byFilename = byFilename
+    }
+
+    static ExplicitSitesIndex loadFromFile(String format, String filePath) {
+        switch (format) {
+            case "ahoj_ubs":
+                return AhojUbsSiteParser.parse(filePath)
+            default:
+                throw new PrankException("Unknown explicit sites format: " + format)
+        }
+    }
+
+    List<SiteDef> getDefsForProtein(String proteinFile) {
+        String filename = Futils.shortName(proteinFile)
+        List<SiteDef> defs = byFilename.get(filename)
+        return defs != null ? defs : Collections.<SiteDef> emptyList()
+    }
+
+    List<ResidueSite> resolveForProtein(Protein protein, String proteinFile) {
+        List<SiteDef> defs = getDefsForProtein(proteinFile)
+        if (defs.isEmpty()) {
+            log.warn "No explicit sites found for [{}] in sites file", Futils.shortName(proteinFile)
+            return Collections.<ResidueSite> emptyList()
+        }
+
+        List<ResidueSite> sites = new ArrayList<>()
+        for (SiteDef sd : defs) {
+            List<Residue> residues = resolveResidues(sd, protein)
+            if (residues.isEmpty()) {
+                log.warn "Site [{}] has no resolved residues, skipping", sd.siteId
+                continue
+            }
+            Atom centroid = Point.of(sd.centerX, sd.centerY, sd.centerZ)
+            sites.add(new ResidueSite(sd.siteId, centroid, residues, protein))
+        }
+        return sites
+    }
+
+    private List<Residue> resolveResidues(SiteDef sd, Protein protein) {
+        List<Residue> resolved = new ArrayList<>()
+        for (String resId : sd.residueIds) {
+            ExtendedResidueId eid = ExtendedResidueId.parse(resId)
+            ResidueNumber rn = eid.toResidueNumber()
+            Residue r = protein.residues.getResidue(Residue.Key.of(rn))
+            if (r != null) {
+                resolved.add(r)
+            } else {
+                log.warn "Cannot resolve residue [{}] for site [{}] in protein [{}]",
+                        resId, sd.siteId, protein.name
+            }
+        }
+        return resolved
+    }
+
+}

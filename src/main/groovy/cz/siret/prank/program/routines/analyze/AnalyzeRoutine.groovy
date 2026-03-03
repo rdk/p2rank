@@ -3,6 +3,7 @@ package cz.siret.prank.program.routines.analyze
 
 import cz.siret.prank.domain.*
 import cz.siret.prank.domain.labeling.*
+import cz.siret.prank.domain.loaders.ExplicitSitesIndex
 import cz.siret.prank.domain.loaders.LoaderParams
 import cz.siret.prank.export.FastaExporter
 import cz.siret.prank.features.implementation.table.AtomTableFeature
@@ -22,6 +23,7 @@ import org.biojava.nbio.structure.ResidueNumber
 
 import javax.annotation.Nullable
 import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.concurrent.atomic.AtomicInteger
 
 import static cz.siret.prank.geom.SecondaryStructureUtils.assignSecondaryStructure
 import static cz.siret.prank.utils.Cutils.newSynchronizedList
@@ -75,6 +77,7 @@ class AnalyzeRoutine extends Routine {
     final Map<String, Closure> commandRegister = unmodifiableMap([
         "residues" : { cmdResidues() },
         "binding-residues" : { cmdBindingResidues() },
+        "binding-sites" : { cmdBindingSites() },
         "labeled-residues" : { cmdLabeledResidues() },
         "aa-propensities" : { cmdAaPropensities() },
         "atomtype-propensities" : { cmdAtomTypePropensities() },
@@ -155,6 +158,141 @@ class AnalyzeRoutine extends Routine {
         res.writeErrorCsvs(outdir)
         write "\n" + summary.toString()
 
+    }
+
+    /**
+     * Binding site statistics — works for both ligand-based and explicit site datasets.
+     * Produces a unified CSV with the same header regardless of site source.
+     */
+    void cmdBindingSites() {
+        DataTable dt = new DataTable("protein",
+                "site_label", "site_type",
+                "n_atoms", "n_residues", "residue_ids",
+                "center_x", "center_y", "center_z",
+                "lig_name", "lig_code", "lig_chain",
+                "contact_dist", "center_to_prot_dist"
+        )
+
+        boolean hasExplicitSites = dataset.hasExplicitSites()
+
+        // Ligand-specific counters
+        AtomicInteger totalIgnored = new AtomicInteger()
+        AtomicInteger totalSmall = new AtomicInteger()
+        AtomicInteger totalDistant = new AtomicInteger()
+
+        // Explicit-site-specific counters
+        AtomicInteger totalSkippedSites = new AtomicInteger()
+        AtomicInteger totalUnresolvedResidues = new AtomicInteger()
+        AtomicInteger proteinsWithSites = new AtomicInteger()
+        AtomicInteger proteinsWithoutSites = new AtomicInteger()
+
+        def res = dataset.processItems { Dataset.Item item ->
+            Protein p = item.protein
+
+            if (hasExplicitSites) {
+                ExplicitSitesIndex index = dataset.explicitSitesIndex
+                List<ExplicitSitesIndex.SiteDef> defs = index.getDefsForProtein(item.proteinFile)
+                List<ResidueSite> sites = p.sites ?: []
+
+                if (sites.isEmpty()) {
+                    proteinsWithoutSites.incrementAndGet()
+                } else {
+                    proteinsWithSites.incrementAndGet()
+                }
+
+                // Track unresolved: compare defs vs resolved sites
+                Map<String, ResidueSite> resolvedByName = new HashMap<>()
+                for (ResidueSite site : sites) {
+                    resolvedByName.put(site.name, site)
+                }
+                for (ExplicitSitesIndex.SiteDef sd : defs) {
+                    ResidueSite resolved = resolvedByName.get(sd.siteId)
+                    if (resolved == null) {
+                        totalSkippedSites.incrementAndGet()
+                        totalUnresolvedResidues.addAndGet(sd.residueIds.size())
+                    } else {
+                        int unresolved = sd.residueIds.size() - resolved.residues.size()
+                        if (unresolved > 0) {
+                            totalUnresolvedResidues.addAndGet(unresolved)
+                        }
+                    }
+                }
+
+                for (ResidueSite site : sites) {
+                    Atom c = site.centroid
+
+                    dt.newRow(item.label)
+                            .put("site_label", site.label)
+                            .put("site_type", "explicit")
+                            .put("n_atoms", site.atoms.count)
+                            .put("n_residues", site.residues.size())
+                            .put("residue_ids", formatResidueIds(site.residues))
+                            .put("center_x", c.x)
+                            .put("center_y", c.y)
+                            .put("center_z", c.z)
+                }
+            } else {
+                double cutoff = params.ligand_protein_contact_distance
+                for (Ligand lig : p.relevantLigands) {
+                    Atom c = lig.centroid
+                    Atoms contactAtoms = p.proteinAtoms.cutoutShell(lig.atoms, cutoff)
+                    List<Residue> contactResidues = p.residues.getDistinctForAtoms(contactAtoms)
+
+                    dt.newRow(item.label)
+                            .put("site_label", lig.label)
+                            .put("site_type", "ligand")
+                            .put("n_atoms", lig.size)
+                            .put("n_residues", contactResidues.size())
+                            .put("residue_ids", formatResidueIds(contactResidues))
+                            .put("center_x", c.x)
+                            .put("center_y", c.y)
+                            .put("center_z", c.z)
+                            .put("lig_name", lig.name)
+                            .put("lig_code", lig.code as String)
+                            .put("lig_chain", lig.chain)
+                            .put("contact_dist", lig.contactDistance)
+                            .put("center_to_prot_dist", lig.centerToProteinDist)
+                }
+
+                totalIgnored.addAndGet(p.ligands.ignoredLigandCount)
+                totalSmall.addAndGet(p.ligands.smallLigandCount)
+                totalDistant.addAndGet(p.ligands.distantLigandCount)
+            }
+        }
+
+        writeFile "$outdir/binding_sites.csv", dt.toCsv()
+
+        Map<String, Object> extraInfo = new LinkedHashMap<>()
+        if (hasExplicitSites) {
+            extraInfo.put("Site source:", "explicit")
+            extraInfo.put("Sites format:", dataset.attributes.get(Dataset.PARAM_EXPLICIT_SITES_FORMAT))
+            extraInfo.put("Sites file:", dataset.attributes.get(Dataset.PARAM_EXPLICIT_SITES_FILE))
+            extraInfo.put("Proteins with sites:", proteinsWithSites.get())
+            extraInfo.put("Proteins without sites:", proteinsWithoutSites.get())
+            extraInfo.put("Sites skipped (no residues):", totalSkippedSites.get())
+            extraInfo.put("Unresolved residues:", totalUnresolvedResidues.get())
+        } else {
+            extraInfo.put("Site source:", "ligands")
+            extraInfo.put("Ignored ligands:", totalIgnored.get())
+            extraInfo.put("Small ligands:", totalSmall.get())
+            extraInfo.put("Distant ligands:", totalDistant.get())
+        }
+        extraInfo.put("Errors:", res.errorCount)
+
+        String summary = dt.formatSummaryTable("Binding Sites Summary", extraInfo)
+        write summary
+        writeFile "$outdir/binding_sites_summary.txt", summary
+
+        write "Processed ${dataset.size} items"
+        write res.errorSummary
+
+        res.writeErrorCsvs(outdir)
+    }
+
+    private static String formatResidueIds(List<Residue> residues) {
+        residues.collect { Residue r ->
+            r.chain.authorId + "_" + r.residueNumber.seqNum + (r.residueNumber.insCode ?: "")
+        }.join(" ")
     }
 
     void cmdPeptides() {
