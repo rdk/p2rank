@@ -7,7 +7,6 @@ import cz.siret.prank.domain.Residue
 import cz.siret.prank.domain.ResidueChain
 import cz.siret.prank.geom.clustering.AtomClusterer
 import cz.siret.prank.geom.clustering.AtomGroupClusterer
-import cz.siret.prank.geom.clustering.SLinkClusterer
 import cz.siret.prank.utils.Cutils
 import cz.siret.prank.utils.PdbUtils
 import cz.siret.prank.utils.PerfUtils
@@ -178,11 +177,11 @@ class Struct {
      * @return
      */
     static List<Atoms> clusterAtoms(Atoms atoms, double clusterDist) {
-        return new AtomClusterer(new SLinkClusterer<Atom>()).clusterAtoms(atoms, clusterDist)
+        return AtomClusterer.singleLinkage().clusterAtoms(atoms, clusterDist)
     }
 
     static List<Atoms> clusterAtomGroups(List<Atoms> atomGroups, double clusterDist ) {
-        return new AtomGroupClusterer(new SLinkClusterer()).clusterGroups(atomGroups, clusterDist)
+        return AtomGroupClusterer.singleLinkage().clusterGroups(atomGroups, clusterDist)
     }
 
     static final Ordering<Group> GROUP_ORDERING = new Ordering<Group>() {

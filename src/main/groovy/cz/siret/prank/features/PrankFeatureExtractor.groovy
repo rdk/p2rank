@@ -303,7 +303,7 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
             double weight = calcWeight(dist)
             weightSum += weight
 
-            res.add( props.copy().multiply(weight) )
+            res.addWeighted(props, weight)
         }
 
         if (AVERAGE_FEAT_VECTORS) {

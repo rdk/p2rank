@@ -17,6 +17,10 @@ class AtomGroupClusterer implements Clusterer<Atoms> {
         this.clusteringAlgorithm = clusteringAlgorithm
     }
 
+    static AtomGroupClusterer singleLinkage() {
+        return new AtomGroupClusterer(new SLinkClustererV2<Atoms>())
+    }
+
     @Override
     List<List<Atoms>> cluster(List<Atoms> elements, double minDist, Clusterer.Distance<Atoms> distDef) {
         return clusteringAlgorithm.cluster(elements, minDist, distDef)

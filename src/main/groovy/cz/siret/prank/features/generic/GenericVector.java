@@ -94,6 +94,18 @@ public class GenericVector {
     }
 
     /**
+     * modifies instance: data[i] += gv.data[i] * weight
+     */
+    public GenericVector addWeighted(final GenericVector gv, double weight) {
+        final double[] gvData = gv.data;
+        final int n = data.length;
+        for (int i = 0; i < n; ++i) {
+            data[i] += gvData[i] * weight;
+        }
+        return this;
+    }
+
+    /**
      * modifies instance
      */
     public GenericVector multiply(double a) {

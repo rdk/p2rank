@@ -113,4 +113,12 @@ public class PrankFeatureVector extends FeatureVector implements Cloneable {
         return this;
     }
 
+    /**
+     * modifies this instance: this += p * weight (no allocation)
+     */
+    public PrankFeatureVector addWeighted(PrankFeatureVector p, double weight) {
+        valueVector.addWeighted(p.valueVector, weight);
+        return this;
+    }
+
 }
