@@ -819,6 +819,11 @@ class Params {
     @RuntimeParam
     boolean vis_highlight_ligands = false
 
+    /**
+     * Render site/pocket centroids as colored balls in visualizations
+     */
+    @RuntimeParam
+    boolean vis_site_centers = false
 
     /**
      * PyMol color gradient for coloring points by their score

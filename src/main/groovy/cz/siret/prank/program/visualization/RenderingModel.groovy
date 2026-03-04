@@ -7,6 +7,7 @@ import cz.siret.prank.domain.labeling.ResidueLabeling
 import cz.siret.prank.program.params.Parametrized
 import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
+import org.biojava.nbio.structure.Atom
 
 import java.awt.*
 import java.util.List
@@ -28,6 +29,8 @@ class RenderingModel implements Parametrized {
     List<LabeledPoint> labeledPoints
 
     ResidueLabeling<Double> doubleLabeling
+
+    List<Atom> siteCentroids
 
     Style style = new Style()
 

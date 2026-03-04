@@ -1,6 +1,7 @@
 package cz.siret.prank.program.visualization.renderers
 
 import cz.siret.prank.domain.labeling.BinaryLabeling
+import org.biojava.nbio.structure.Atom
 import cz.siret.prank.domain.labeling.LabeledResidue
 import cz.siret.prank.domain.labeling.ResidueLabeling
 import cz.siret.prank.program.params.Parametrized
@@ -120,6 +121,8 @@ ${renderLigands()}
 ${renderLabaledPoints()} 
 
 ${renderResidueColoring()}
+
+${renderSiteCentroids()}
 
 deselect
 
@@ -275,6 +278,20 @@ cmd.set("sphere_scale","0.3","rest")
         res << "color $colorName, $selName \n"
         res << "set surface_color, $colorName, $selName \n"
 
+        return res.toString()
+    }
+
+    private String renderSiteCentroids() {
+        if (!params.vis_site_centers || model.siteCentroids == null || model.siteCentroids.isEmpty()) return ""
+
+        StringBuilder res = new StringBuilder()
+        res << "# site centroids\n"
+        for (Atom c : model.siteCentroids) {
+            res << sprintf("pseudoatom site_centers, pos=[%.3f, %.3f, %.3f]\n", c.x, c.y, c.z)
+        }
+        res << "show spheres, site_centers\n"
+        res << "set sphere_scale, 0.8, site_centers\n"
+        res << "color hotpink, site_centers\n"
         return res.toString()
     }
 

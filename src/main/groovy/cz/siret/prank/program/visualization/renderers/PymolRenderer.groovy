@@ -96,7 +96,9 @@ for my_index in range(1,int(lastSTP)+1): cmd.set("sphere_transparency","0.1","po
 
 ${colorExposedAtoms(pair)}
 
-${colorPocketSurfaces(pair)}   
+${colorPocketSurfaces(pair)}
+
+${renderPocketCentroids(pair)}
 
 deselect
 
@@ -162,6 +164,37 @@ select $label, $idsOrList
 show spheres, $label
 color $color, $label
 """
+    }
+
+    private String renderPocketCentroids(PredictionPair pair) {
+        if (!params.vis_site_centers) return ""
+
+        StringBuilder res = new StringBuilder()
+        res << "# pocket centroids\n"
+
+        if (pair.prediction != null) {
+            for (Pocket pocket : pair.prediction.reorderedPockets) {
+                if (pocket.centroid != null) {
+                    res << sprintf("pseudoatom site_centers, pos=[%.3f, %.3f, %.3f]\n",
+                            pocket.centroid.x, pocket.centroid.y, pocket.centroid.z)
+                }
+            }
+        }
+
+        for (Ligand lig : pair.holoProtein.relevantLigands) {
+            def c = lig.centroid
+            if (c != null) {
+                res << sprintf("pseudoatom site_centers, pos=[%.3f, %.3f, %.3f]\n", c.x, c.y, c.z)
+            }
+        }
+
+        if (res.length() > "# pocket centroids\n".length()) {
+            res << "show spheres, site_centers\n"
+            res << "set sphere_scale, 0.8, site_centers\n"
+            res << "color hotpink, site_centers\n"
+        }
+
+        return res.toString()
     }
 
 /* random notes:

@@ -264,11 +264,13 @@ class AnalyzeRoutine extends Routine {
 
             if (params.visualizations) {
                 BinaryLabeling labeling
+                List<Atom> centroids = new ArrayList<>()
                 if (hasExplicitSites) {
                     // Build labeling from resolved site residues
                     Set<Residue> siteResidues = new HashSet<>()
                     for (ResidueSite site : (p.sites ?: [])) {
                         siteResidues.addAll(site.residues)
+                        centroids.add(site.centroid)
                     }
                     labeling = new BinaryLabeling(p.residues.count)
                     for (Residue r : p.residues) {
@@ -276,13 +278,17 @@ class AnalyzeRoutine extends Routine {
                     }
                 } else {
                     labeling = item.binaryLabeling
+                    for (Ligand lig : p.relevantLigands) {
+                        centroids.add(lig.centroid)
+                    }
                 }
                 if (labeling != null) {
                     new NewPymolRenderer("$outdir/visualizations", new RenderingModel(
                             proteinFile: item.proteinFile,
                             label: item.label,
                             protein: p,
-                            observedLabeling: labeling
+                            observedLabeling: labeling,
+                            siteCentroids: centroids
                     )).render()
                 }
             }

@@ -68,15 +68,14 @@ class PredictPocketsRoutine extends Routine {
 
         Model model = Model.load(modelf)
 
-        String visDir = "$outdir/visualizations"
         String predDir = "$outdir"
-        if (produceVisualizations) {
-            mkdirs(visDir)
-        }
         if (collectStats) {
             // keep predictions in subfolder when running eval-predict command
             predDir = "$outdir/predictions"
             mkdirs(predDir)
+        }
+        if (produceVisualizations) {
+            mkdirs("$predDir/visualizations")
         }
 
         PredictResults stats = new PredictResults()
