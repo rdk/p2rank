@@ -19,17 +19,18 @@ class DCC extends PocketCriterium {
         this.cutoff = cutoff
     }
 
-    // Uses geometric center (Atoms.centroid — unweighted arithmetic mean of coordinates).
-    // Note: BindingSite.getCentroid() returns mass-weighted center (Atoms.centerOfMass), not geometric center.
+    // Uses BindingSite.getCentroid():
+    //   Ligand:      atoms.centerOfMass (mass-weighted center)
+    //   ResidueSite: predefined centroid from input file
 
     @Override
     boolean isIdentified(BindingSite site, Pocket pocket, EvalContext context) {
-        return cutoff >= Struct.dist(site.atoms.centroid, pocket.centroid)
+        return cutoff >= Struct.dist(site.centroid, pocket.centroid)
     }
 
     @Override
     double score(BindingSite site, Pocket pocket) {
-        return cutoff - Struct.dist(site.atoms.centroid, pocket.centroid)
+        return cutoff - Struct.dist(site.centroid, pocket.centroid)
     }
 
     @Override
