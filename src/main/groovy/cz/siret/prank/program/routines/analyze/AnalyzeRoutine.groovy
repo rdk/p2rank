@@ -263,7 +263,20 @@ class AnalyzeRoutine extends Routine {
             }
 
             if (params.visualizations) {
-                BinaryLabeling labeling = item.binaryLabeling
+                BinaryLabeling labeling
+                if (hasExplicitSites) {
+                    // Build labeling from resolved site residues
+                    Set<Residue> siteResidues = new HashSet<>()
+                    for (ResidueSite site : (p.sites ?: [])) {
+                        siteResidues.addAll(site.residues)
+                    }
+                    labeling = new BinaryLabeling(p.residues.count)
+                    for (Residue r : p.residues) {
+                        labeling.add(r, siteResidues.contains(r))
+                    }
+                } else {
+                    labeling = item.binaryLabeling
+                }
                 if (labeling != null) {
                     new NewPymolRenderer("$outdir/visualizations", new RenderingModel(
                             proteinFile: item.proteinFile,
