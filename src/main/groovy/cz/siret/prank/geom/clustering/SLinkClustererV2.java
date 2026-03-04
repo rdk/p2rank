@@ -74,7 +74,7 @@ public class SLinkClustererV2<E> implements Clusterer<E> {
 
         List<List<E>> result = new ArrayList<>(clusterMap.values());
 
-        log.info("clusters: {}", result);
+        log.info("clusters ({}): sizes {}", result.size(), result.stream().map(List::size).toList());
         log.info("clusters together: {} / {}", result.stream().mapToInt(List::size).sum(), elements.size());
 
         return result;

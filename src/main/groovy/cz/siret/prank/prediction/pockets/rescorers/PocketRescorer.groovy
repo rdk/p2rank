@@ -26,6 +26,11 @@ abstract class PocketRescorer implements Parametrized {
         this.ligandedProtein = liganatedProtein
         if (liganatedProtein != null) {
             ligandAtoms = liganatedProtein.allRelevantLigandAtoms
+            // Fallback: use explicit site residue atoms for point labeling
+            if ((ligandAtoms == null || ligandAtoms.empty) && !liganatedProtein.sites.isEmpty()) {
+                List<Atoms> siteAtomsList = liganatedProtein.sites.collect { it.atoms }
+                ligandAtoms = Atoms.union(siteAtomsList)
+            }
         }
     }
 
