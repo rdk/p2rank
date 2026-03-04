@@ -173,22 +173,45 @@ color $color, $label
         res << "# pocket centroids\n"
 
         if (pair.prediction != null) {
+            int nPockets = pair.prediction.reorderedPockets.size()
+            List<Color> colors = PredictionVisualizer.generatePocketColors(nPockets)
+
+            int i = 1
             for (Pocket pocket : pair.prediction.reorderedPockets) {
                 if (pocket.centroid != null) {
-                    res << sprintf("pseudoatom site_centers, pos=[%.3f, %.3f, %.3f]\n",
+                    String name = "pocket_center_$i"
+                    String ncol = "pccol$i"
+                    res << "set_color $ncol = " + pyColor(colors[i-1]) + "\n"
+                    res << sprintf("pseudoatom $name, pos=[%.3f, %.3f, %.3f]\n",
                             pocket.centroid.x, pocket.centroid.y, pocket.centroid.z)
+                    res << "show spheres, $name\n"
+                    res << "set sphere_scale, 0.8, $name\n"
+                    res << "color $ncol, $name\n"
+                }
+                i++
+            }
+        }
+
+        boolean hasSiteCenters = false
+        if (pair.holoProtein.sites != null && !pair.holoProtein.sites.isEmpty()) {
+            for (ResidueSite site : pair.holoProtein.sites) {
+                def c = site.centroid
+                if (c != null) {
+                    res << sprintf("pseudoatom site_centers, pos=[%.3f, %.3f, %.3f]\n", c.x, c.y, c.z)
+                    hasSiteCenters = true
+                }
+            }
+        } else {
+            for (Ligand lig : pair.holoProtein.relevantLigands) {
+                def c = lig.centroid
+                if (c != null) {
+                    res << sprintf("pseudoatom site_centers, pos=[%.3f, %.3f, %.3f]\n", c.x, c.y, c.z)
+                    hasSiteCenters = true
                 }
             }
         }
 
-        for (Ligand lig : pair.holoProtein.relevantLigands) {
-            def c = lig.centroid
-            if (c != null) {
-                res << sprintf("pseudoatom site_centers, pos=[%.3f, %.3f, %.3f]\n", c.x, c.y, c.z)
-            }
-        }
-
-        if (res.length() > "# pocket centroids\n".length()) {
+        if (hasSiteCenters) {
             res << "show spheres, site_centers\n"
             res << "set sphere_scale, 0.8, site_centers\n"
             res << "color hotpink, site_centers\n"
