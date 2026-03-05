@@ -318,7 +318,7 @@ class EvalResults extends ResultsBase {
                 mkdirs(casedir)
                 writeFile "$casedir/proteins.csv", eval.toProteinsCSV()
                 writeFile "$casedir/ligands.csv", eval.toLigandsCSV()
-                writeFile "$casedir/pockets.csv", eval.toPocketsCSV()
+                writeFile "$casedir/predicted_pockets.csv", eval.toPocketsCSV()
                 writeFile "$casedir/ranks.csv", eval.toRanksCSV()
                 if (rescoring) {
                     writeFile "$casedir/ranks_original.csv", origEval.toRanksCSV()

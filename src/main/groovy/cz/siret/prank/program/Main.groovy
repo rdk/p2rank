@@ -285,10 +285,10 @@ class Main implements Parametrized, Writable {
         }
 
         Dataset.Result result = predictRoutine.execute()
-        finalizeDatasetResult(result)
+        finalizeDatasetResult(result, outdir)
     }
 
-    void finalizeDatasetResult(Dataset.Result result) {
+    void finalizeDatasetResult(Dataset.Result result, String outdir) {
         if (result.hasErrors()) {
             error = true
             write "ERROR on processing $result.errorCount file(s):"
@@ -296,6 +296,9 @@ class Main implements Parametrized, Writable {
             for (def itemError : result.errorItems) {
                 write "    [$itemError.item.label]"
             }
+
+            result.writeErrorCsvs(outdir)
+            write "See error details in: $outdir/errors.csv, $outdir/errors_full.txt.gz"
         }
     }
 
@@ -311,7 +314,7 @@ class Main implements Parametrized, Writable {
         configureLoggers(outdir)
 
         Dataset.Result result = new ExportPointsRoutine(dataset, outdir).execute()
-        finalizeDatasetResult(result)
+        finalizeDatasetResult(result, outdir)
     }
 
     void runEvalPredict() {
@@ -330,7 +333,7 @@ class Main implements Parametrized, Writable {
                 findModel(),
                 outdir).execute()
 
-        finalizeDatasetResult(result)
+        finalizeDatasetResult(result, outdir)
     }
 
     void runFpocketRescore() {
@@ -344,7 +347,7 @@ class Main implements Parametrized, Writable {
                 findModel(),
                 outdir, true).execute()
 
-        finalizeDatasetResult(result)
+        finalizeDatasetResult(result, outdir)
     }
 
     void runEvalRescore() {
@@ -372,7 +375,7 @@ class Main implements Parametrized, Writable {
         EvalRoutine evalRoutine = EvalRoutine.create(params.predict_residues, dataset, model, outdir)
         EvalResults res = evalRoutine.execute()
 
-        finalizeDatasetResult(res.datasetResult)
+        finalizeDatasetResult(res.datasetResult, outdir)
     }
 
     private runCrossvalidation() {
