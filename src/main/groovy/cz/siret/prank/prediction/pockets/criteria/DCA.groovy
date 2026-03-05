@@ -26,11 +26,13 @@ class DCA extends PocketCriterium implements Parametrized {
 
     @Override
     boolean isIdentified(BindingSite site, Pocket pocket, EvalContext context) {
+        if (pocket.centroid == null) return false
         return getSitePoints(site).areWithinDistance(pocket.centroid, cutoff)
     }
 
     @Override
     double score(BindingSite site, Pocket pocket) {
+        if (pocket.centroid == null) return Double.NEGATIVE_INFINITY
         return cutoff - getSitePoints(site).dist(pocket.centroid)
     }
 
