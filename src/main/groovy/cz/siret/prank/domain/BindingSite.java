@@ -9,6 +9,8 @@ public interface BindingSite {
 
     Atom getCentroid();
 
+    Atom getCentroidForEval();
+
     Atoms getSasPoints();
 
     String getLabel();

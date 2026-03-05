@@ -15,18 +15,19 @@ import org.biojava.nbio.structure.Atom
 class ResidueSite implements BindingSite, Parametrized {
 
     String name
-    Atom centroid
+    /** Centroid explicitly defined in the input site definition */
+    Atom explicitCentroid
     List<Residue> residues
     Protein protein
 
     private Atoms cachedAtoms
     private Atoms sasPoints
 
-    ResidueSite(String name, Atom centroid, List<Residue> residues, Protein protein) {
+    ResidueSite(String name, Atom explicitCentroid, List<Residue> residues, Protein protein) {
         assert !residues.isEmpty(), "ResidueSite must have at least one residue"
 
         this.name = name
-        this.centroid = centroid
+        this.explicitCentroid = explicitCentroid
         this.residues = residues
         this.protein = protein
     }
@@ -43,11 +44,37 @@ class ResidueSite implements BindingSite, Parametrized {
     }
 
     /**
-     * Predefined centroid of the site (from input)
+     * Predefined centroid of the site (from input).
      */
     @Override
     Atom getCentroid() {
-        return centroid
+        return explicitCentroid
+    }
+
+    /**
+     * Returns the centroid used for evaluation, based on the site_centroid_method parameter.
+     *
+     * Possible methods:
+     *   - explicit: predefined centroid from input site definition
+     *   - sas_points_center_of_mass: center of mass of SAS points around site residues
+     *   - residue_atoms_center_of_mass: center of mass of all residue atoms
+     */
+    @Override
+    Atom getCentroidForEval() {
+        SiteCentroidMethod method = SiteCentroidMethod.parse(params.site_centroid_method)
+        if (!method.supportedForExplicitSites) {
+            throw new IllegalArgumentException("site_centroid_method '${method}' is not supported for explicitly defined sites")
+        }
+        switch (method) {
+            case SiteCentroidMethod.explicit_centroid:
+                return explicitCentroid
+            case SiteCentroidMethod.sas_points_center_of_mass:
+                return getSasPoints().centerOfMass
+            case SiteCentroidMethod.atoms_center_of_mass:
+                return getAtoms().centerOfMass
+            default:
+                throw new IllegalArgumentException("Unsupported site_centroid_method: '${method}'")
+        }
     }
 
     /**

@@ -86,6 +86,26 @@ class Ligand implements BindingSite, Parametrized {
         //atoms.geometricCenter
     }
 
+    /**
+     * Returns the centroid used for evaluation, based on the site_centroid_method parameter.
+     * Ligands have no explicit centroid, so "explicit" falls back to atoms center of mass.
+     */
+    @Override
+    Atom getCentroidForEval() {
+        SiteCentroidMethod method = SiteCentroidMethod.parse(params.site_centroid_method)
+        if (!method.supportedForLigandSites) {
+            throw new IllegalArgumentException("site_centroid_method '${method}' is not supported for ligand-defined sites")
+        }
+        switch (method) {
+            case SiteCentroidMethod.atoms_center_of_mass:
+                return atoms.centerOfMass
+            case SiteCentroidMethod.sas_points_center_of_mass:
+                return getSasPoints().centerOfMass
+            default:
+                throw new IllegalArgumentException("Unsupported site_centroid_method: '${method}'")
+        }
+    }
+
     String getNameCode() {
         name + "_" + code
     }

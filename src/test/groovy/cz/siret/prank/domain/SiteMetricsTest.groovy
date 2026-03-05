@@ -84,7 +84,7 @@ class SiteMetricsTest {
         ResidueSite site = new ResidueSite("site1", expectedCentroid, residues, protein)
 
         // centroid should be the one passed to the constructor
-        assertSame(expectedCentroid, site.centroid)
+        assertSame(expectedCentroid, site.explicitCentroid)
     }
 
     @Test

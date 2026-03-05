@@ -25,12 +25,12 @@ class DCC extends PocketCriterium {
 
     @Override
     boolean isIdentified(BindingSite site, Pocket pocket, EvalContext context) {
-        return cutoff >= Struct.dist(site.centroid, pocket.centroid)
+        return cutoff >= Struct.dist(site.centroidForEval, pocket.centroid)
     }
 
     @Override
     double score(BindingSite site, Pocket pocket) {
-        return cutoff - Struct.dist(site.centroid, pocket.centroid)
+        return cutoff - Struct.dist(site.centroidForEval, pocket.centroid)
     }
 
     @Override

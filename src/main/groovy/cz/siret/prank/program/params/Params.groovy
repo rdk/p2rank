@@ -820,6 +820,21 @@ class Params {
     boolean vis_highlight_ligands = false
 
     /**
+     * Method for computing binding site centroid for evaluation (DCC criterion).
+     * Values: explicit_centroid, atoms_center_of_mass, sas_points_center_of_mass
+     * @see cz.siret.prank.domain.SiteCentroidMethod
+     */
+    @RuntimeParam
+    String site_centroid_method = "atoms_center_of_mass"
+
+    /**
+     * Use SAS points instead of atoms for site representation in evaluation criteria (e.g. DCA).
+     * Note: intended for exploration of explicit sites only. It will unrealistically inflate DCA for ligand-defined sites.
+     */
+    @RuntimeParam
+    boolean site_eval_sas_pts_as_atoms = false
+
+    /**
      * Render site/pocket centroids as colored balls in visualizations
      */
     @RuntimeParam
