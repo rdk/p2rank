@@ -44,10 +44,10 @@ class LigandabilityPointVectorCollector extends VectorCollector implements Param
     Atoms getTrainingRelevantLigandAtoms(PredictionPair pair) {
         Atoms res = new Atoms()
 
-        if (params.positive_def_ligtypes.contains("relevant")) pair.ligands.relevantLigands*.atoms.each { res.addAll(it) }
-        if (params.positive_def_ligtypes.contains("ignored"))  pair.ligands.ignoredLigands*.atoms.each { res.addAll(it) }
-        if (params.positive_def_ligtypes.contains("small"))    pair.ligands.smallLigands*.atoms.each { res.addAll(it) }
-        if (params.positive_def_ligtypes.contains("distant"))  pair.ligands.distantLigands*.atoms.each { res.addAll(it) }
+        if (params.positive_def_ligtypes.contains("relevant")) pair.ligands.relevantLigands*.ligandAtoms.each { res.addAll(it) }
+        if (params.positive_def_ligtypes.contains("ignored"))  pair.ligands.ignoredLigands*.ligandAtoms.each { res.addAll(it) }
+        if (params.positive_def_ligtypes.contains("small"))    pair.ligands.smallLigands*.ligandAtoms.each { res.addAll(it) }
+        if (params.positive_def_ligtypes.contains("distant"))  pair.ligands.distantLigands*.ligandAtoms.each { res.addAll(it) }
 
         return res
     }

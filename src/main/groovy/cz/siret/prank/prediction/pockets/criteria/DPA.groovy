@@ -25,7 +25,7 @@ class DPA extends PocketCriterium {
         if (!(pocket instanceof PrankPocket)) return false
         PrankPocket pp = (PrankPocket) pocket
 
-        return site.atoms.areWithinDistance(pp.sasPoints, cutoff)
+        return site.ligandAtoms.areWithinDistance(pp.sasPoints, cutoff)
     }
 
     @Override
@@ -34,7 +34,7 @@ class DPA extends PocketCriterium {
         if (!(pocket instanceof PrankPocket)) return 0
         PrankPocket pp = (PrankPocket) pocket
 
-        return cutoff - site.atoms.dist(pp.sasPoints)
+        return cutoff - site.ligandAtoms.dist(pp.sasPoints)
     }
 
     @Override

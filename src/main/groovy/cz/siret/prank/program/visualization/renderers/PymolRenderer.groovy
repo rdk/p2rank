@@ -152,7 +152,7 @@ ${renderLigands("ligands_ignored", "lightorange", protein.allIgnoredLigands)}
 
     private String renderLigands(String label, String color, List<Ligand> ligands) {
 
-        Atoms ligandAtoms = Atoms.join(ligands*.atoms)
+        Atoms ligandAtoms = Atoms.join(ligands*.ligandAtoms)
 
         if (ligandAtoms.empty) return ""
 

@@ -266,7 +266,7 @@ class Protein implements Parametrized {
      * @return all atoms from relevant ligands
      */
     Atoms getAllIgnoredLigandAtoms() {
-        Atoms.join(allIgnoredLigands*.atoms)
+        Atoms.join(allIgnoredLigands*.ligandAtoms)
     }
 
 //===========================================================================================================//

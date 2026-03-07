@@ -21,13 +21,13 @@ class DSA extends PocketCriterium {
     @Override
     boolean isIdentified(BindingSite site, Pocket pocket, EvalContext context) {
 
-        return site.atoms.areWithinDistance(pocket.surfaceAtoms, cutoff)
+        return site.ligandAtoms.areWithinDistance(pocket.surfaceAtoms, cutoff)
     }
 
     @Override
     double score(BindingSite site, Pocket pocket) {
 
-        return cutoff - site.atoms.dist(pocket.surfaceAtoms)
+        return cutoff - site.ligandAtoms.dist(pocket.surfaceAtoms)
     }
 
     @Override

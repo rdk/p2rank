@@ -50,7 +50,7 @@ class SiteMetricsTest {
         List<Residue> residues = protein.residues.toList().subList(0, 3)
 
         ResidueSite site = makeSite("site1", residues)
-        Atoms siteAtoms = site.atoms
+        Atoms siteAtoms = site.ligandAtoms
 
         // atoms should be the union of all residue atoms
         int expectedCount = Atoms.union(residues.collect { it.atoms }).count
@@ -70,8 +70,8 @@ class SiteMetricsTest {
         List<Residue> residues = protein.residues.toList().subList(0, 3)
         ResidueSite site = makeSite("site1", residues)
 
-        Atoms first = site.atoms
-        Atoms second = site.atoms
+        Atoms first = site.ligandAtoms
+        Atoms second = site.ligandAtoms
         assertSame(first, second, "getAtoms() should return cached instance")
     }
 
@@ -137,7 +137,7 @@ class SiteMetricsTest {
         ResidueSite site = makeSite("BS1", residues)
 
         // Create a mock pocket near the site
-        Pocket pocket = makePocket("pocket1", site.centroid, site.atoms, 1)
+        Pocket pocket = makePocket("pocket1", site.centroid, site.ligandAtoms, 1)
 
         // Build a PredictionPair with sites populated
         Protein predProtein = Protein.load(TEST_PROTEIN)
@@ -203,7 +203,7 @@ class SiteMetricsTest {
         ResidueSite site = makeSite("BS1", residues)
 
         // Pocket centroid = site centroid => DCA distance = 0 => identified
-        Pocket pocket = makePocket("pocket1", site.centroid, site.atoms, 1)
+        Pocket pocket = makePocket("pocket1", site.centroid, site.ligandAtoms, 1)
 
         DCA dca4 = new DCA("DCA_4", 4.0d)
         EvalContext ctx = new EvalContext()
@@ -218,7 +218,7 @@ class SiteMetricsTest {
         List<Residue> residues = protein.residues.toList().subList(20, 30)
         ResidueSite site = makeSite("BS1", residues)
 
-        Pocket pocket = makePocket("pocket1", site.centroid, site.atoms, 1)
+        Pocket pocket = makePocket("pocket1", site.centroid, site.ligandAtoms, 1)
         DCA dca4 = new DCA("DCA_4", 4.0d)
         EvalContext ctx = new EvalContext()
 
@@ -227,7 +227,7 @@ class SiteMetricsTest {
         double siteScore = dca4.score(site, pocket)
 
         // Test with Ligand using same atoms
-        Ligand ligand = new Ligand(site.atoms, protein)
+        Ligand ligand = new Ligand(site.ligandAtoms, protein)
         boolean ligandResult = dca4.isIdentified(ligand, pocket, ctx)
         double ligandScore = dca4.score(ligand, pocket)
 

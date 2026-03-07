@@ -5,6 +5,8 @@ import cz.siret.prank.domain.labeling.LabeledPoint
 import cz.siret.prank.domain.labeling.ResidueLabelings
 import cz.siret.prank.features.implementation.conservation.ConservationScore
 import cz.siret.prank.geom.Atoms
+import cz.siret.prank.geom.Struct
+import org.biojava.nbio.structure.Atom
 import cz.siret.prank.prediction.pockets.criteria.*
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Cutils
@@ -180,6 +182,7 @@ class Evaluation implements Parametrized {
             row.ligCode = lig.code
             row.chainCode = lig.chain
 
+            row.siteType = "ligand"
             row.ligCount = ligands.relevantLigandCount
             row.ranks = criteria.list.collect { criterium -> pair.rankOfIdentifiedPocket(lig, pockets, criterium, context) }
             row.dca4rank = pair.rankOfIdentifiedPocket(lig, pockets, standardCriterium, context)
@@ -187,8 +190,16 @@ class Evaluation implements Parametrized {
             row.centerToProtDist = lig.centerToProteinDist
             row.proteinDist = lig.contactDistance
             row.sasDist = protein.accessibleSurface.points.dist(lig.ligandAtoms)
-            row.contactAtoms = protein.proteinAtoms.cutoutShell(lig.ligandAtoms, params.ligand_protein_contact_distance).count
+            Atoms contactAtomSet = protein.proteinAtoms.cutoutShell(lig.ligandAtoms, params.ligand_protein_contact_distance)
+            row.contactAtoms = contactAtomSet.count
+            row.residues = protein.residues.getDistinctForAtoms(contactAtomSet).size()
             row.atomIds = (lig.ligandAtoms*.PDBserial).toSorted()
+
+            Atom centroid = lig.centroid
+            row.centerX = centroid.x
+            row.centerY = centroid.y
+            row.centerZ = centroid.z
+            row.siteRadius = siteRadius(centroid, lig.ligandAtoms)
 
 
             Pocket closestPocket = closestPocket(lig, pockets)
@@ -323,6 +334,7 @@ class Evaluation implements Parametrized {
             LigRow row = new LigRow()
 
             row.protName = pair.name
+            row.siteType = "explicit"
             row.ligName = site.label
             row.ligCode = ""
             row.chainCode = site.residues.collect { it.chainAuthorId }.unique().join(" ")
@@ -331,6 +343,20 @@ class Evaluation implements Parametrized {
             row.ranks = criteria.list.collect { criterium -> PredictionPair.rankOfIdentifiedPocket(site, pockets, criterium, context) }
             row.dca4rank = PredictionPair.rankOfIdentifiedPocket(site, pockets, standardCriterium, context)
             row.atoms = site.ligandAtoms.count
+            row.residues = site.residues.size()
+
+            Atom centroid = site.centroid
+            if (centroid != null) {
+                row.centerX = centroid.x
+                row.centerY = centroid.y
+                row.centerZ = centroid.z
+                row.siteRadius = siteRadius(centroid, site.ligandAtoms)
+            } else {
+                row.centerX = Double.NaN
+                row.centerY = Double.NaN
+                row.centerZ = Double.NaN
+                row.siteRadius = Double.NaN
+            }
 
             Pocket closest = closestPocket(site, pockets)
             if (closest != null) {
@@ -973,6 +999,46 @@ class Evaluation implements Parametrized {
     }
 
     /**
+     * Unified CSV with all binding sites (ligand-defined and explicit).
+     */
+    String toSitesCSV() {
+        StringBuilder csv = new StringBuilder()
+        csv << "file, site_type, #sites, site, chain, ligCode, #atoms, #residues, center_x, center_y, center_z, site_radius, dca4rank, closestPocketDist, proteinDist, centerToProteinDist, sasDist, #contactProteinAtoms\n"
+        ligandRows.each { r ->
+            List rec = new ArrayList()
+            rec.add r.protName
+            rec.add r.siteType
+            rec.add r.ligCount
+            rec.add r.ligName
+            rec.add r.chainCode
+            rec.add r.ligCode
+            rec.add r.atoms
+            rec.add r.residues
+            rec.add fmt(r.centerX)
+            rec.add fmt(r.centerY)
+            rec.add fmt(r.centerZ)
+            rec.add fmt(r.siteRadius)
+            rec.add r.dca4rank
+            rec.add fmt(r.closestPocketDist)
+            rec.add fmt(r.proteinDist)
+            rec.add fmt(r.centerToProtDist)
+            rec.add fmt(r.sasDist)
+            rec.add r.contactAtoms
+            csv << rec.join(", ") << "\n"
+        }
+        return csv.toString()
+    }
+
+    private static double siteRadius(Atom centroid, Atoms atoms) {
+        double maxDist = 0
+        for (Atom a : atoms) {
+            double d = Struct.dist(centroid, a)
+            if (d > maxDist) maxDist = d
+        }
+        return maxDist
+    }
+
+    /**
      * @return print ranks for all criteria
      */
     String toRanksCSV() {
@@ -1054,13 +1120,19 @@ class Evaluation implements Parametrized {
         String ligName
         String ligCode
         String chainCode
+        String siteType          // "ligand" or "explicit"
         int ligCount
         int atoms = 0
         int contactAtoms = 0
-        double closestPocketDist 
+        int residues = 0
+        double closestPocketDist
         double centerToProtDist
         double proteinDist
         double sasDist
+        double centerX
+        double centerY
+        double centerZ
+        double siteRadius
         int dca4rank = -1
 
         double avgPointScore

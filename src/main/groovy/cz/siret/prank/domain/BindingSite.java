@@ -5,7 +5,7 @@ import org.biojava.nbio.structure.Atom;
 
 public interface BindingSite {
 
-    Atoms getAtoms();
+    Atoms getLigandAtoms();
 
     Atom getCentroid();
 
