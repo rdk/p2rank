@@ -76,12 +76,13 @@ class Evaluation implements Parametrized {
     private Pocket closestPocket(BindingSite site, List<Pocket> pockets) {
         if (pockets.empty) return null
 
-        Pocket res = pockets.first()
-        double minDist = site.atoms.dist(res.centroid)
+        Pocket res = null
+        double minDist = Double.MAX_VALUE
 
         for (Pocket p : pockets) {
-            double dist = site.atoms.dist(p.centroid)
-            if (dist<minDist) {
+            if (p.centroid == null) continue
+            double dist = site.ligandAtoms.dist(p.centroid)
+            if (dist < minDist) {
                 minDist = dist
                 res = p
             }
@@ -182,22 +183,22 @@ class Evaluation implements Parametrized {
             row.ligCount = ligands.relevantLigandCount
             row.ranks = criteria.list.collect { criterium -> pair.rankOfIdentifiedPocket(lig, pockets, criterium, context) }
             row.dca4rank = pair.rankOfIdentifiedPocket(lig, pockets, standardCriterium, context)
-            row.atoms = lig.atoms.count
+            row.atoms = lig.ligandAtoms.count
             row.centerToProtDist = lig.centerToProteinDist
             row.proteinDist = lig.contactDistance
-            row.sasDist = protein.accessibleSurface.points.dist(lig.atoms)
-            row.contactAtoms = protein.proteinAtoms.cutoutShell(lig.atoms, params.ligand_protein_contact_distance).count
-            row.atomIds = (lig.atoms*.PDBserial).toSorted()
+            row.sasDist = protein.accessibleSurface.points.dist(lig.ligandAtoms)
+            row.contactAtoms = protein.proteinAtoms.cutoutShell(lig.ligandAtoms, params.ligand_protein_contact_distance).count
+            row.atomIds = (lig.ligandAtoms*.PDBserial).toSorted()
 
 
             Pocket closestPocket = closestPocket(lig, pockets)
             if (closestPocket!=null) {
-                row.closestPocketDist = lig.atoms.dist(closestPocket.centroid)
+                row.closestPocketDist = lig.ligandAtoms.dist(closestPocket.centroid)
             } else {
                 row.closestPocketDist = Double.NaN
             }
 
-            List<LabeledPoint> ligPoints = allLigLabeledPoints.cutoutShell(lig.atoms, LIG_SAS_CUTOFF).toList() as List<LabeledPoint>
+            List<LabeledPoint> ligPoints = allLigLabeledPoints.cutoutShell(lig.ligandAtoms, LIG_SAS_CUTOFF).toList() as List<LabeledPoint>
             ligPoints.sort { -it.score }
             List<Double> ptScores = ligPoints.collect { it.score }
             row.avgPointScore = avg ptScores
@@ -329,11 +330,11 @@ class Evaluation implements Parametrized {
 
             row.ranks = criteria.list.collect { criterium -> PredictionPair.rankOfIdentifiedPocket(site, pockets, criterium, context) }
             row.dca4rank = PredictionPair.rankOfIdentifiedPocket(site, pockets, standardCriterium, context)
-            row.atoms = site.atoms.count
+            row.atoms = site.ligandAtoms.count
 
             Pocket closest = closestPocket(site, pockets)
             if (closest != null) {
-                row.closestPocketDist = site.atoms.dist(closest.centroid)
+                row.closestPocketDist = site.ligandAtoms.dist(closest.centroid)
             } else {
                 row.closestPocketDist = Double.NaN
             }

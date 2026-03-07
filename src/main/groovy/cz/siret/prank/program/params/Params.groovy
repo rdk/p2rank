@@ -822,6 +822,10 @@ class Params {
     /**
      * Method for computing binding site centroid for evaluation (DCC criterion).
      * Values: explicit_centroid, atoms_center_of_mass, sas_points_center_of_mass
+     *
+     * Note: atoms_center_of_mass uses mass-weighted center of ligand/residue atoms for both site types.
+     * explicit_centroid is only supported for explicitly defined sites (not ligand-defined).
+     *
      * @see cz.siret.prank.domain.SiteCentroidMethod
      */
     @RuntimeParam

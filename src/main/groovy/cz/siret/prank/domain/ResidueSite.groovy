@@ -36,7 +36,7 @@ class ResidueSite implements BindingSite, Parametrized {
      * Returns all atoms of the residues in this site.
      */
     @Override
-    Atoms getAtoms() {
+    Atoms getLigandAtoms() {
         if (cachedAtoms == null) {
             cachedAtoms = Atoms.union((List<Atoms>) residues*.atoms)
         }
@@ -53,11 +53,7 @@ class ResidueSite implements BindingSite, Parametrized {
 
     /**
      * Returns the centroid used for evaluation, based on the site_centroid_method parameter.
-     *
-     * Possible methods:
-     *   - explicit: predefined centroid from input site definition
-     *   - sas_points_center_of_mass: center of mass of SAS points around site residues
-     *   - residue_atoms_center_of_mass: center of mass of all residue atoms
+     * @see SiteCentroidMethod
      */
     @Override
     Atom getCentroidForEval() {
@@ -71,7 +67,7 @@ class ResidueSite implements BindingSite, Parametrized {
             case SiteCentroidMethod.sas_points_center_of_mass:
                 return getSasPoints().centerOfMass
             case SiteCentroidMethod.atoms_center_of_mass:
-                return getAtoms().centerOfMass
+                return getLigandAtoms().centerOfMass   // TODO fix!
             default:
                 throw new IllegalArgumentException("Unsupported site_centroid_method: '${method}'")
         }
@@ -90,7 +86,7 @@ class ResidueSite implements BindingSite, Parametrized {
     @Override
     Atoms getSasPoints() {
         if (sasPoints == null) {
-            sasPoints = protein.accessibleSurface.points.cutoutShell(getAtoms(), params.getSasCutoffDist())
+            sasPoints = protein.accessibleSurface.points.cutoutShell(getLigandAtoms(), params.getSasCutoffDist())
         }
         return sasPoints
     }

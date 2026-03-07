@@ -3,6 +3,7 @@ package cz.siret.prank.prediction.pockets.criteria
 import cz.siret.prank.domain.BindingSite
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.geom.Struct
+import org.biojava.nbio.structure.Atom
 import cz.siret.prank.program.routines.results.EvalContext
 import groovy.transform.CompileStatic
 
@@ -19,20 +20,18 @@ class DCC extends PocketCriterium {
         this.cutoff = cutoff
     }
 
-    // Uses BindingSite.getCentroid():
-    //   Ligand:      atoms.centerOfMass (mass-weighted center)
-    //   ResidueSite: predefined centroid from input file
-
     @Override
     boolean isIdentified(BindingSite site, Pocket pocket, EvalContext context) {
-        if (site.centroidForEval == null || pocket.centroid == null) return false
-        return cutoff >= Struct.dist(site.centroidForEval, pocket.centroid)
+        Atom siteCentroid = site.centroidForEval
+        if (siteCentroid == null || pocket.centroid == null) return false
+        return cutoff >= Struct.dist(siteCentroid, pocket.centroid)
     }
 
     @Override
     double score(BindingSite site, Pocket pocket) {
-        if (site.centroidForEval == null || pocket.centroid == null) return Double.NEGATIVE_INFINITY
-        return cutoff - Struct.dist(site.centroidForEval, pocket.centroid)
+        Atom siteCentroid = site.centroidForEval
+        if (siteCentroid == null || pocket.centroid == null) return Double.NEGATIVE_INFINITY
+        return cutoff - Struct.dist(siteCentroid, pocket.centroid)
     }
 
     @Override

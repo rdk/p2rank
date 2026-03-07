@@ -26,9 +26,11 @@ abstract class PocketRescorer implements Parametrized {
         this.ligandedProtein = liganatedProtein
         if (liganatedProtein != null) {
             ligandAtoms = liganatedProtein.allRelevantLigandAtoms
-            // Fallback: use explicit site residue atoms for point labeling
+            // Fallback: use explicit site residue atoms for point labeling.
+            // Note: this uses residue atoms, not SAS points, even when site_eval_sas_pts_as_atoms is enabled.
+            // Point labeling region may therefore differ from the DCA evaluation region.
             if ((ligandAtoms == null || ligandAtoms.empty) && !liganatedProtein.sites.isEmpty()) {
-                List<Atoms> siteAtomsList = liganatedProtein.sites.collect { it.atoms }
+                List<Atoms> siteAtomsList = liganatedProtein.sites.collect { it.ligandAtoms }
                 ligandAtoms = Atoms.union(siteAtomsList)
             }
         }

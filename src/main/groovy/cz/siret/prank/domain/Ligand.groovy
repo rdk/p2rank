@@ -53,7 +53,7 @@ class Ligand implements BindingSite, Parametrized {
         this.protein = protein
         this.groups = atoms.getDistinctGroupsSorted()
         Set<String> uniqueNames = (groups*.PDBName).toSet()
-        this.name = uniqueNames.join("&")
+        this.name = uniqueNames.toSorted().join("&")
         this.code = (groups*.residueNumber).join("&")
         this.chain = (groups*.chainId).toSet().toSorted().join("&")
 
@@ -74,6 +74,11 @@ class Ligand implements BindingSite, Parametrized {
         return proteinAtoms.cutoutShell(atoms, params.ligand_protein_contact_distance)
     }
 
+    @Override
+    Atoms getLigandAtoms() {
+        return atoms
+    }
+
     Atoms getSasPoints() {
         if (sasPoints==null) {
             sasPoints = protein.accessibleSurface.points.cutoutShell(this.atoms, params.ligand_induced_volume_cutoff)
@@ -88,7 +93,8 @@ class Ligand implements BindingSite, Parametrized {
 
     /**
      * Returns the centroid used for evaluation, based on the site_centroid_method parameter.
-     * Ligands have no explicit centroid, so "explicit" falls back to atoms center of mass.
+     * Throws if unsupported method (e.g. explicit_centroid) is used with ligand-defined sites.
+     * @see SiteCentroidMethod
      */
     @Override
     Atom getCentroidForEval() {
