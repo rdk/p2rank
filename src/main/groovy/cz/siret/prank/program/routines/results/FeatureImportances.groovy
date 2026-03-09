@@ -38,7 +38,7 @@ class FeatureImportances {
 
     static String fmt_fi(Object x) {
         if (x==null) return ""
-        sprintf "%8.6f", x
+        sprintf "%.6f", x
     }
 
     static FeatureImportances from(List<Double> importanceValues) {

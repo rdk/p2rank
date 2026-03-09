@@ -940,7 +940,7 @@ class Evaluation implements Parametrized {
 
     String getMiscStatsCSV() {
 
-        stats.collect { "$it.key, ${fmt it.value}" }.join("\n")
+        stats.collect { "$it.key, ${fmtCsv it.value}" }.join("\n")
     }
 
     String diffSuccRatesCSV(List<Integer> tolerances, Evaluation diffWith) {
@@ -974,7 +974,7 @@ class Evaluation implements Parametrized {
      */
     String toLigandsCSV() {
         StringBuilder csv = new StringBuilder()
-        csv <<  "file, #ligands, ligand, chain, ligCode, #atoms, dca4rank, closestPocketDist, proteinDist, centerToProteinDist, sasDist, #contactProteinAtoms, atomIds \n"
+        csv <<  "file, #ligands, ligand, chain, ligCode, #atoms, dca4rank, closestPocketDist, proteinDist, centerToProteinDist, sasDist, #contactProteinAtoms, atomIds\n"
         ligandRows.each { r ->
             List<String> rec = new ArrayList()
 
@@ -1065,7 +1065,7 @@ class Evaluation implements Parametrized {
     String toPocketsCSV() {
         StringBuilder csv = new StringBuilder()
 
-        csv <<  "file, #ligands, #pockets, pocket, ligand, rank, score, newRank, oldScore, zScoreTP, probaTP, samplePoints, rawNewScore, pocketVolume, surfaceAtoms  \n"
+        csv <<  "file,#ligands,#pockets,pocket,ligand,rank,score,newRank,oldScore,zScoreTP,probaTP,samplePoints,rawNewScore,pocketVolume,surfaceAtoms\n"
 
         for (PocketRow p in pocketRows) {
             csv << "$p.protName,$p.ligCount,$p.pocketCount,$p.pocketName,$p.ligName,"
