@@ -7,8 +7,6 @@ import cz.siret.prank.utils.csv.CsvRow
 import groovy.transform.CompileStatic
 
 import static cz.siret.prank.utils.Formatter.*
-import static cz.siret.prank.utils.csv.CsvRow.Justify.LEFT
-import static cz.siret.prank.utils.csv.CsvRow.Justify.RIGHT
 
 /**
  * Summary of predicted pockets for one protein.
@@ -23,17 +21,17 @@ class PredictionSummary {
     }
 
     static String HEADER = new CsvRow() {{
-        add LEFT,   9, "name"
-        add RIGHT,  5, "rank"
-        add RIGHT,  7, "score"
-        add RIGHT, 11, "probability"
-        add RIGHT, 10, "sas_points"
-        add RIGHT, 10, "surf_atoms"
-        add RIGHT, 10, "center_x"
-        add RIGHT, 10, "center_y"
-        add RIGHT, 10, "center_z"
-        add LEFT,  10, "residue_ids"
-        add LEFT,  10, "surf_atom_ids"
+        add "name"
+        add "rank"
+        add "score"
+        add "probability"
+        add "sas_points"
+        add "surf_atoms"
+        add "center_x"
+        add "center_y"
+        add "center_z"
+        add "residue_ids"
+        add "surf_atom_ids"
     }}.toString()
 
     CSV toCSV() {
@@ -57,15 +55,15 @@ class PredictionSummary {
 
 
             CsvRow row = new CsvRow()
-            row.add LEFT,   9, p.name
-            row.add RIGHT,  5, p.newRank.toString()
-            row.add RIGHT,  7, score
-            row.add RIGHT, 11, proba
-            row.add RIGHT, 10, p.sasPoints.count.toString()
-            row.add RIGHT, 10, p.surfaceAtoms.count.toString()
-            row.add RIGHT, 10, x
-            row.add RIGHT, 10, y
-            row.add RIGHT, 10, z
+            row.add p.name
+            row.add p.newRank.toString()
+            row.add score
+            row.add proba
+            row.add p.sasPoints.count.toString()
+            row.add p.surfaceAtoms.count.toString()
+            row.add x
+            row.add y
+            row.add z
             row.add strResIds
             row.add surfAtomIds
 

@@ -16,6 +16,10 @@ class CsvRow {
 
 
     void add(String val) {
+        if (val == null) {
+            val = ""
+        }
+
         cells.add(val)
     }
 
@@ -30,7 +34,7 @@ class CsvRow {
             val = val.padRight(colLength)
         }
 
-        add(val)
+        cells.add(val)
     }
 
     @Override
