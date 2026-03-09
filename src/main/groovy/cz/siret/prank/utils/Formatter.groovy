@@ -63,7 +63,18 @@ class Formatter {
         else if (val instanceof Number)
             sprintf "%8.4f", val
         else
-            ""+val
+            val.toString()
+    }
+
+    static String fmtCsv(Object val) {
+        if (val == null)
+            "--"
+        else if (val instanceof Integer || val instanceof Long)
+            val.toString()
+        else if (val instanceof Number)
+            sprintf "%.4f", val
+        else
+            val.toString()
     }
 
 //===========================================================================================================//

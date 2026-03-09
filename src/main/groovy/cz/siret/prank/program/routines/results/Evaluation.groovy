@@ -986,10 +986,10 @@ class Evaluation implements Parametrized {
             rec.add r.atoms
             rec.add r.dca4rank
 
-            rec.add fmt(r.closestPocketDist)
-            rec.add fmt(r.proteinDist)
-            rec.add fmt(r.centerToProtDist)
-            rec.add fmt(r.sasDist)
+            rec.add fmtCsv(r.closestPocketDist)
+            rec.add fmtCsv(r.proteinDist)
+            rec.add fmtCsv(r.centerToProtDist)
+            rec.add fmtCsv(r.sasDist)
             rec.add r.contactAtoms
             rec.add r.atomIds.join(" ")
             
@@ -1014,15 +1014,15 @@ class Evaluation implements Parametrized {
             rec.add r.ligCode
             rec.add r.atoms
             rec.add r.residues
-            rec.add fmt(r.centerX)
-            rec.add fmt(r.centerY)
-            rec.add fmt(r.centerZ)
-            rec.add fmt(r.siteRadius)
+            rec.add fmtCsv(r.centerX)
+            rec.add fmtCsv(r.centerY)
+            rec.add fmtCsv(r.centerZ)
+            rec.add fmtCsv(r.siteRadius)
             rec.add r.dca4rank
-            rec.add fmt(r.closestPocketDist)
-            rec.add fmt(r.proteinDist)
-            rec.add fmt(r.centerToProtDist)
-            rec.add fmt(r.sasDist)
+            rec.add fmtCsv(r.closestPocketDist)
+            rec.add fmtCsv(r.proteinDist)
+            rec.add fmtCsv(r.centerToProtDist)
+            rec.add fmtCsv(r.sasDist)
             rec.add r.contactAtoms
             csv << rec.join(", ") << "\n"
         }
@@ -1043,9 +1043,9 @@ class Evaluation implements Parametrized {
      */
     String toRanksCSV() {
         StringBuilder csv = new StringBuilder()
-        csv <<  "file, #ligands, ligand," + criteria.list.join(",") + "\n"
+        csv <<  "file,#ligands,ligand," + criteria.list.join(",") + "\n"
         ligandRows.each { row ->
-            csv << "$row.protName, $row.ligCount, $row.ligName, " + row.ranks.join(",") + "\n"
+            csv << "$row.protName,$row.ligCount,$row.ligName," + row.ranks.join(",") + "\n"
         }
         return csv.toString()
     }
@@ -1053,7 +1053,7 @@ class Evaluation implements Parametrized {
     String toProteinsCSV() {
         StringBuilder csv = new StringBuilder()
 
-        csv <<  "name, #atoms, #proteinAtoms, #chains, chainNames, #ligands, #pockets, ligandNames, #ignoredLigands, ignoredLigNames, #smallLigands, smallLigNames, #distantLigands, distantLigNames\n"
+        csv <<  "name,#atoms,#proteinAtoms,#chains,chainNames,#ligands,#pockets,ligandNames,#ignoredLigands,ignoredLigNames,#smallLigands,smallLigNames,#distantLigands,distantLigNames\n"
 
         for (ProteinRow p in proteinRows) {
             csv << "$p.name,$p.atoms,$p.protAtoms,$p.chains,$p.chainNames,$p.ligands,$p.pockets,$p.ligNames,$p.ignoredLigands,$p.ignoredLigNames,$p.smallLigands,$p.smallLigNames,$p.distantLigands,$p.distantLigNames\n"
@@ -1070,7 +1070,7 @@ class Evaluation implements Parametrized {
         for (PocketRow p in pocketRows) {
             csv << "$p.protName,$p.ligCount,$p.pocketCount,$p.pocketName,$p.ligName,"
             // TODO possibly problematic, occasional groovy error in sprintf
-            csv << "$p.rank,$p.score,$p.newRank,${fmt(p.oldScore)},${fmt(p.auxInfo.zScoreTP)},${fmt(p.auxInfo.probaTP)},$p.auxInfo.samplePoints,${fmt(p.auxInfo.rawNewScore)},$p.pocketVolume,$p.surfaceAtomCount"
+            csv << "$p.rank,$p.score,$p.newRank,${fmtCsv(p.oldScore)},${fmtCsv(p.auxInfo.zScoreTP)},${fmtCsv(p.auxInfo.probaTP)},$p.auxInfo.samplePoints,${fmtCsv(p.auxInfo.rawNewScore)},$p.pocketVolume,$p.surfaceAtomCount"
             csv << "\n"
         }
 

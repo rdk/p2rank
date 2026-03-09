@@ -17,7 +17,7 @@ class RescoringSummary {
         this.prediction = prediction
     }
 
-    private String changeVisAid(int change) {
+    private String changeVisualAid(int change) {
         int MAX = 16
         int n = prediction.pocketCount
 
@@ -38,15 +38,15 @@ class RescoringSummary {
     CSV toCSV() {
         StringBuilder sb = new StringBuilder()
 
-        sb << "name,score,rank,old_rank,change,   " << '\n'
+        sb << "name,score,rank,old_rank,change,change_visual_aid" << '\n'
 
         for (p in prediction.reorderedPockets) {
             int change = p.rank - p.newRank
 
             String fmtScore = PerfUtils.formatDouble(p.newScore)
-            String changeAid = changeVisAid(change)
+            String changeAid = changeVisualAid(change)
 
-            sb << "$p.name,$fmtScore,$p.newRank,$p.rank,$change,$changeAid \n"
+            sb << "$p.name,$fmtScore,$p.newRank,$p.rank,$change,$changeAid\n"
         }
 
         return new CSV(sb.toString())

@@ -140,7 +140,7 @@ class ResidueLabelings implements Parametrized {
         if (x==null) return ""
 
         if (x instanceof Double) {
-            return sprintf("%8.4f", x)
+            return sprintf("%.4f", x)
         } else {
             return x.toString()
         }
