@@ -6,6 +6,7 @@ import cz.siret.prank.features.api.SasFeatureCalculationContext
 import cz.siret.prank.features.api.SasFeatureCalculator
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Point
+import cz.siret.prank.geom.Struct
 import cz.siret.prank.program.params.Parametrized
 import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
@@ -79,7 +80,7 @@ class PyramidFeature extends SasFeatureCalculator implements Parametrized {
         }
 
         Atom getCentroid() {
-            Atoms.calculateCentroid([a, b, c, d])
+            Struct.calculateCentroid([a, b, c, d])
         }
 
         double getSurface() {

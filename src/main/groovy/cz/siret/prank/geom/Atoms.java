@@ -247,42 +247,17 @@ public final class Atoms implements Iterable<Atom> {
         if (list.isEmpty()) {
             return null;
         }
-        if (centerOfMass==null) {
-            Atom[] aa = new Atom[list.size()];
-            aa = list.toArray(aa);
-            centerOfMass = Calc.centerOfMass(aa);
+        if (centerOfMass == null) {
+            centerOfMass = PerfUtils.centerOfMass(list);
         }
         return centerOfMass;
     }
 
     public Atom getCentroid() {
-        if (centroid==null) {
-            centroid = calculateCentroid(list);
+        if (centroid == null) {
+            centroid = PerfUtils.calculateCentroid(list);
         }
         return centroid;
-    }
-
-    public static Atom calculateCentroid(Collection<Atom> atoms) {
-        if (atoms.isEmpty()) {
-            return null;
-        }
-
-        double x = 0d;
-        double y = 0d;
-        double z = 0d;
-
-        for (Atom a : atoms) {
-            x += a.getX();
-            y += a.getY();
-            z += a.getZ();
-        }
-
-        int n = atoms.size();
-        x = x / n;
-        y = y / n;
-        z = z / n;
-
-        return new Point(x, y, z);
     }
 
     public List<Group> getDistinctGroupsSorted() {

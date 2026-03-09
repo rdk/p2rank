@@ -1,12 +1,13 @@
 package cz.siret.prank.utils;
 
 import cz.siret.prank.geom.Atoms;
+import cz.siret.prank.geom.Point;
 import org.biojava.nbio.structure.Atom;
+import org.biojava.nbio.structure.AtomImpl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+
+import org.biojava.nbio.structure.Calc;
 
 /**
  *  Methods that needed to be written in Java for performance reasons.
@@ -162,6 +163,65 @@ public class PerfUtils {
             }
         }
         return new Atoms(res);
+    }
+
+//===============================================================================================//
+
+	/**
+	 * Returns the center of mass of the set of atoms. Atomic masses of the
+	 * Atoms are used.
+     *
+     * Based on @see org.biojava.nbio.structure.Calc#centerOfMass(org.biojava.nbio.structure.Atom[])
+	 *
+	 * @return an Atom representing the center of mass
+	 */
+	public static Atom centerOfMass(Collection<? extends Atom> atoms) {
+        if (atoms.isEmpty()) {
+            return null;
+        }
+
+		Atom center = new AtomImpl();
+
+		double totalMass = 0.0d;
+		for (Atom a : atoms) {
+			float mass = a.getElement().getAtomicMass();
+			totalMass += mass;
+			Calc.scaleAdd(mass, a, center);
+		}
+
+		Calc.scaleEquals(center, 1.0d/totalMass);
+		return center;
+	}
+
+
+	/**
+	 * Returns the centroid of the set of atoms.
+	 *
+	 * Based on @see org.biojava.nbio.structure.Calc#getCentroid(org.biojava.nbio.structure.Atom[])
+     *
+	 * @return an Atom representing the Centroid of the set of atoms
+	 */
+    public static Atom calculateCentroid(Collection<? extends Atom> atoms) {
+		if (atoms.isEmpty()) {
+			return null;
+        }
+
+        double x = 0.0d;
+        double y = 0.0d;
+        double z = 0.0d;
+
+        for (Atom a : atoms) {
+            x += a.getX();
+            y += a.getY();
+            z += a.getZ();
+        }
+
+        int n = atoms.size();
+        x /= n;
+        y /= n;
+        z /= n;
+
+        return new Point(x, y, z);
     }
 
 }

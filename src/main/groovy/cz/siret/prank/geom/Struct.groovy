@@ -254,6 +254,16 @@ class Struct {
 
 //===========================================================================================================//
 
+	static Atom centerOfMass(Collection<? extends Atom> atoms) {
+		return PerfUtils.centerOfMass(atoms)
+	}
+
+    static Atom calculateCentroid(Collection<? extends Atom> atoms) {
+        return PerfUtils.calculateCentroid(atoms)
+    }
+
+//===========================================================================================================//
+
     static boolean isAminoAcidGroup(Group g) {
         if (g == null) return false
         return GroupType.AMINOACID.equals(g.type)
