@@ -10,12 +10,9 @@ import groovy.util.logging.Slf4j
 import java.util.function.Function
 
 /**
- * discretized surface overlap ratio (similar to DeepSite DVO criterion)
- * Defined as Jaccard/Tanimoto coefficient of SAS points of ligand and pocket.
- *
- * |intersection|/|union| of SAS points induced by ligand and defined by pocket
- *
- * TODO unfinished
+ * Discretized surface overlap ratio (similar to DeepSite DVO criterion).
+ * Defined as Jaccard/Tanimoto coefficient of SAS points of the binding site and pocket:
+ * |intersection| / |union| of SAS points induced by the site and defined by the pocket.
  */
 @Slf4j
 @CompileStatic
@@ -29,11 +26,11 @@ class DSO extends PocketCriterion {
     }
 
     static Tuple2<Atoms, Atoms> getUnionAndIntersection(BindingSite site, Pocket pocket, EvalContext context) {
-        def cahe = (Map<Tuple2<BindingSite, Pocket>, Tuple2<Atoms, Atoms>>) context.cache.get('sas_set_cache', new HashMap())
+        def cache = (Map<Tuple2<BindingSite, Pocket>, Tuple2<Atoms, Atoms>>) context.cache.get('sas_set_cache', new HashMap())
 
         def key = new Tuple2(site, pocket)
 
-        def sets = cahe.computeIfAbsent(key, new Function<Tuple2<BindingSite, Pocket>, Tuple2<Atoms, Atoms>>() {
+        def sets = cache.computeIfAbsent(key, new Function<Tuple2<BindingSite, Pocket>, Tuple2<Atoms, Atoms>>() {
             @Override
             Tuple2<Atoms, Atoms> apply(Tuple2<BindingSite, Pocket> t) {
                 Atoms union =  Atoms.union(site.sasPoints, pocket.sasPoints)
@@ -54,21 +51,17 @@ class DSO extends PocketCriterion {
         int union = sets.first.count
         int inter = sets.second.count
 
-//        log.warn("I:$inter")
-        if (inter==0)
-            return false
-//        log.warn("U:$union")
-        if (union==0)
+        if (inter==0 || union==0)
             return false
 
-
-        double ratio = inter / union
+        double ratio = (double) inter / union
 
         return ratio >= threshold
     }
 
     @Override
     double score(BindingSite site, Pocket pocket) {
+        // TODO return cached ratio
         return Double.NaN
     }
 
