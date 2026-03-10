@@ -128,6 +128,32 @@ class Struct {
         return GroupType.HETATM.equals(group.type)
     }
 
+    /**
+     * Returns true if the group is a potential ligand candidate.
+     *
+     * BioJava assigns GroupType based on chemical classification (Chemical Component Dictionary),
+     * not structural role. This means ligands in non-polymer chains can have any GroupType:
+     * - GDP, GTP, ATP get GroupType.NUCLEOTIDE (nucleotide derivatives)
+     * - SHR and similar get GroupType.AMINOACID (amino acid derivatives)
+     * - Most other ligands get GroupType.HETATM
+     *
+     * To handle all cases, this method considers a group as a ligand candidate if:
+     * - It has GroupType.HETATM (traditional case, works regardless of chain type), OR
+     * - It is in a NONPOLYMER chain (covers all misclassified GroupTypes)
+     *
+     * Groups in polymer chains (protein AA chains, DNA/RNA) are only included
+     * if they have GroupType.HETATM (e.g. covalently bound ligands, modified residues).
+     */
+    static boolean isLigandCandidateGroup(Group group) {
+        if (group == null) return false
+        if (GroupType.HETATM.equals(group.type)) return true
+
+        // Any group in a non-polymer chain is a ligand candidate,
+        // regardless of BioJava's GroupType classification.
+        Chain chain = group.getChain()
+        return chain != null && isNonPolymerChain(chain)
+    }
+
     static List<Group> getGroups(Structure struc) {
         List<Group> res = new ArrayList<>()
         GroupIterator gi = new GroupIterator(struc)
@@ -146,18 +172,25 @@ class Struct {
         return isHetGroup(g) && !g.isWater()
     }
 
+    /** @see #isLigandCandidateGroup(Group) */
+    static boolean isLigandCandidateNonWaterGroup(Group g) {
+        return isLigandCandidateGroup(g) && !g.isWater()
+    }
+
 
     static List<Group> getResidueHetGroups(Protein protein) {
         protein.residues*.group.findAll { isHetGroup(it) }
     }
 
     /**
-     * @return ligand groups without HOH
+     * Returns ligand candidate groups (without water).
+     * Includes HETATM groups from any chain and all groups from non-polymer chains.
+     * @see #isLigandCandidateGroup(Group)
      */
     static List<Group> getLigandGroups(Protein protein) {
         List<Group> residueHetGroups = getResidueHetGroups(protein)
-        List<Group> groups = getGroups(protein.structure).findAll{ isHetNonWaterGroup(it) }.toList()
-        
+        List<Group> groups = getGroups(protein.structure).findAll { isLigandCandidateNonWaterGroup(it) }.toList()
+
         groups.removeAll { residueHetGroups.contains(it) }  // biojava doesn't implement equals() on groups
 
         return groups
@@ -209,6 +242,15 @@ class Struct {
 
     static boolean isPolyChain(Chain chain) {
         return EntityType.POLYMER.equals(chain.entityInfo?.type)
+    }
+
+    /**
+     * Returns true if chain entity type is NONPOLYMER.
+     * Non-polymer chains contain single-molecule ligands
+     * (including nucleotide-derived ligands like GDP, GTP).
+     */
+    static boolean isNonPolymerChain(Chain chain) {
+        return EntityType.NONPOLYMER.equals(chain.entityInfo?.type)
     }
 
     static boolean isTerminalResidue(Group group) {
