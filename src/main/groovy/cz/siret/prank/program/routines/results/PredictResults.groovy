@@ -66,14 +66,7 @@ class PredictResults extends ResultsBase {
 
         if (logIndividualCases) {
             evaluation.sort()
-
-            String casedir = "$outdir/cases"
-            mkdirs(casedir)
-
-            writeFile "$casedir/proteins.csv", evaluation.toProteinsCSV()
-            writeFile "$casedir/ligands.csv", evaluation.toLigandsCSV()
-            writeFile "$casedir/pockets.csv", evaluation.toPocketsCSV()
-            writeFile "$casedir/ranks.csv", evaluation.toRanksCSV()
+            evaluation.writeCases("$outdir/cases")
         }
 
         log.info "\n" + CSV.tabulate(classifier_stats) + "\n\n"

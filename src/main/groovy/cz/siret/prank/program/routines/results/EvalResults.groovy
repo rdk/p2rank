@@ -314,13 +314,9 @@ class EvalResults extends ResultsBase {
                 origEval.sort()
                 eval.sort()
 
-                String casedir = "$outdir/cases"
-                mkdirs(casedir)
-                writeFile "$casedir/proteins.csv", eval.toProteinsCSV()
-                writeFile "$casedir/ligands.csv", eval.toLigandsCSV()
-                writeFile "$casedir/sites.csv", eval.toSitesCSV()
-                writeFile "$casedir/predicted_pockets.csv", eval.toPocketsCSV()
-                writeFile "$casedir/ranks.csv", eval.toRanksCSV()
+                String casedir = mkdirs("$outdir/cases")
+
+                eval.writeCases(casedir)
                 if (rescoring) {
                     writeFile "$casedir/ranks_original.csv", origEval.toRanksCSV()
                 }

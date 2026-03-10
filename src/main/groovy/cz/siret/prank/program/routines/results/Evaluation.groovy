@@ -20,6 +20,12 @@ import static cz.siret.prank.geom.Atoms.union
 import static cz.siret.prank.utils.Cutils.head
 import static cz.siret.prank.utils.Cutils.newSynchronizedList
 import static cz.siret.prank.utils.Formatter.*
+import static cz.siret.prank.utils.Futils.mkdirs
+import static cz.siret.prank.utils.Futils.writeFile
+import static cz.siret.prank.utils.Futils.writeFile
+import static cz.siret.prank.utils.Futils.writeFile
+import static cz.siret.prank.utils.Futils.writeFile
+import static cz.siret.prank.utils.Futils.writeFile
 import static java.util.Collections.emptyList
 
 /**
@@ -856,7 +862,7 @@ class Evaluation implements Parametrized {
         m.OPT2 = 100*m.DCA_4_0_PC + 50*m.DCA_4_2_PC + 5*m.AVG_LIGCOV_SUCC + 3*m.AVG_DSO_SUCC
 
 
-
+        // write predicted scores to file if requested
         // TODO: move this somewhere else (getStats() shouldn't write to disk)
         if (StringUtils.isNotBlank(params.log_scores_to_file)) {
             PrintWriter w = new PrintWriter(new BufferedWriter(
@@ -906,7 +912,6 @@ class Evaluation implements Parametrized {
                 new DSO("DSO_0.4",  0.4),
                 new DSO("DSO_0.3",  0.3),
                 new DSO("DSO_0.2",  0.2),
-                new DSO("DSO_0.1",  0.1),
                 new DSO("DSO_0.1",  0.1),
                 new DSO("DSO_0.05", 0.05),
 
@@ -1041,7 +1046,7 @@ class Evaluation implements Parametrized {
      */
     String toRanksCSV() {
         StringBuilder csv = new StringBuilder()
-        csv <<  "file,#ligands,ligand," + criteria.list.join(",") + "\n"
+        csv << "file,#ligands,ligand," + criteria.list.join(",") + "\n"
         ligandRows.each { row ->
             csv << "$row.protName,$row.ligCount,$row.ligName," + row.ranks.join(",") + "\n"
         }
@@ -1051,7 +1056,7 @@ class Evaluation implements Parametrized {
     String toProteinsCSV() {
         StringBuilder csv = new StringBuilder()
 
-        csv <<  "name,#atoms,#proteinAtoms,#chains,chainNames,#ligands,#pockets,ligandNames,#ignoredLigands,ignoredLigNames,#smallLigands,smallLigNames,#distantLigands,distantLigNames\n"
+        csv << "name,#atoms,#proteinAtoms,#chains,chainNames,#ligands,#pockets,ligandNames,#ignoredLigands,ignoredLigNames,#smallLigands,smallLigNames,#distantLigands,distantLigNames\n"
 
         for (ProteinRow p in proteinRows) {
             csv << "$p.name,$p.atoms,$p.protAtoms,$p.chains,$p.chainNames,$p.ligands,$p.pockets,$p.ligNames,$p.ignoredLigands,$p.ignoredLigNames,$p.smallLigands,$p.smallLigNames,$p.distantLigands,$p.distantLigNames\n"
@@ -1067,12 +1072,21 @@ class Evaluation implements Parametrized {
 
         for (PocketRow p in pocketRows) {
             csv << "$p.protName,$p.ligCount,$p.pocketCount,$p.pocketName,$p.ligName,"
-            // TODO possibly problematic, occasional groovy error in sprintf
             csv << "$p.rank,$p.score,$p.newRank,${fmtCsv(p.oldScore)},${fmtCsv(p.auxInfo.zScoreTP)},${fmtCsv(p.auxInfo.probaTP)},$p.auxInfo.samplePoints,${fmtCsv(p.auxInfo.rawNewScore)},$p.pocketVolume,$p.surfaceAtomCount"
             csv << "\n"
         }
 
         return csv.toString()
+    }
+
+//===========================================================================================================//
+
+    void writeCases(String dir) {
+        writeFile "$dir/proteins.csv",          this.toProteinsCSV()
+        writeFile "$dir/ligands.csv",           this.toLigandsCSV()
+        writeFile "$dir/observed_sites.csv",    this.toSitesCSV()
+        writeFile "$dir/predicted_pockets.csv", this.toPocketsCSV()
+        writeFile "$dir/ranks.csv",             this.toRanksCSV()
     }
 
 //===========================================================================================================//
@@ -1107,8 +1121,6 @@ class Evaluation implements Parametrized {
         double surfOverlapN2       // discretized surface overlap considering top-(n+2) pockets
         double ligandCoverageSucc  // coverage only considering those ligands that were successfully predicted according to DCA(4)
         double surfOverlapSucc     // overlap only considering those ligands that were successfully predicted according to DCA(4)
-
-//        double protDCA_4_0
 
         int sasPoints
     }
