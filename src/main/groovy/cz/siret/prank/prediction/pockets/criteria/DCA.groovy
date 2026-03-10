@@ -11,7 +11,7 @@ import groovy.transform.CompileStatic
  * distance from the center of the predicted pocket to any atom of the ligand
  */
 @CompileStatic
-class DCA extends PocketCriterium implements Parametrized {
+class DCA extends PocketCriterion implements Parametrized {
 
     final double cutoff
 
@@ -21,7 +21,7 @@ class DCA extends PocketCriterium implements Parametrized {
     }
 
     private Atoms getSitePoints(BindingSite site) {
-        return params.site_eval_sas_pts_as_atoms ? site.sasPoints : site.ligandAtoms
+        return params.site_eval_sas_pts_as_atoms ? site.sasPoints : site.atoms
     }
 
     @Override

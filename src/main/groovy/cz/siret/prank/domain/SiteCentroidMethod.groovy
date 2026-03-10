@@ -9,13 +9,13 @@ import groovy.transform.CompileStatic
 enum SiteCentroidMethod {
 
     /** Predefined centroid from the input site definition (only for explicitly defined sites) */
-    explicit_centroid(false, true),
+    explicit(false, true),
 
     /** Center of mass of ligand/residue atoms */
     atoms_center_of_mass(true, true),
 
-    /** Center of mass of SAS points around site atoms */
-    sas_points_center_of_mass(true, true)
+    /** Centroid of SAS points around site atoms */
+    sas_points_centroid(true, true)
 
     /** Supported for ligand-defined sites */
     final boolean supportedForLigandSites
@@ -33,7 +33,7 @@ enum SiteCentroidMethod {
             return valueOf(value)
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException(
-                "Unsupported site_centroid_method: '${value}'. Supported values: ${values()*.name().join(', ')}")
+                "Unsupported site_eval_center_method: '${value}'. Supported values: ${values()*.name().join(', ')}")
         }
     }
 

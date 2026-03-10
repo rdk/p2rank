@@ -13,6 +13,7 @@ import cz.siret.prank.geom.Struct
 import cz.siret.prank.program.Main
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.routines.Routine
+import cz.siret.prank.program.routines.results.Evaluation
 import cz.siret.prank.program.visualization.RenderingModel
 import cz.siret.prank.program.visualization.renderers.NewPymolRenderer
 import cz.siret.prank.utils.*
@@ -222,9 +223,9 @@ class AnalyzeRoutine extends Routine {
                     dt.newRow(item.label)
                             .put("site_label", site.label)
                             .put("site_type", "explicit")
-                            .put("n_atoms", site.ligandAtoms.count)
+                            .put("n_atoms", site.atoms.count)
                             .put("n_residues", site.residues.size())
-                            .put("site_radius", siteRadius(c, site.ligandAtoms))
+                            .put("site_radius", siteRadius(c, site.atoms))
                             .put("residue_ids", formatResidueIds(site.residues))
                             .put("center_x", c.x)
                             .put("center_y", c.y)
@@ -237,7 +238,7 @@ class AnalyzeRoutine extends Routine {
                 double cutoff = params.ligand_protein_contact_distance
                 for (Ligand lig : p.relevantLigands) {
                     Atom c = lig.centroid
-                    Atoms contactAtoms = p.proteinAtoms.cutoutShell(lig.ligandAtoms, cutoff)
+                    Atoms contactAtoms = p.proteinAtoms.cutoutShell(lig.atoms, cutoff)
                     List<Residue> contactResidues = p.residues.getDistinctForAtoms(contactAtoms)
 
                     dt.newRow(item.label)
@@ -245,7 +246,7 @@ class AnalyzeRoutine extends Routine {
                             .put("site_type", "ligand")
                             .put("n_atoms", lig.size)
                             .put("n_residues", contactResidues.size())
-                            .put("site_radius", siteRadius(c, lig.ligandAtoms))
+                            .put("site_radius", siteRadius(c, lig.atoms))
                             .put("residue_ids", formatResidueIds(contactResidues))
                             .put("center_x", c.x)
                             .put("center_y", c.y)
@@ -339,12 +340,7 @@ class AnalyzeRoutine extends Routine {
     }
 
     private static double siteRadius(Atom centroid, Atoms atoms) {
-        double maxDist = 0
-        for (Atom a : atoms) {
-            double d = Struct.dist(centroid, a)
-            if (d > maxDist) maxDist = d
-        }
-        return maxDist
+        return Evaluation.siteRadius(centroid, atoms)
     }
 
     void cmdPeptides() {
@@ -833,7 +829,7 @@ class AnalyzeRoutine extends Routine {
             List<String> ligDefs = new ArrayList<>()
             for (Ligand lig : prot.relevantLigands) {
                 String name = lig.groups[0].PDBName
-                int atomId = lig.ligandAtoms[0].PDBserial
+                int atomId = lig.atoms[0].PDBserial
                 String ligDef = name + "[atom_id:" + atomId + "]"
                 ligDefs.add(ligDef)
             }

@@ -296,12 +296,12 @@ class EvalResults extends ResultsBase {
         if (mode_pockets) {
             List<Integer> tolerances = params.eval_tolerances
 
-            String succ_rates = eval.toSuccRatesCSV(tolerances)  // P2RANK predictions are in eval
+            String succ_rates = eval.toSuccessRatesCSV(tolerances)  // P2RANK predictions are in eval
             String succ_rates_original = null                    // predictions of other method in origEval (in rescore mode)
             String succ_rates_diff     = null
             if (rescoring) {
-                succ_rates_original = origEval.toSuccRatesCSV(tolerances)
-                succ_rates_diff = eval.diffSuccRatesCSV(tolerances, origEval)
+                succ_rates_original = origEval.toSuccessRatesCSV(tolerances)
+                succ_rates_diff = eval.diffSuccessRatesCSV(tolerances, origEval)
             }
 
             writeFile "$outdir/success_rates.csv", succ_rates

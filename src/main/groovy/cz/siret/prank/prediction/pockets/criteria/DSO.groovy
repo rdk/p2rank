@@ -19,7 +19,7 @@ import java.util.function.Function
  */
 @Slf4j
 @CompileStatic
-class DSO extends PocketCriterium {
+class DSO extends PocketCriterion {
 
     final double threshold
 

@@ -54,7 +54,7 @@ class Ligand implements BindingSite, Parametrized {
         this.groups = atoms.getDistinctGroupsSorted()
         Set<String> uniqueNames = (groups*.PDBName).toSet()
         this.name = uniqueNames.toSorted().join("&")
-        this.code = (groups*.residueNumber).join("&")
+        this.code = (groups*.residueNumber).toSorted().join("&")
         this.chain = (groups*.chainId).toSet().toSorted().join("&")
 
         for (Atom a : atoms) {
@@ -75,7 +75,7 @@ class Ligand implements BindingSite, Parametrized {
     }
 
     @Override
-    Atoms getLigandAtoms() {
+    Atoms getAtoms() {
         return atoms
     }
 
@@ -87,28 +87,27 @@ class Ligand implements BindingSite, Parametrized {
     }
 
     Atom getCentroid() {
-        atoms.centerOfMass
-        //atoms.geometricCenter
+        return getCenterForEval()
     }
 
     /**
-     * Returns the centroid used for evaluation, based on the site_centroid_method parameter.
-     * Throws if unsupported method (e.g. explicit_centroid) is used with ligand-defined sites.
+     * Returns the centroid used for evaluation, based on the site_eval_center_method parameter.
+     * Throws if unsupported method (e.g. explicit) is used with ligand-defined sites.
      * @see SiteCentroidMethod
      */
     @Override
-    Atom getCentroidForEval() {
-        SiteCentroidMethod method = SiteCentroidMethod.parse(params.site_centroid_method)
+    Atom getCenterForEval() {
+        SiteCentroidMethod method = SiteCentroidMethod.parse(params.site_eval_center_method)
         if (!method.supportedForLigandSites) {
-            throw new IllegalArgumentException("site_centroid_method '${method}' is not supported for ligand-defined sites")
+            throw new IllegalArgumentException("site_eval_center_method '${method}' is not supported for ligand-defined sites")
         }
         switch (method) {
             case SiteCentroidMethod.atoms_center_of_mass:
                 return atoms.centerOfMass
-            case SiteCentroidMethod.sas_points_center_of_mass:
-                return getSasPoints().centerOfMass
+            case SiteCentroidMethod.sas_points_centroid:
+                return getSasPoints().centroid
             default:
-                throw new IllegalArgumentException("Unsupported site_centroid_method: '${method}'")
+                throw new IllegalArgumentException("Unsupported site_eval_center_method: '${method}'")
         }
     }
 

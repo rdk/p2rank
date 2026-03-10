@@ -1,6 +1,6 @@
 package cz.siret.prank.domain
 
-import cz.siret.prank.prediction.pockets.criteria.PocketCriterium
+import cz.siret.prank.prediction.pockets.criteria.PocketCriterion
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.routines.results.EvalContext
 import groovy.transform.CompileStatic
@@ -58,7 +58,7 @@ class PredictionPair implements Parametrized {
      * first is 1
      * @return ... -1 = not identified
      */
-    static int rankOfIdentifiedPocket(BindingSite site, List<Pocket> pockets, PocketCriterium criterium, EvalContext context) {
+    static int rankOfIdentifiedPocket(BindingSite site, List<Pocket> pockets, PocketCriterion criterium, EvalContext context) {
 
         int rank = 1
         for (Pocket pocket in pockets) {
@@ -75,7 +75,7 @@ class PredictionPair implements Parametrized {
      * @return null if pocket has no ligand
      * Note: only searches ligands, not ResidueSites. For site-based evaluation see Evaluation.findSiteForPocket().
      */
-    Ligand findLigandForPocket(Pocket pocket, PocketCriterium criterium, EvalContext context) {
+    Ligand findLigandForPocket(Pocket pocket, PocketCriterion criterium, EvalContext context) {
         for (Ligand lig in ligands.relevantLigands) {
             if (criterium.isIdentified(lig, pocket, context)) {
                 return lig
@@ -96,15 +96,15 @@ class PredictionPair implements Parametrized {
 
 //===========================================================================================================//
 
-    List<Pocket> getFalsePositivePockets(PocketCriterium assesor) {
+    List<Pocket> getFalsePositivePockets(PocketCriterion assesor) {
         prediction.pockets.findAll { Pocket p -> !isCorrectlyPredictedPocket(p, assesor) }
     }
 
-    List<Pocket> getCorrectlyPredictedPockets(PocketCriterium assesor) {
+    List<Pocket> getCorrectlyPredictedPockets(PocketCriterion assesor) {
         prediction.pockets.findAll { Pocket p -> isCorrectlyPredictedPocket(p, assesor) }
     }
 
-    boolean isCorrectlyPredictedPocket(Pocket pocket, PocketCriterium criterium) {
+    boolean isCorrectlyPredictedPocket(Pocket pocket, PocketCriterion criterium) {
         for (Ligand lig : ligands.relevantLigands) {
             if (criterium.isIdentified(lig, pocket, new EvalContext())) {
                 return true

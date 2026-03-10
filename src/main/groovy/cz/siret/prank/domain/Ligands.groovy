@@ -67,7 +67,7 @@ class Ligands implements Parametrized, Writable, Failable {
      * @return all atoms from relevant ligands
      */
     Atoms getAllRelevantLigandAtoms() {
-        return Atoms.join(relevantLigands*.ligandAtoms)
+        return Atoms.join(relevantLigands*.atoms)
     }
 
 //===========================================================================================================//
@@ -154,8 +154,8 @@ class Ligands implements Parametrized, Writable, Failable {
         for (Atoms ligAtoms in ligAtomGroups) {
             if (ligAtoms.count > 0) {
                 Ligand lig = new Ligand(ligAtoms, protein)
-                lig.centerToProteinDist = protein.proteinAtoms.dist(lig.ligandAtoms.centerOfMass)
-                lig.contactDistance = protein.proteinAtoms.dist(lig.ligandAtoms)
+                lig.centerToProteinDist = protein.proteinAtoms.dist(lig.atoms.centerOfMass)
+                lig.contactDistance = protein.proteinAtoms.dist(lig.atoms)
 
                 res.add(lig)
             }
@@ -183,9 +183,9 @@ class Ligands implements Parametrized, Writable, Failable {
      */
     private void categorizeLigand(Ligand lig) {
 
-        if (lig.ligandAtoms.count < params.min_ligand_atoms ) {
+        if (lig.atoms.count < params.min_ligand_atoms ) {
 
-            log.info "ignoring ligand $lig.name with only $lig.ligandAtoms.count atoms (min $params.min_ligand_atoms)"
+            log.info "ignoring ligand $lig.name with only $lig.atoms.count atoms (min $params.min_ligand_atoms)"
             smallLigands.add(lig)
 
         } else if (lig.contactDistance > params.ligand_protein_contact_distance) {

@@ -11,7 +11,7 @@ import groovy.transform.CompileStatic
  * distance from the center of the pocket to the center of the ligand
  */
 @CompileStatic
-class DCC extends PocketCriterium {
+class DCC extends PocketCriterion {
 
     final double cutoff
 
@@ -22,16 +22,20 @@ class DCC extends PocketCriterium {
 
     @Override
     boolean isIdentified(BindingSite site, Pocket pocket, EvalContext context) {
-        Atom siteCentroid = site.centroidForEval
-        if (siteCentroid == null || pocket.centroid == null) return false
-        return cutoff >= Struct.dist(siteCentroid, pocket.centroid)
+        Atom siteCenter = site.centerForEval
+        if (siteCenter == null || pocket.centroid == null) {
+            return false
+        }
+        return cutoff >= Struct.dist(siteCenter, pocket.centroid)
     }
 
     @Override
     double score(BindingSite site, Pocket pocket) {
-        Atom siteCentroid = site.centroidForEval
-        if (siteCentroid == null || pocket.centroid == null) return Double.NEGATIVE_INFINITY
-        return cutoff - Struct.dist(siteCentroid, pocket.centroid)
+        Atom siteCenter = site.centerForEval
+        if (siteCenter == null || pocket.centroid == null) {
+            return Double.NEGATIVE_INFINITY
+        }
+        return cutoff - Struct.dist(siteCenter, pocket.centroid)
     }
 
     @Override

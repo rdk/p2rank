@@ -16,18 +16,18 @@ class ResidueSite implements BindingSite, Parametrized {
 
     String name
     /** Centroid explicitly defined in the input site definition */
-    Atom explicitCentroid
+    Atom explicitCenter
     List<Residue> residues
     Protein protein
 
     private Atoms cachedAtoms
     private Atoms sasPoints
 
-    ResidueSite(String name, Atom explicitCentroid, List<Residue> residues, Protein protein) {
+    ResidueSite(String name, Atom explicitCenter, List<Residue> residues, Protein protein) {
         assert !residues.isEmpty(), "ResidueSite must have at least one residue"
 
         this.name = name
-        this.explicitCentroid = explicitCentroid
+        this.explicitCenter = explicitCenter
         this.residues = residues
         this.protein = protein
     }
@@ -36,7 +36,7 @@ class ResidueSite implements BindingSite, Parametrized {
      * Returns all atoms of the residues in this site.
      */
     @Override
-    Atoms getLigandAtoms() {
+    Atoms getAtoms() {
         if (cachedAtoms == null) {
             cachedAtoms = Atoms.union((List<Atoms>) residues*.atoms)
         }
@@ -48,28 +48,28 @@ class ResidueSite implements BindingSite, Parametrized {
      */
     @Override
     Atom getCentroid() {
-        return explicitCentroid
+        return explicitCenter
     }
 
     /**
-     * Returns the centroid used for evaluation, based on the site_centroid_method parameter.
+     * Returns the centroid used for evaluation, based on the site_eval_center_method parameter.
      * @see SiteCentroidMethod
      */
     @Override
-    Atom getCentroidForEval() {
-        SiteCentroidMethod method = SiteCentroidMethod.parse(params.site_centroid_method)
+    Atom getCenterForEval() {
+        SiteCentroidMethod method = SiteCentroidMethod.parse(params.site_eval_center_method)
         if (!method.supportedForExplicitSites) {
-            throw new IllegalArgumentException("site_centroid_method '${method}' is not supported for explicitly defined sites")
+            throw new IllegalArgumentException("site_eval_center_method '${method}' is not supported for explicitly defined sites")
         }
         switch (method) {
-            case SiteCentroidMethod.explicit_centroid:
-                return explicitCentroid
-            case SiteCentroidMethod.sas_points_center_of_mass:
-                return getSasPoints().centerOfMass
+            case SiteCentroidMethod.explicit:
+                return explicitCenter
+            case SiteCentroidMethod.sas_points_centroid:
+                return getSasPoints().centroid
             case SiteCentroidMethod.atoms_center_of_mass:
-                return getLigandAtoms().centerOfMass   // TODO fix!
+                return getAtoms().centerOfMass
             default:
-                throw new IllegalArgumentException("Unsupported site_centroid_method: '${method}'")
+                throw new IllegalArgumentException("Unsupported site_eval_center_method: '${method}'")
         }
     }
 
@@ -86,7 +86,7 @@ class ResidueSite implements BindingSite, Parametrized {
     @Override
     Atoms getSasPoints() {
         if (sasPoints == null) {
-            sasPoints = protein.accessibleSurface.points.cutoutShell(getLigandAtoms(), params.getSasCutoffDist())
+            sasPoints = protein.accessibleSurface.points.cutoutShell(getAtoms(), params.getSasCutoffDist())
         }
         return sasPoints
     }

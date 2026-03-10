@@ -30,7 +30,7 @@ abstract class PocketRescorer implements Parametrized {
             // Note: this uses residue atoms, not SAS points, even when site_eval_sas_pts_as_atoms is enabled.
             // Point labeling region may therefore differ from the DCA evaluation region.
             if ((ligandAtoms == null || ligandAtoms.empty) && !liganatedProtein.sites.isEmpty()) {
-                List<Atoms> siteAtomsList = liganatedProtein.sites.collect { it.ligandAtoms }
+                List<Atoms> siteAtomsList = liganatedProtein.sites.collect { it.atoms }
                 ligandAtoms = Atoms.union(siteAtomsList)
             }
         }

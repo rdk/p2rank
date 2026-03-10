@@ -10,7 +10,7 @@ import groovy.transform.CompileStatic
  * distance from any of the pocket SAS points to any atom of the ligand
  */
 @CompileStatic
-class DPA extends PocketCriterium {
+class DPA extends PocketCriterion {
 
     final double cutoff
 
@@ -25,7 +25,7 @@ class DPA extends PocketCriterium {
         if (!(pocket instanceof PrankPocket)) return false
         PrankPocket pp = (PrankPocket) pocket
 
-        return site.ligandAtoms.areWithinDistance(pp.sasPoints, cutoff)
+        return site.atoms.areWithinDistance(pp.sasPoints, cutoff)
     }
 
     @Override
@@ -34,7 +34,7 @@ class DPA extends PocketCriterium {
         if (!(pocket instanceof PrankPocket)) return 0
         PrankPocket pp = (PrankPocket) pocket
 
-        return cutoff - site.ligandAtoms.dist(pp.sasPoints)
+        return cutoff - site.atoms.dist(pp.sasPoints)
     }
 
     @Override

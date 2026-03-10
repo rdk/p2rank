@@ -9,7 +9,7 @@ import groovy.transform.CompileStatic
  * distance from any of the pocket surface atoms to any atom of the ligand
  */
 @CompileStatic
-class DSA extends PocketCriterium {
+class DSA extends PocketCriterion {
 
     final double cutoff
 
@@ -21,13 +21,13 @@ class DSA extends PocketCriterium {
     @Override
     boolean isIdentified(BindingSite site, Pocket pocket, EvalContext context) {
 
-        return site.ligandAtoms.areWithinDistance(pocket.surfaceAtoms, cutoff)
+        return site.atoms.areWithinDistance(pocket.surfaceAtoms, cutoff)
     }
 
     @Override
     double score(BindingSite site, Pocket pocket) {
 
-        return cutoff - site.ligandAtoms.dist(pocket.surfaceAtoms)
+        return cutoff - site.atoms.dist(pocket.surfaceAtoms)
     }
 
     @Override

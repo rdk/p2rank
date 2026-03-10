@@ -57,7 +57,7 @@ class PredictResults extends ResultsBase {
 
         List<Integer> tolerances = params.eval_tolerances
 
-        String succ_rates          = evaluation.toSuccRatesCSV(tolerances)
+        String succ_rates          = evaluation.toSuccessRatesCSV(tolerances)
         String stats             = getMiscStatsCSV()
 
         writeFile "$outdir/success_rates.csv", succ_rates

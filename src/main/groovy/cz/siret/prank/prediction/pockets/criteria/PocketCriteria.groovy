@@ -8,30 +8,30 @@ import groovy.transform.CompileStatic
 @CompileStatic
 class PocketCriteria {
 
-    private final List<PocketCriterium> criteria
+    private final List<PocketCriterion> criteria
 
     private Map<String, Integer> nameToIndex
 
-    PocketCriteria(List<PocketCriterium> criteria) {
+    PocketCriteria(List<PocketCriterion> criteria) {
         this.criteria = criteria
         this.nameToIndex = buildNameIndex(criteria)
     }
 
-    private Map<String, Integer> buildNameIndex(List<PocketCriterium> criteria) {
+    private static Map<String, Integer> buildNameIndex(List<PocketCriterion> criteria) {
         Map<String, Integer> index = new HashMap<>()
         int i = 0
-        for (PocketCriterium criterium : criteria) {
-            index.put(criterium.name, i)
+        for (PocketCriterion criterion : criteria) {
+            index.put(criterion.name, i)
             i++
         }
         return index
     }
 
-    List<PocketCriterium> getList() {
+    List<PocketCriterion> getList() {
         return criteria
     }
 
-    int getCriteriumIndexForName(String name) {
+    int getCriterionIndexForName(String name) {
         Integer index = nameToIndex.get(name)
 
         if (index == null) {

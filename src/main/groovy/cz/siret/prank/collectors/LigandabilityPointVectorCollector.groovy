@@ -9,7 +9,7 @@ import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.samplers.SampledPoints
 import cz.siret.prank.prediction.pockets.criteria.DCA
-import cz.siret.prank.prediction.pockets.criteria.PocketCriterium
+import cz.siret.prank.prediction.pockets.criteria.PocketCriterion
 import cz.siret.prank.program.Failable
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Cutils
@@ -27,7 +27,7 @@ import org.biojava.nbio.structure.Atom
 class LigandabilityPointVectorCollector extends VectorCollector implements Parametrized, Failable {
 
     /** Criterion for calling true positive / false positive pockets */
-    static final PocketCriterium DEFAULT_POSITIVE_POCKET_CRITERION = new DCA("DCA_5", 5)
+    static final PocketCriterion DEFAULT_POSITIVE_POCKET_CRITERION = new DCA("DCA_5", 5)
 
     /** distance from the point to the ligand that identifies positive point */
     final double POSITIVE_VC_LIGAND_DISTANCE = params.positive_point_ligand_distance
@@ -35,7 +35,7 @@ class LigandabilityPointVectorCollector extends VectorCollector implements Param
     final boolean COLLECT_NEGATIVES_FROM_TRUE_POCKETS = params.collect_negatives_from_true_pockets
 
     final FeatureExtractor extractorFactory
-    final PocketCriterium positivePocketCriterion = DEFAULT_POSITIVE_POCKET_CRITERION
+    final PocketCriterion positivePocketCriterion = DEFAULT_POSITIVE_POCKET_CRITERION
 
     LigandabilityPointVectorCollector(FeatureExtractor extractorFactory) {
         this.extractorFactory = extractorFactory
@@ -44,10 +44,10 @@ class LigandabilityPointVectorCollector extends VectorCollector implements Param
     Atoms getTrainingRelevantLigandAtoms(PredictionPair pair) {
         Atoms res = new Atoms()
 
-        if (params.positive_def_ligtypes.contains("relevant")) pair.ligands.relevantLigands*.ligandAtoms.each { res.addAll(it) }
-        if (params.positive_def_ligtypes.contains("ignored"))  pair.ligands.ignoredLigands*.ligandAtoms.each { res.addAll(it) }
-        if (params.positive_def_ligtypes.contains("small"))    pair.ligands.smallLigands*.ligandAtoms.each { res.addAll(it) }
-        if (params.positive_def_ligtypes.contains("distant"))  pair.ligands.distantLigands*.ligandAtoms.each { res.addAll(it) }
+        if (params.positive_def_ligtypes.contains("relevant")) pair.ligands.relevantLigands*.atoms.each { res.addAll(it) }
+        if (params.positive_def_ligtypes.contains("ignored"))  pair.ligands.ignoredLigands*.atoms.each { res.addAll(it) }
+        if (params.positive_def_ligtypes.contains("small"))    pair.ligands.smallLigands*.atoms.each { res.addAll(it) }
+        if (params.positive_def_ligtypes.contains("distant"))  pair.ligands.distantLigands*.atoms.each { res.addAll(it) }
 
         return res
     }

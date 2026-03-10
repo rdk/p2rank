@@ -179,7 +179,7 @@ Params[
   score_point_limit = 0
   seed = 42
   selected_stats = [DCA_4_0, DCA_4_2, DCA_4_4, DCC_10_0, DCC_10_2, DSOR_02_0, DSOR_02_2, DSWO_05_0, DSWO_05_2, point_MCC, point_TPX, point_LOG_LOSS, AVG_DSO_SUCC, AVG_LIGCOV_SUCC, AVG_POCKETS, AVG_POCKET_SAS_POINTS, AVG_POCKET_SAS_POINTS_TRUE_POCKETS, TIME_TRAINEVAL_AVG_M]
-  site_centroid_method = atoms_center_of_mass
+  site_eval_center_method = atoms_center_of_mass
   site_eval_sas_pts_as_atoms = false
   smooth_representation = false
   smoothing_radius = 4.5

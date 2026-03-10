@@ -9,7 +9,6 @@ import cz.siret.prank.geom.Struct
 import org.biojava.nbio.structure.Atom
 import cz.siret.prank.prediction.pockets.criteria.*
 import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.utils.Cutils
 import cz.siret.prank.utils.MathUtils
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.StringUtils
@@ -35,8 +34,7 @@ class Evaluation implements Parametrized {
     /** cutoff distance in A around ligand atoms that determines which SAS points cover the ligand */
     final double LIG_SAS_CUTOFF = params.ligand_induced_volume_cutoff  
 
-    PocketCriterium standardCriterium = new DCA("DCA_4", 4.0d)
-    //List<PocketCriterium> criteria
+    PocketCriterion canonicalCriterion = new DCA("DCA_4", 4.0d)
     PocketCriteria criteria
     List<ProteinRow> proteinRows = newSynchronizedList()
     List<LigRow> ligandRows = newSynchronizedList()
@@ -58,7 +56,7 @@ class Evaluation implements Parametrized {
     long ligSASPointsCoveredCount
     double ligSASPointsScoreSum
 
-    Evaluation(List<PocketCriterium> criteria) {
+    Evaluation(List<PocketCriterion> criteria) {
         this.criteria = new PocketCriteria(criteria)
     }
 
@@ -83,7 +81,7 @@ class Evaluation implements Parametrized {
 
         for (Pocket p : pockets) {
             if (p.centroid == null) continue
-            double dist = site.ligandAtoms.dist(p.centroid)
+            double dist = site.atoms.dist(p.centroid)
             if (dist < minDist) {
                 minDist = dist
                 res = p
@@ -103,7 +101,7 @@ class Evaluation implements Parametrized {
     }
 
     private Pocket findPocketForSite(BindingSite site, List<Pocket> pockets,
-                                     PocketCriterium criterium, EvalContext context) {
+                                     PocketCriterion criterium, EvalContext context) {
         for (Pocket pocket in pockets) {
             if (criterium.isIdentified(site, pocket, context)) {
                 return pocket
@@ -114,7 +112,7 @@ class Evaluation implements Parametrized {
 
     private void assignPocketsToLigands(List<Ligand> ligands, List<Pocket> pockets, EvalContext context) {
         for (Ligand ligand : ligands) {
-            ligand.predictedPocket = findPocketForSite(ligand, pockets, standardCriterium, context)
+            ligand.predictedPocket = findPocketForSite(ligand, pockets, canonicalCriterion, context)
         }
     }
 
@@ -185,37 +183,37 @@ class Evaluation implements Parametrized {
             row.siteType = "ligand"
             row.ligCount = ligands.relevantLigandCount
             row.ranks = criteria.list.collect { criterium -> pair.rankOfIdentifiedPocket(lig, pockets, criterium, context) }
-            row.dca4rank = pair.rankOfIdentifiedPocket(lig, pockets, standardCriterium, context)
-            row.atoms = lig.ligandAtoms.count
+            row.dca4rank = pair.rankOfIdentifiedPocket(lig, pockets, canonicalCriterion, context)
+            row.atoms = lig.atoms.count
             row.centerToProtDist = lig.centerToProteinDist
             row.proteinDist = lig.contactDistance
-            row.sasDist = protein.accessibleSurface.points.dist(lig.ligandAtoms)
-            Atoms contactAtomSet = protein.proteinAtoms.cutoutShell(lig.ligandAtoms, params.ligand_protein_contact_distance)
+            row.sasDist = protein.accessibleSurface.points.dist(lig.atoms)
+            Atoms contactAtomSet = protein.proteinAtoms.cutoutShell(lig.atoms, params.ligand_protein_contact_distance)
             row.contactAtoms = contactAtomSet.count
             row.residues = protein.residues.getDistinctForAtoms(contactAtomSet).size()
-            row.atomIds = (lig.ligandAtoms*.PDBserial).toSorted()
+            row.atomIds = (lig.atoms*.PDBserial).toSorted()
 
             Atom centroid = lig.centroid
             row.centerX = centroid.x
             row.centerY = centroid.y
             row.centerZ = centroid.z
-            row.siteRadius = siteRadius(centroid, lig.ligandAtoms)
+            row.siteRadius = siteRadius(centroid, lig.atoms)
 
 
             Pocket closestPocket = closestPocket(lig, pockets)
             if (closestPocket!=null) {
-                row.closestPocketDist = lig.ligandAtoms.dist(closestPocket.centroid)
+                row.closestPocketDist = lig.atoms.dist(closestPocket.centroid)
             } else {
                 row.closestPocketDist = Double.NaN
             }
 
-            List<LabeledPoint> ligPoints = allLigLabeledPoints.cutoutShell(lig.ligandAtoms, LIG_SAS_CUTOFF).toList() as List<LabeledPoint>
+            List<LabeledPoint> ligPoints = allLigLabeledPoints.cutoutShell(lig.atoms, LIG_SAS_CUTOFF).toList() as List<LabeledPoint>
             ligPoints.sort { -it.score }
             List<Double> ptScores = ligPoints.collect { it.score }
             row.avgPointScore = avg ptScores
             row.maxPointScore = ptScores.empty ? 0d : ptScores[0]
-            row.avgMax3PointScore = avg Cutils.head(3, ptScores)
-            row.avgMaxHalfPointScore = avg Cutils.head(MathUtils.ceilDiv(ptScores.size(), 2), ptScores)
+            row.avgMax3PointScore = avg head(3, ptScores)
+            row.avgMaxHalfPointScore = avg head(MathUtils.ceilDiv(ptScores.size(), 2), ptScores)
 
             tmpLigRows.add(row)
         }
@@ -229,7 +227,7 @@ class Evaluation implements Parametrized {
             prow.ligCount = ligands.relevantLigandCount
             prow.pocketCount = pair.prediction.pocketCount
 
-            Ligand ligand = pair.findLigandForPocket(pocket, standardCriterium, context)
+            Ligand ligand = pair.findLigandForPocket(pocket, canonicalCriterion, context)
             prow.ligName = (ligand==null) ? "" : ligand.name + "_" + ligand.code
 
             prow.oldScore = pocket.stats.pocketScore
@@ -292,7 +290,7 @@ class Evaluation implements Parametrized {
      */
     private String findSiteForPocket(List<? extends BindingSite> sites, Pocket pocket, EvalContext context) {
         for (BindingSite site : sites) {
-            if (standardCriterium.isIdentified(site, pocket, context)) {
+            if (canonicalCriterion.isIdentified(site, pocket, context)) {
                 return site.label
             }
         }
@@ -341,8 +339,8 @@ class Evaluation implements Parametrized {
             row.ligCount = sites.size()
 
             row.ranks = criteria.list.collect { criterium -> PredictionPair.rankOfIdentifiedPocket(site, pockets, criterium, context) }
-            row.dca4rank = PredictionPair.rankOfIdentifiedPocket(site, pockets, standardCriterium, context)
-            row.atoms = site.ligandAtoms.count
+            row.dca4rank = PredictionPair.rankOfIdentifiedPocket(site, pockets, canonicalCriterion, context)
+            row.atoms = site.atoms.count
             row.residues = site.residues.size()
 
             Atom centroid = site.centroid
@@ -350,7 +348,7 @@ class Evaluation implements Parametrized {
                 row.centerX = centroid.x
                 row.centerY = centroid.y
                 row.centerZ = centroid.z
-                row.siteRadius = siteRadius(centroid, site.ligandAtoms)
+                row.siteRadius = siteRadius(centroid, site.atoms)
             } else {
                 row.centerX = Double.NaN
                 row.centerY = Double.NaN
@@ -360,7 +358,7 @@ class Evaluation implements Parametrized {
 
             Pocket closest = closestPocket(site, pockets)
             if (closest != null) {
-                row.closestPocketDist = site.ligandAtoms.dist(closest.centroid)
+                row.closestPocketDist = site.atoms.dist(closest.centroid)
             } else {
                 row.closestPocketDist = Double.NaN
             }
@@ -374,7 +372,7 @@ class Evaluation implements Parametrized {
             row.maxPointScore = Double.NaN
             row.avgMax3PointScore = Double.NaN
             row.avgMaxHalfPointScore = Double.NaN
-            row.atomIds = Collections.<Integer>emptyList()
+            row.atomIds = emptyList()
 
             tmpLigRows.add(row)
         }
@@ -580,15 +578,15 @@ class Evaluation implements Parametrized {
     }
 
     double calcSuccessRate(String criteriumName, int tolerance) {
-        return calcSuccessRate(criteria.getCriteriumIndexForName(criteriumName), tolerance)
+        return calcSuccessRate(criteria.getCriterionIndexForName(criteriumName), tolerance)
     }
 
     double calcSuccessRateTopN(String criteriumName, int topN) {
-        return calcSuccessRateTopN(criteria.getCriteriumIndexForName(criteriumName), topN)
+        return calcSuccessRateTopN(criteria.getCriterionIndexForName(criteriumName), topN)
     }
 
     double calcSuccessRateProteinCentric(String criteriumName, int tolerance) {
-        return calcSuccessRateProteinCentric(criteria.getCriteriumIndexForName(criteriumName), tolerance)
+        return calcSuccessRateProteinCentric(criteria.getCriterionIndexForName(criteriumName), tolerance)
     }
 
     double calcDefaultCriteriumSuccessRate(int tolerance) {
@@ -877,7 +875,7 @@ class Evaluation implements Parametrized {
     /**
      * get list of evaluation criteria used during eval routines
      */
-    static List<PocketCriterium> getDefaultEvalCriteria() {
+    static List<PocketCriterion> getDefaultEvalCriteria() {
         double REQUIRED_POCKET_COVERAGE = 0.2  //  like in fpocket MOc criterion
         return [
                 new DCA("DCA_2",   2),
@@ -934,8 +932,8 @@ class Evaluation implements Parametrized {
 
 //===========================================================================================================//
 
-    String toSuccRatesCSV(List<Integer> tolerances) {
-        return formatSuccRatesCSV(tolerances, calcSuccessRates(tolerances))
+    String toSuccessRatesCSV(List<Integer> tolerances) {
+        return formatSuccessRatesCSV(tolerances, calcSuccessRates(tolerances))
     }
 
     String getMiscStatsCSV() {
@@ -943,13 +941,13 @@ class Evaluation implements Parametrized {
         stats.collect { "$it.key, ${fmtCsv it.value}" }.join("\n")
     }
 
-    String diffSuccRatesCSV(List<Integer> tolerances, Evaluation diffWith) {
+    String diffSuccessRatesCSV(List<Integer> tolerances, Evaluation diffWith) {
         List<List<Double>> ours = calcSuccessRates(tolerances)
         List<List<Double>> theirs = diffWith.calcSuccessRates(tolerances)
-        return formatSuccRatesCSV(tolerances, diffSuccRates(ours, theirs))
+        return formatSuccessRatesCSV(tolerances, diffSuccRates(ours, theirs))
     }
 
-    String formatSuccRatesCSV(List<Integer> tolerances, List<List<Double>> succRates) {
+    String formatSuccessRatesCSV(List<Integer> tolerances, List<List<Double>> succRates) {
 
         StringBuilder str = new StringBuilder()
         str << "tolerances:," + tolerances.collect{"[$it]"}.join(",") + "\n"
@@ -1029,7 +1027,7 @@ class Evaluation implements Parametrized {
         return csv.toString()
     }
 
-    private static double siteRadius(Atom centroid, Atoms atoms) {
+    static double siteRadius(Atom centroid, Atoms atoms) {
         double maxDist = 0
         for (Atom a : atoms) {
             double d = Struct.dist(centroid, a)
