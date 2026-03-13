@@ -42,6 +42,10 @@ class ConservationLoader implements Parametrized {
             prefix = baseName + chainId + '.'           // e.g. "2ed4A."
             res = findConservFilePrefixed(dirs, prefix)
         }
+        if (res == null) { // try using only first 4 letters of base name (legacy format)
+            prefix = baseName.substring(0, 4) + '_' + chainId + '.'     // e.g. "2ed4_A." for "2ed4A.pdb"
+            res = findConservFilePrefixed(dirs, prefix)
+        }
 
         if (res != null) {
             log.info "Conservation file for [baseName:$baseName chain:$chainId] found: [{}]", res?.absolutePath
