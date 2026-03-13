@@ -55,6 +55,7 @@ class Dataset implements Parametrized, Writable, Failable {
      */
     static final String PARAM_PREDICTION_METHOD = "PREDICTION_METHOD"
     static final String PARAM_LIGANDS_SEPARATED_BY_TER = "LIGANDS_SEPARATED_BY_TER"
+    static final String PARAM_LOAD_LIGANDS_FROM_SEPARATE_FILES = "LOAD_LIGANDS_FROM_SEPARATE_FILES"
     static final String PARAM_RESIDUE_LABELING_FORMAT = "RESIDUE_LABELING_FORMAT"
     static final String PARAM_RESIDUE_LABELING_FILE = "RESIDUE_LABELING_FILE"
     static final String PARAM_EXPLICIT_SITES_FORMAT = "EXPLICIT_SITES_FORMAT"
@@ -294,6 +295,9 @@ class Dataset implements Parametrized, Writable, Failable {
     private LoaderParams getLoaderParams(Item item) {
         LoaderParams lp = new LoaderParams()
         lp.ligandsSeparatedByTER = (attributes.get(PARAM_LIGANDS_SEPARATED_BY_TER) == "true")  // for chen11 dataset
+        if (attributes.get(PARAM_LOAD_LIGANDS_FROM_SEPARATE_FILES) == "true") {
+            lp.loadLigandsFromSeparateFiles = true
+        }
         lp.relevantLigandsDefined = hasExplicitlyDefinedLigands()
         lp.relevantLigandDefinitions = item.getLigandDefinitions()
         return lp

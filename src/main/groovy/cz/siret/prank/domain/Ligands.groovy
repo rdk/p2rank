@@ -6,11 +6,14 @@ import cz.siret.prank.geom.Struct
 import cz.siret.prank.program.Failable
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Cutils
+import cz.siret.prank.utils.Futils
+import cz.siret.prank.utils.PdbUtils
 import cz.siret.prank.utils.Writable
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 import org.biojava.nbio.structure.Group
+import org.biojava.nbio.structure.Structure
 
 /**
  * Ligand categorizer and holder.
@@ -74,7 +77,11 @@ class Ligands implements Parametrized, Writable, Failable {
 
     Ligands loadForProtein(Protein protein, LoaderParams loaderParams, String pdbFileName) {
 
-        if (loaderParams.ligandsSeparatedByTER) {
+        if (loaderParams.loadLigandsFromSeparateFiles) {
+            // Load ligands from separate "ligand_*" files instead of from the primary structure file
+            loadLigandsFromSeparateFiles(protein, pdbFileName)
+
+        } else if (loaderParams.ligandsSeparatedByTER) {
             // ligands are separated by TER lines in specific datasets (CHEN11)
             // we are assuming all ligands are relevant
             List<Atoms> ligAtomGroups = getLigandAtomGroupsByTER(protein.allAtoms, pdbFileName)
@@ -118,6 +125,72 @@ class Ligands implements Parametrized, Writable, Failable {
         sortLigands distantLigands
 
         return this
+    }
+
+    /**
+     * Load ligands from separate files matching "ligand_*.{pdb,cif}" pattern in the same directory
+     * as the primary protein file. Each file produces exactly one ligand (all non-water groups
+     * within a file are merged into a single ligand). All such ligands are treated as relevant.
+     * All ligands found in the primary structure file are placed into ignoredLigands.
+     */
+    private void loadLigandsFromSeparateFiles(Protein protein, String pdbFileName) {
+
+        // Move all ligands from the primary structure file to ignoredLigands
+        List<Group> primaryLigandGroups = Struct.getLigandGroups(protein)
+        List<Atoms> primaryAtomGroups = primaryLigandGroups.collect { Atoms.allFromGroup(it) }
+        ignoredLigands = makeLigands(primaryAtomGroups, protein)
+        log.info "Moved {} ligands from primary file to ignored: {}", ignoredLigands.size(), ignoredLigands*.name
+
+        // Find ligand files in the same directory as the primary protein file
+        File dir = new File(pdbFileName).absoluteFile.parentFile
+        if (dir == null || !dir.exists()) {
+            log.warn "Cannot scan for separate ligand files: directory not found for [{}]", pdbFileName
+            return
+        }
+
+        log.info "Scanning directory [{}] for separate ligand files (ligand_*.pdb/cif)", dir.absolutePath
+
+        List<File> ligandFiles = Futils.listFiles(dir.absolutePath, { File f ->
+            if (!f.name.startsWith("ligand_")) return false
+            String realExt = Futils.realExtension(f.name)
+            return realExt == "pdb" || realExt == "cif"
+        })
+        ligandFiles.sort { it.name }
+
+        if (ligandFiles.empty) {
+            log.warn "No separate ligand files (ligand_*.pdb/cif) found in [{}]", dir.absolutePath
+            return
+        }
+
+        log.info "Found {} separate ligand files: {}", ligandFiles.size(), ligandFiles*.name
+
+        // Load ligands from each separate file
+        List<Atoms> allLigandAtomGroups = new ArrayList<>()
+        for (File ligFile : ligandFiles) {
+            log.info "Loading ligand from separate file: [{}]", ligFile.name
+            try {
+                Structure ligStructure = PdbUtils.loadFromFile(ligFile.absolutePath)
+                // Extract all non-water groups — these are dedicated ligand files, so all groups are ligand atoms
+                List<Group> groups = Struct.getGroups(ligStructure).findAll { Group g -> !g.isWater() }
+                if (groups.empty) {
+                    log.warn "No non-water groups found in ligand file [{}], skipping", ligFile.name
+                    continue
+                }
+                // Merge all non-water groups into a single ligand (one ligand per file)
+                Atoms ligandAtoms = Atoms.join(groups.collect { Atoms.allFromGroup(it) })
+                log.info "Loaded ligand from [{}]: {} groups, {} atoms", ligFile.name, groups.size(), ligandAtoms.count
+                allLigandAtomGroups.add(ligandAtoms)
+            } catch (Exception e) {
+                log.error "Failed to load ligand from file [{}]: {}", ligFile.name, e.message
+                if (params.fail_fast) {
+                    throw e
+                }
+            }
+        }
+
+        // All ligands from separate files are treated as relevant (no categorization/filtering)
+        relevantLigands = makeLigands(allLigandAtomGroups, protein)
+        log.info "Loaded {} relevant ligands from {} separate files", relevantLigands.size(), ligandFiles.size()
     }
 
     private void checkLigandMatches(LoaderParams loaderParams, String pdbFileName) {

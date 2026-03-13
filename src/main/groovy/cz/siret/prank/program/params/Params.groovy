@@ -540,6 +540,15 @@ class Params {
     int min_ligand_atoms = 5
 
     /**
+     * If true, load ligands from separate files matching "ligand_*.{pdb,cif}" pattern
+     * in the same directory as the main protein file, instead of from the primary structure file.
+     * All such ligands are treated as relevant. Ligands from the primary file are moved to ignoredLigands.
+     * Compressed variants (.gz, .zst, etc.) are supported.
+     */
+    @RuntimeParam
+    boolean load_ligands_from_separate_files = false
+
+    /**
      * Point sampler for extracting instances for training.
      * P2Rank and PRANK use SurfacePointSampler that produces SAS points.
      * Others like GridPointSampler are experimental, and also deprecated. see point_sampling_strategy

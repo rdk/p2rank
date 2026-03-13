@@ -21,6 +21,7 @@ class LoaderParams {
 
     boolean ignoreLigands = ignoreLigandsSwitch
     boolean ligandsSeparatedByTER = false
+    boolean loadLigandsFromSeparateFiles = Params.inst.load_ligands_from_separate_files
 
     boolean relevantLigandsDefined
     List<Dataset.LigandDefinition> relevantLigandDefinitions = new ArrayList<>()
