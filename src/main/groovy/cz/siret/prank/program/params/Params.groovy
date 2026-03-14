@@ -839,7 +839,7 @@ class Params {
      * (for ligand sites: contact residues within ligand_protein_contact_distance;
      *  for explicit sites: the defined residues directly).
      *
-     * @see cz.siret.prank.domain.SiteCentroidMethod
+     * @see cz.siret.prank.domain.SiteCenterMethod
      */
     @RuntimeParam
     String site_eval_center_method = "atoms_center_of_mass"

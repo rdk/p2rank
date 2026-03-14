@@ -6,7 +6,7 @@ import groovy.transform.CompileStatic
  * Method for computing binding site centroid for evaluation (DCC criterion).
  */
 @CompileStatic
-enum SiteCentroidMethod {
+enum SiteCenterMethod {
 
     /** Predefined centroid from the input site definition (only for explicitly defined sites) */
     explicit(false, true),
@@ -26,12 +26,12 @@ enum SiteCentroidMethod {
     /** Supported for explicitly defined sites (ResidueSite) */
     final boolean supportedForExplicitSites
 
-    SiteCentroidMethod(boolean supportedForLigandSites, boolean supportedForExplicitSites) {
+    SiteCenterMethod(boolean supportedForLigandSites, boolean supportedForExplicitSites) {
         this.supportedForLigandSites = supportedForLigandSites
         this.supportedForExplicitSites = supportedForExplicitSites
     }
 
-    static SiteCentroidMethod parse(String value) {
+    static SiteCenterMethod parse(String value) {
         try {
             return valueOf(value)
         } catch (IllegalArgumentException e) {

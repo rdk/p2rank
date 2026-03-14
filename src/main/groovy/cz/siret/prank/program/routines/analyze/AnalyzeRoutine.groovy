@@ -79,6 +79,7 @@ class AnalyzeRoutine extends Routine {
         "residues" : { cmdResidues() },
         "binding-residues" : { cmdBindingResidues() },
         "binding-sites" : { cmdBindingSites() },
+        "binding-site-centers" : { cmdBindingSiteCenters() },
         "labeled-residues" : { cmdLabeledResidues() },
         "aa-propensities" : { cmdAaPropensities() },
         "atomtype-propensities" : { cmdAtomTypePropensities() },
@@ -129,7 +130,7 @@ class AnalyzeRoutine extends Routine {
             writeFile outf, csv.toString()
         }
 
-        res.writeErrorCsvs(outdir)
+        write res.writeErrorsAndGetSummary(outdir)
     }
 
 
@@ -156,7 +157,7 @@ class AnalyzeRoutine extends Routine {
             writeFile outf, bindingResidueCodes.join("\n")
         }
 
-        res.writeErrorCsvs(outdir)
+        write res.writeErrorsAndGetSummary(outdir)
         write "\n" + summary.toString()
 
     }
@@ -328,9 +329,7 @@ class AnalyzeRoutine extends Routine {
         }
 
         write "Processed ${dataset.size} items"
-        write res.errorSummary
-
-        res.writeErrorCsvs(outdir)
+        write res.writeErrorsAndGetSummary(outdir)
     }
 
     private static String formatResidueIds(List<Residue> residues) {
@@ -343,6 +342,120 @@ class AnalyzeRoutine extends Routine {
         return Evaluation.siteRadius(centroid, atoms)
     }
 
+    /**
+     * Analyzes binding site centers by computing each valid SiteCenterMethod for every site
+     * and reporting distances between methods, to SAS surface, and to protein atoms.
+     */
+    void cmdBindingSiteCenters() {
+        DataTable dt = new DataTable("protein",
+                "site_label", "site_type", "method",
+                "center_x", "center_y", "center_z",
+                "dist_to_atom_com", "dist_to_sas", "dist_to_protein"
+        )
+
+        boolean hasExplicitSites = dataset.hasExplicitSites()
+
+        AtomicInteger totalIgnored = new AtomicInteger()
+        AtomicInteger totalSmall = new AtomicInteger()
+        AtomicInteger totalDistant = new AtomicInteger()
+        AtomicInteger totalSkippedSites = new AtomicInteger()
+
+        Queue<String> itemsWithoutSites = new ConcurrentLinkedQueue<>()
+
+        def res = dataset.processItems { Dataset.Item item ->
+            Protein p = item.protein
+            p.calcuateSurfaceAndExposedAtoms()
+
+            List<BindingSite> sites = []
+            List<String> siteTypes = []
+
+            if (hasExplicitSites) {
+                List<ResidueSite> rSites = p.sites ?: []
+                if (rSites.isEmpty()) {
+                    itemsWithoutSites.add(item.row)
+                }
+                for (ResidueSite s : rSites) {
+                    sites.add(s)
+                    siteTypes.add("explicit")
+                }
+            } else {
+                if (p.relevantLigands.isEmpty()) {
+                    itemsWithoutSites.add(item.row)
+                }
+                for (Ligand lig : p.relevantLigands) {
+                    sites.add(lig)
+                    siteTypes.add("ligand")
+                }
+                totalIgnored.addAndGet(p.ligands.ignoredLigandCount)
+                totalSmall.addAndGet(p.ligands.smallLigandCount)
+                totalDistant.addAndGet(p.ligands.distantLigandCount)
+            }
+
+            for (int si = 0; si < sites.size(); si++) {
+                BindingSite site = sites[si]
+                String siteType = siteTypes[si]
+                boolean isLigand = siteType == "ligand"
+
+                // Compute baseline center (atoms_center_of_mass)
+                Atom baselineCenter = site.getCenterForMethod(SiteCenterMethod.atoms_center_of_mass)
+
+                for (SiteCenterMethod method : SiteCenterMethod.values()) {
+                    if (isLigand && !method.supportedForLigandSites) continue
+                    if (!isLigand && !method.supportedForExplicitSites) continue
+
+                    Atom center = site.getCenterForMethod(method)
+                    if (center == null) continue
+
+                    double distToAtomCom = baselineCenter != null ? Struct.dist(center, baselineCenter) : Double.NaN
+                    double distToSas = p.accessibleSurface.points.dist(center)
+                    double distToProtein = p.proteinAtoms.dist(center)
+
+                    dt.newRow(item.label)
+                            .put("site_label", site.label)
+                            .put("site_type", siteType)
+                            .put("method", method.name())
+                            .put("center_x", center.x)
+                            .put("center_y", center.y)
+                            .put("center_z", center.z)
+                            .put("dist_to_atom_com", distToAtomCom)
+                            .put("dist_to_sas", distToSas)
+                            .put("dist_to_protein", distToProtein)
+                }
+            }
+        }
+
+        writeFile "$outdir/binding_site_centers.csv", dt.toCsv()
+
+        Map<String, Object> extraInfo = new LinkedHashMap<>()
+        int noSiteCount = itemsWithoutSites.size()
+        if (hasExplicitSites) {
+            extraInfo.put("Site source:", "explicit")
+            extraInfo.put("Proteins without sites:", noSiteCount)
+            extraInfo.put("Sites skipped:", totalSkippedSites.get())
+        } else {
+            extraInfo.put("Site source:", "ligands")
+            extraInfo.put("Proteins without ligands:", noSiteCount)
+            extraInfo.put("Ignored ligands:", totalIgnored.get())
+            extraInfo.put("Small ligands:", totalSmall.get())
+            extraInfo.put("Distant ligands:", totalDistant.get())
+        }
+        extraInfo.put("Errors:", res.errorCount)
+
+        Set<String> noSummary = ["center_x", "center_y", "center_z"] as Set
+        String summary = dt.formatSummaryTable("Binding Site Centers Summary", extraInfo, noSummary)
+        write summary
+        writeFile "$outdir/binding_site_centers_summary.txt", summary
+
+        if (!itemsWithoutSites.isEmpty()) {
+            String noSitesFile = "$outdir/items_without_sites.txt"
+            writeFile noSitesFile, itemsWithoutSites.toSorted().join("\n") + "\n"
+            write "NOTE: $noSiteCount of ${dataset.size} items have no binding sites. List written to [$noSitesFile]"
+        }
+
+        write "Processed ${dataset.size} items"
+        write res.writeErrorsAndGetSummary(outdir)
+    }
+
     void cmdPeptides() {
         LoaderParams.ignoreLigandsSwitch = true
 
@@ -353,7 +466,7 @@ class AnalyzeRoutine extends Routine {
             csv << "$p.name, ${p.peptides.size()}, $ps\n"
         }
         writeFile "$outdir/peptides.csv", csv
-        res.writeErrorCsvs(outdir)
+        write res.writeErrorsAndGetSummary(outdir)
         write csv.toString()
     }
 
@@ -395,8 +508,6 @@ class AnalyzeRoutine extends Routine {
 
         writeFile "$outdir/proteins.csv", dt.toCsv()
 
-        res.writeErrorCsvs(outdir)
-
         // Write split dataset files if some structures have no protein chains
         if (!withoutProteinChains.empty) {
             String headerLine = dataset.header.size() > 1 ? "HEADER: " + dataset.header.join(" ") + "\n\n" : ""
@@ -426,7 +537,7 @@ class AnalyzeRoutine extends Routine {
         writeFile "$outdir/proteins_summary.txt", summary
 
         write "Processed ${dataset.size} items"
-        write res.errorSummary
+        write res.writeErrorsAndGetSummary(outdir)
     }
 
     /**
@@ -439,10 +550,8 @@ class AnalyzeRoutine extends Routine {
             item.protein
         }
 
-        res.writeErrorCsvs(outdir)
-
         write "Processed ${dataset.size} items"
-        write res.errorSummary
+        write res.writeErrorsAndGetSummary(outdir)
     }
 
     /**
@@ -468,10 +577,8 @@ class AnalyzeRoutine extends Routine {
                 csvRows.toSorted().collect { it + "\n" }.join("")
         writeFile "$outdir/chains.csv", csv
 
-        res.writeErrorCsvs(outdir)
-
         write "Processed ${dataset.size} items"
-        write res.errorSummary
+        write res.writeErrorsAndGetSummary(outdir)
     }
 
     /**
@@ -499,7 +606,7 @@ class AnalyzeRoutine extends Routine {
             }
         }
 
-        res.writeErrorCsvs(outdir)
+        write res.writeErrorsAndGetSummary(outdir)
     }
 
     /**
@@ -547,7 +654,7 @@ class AnalyzeRoutine extends Routine {
             }
         }
 
-        res.writeErrorCsvs(outdir)
+        write res.writeErrorsAndGetSummary(outdir)
     }
 
     /**
@@ -589,7 +696,7 @@ class AnalyzeRoutine extends Routine {
         String csv = "protein, n_chains, chain_ids, n_residues, n_residues_in_labeling, positives, negatives, unlabeled\n" +
                 csvRows.toSorted().collect { it + "\n" }.join("")
         writeFile "$outdir/residue_stats.csv", csv
-        res.writeErrorCsvs(outdir)
+        write res.writeErrorsAndGetSummary(outdir)
     }
 
     /**
@@ -622,7 +729,7 @@ class AnalyzeRoutine extends Routine {
             }
         }
 
-        res.writeErrorCsvs(outdir)
+        write res.writeErrorsAndGetSummary(outdir)
     }
 
     /**
@@ -699,7 +806,7 @@ class AnalyzeRoutine extends Routine {
             counters.add(counter)
         }
 
-        res.writeErrorCsvs(outdir)
+        write res.writeErrorsAndGetSummary(outdir)
         BinCounter<AA> counter = BinCounter.join(counters)
         savePropensities("$outdir/aa-propensity.csv", counter)
     }
@@ -727,7 +834,7 @@ class AnalyzeRoutine extends Routine {
             counters.add(counter)
         }
 
-        res.writeErrorCsvs(outdir)
+        write res.writeErrorsAndGetSummary(outdir)
         BinCounter<String> counter = BinCounter.join(counters)
         savePropensities("$outdir/atomtype-propensity.csv", counter)
     }
@@ -759,7 +866,7 @@ class AnalyzeRoutine extends Routine {
             counters.add(counter)
         }
 
-        res.writeErrorCsvs(outdir)
+        write res.writeErrorsAndGetSummary(outdir)
         savePropensities("$outdir/duplets.csv", BinCounter.join(counters))
     }
 
@@ -784,7 +891,7 @@ class AnalyzeRoutine extends Routine {
             counters.add(counter)
         }
 
-        res.writeErrorCsvs(outdir)
+        write res.writeErrorsAndGetSummary(outdir)
         savePropensities("$outdir/triplets.csv", BinCounter.join(counters))
     }
 
@@ -859,10 +966,10 @@ class AnalyzeRoutine extends Routine {
 
         writeFile "$outdir/${dataset.label}_converted.ds", newDsText
         writeFile "$outdir/non_matching_items.txt", nonMatchingText
-        res.writeErrorCsvs(outdir)
+        write res.writeErrorsAndGetSummary(outdir)
     }
 
-    
+
     void print_volsite_table() {
         List<String> atomTypes = AtomTableFeature.atomPropertyTable.itemNames.toSorted()
 

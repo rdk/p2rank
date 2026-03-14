@@ -94,27 +94,32 @@ class Ligand implements BindingSite, Parametrized {
     /**
      * Returns the centroid used for evaluation, based on the site_eval_center_method parameter.
      * Throws if unsupported method (e.g. explicit) is used with ligand-defined sites.
-     * @see SiteCentroidMethod
+     * @see SiteCenterMethod
      */
     @Override
     Atom getCenterForEval() {
-        SiteCentroidMethod method = SiteCentroidMethod.parse(params.site_eval_center_method)
+        SiteCenterMethod method = SiteCenterMethod.parse(params.site_eval_center_method)
         if (!method.supportedForLigandSites) {
             throw new IllegalArgumentException("site_eval_center_method '${method}' is not supported for ligand-defined sites")
         }
+        return getCenterForMethod(method)
+    }
+
+    @Override
+    Atom getCenterForMethod(SiteCenterMethod method) {
         switch (method) {
-            case SiteCentroidMethod.atoms_center_of_mass:
+            case SiteCenterMethod.atoms_center_of_mass:
                 return atoms.centerOfMass
-            case SiteCentroidMethod.sas_points_centroid:
+            case SiteCenterMethod.sas_points_centroid:
                 return getSasPoints().centroid
-            case SiteCentroidMethod.ca_atoms_centroid:
+            case SiteCenterMethod.ca_atoms_centroid:
                 // Select contact residues and compute geometric centroid of their CA atoms
                 List<Residue> contactResidues = protein.residues.getDistinctForAtoms(
                     protein.proteinAtoms.cutoutShell(atoms, params.ligand_protein_contact_distance)
                 )
                 return Struct.calcCaCentroid(contactResidues)
             default:
-                throw new IllegalArgumentException("Unsupported site_eval_center_method: '${method}'")
+                return null
         }
     }
 

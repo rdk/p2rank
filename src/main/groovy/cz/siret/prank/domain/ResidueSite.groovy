@@ -54,25 +54,30 @@ class ResidueSite implements BindingSite, Parametrized {
 
     /**
      * Returns the centroid used for evaluation, based on the site_eval_center_method parameter.
-     * @see SiteCentroidMethod
+     * @see SiteCenterMethod
      */
     @Override
     Atom getCenterForEval() {
-        SiteCentroidMethod method = SiteCentroidMethod.parse(params.site_eval_center_method)
+        SiteCenterMethod method = SiteCenterMethod.parse(params.site_eval_center_method)
         if (!method.supportedForExplicitSites) {
             throw new IllegalArgumentException("site_eval_center_method '${method}' is not supported for explicitly defined sites")
         }
+        return getCenterForMethod(method)
+    }
+
+    @Override
+    Atom getCenterForMethod(SiteCenterMethod method) {
         switch (method) {
-            case SiteCentroidMethod.explicit:
+            case SiteCenterMethod.explicit:
                 return explicitCenter
-            case SiteCentroidMethod.sas_points_centroid:
+            case SiteCenterMethod.sas_points_centroid:
                 return getSasPoints().centroid
-            case SiteCentroidMethod.atoms_center_of_mass:
+            case SiteCenterMethod.atoms_center_of_mass:
                 return getAtoms().centerOfMass
-            case SiteCentroidMethod.ca_atoms_centroid:
+            case SiteCenterMethod.ca_atoms_centroid:
                 return Struct.calcCaCentroid(residues)
             default:
-                throw new IllegalArgumentException("Unsupported site_eval_center_method: '${method}'")
+                return null
         }
     }
 

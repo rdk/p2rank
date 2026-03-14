@@ -14,6 +14,13 @@ public interface BindingSite {
 
     Atom getCenterForEval();
 
+    /**
+     * Calculate center using the specified method.
+     * Unlike getCenterForEval(), this does not read from params — safe for parallel use.
+     * @return center atom, or null if the method cannot produce a center for this site
+     */
+    Atom getCenterForMethod(SiteCenterMethod method);
+
     Atoms getSasPoints();
 
     String getLabel();

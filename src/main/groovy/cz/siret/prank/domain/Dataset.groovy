@@ -1191,6 +1191,14 @@ class Dataset implements Parametrized, Writable, Failable {
             writeFullItemErrorsToFile("$outdir/errors_full.txt.gz")
         }
 
+        /**
+         * Writes error CSV files and returns the error summary string for console output.
+         */
+        String writeErrorsAndGetSummary(String outdir) {
+            writeErrorCsvs(outdir)
+            return errorSummary
+        }
+
     }
 
     static class ItemError {
