@@ -1,8 +1,10 @@
 package cz.siret.prank.domain
 
 import cz.siret.prank.geom.Atoms
+import cz.siret.prank.geom.Struct
 import cz.siret.prank.prediction.pockets.PrankPocket
 import cz.siret.prank.prediction.pockets.criteria.DCA
+import cz.siret.prank.program.params.Params
 import cz.siret.prank.program.routines.results.EvalContext
 import cz.siret.prank.program.routines.results.Evaluation
 import groovy.transform.CompileStatic
@@ -242,6 +244,51 @@ class SiteMetricsTest {
     // TODO: test other criteria (DCC, DSO, DSWO, DPA, DSA) with ResidueSite
     // TODO: test evaluation getStats() with site-based results
     // TODO: test with sites that are far from any pocket (unidentified case)
+
+//===========================================================================================================//
+// ca_atoms_centroid tests
+//===========================================================================================================//
+
+    @Test
+    void caCentroidMethodWorksForResidueSite() {
+        List<Residue> residues = protein.residues.toList().subList(0, 10)
+        ResidueSite site = makeSite("ca_test", residues)
+
+        String savedMethod = Params.inst.site_eval_center_method
+        try {
+            Params.inst.site_eval_center_method = "ca_atoms_centroid"
+
+            def result = site.getCenterForEval()
+            def expected = Struct.calcCaCentroid(residues)
+
+            assertNotNull(result)
+            assertEquals(expected.x, result.x, 0.001)
+            assertEquals(expected.y, result.y, 0.001)
+            assertEquals(expected.z, result.z, 0.001)
+        } finally {
+            Params.inst.site_eval_center_method = savedMethod
+        }
+    }
+
+    @Test
+    void caCentroidMethodWorksForLigand() {
+        Ligand ligand = protein.ligands.relevantLigands[0]
+        assertNotNull(ligand, "Test protein should have at least one relevant ligand")
+
+        String savedMethod = Params.inst.site_eval_center_method
+        try {
+            Params.inst.site_eval_center_method = "ca_atoms_centroid"
+
+            def result = ligand.getCenterForEval()
+            assertNotNull(result, "ca_atoms_centroid should return non-null for a ligand with nearby protein residues")
+
+            // Result should be within reasonable distance of the ligand
+            double dist = protein.proteinAtoms.dist(result)
+            assertTrue(dist < 20.0, "CA centroid should be near the protein surface")
+        } finally {
+            Params.inst.site_eval_center_method = savedMethod
+        }
+    }
 
 //===========================================================================================================//
 // Helpers

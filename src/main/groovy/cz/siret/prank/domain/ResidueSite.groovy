@@ -1,6 +1,7 @@
 package cz.siret.prank.domain
 
 import cz.siret.prank.geom.Atoms
+import cz.siret.prank.geom.Struct
 import cz.siret.prank.program.params.Parametrized
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
@@ -68,6 +69,8 @@ class ResidueSite implements BindingSite, Parametrized {
                 return getSasPoints().centroid
             case SiteCentroidMethod.atoms_center_of_mass:
                 return getAtoms().centerOfMass
+            case SiteCentroidMethod.ca_atoms_centroid:
+                return Struct.calcCaCentroid(residues)
             default:
                 throw new IllegalArgumentException("Unsupported site_eval_center_method: '${method}'")
         }

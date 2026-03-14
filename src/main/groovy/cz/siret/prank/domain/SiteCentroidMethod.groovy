@@ -15,7 +15,10 @@ enum SiteCentroidMethod {
     atoms_center_of_mass(true, true),
 
     /** Centroid of SAS points around site atoms */
-    sas_points_centroid(true, true)
+    sas_points_centroid(true, true),
+
+    /** Geometric centroid of CA atoms of contact residues */
+    ca_atoms_centroid(true, true)
 
     /** Supported for ligand-defined sites */
     final boolean supportedForLigandSites

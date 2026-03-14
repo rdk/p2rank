@@ -204,6 +204,29 @@ class Struct {
     }
 
     /**
+     * Calculate geometric centroid of CA atoms from the given residues.
+     * Residues without CA atoms (e.g. non-standard residues) are skipped.
+     * @return centroid atom or null if no CA atoms found
+     */
+    @Nullable
+    static Atom calcCaCentroid(List<Residue> residues) {
+        List<Atom> caAtoms = new ArrayList<>()
+        for (Residue res : residues) {
+            AminoAcid aa = res.aminoAcid
+            if (aa != null) {
+                Atom ca = aa.getCA()
+                if (ca != null) {
+                    caAtoms.add(ca)
+                }
+            }
+        }
+        if (caAtoms.isEmpty()) {
+            return null
+        }
+        return new Atoms(caAtoms).centroid
+    }
+
+    /**
      * single linkage clustering
      * @param clusters
      * @param clusterDist

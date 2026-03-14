@@ -1,6 +1,7 @@
 package cz.siret.prank.domain
 
 import cz.siret.prank.geom.Atoms
+import cz.siret.prank.geom.Struct
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.PdbUtils
 import groovy.transform.CompileStatic
@@ -106,6 +107,12 @@ class Ligand implements BindingSite, Parametrized {
                 return atoms.centerOfMass
             case SiteCentroidMethod.sas_points_centroid:
                 return getSasPoints().centroid
+            case SiteCentroidMethod.ca_atoms_centroid:
+                // Select contact residues and compute geometric centroid of their CA atoms
+                List<Residue> contactResidues = protein.residues.getDistinctForAtoms(
+                    protein.proteinAtoms.cutoutShell(atoms, params.ligand_protein_contact_distance)
+                )
+                return Struct.calcCaCentroid(contactResidues)
             default:
                 throw new IllegalArgumentException("Unsupported site_eval_center_method: '${method}'")
         }

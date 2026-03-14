@@ -829,11 +829,15 @@ class Params {
     boolean vis_highlight_ligands = false
 
     /**
-     * Method for computing binding site center for evaluation (DCC criterion).
-     * Values: explicit, atoms_center_of_mass, sas_points_centroid
+     * Method for computing binding site center of observed pocket for evaluation (used by DCC criterion).
+     * Observed pocket can be defined by ligand or can be explicit (set of residues defined in the dataset).
+     * Values: explicit, atoms_center_of_mass, sas_points_centroid, ca_atoms_centroid
      *
      * Note: atoms_center_of_mass uses mass-weighted center of ligand/residue atoms for both site types.
      * explicit is only supported for explicitly defined sites (not ligand-defined).
+     * ca_atoms_centroid uses geometric centroid of CA atoms of contact residues
+     * (for ligand sites: contact residues within ligand_protein_contact_distance;
+     *  for explicit sites: the defined residues directly).
      *
      * @see cz.siret.prank.domain.SiteCentroidMethod
      */
