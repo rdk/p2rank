@@ -22,7 +22,8 @@ class ResidueSite implements BindingSite, Parametrized {
     Protein protein
 
     private Atoms cachedAtoms
-    private Atoms sasPoints
+    Atoms sasPoints
+    Pocket predictedPocket
 
     ResidueSite(String name, Atom explicitCenter, List<Residue> residues, Protein protein) {
         assert !residues.isEmpty(), "ResidueSite must have at least one residue"

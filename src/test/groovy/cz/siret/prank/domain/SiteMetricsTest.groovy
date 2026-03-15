@@ -179,11 +179,11 @@ class SiteMetricsTest {
     }
 
     @Test
-    void siteEvaluationFallsBackToLigandPathWhenNoSites() {
-        // When protein.sites is empty, addPrediction should use addLigandPrediction
+    void siteEvaluationUsesLigandPathWhenSitesPopulatedFromLigands() {
+        // When sites are populated from ligands, addPrediction should use ligand mode
         Protein predProtein = Protein.load(TEST_PROTEIN)
         predProtein.calcuateSurfaceAndExposedAtoms()
-        // sites is empty by default
+        predProtein.populateSitesFromLigands()
 
         Pocket pocket = makePocket("pocket1", predProtein.proteinAtoms.centerOfMass, predProtein.proteinAtoms, 1)
         Prediction prediction = new Prediction(predProtein, [pocket])

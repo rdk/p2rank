@@ -23,6 +23,13 @@ public interface BindingSite {
 
     Atoms getSasPoints();
 
+    void setSasPoints(Atoms sasPoints);
+
     String getLabel();
+
+    /** Predicted pocket matched to this binding site during evaluation (null if not matched). */
+    Pocket getPredictedPocket();
+
+    void setPredictedPocket(Pocket pocket);
 
 }

@@ -195,7 +195,7 @@ class AnalyzeRoutine extends Routine {
             if (hasExplicitSites) {
                 ExplicitSitesIndex index = dataset.explicitSitesIndex
                 List<ExplicitSitesIndex.SiteDef> defs = index.getDefsForProtein(item.proteinFile)
-                List<ResidueSite> sites = p.sites ?: []
+                List<ResidueSite> sites = (p.sites ?: []) as List<ResidueSite>
 
                 if (sites.isEmpty()) {
                     itemsWithoutSites.add(item.row)
@@ -271,7 +271,7 @@ class AnalyzeRoutine extends Routine {
                 if (hasExplicitSites) {
                     // Build labeling from resolved site residues
                     Set<Residue> siteResidues = new HashSet<>()
-                    for (ResidueSite site : (p.sites ?: [])) {
+                    for (ResidueSite site : ((p.sites ?: []) as List<ResidueSite>)) {
                         siteResidues.addAll(site.residues)
                         centroids.add(site.centroid)
                     }
@@ -367,35 +367,20 @@ class AnalyzeRoutine extends Routine {
             Protein p = item.protein
             p.calcuateSurfaceAndExposedAtoms()
 
-            List<BindingSite> sites = []
-            List<String> siteTypes = []
+            List<BindingSite> sites = p.sites
 
-            if (hasExplicitSites) {
-                List<ResidueSite> rSites = p.sites ?: []
-                if (rSites.isEmpty()) {
-                    itemsWithoutSites.add(item.row)
-                }
-                for (ResidueSite s : rSites) {
-                    sites.add(s)
-                    siteTypes.add("explicit")
-                }
-            } else {
-                if (p.relevantLigands.isEmpty()) {
-                    itemsWithoutSites.add(item.row)
-                }
-                for (Ligand lig : p.relevantLigands) {
-                    sites.add(lig)
-                    siteTypes.add("ligand")
-                }
+            if (sites.isEmpty()) {
+                itemsWithoutSites.add(item.row)
+            }
+            if (!hasExplicitSites) {
                 totalIgnored.addAndGet(p.ligands.ignoredLigandCount)
                 totalSmall.addAndGet(p.ligands.smallLigandCount)
                 totalDistant.addAndGet(p.ligands.distantLigandCount)
             }
 
-            for (int si = 0; si < sites.size(); si++) {
-                BindingSite site = sites[si]
-                String siteType = siteTypes[si]
-                boolean isLigand = siteType == "ligand"
+            for (BindingSite site : sites) {
+                boolean isLigand = site instanceof Ligand
+                String siteType = isLigand ? "ligand" : "explicit"
 
                 // Compute baseline center (atoms_center_of_mass)
                 Atom baselineCenter = site.getCenterForMethod(SiteCenterMethod.atoms_center_of_mass)

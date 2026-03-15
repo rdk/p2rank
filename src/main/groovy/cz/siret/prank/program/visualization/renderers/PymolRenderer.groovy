@@ -193,21 +193,11 @@ color $color, $label
         }
 
         boolean hasSiteCenters = false
-        if (pair.holoProtein.sites != null && !pair.holoProtein.sites.isEmpty()) {
-            for (ResidueSite site : pair.holoProtein.sites) {
-                def c = site.centroid
-                if (c != null) {
-                    res << sprintf("pseudoatom site_centers, pos=[%.3f, %.3f, %.3f]\n", c.x, c.y, c.z)
-                    hasSiteCenters = true
-                }
-            }
-        } else {
-            for (Ligand lig : pair.holoProtein.relevantLigands) {
-                def c = lig.centroid
-                if (c != null) {
-                    res << sprintf("pseudoatom site_centers, pos=[%.3f, %.3f, %.3f]\n", c.x, c.y, c.z)
-                    hasSiteCenters = true
-                }
+        for (BindingSite site : pair.holoProtein.sites) {
+            def c = site.centroid
+            if (c != null) {
+                res << sprintf("pseudoatom site_centers, pos=[%.3f, %.3f, %.3f]\n", c.x, c.y, c.z)
+                hasSiteCenters = true
             }
         }
 
