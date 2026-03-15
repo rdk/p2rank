@@ -28,7 +28,7 @@ public class MathUtils {
 //===============================================================================================//
 
     public static double nanToZero(double x) {
-        if (Double.isNaN(x)) return 0;
+        if (Double.isNaN(x)) return 0.0d;
         return x;
     }
 
@@ -43,7 +43,7 @@ public class MathUtils {
     }
 
     public static double safeDiv(double x, double y){
-        if (y == 0.0) return 0;
+        if (y == 0.0d) return 0.0d;
         return x / y;
     }
 
