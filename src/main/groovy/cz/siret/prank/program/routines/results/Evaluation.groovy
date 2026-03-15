@@ -6,7 +6,6 @@ import cz.siret.prank.domain.labeling.ResidueLabelings
 import cz.siret.prank.features.implementation.conservation.ConservationScore
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Struct
-import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
 import cz.siret.prank.prediction.pockets.criteria.*
@@ -14,6 +13,7 @@ import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.MathUtils
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.StringUtils
+import org.biojava.nbio.structure.Group
 
 import javax.annotation.concurrent.ThreadSafe
 import java.util.function.Function
@@ -41,13 +41,14 @@ class Evaluation implements Parametrized {
 
     PocketCriterion canonicalCriterion = new DCA("DCA_4", 4.0d)
     PocketCriteria criteria
+
     List<ProteinRow> proteinRows = newSynchronizedList(1024)
     List<LigRow> ligandRows = newSynchronizedList(4 * 1024)
     List<PocketRow> pocketRows = newSynchronizedList(16 * 1024)
     List<ResidueRow> residueRows = newSynchronizedList(16 * 1024)
 
-    List<Double> bindingScores = newSynchronizedList()
-    List<Double> nonBindingScores = newSynchronizedList()
+    List<Double> bindingConservationScores = newSynchronizedList()
+    List<Double> nonBindingConservationScores = newSynchronizedList()
 
     long proteinCount
     long pocketCount
@@ -96,19 +97,20 @@ class Evaluation implements Parametrized {
         return res
     }
 
-    private double getAvgConservationForAtoms(Atoms atoms, ConservationScore score) {
-        if (atoms.distinctGroupsSorted.size() == 0) {
+    private static double getAvgConservationForAtoms(Atoms atoms, ConservationScore score) {
+        def distinctGroups = atoms.distinctGroups
+
+        if (distinctGroups.empty) {
             return 0.0
         }
-        return atoms.distinctGroupsSorted.stream().mapToDouble( {
-            group -> score.getScoreForResidueSafe(group.getResidueNumber())})
-                .average().getAsDouble()
+
+        return avg(distinctGroups, { Group group -> score.getScoreForResidueSafe(group.residueNumber) })
     }
 
-    private Pocket findPocketForSite(BindingSite site, List<Pocket> pockets,
-                                     PocketCriterion criterium, EvalContext context) {
-        for (Pocket pocket in pockets) {
-            if (criterium.isIdentified(site, pocket, context)) {
+    private static Pocket findPocketForSite(BindingSite site, List<Pocket> pockets,
+                                     PocketCriterion criterion, EvalContext context) {
+        for (Pocket pocket : pockets) {
+            if (criterion.isIdentified(site, pocket, context)) {
                 return pocket
             }
         }
@@ -175,10 +177,10 @@ class Evaluation implements Parametrized {
         //log.debug "XXXX n_ligSasPoints: $n_ligSasPoints covered: $n_ligSasPointsCovered"
 
         // Conservation stats
-        List conservationResult = calcConservationStats(protein, protRow)
-        ConservationScore score = (ConservationScore) conservationResult[0]
-        List<Double> bindingScrs = (List<Double>) conservationResult[1]
-        List<Double> nonBindingScrs = (List<Double>) conservationResult[2]
+        ConservationResult conservationResult = calcConservationStats(protein, protRow)
+        ConservationScore score = conservationResult.score
+        List<Double> bindingScrs = conservationResult.bindingScores
+        List<Double> nonBindingScrs = conservationResult.nonBindingScores
 
         for (Ligand lig : ligands.relevantLigands) {
             LigRow row = new LigRow()
@@ -281,8 +283,8 @@ class Evaluation implements Parametrized {
         pocketRows.addAll(tmpPockets)
         residueRows.addAll(tmpResidueRows)
         if (!protein.params.log_scores_to_file.isEmpty()) {
-            bindingScores.addAll(bindingScrs)
-            nonBindingScores.addAll(nonBindingScrs)
+            bindingConservationScores.addAll(bindingScrs)
+            nonBindingConservationScores.addAll(nonBindingScrs)
         }
 
         synchronized (this) {
@@ -299,7 +301,7 @@ class Evaluation implements Parametrized {
     }
 
     /**
-     * Find which site (if any) identifies the given pocket using the standard criterium.
+     * Find which site (if any) identifies the given pocket using the standard criterion.
      */
     private String findSiteForPocket(List<? extends BindingSite> sites, Pocket pocket, EvalContext context) {
         for (BindingSite site : sites) {
@@ -423,6 +425,10 @@ class Evaluation implements Parametrized {
             prow.combinedRank = combiSorted.indexOf(prow) + 1
         }
 
+        proteinRows.add(protRow)
+        ligandRows.addAll(tmpLigRows)
+        pocketRows.addAll(tmpPockets)
+
         synchronized (this) {
             ligandCount += sites.size()
             // Note: ignoredLigandCount, smallLigandCount, distantLigandCount not applicable for sites
@@ -430,22 +436,20 @@ class Evaluation implements Parametrized {
             // Note: bindingScores/nonBindingScores (log_scores_to_file) not yet implemented for sites
             pocketCount += tmpPockets.size()
             proteinCount += 1
-            proteinRows.add(protRow)
-            ligandRows.addAll(tmpLigRows)
-            pocketRows.addAll(tmpPockets)
+
         }
     }
 
-    @CompileDynamic
-    private List calcConservationStats(Protein protein, ProteinRow protRow) {
+    private static ConservationResult calcConservationStats(Protein protein, ProteinRow protRow) {
         ConservationScore score = protein.conservationScore
         List<Double> bindingScrs = new ArrayList<>()
         List<Double> nonBindingScrs = new ArrayList<>()
         if (score != null) {
-            protRow.avgConservation = getAvgConservationForAtoms(protein.proteinAtoms, score)
             Atoms bindingAtoms = protein.proteinAtoms.cutoutShell(protein.allRelevantLigandAtoms, protein.params.ligand_protein_contact_distance)
-            protRow.avgBindingConservation = getAvgConservationForAtoms(bindingAtoms, score)
             Atoms nonBindingAtoms = new Atoms(protein.proteinAtoms - bindingAtoms)
+
+            protRow.avgConservation = getAvgConservationForAtoms(protein.proteinAtoms, score)
+            protRow.avgBindingConservation = getAvgConservationForAtoms(bindingAtoms, score)
             protRow.avgNonBindingConservation = getAvgConservationForAtoms(nonBindingAtoms, score)
 
             if (!protein.params.log_scores_to_file.isEmpty()) {
@@ -457,19 +461,18 @@ class Evaluation implements Parametrized {
                 }
             }
         }
-        [score, bindingScrs, nonBindingScrs]
+        new ConservationResult(score, bindingScrs, nonBindingScrs)
     }
 
-    def calcOverlapStatsForPockets(List<Pocket> topPockets, Atoms ligSasPoints) {
+    private static OverlapStats calcOverlapStatsForPockets(List<Pocket> topPockets, Atoms ligSasPoints) {
         Atoms pocSasp = union((topPockets*.sasPoints).toList())
         int intersect = intersection(ligSasPoints, pocSasp).count
         int union     = union(ligSasPoints, pocSasp).count
         double ligCov = div intersect, ligSasPoints.count
         double surfOverlap = div intersect, union
-        [ligCov, surfOverlap]
+        new OverlapStats(ligCov, surfOverlap)
     }
 
-    @CompileDynamic
     private int calcCoveragesProt(ProteinRow protRow, PredictionPair pair, Atoms sasPoints, List<Pocket> pockets) {
         Protein prot = pair.protein
         Atoms ligSasp = sasPoints.cutoutShell(prot.allRelevantLigandAtoms, LIG_SAS_CUTOFF)
@@ -478,12 +481,12 @@ class Evaluation implements Parametrized {
         // ligand coverage by pockets
         List<Pocket> topn0Pockets = head(pair.ligands.relevantLigandCount, pockets)
         List<Pocket> topn2Pockets = head(pair.ligands.relevantLigandCount + 2, pockets)
-        def (ligCovN0, surfOverlapN0) = calcOverlapStatsForPockets(topn0Pockets, ligSasp)
-        def (ligCovN2, surfOverlapN2) = calcOverlapStatsForPockets(topn2Pockets, ligSasp)
-        protRow.ligandCoverageN0 = ligCovN0
-        protRow.ligandCoverageN2 = ligCovN2
-        protRow.surfOverlapN0 = surfOverlapN0
-        protRow.surfOverlapN2 = surfOverlapN2
+        OverlapStats overlapN0 = calcOverlapStatsForPockets(topn0Pockets, ligSasp)
+        OverlapStats overlapN2 = calcOverlapStatsForPockets(topn2Pockets, ligSasp)
+        protRow.ligandCoverageN0 = overlapN0.ligandCoverage
+        protRow.ligandCoverageN2 = overlapN2.ligandCoverage
+        protRow.surfOverlapN0 = overlapN0.surfaceOverlap
+        protRow.surfOverlapN2 = overlapN2.surfaceOverlap
 
         // TODO revisit: consider prot averaging vs ligand averaging etc...
         List<Ligand> succLigands = prot.relevantLigands.findAll { it.predictedPocket!=null }.toList() //.toList()
@@ -496,13 +499,10 @@ class Evaluation implements Parametrized {
         protRow.ligandCoverageSucc = div succIntersect, succLigSasp.count
         protRow.surfOverlapSucc    = div succIntersect, succUnion
 
-        n_ligSasPoints
+        return n_ligSasPoints
     }
 
     void addAll(Evaluation eval) {
-        proteinRows.addAll(eval.proteinRows)
-        ligandRows.addAll(eval.ligandRows)
-        pocketRows.addAll(eval.pocketRows)
         proteinCount += eval.proteinCount
         pocketCount += eval.pocketCount
         ligandCount += eval.ligandCount
@@ -513,8 +513,12 @@ class Evaluation implements Parametrized {
         ligSASPointsCoveredCount += eval.ligSASPointsCoveredCount
         ligSASPointsScoreSum += eval.ligSASPointsScoreSum
 
-        bindingScores.addAll(eval.bindingScores)
-        nonBindingScores.addAll(eval.nonBindingScores)
+        proteinRows.addAll(eval.proteinRows)
+        ligandRows.addAll(eval.ligandRows)
+        pocketRows.addAll(eval.pocketRows)
+        residueRows.addAll(eval.residueRows)
+        bindingConservationScores.addAll(eval.bindingConservationScores)
+        nonBindingConservationScores.addAll(eval.nonBindingConservationScores)
     }
 
 //===========================================================================================================//
@@ -897,9 +901,9 @@ class Evaluation implements Parametrized {
                     new FileWriter(params.log_scores_to_file, false)))
             try {
                 w.println("First line of the file")
-                nonBindingScores.forEach({ it -> w.print(it); w.print(' ') })
+                nonBindingConservationScores.forEach({ it -> w.print(it); w.print(' ') })
                 w.println()
-                bindingScores.forEach({ it -> w.print(it); w.print(' ') })
+                bindingConservationScores.forEach({ it -> w.print(it); w.print(' ') })
                 w.println()
             } finally {
                 w.close()
@@ -1005,12 +1009,11 @@ class Evaluation implements Parametrized {
      *
      * @return
      */
-    @CompileDynamic
     String toLigandsCSV() {
         StringBuilder csv = new StringBuilder()
         csv <<  "file, #ligands, ligand, chain, ligCode, #atoms, dca4rank, closestPocketDist, proteinDist, centerToProteinDist, sasDist, #contactProteinAtoms, atomIds\n"
         for (LigRow r : ligandRows) {
-            List<String> rec = new ArrayList()
+            List rec = new ArrayList()
 
             rec.add r.protName
             rec.add r.ligCount
@@ -1218,6 +1221,28 @@ class Evaluation implements Parametrized {
         ResidueRow(double score, Boolean observed) {
             this.score = score
             this.observed = observed
+        }
+    }
+
+    static class ConservationResult {
+        final ConservationScore score
+        final List<Double> bindingScores
+        final List<Double> nonBindingScores
+
+        ConservationResult(ConservationScore score, List<Double> bindingScores, List<Double> nonBindingScores) {
+            this.score = score
+            this.bindingScores = bindingScores
+            this.nonBindingScores = nonBindingScores
+        }
+    }
+
+    static class OverlapStats {
+        final double ligandCoverage
+        final double surfaceOverlap
+
+        OverlapStats(double ligandCoverage, double surfaceOverlap) {
+            this.ligandCoverage = ligandCoverage
+            this.surfaceOverlap = surfaceOverlap
         }
     }
 
