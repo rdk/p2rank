@@ -4,6 +4,8 @@ import groovy.transform.CompileStatic
 
 /**
  * Method for computing binding site centroid for evaluation (DCC criterion).
+ *
+ * @see cz.siret.prank.program.params.Params#site_eval_center_method
  */
 @CompileStatic
 enum SiteCenterMethod {
@@ -18,7 +20,10 @@ enum SiteCenterMethod {
     sas_points_centroid(true, true),
 
     /** Geometric centroid of CA atoms of contact residues */
-    ca_atoms_centroid(true, true)
+    ca_atoms_centroid(true, true),
+
+    /** Geometric centroid of all protein contact atoms (only for ligand-defined sites) */
+    contact_atoms_centroid(true, false)
 
     /** Supported for ligand-defined sites */
     final boolean supportedForLigandSites

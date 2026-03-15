@@ -118,6 +118,9 @@ class Ligand implements BindingSite, Parametrized {
                     protein.proteinAtoms.cutoutShell(atoms, params.ligand_protein_contact_distance)
                 )
                 return Struct.calcCaCentroid(contactResidues)
+            case SiteCenterMethod.contact_atoms_centroid:
+                // Geometric centroid of all protein atoms within contact distance of the ligand
+                return protein.proteinAtoms.cutoutShell(atoms, params.ligand_protein_contact_distance).centroid
             default:
                 return null
         }

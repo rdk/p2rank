@@ -291,6 +291,47 @@ class SiteMetricsTest {
     }
 
 //===========================================================================================================//
+// contact_atoms_centroid tests
+//===========================================================================================================//
+
+    @Test
+    void contactAtomsCentroidMethodWorksForLigand() {
+        Ligand ligand = protein.ligands.relevantLigands[0]
+        assertNotNull(ligand, "Test protein should have at least one relevant ligand")
+
+        String savedMethod = Params.inst.site_eval_center_method
+        try {
+            Params.inst.site_eval_center_method = "contact_atoms_centroid"
+
+            def result = ligand.getCenterForEval()
+            assertNotNull(result, "contact_atoms_centroid should return non-null for a ligand with nearby protein atoms")
+
+            // Result should be within reasonable distance of the ligand
+            double dist = protein.proteinAtoms.dist(result)
+            assertTrue(dist < 20.0, "Contact atoms centroid should be near the protein surface")
+        } finally {
+            Params.inst.site_eval_center_method = savedMethod
+        }
+    }
+
+    @Test
+    void contactAtomsCentroidNotSupportedForResidueSite() {
+        List<Residue> residues = protein.residues.toList().subList(0, 5)
+        ResidueSite site = makeSite("test", residues)
+
+        String savedMethod = Params.inst.site_eval_center_method
+        try {
+            Params.inst.site_eval_center_method = "contact_atoms_centroid"
+
+            assertThrows(IllegalArgumentException) {
+                site.getCenterForEval()
+            }
+        } finally {
+            Params.inst.site_eval_center_method = savedMethod
+        }
+    }
+
+//===========================================================================================================//
 // Helpers
 //===========================================================================================================//
 
