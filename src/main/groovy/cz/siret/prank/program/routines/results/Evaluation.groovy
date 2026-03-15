@@ -6,6 +6,8 @@ import cz.siret.prank.domain.labeling.ResidueLabelings
 import cz.siret.prank.features.implementation.conservation.ConservationScore
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Struct
+import groovy.transform.CompileDynamic
+import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
 import cz.siret.prank.prediction.pockets.criteria.*
 import cz.siret.prank.program.params.Parametrized
@@ -20,11 +22,6 @@ import static cz.siret.prank.geom.Atoms.union
 import static cz.siret.prank.utils.Cutils.head
 import static cz.siret.prank.utils.Cutils.newSynchronizedList
 import static cz.siret.prank.utils.Formatter.*
-import static cz.siret.prank.utils.Futils.mkdirs
-import static cz.siret.prank.utils.Futils.writeFile
-import static cz.siret.prank.utils.Futils.writeFile
-import static cz.siret.prank.utils.Futils.writeFile
-import static cz.siret.prank.utils.Futils.writeFile
 import static cz.siret.prank.utils.Futils.writeFile
 import static java.util.Collections.emptyList
 
@@ -35,6 +32,7 @@ import static java.util.Collections.emptyList
  */
 @ThreadSafe
 @Slf4j
+@CompileStatic
 class Evaluation implements Parametrized {
 
     /** cutoff distance in A around ligand atoms that determines which SAS points cover the ligand */
@@ -134,6 +132,7 @@ class Evaluation implements Parametrized {
         }
     }
 
+    @CompileDynamic
     @SuppressWarnings("GroovyAssignabilityCheck")
     private void addLigandPrediction(PredictionPair pair, List<Pocket> pockets, EvalContext context) {
         Ligands ligands = pair.ligands
@@ -462,6 +461,7 @@ class Evaluation implements Parametrized {
         [ligCov, surfOverlap]
     }
 
+    @CompileDynamic
     private int calcCoveragesProt(ProteinRow protRow, PredictionPair pair, Atoms sasPoints, List<Pocket> pockets) {
         Protein prot = pair.protein
         Atoms ligSasp = sasPoints.cutoutShell(prot.allRelevantLigandAtoms, LIG_SAS_CUTOFF)
@@ -516,37 +516,37 @@ class Evaluation implements Parametrized {
      *   n ... number of ligands in given protein
      *   T ... supplied tolerance
      */
-    double calcSuccessRate(int criteriumIndex, int tolerance) {
-        return _calcSuccessRate(criteriumIndex, tolerance, true)
+    double calcSuccessRate(int criterionIndex, int tolerance) {
+        return _calcSuccessRate(criterionIndex, tolerance, true)
     }
 
     /**
      * Top-N mode: Top-1, Top-3, ...
      * without considering number of ligands in the protein
      */
-    double calcSuccessRateTopN(int criteriumIndex, int topN) {
-        return _calcSuccessRate(criteriumIndex, topN, false)
+    double calcSuccessRateTopN(int criterionIndex, int topN) {
+        return _calcSuccessRate(criterionIndex, topN, false)
     }
 
     /**
      *
-     * @param criteriumIndex
+     * @param criterionIndex
      * @param tolerance
      * @param topKplusNmode if true, then number of ligands is added to tolerance for each protein
      * @return
      */
-    private double _calcSuccessRate(int criteriumIndex, int tolerance, boolean topNplusKmode) {
+    private double _calcSuccessRate(int criterionIndex, int tolerance, boolean topNplusKmode) {
         int identified = 0
 
         for (LigRow ligRow in ligandRows) {
-            int rankForCriterium = ligRow.ranks[criteriumIndex]
+            int rankForCriterium = ligRow.ranks[criterionIndex]  // Note: rank is 1-based, 0 means not found at all
 
             int rowTolerance = tolerance
             if (topNplusKmode) {
-                rowTolerance += ligRow.ligCount  // Top-(n+T) mode
+                rowTolerance += ligRow.ligCount  // Top-(n+K) mode where n in number of ligands in given protein and K is supplied tolerance
             }
 
-            if ((rankForCriterium > 0) && (rankForCriterium <= rowTolerance)) {  // pocked is found and is within tolerance
+            if ((rankForCriterium > 0) && (rankForCriterium <= rowTolerance)) {  // pocket is found and is within tolerance
                 identified += 1
             }
         }
@@ -565,12 +565,18 @@ class Evaluation implements Parametrized {
 //===========================================================================================================//
 
 
-    double calcSuccessRateProteinCentric(int criteriumIndex, int tolerance) {
+    /**
+     *
+     * @param criterionIndex
+     * @param tolerance
+     * @return
+     */
+    double calcSuccessRateProteinCentric(int criterionIndex, int tolerance) {
         double identified = 0
 
         for (LigRow ligRow in ligandRows) {
-            int rankForAssessor = ligRow.ranks[criteriumIndex]
-            if ((rankForAssessor > 0) && (rankForAssessor <= ligRow.ligCount + tolerance)) {
+            int rankForCriterion = ligRow.ranks[criterionIndex]
+            if ((rankForCriterion > 0) && (rankForCriterion <= ligRow.ligCount + tolerance)) {
                 identified += 1.0 / ligRow.ligCount
             }
         }
@@ -583,19 +589,19 @@ class Evaluation implements Parametrized {
         return res
     }
 
-    double calcSuccessRate(String criteriumName, int tolerance) {
-        return calcSuccessRate(criteria.getCriterionIndexForName(criteriumName), tolerance)
+    double calcSuccessRate(String criterionName, int tolerance) {
+        return calcSuccessRate(criteria.getCriterionIndexForName(criterionName), tolerance)
     }
 
-    double calcSuccessRateTopN(String criteriumName, int topN) {
-        return calcSuccessRateTopN(criteria.getCriterionIndexForName(criteriumName), topN)
+    double calcSuccessRateTopN(String criterionName, int topN) {
+        return calcSuccessRateTopN(criteria.getCriterionIndexForName(criterionName), topN)
     }
 
-    double calcSuccessRateProteinCentric(String criteriumName, int tolerance) {
-        return calcSuccessRateProteinCentric(criteria.getCriterionIndexForName(criteriumName), tolerance)
+    double calcSuccessRateProteinCentric(String criterionName, int tolerance) {
+        return calcSuccessRateProteinCentric(criteria.getCriterionIndexForName(criterionName), tolerance)
     }
 
-    double calcDefaultCriteriumSuccessRate(int tolerance) {
+    double calcDefaultCriterionSuccessRate(int tolerance) {
         return calcSuccessRate("DCA_4", tolerance)
     }
 
@@ -645,17 +651,20 @@ class Evaluation implements Parametrized {
 
 //===========================================================================================================//
 
-    public double avg(List<Double> list) {
+    @CompileDynamic
+    double avg(List<Double> list) {
         if (list.size()==0) return Double.NaN
-        list.findAll { it!=Double.NaN }.sum(0) / list.size()
+        list.findAll { !it.isNaN() }.sum(0) / list.size()
     }
-    
-    public <T> double avg(List<T> list, Closure<T> closure) {
+
+    @CompileDynamic
+    <T> double avg(List<T> list, Closure<T> closure) {
         if (list.size()==0) return Double.NaN
         list.collect { closure(it) }.findAll { it!=Double.NaN }.sum(0) / list.size()
     }
 
-    public <T> double avgNanTo0(List<T> list, Closure<T> closure) {
+    @CompileDynamic
+    <T> double avgNanTo0(List<T> list, Closure<T> closure) {
         if (list.size()==0) return Double.NaN
         list.collect { closure(it) }.collect { nanNullTo0(it) }.sum(0) / list.size()
     }
@@ -671,7 +680,7 @@ class Evaluation implements Parametrized {
     /**
      * average only on proteins that have relevant ligands
      */
-    public double avgLigProt(List<ProteinRow> list, Closure<ProteinRow> closure) {
+    double avgLigProt(List<ProteinRow> list, Closure<ProteinRow> closure) {
         List<ProteinRow> ligProts = list.findAll { it.ligands > 0 }.toList()
         return avg(ligProts, closure)
     }
@@ -688,44 +697,57 @@ class Evaluation implements Parametrized {
         div pocketCount, proteinCount
     }
 
+    @CompileDynamic
     double getAvgLigandAtoms() {
         div ligandRows.collect {it.atoms}.sum(0), ligandCount
     }
 
+    @CompileDynamic
     double getAvgPocketVolume() {
         div pocketRows.collect { it.pocketVolume }.sum(0), pocketCount
     }
+
+    @CompileDynamic
     double getAvgPocketVolumeTruePockets() {
         avg pocketRows.findAll { it.truePocket }, {PocketRow it -> it.pocketVolume }
     }
 
+    @CompileDynamic
     double getAvgPocketSurfAtoms() {
         div pocketRows.collect { it.surfaceAtomCount }.sum(0), pocketCount
     }
 
+    @CompileDynamic
     double getAvgPocketSurfAtomsTruePockets() {
         avg pocketRows.findAll { it.truePocket }, {PocketRow it -> it.surfaceAtomCount }
     }
 
+    @CompileDynamic
     double getAvgPocketInnerPoints() {
         div pocketRows.collect { it.auxInfo.samplePoints }.sum(0), pocketCount
     }
+
+    @CompileDynamic
     double getAvgPocketInnerPointsTruePockets() {
         avg pocketRows.findAll { it.truePocket }, {PocketRow it -> it.auxInfo.samplePoints }
     }
 
+    @CompileDynamic
     double getAvgProteinAtoms() {
         div proteinRows.collect { it.protAtoms }.sum(0), proteinCount
     }
 
+    @CompileDynamic
     double getAvgExposedAtoms() {
         div proteinRows.collect { it.exposedAtoms }.sum(0), proteinCount
     }
 
+    @CompileDynamic
     double getAvgProteinConollyPoints() {
         avg proteinRows, {ProteinRow it -> it.sasPoints }
     }
 
+    @CompileDynamic
     double getAvgLigCenterToProtDist() {
         avg ligandRows, {LigRow it -> it.centerToProtDist}
     }
@@ -738,6 +760,7 @@ class Evaluation implements Parametrized {
         div ligSASPointsScoreSum, ligSASPointsCount
     }
 
+    @CompileDynamic
     double getAvgClosestPocketDist() {
         avg ligandRows, { LigRow row -> row.closestPocketDist }
     }
@@ -745,6 +768,7 @@ class Evaluation implements Parametrized {
     /**
      * Todo optimize closures
      */
+    @CompileDynamic
     Map getStats() {
         def m = new LinkedHashMap() // keep insertion order
 
@@ -882,7 +906,7 @@ class Evaluation implements Parametrized {
      * get list of evaluation criteria used during eval routines
      */
     static List<PocketCriterion> getDefaultEvalCriteria() {
-        double REQUIRED_POCKET_COVERAGE = 0.2  //  like in fpocket MOc criterion
+        double REQUIRED_POCKET_COVERAGE = 0.2d  //  like in fpocket MOc criterion
         return [
                 new DCA("DCA_2",   2),
                 new DCA("DCA_3",   3),
@@ -908,29 +932,29 @@ class Evaluation implements Parametrized {
                 new DCC("DCC_13", 13),
                 new DCC("DCC_14", 14),
 
-                new DSO("DSO_0.5",  0.5),
-                new DSO("DSO_0.4",  0.4),
-                new DSO("DSO_0.3",  0.3),
-                new DSO("DSO_0.2",  0.2),
-                new DSO("DSO_0.1",  0.1),
-                new DSO("DSO_0.05", 0.05),
+                new DSO("DSO_0.5",  0.5d),
+                new DSO("DSO_0.4",  0.4d),
+                new DSO("DSO_0.3",  0.3d),
+                new DSO("DSO_0.2",  0.2d),
+                new DSO("DSO_0.1",  0.1d),
+                new DSO("DSO_0.05", 0.05d),
 
                 new DPA("DPA_1", 1),
                 new DPA("DPA_2", 2),
                 new DPA("DPA_3", 3),
 
-                new DSWO("DSWO_1.0", 1.0, REQUIRED_POCKET_COVERAGE),
-                new DSWO("DSWO_0.9", 0.9, REQUIRED_POCKET_COVERAGE),
-                new DSWO("DSWO_0.8", 0.8, REQUIRED_POCKET_COVERAGE),
-                new DSWO("DSWO_0.7", 0.7, REQUIRED_POCKET_COVERAGE),
-                new DSWO("DSWO_0.6", 0.6, REQUIRED_POCKET_COVERAGE),
-                new DSWO("DSWO_0.5", 0.5, REQUIRED_POCKET_COVERAGE),
-                new DSWO("DSWO_0.4", 0.4, REQUIRED_POCKET_COVERAGE),
-                new DSWO("DSWO_0.3", 0.3, REQUIRED_POCKET_COVERAGE),
-                new DSWO("DSWO_0.2", 0.2, REQUIRED_POCKET_COVERAGE),
-                new DSWO("DSWO_0.1", 0.1, REQUIRED_POCKET_COVERAGE),
+                new DSWO("DSWO_1.0", 1.0d, REQUIRED_POCKET_COVERAGE),
+                new DSWO("DSWO_0.9", 0.9d, REQUIRED_POCKET_COVERAGE),
+                new DSWO("DSWO_0.8", 0.8d, REQUIRED_POCKET_COVERAGE),
+                new DSWO("DSWO_0.7", 0.7d, REQUIRED_POCKET_COVERAGE),
+                new DSWO("DSWO_0.6", 0.6d, REQUIRED_POCKET_COVERAGE),
+                new DSWO("DSWO_0.5", 0.5d, REQUIRED_POCKET_COVERAGE),
+                new DSWO("DSWO_0.4", 0.4d, REQUIRED_POCKET_COVERAGE),
+                new DSWO("DSWO_0.3", 0.3d, REQUIRED_POCKET_COVERAGE),
+                new DSWO("DSWO_0.2", 0.2d, REQUIRED_POCKET_COVERAGE),
+                new DSWO("DSWO_0.1", 0.1d, REQUIRED_POCKET_COVERAGE),
 
-        ]
+        ] as List<PocketCriterion>
         //        ((1..6).collect { new DPA(it) }) +
         //        ((1..6).collect { new DSA(it) }) +
     }
@@ -975,10 +999,11 @@ class Evaluation implements Parametrized {
      *
      * @return
      */
+    @CompileDynamic
     String toLigandsCSV() {
         StringBuilder csv = new StringBuilder()
         csv <<  "file, #ligands, ligand, chain, ligCode, #atoms, dca4rank, closestPocketDist, proteinDist, centerToProteinDist, sasDist, #contactProteinAtoms, atomIds\n"
-        ligandRows.each { r ->
+        for (LigRow r : ligandRows) {
             List<String> rec = new ArrayList()
 
             rec.add r.protName
@@ -995,7 +1020,7 @@ class Evaluation implements Parametrized {
             rec.add fmtCsv(r.sasDist)
             rec.add r.contactAtoms
             rec.add r.atomIds.join(" ")
-            
+
             csv << rec.join(", ") << "\n"
         }
         return csv.toString()
@@ -1007,7 +1032,7 @@ class Evaluation implements Parametrized {
     String toSitesCSV() {
         StringBuilder csv = new StringBuilder()
         csv << "file, site_type, #sites, site, chain, ligCode, #atoms, #residues, center_x, center_y, center_z, site_radius, dca4rank, closestPocketDist, proteinDist, centerToProteinDist, sasDist, #contactProteinAtoms\n"
-        ligandRows.each { r ->
+        for (LigRow r : ligandRows) {
             List rec = new ArrayList()
             rec.add r.protName
             rec.add r.siteType
@@ -1047,7 +1072,7 @@ class Evaluation implements Parametrized {
     String toRanksCSV() {
         StringBuilder csv = new StringBuilder()
         csv << "file,#ligands,ligand," + criteria.list.join(",") + "\n"
-        ligandRows.each { row ->
+        for (LigRow row : ligandRows) {
             csv << "$row.protName,$row.ligCount,$row.ligName," + row.ranks.join(",") + "\n"
         }
         return csv.toString()

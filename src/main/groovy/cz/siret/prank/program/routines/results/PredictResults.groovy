@@ -87,8 +87,8 @@ class PredictResults extends ResultsBase {
         m.ligands =  evaluation.ligandCount
         m.pockets =  evaluation.pocketCount
 
-        m.DCA_4_0 = formatPercent evaluation.calcDefaultCriteriumSuccessRate(0)
-        m.DCA_4_2 = formatPercent evaluation.calcDefaultCriteriumSuccessRate(2)
+        m.DCA_4_0 = formatPercent evaluation.calcDefaultCriterionSuccessRate(0)
+        m.DCA_4_2 = formatPercent evaluation.calcDefaultCriterionSuccessRate(2)
 
         m.P =   fmt classStats.metrics.p
         m.R =   fmt classStats.metrics.r

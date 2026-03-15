@@ -32,9 +32,9 @@ abstract class EvalRoutine extends Routine {
         long ligands = results.eval.ligandCount
         long pockets = results.eval.pocketCount
 
-        double top1 = results.origEval.calcDefaultCriteriumSuccessRate(0)
-        double all = results.origEval.calcDefaultCriteriumSuccessRate(999)
-        double rescored = results.eval.calcDefaultCriteriumSuccessRate(0)
+        double top1 = results.origEval.calcDefaultCriterionSuccessRate(0)
+        double all = results.origEval.calcDefaultCriterionSuccessRate(999)
+        double rescored = results.eval.calcDefaultCriterionSuccessRate(0)
 
         double orig_DCA4_0 = results.origEval.calcSuccessRate("DCA_4", 0)
         double orig_DCA4_2 = results.origEval.calcSuccessRate("DCA_4", 2)

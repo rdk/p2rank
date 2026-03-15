@@ -143,7 +143,7 @@ class DataTable {
         return result
     }
 
-    String formatSummaryTable(String title = "Dataset Summary", Map<String, Object> extraInfo = [:], Set<String> excludeFromSummary = Collections.emptySet()) {
+    String formatSummaryTable(String title = "Dataset Summary", Map<String, Object> extraInfo = [:], Set<String> excludeFromSummary = Collections.emptySet(), String totalLabel = "Total entries:") {
         List<Integer> numColIndices = getNumericColumnIndices(excludeFromSummary)
         int n = size()
 
@@ -151,7 +151,7 @@ class DataTable {
         table << "\n"
         table << "=== $title ===\n"
         table << "\n"
-        table << String.format("  %-22s %d\n", "Total entries:", n)
+        table << String.format("  %-22s %d\n", totalLabel, n)
 
         for (Map.Entry<String, Object> entry : extraInfo.entrySet()) {
             table << String.format("  %-22s %s\n", entry.key, entry.value)

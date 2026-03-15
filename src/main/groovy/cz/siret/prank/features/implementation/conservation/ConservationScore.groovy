@@ -41,6 +41,33 @@ class ConservationScore implements Parametrized {
         this.scores = scores
     }
 
+    /**
+     * Per-chain conservation loading metadata.
+     */
+    @CompileStatic
+    static class ChainConservationInfo {
+        final String chainId
+        final File scoreFile        // null if not found
+        final boolean loaded        // file existed and scores were parsed
+        final int matchedResidues   // residues with matched conservation scores
+        final int chainResidues     // total AA residues in the chain from structure
+
+        ChainConservationInfo(String chainId, File scoreFile, boolean loaded, int matchedResidues, int chainResidues) {
+            this.chainId = chainId
+            this.scoreFile = scoreFile
+            this.loaded = loaded
+            this.matchedResidues = matchedResidues
+            this.chainResidues = chainResidues
+        }
+    }
+
+    /** Per-chain conservation loading metadata. Key: chain authorId */
+    private Map<String, ChainConservationInfo> chainInfoMap = Collections.emptyMap()
+
+    Map<String, ChainConservationInfo> getChainInfoMap() {
+        return chainInfoMap
+    }
+
     private static class AAScore {
         String chainId
         String letter
@@ -309,9 +336,13 @@ class ConservationScore implements Parametrized {
         // Resolve provider once for all chains (singleton with semaphore)
         ConservationProvider provider = ConservationProviderFactory.getOrCreateProvider()
 
+        Map<String, ChainConservationInfo> chainInfo = new LinkedHashMap<>()
+
         for (Chain chain : conservationChains) {
             String chainId = Struct.getAuthorId(chain)
             chainId = Struct.maskEmptyChainId(chainId)
+            List<Group> aaGroups = chain.getAtomGroups(GroupType.AMINOACID)
+            int chainResidueCount = aaGroups.size()
 
             try {
                 File scoreFile
@@ -319,6 +350,7 @@ class ConservationScore implements Parametrized {
                     ResidueChain residueChain = protein.getResidueChain(chainId)
                     if (residueChain == null) {
                         P2Rank.failStatic("No residue chain found for chainId '$chainId' in protein '${protein.name}'", log)
+                        chainInfo.put(chainId, new ChainConservationInfo(chainId, null, false, 0, chainResidueCount))
                         continue
                     }
 
@@ -342,15 +374,23 @@ class ConservationScore implements Parametrized {
                         log.trace "loaded chain scores:\n  {}", chainScores.collect { "$it.index $it.letter $it.score" }.join("\n")
                     }
 
-                    matchSequences(chainId, chain.getAtomGroups(GroupType.AMINOACID), chainScores, scores)
+                    int sizeBefore = scores.size()
+                    matchSequences(chainId, aaGroups, chainScores, scores)
+                    int matched = scores.size() - sizeBefore
+                    chainInfo.put(chainId, new ChainConservationInfo(chainId, scoreFile, true, matched, chainResidueCount))
                 } else {
                     P2Rank.failStatic("Conservation score file doesn't exist for [protein:$protein.name chain:$chainId] file:[$scoreFile]", log)
+                    chainInfo.put(chainId, new ChainConservationInfo(chainId, scoreFile, false, 0, chainResidueCount))
                 }
             } catch (Exception e) {
                 P2Rank.failStatic("Failed to load conservation file for [protein:$protein.name chain:$chainId]", e, log)
+                chainInfo.put(chainId, new ChainConservationInfo(chainId, null, false, 0, chainResidueCount))
             }
         }
-        return new ConservationScore(scores)
+
+        ConservationScore result = new ConservationScore(scores)
+        result.chainInfoMap = chainInfo
+        return result
     }
 
 }

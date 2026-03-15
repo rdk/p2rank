@@ -6,6 +6,7 @@ import cz.siret.prank.domain.labeling.*
 import cz.siret.prank.domain.loaders.ExplicitSitesIndex
 import cz.siret.prank.domain.loaders.LoaderParams
 import cz.siret.prank.export.FastaExporter
+import cz.siret.prank.features.implementation.conservation.ConservationScore
 import cz.siret.prank.features.implementation.table.AtomTableFeature
 import cz.siret.prank.features.implementation.volsite.VolSitePharmacophore
 import cz.siret.prank.geom.Atoms
@@ -560,22 +561,32 @@ class AnalyzeRoutine extends Routine {
     void cmdChains() {
         LoaderParams.ignoreLigandsSwitch = true
 
-        List<String> csvRows = newSynchronizedList()
+        DataTable dt = new DataTable("protein",
+                "n_chains", "chain_id", "mmcif_id", "n_residues",
+                "residue_string"
+        )
+
         def res = dataset.processItems { Dataset.Item item ->
             Protein p = item.protein
 
             int nchains = p.residueChains.size()
-            p.residueChains.each {
-                String chainId = it.authorId
-                String mmcifId = it.mmcifId
-                int nres = it.length
-                String chars = it.biojavaCodeCharString
-                csvRows.add("${item.label}, $nchains, $chainId, $mmcifId, $nres, $chars " as String)
+            for (ResidueChain chain : p.residueChains) {
+                dt.newRow(item.label)
+                        .put("n_chains", nchains)
+                        .put("chain_id", chain.authorId)
+                        .put("mmcif_id", chain.mmcifId)
+                        .put("n_residues", chain.length)
+                        .put("residue_string", chain.biojavaCodeCharString)
             }
         }
-        String csv = "protein, n_chains, chain_id, mmcif_id, n_residues, residue_string\n" +
-                csvRows.toSorted().collect { it + "\n" }.join("")
-        writeFile "$outdir/chains.csv", csv
+
+        writeFile "$outdir/chains.csv", dt.toCsv()
+
+        Set<String> noSummary = ["residue_string"] as Set
+        String summary = dt.formatSummaryTable("Chains Summary",
+                ["Errors:": res.errorCount] as Map<String, Object>, noSummary)
+        write summary
+        writeFile "$outdir/chains_summary.txt", summary
 
         write "Processed ${dataset.size} items"
         write res.writeErrorsAndGetSummary(outdir)
@@ -700,35 +711,102 @@ class AnalyzeRoutine extends Routine {
     }
 
     /**
-     * Analyze and visualize conservation scores
+     * Analyze conservation scores per chain.
+     * Produces a CSV with per-chain conservation loading info: whether conservation was loaded,
+     * the conservation file path, and how many residues were matched.
      */
     void cmdConservation() {
         LoaderParams.ignoreLigandsSwitch = true
 
+        DataTable dt = new DataTable("protein",
+                "chain_id", "mmcif_id", "n_residues",
+                "conserv_loaded", "conserv_file", "conserv_matched_residues",
+                "residue_string"
+        )
+
+        AtomicInteger fullyMatchedChains = new AtomicInteger()
+        AtomicInteger fullyMatchedChainItems = new AtomicInteger()
+        AtomicInteger failedChains = new AtomicInteger()
+        AtomicInteger failedChainItems = new AtomicInteger()
+        AtomicInteger partialChains = new AtomicInteger()
+        AtomicInteger partialChainItems = new AtomicInteger()
+
         def res = dataset.processItems { Dataset.Item item ->
             Protein p = item.protein
-            ResidueLabeling<Double> labeling = p.getConservationLabeling()
-            if (labeling != null) {
 
-                labeling.labeledResidues.each {
-                    write "conservation for residue $it.residue: $it.label"
+            // Load conservation scores (graceful — null on failure)
+            ConservationScore conservScore = null
+            try {
+                conservScore = p.loadConservationScores(item.context)
+            } catch (Exception e) {
+                log.warn "Failed to load conservation for [{}]: {}", item.label, e.message
+            }
+
+            boolean itemHasFullyMatchedChain = false
+            boolean itemHasFailedChain = false
+            boolean itemHasPartialChain = false
+
+            for (ResidueChain chain : p.residueChains) {
+                def row = dt.newRow(item.label)
+                        .put("chain_id", chain.authorId)
+                        .put("mmcif_id", chain.mmcifId)
+                        .put("n_residues", chain.length)
+                        .put("residue_string", chain.biojavaCodeCharString)
+
+                ConservationScore.ChainConservationInfo ci = conservScore?.chainInfoMap?.get(chain.authorId)
+                if (ci != null) {
+                    row.put("conserv_loaded", ci.loaded ? 1 : 0)
+                            .put("conserv_file", ci.scoreFile?.absolutePath ?: "")
+                            .put("conserv_matched_residues", ci.matchedResidues)
+
+                    if (!ci.loaded) {
+                        failedChains.incrementAndGet()
+                        itemHasFailedChain = true
+                    } else if (ci.matchedResidues < ci.chainResidues) {
+                        partialChains.incrementAndGet()
+                        itemHasPartialChain = true
+                    } else {
+                        fullyMatchedChains.incrementAndGet()
+                        itemHasFullyMatchedChain = true
+                    }
+                } else {
+                    row.put("conserv_loaded", 0)
+                            .put("conserv_file", "")
+                            .put("conserv_matched_residues", 0)
+                    failedChains.incrementAndGet()
+                    itemHasFailedChain = true
                 }
-                write "score map: " + p.getConservationScore().getScoreMap()
+            }
 
-                if (params.visualizations) {
-                    new NewPymolRenderer("$outdir/visualizations", new RenderingModel(
-                            proteinFile: item.proteinFile,
-                            label: item.label,
-                            protein: item.protein,
-                            doubleLabeling: labeling
-                    )).render()
-                }
+            if (itemHasFullyMatchedChain) fullyMatchedChainItems.incrementAndGet()
+            if (itemHasFailedChain) failedChainItems.incrementAndGet()
+            if (itemHasPartialChain) partialChainItems.incrementAndGet()
 
-            } else {
-                log.error "Failed to load conservation scores for [{}]", item.label
+            if (params.visualizations && conservScore != null) {
+                ResidueLabeling<Double> labeling = conservScore.toDoubleLabeling(p)
+                new NewPymolRenderer("$outdir/visualizations", new RenderingModel(
+                        proteinFile: item.proteinFile,
+                        label: item.label,
+                        protein: p,
+                        doubleLabeling: labeling
+                )).render()
             }
         }
 
+        writeFile "$outdir/conservation.csv", dt.toCsv()
+
+        Map<String, Object> extraInfo = new LinkedHashMap<>()
+        extraInfo.put("Fully matched chains:", "${fullyMatchedChains.get()} in ${fullyMatchedChainItems.get()} dataset items")
+        extraInfo.put("Partially matched chains:", "${partialChains.get()} in ${partialChainItems.get()} dataset items")
+        extraInfo.put("Failed chains:", "${failedChains.get()} in ${failedChainItems.get()} dataset items")
+        extraInfo.put("Failed to load dataset items:", res.errorCount)
+
+        Set<String> noSummary = ["residue_string", "conserv_file"] as Set
+        String summary = dt.formatSummaryTable("Conservation Summary", extraInfo, noSummary, "Total chains:")
+        write summary
+        writeFile "$outdir/conservation_summary.txt", summary
+
+        write "Processed ${dataset.size} items"
         write res.writeErrorsAndGetSummary(outdir)
     }
 
