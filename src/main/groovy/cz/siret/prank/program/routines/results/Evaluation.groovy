@@ -197,8 +197,8 @@ class Evaluation implements Parametrized {
         int n_ligSasPointsCovered = 0
         double _ligSasPointsScoreSum = 0d
         ConservationScore score = null
-        List<Double> bindingScrs = Collections.<Double>emptyList()
-        List<Double> nonBindingScrs = Collections.<Double>emptyList()
+        List<Double> bindingScrs = emptyList()
+        List<Double> nonBindingScrs = emptyList()
         Atoms allLigLabeledPoints = null
 
         if (isLigandMode) {
@@ -231,7 +231,7 @@ class Evaluation implements Parametrized {
             row.ligCount = sites.size()
             row.atoms = site.atoms.count
 
-            row.ranks = criteria.list.collect { criterium -> PredictionPair.rankOfIdentifiedPocket(site, pockets, criterium, context) }
+            row.ranks = criteria.list.collect { criterion -> PredictionPair.rankOfIdentifiedPocket(site, pockets, criterion, context) }
             row.dca4rank = PredictionPair.rankOfIdentifiedPocket(site, pockets, canonicalCriterion, context)
 
             Atom centroid = site.centroid
@@ -560,7 +560,7 @@ class Evaluation implements Parametrized {
         for (int i=0; i!=n; i++) {
             List<Double> resRow = new ArrayList<>(tolerances.size())
 
-            for (int tolerance in tolerances) {
+            for (int tolerance : tolerances) {
                 double resCell = calcSuccessRate(i, tolerance)
                 resRow.add(resCell)
             }
