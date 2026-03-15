@@ -782,6 +782,8 @@ class Evaluation implements Parametrized {
         m.DCC_4_T5 = calcSuccessRateTopN("DCC_4",5)
         m.DCC_4_T7 = calcSuccessRateTopN("DCC_4",7)
 
+        m.DCC_4_0_PC = calcSuccessRateProteinCentric("DCC_4", 0)
+        m.DCC_4_2_PC = calcSuccessRateProteinCentric("DCC_4", 2)
         m.DCC_10_0_PC = calcSuccessRateProteinCentric("DCC_10", 0)
         m.DCC_10_2_PC = calcSuccessRateProteinCentric("DCC_10", 2)
 
