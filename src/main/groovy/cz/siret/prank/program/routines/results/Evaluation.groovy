@@ -41,10 +41,10 @@ class Evaluation implements Parametrized {
 
     PocketCriterion canonicalCriterion = new DCA("DCA_4", 4.0d)
     PocketCriteria criteria
-    List<ProteinRow> proteinRows = newSynchronizedList()
-    List<LigRow> ligandRows = newSynchronizedList()
-    List<PocketRow> pocketRows = newSynchronizedList()
-    List<ResidueRow> residueRows = newSynchronizedList()
+    List<ProteinRow> proteinRows = newSynchronizedList(1024)
+    List<LigRow> ligandRows = newSynchronizedList(4 * 1024)
+    List<PocketRow> pocketRows = newSynchronizedList(16 * 1024)
+    List<ResidueRow> residueRows = newSynchronizedList(16 * 1024)
 
     List<Double> bindingScores = newSynchronizedList()
     List<Double> nonBindingScores = newSynchronizedList()
@@ -78,7 +78,7 @@ class Evaluation implements Parametrized {
     /**
      * considering DCA measure
      */
-    private Pocket closestPocket(BindingSite site, List<Pocket> pockets) {
+    private static Pocket closestPocket(BindingSite site, List<Pocket> pockets) {
         if (pockets.empty) return null
 
         Pocket res = null
@@ -101,7 +101,7 @@ class Evaluation implements Parametrized {
             return 0.0
         }
         return atoms.distinctGroupsSorted.stream().mapToDouble( {
-            group->score.getScoreForResidueSafe(group.getResidueNumber())})
+            group -> score.getScoreForResidueSafe(group.getResidueNumber())})
                 .average().getAsDouble()
     }
 
@@ -133,7 +133,6 @@ class Evaluation implements Parametrized {
         }
     }
 
-    @CompileDynamic
     @SuppressWarnings("GroovyAssignabilityCheck")
     private void addLigandPrediction(PredictionPair pair, List<Pocket> pockets, EvalContext context) {
         Ligands ligands = pair.ligands
@@ -172,11 +171,14 @@ class Evaluation implements Parametrized {
         // ligand coverage by positively predicted points (note: not by pockets!)
         Atoms allLigLabeledPoints = labeledPoints.cutoutShell(ligands.allRelevantLigandAtoms, LIG_SAS_CUTOFF)
         int n_ligSasPointsCovered = allLigLabeledPoints.findAll { ((LabeledPoint) it).predicted }.size()  // only for P2Rank
-        double _ligSasPointsScoreSum = allLigLabeledPoints.collect { LabeledPoint it -> it.score }.sum(0)
+        double _ligSasPointsScoreSum = allLigLabeledPoints.collect { ((LabeledPoint) it).score }.sum(0) as double
         //log.debug "XXXX n_ligSasPoints: $n_ligSasPoints covered: $n_ligSasPointsCovered"
 
         // Conservation stats
-        def (ConservationScore score, List<Double> bindingScrs, List<Double> nonBindingScrs) = calcConservationStats(protein, protRow)
+        List conservationResult = calcConservationStats(protein, protRow)
+        ConservationScore score = (ConservationScore) conservationResult[0]
+        List<Double> bindingScrs = (List<Double>) conservationResult[1]
+        List<Double> nonBindingScrs = (List<Double>) conservationResult[2]
 
         for (Ligand lig : ligands.relevantLigands) {
             LigRow row = new LigRow()
@@ -197,7 +199,7 @@ class Evaluation implements Parametrized {
             Atoms contactAtomSet = protein.proteinAtoms.cutoutShell(lig.atoms, params.ligand_protein_contact_distance)
             row.contactAtoms = contactAtomSet.count
             row.residues = protein.residues.getDistinctForAtoms(contactAtomSet).size()
-            row.atomIds = (lig.atoms*.PDBserial).toSorted()
+            row.atomIds = (lig.atoms*.PDBserial).toSorted() as List<Integer>
 
             Atom centroid = lig.centroid
             row.centerX = centroid.x
@@ -256,18 +258,31 @@ class Evaluation implements Parametrized {
             prow.combinedRank = combiSorted.indexOf(prow) + 1
         }
 
+
+        List<ResidueRow> tmpResidueRows = emptyList()
+
         ResidueLabelings rlabs = pair.prediction.residueLabelings
         if (rlabs != null) {
+            tmpResidueRows = new ArrayList<>(protein.residues.size())
             for (Residue res : protein.residues) {
                 double resScore = rlabs.scoreLabeling.getLabel(res)
                 Boolean resLabel = rlabs.observed?.getLabel(res)
 
-                ResidueRow rrow = new ResidueRow()
-                rrow.score = resScore
-                rrow.observed = resLabel
+                ResidueRow rrow = new ResidueRow(resScore, resLabel)
 
-                residueRows.add(rrow)
+                tmpResidueRows.add(rrow)
             }
+        }
+
+
+        // synchronized by lists
+        proteinRows.add(protRow)
+        ligandRows.addAll(tmpLigRows)
+        pocketRows.addAll(tmpPockets)
+        residueRows.addAll(tmpResidueRows)
+        if (!protein.params.log_scores_to_file.isEmpty()) {
+            bindingScores.addAll(bindingScrs)
+            nonBindingScores.addAll(nonBindingScrs)
         }
 
         synchronized (this) {
@@ -277,17 +292,9 @@ class Evaluation implements Parametrized {
             distantLigandCount += ligands.distantLigandCount
             pocketCount += tmpPockets.size()
             proteinCount += 1
-            proteinRows.add(protRow)
-            ligandRows.addAll(tmpLigRows)
-            pocketRows.addAll(tmpPockets)
             ligSASPointsCount += n_ligSasPoints
             ligSASPointsCoveredCount += n_ligSasPointsCovered
             ligSASPointsScoreSum += _ligSasPointsScoreSum
-
-            if (!protein.params.log_scores_to_file.isEmpty()) {
-                bindingScores.addAll(bindingScrs)
-                nonBindingScores.addAll(nonBindingScrs)
-            }
         }
     }
 
@@ -330,7 +337,6 @@ class Evaluation implements Parametrized {
         protRow.distantLigNames = ""
         protRow.sasPoints = pair.prediction.protein.accessibleSurface.points.count
         // TODO: coverage stats (ligandCoverageN0, surfOverlapN0, etc.) not yet implemented for site-based evaluation
-
         // TODO: residueRows not populated for site-based evaluation (no ResidueLabelings handling)
 
         // Per-site LigRows
@@ -430,6 +436,7 @@ class Evaluation implements Parametrized {
         }
     }
 
+    @CompileDynamic
     private List calcConservationStats(Protein protein, ProteinRow protRow) {
         ConservationScore score = protein.conservationScore
         List<Double> bindingScrs = new ArrayList<>()
@@ -698,59 +705,48 @@ class Evaluation implements Parametrized {
         div pocketCount, proteinCount
     }
 
-    @CompileDynamic
     double getAvgLigandAtoms() {
-        div ligandRows.collect {it.atoms}.sum(0), ligandCount
+        div ligandRows.collect {it.atoms}.sum(0) as double, ligandCount
     }
 
-    @CompileDynamic
     double getAvgPocketVolume() {
-        div pocketRows.collect { it.pocketVolume }.sum(0), pocketCount
+        div pocketRows.collect { it.pocketVolume }.sum(0) as double, pocketCount
     }
 
-    @CompileDynamic
     double getAvgPocketVolumeTruePockets() {
         avg pocketRows.findAll { it.truePocket }, { PocketRow it -> it.pocketVolume }
     }
 
-    @CompileDynamic
     double getAvgPocketSurfAtoms() {
-        div pocketRows.collect { it.surfaceAtomCount }.sum(0), pocketCount
+        div pocketRows.collect { it.surfaceAtomCount }.sum(0) as double, pocketCount
     }
 
-    @CompileDynamic
     double getAvgPocketSurfAtomsTruePockets() {
-        avg pocketRows.findAll { it.truePocket }, { PocketRow it -> it.surfaceAtomCount }
+        avg pocketRows.findAll { it.truePocket }, { PocketRow it -> (double) it.surfaceAtomCount }
     }
 
-    @CompileDynamic
     double getAvgPocketInnerPoints() {
-        div pocketRows.collect { it.auxInfo.samplePoints }.sum(0), pocketCount
+        div pocketRows.collect { it.auxInfo.samplePoints }.sum(0) as double, pocketCount
     }
 
-    @CompileDynamic
     double getAvgPocketInnerPointsTruePockets() {
-        avg pocketRows.findAll { it.truePocket }, { PocketRow it -> it.auxInfo.samplePoints }
+        avg pocketRows.findAll { it.truePocket }, { PocketRow it -> (double) it.auxInfo.samplePoints }
     }
 
-    @CompileDynamic
     double getAvgProteinAtoms() {
-        div proteinRows.collect { it.protAtoms }.sum(0), proteinCount
+        div proteinRows.collect { it.protAtoms }.sum(0) as double, proteinCount
     }
 
-    @CompileDynamic
     double getAvgExposedAtoms() {
-        div proteinRows.collect { it.exposedAtoms }.sum(0), proteinCount
+        div proteinRows.collect { it.exposedAtoms }.sum(0) as double, proteinCount
     }
 
-    @CompileDynamic
-    double getAvgProteinConollyPoints() {
-        avg proteinRows, {ProteinRow it -> it.sasPoints }
+    double getAvgProteinSasPoints() {
+        avg proteinRows, { ProteinRow it -> (double) it.sasPoints }
     }
 
-    @CompileDynamic
     double getAvgLigCenterToProtDist() {
-        avg ligandRows, {LigRow it -> it.centerToProtDist}
+        avg ligandRows, { LigRow it -> it.centerToProtDist }
     }
 
     double getLigandCoverage() {
@@ -761,7 +757,6 @@ class Evaluation implements Parametrized {
         div ligSASPointsScoreSum, ligSASPointsCount
     }
 
-    @CompileDynamic
     double getAvgClosestPocketDist() {
         avg ligandRows, { LigRow row -> row.closestPocketDist }
     }
@@ -782,7 +777,7 @@ class Evaluation implements Parametrized {
         m.AVG_LIGAND_ATOMS = avgLigandAtoms
         m.AVG_PROT_ATOMS =  avgProteinAtoms
         m.AVG_PROT_EXPOSED_ATOMS = avgExposedAtoms
-        m.AVG_PROT_SAS_POINTS =  avgProteinConollyPoints
+        m.AVG_PROT_SAS_POINTS =  avgProteinSasPoints
         m.AVG_PROT_CONSERVATION = avg(proteinRows, {it -> it.avgConservation})
         m.AVG_PROT_BINDING_CONSERVATION = avg(proteinRows, {it -> it.avgBindingConservation})
         m.AVG_PROT_NON_BINDING_CONSERVATION = avg(proteinRows, {it -> it.avgNonBindingConservation})
@@ -965,6 +960,7 @@ class Evaluation implements Parametrized {
                 new DSWO("DSWO_0.1", 0.1d, REQUIRED_POCKET_COVERAGE),
 
         ] as List<PocketCriterion>
+
         //        ((1..6).collect { new DPA(it) }) +
         //        ((1..6).collect { new DSA(it) }) +
     }
@@ -1218,6 +1214,11 @@ class Evaluation implements Parametrized {
     static class ResidueRow {
         double score
         Boolean observed
+
+        ResidueRow(double score, Boolean observed) {
+            this.score = score
+            this.observed = observed
+        }
     }
 
 }
