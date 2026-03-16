@@ -22,25 +22,11 @@ class MethylEnergyFeature extends SasFeatureCalculator implements Parametrized {
     // Immutable calculator instance
     private LJEnergyCalculator calculator
 
-    MethylEnergyFeature() {
-        // TODO re-init with new params before each run
-        initializeCalculator()
-    }
-
-//    /**
-//     * Initialize the feature with the energy calculator
-//     */
-//    @Override
-//    void preProcessProtein(Protein protein, ProcessedItemContext itemContext) {
-//        initializeCalculator()
-//    }
-
-
-
     /**
-     * Initialize the energy calculator with current parameters
+     * Initialize the energy calculator with current parameters (lazy, called on first use per protein).
      */
-    private void initializeCalculator() {
+    private void ensureCalculatorInitialized() {
+        if (calculator != null) return
         calculator = new LJEnergyCalculator(
             params.energy_probe_sigma,
             params.energy_probe_epsilon,
@@ -63,8 +49,8 @@ class MethylEnergyFeature extends SasFeatureCalculator implements Parametrized {
      */
     @Override
     double[] calculateForSasPoint(Atom sasPoint, SasFeatureCalculationContext context) {
+            ensureCalculatorInitialized()
 
-//        try {
             // Get neighbor atoms around the SAS point
             //Atoms neighbourAtoms = context.extractor.deepLayer.cutoutSphere(sasPoint, params.energy_rc)
             Atoms neighbourAtoms = context.neighbourhoodAtoms

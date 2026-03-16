@@ -27,13 +27,8 @@ import static cz.siret.prank.utils.MathUtils.nanToZero
 @CompileStatic
 abstract class AbstractProbeEnergyFeature extends SasFeatureCalculator implements Parametrized {
 
-    // Immutable calculator instance
     protected EnergyCalculator calculator
     protected EnergyCalculatorConfig config
-
-    AbstractProbeEnergyFeature() {
-        initializeCalculator()
-    }
 
     /**
      * Get the probe type that this feature calculates
@@ -46,7 +41,8 @@ abstract class AbstractProbeEnergyFeature extends SasFeatureCalculator implement
     abstract String getSecondaryDataKey()
 
     /**
-     * Initialize the energy calculator with current parameters and specific probe selection
+     * Initialize the energy calculator with current parameters and specific probe selection.
+     * Called lazily from preProcessProtein before first use.
      */
     protected void initializeCalculator() {
         // Create config with only the specific probe type selected

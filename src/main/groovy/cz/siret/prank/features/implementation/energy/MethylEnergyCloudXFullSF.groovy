@@ -29,14 +29,6 @@ class MethylEnergyCloudXFullSF extends SasFeatureCalculator implements Parametri
     // Immutable calculator instance
     private LJEnergyCalculator calculator
 
-    MethylEnergyCloudXFullSF() {
-        // TODO re-init with new params before each run
-        initializeCalculator()
-    }
-
-    /**
-     * Initialize the feature with the energy calculator
-     */
     @Override
     void preProcessProtein(Protein protein, ProcessedItemContext itemContext) {
         initializeCalculator()
