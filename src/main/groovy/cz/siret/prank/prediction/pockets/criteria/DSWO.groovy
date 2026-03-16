@@ -6,14 +6,11 @@ import cz.siret.prank.program.routines.results.EvalContext
 import groovy.transform.CompileStatic
 
 /**
- * discretized surface weighted overlap
+ * Discretized surface weighted overlap.
  *
- * given thresholds from <0,1>
- *
- * pocket is correctly predicted iff:
- *  at least ligandCoverageThreshold of the ligand is covered by the pocket and
- *  at least pocketCoverageThreshold of the pocket is covered by the ligand
- *
+ * Pocket is correctly predicted iff:
+ *  at least ligandCoverageThreshold of the ligand SAS points are covered by the pocket, and
+ *  at least pocketCoverageThreshold of the pocket SAS points are covered by the ligand.
  */
 @CompileStatic
 class DSWO extends PocketCriterion {
@@ -29,21 +26,18 @@ class DSWO extends PocketCriterion {
 
     @Override
     boolean isIdentified(BindingSite site, Pocket pocket, EvalContext context) {
-        if (pocket.sasPoints == null) { // pocket does not define sas points
+        if (pocket.sasPoints == null) {
             return false
         }
 
-        def sets = DSO.getUnionAndIntersection(site, pocket, context)
-        int inter = sets.second.count
+        DSO.OverlapCounts counts = DSO.getOverlapCounts(site, pocket, context)
 
-        if (inter==0)
+        if (counts.intersectionCount == 0) {
             return false
+        }
 
-        int nlig = site.sasPoints.count
-        int npoc = pocket.sasPoints.count
-
-        double ligCov = inter / nlig
-        double pocCov = inter / npoc
+        double ligCov = (double) counts.intersectionCount / site.sasPoints.count
+        double pocCov = (double) counts.intersectionCount / pocket.sasPoints.count
 
         return (ligCov >= ligandCoverageThreshold) && (pocCov >= pocketCoverageThreshold)
     }

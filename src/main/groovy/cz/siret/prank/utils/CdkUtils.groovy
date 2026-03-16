@@ -48,7 +48,7 @@ class CdkUtils {
         IAtom[] cdkAtoms = new IAtom[atoms.count]
 
         int i = 0
-        for (Atom a in atoms) {
+        for (Atom a : atoms) {
             cdkAtoms[i] = bioJavaToCDKAtom(a)
             i++
         }
@@ -59,15 +59,12 @@ class CdkUtils {
     }
 
     static Point toAtomPoint(Point3d pt) {
-        double[] coords = new double[3]
-        pt.get(coords)
-        Point res = new Point(coords)
-        return res
+        return new Point(pt.x, pt.y, pt.z)
     }
 
     static Atoms toAtomPoints(Point3d[] pts) {
         List<Atom> res = new ArrayList<Atom>(pts.length)
-        for (Point3d pt in pts) {
+        for (Point3d pt : pts) {
             res.add(toAtomPoint(pt))
         }
         return new Atoms(res)
