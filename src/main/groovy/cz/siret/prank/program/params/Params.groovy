@@ -1612,6 +1612,13 @@ class Params {
     @RuntimeParam
     boolean fpocket_keep_output = true
 
+    /**
+     * Run fpocket ad-hoc before rescoring/evaluation (in 'rescore' and 'eval-rescore' commands).
+     * When true, fpocket is executed for each protein and its results are used as input pockets.
+     */
+    @RuntimeParam
+    boolean run_fpocket_ad_hoc = false
+
 
     /**
      * accepted values: "sas_pts_getcleft_pdb", "grid_pts_getcleft_pdb"

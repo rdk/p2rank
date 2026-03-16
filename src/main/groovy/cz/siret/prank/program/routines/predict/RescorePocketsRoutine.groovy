@@ -11,7 +11,7 @@ import cz.siret.prank.prediction.pockets.results.RescoringSummary
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.routines.Routine
-import cz.siret.prank.program.routines.predict.external.FpocketRunner
+import cz.siret.prank.program.routines.predict.external.FpocketAdHocHelper
 import cz.siret.prank.program.routines.predict.output.PointsExporter
 import cz.siret.prank.program.visualization.PredictionVisualizer
 import cz.siret.prank.utils.Futils
@@ -46,9 +46,7 @@ class RescorePocketsRoutine extends Routine {
 
     private void checkDataset() {
         if (runFpocketAdHoc) {
-            if (dataset.hasPredictionColumn()) {
-                log.info "Dataset $dataset.name already contains prediction column; it will be ignored since ad-hoc fpocket prediction was requested."
-            }
+            // prediction column not required — fpocket will generate predictions
         } else {
             if (!(dataset.hasProteinColumn() && dataset.hasPredictionColumn())) {
                 throw new PrankException("Dataset must contain '${Dataset.COLUMN_PROTEIN}' and '${Dataset.COLUMN_PREDICTION}' columns!")
@@ -74,7 +72,7 @@ class RescorePocketsRoutine extends Routine {
         }
 
         if (runFpocketAdHoc) {
-            dataset.attributes.put(Dataset.PARAM_PREDICTION_METHOD, 'fpocket')
+            FpocketAdHocHelper.prepareDataset(dataset)
         }
         String fpocketOutBaseDir = "$outdir/fpocket"
         String fpocketTmpDir = "$outdir/tmp_fpocket_runs"
@@ -86,7 +84,7 @@ class RescorePocketsRoutine extends Routine {
 
             String fpocketOutDir
             if (runFpocketAdHoc) {
-                fpocketOutDir = adHocRunFpocketForItem(item, fpocketOutBaseDir, fpocketTmpDir)
+                fpocketOutDir = FpocketAdHocHelper.runForItem(item, fpocketOutBaseDir, fpocketTmpDir)
             }
 
             PredictionPair pair = item.predictionPair
@@ -108,7 +106,9 @@ class RescorePocketsRoutine extends Routine {
             log.info "\n\nRescored pockets for [$item.label]: \n\n" + rsum.toTable() + "\n"
         }
 
-        cleanAfterFpocket(fpocketOutBaseDir, fpocketTmpDir)
+        if (runFpocketAdHoc) {
+            FpocketAdHocHelper.cleanup(fpocketOutBaseDir, fpocketTmpDir, params.fpocket_keep_output)
+        }
 
         write "rescoring finished in $timer.formatted"
         write "results saved to directory [${Futils.absPath(outdir)}]"
@@ -125,13 +125,6 @@ class RescorePocketsRoutine extends Routine {
                 PredictionSummary psum = new PredictionSummary(pair.prediction)
                 writeFile "$outdir/${item.label}_predictions.csv", psum.toCSV()
 
-                // residues can't be always calculated when rescoring since we don't cover all the surface with SAS points
-                //
-                //if (params.label_residues && pair.prediction.residueLabelings != null) {
-                //    String resf = "$predDir/${item.label}_residues.csv"
-                //    writeFile(resf, pair.prediction.residueLabelings.toCSV())
-                //}
-
                 // Export SAS points with feature vectors and scores (pocket points only in rescore mode)
                 PointsExporter.tryExportPoints(rescorer.exportData, outdir, item.label)
             }
@@ -140,50 +133,6 @@ class RescorePocketsRoutine extends Routine {
                 new PredictionVisualizer(outdir).generateVisualizations(item, rescorer, pair)
             }
         }
-    }
-
-    private void cleanAfterFpocket(String fpocketOutBaseDir, String fpocketTmpDir) {
-        if (runFpocketAdHoc) {
-            if (!params.fpocket_keep_output) {
-                Futils.delete(fpocketOutBaseDir)
-            }
-            if (Futils.isDirEmpty(fpocketTmpDir)) {  // if not empty keep to debug failed runs
-                try {
-                    Futils.delete(fpocketTmpDir)
-                } catch (Exception e) {
-                    log.warn "Failed to delete tmp fpocket directory [$fpocketTmpDir]: ${e.message}"
-                }
-            }
-        }
-    }
-
-    private String adHocRunFpocketForItem(Dataset.Item item, String fpocketOutBaseDir, String tmpDir) {
-        log.info "Running Fpocket ad-hoc for item [${item.label}]"
-        try {
-            item.columnValues.put(Dataset.COLUMN_PREDICTION, '') // reset in case fpocket run fails
-
-            String structFileName = Futils.shortName(item.proteinFile)
-            String fpocketOutDir = "$fpocketOutBaseDir/${structFileName}_out"
-            String fpocketPredFile = "$fpocketOutDir/${fpocketPredictionFileName(structFileName)}"
-
-            FpocketRunner.runFpocket(item.proteinFile, fpocketOutDir, tmpDir)
-
-            log.info "Fpocket run finished successfully for [$structFileName] - output in [$fpocketOutDir] (${Futils.shortName(fpocketPredFile)})"
-
-            item.setPocketPredictionFile(fpocketPredFile)
-
-            return fpocketOutDir
-
-        } catch (Exception e) {
-            throw new PrankException("Fpocket run failed for ${item.label}: ${e.message}", e)
-        }
-    }
-
-    private static String fpocketPredictionFileName(String structFileName) {
-        structFileName = Futils.shortName(structFileName)
-        String structBaseName = Futils.baseName(structFileName)
-        String structExtension = Futils.realExtension(structFileName) // aaaa.pdb.gz -> pdb
-        return "${structBaseName}_out.${structExtension}"
     }
 
 }

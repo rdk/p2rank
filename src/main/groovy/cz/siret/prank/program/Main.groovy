@@ -331,7 +331,8 @@ class Main implements Parametrized, Writable {
         Dataset.Result result = new RescorePocketsRoutine(
                 dataset,
                 findModel(),
-                outdir).execute()
+                outdir,
+                params.run_fpocket_ad_hoc).execute()
 
         finalizeDatasetResult(result, outdir)
     }
@@ -360,7 +361,8 @@ class Main implements Parametrized, Writable {
         new EvalPocketsRoutine(
                 dataset,
                 Model.load(findModel()),
-                outdir).execute()
+                outdir,
+                params.run_fpocket_ad_hoc).execute()
 
     }
 

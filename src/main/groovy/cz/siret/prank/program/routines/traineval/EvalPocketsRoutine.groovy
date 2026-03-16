@@ -6,6 +6,7 @@ import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.prediction.pockets.rescorers.*
 import cz.siret.prank.program.ml.Model
+import cz.siret.prank.program.routines.predict.external.FpocketAdHocHelper
 import cz.siret.prank.program.routines.results.EvalResults
 import cz.siret.prank.program.routines.results.PredictResults
 import cz.siret.prank.program.visualization.PredictionVisualizer
@@ -27,12 +28,14 @@ class EvalPocketsRoutine extends EvalRoutine {
 
     Dataset dataset
     Model model
+    boolean runFpocketAdHoc
     private EvalResults results
 
-    EvalPocketsRoutine(Dataset dataSet, Model model, String outdir) {
+    EvalPocketsRoutine(Dataset dataSet, Model model, String outdir, boolean runFpocketAdHoc = false) {
         super(outdir)
         this.dataset = dataSet
         this.model = model
+        this.runFpocketAdHoc = runFpocketAdHoc
     }
 
     EvalResults getResults() {
@@ -82,10 +85,21 @@ class EvalPocketsRoutine extends EvalRoutine {
             mkdirs(orig_pockets_dir)
         }
 
+        if (runFpocketAdHoc) {
+            FpocketAdHocHelper.prepareDataset(dataset)
+        }
+        String fpocketOutBaseDir = "$outdir/fpocket"
+        String fpocketTmpDir = "$outdir/tmp_fpocket_runs"
+
         results = new EvalResults(1)
         final FeatureExtractor extractor = FeatureExtractor.createFactory()
 
         results.datasetResult = dataset.processItems { Dataset.Item item ->
+
+            String fpocketOutDir
+            if (runFpocketAdHoc) {
+                fpocketOutDir = FpocketAdHocHelper.runForItem(item, fpocketOutBaseDir, fpocketTmpDir)
+            }
 
             PredictionPair pair = item.predictionPair
             PocketRescorer rescorer = createRescorer(pair, extractor)
@@ -109,9 +123,17 @@ class EvalPocketsRoutine extends EvalRoutine {
                 }
             }
 
+            if (runFpocketAdHoc && !params.fpocket_keep_output) {
+                Futils.delete(fpocketOutDir)
+            }
+
             if (!dataset.cached) {
                 item.cachedPair = null
             }
+        }
+
+        if (runFpocketAdHoc) {
+            FpocketAdHocHelper.cleanup(fpocketOutBaseDir, fpocketTmpDir, params.fpocket_keep_output)
         }
 
         if (params.train_score_transformers != null) {
