@@ -346,8 +346,15 @@ class AnalyzeRoutine extends Routine {
     /**
      * Analyzes binding site centers by computing each valid SiteCenterMethod for every site
      * and reporting distances between methods, to SAS surface, and to protein atoms.
+     *
+     * Produces:
+     *  - binding_site_centers.csv — all results in one table
+     *  - binding_site_centers_{method}.csv — per-method tables
+     *  - binding_site_centers_summary.txt — overall + per-method distance statistics
      */
     void cmdBindingSiteCenters() {
+        List<String> distColumns = ["dist_to_atom_com", "dist_to_sas", "dist_to_protein"]
+
         DataTable dt = new DataTable("protein",
                 "site_label", "site_type", "method",
                 "center_x", "center_y", "center_z",
@@ -382,7 +389,6 @@ class AnalyzeRoutine extends Routine {
                 boolean isLigand = site instanceof Ligand
                 String siteType = isLigand ? "ligand" : "explicit"
 
-                // Compute baseline center (atoms_center_of_mass)
                 Atom baselineCenter = site.getCenterForMethod(SiteCenterMethod.atoms_center_of_mass)
 
                 for (SiteCenterMethod method : SiteCenterMethod.values()) {
@@ -412,6 +418,13 @@ class AnalyzeRoutine extends Routine {
 
         writeFile "$outdir/binding_site_centers.csv", dt.toCsv()
 
+        // Write per-method CSVs
+        for (String method : dt.distinctValues("method")) {
+            DataTable methodDt = dt.filter("method", method)
+            writeFile "$outdir/binding_site_centers_${method}.csv", methodDt.toCsv()
+        }
+
+        // Build text summary
         Map<String, Object> extraInfo = new LinkedHashMap<>()
         int noSiteCount = itemsWithoutSites.size()
         if (hasExplicitSites) {
@@ -429,6 +442,8 @@ class AnalyzeRoutine extends Routine {
 
         Set<String> noSummary = ["center_x", "center_y", "center_z"] as Set
         String summary = dt.formatSummaryTable("Binding Site Centers Summary", extraInfo, noSummary)
+        summary += dt.formatGroupedSummaryTable("method", distColumns, "Distance Statistics by Center Method")
+
         write summary
         writeFile "$outdir/binding_site_centers_summary.txt", summary
 

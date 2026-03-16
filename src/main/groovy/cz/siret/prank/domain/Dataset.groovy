@@ -295,8 +295,11 @@ class Dataset implements Parametrized, Writable, Failable {
     private LoaderParams getLoaderParams(Item item) {
         LoaderParams lp = new LoaderParams()
         lp.ligandsSeparatedByTER = (attributes.get(PARAM_LIGANDS_SEPARATED_BY_TER) == "true")  // for chen11 dataset
-        if (attributes.get(PARAM_LOAD_LIGANDS_FROM_SEPARATE_FILES) == "true") {
-            lp.loadLigandsFromSeparateFiles = true
+
+        if (attributes.containsKey(PARAM_LOAD_LIGANDS_FROM_SEPARATE_FILES)) {
+            boolean loadSeparate = (attributes.get(PARAM_LOAD_LIGANDS_FROM_SEPARATE_FILES) == "true")
+            lp.loadLigandsFromSeparateFiles = loadSeparate
+            log.info "dataset parameter overrie: '$PARAM_LOAD_LIGANDS_FROM_SEPARATE_FILES' = '$loadSeparate'"
         }
         lp.relevantLigandsDefined = hasExplicitlyDefinedLigands()
         lp.relevantLigandDefinitions = item.getLigandDefinitions()

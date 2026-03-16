@@ -186,6 +186,106 @@ class DataTable {
         return table.toString()
     }
 
+    /**
+     * Returns distinct values of a string column, in insertion order.
+     */
+    List<String> distinctValues(String column) {
+        int idx = resolveIndex(column)
+        Set<String> seen = new LinkedHashSet<>()
+        for (Row row : getRows()) {
+            Object val = row.values[idx]
+            if (val != null) seen.add(val.toString())
+        }
+        return new ArrayList<>(seen)
+    }
+
+    /**
+     * Returns a new DataTable containing only rows where the given column equals the given value.
+     * The new table has the same columns (excluding the filter column).
+     */
+    DataTable filter(String filterColumn, String filterValue) {
+        int filterIdx = resolveIndex(filterColumn)
+        // Build new table without the filter column
+        List<String> newCols = new ArrayList<>()
+        for (String col : columns) {
+            if (col != filterColumn) newCols.add(col)
+        }
+        DataTable result = new DataTable(labelColumn, newCols as String[])
+        for (Row row : getRows()) {
+            Object val = row.values[filterIdx]
+            if (val != null && val.toString() == filterValue) {
+                Row newRow = result.newRow(row.label)
+                for (String col : newCols) {
+                    Object v = row.values[resolveIndex(col)]
+                    if (v instanceof Integer) newRow.put(col, (int) v)
+                    else if (v instanceof Long) newRow.put(col, (long) v)
+                    else if (v instanceof Double) newRow.put(col, (double) v)
+                    else if (v instanceof String) newRow.put(col, (String) v)
+                    else if (v instanceof Number) newRow.put(col, ((Number) v).doubleValue())
+                }
+            }
+        }
+        return result
+    }
+
+    /**
+     * Produces a summary table with stats (count, min, max, avg, median) for selected numeric columns,
+     * broken down by the values in the given groupBy column.
+     */
+    String formatGroupedSummaryTable(String groupByColumn, List<String> statColumns, String title = "Grouped Summary") {
+        int groupIdx = resolveIndex(groupByColumn)
+        List<Integer> statIndices = statColumns.collect { resolveIndex(it) }
+
+        // Group rows by the groupBy column value (preserving insertion order)
+        Map<String, List<Row>> groups = new LinkedHashMap<>()
+        for (Row row : getRows()) {
+            String key = row.values[groupIdx]?.toString() ?: ""
+            groups.computeIfAbsent(key, { new ArrayList<>() }).add(row)
+        }
+
+        StringBuilder table = new StringBuilder()
+        table << "\n"
+        table << "=== $title ===\n"
+
+        for (Map.Entry<String, List<Row>> entry : groups.entrySet()) {
+            String groupName = entry.key
+            List<Row> groupRows = entry.value
+
+            table << "\n"
+            table << "  $groupByColumn = $groupName  (n=${groupRows.size()})\n"
+            table << String.format("  %-22s %10s %10s %10s %10s\n", "column", "min", "max", "avg", "median")
+            table << "  " << "-" * 65 << "\n"
+
+            for (int ci : statIndices) {
+                List<Double> vals = new ArrayList<>()
+                for (Row row : groupRows) {
+                    Object val = row.values[ci]
+                    if (val instanceof Number) {
+                        double d = ((Number) val).doubleValue()
+                        if (!Double.isNaN(d)) {
+                            vals.add(d)
+                        }
+                    }
+                }
+                if (vals.isEmpty()) continue
+                vals.sort()
+
+                double min = vals.first()
+                double max = vals.last()
+                double sum = 0d
+                for (double v : vals) { sum += v }
+                double avg = sum / vals.size()
+                double median = computeMedian(vals)
+
+                table << String.format("  %-22s %10s %10s %10s %10s\n",
+                        columns[ci], format(min, 3), format(max, 3), format(avg, 3), format(median, 3))
+            }
+        }
+
+        table << "\n"
+        return table.toString()
+    }
+
     private boolean isIntegerColumn(int colIndex) {
         for (Row row : getRows()) {
             Object v = row.values[colIndex]

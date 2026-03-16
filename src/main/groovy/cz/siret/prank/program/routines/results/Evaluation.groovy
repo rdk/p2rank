@@ -760,16 +760,17 @@ class Evaluation implements Parametrized {
         m.DCA_4_10 = calcSuccessRate("DCA_4", 10)
         m.DCA_4_99 = calcSuccessRate("DCA_4", 99)
 
-        m.DCA_4_0_NOMINAL = (double)m.DCA_4_0 * (long)m.LIGANDS
-        m.DCA_4_1_NOMINAL = (double)m.DCA_4_1 * (long)m.LIGANDS
-        m.DCA_4_2_NOMINAL = (double)m.DCA_4_2 * (long)m.LIGANDS
-        m.DCA_4_4_NOMINAL = (double)m.DCA_4_4 * (long)m.LIGANDS
-        m.DCA_4_10_NOMINAL = (double)m.DCA_4_10 * (long)m.LIGANDS
+        m.DCA_4_0_NOMINAL =  (long)((double)m.DCA_4_0  * (long)m.LIGANDS)
+        m.DCA_4_1_NOMINAL =  (long)((double)m.DCA_4_1  * (long)m.LIGANDS)
+        m.DCA_4_2_NOMINAL =  (long)((double)m.DCA_4_2  * (long)m.LIGANDS)
+        m.DCA_4_4_NOMINAL =  (long)((double)m.DCA_4_4  * (long)m.LIGANDS)
+        m.DCA_4_10_NOMINAL = (long)((double)m.DCA_4_10 * (long)m.LIGANDS)
 
         m.DCA_4_0_PC = calcSuccessRateProteinCentric("DCA_4", 0)
         m.DCA_4_2_PC = calcSuccessRateProteinCentric("DCA_4", 2)
 
-        // for indexes see cz.siret.prank.program.routines.results.Evaluation.getDefaultEvalCriteria
+        m.DCC_4_0 = calcSuccessRate("DCC_4",0)
+        m.DCC_4_2 = calcSuccessRate("DCC_4",2)
         m.DCC_5_0 = calcSuccessRate("DCC_5",0)
         m.DCC_5_2 = calcSuccessRate("DCC_5",2)
         m.DCC_10_0 = calcSuccessRate("DCC_10",0)
@@ -814,7 +815,7 @@ class Evaluation implements Parametrized {
         m.DSO_02_T5 = calcSuccessRateTopN("DSO_0.2",5)
         m.DSO_02_T7 = calcSuccessRateTopN("DSO_0.2",7)
 
-        m.OPT1 = 100*(double)m.DCA_4_0a + 100*(double)m.DCA_4_2 + 50*(double)m.DCA_4_4 + 10*(double)m.AVG_LIGCOV_SUCC + 5*(double)m.AVG_DSO_SUCC
+        m.OPT1 = 100*(double)m.DCA_4_0 + 100*(double)m.DCA_4_2 + 50*(double)m.DCA_4_4 + 10*(double)m.AVG_LIGCOV_SUCC + 5*(double)m.AVG_DSO_SUCC
         m.OPT2 = 100*(double)m.DCA_4_0_PC + 50*(double)m.DCA_4_2_PC + 5*(double)m.AVG_LIGCOV_SUCC + 3*(double)m.AVG_DSO_SUCC
 
         writeScoresToFileIfRequested()
