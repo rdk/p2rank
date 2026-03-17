@@ -5,6 +5,8 @@ import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.features.FeatureExtractor
 import cz.siret.prank.prediction.pockets.rescorers.*
+import cz.siret.prank.prediction.pockets.results.PredictionSummary
+import cz.siret.prank.prediction.pockets.results.RescoringSummary
 import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.routines.predict.external.FpocketAdHocHelper
 import cz.siret.prank.program.routines.results.EvalResults
@@ -17,6 +19,7 @@ import groovy.util.logging.Slf4j
 import static cz.siret.prank.program.routines.predict.PredictPocketsRoutine.trainPocketScoreTransformers
 import static cz.siret.prank.utils.ATimer.startTimer
 import static cz.siret.prank.utils.Futils.mkdirs
+import static cz.siret.prank.utils.Futils.writeFile
 
 /**
  * Evaluate a model on a dataset.
@@ -85,6 +88,11 @@ class EvalPocketsRoutine extends EvalRoutine {
             mkdirs(orig_pockets_dir)
         }
 
+        String predictionsDir = "$outdir/predictions"
+        if (params.eval_output_prediction_files) {
+            mkdirs(predictionsDir)
+        }
+
         if (runFpocketAdHoc) {
             FpocketAdHocHelper.prepareDataset(dataset)
         }
@@ -107,6 +115,16 @@ class EvalPocketsRoutine extends EvalRoutine {
 
             if (params.visualizations) {
                 new PredictionVisualizer(outdir).generateVisualizations(item, (ModelBasedRescorer)rescorer, pair)
+            }
+
+            if (params.eval_output_prediction_files) {
+                PredictionSummary psum = new PredictionSummary(pair.prediction)
+                writeFile "$predictionsDir/${item.label}_predictions.csv", psum.toCSV()
+
+                if (!params.predictions) { // rescore mode
+                    RescoringSummary rsum = new RescoringSummary(pair.prediction)
+                    writeFile "$predictionsDir/${item.label}_rescored.csv", rsum.toCSV()
+                }
             }
 
             if (params.predictions) {

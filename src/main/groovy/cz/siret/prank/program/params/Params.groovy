@@ -1131,8 +1131,14 @@ class Params {
     /**
      * don't produce prediction files for individual proteins (useful for long repetitive experiments)
      */
-    @RuntimeParam 
+    @RuntimeParam
     boolean output_only_stats = false
+
+    /**
+     * produce prediction files for individual proteins in eval commands
+     */
+    @RuntimeParam
+    boolean eval_output_prediction_files = false
 
     /**
      * compress results of individual ploop runs
