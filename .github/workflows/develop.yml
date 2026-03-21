@@ -20,7 +20,7 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest, windows-latest, macos-latest ]
-        java-version: [ '17', '21', '23', '24', '25' ]
+        java-version: [ '17', '21', '25', '26' ]
 
     steps:
     - uses: actions/checkout@v5
