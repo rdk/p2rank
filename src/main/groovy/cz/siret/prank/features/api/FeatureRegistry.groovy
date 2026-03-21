@@ -172,6 +172,9 @@ class FeatureRegistry {
 
 
 
+        register new HybridizationFeature()
+        register new AtomicToSasFeatWrapper(new HybridizationFeature())
+
         // Register new feature implementations here
 
     }
