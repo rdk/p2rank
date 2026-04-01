@@ -11,6 +11,8 @@ import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 import org.biojava.nbio.structure.ResidueNumber
 
+import javax.annotation.Nullable
+
 /**
  * Index of explicit site definitions loaded from an external CSV file.
  * Keyed by filename for O(1) lookup per protein.
@@ -28,15 +30,18 @@ class ExplicitSitesIndex {
         double centerX
         double centerY
         double centerZ
+        @Nullable AhojSiteInfo ahojSiteInfo
 
         SiteDef(String siteId, String filename, List<String> residueIds,
-                double centerX, double centerY, double centerZ) {
+                double centerX, double centerY, double centerZ,
+                @Nullable AhojSiteInfo ahojSiteInfo = null) {
             this.siteId = siteId
             this.filename = filename
             this.residueIds = residueIds
             this.centerX = centerX
             this.centerY = centerY
             this.centerZ = centerZ
+            this.ahojSiteInfo = ahojSiteInfo
         }
     }
 
@@ -76,7 +81,11 @@ class ExplicitSitesIndex {
                 continue
             }
             Atom centroid = Point.of(sd.centerX, sd.centerY, sd.centerZ)
-            sites.add(new ResidueSite(sd.siteId, centroid, residues, protein))
+            ResidueSite rs = new ResidueSite(sd.siteId, centroid, residues, protein)
+            if (sd.ahojSiteInfo != null) {
+                rs.secondaryData.put(ResidueSite.KEY_AHOJ_SITE_INFO, sd.ahojSiteInfo)
+            }
+            sites.add(rs)
         }
         return sites
     }

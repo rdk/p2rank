@@ -15,11 +15,17 @@ import org.biojava.nbio.structure.Atom
 @CompileStatic
 class ResidueSite implements BindingSite, Parametrized {
 
+    /** Key for storing {@link cz.siret.prank.domain.loaders.AhojSiteInfo} in {@link #secondaryData} */
+    static final String KEY_AHOJ_SITE_INFO = "ahoj_site_info"
+
     String name
     /** Centroid explicitly defined in the input site definition */
     Atom explicitCenter
     List<Residue> residues
     Protein protein
+
+    /** Extensible metadata storage (analogous to {@link Protein#secondaryData}) */
+    Map<String, Object> secondaryData = new HashMap<>()
 
     private Atoms cachedAtoms
     Atoms sasPoints

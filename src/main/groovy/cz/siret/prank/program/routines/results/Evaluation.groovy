@@ -3,6 +3,7 @@ package cz.siret.prank.program.routines.results
 import cz.siret.prank.domain.*
 import cz.siret.prank.domain.labeling.LabeledPoint
 import cz.siret.prank.domain.labeling.ResidueLabelings
+import cz.siret.prank.domain.loaders.AhojSiteInfo
 import cz.siret.prank.features.implementation.conservation.ConservationScore
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Struct
@@ -289,6 +290,7 @@ class Evaluation implements Parametrized {
                 row.avgMax3PointScore = Double.NaN
                 row.avgMaxHalfPointScore = Double.NaN
                 row.atomIds = emptyList()
+                row.ahojSiteInfo = (AhojSiteInfo) rs.secondaryData.get(ResidueSite.KEY_AHOJ_SITE_INFO)
             }
 
             tmpLigRows.add(row)
@@ -970,8 +972,16 @@ class Evaluation implements Parametrized {
      * Unified CSV with all binding sites (ligand-defined and explicit).
      */
     String toSitesCSV() {
+        // Include AhojSiteInfo columns only when at least one row has the data
+        boolean hasAhojInfo = ligandRows.any { it.ahojSiteInfo != null }
+
         StringBuilder csv = new StringBuilder()
-        csv << "file, site_type, #sites, site, chain, ligCode, #atoms, #residues, center_x, center_y, center_z, site_radius, dca4rank, closestPocketDist, proteinDist, centerToProteinDist, sasDist, #contactProteinAtoms\n"
+        String header = "file, site_type, #sites, site, chain, ligCode, #atoms, #residues, center_x, center_y, center_z, site_radius, dca4rank, closestPocketDist, proteinDist, centerToProteinDist, sasDist, #contactProteinAtoms"
+        if (hasAhojInfo) {
+            header += ", " + AhojSiteInfo.EXPORT_COLUMNS.join(", ")
+        }
+        csv << header << "\n"
+
         for (LigRow r : ligandRows) {
             List rec = new ArrayList()
             rec.add r.protName
@@ -992,6 +1002,9 @@ class Evaluation implements Parametrized {
             rec.add fmtCsv(r.centerToProtDist)
             rec.add fmtCsv(r.sasDist)
             rec.add r.contactAtoms
+            if (hasAhojInfo) {
+                rec.addAll(r.ahojSiteInfo != null ? r.ahojSiteInfo.toExportValues() : AhojSiteInfo.emptyExportValues())
+            }
             csv << rec.join(", ") << "\n"
         }
         return csv.toString()
@@ -1117,6 +1130,8 @@ class Evaluation implements Parametrized {
 
         List<Integer> atomIds
         List<Integer> ranks // of identified pocket for given criterion starting with 1 (-1 = not identified)
+
+        AhojSiteInfo ahojSiteInfo
     }
 
     static class PocketRow {
