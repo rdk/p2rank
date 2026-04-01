@@ -132,6 +132,8 @@ class AhojUbsSiteParserTest {
         assertNotNull(sd.ahojSiteInfo, "full CSV should produce AhojSiteInfo")
 
         AhojSiteInfo info = sd.ahojSiteInfo
+        assertEquals(1, info.nUnpPockets)
+        assertEquals(1, info.nUnpPocketsMultichain)
         assertEquals("apo", info.pocketClass)
         assertEquals(0.46,  info.pocketDensityCombined,  DELTA)
         assertEquals(0.47,  info.pocketDensityPair,      DELTA)
@@ -146,6 +148,7 @@ class AhojUbsSiteParserTest {
         assertEquals(97.54, info.modelPocketPlddt,       DELTA)
         assertEquals(10.0,  info.nApoAvg,                DELTA)
         assertEquals(2.0,   info.nHoloAvg,               DELTA)
+        assertEquals(7.354, info.rg,                     DELTA)
     }
 
     @Test

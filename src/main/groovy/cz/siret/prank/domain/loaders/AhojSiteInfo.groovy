@@ -16,6 +16,8 @@ import org.apache.commons.lang3.StringUtils
 class AhojSiteInfo {
 
     // CSV column names
+    static final String COL_N_UNP_POCKETS            = "n_unp_pockets"
+    static final String COL_N_UNP_POCKETS_MULTICHAIN = "n_unp_pockets_multichain"
     static final String COL_POCKET_CLASS             = "pocket_class"
     static final String COL_POCKET_DENSITY_COMBINED  = "pocket_density_combined"
     static final String COL_POCKET_DENSITY_PAIR      = "pocket_density_pair"
@@ -30,12 +32,15 @@ class AhojSiteInfo {
     static final String COL_MODEL_POCKET_PLDDT       = "model_pocket_plddt"
     static final String COL_N_APO_AVG                = "n_apo_avg"
     static final String COL_N_HOLO_AVG               = "n_holo_avg"
+    static final String COL_RG                       = "rg"
 
     /** Column used to detect whether the full format is present */
     static final String MARKER_COLUMN = COL_POCKET_CLASS
 
     // Ordered list of all export column headers
     static final List<String> EXPORT_COLUMNS = [
+        COL_N_UNP_POCKETS,
+        COL_N_UNP_POCKETS_MULTICHAIN,
         COL_POCKET_CLASS,
         COL_POCKET_DENSITY_COMBINED,
         COL_POCKET_DENSITY_PAIR,
@@ -50,10 +55,13 @@ class AhojSiteInfo {
         COL_MODEL_POCKET_PLDDT,
         COL_N_APO_AVG,
         COL_N_HOLO_AVG,
+        COL_RG,
     ].asImmutable()
 
     // Fields
 
+    int nUnpPockets
+    int nUnpPocketsMultichain
     String pocketClass             // "apo" or "holo"
     double pocketDensityCombined
     double pocketDensityPair
@@ -68,6 +76,7 @@ class AhojSiteInfo {
     double modelPocketPlddt
     double nApoAvg
     double nHoloAvg
+    double rg                      // radius of gyration
 
     /**
      * Creates an AhojSiteInfo from a CSV record.
@@ -75,6 +84,8 @@ class AhojSiteInfo {
      */
     static AhojSiteInfo fromCsvRecord(CSVRecord record) {
         AhojSiteInfo info = new AhojSiteInfo()
+        info.nUnpPockets            = parseInt(record.get(COL_N_UNP_POCKETS))
+        info.nUnpPocketsMultichain  = parseInt(record.get(COL_N_UNP_POCKETS_MULTICHAIN))
         info.pocketClass            = record.get(COL_POCKET_CLASS)
         info.pocketDensityCombined  = parseDouble(record.get(COL_POCKET_DENSITY_COMBINED))
         info.pocketDensityPair      = parseDouble(record.get(COL_POCKET_DENSITY_PAIR))
@@ -89,6 +100,7 @@ class AhojSiteInfo {
         info.modelPocketPlddt       = parseDouble(record.get(COL_MODEL_POCKET_PLDDT))
         info.nApoAvg                = parseDouble(record.get(COL_N_APO_AVG))
         info.nHoloAvg               = parseDouble(record.get(COL_N_HOLO_AVG))
+        info.rg                     = parseDouble(record.get(COL_RG))
         return info
     }
 
@@ -97,6 +109,8 @@ class AhojSiteInfo {
      */
     List<String> toExportValues() {
         return [
+            String.valueOf(nUnpPockets),
+            String.valueOf(nUnpPocketsMultichain),
             pocketClass ?: "",
             fmtDouble(pocketDensityCombined),
             fmtDouble(pocketDensityPair),
@@ -111,6 +125,7 @@ class AhojSiteInfo {
             fmtDouble(modelPocketPlddt),
             fmtDouble(nApoAvg),
             fmtDouble(nHoloAvg),
+            fmtDouble(rg),
         ]
     }
 
@@ -120,6 +135,13 @@ class AhojSiteInfo {
      */
     static List<String> emptyExportValues() {
         return Collections.nCopies(EXPORT_COLUMNS.size(), "")
+    }
+
+    private static int parseInt(String s) {
+        if (StringUtils.isBlank(s)) {
+            return 0
+        }
+        return Integer.parseInt(s)
     }
 
     private static double parseDouble(String s) {
