@@ -22,7 +22,7 @@ class ConcavityLoader extends PredictionLoader {
     /**
      * distance from pocket grid points to protein surface atoms
      */
-    static double POCKET_GRID_TO_SURFACE_DIST = 4
+    static int POCKET_GRID_TO_SURFACE_DIST = 4
 
     /**
      * @param ppOutputFile concavity grid points output file, something like a.001.001.001_1s69a_xxxxx_pocket.pdb
@@ -74,7 +74,7 @@ class ConcavityLoader extends PredictionLoader {
                 distToSurface++
             }
 
-            poc.centroid = poc.gridPoints.centerOfMass
+            poc.centroid = poc.gridPoints.centroid
             poc.stats.realVolumeApprox = poc.gridPoints.count * 8 // grid points are spaced by ~2A
             res.add(poc)
 

@@ -52,14 +52,13 @@ class PUResNetLoader extends PredictionLoader implements Parametrized {
             pocket.rank = i++
             pocket.name = Sutils.removeSuffix(Futils.baseName(pocketFile.name), '.pdb')
             pocket.surfaceAtoms = pocketAtoms  // not all of them are necessarily on the surface but it s
+            pocket.centroid = pocketAtoms.getCentroid()
 
             res.add(pocket)
         }
 
         return res
     }
-
-
 
     static class PUResNetPocket extends Pocket {
         Atoms pocketAtoms  // as defined by PUResNet
