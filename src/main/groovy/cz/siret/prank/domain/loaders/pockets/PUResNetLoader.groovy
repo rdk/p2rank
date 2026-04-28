@@ -9,6 +9,7 @@ import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.Sutils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+import org.biojava.nbio.structure.Structure
 
 import javax.annotation.Nullable
 
@@ -45,8 +46,8 @@ class PUResNetLoader extends PredictionLoader implements Parametrized {
             String absName = pocketFile.absolutePath
             log.info('Loading pocket from file {}', absName)
 
-            Protein pocketStructure = Protein.load(absName)
-            Atoms pocketAtoms = pocketStructure.allAtoms
+            Structure pocketStructure = PUResNetPdbRepair.loadPocketStructure(absName)
+            Atoms pocketAtoms = Atoms.allFromStructure(pocketStructure).withIndex()
 
             PUResNetPocket pocket = new PUResNetPocket(pocketAtoms)
             pocket.rank = i++
