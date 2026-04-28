@@ -6,6 +6,7 @@ import cz.siret.prank.utils.Futils
 import org.junit.jupiter.api.Test
 
 import static org.junit.jupiter.api.Assertions.assertEquals
+import static org.junit.jupiter.api.Assertions.assertSame
 
 /**
  *
@@ -52,5 +53,20 @@ class FPocketLoaderTest {
         assertEquals 0.9050, pb.pockets[0].score, DELTA
     }
 
-    
+    /**
+     * PredictionLoader contract: prediction.protein must be the queryProtein
+     * passed in. See ConcavityLoaderTest for the full rationale.
+     */
+    @Test
+    void predictionIsBoundToQueryProtein() {
+        String structFile = "$dir/fpocket-4-2/pdb/1fbl.pdb"
+        String predictionFile = "$dir/fpocket-4-2/pdb/1fbl_out/1fbl_out.pdb"
+        Protein queryProtein = Protein.load(structFile)
+
+        Prediction p = new FPocketLoader().loadPrediction(predictionFile, queryProtein)
+
+        assertSame(queryProtein, p.protein)
+    }
+
+
 }

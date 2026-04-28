@@ -31,15 +31,20 @@ class ConcavityLoader extends PredictionLoader {
     @Override
     Prediction loadPrediction(String ppOutputFile, Protein queryProtein) {
 
-        // a.001.001.001_1s69a_xxxxx_residue.pdb in the same dir
+        // a.001.001.001_1s69a_xxxxx_residue.pdb in the same dir.
+        // ConCavity's *_residue.pdb is a subset of the protein consisting of pocket-touching
+        // residues; we use it only to define the per-pocket surface-atom shell. The Prediction
+        // itself must be tied to the original queryProtein so that downstream lookups (notably
+        // conservation, which keys on protein.fileName) resolve against the actual protein,
+        // not the residue subset PDB.
         String proteinFile = ppOutputFile.replaceFirst("_pocket.pdb\$", "_residue.pdb")
 
-        Protein protein = Protein.load(proteinFile, new LoaderParams())
-        protein.calcuateSurfaceAndExposedAtoms()
+        Protein residueSubset = Protein.load(proteinFile, new LoaderParams())
+        residueSubset.calcuateSurfaceAndExposedAtoms()
         Structure pocketStruct = PdbUtils.loadFromFile(ppOutputFile)
-        List<ConcavityPocket> pockets = loadConcavityPockets(protein, pocketStruct)
+        List<ConcavityPocket> pockets = loadConcavityPockets(residueSubset, pocketStruct)
 
-        return new Prediction(protein, pockets)
+        return new Prediction(queryProtein, pockets)
     }
 
     List<ConcavityPocket> loadConcavityPockets(Protein protein, Structure pocketStruct) {
