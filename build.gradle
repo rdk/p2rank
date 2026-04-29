@@ -9,7 +9,7 @@ buildscript {  // for "com.github.ben-manes.versions" plugin
         }
     }
     dependencies {
-        classpath "com.github.ben-manes:gradle-versions-plugin:0.53.0"
+        classpath "com.github.ben-manes:gradle-versions-plugin:0.54.0"
     }
 }
 
@@ -192,9 +192,9 @@ dependencies {
     implementation 'org.apache.groovy:groovy:5.0.5'
     implementation 'org.apache.commons:commons-lang3:3.20.0'
     implementation 'org.apache.commons:commons-math3:3.6.1'
-    implementation 'commons-io:commons-io:2.21.0'
-    implementation 'com.google.guava:guava:33.5.0-jre'
-    implementation 'com.google.code.gson:gson:2.13.2'
+    implementation 'commons-io:commons-io:2.22.0'
+    implementation 'com.google.guava:guava:33.6.0-jre'
+    implementation 'com.google.code.gson:gson:2.14.0'
     implementation 'com.univocity:univocity-parsers:2.9.1' // csv parser
     implementation 'org.apache.commons:commons-csv:1.14.1'
     implementation 'org.zeroturnaround:zt-zip:1.17'
@@ -206,7 +206,7 @@ dependencies {
 
     implementation 'org.apache.arrow:arrow-vector:19.0.0'
     implementation 'org.apache.arrow:arrow-memory-netty:19.0.0'
-    implementation 'blue.strategic.parquet:parquet-floor:1.64'
+    implementation 'blue.strategic.parquet:parquet-floor:1.65'
 
     implementation 'org.slf4j:slf4j-api:2.0.17'
     implementation 'org.slf4j:jul-to-slf4j:2.0.17'         // for netlib logging messages
