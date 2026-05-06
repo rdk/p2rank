@@ -3,6 +3,7 @@ package cz.siret.prank.program.routines.predict.output
 import cz.siret.prank.collectors.DoubleVector
 import cz.siret.prank.domain.labeling.LabeledPoint
 import cz.siret.prank.features.FeatureVector
+import cz.siret.prank.program.routines.predict.output.TableData.ColumnType
 import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.AtomImpl
 import org.junit.jupiter.api.Test
@@ -12,41 +13,42 @@ import static org.junit.jupiter.api.Assertions.*
 @CompileStatic
 class PointExportDataTest {
 
-    // --- With scores (existing behavior) ---
+    // --- With scores and pocket (predict / rescore) ---
 
     @Test
-    void withScores_headerIncludesScore() {
+    void withScores_headerIncludesScoreAndPocket() {
         def data = PointExportData.create(
-            [point(1, 2, 3, 0.8)],
+            [point(1, 2, 3, 0.8, 0)],
             [vector(0.1, 0.2)],
             ["feat1", "feat2"]
         )
 
-        assertEquals(["x", "y", "z", "score", "feat1", "feat2"], data.header)
+        assertEquals(["x", "y", "z", "score", "pocket", "feat1", "feat2"], data.header)
     }
 
     @Test
-    void withScores_rowIncludesScore() {
+    void withScores_rowIncludesScoreAndPocket() {
         def data = PointExportData.create(
-            [point(1, 2, 3, 0.8)],
+            [point(1, 2, 3, 0.8, 2)],
             [vector(0.1, 0.2)],
             ["feat1", "feat2"]
         )
 
         double[] row = data.getRow(0)
-        assertEquals(6, row.length)
+        assertEquals(7, row.length)
         assertEquals(1.0d, row[0], 1e-9)  // x
         assertEquals(2.0d, row[1], 1e-9)  // y
         assertEquals(3.0d, row[2], 1e-9)  // z
         assertEquals(0.8d, row[3], 1e-9)  // score
-        assertEquals(0.1d, row[4], 1e-9)  // feat1
-        assertEquals(0.2d, row[5], 1e-9)  // feat2
+        assertEquals(2.0d, row[4], 1e-9)  // pocket
+        assertEquals(0.1d, row[5], 1e-9)  // feat1
+        assertEquals(0.2d, row[6], 1e-9)  // feat2
     }
 
     @Test
     void withScores_columnAccess() {
         def data = PointExportData.create(
-            [point(1, 2, 3, 0.8), point(4, 5, 6, 0.9)],
+            [point(1, 2, 3, 0.8, 1), point(4, 5, 6, 0.9, 2)],
             [vector(0.1, 0.2), vector(0.3, 0.4)],
             ["feat1", "feat2"]
         )
@@ -55,17 +57,49 @@ class PointExportDataTest {
         double[] scoreCol = data.getColumn(3)
         assertArrayEquals([0.8d, 0.9d] as double[], scoreCol, 1e-9)
 
-        // First feature column (index 4)
-        double[] feat1Col = data.getColumn(4)
+        // Pocket column
+        double[] pocketCol = data.getColumn(4)
+        assertArrayEquals([1.0d, 2.0d] as double[], pocketCol, 1e-9)
+
+        // First feature column (now index 5)
+        double[] feat1Col = data.getColumn(5)
         assertArrayEquals([0.1d, 0.3d] as double[], feat1Col, 1e-9)
     }
 
-    // --- Without scores (export-points behavior) ---
+    @Test
+    void withScores_pocketColumnTypeIsInt() {
+        def data = PointExportData.create(
+            [point(1, 2, 3, 0.8, 1)],
+            [vector(0.1)],
+            ["feat1"]
+        )
+
+        assertEquals(ColumnType.DOUBLE, data.getColumnType(0))  // x
+        assertEquals(ColumnType.DOUBLE, data.getColumnType(1))  // y
+        assertEquals(ColumnType.DOUBLE, data.getColumnType(2))  // z
+        assertEquals(ColumnType.DOUBLE, data.getColumnType(3))  // score
+        assertEquals(ColumnType.INT, data.getColumnType(4))     // pocket
+        assertEquals(ColumnType.DOUBLE, data.getColumnType(5))  // feat1
+    }
 
     @Test
-    void withoutScores_headerExcludesScore() {
+    void withScores_pocketValueZeroForUnassigned() {
+        def data = PointExportData.create(
+            [point(1, 2, 3, 0.5, 0), point(4, 5, 6, 0.5, 3)],
+            [vector(0.1), vector(0.2)],
+            ["feat1"]
+        )
+
+        double[] pocketCol = data.getColumn(4)
+        assertArrayEquals([0.0d, 3.0d] as double[], pocketCol, 1e-9)
+    }
+
+    // --- Without scores or pocket (export-points standalone) ---
+
+    @Test
+    void withoutScores_headerExcludesScoreAndPocket() {
         def data = PointExportData.createWithoutScores(
-            [point(1, 2, 3, 0.8)],
+            [point(1, 2, 3, 0.8, 5)],  // pocket value present on the LP but should be ignored
             [vector(0.1, 0.2)],
             ["feat1", "feat2"]
         )
@@ -74,9 +108,9 @@ class PointExportDataTest {
     }
 
     @Test
-    void withoutScores_rowExcludesScore() {
+    void withoutScores_rowExcludesScoreAndPocket() {
         def data = PointExportData.createWithoutScores(
-            [point(1, 2, 3, 0.8)],
+            [point(1, 2, 3, 0.8, 5)],
             [vector(0.1, 0.2)],
             ["feat1", "feat2"]
         )
@@ -86,19 +120,19 @@ class PointExportDataTest {
         assertEquals(1.0d, row[0], 1e-9)  // x
         assertEquals(2.0d, row[1], 1e-9)  // y
         assertEquals(3.0d, row[2], 1e-9)  // z
-        assertEquals(0.1d, row[3], 1e-9)  // feat1 (no score gap)
+        assertEquals(0.1d, row[3], 1e-9)  // feat1 (no score/pocket gap)
         assertEquals(0.2d, row[4], 1e-9)  // feat2
     }
 
     @Test
     void withoutScores_columnAccess() {
         def data = PointExportData.createWithoutScores(
-            [point(1, 2, 3, 0.8), point(4, 5, 6, 0.9)],
+            [point(1, 2, 3, 0.8, 0), point(4, 5, 6, 0.9, 0)],
             [vector(0.1, 0.2), vector(0.3, 0.4)],
             ["feat1", "feat2"]
         )
 
-        // Column 3 is now feat1 (not score)
+        // Column 3 is feat1 (no score/pocket)
         double[] feat1Col = data.getColumn(3)
         assertArrayEquals([0.1d, 0.3d] as double[], feat1Col, 1e-9)
 
@@ -110,7 +144,7 @@ class PointExportDataTest {
     @Test
     void withoutScores_coordinateColumns() {
         def data = PointExportData.createWithoutScores(
-            [point(1, 2, 3, 0), point(4, 5, 6, 0)],
+            [point(1, 2, 3, 0, 0), point(4, 5, 6, 0, 0)],
             [vector(0.1), vector(0.2)],
             ["feat"]
         )
@@ -123,7 +157,7 @@ class PointExportDataTest {
     @Test
     void withoutScores_rowCount() {
         def data = PointExportData.createWithoutScores(
-            [point(1, 2, 3, 0), point(4, 5, 6, 0)],
+            [point(1, 2, 3, 0, 0), point(4, 5, 6, 0, 0)],
             [vector(0.1), vector(0.2)],
             ["feat"]
         )
@@ -132,42 +166,61 @@ class PointExportDataTest {
     }
 
     @Test
-    void withoutScores_includeScoreIsFalse() {
+    void withoutScores_includeFlagsAreFalse() {
         def data = PointExportData.createWithoutScores(
-            [point(1, 2, 3, 0)],
+            [point(1, 2, 3, 0, 0)],
             [vector(0.1)],
             ["feat"]
         )
         assertFalse(data.includeScore)
+        assertFalse(data.includePocket)
     }
 
     @Test
-    void withScores_includeScoreIsTrue() {
+    void withoutScores_allColumnsAreDouble() {
+        def data = PointExportData.createWithoutScores(
+            [point(1, 2, 3, 0, 0)],
+            [vector(0.1)],
+            ["feat"]
+        )
+        for (int c = 0; c < data.header.size(); c++) {
+            assertEquals(ColumnType.DOUBLE, data.getColumnType(c), "column $c should be DOUBLE")
+        }
+    }
+
+    @Test
+    void withScores_includeFlagsAreTrue() {
         def data = PointExportData.create(
-            [point(1, 2, 3, 0)],
+            [point(1, 2, 3, 0, 0)],
             [vector(0.1)],
             ["feat"]
         )
         assertTrue(data.includeScore)
+        assertTrue(data.includePocket)
     }
 
     @Test
-    void builderProducesDataWithScores() {
+    void builderProducesDataWithScoresAndPocket() {
         def builder = PointExportData.builder(["feat1"])
-        builder.add(point(1, 2, 3, 0.5), vector(0.1))
+        builder.add(point(1, 2, 3, 0.5, 4), vector(0.1))
         def data = builder.build()
 
         assertTrue(data.includeScore)
-        assertEquals(["x", "y", "z", "score", "feat1"], data.header)
+        assertTrue(data.includePocket)
+        assertEquals(["x", "y", "z", "score", "pocket", "feat1"], data.header)
+        double[] row = data.getRow(0)
+        assertEquals(0.5d, row[3], 1e-9)
+        assertEquals(4.0d, row[4], 1e-9)
     }
 
     // --- Helpers ---
 
-    private static LabeledPoint point(double x, double y, double z, double score) {
+    private static LabeledPoint point(double x, double y, double z, double score, int pocket) {
         def atom = new AtomImpl()
         atom.coords = [x, y, z] as double[]
         def lp = new LabeledPoint(atom)
         lp.score = score
+        lp.pocket = pocket
         return lp
     }
 

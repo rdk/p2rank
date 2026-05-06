@@ -3,10 +3,12 @@ package cz.siret.prank.program.routines.predict.output
 import blue.strategic.parquet.Dehydrator
 import blue.strategic.parquet.ParquetWriter
 import blue.strategic.parquet.ValueWriter
+import cz.siret.prank.program.routines.predict.output.TableData.ColumnType
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.apache.arrow.memory.RootAllocator
 import org.apache.arrow.vector.Float8Vector
+import org.apache.arrow.vector.IntVector
 import org.apache.arrow.vector.VectorSchemaRoot
 import org.apache.arrow.vector.ipc.ArrowStreamWriter
 import org.apache.arrow.vector.types.FloatingPointPrecision
@@ -110,11 +112,18 @@ class TableExporter {
 
             // Header
             List<String> header = data.getHeader()
-            for (int c = 0; c < header.size(); c++) {
+            int colCount = header.size()
+            for (int c = 0; c < colCount; c++) {
                 if (c > 0) writer.print(",")
                 writer.print(header.get(c))
             }
             writer.print("\n")  // Explicit newline for cross-platform consistency
+
+            // Cache column types so we don't dispatch per row
+            ColumnType[] types = new ColumnType[colCount]
+            for (int c = 0; c < colCount; c++) {
+                types[c] = data.getColumnType(c)
+            }
 
             // Data rows
             int rowCount = data.getRowCount()
@@ -122,7 +131,11 @@ class TableExporter {
                 double[] row = data.getRow(i)
                 for (int c = 0; c < row.length; c++) {
                     if (c > 0) writer.print(",")
-                    writer.print(formatDouble(row[c]))
+                    if (types[c] == ColumnType.INT) {
+                        writer.print(Long.toString((long) row[c]))
+                    } else {
+                        writer.print(formatDouble(row[c]))
+                    }
                 }
                 writer.print("\n")
             }
@@ -136,7 +149,7 @@ class TableExporter {
         // Streaming format doesn't require seeking, so we can write directly to any output stream
         createOutputStream(filepath, compression).withCloseable { OutputStream out ->
             new RootAllocator().withCloseable { allocator ->
-                VectorSchemaRoot.create(buildSchema(data.getHeader()), allocator).withCloseable { root ->
+                VectorSchemaRoot.create(buildSchema(data), allocator).withCloseable { root ->
                     populateVectors(root, data)
                     new ArrowStreamWriter(root, null, Channels.newChannel(out)).withCloseable { writer ->
                         writer.start()
@@ -148,9 +161,14 @@ class TableExporter {
         }
     }
 
-    private static Schema buildSchema(List<String> header) {
-        List<Field> fields = header.collect { String name ->
-            Field.nullable(name, new ArrowType.FloatingPoint(FloatingPointPrecision.DOUBLE))
+    private static Schema buildSchema(TableData data) {
+        List<String> header = data.getHeader()
+        List<Field> fields = new ArrayList<>(header.size())
+        for (int c = 0; c < header.size(); c++) {
+            ArrowType type = (data.getColumnType(c) == ColumnType.INT)
+                    ? new ArrowType.Int(32, true)
+                    : new ArrowType.FloatingPoint(FloatingPointPrecision.DOUBLE)
+            fields.add(Field.nullable(header.get(c), type))
         }
         return new Schema(fields)
     }
@@ -163,10 +181,17 @@ class TableExporter {
 
         // Populate column by column (more efficient for columnar format)
         for (int c = 0; c < colCount; c++) {
-            Float8Vector vector = (Float8Vector) root.getVector(header.get(c))
             double[] column = data.getColumn(c)
-            for (int i = 0; i < rowCount; i++) {
-                vector.setSafe(i, column[i])
+            if (data.getColumnType(c) == ColumnType.INT) {
+                IntVector vector = (IntVector) root.getVector(header.get(c))
+                for (int i = 0; i < rowCount; i++) {
+                    vector.setSafe(i, (int) column[i])
+                }
+            } else {
+                Float8Vector vector = (Float8Vector) root.getVector(header.get(c))
+                for (int i = 0; i < rowCount; i++) {
+                    vector.setSafe(i, column[i])
+                }
             }
         }
         root.setRowCount(rowCount)
@@ -175,11 +200,16 @@ class TableExporter {
     // --- Parquet Writer (uses SNAPPY compression) ---
 
     private static void writeParquet(TableData data, String filepath) {
-        MessageType schema = buildParquetSchema(data.getHeader())
+        List<String> header = data.getHeader()
+        ColumnType[] types = new ColumnType[header.size()]
+        for (int c = 0; c < header.size(); c++) {
+            types[c] = data.getColumnType(c)
+        }
+
+        MessageType schema = buildParquetSchema(header, types)
         File outputFile = new File(filepath)
 
-        List<String> header = data.getHeader()
-        Dehydrator<double[]> dehydrator = new RowDehydrator(header)
+        Dehydrator<double[]> dehydrator = new RowDehydrator(header, types)
 
         ParquetWriter.writeFile(schema, outputFile, dehydrator).withCloseable { ParquetWriter<double[]> writer ->
             int rowCount = data.getRowCount()
@@ -189,10 +219,13 @@ class TableExporter {
         }
     }
 
-    private static MessageType buildParquetSchema(List<String> header) {
+    private static MessageType buildParquetSchema(List<String> header, ColumnType[] types) {
         Types.MessageTypeBuilder builder = Types.buildMessage()
-        for (String colName : header) {
-            builder.required(PrimitiveType.PrimitiveTypeName.DOUBLE).named(colName)
+        for (int c = 0; c < header.size(); c++) {
+            PrimitiveType.PrimitiveTypeName primitive = (types[c] == ColumnType.INT)
+                    ? PrimitiveType.PrimitiveTypeName.INT32
+                    : PrimitiveType.PrimitiveTypeName.DOUBLE
+            builder.required(primitive).named(header.get(c))
         }
         return builder.named("table")
     }
@@ -200,15 +233,21 @@ class TableExporter {
     @CompileStatic
     private static class RowDehydrator implements Dehydrator<double[]> {
         private final List<String> header
+        private final ColumnType[] types
 
-        RowDehydrator(List<String> header) {
+        RowDehydrator(List<String> header, ColumnType[] types) {
             this.header = header
+            this.types = types
         }
 
         @Override
         void dehydrate(double[] row, ValueWriter valueWriter) {
             for (int i = 0; i < header.size(); i++) {
-                valueWriter.write(header.get(i), row[i])
+                if (types[i] == ColumnType.INT) {
+                    valueWriter.write(header.get(i), Integer.valueOf((int) row[i]))
+                } else {
+                    valueWriter.write(header.get(i), row[i])
+                }
             }
         }
     }

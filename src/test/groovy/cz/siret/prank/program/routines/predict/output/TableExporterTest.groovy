@@ -1,7 +1,12 @@
 package cz.siret.prank.program.routines.predict.output
 
+import blue.strategic.parquet.ParquetReader
 import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
+import org.apache.arrow.memory.RootAllocator
+import org.apache.arrow.vector.ipc.ArrowStreamReader
+import org.apache.arrow.vector.types.pojo.ArrowType
+import org.apache.parquet.schema.PrimitiveType
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 
@@ -150,6 +155,69 @@ class TableExporterTest {
 
         def file = new File(filepath)
         assertTrue(file.exists())
+    }
+
+    // --- INT column type tests ---
+
+    @Test
+    void csvIntColumnHasNoDecimals() {
+        def data = ArrayTableData.ofWithInts(
+                ["score", "pocket"],
+                [row(0.5d, 3.0d), row(0.7d, 0.0d)],
+                1)
+        def filepath = "$tempDir/int.csv"
+
+        TableExporter.export(data, filepath, "csv")
+
+        def lines = new File(filepath).readLines()
+        assertEquals("score,pocket", lines[0])
+        assertEquals("0.5,3", lines[1])
+        assertEquals("0.7,0", lines[2])
+    }
+
+    @Test
+    void arrowIntColumnIsInt32() {
+        def data = ArrayTableData.ofWithInts(
+                ["score", "pocket"],
+                [row(0.5d, 7.0d)],
+                1)
+        def filepath = "$tempDir/int.arrow"
+
+        TableExporter.export(data, filepath, "arrow")
+
+        new RootAllocator().withCloseable { allocator ->
+            new FileInputStream(filepath).withCloseable { is ->
+                new ArrowStreamReader(is, allocator).withCloseable { reader ->
+                    reader.loadNextBatch()
+                    def root = reader.vectorSchemaRoot
+                    def fields = root.schema.fields
+                    assertTrue(fields[0].type instanceof ArrowType.FloatingPoint, "score should be FloatingPoint")
+                    assertTrue(fields[1].type instanceof ArrowType.Int, "pocket should be Int")
+                    def intType = (ArrowType.Int) fields[1].type
+                    assertEquals(32, intType.getBitWidth())
+                    assertTrue(intType.getIsSigned())
+                    assertEquals(7, root.getVector("pocket").getObject(0))
+                }
+            }
+        }
+    }
+
+    @Test
+    void parquetIntColumnIsInt32() {
+        def data = ArrayTableData.ofWithInts(
+                ["score", "pocket"],
+                [row(0.5d, 11.0d)],
+                1)
+        def filepath = "$tempDir/int.parquet"
+
+        TableExporter.export(data, filepath, "parquet")
+
+        def metadata = ParquetReader.readMetadata(new File(filepath))
+        def schema = metadata.fileMetaData.schema
+        assertEquals(PrimitiveType.PrimitiveTypeName.DOUBLE,
+                schema.getType("score").asPrimitiveType().primitiveTypeName)
+        assertEquals(PrimitiveType.PrimitiveTypeName.INT32,
+                schema.getType("pocket").asPrimitiveType().primitiveTypeName)
     }
 
 }

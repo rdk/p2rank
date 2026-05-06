@@ -12,6 +12,9 @@ import groovy.transform.CompileStatic
 @CompileStatic
 interface TableData {
 
+    /** Logical type for a column. INT values are still stored as double in getRow/getColumn but are emitted as integers by writers. */
+    enum ColumnType { DOUBLE, INT }
+
     /** Column names */
     List<String> getHeader()
 
@@ -38,6 +41,14 @@ interface TableData {
             column[i] = getRow(i)[colIndex]
         }
         return column
+    }
+
+    /**
+     * Logical type of column at index. Default is DOUBLE; override to mark integer columns
+     * so writers can emit them as native integer types (CSV without decimals, Arrow Int32, Parquet INT32).
+     */
+    default ColumnType getColumnType(int colIndex) {
+        return ColumnType.DOUBLE
     }
 
 }

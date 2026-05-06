@@ -40,7 +40,7 @@ class PointsExporterTest {
 
         def lines = outputFile("test").readLines()
         assertEquals(3, lines.size())
-        assertEquals("x,y,z,score,feat1,feat2", lines[0])
+        assertEquals("x,y,z,score,pocket,feat1,feat2", lines[0])
     }
 
     @Test
@@ -56,13 +56,14 @@ class PointsExporterTest {
         def row = outputFile("test").readLines()[1]
         def values = row.split(",")
 
-        assertEquals(6, values.length)
+        assertEquals(7, values.length)
         assertTrue(values[0].contains("1.5"))
         assertTrue(values[1].contains("2.5"))
         assertTrue(values[2].contains("3.5"))
         assertTrue(values[3].contains("0.75"))
-        assertTrue(values[4].contains("0.123"))
-        assertTrue(values[5].contains("0.456"))
+        assertEquals("0", values[4])  // pocket: default 0 = unassigned
+        assertTrue(values[5].contains("0.123"))
+        assertTrue(values[6].contains("0.456"))
     }
 
     @Test
@@ -92,7 +93,7 @@ class PointsExporterTest {
         assertTrue(gzFile.exists())
 
         def content = new GZIPInputStream(new FileInputStream(gzFile)).text
-        assertTrue(content.startsWith("x,y,z,score,f1"))
+        assertTrue(content.startsWith("x,y,z,score,pocket,f1"))
     }
 
     @Test
@@ -106,7 +107,7 @@ class PointsExporterTest {
         assertTrue(zstFile.exists())
 
         String content = Futils.inputStream(zstFile.path).text
-        assertTrue(content.startsWith("x,y,z,score,f1"))
+        assertTrue(content.startsWith("x,y,z,score,pocket,f1"))
     }
 
     @Test
@@ -120,7 +121,7 @@ class PointsExporterTest {
         def file = new File("$tempDir/fallback_points.xyz123")
         assertTrue(file.exists())
         def content = file.text
-        assertTrue(content.startsWith("x,y,z,score,f1"))
+        assertTrue(content.startsWith("x,y,z,score,pocket,f1"))
     }
 
     @Test

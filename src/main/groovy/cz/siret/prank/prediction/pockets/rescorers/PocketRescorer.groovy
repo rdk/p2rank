@@ -70,10 +70,16 @@ abstract class PocketRescorer implements Parametrized {
             pocket.newRank = i++
         }
 
-        // label SAS points with pocket new ranks
+        // Label SAS points with the BEST (lowest) pocket newRank they belong to.
+        // Extended pocket shells can overlap (extended_pocket_cutoff > 0), so a single
+        // LabeledPoint can appear in multiple pocket.labeledPoints lists. Iterating
+        // best-first (reorderedPockets is sorted by newScore descending) and only
+        // writing when the point is still unlabeled ensures the lowest newRank wins.
         for (Pocket pocket : prediction.reorderedPockets) {
             for (LabeledPoint lp : pocket.labeledPoints) {
-                lp.pocket = pocket.newRank
+                if (lp.pocket == 0) {
+                    lp.pocket = pocket.newRank
+                }
             }
         }
     }

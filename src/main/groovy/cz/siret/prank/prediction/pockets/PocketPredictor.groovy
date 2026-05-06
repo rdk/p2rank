@@ -136,12 +136,6 @@ class PocketPredictor implements Parametrized {
         pockets.each {
             i++
 
-            for (LabeledPoint lp : it.labeledPoints) {
-                //if (lp.score > 0.2) { // TODO XXX this is temporary to fix pymol visualization aesthetics
-                    lp.pocket = i
-                //}
-            }
-
             it.name = "pocket" + i
             it.rank = i
 

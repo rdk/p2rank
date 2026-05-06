@@ -52,12 +52,13 @@ For each protein file, a `{protein_file}_points.{format}` file is generated:
 |--------|-------------|
 | `x`, `y`, `z` | SAS point coordinates |
 | `score` | Predicted ligandability [0-1] (`predict`/`rescore` only) |
+| `pocket` | Predicted pocket rank (1, 2, …); `0` = point not assigned to any pocket. Integer column, present in `predict`/`rescore` output, absent in standalone `export-points` |
 | `feature1`, ... | Feature values based on effective feature setup (`-features`, `-extra_features`) |
 
 Example - `predict -export_points 1` (CSV):
 ```csv
-x,y,z,score,chem.hydrophobic,chem.aromatic,protrusion,...
-12.3456,23.4567,34.5678,0.8234,0.5123,-0.2345,15.0000,...
+x,y,z,score,pocket,chem.hydrophobic,chem.aromatic,protrusion,...
+12.3456,23.4567,34.5678,0.8234,1,0.5123,-0.2345,15.0000,...
 ```
 
 Example - `export-points` (CSV):
@@ -90,11 +91,12 @@ x,y,z,chem.hydrophobic,chem.aromatic,protrusion,...
 
 - `export-points` and `predict` export all SAS points; `rescore` exports only pocket points
 - `export-points` does not require `-export_points 1` - exporting is always on
-- CSV format uses 7 decimal places for all numeric values
-- Arrow uses IPC streaming format with 64-bit floats
-- Parquet uses SNAPPY compression (not configurable)
+- CSV format uses up to 7 decimal places for floating-point values; the `pocket` column is written as a plain integer
+- Arrow uses IPC streaming format with 64-bit floats; the `pocket` column uses Int32
+- Parquet uses SNAPPY compression (not configurable); the `pocket` column uses INT32
 - Zstd compression uses level 16 for good compression ratio
 - Export is disabled when using `-output_only_stats 1`
+- `pocket` matches the `rank` column of `*_predictions.csv`. Boundary points that fall within the extended shells of two pockets (controlled by `extended_pocket_cutoff`) are labeled with the **best** (lowest) rank they belong to.
 
 ## Example Analysis
 
@@ -104,6 +106,9 @@ import pandas as pd
 df = pd.read_csv('protein_points.csv.gz')
 high_score = df[df['score'] > 0.5]
 print(df.describe())
+
+# Per-pocket aggregated descriptors (predict / rescore output only):
+pocket_descriptors = df[df['pocket'] > 0].groupby('pocket').mean()
 ~~~
 
 **Python (Arrow):**
