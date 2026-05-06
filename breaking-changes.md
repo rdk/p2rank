@@ -15,6 +15,18 @@ All changes of that type should be rare and should be all listed here.
 
 ## List of changes
 
+### 2.6
+
+###### Evaluation
+
+* Ligand detection was fixed (`e7fc457f`) to include nucleotide ligands (GDP, GTP, ATP — classified by BioJava as `NUCLEOTIDE`)
+  and amino-acid-derivative ligands (SHR-like — classified as `AMINOACID`) that were previously skipped because only
+  `GroupType.HETATM` qualified. Any non-water group in a NONPOLYMER chain now qualifies regardless of GroupType.
+  This changes the relevant-ligand set on datasets containing such ligands, which moves DCA/DCC numerator and denominator
+  and thus the reported success rates.
+* For additional internal evaluation-criterion fixes during the 2.6 dev cycle see
+  [`documentation/dev/evaluation-metric-fixes-2.6.md`](documentation/dev/evaluation-metric-fixes-2.6.md).
+
 ### 2.5.1
 
 none
