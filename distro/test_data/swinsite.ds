@@ -1,0 +1,27 @@
+# Dataset for rescoring SwinSite predictions.
+# (predictions generated with SwinSite, https://doi.org/10.1021/acs.jcim.5c02734,
+#  on "./clean" structures)
+
+
+# Note: 'prank rescore' expects 2 columns: prediction, protein
+# Providing protein (with or without ligands) that was used to calculate the prediction is required.
+# Proteins have to be liganated only if you want to calculate metrics by running 'prank eval-rescore'.
+
+# Note: this dataset CANNOT be used for eval-rescore
+# because the protein column points to proteins without known ligands.
+
+# The 'prediction' column points to the per-protein output directory.
+# SwinSiteLoader iterates grid<N>_score_<float>.mol2 files inside it.
+
+
+PARAM.PREDICTION_METHOD=swinsite
+
+
+HEADER: prediction protein
+
+predictions/swinsite/1tjw_A    clean/1tjw_A.pdb
+predictions/swinsite/1a26A     clean/1a26A.pdb
+predictions/swinsite/1a2kC     clean/1a2kC.pdb
+predictions/swinsite/1afkA     clean/1afkA.pdb
+predictions/swinsite/1atlA     clean/1atlA.pdb
+predictions/swinsite/1bqoB     clean/1bqoB.pdb
