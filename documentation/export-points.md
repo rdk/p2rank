@@ -1,6 +1,6 @@
 # Exporting SAS Points with Feature Vectors
 
-Export SAS points with feature vectors and (optionally) predicted ligandability scores.
+Export SAS points with feature vectors and (optionally) predicted ligandability scores and pocket assignments.
 
 ## Commands
 
@@ -15,7 +15,7 @@ prank export-points dataset.ds     -export_points_format arrow.zst
 ```
 
 The `export-points` command calculates SAS surface points with feature vectors and exports them directly - **no model is loaded and no prediction is made**.
-This means the output does **not** contain a `score` column, but you are free to use any custom feature setup via `-features` and `-extra_features` parameters.
+This means the output does **not** contain `score` or `pocket` columns, but you are free to use any custom feature setup via `-features` and `-extra_features` parameters.
 
 ### `predict` / `rescore` - export alongside prediction
 
@@ -32,7 +32,7 @@ The `rescore` command also supports export (pocket points only):
 prank rescore joined-fpocket.ds -export_points 1 -export_points_format arrow.zst
 ```
 
-With `predict`/`rescore`, the output includes a `score` column with predicted ligandability.
+With `predict`/`rescore`, the output includes a `score` column with predicted ligandability and a `pocket` column with the predicted pocket rank (`0` if the point is not assigned to any pocket).
 However, because prediction relies on a pre-trained model that expects a particular set and order of features,
 you **cannot** customize the feature setup (changing `-features` or `-extra_features` would break the model).
 
@@ -41,7 +41,7 @@ you **cannot** customize the feature setup (changing `-features` or `-extra_feat
 | | `export-points` | `predict -export_points 1` |
 |---|---|---|
 | Custom feature setup | Yes | No (must match the model) |
-| Predicted `score` column | No | Yes |
+| Predicted `score` and `pocket` columns | No | Yes |
 | Requires a model | No | Yes |
 
 ## Output
