@@ -6,7 +6,6 @@ import cz.siret.prank.program.params.Params
 import cz.siret.prank.utils.CdkUtils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-import org.openscience.cdk.geometry.surface.NumericalSurface
 import org.openscience.cdk.interfaces.IAtomContainer
 
 import javax.vecmath.Point3d
@@ -56,7 +55,10 @@ class Surface implements Parametrized {
             totalSurfaceArea = numericalSurface.totalSurfaceArea
             allSurfacePoints = numericalSurface.allSurfacePoints
         } else {
-            NumericalSurface numericalSurface = new NumericalSurface(container, solventRadius, tesselationLevel)
+            // Wrap CDK's NumericalSurface to fall back on elements with null VdW radius
+            // in CDK's Elements enum (Co, Ni, Cu, Rh, Os, Ir, ...). See PatchedCdkNumericalSurface
+            // and local/cdk-vdw-radius-gap.md.
+            PatchedCdkNumericalSurface numericalSurface = new PatchedCdkNumericalSurface(container, solventRadius, tesselationLevel)
             totalSurfaceArea = numericalSurface.totalSurfaceArea
             allSurfacePoints = numericalSurface.allSurfacePoints
         }

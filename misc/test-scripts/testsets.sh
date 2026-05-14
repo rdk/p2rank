@@ -413,6 +413,46 @@ cofactors() {
     test ./benchmark/cofactors_dropin_safety.sh distro/test_data/concavity.ds
 }
 
+cofactors_full() {
+
+    title COFACTOR DATASETS
+
+    local DS_BASE="../p2rank-datasets2/other/cofactors"
+    if [ ! -f "$DS_BASE/cofactors-demo-cif.ds" ]; then
+        echo "  [SKIP] $DS_BASE/cofactors-demo-cif.ds not found"
+        return
+    fi
+
+    # --- A. predict on the demo dataset, both formats ---
+    test ./prank.sh predict cofactors-demo-cif.ds          -dataset_base_dir $DS_BASE  -fail_fast 1  -out_subdir TEST/COF_DS
+    test ./prank.sh predict cofactors-demo-pdb.ds          -dataset_base_dir $DS_BASE  -fail_fast 1  -out_subdir TEST/COF_DS
+
+    # --- B. baseline runs (no cofactors column) for delta comparison ---
+    test ./prank.sh predict cofactors-demo-baseline-cif.ds -dataset_base_dir $DS_BASE  -fail_fast 1  -out_subdir TEST/COF_DS
+    test ./prank.sh predict cofactors-demo-baseline-pdb.ds -dataset_base_dir $DS_BASE  -fail_fast 1  -out_subdir TEST/COF_DS
+
+    # --- C. analyze cofactors on the demo dataset (matches.csv, summary) ---
+    test ./prank.sh analyze cofactors cofactors-demo-cif.ds          -dataset_base_dir $DS_BASE  -fail_fast 1  -out_subdir TEST/COF_DS
+    test ./prank.sh analyze cofactors cofactors-demo-baseline-cif.ds -dataset_base_dir $DS_BASE  -fail_fast 1  -out_subdir TEST/COF_DS
+
+    # --- D. combined with -aa_mapping pdbfixer (R19 collision on TPQ family) ---
+    test ./prank.sh predict cofactors-demo-cif.ds -dataset_base_dir $DS_BASE  -aa_mapping pdbfixer  -out_subdir TEST/COF_DS
+
+    # --- E. visualization spot-check on two well-known cofactors ---
+    test ./prank.sh predict -f $DS_BASE/structures/pdb/4REK.pdb -cofactors FAD  -visualizations 1  -out_subdir TEST/COF_DS
+    test ./prank.sh predict -f $DS_BASE/structures/pdb/4BEU.pdb -cofactors PLP  -visualizations 1  -out_subdir TEST/COF_DS
+
+    # --- F. export-points (cofactor atoms must propagate into the points output) ---
+    test ./prank.sh export-points -f $DS_BASE/structures/pdb/4REK.pdb -cofactors FAD  -out_subdir TEST/COF_DS
+
+    # --- G. full-dataset stress test (523 structures across 43 cofactor codes) ---
+    if [ -f "$DS_BASE/cofactors-full.ds" ]; then
+        test ./prank.sh predict cofactors-full.ds          -dataset_base_dir $DS_BASE  -fail_fast 1  -out_subdir TEST/COF_DS_FULL
+        test ./prank.sh predict cofactors-full-baseline.ds -dataset_base_dir $DS_BASE  -fail_fast 1  -out_subdir TEST/COF_DS_FULL
+        test ./prank.sh analyze cofactors cofactors-full.ds -dataset_base_dir $DS_BASE  -fail_fast 1  -out_subdir TEST/COF_DS_FULL
+    fi
+}
+
 transform() {
 
   title TRANSFORM COMMANDS
@@ -635,6 +675,7 @@ tests() {
     quick
     basic
     cofactors
+    cofactors_full
 }
 
 all() {

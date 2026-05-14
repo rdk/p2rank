@@ -1116,7 +1116,11 @@ class AnalyzeRoutine extends Routine {
             Map<String, List<String>> matchedGroupIdsBySpec = new LinkedHashMap<>()
             for (LigandDefinition d : itemSpecifiers) matchedGroupIdsBySpec.put(d.originalString, new ArrayList<>())
 
-            for (Group g : Struct.getHetGroups(p.structure)) {
+            // Use the same candidate set as cofactor extraction (Ligands.loadForProtein,
+            // CofactorHandler.extractCofactorAtoms). getHetGroups misses GDP/GTP/ATP
+            // (BioJava GroupType.NUCLEOTIDE) and SHR-style AA derivatives in non-polymer
+            // chains, which would silently drop them from het_groups.csv / cofactor_matches.csv.
+            for (Group g : Struct.getLigandGroups(p)) {
                 String name = g.PDBName?.toUpperCase()
                 if (name == null) continue
 
@@ -1164,7 +1168,9 @@ class AnalyzeRoutine extends Routine {
                 List<String> matched = matchedGroupIdsBySpec.get(d.originalString)
                 String reason = ""
                 if (matched.isEmpty()) {
-                    boolean nameInStructure = Struct.getHetGroups(p.structure)
+                    // Use getLigandGroups (matches extraction path) so GDP/GTP/ATP-style
+                    // codes aren't falsely reported as "name not in structure".
+                    boolean nameInStructure = Struct.getLigandGroups(p)
                             .any { ((Group) it).PDBName?.toUpperCase() == d.groupName?.toUpperCase() }
                     reason = nameInStructure ? "name present but specifier filter excluded all instances"
                                              : "name not in structure"
