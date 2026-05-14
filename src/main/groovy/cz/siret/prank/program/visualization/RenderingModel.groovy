@@ -1,5 +1,6 @@
 package cz.siret.prank.program.visualization
 
+import cz.siret.prank.domain.CofactorHandler
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.domain.labeling.BinaryLabeling
 import cz.siret.prank.domain.labeling.LabeledPoint
@@ -8,6 +9,8 @@ import cz.siret.prank.program.params.Parametrized
 import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
 import org.biojava.nbio.structure.Atom
+
+import javax.annotation.Nullable
 
 import java.awt.*
 import java.util.List
@@ -31,6 +34,15 @@ class RenderingModel implements Parametrized {
     ResidueLabeling<Double> doubleLabeling
 
     List<Atom> siteCentroids
+
+    /**
+     * Result of cofactor extraction for the loaded protein.
+     * Carries the per-name grouping (`foundGroups`) used to emit per-cofactor PyMOL
+     * selections, plus `unmatchedSpecifiers` for diagnostic comments. Null when no
+     * cofactors are configured.
+     */
+    @Nullable
+    CofactorHandler.ExtractionResult cofactorResult
 
     Style style = new Style()
 

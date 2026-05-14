@@ -96,7 +96,8 @@ class EvalResiduesRoutine extends EvalRoutine {
                         protein: item.protein,
                         observedLabeling: observed,
                         predictedLabeling: predicted,
-                        labeledPoints: predictedPoints
+                        labeledPoints: predictedPoints,
+                        cofactorResult: item.protein.cofactorExtractionResult
                 )).render()
             }
 

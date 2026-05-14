@@ -21,7 +21,13 @@ import cz.siret.prank.utils.*
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
+import org.biojava.nbio.structure.Group
 import org.biojava.nbio.structure.ResidueNumber
+
+import cz.siret.prank.program.params.Params
+
+import static cz.siret.prank.domain.Dataset.LigandDefinition
+import static cz.siret.prank.geom.Struct.getAuthorId
 
 import javax.annotation.Nullable
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -96,7 +102,8 @@ class AnalyzeRoutine extends Routine {
         "fasta-masked" : { cmdFastaMasked() },
         "peptides" : { cmdPeptides() },
         "convert-dataset-to-atomid" : { cmdConvertContactresDataset() },
-        "print-volsite-table" : { print_volsite_table() }
+        "print-volsite-table" : { print_volsite_table() },
+        "cofactors" : { cmdCofactors() }
     ])
 
 //===========================================================================================================//
@@ -164,7 +171,7 @@ class AnalyzeRoutine extends Routine {
     }
 
     /**
-     * Binding site statistics — works for both ligand-based and explicit site datasets.
+     * Binding site statistics - works for both ligand-based and explicit site datasets.
      * Produces a unified CSV with the same header regardless of site source.
      */
     void cmdBindingSites() {
@@ -291,7 +298,8 @@ class AnalyzeRoutine extends Routine {
                             label: item.label,
                             protein: p,
                             observedLabeling: labeling,
-                            siteCentroids: centroids
+                            siteCentroids: centroids,
+                            cofactorResult: p.cofactorExtractionResult
                     )).render()
                 }
             }
@@ -348,9 +356,9 @@ class AnalyzeRoutine extends Routine {
      * and reporting distances between methods, to SAS surface, and to protein atoms.
      *
      * Produces:
-     *  - binding_site_centers.csv — all results in one table
-     *  - binding_site_centers_{method}.csv — per-method tables
-     *  - binding_site_centers_summary.txt — overall + per-method distance statistics
+     *  - binding_site_centers.csv - all results in one table
+     *  - binding_site_centers_{method}.csv - per-method tables
+     *  - binding_site_centers_summary.txt - overall + per-method distance statistics
      */
     void cmdBindingSiteCenters() {
         List<String> distColumns = ["dist_to_atom_com", "dist_to_sas", "dist_to_protein"]
@@ -699,7 +707,8 @@ class AnalyzeRoutine extends Routine {
                         proteinFile: item.proteinFile,
                         label: item.label,
                         protein: item.protein,
-                        observedLabeling: labeling
+                        observedLabeling: labeling,
+                        cofactorResult: item.protein.cofactorExtractionResult
                 )).render()
             }
         }
@@ -734,7 +743,7 @@ class AnalyzeRoutine extends Routine {
         def res = dataset.processItems { Dataset.Item item ->
             Protein p = item.protein
 
-            // Load conservation scores (graceful — null on failure)
+            // Load conservation scores (graceful - null on failure)
             ConservationScore conservScore = null
             try {
                 conservScore = p.loadConservationScores(item.context)
@@ -788,7 +797,8 @@ class AnalyzeRoutine extends Routine {
                         proteinFile: item.proteinFile,
                         label: item.label,
                         protein: p,
-                        doubleLabeling: labeling
+                        doubleLabeling: labeling,
+                        cofactorResult: p.cofactorExtractionResult
                 )).render()
             }
         }
@@ -1044,6 +1054,175 @@ class AnalyzeRoutine extends Routine {
 
         writeFile "$outdir/${dataset.label}_converted.ds", newDsText
         writeFile "$outdir/non_matching_items.txt", nonMatchingText
+        write res.writeErrorsAndGetSummary(outdir)
+    }
+
+    /**
+     * Survey HETATM groups and dry-run cofactor specifiers.
+     *
+     * <p>Without {@code -cofactors}: lists every distinct HETATM group instance with
+     * chain/residue/atoms for discovery (which names exist? which to use as cofactor
+     * specifiers?).
+     *
+     * <p>With {@code -cofactors} (or a {@code cofactors} column in the dataset): additionally
+     * reports which specifiers matched which groups, using the same per-item resolution as
+     * pocket prediction would (column overrides global). Lets users verify precise specifiers
+     * before committing to a long-running run.
+     */
+    void cmdCofactors() {
+        DataTable dt = new DataTable("protein",
+                "het_name", "chain", "res_num", "group_id",
+                "n_heavy_atoms", "dist_to_protein",
+                "currently_classified_as", "would_be_cofactor"
+        )
+
+        // Aggregates across the dataset
+        Map<String, Set<String>> nameToStructures = new java.util.concurrent.ConcurrentHashMap<>()
+        Map<String, java.util.concurrent.atomic.AtomicInteger> nameToGroupCount = new java.util.concurrent.ConcurrentHashMap<>()
+        Map<String, Set<String>> specToStructures = new java.util.concurrent.ConcurrentHashMap<>()
+        Map<String, java.util.concurrent.atomic.AtomicInteger> specToGroupCount = new java.util.concurrent.ConcurrentHashMap<>()
+        java.util.concurrent.atomic.AtomicInteger itemsWithSpecifiers = new java.util.concurrent.atomic.AtomicInteger()
+
+        DataTable mt = new DataTable("protein",
+                "specifier", "matched_count", "matched_group_ids", "unmatched_reason")
+
+        def res = dataset.processItems { Dataset.Item item ->
+            Protein p = item.protein
+
+            // Per-item resolved specifiers - same resolution as protein loading does.
+            // Either the dataset's `cofactors` column (if present) or the global Params.inst.cofactors.
+            List<LigandDefinition> itemSpecifiers = dataset.resolveCofactorDefinitions(item)
+            if (!itemSpecifiers.isEmpty()) itemsWithSpecifiers.incrementAndGet()
+
+            // Index cofactor-matched groups for fast classification
+            Set<Group> cofactorMatched = Collections.newSetFromMap(new IdentityHashMap<>())
+            if (p.cofactorExtractionResult != null) {
+                for (List<Group> gs : p.cofactorExtractionResult.foundGroups.values()) {
+                    cofactorMatched.addAll(gs)
+                }
+            }
+
+            // Index relevant + ignored ligand groups
+            Set<Group> relevantLigGroups = Collections.newSetFromMap(new IdentityHashMap<>())
+            Set<Group> ignoredLigGroups = Collections.newSetFromMap(new IdentityHashMap<>())
+            for (Ligand lig : p.relevantLigands ?: []) {
+                relevantLigGroups.addAll(lig.atoms.distinctGroups)
+            }
+            for (Ligand lig : p.allIgnoredLigands ?: []) {
+                ignoredLigGroups.addAll(lig.atoms.distinctGroups)
+            }
+
+            // Per-specifier per-structure match tracking
+            Map<String, List<String>> matchedGroupIdsBySpec = new LinkedHashMap<>()
+            for (LigandDefinition d : itemSpecifiers) matchedGroupIdsBySpec.put(d.originalString, new ArrayList<>())
+
+            for (Group g : Struct.getHetGroups(p.structure)) {
+                String name = g.PDBName?.toUpperCase()
+                if (name == null) continue
+
+                nameToGroupCount.computeIfAbsent(name, { new java.util.concurrent.atomic.AtomicInteger() } as java.util.function.Function).incrementAndGet()
+                nameToStructures.computeIfAbsent(name, { (Set<String>) (java.util.concurrent.ConcurrentHashMap.newKeySet()) } as java.util.function.Function).add(item.label)
+
+                String chain = getAuthorId(g.chain)
+                String resNum = g.residueNumber?.printFull() ?: "?"
+                String groupId = "${chain}_${resNum}"
+                Atoms ga = Atoms.allFromGroup(g).withoutHydrogens()
+
+                String cls
+                if (cofactorMatched.contains(g)) cls = "cofactor"
+                else if (relevantLigGroups.contains(g)) cls = "relevant_ligand"
+                else if (ignoredLigGroups.contains(g)) cls = "ignored"
+                else cls = "other"
+
+                int wouldBeCofactor = 0
+                for (LigandDefinition d : itemSpecifiers) {
+                    if (d.matchesGroup(g, p)) {
+                        wouldBeCofactor = 1
+                        specToGroupCount.computeIfAbsent(d.originalString, { new java.util.concurrent.atomic.AtomicInteger() } as java.util.function.Function).incrementAndGet()
+                        specToStructures.computeIfAbsent(d.originalString, { (Set<String>) (java.util.concurrent.ConcurrentHashMap.newKeySet()) } as java.util.function.Function).add(item.label)
+                        matchedGroupIdsBySpec.get(d.originalString).add(groupId)
+                    }
+                }
+
+                DataTable.Row r = dt.newRow(item.label)
+                r.put("het_name", name)
+                r.put("chain", chain)
+                r.put("res_num", resNum)
+                r.put("group_id", groupId)
+                r.put("n_heavy_atoms", ga.count)
+                if (ga.empty) {
+                    r.put("dist_to_protein", "")
+                } else {
+                    r.put("dist_to_protein", p.proteinAtoms.dist(ga))
+                }
+                r.put("currently_classified_as", cls)
+                r.put("would_be_cofactor", itemSpecifiers.isEmpty() ? "" : String.valueOf(wouldBeCofactor))
+            }
+
+            // cofactor_matches.csv row(s) for this structure
+            for (LigandDefinition d : itemSpecifiers) {
+                List<String> matched = matchedGroupIdsBySpec.get(d.originalString)
+                String reason = ""
+                if (matched.isEmpty()) {
+                    boolean nameInStructure = Struct.getHetGroups(p.structure)
+                            .any { ((Group) it).PDBName?.toUpperCase() == d.groupName?.toUpperCase() }
+                    reason = nameInStructure ? "name present but specifier filter excluded all instances"
+                                             : "name not in structure"
+                }
+                DataTable.Row mr = mt.newRow(item.label)
+                mr.put("specifier", d.originalString)
+                mr.put("matched_count", matched.size())
+                mr.put("matched_group_ids", matched.join(" "))
+                mr.put("unmatched_reason", reason)
+            }
+
+            // Visualizations - renderer reads cofactorResult and emits per-name selections.
+            if (params.visualizations) {
+                new NewPymolRenderer("$outdir/visualizations", new RenderingModel(
+                        proteinFile: item.proteinFile,
+                        label: item.label,
+                        protein: p,
+                        cofactorResult: p.cofactorExtractionResult
+                )).render()
+            }
+        }
+
+        writeFile "$outdir/het_groups.csv", dt.toCsv()
+
+        boolean anySpecifiers = itemsWithSpecifiers.get() > 0
+
+        StringBuilder summary = new StringBuilder()
+        summary << "HETATM Survey for ${dataset.name} (${dataset.size} structures)\n\n"
+        summary << "Most frequent HETATM groups:\n"
+        nameToStructures.entrySet()
+                .toSorted { -it.value.size() }
+                .each { e ->
+                    int nStruct = e.value.size()
+                    int nGroups = nameToGroupCount.get(e.key).get()
+                    double pct = (100.0d * nStruct) / Math.max(1, dataset.size)
+                    summary << String.format("  %-8s %4d structures (%5.1f%%) - %d groups total\n",
+                            e.key, nStruct, pct, nGroups)
+                }
+
+        if (anySpecifiers) {
+            summary << "\nCofactor specifier match (per-item resolution, column overrides global):\n"
+            specToStructures.entrySet()
+                    .toSorted { -it.value.size() }
+                    .each { e ->
+                        int nStruct = e.value.size()
+                        int nGroups = specToGroupCount.get(e.key).get()
+                        String marker = nStruct == 0 ? "   ← matched no structures" : ""
+                        summary << String.format("  %-30s %d/%d structures, %d groups total%s\n",
+                                e.key, nStruct, dataset.size, nGroups, marker)
+                    }
+            writeFile "$outdir/cofactor_matches.csv", mt.toCsv()
+        }
+
+        String summaryStr = summary.toString()
+        writeFile "$outdir/het_groups_summary.txt", summaryStr
+        write summaryStr
+
+        write "Processed ${dataset.size} items"
         write res.writeErrorsAndGetSummary(outdir)
     }
 

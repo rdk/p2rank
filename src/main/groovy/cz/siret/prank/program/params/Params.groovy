@@ -518,6 +518,54 @@ class Params {
     List<String> positive_def_ligtypes = ["relevant"]
 
     /**
+     * Cofactor specifiers - HETATM groups to include as part of the protein surface.
+     *
+     * Matching groups will:
+     * - Contribute heavy atoms to SAS point generation and pocket detection
+     * - Be EXCLUDED from ligand detection
+     * - Have features calculated from nearest protein residue (SAS-level) or
+     *   defaults (atom-level - cofactor atoms aren't amino acids)
+     *
+     * Specifier syntax mirrors the dataset 'ligands' column (Dataset.LigandDefinition):
+     *   "FAD"                                     - all FAD groups
+     *   "FAD[group_id:A_500]"                     - specific FAD by chain + residue number
+     *   "FAD[A_500]"                              - shorthand for group_id
+     *   "FAD[atom_id:12345]"                      - by PDB atom serial
+     *   "FAD[contact_res_ids:A_D246,A_T259,...]"  - by surrounding polymer residues
+     *
+     * Group names are matched against group.PDBName exactly (case-sensitive).
+     * BioJava returns uppercase PDB names so in practice "FAD" matches and "fad" does not.
+     * Validation happens at startup via LigandDefinition.parse().
+     *
+     * Can be overridden per-structure using the 'cofactors' column in dataset files.
+     *
+     * Example values: ["FAD", "PLP", "HEM"]
+     * Precise specifiers (with [...]) are typically used via the CLI or per-row
+     * dataset column, not in static config files.
+     * Default: [] (empty - cofactors treated as ligands or ignored per ignore_het_groups)
+     *
+     * Related: ignore_het_groups (ignored groups are excluded from ligand detection AND
+     *          from protein surface; cofactors are excluded from ligand detection but
+     *          INCLUDED in surface).
+     */
+    @RuntimeParam
+    List<String> cofactors = []
+
+    /**
+     * Maximum distance (Å) from a cofactor's center of mass to the nearest
+     * protein atom for the cofactor to be considered associated with the protein.
+     *
+     * Cofactors beyond this distance are still included in the surface, but
+     * an INFO warning is logged - the cofactor may be a crystallization artifact
+     * or positioned in the solvent far from the protein.
+     *
+     * Set to 0 to disable proximity checking.
+     * Default: 15.0 Å (covers most covalently/tightly bound cofactors).
+     */
+    @RuntimeParam
+    double cofactor_max_protein_dist = 15.0
+
+    /**
      * Amino acid mapping mode for non-canonical residues.
      *
      * Controls how modified amino acid residue codes (e.g., MSE, LLP, TQP) are mapped
@@ -827,6 +875,18 @@ class Params {
      */
     @RuntimeParam
     boolean vis_highlight_ligands = false
+
+    /**
+     * Highlight cofactor atoms (matched via -cofactors) as teal sticks in PyMOL output,
+     * distinct from ligand spheres and the polymer cartoon.
+     *
+     * If false, cofactor atoms render with PyMOL's default style for HETATMs (sticks in
+     * the default colour), which can be visually indistinguishable from ligands or noise.
+     * Setting this to false does NOT change pocket prediction - cofactor atoms remain on
+     * the protein surface; only the colour highlight is removed.
+     */
+    @RuntimeParam
+    boolean vis_highlight_cofactors = true
 
     /**
      * Method for computing binding site center of observed pocket for evaluation (used by DCC criterion).

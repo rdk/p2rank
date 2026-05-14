@@ -9,7 +9,7 @@ import static cz.siret.prank.utils.Formatter.format
 /**
  * Collects structured rows of named values and produces CSV output and summary statistics.
  *
- * Columns are pre-registered at construction time. Row operations require no synchronization —
+ * Columns are pre-registered at construction time. Row operations require no synchronization -
  * each Row is filled by a single thread, and only the final {@code rows.add()} is synchronized.
  *
  * Usage:
@@ -42,7 +42,7 @@ class DataTable {
 
     /**
      * Creates a new row and adds it to the table.
-     * The returned Row can be filled via {@code put()} — no synchronization needed.
+     * The returned Row can be filled via {@code put()} - no synchronization needed.
      */
     Row newRow(String label) {
         Row row = new Row(label, columns.length, columnIndex)
@@ -76,23 +76,37 @@ class DataTable {
     String toCsv() {
         StringBuilder sb = new StringBuilder()
 
-        sb << labelColumn
+        sb << csvCell(labelColumn)
         for (String col : columns) {
-            sb << ", " << col
+            sb << ", " << csvCell(col)
         }
         sb << "\n"
 
         for (Row row : getRowsSorted()) {
-            sb << row.label
+            sb << csvCell(row.label)
             for (int i = 0; i < columns.length; i++) {
                 sb << ", "
                 Object val = row.values[i]
-                if (val != null) sb << val.toString()
+                if (val != null) sb << csvCell(val.toString())
             }
             sb << "\n"
         }
 
         return sb.toString()
+    }
+
+    /**
+     * Minimal CSV cell encoding (RFC 4180):
+     * - If the cell contains comma, double-quote, CR, or LF, wrap it in double quotes
+     *   and escape any inner double quotes by doubling them.
+     * - Otherwise, return as-is.
+     */
+    private static String csvCell(String value) {
+        if (value == null) return ""
+        boolean needsQuoting = value.indexOf(',') >= 0 || value.indexOf('"') >= 0 ||
+                value.indexOf('\n') >= 0 || value.indexOf('\r') >= 0
+        if (!needsQuoting) return value
+        return '"' + value.replace('"', '""') + '"'
     }
 
     // ---- Summary stats ----

@@ -113,6 +113,10 @@ quick() {
     # test export-points command (no model)
     test ./prank.sh export-points -f distro/test_data/1fbl.pdb -export_points_format csv.gz                -out_subdir TEST/TESTS
 
+    # cofactors feature smoke test
+    test ./prank.sh predict -f distro/test_data/liganated/1t7qa.pdb -cofactors COA                         -out_subdir TEST/TESTS
+    test ./prank.sh analyze cofactors -f distro/test_data/liganated/1t7qa.pdb                              -out_subdir TEST/TESTS
+
 }
 
 quick_train() {
@@ -368,9 +372,46 @@ analyze() {
     test ./prank.sh analyze chains                holo4k.ds     -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
     test ./prank.sh analyze chains-residues       holo4k.ds     -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
 
+    test ./prank.sh analyze cofactors             joined.ds     -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
+    test ./prank.sh analyze cofactors             holo4k.ds     -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
+
 }
 
 
+
+cofactors() {
+
+    title COFACTORS FEATURE
+
+    # analyze cofactors: survey mode (no -cofactors) on file + dataset
+    test ./prank.sh analyze cofactors -f distro/test_data/liganated/1t7qa.pdb                                          -out_subdir TEST/COFACTORS
+    test ./prank.sh analyze cofactors test.ds                                                                          -out_subdir TEST/COFACTORS
+
+    # analyze cofactors: dry-run mode with each specifier form
+    test ./prank.sh analyze cofactors -f distro/test_data/liganated/1t7qa.pdb -cofactors COA                           -out_subdir TEST/COFACTORS
+    test ./prank.sh analyze cofactors -f distro/test_data/liganated/1t7qa.pdb -cofactors 'COA[atom_id:9551]'           -out_subdir TEST/COFACTORS
+    test ./prank.sh analyze cofactors -f distro/test_data/liganated/1t7qa.pdb -cofactors 'COA[contact_res_ids:A_K258]' -out_subdir TEST/COFACTORS
+    test ./prank.sh analyze cofactors -f distro/test_data/liganated/1t7qa.pdb -cofactors ZZZZ                          -out_subdir TEST/COFACTORS
+
+    # predict with cofactors
+    test ./prank.sh predict -f distro/test_data/liganated/1t7qa.pdb -cofactors COA                                     -out_subdir TEST/COFACTORS
+    # R18: never-present specifier must be a no-op (drop-in safety)
+    test ./prank.sh predict -f distro/test_data/1fbl.pdb -cofactors ZZZZ                                               -out_subdir TEST/COFACTORS
+    # R22: case-mismatched name must still match (parser auto-uppercases the group name)
+    test ./prank.sh predict -f distro/test_data/liganated/1t7qa.pdb -cofactors coa                                     -out_subdir TEST/COFACTORS
+    # R22: contact_res_ids must survive comma-splitting (bracket-aware parse)
+    test ./prank.sh predict -f distro/test_data/liganated/1t7qa.pdb -cofactors 'COA[contact_res_ids:A_K258,A_D246]'    -out_subdir TEST/COFACTORS
+
+    # knobs
+    test ./prank.sh predict -f distro/test_data/liganated/1t7qa.pdb -cofactors COA -cofactor_max_protein_dist 0        -out_subdir TEST/COFACTORS
+    test ./prank.sh predict -f distro/test_data/liganated/1t7qa.pdb -cofactors COA -vis_highlight_cofactors 0          -out_subdir TEST/COFACTORS
+
+    # R19: aa_mapping collision warning (MSE is in built-in minimal mapping)
+    test ./prank.sh predict -f distro/test_data/1fbl.pdb -cofactors MSE                                                -out_subdir TEST/COFACTORS
+
+    # drop-in safety benchmark
+    test ./benchmark/cofactors_dropin_safety.sh distro/test_data/concavity.ds
+}
 
 transform() {
 
@@ -593,6 +634,7 @@ eval_train_all() {
 tests() {
     quick
     basic
+    cofactors
 }
 
 all() {

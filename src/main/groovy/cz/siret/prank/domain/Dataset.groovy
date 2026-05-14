@@ -73,6 +73,7 @@ class Dataset implements Parametrized, Writable, Failable {
     static final String COLUMN_APO_PROTEIN = "apo_protein"
     static final String COLUMN_APO_CHAINS = "apo_chains"
     static final String COLUMN_POSITIVE_RESIDUES = "positive_residues"
+    static final String COLUMN_COFACTORS = "cofactors"
 
     static final List<String> DEFAULT_HEADER = [ COLUMN_PROTEIN ]
 
@@ -303,7 +304,36 @@ class Dataset implements Parametrized, Writable, Failable {
         }
         lp.relevantLigandsDefined = hasExplicitlyDefinedLigands()
         lp.relevantLigandDefinitions = item.getLigandDefinitions()
+
+        // Cofactor handler: per-structure column value overrides global Params.cofactors
+        List<LigandDefinition> effectiveDefs = resolveCofactorDefinitions(item)
+        if (!effectiveDefs.isEmpty()) {
+            lp.cofactorHandler = new CofactorHandler(effectiveDefs)
+        }
+
         return lp
+    }
+
+    /**
+     * Resolve effective cofactor definitions for an item.
+     *
+     * Per-structure column value overrides global {@code Params.cofactors}. Parsing is
+     * delegated to {@link CofactorHandler#parseAndValidate}, which handles bracket-aware
+     * splitting (so {@code contact_res_ids:A,B} stays one specifier), case normalization
+     * of the group name, and cofactor-specific error wrapping. Invalid specifiers throw
+     * PrankException with the offending input.
+     *
+     * Package-private so {@code AnalyzeRoutine.cmdCofactors} can use the same per-item
+     * resolution for its dry-run mode.
+     *
+     * @return parsed cofactor definitions; never null, empty when no cofactors configured
+     */
+    List<LigandDefinition> resolveCofactorDefinitions(Item item) {
+        String columnValue = item.columnValues?.get(COLUMN_COFACTORS)
+        if (columnValue != null && !columnValue.trim().isEmpty()) {
+            return CofactorHandler.parseAndValidate(columnValue)
+        }
+        return CofactorHandler.parseAndValidate(Params.inst.cofactors)
     }
 
     /**

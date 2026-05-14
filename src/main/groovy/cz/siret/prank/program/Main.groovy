@@ -1,6 +1,7 @@
 package cz.siret.prank.program
 
 import cz.siret.prank.domain.AminoAcidMapper
+import cz.siret.prank.domain.CofactorHandler
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.domain.loaders.LoaderParams
 import cz.siret.prank.features.implementation.conservation.provider.ConservationProviderFactory
@@ -137,6 +138,38 @@ class Main implements Parametrized, Writable {
 
         // Initialize amino acid mapper based on aa_mapping parameter
         AminoAcidMapper.initialize(params.aa_mapping)
+
+        // Parse and validate cofactor specifiers (Issue #79 part 2).
+        // parseAndValidate throws PrankException on malformed input via LigandDefinition.parse().
+        // The result is discarded here - re-parsing happens per-item in
+        // Dataset.resolveCofactorDefinitions so dataset-column overrides go through the
+        // same validation.
+        if (params.cofactors != null && !params.cofactors.isEmpty()) {
+            CofactorHandler.parseAndValidate(params.cofactors)
+            log.info "Cofactors to include as protein surface: {}", params.cofactors
+
+            // R19: warn if a cofactor specifier's group name is also in the active aa_mapping.
+            // Cofactor atoms would silently inherit the mapped AA's features rather than
+            // cofactor defaults - defined behaviour, but invisible without a warning.
+            Set<String> activeMappings = AminoAcidMapper.getInstance().getMappings().keySet()
+            Set<String> overlapping = new LinkedHashSet<>()
+            for (String spec : params.cofactors) {
+                String trimmed = spec?.trim()
+                if (trimmed == null || trimmed.isEmpty()) continue
+                try {
+                    String name = Dataset.LigandDefinition.parse(trimmed).groupName?.toUpperCase()
+                    if (name != null && activeMappings.contains(name)) overlapping.add(name)
+                } catch (Exception ignored) {
+                    // parse error already surfaced by parseAndValidate above
+                }
+            }
+            if (!overlapping.isEmpty()) {
+                log.warn "Cofactor specifier(s) name(s) {} are also covered by the active " +
+                        "aa_mapping. Cofactor atom features will be computed using the mapped " +
+                        "AA's table entries instead of cofactor defaults. Remove the entry " +
+                        "from aa_mapping or change the cofactor specifier to fix.", overlapping
+            }
+        }
     }
 
     String evalDirParam(String dirParam, String relativePrefixDir) {

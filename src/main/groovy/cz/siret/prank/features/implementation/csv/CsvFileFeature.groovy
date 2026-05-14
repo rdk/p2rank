@@ -61,6 +61,13 @@ class CsvFileFeature extends AtomFeatureCalculator implements Parametrized {
 
     @Override
     double[] calculateForAtom(Atom proteinSurfaceAtom, AtomFeatureCalculationContext context) {
+        // R17: cofactor atoms aren't expected to appear in user-provided CSVs. Without this
+        // short-circuit, the strict-by-default CSV lookup throws PrankException on every
+        // cofactor atom when -cofactors is set. Strict-mode behaviour for polymer atoms is
+        // preserved.
+        if (context.protein.loaderParams?.isCofactor(proteinSurfaceAtom.group)) {
+            return new double[header.size()]
+        }
         CsvFileFeatureValues feature = getValuesForProtein(context.protein)
         return feature.getValues(proteinSurfaceAtom, header)
     }

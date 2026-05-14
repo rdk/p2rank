@@ -258,6 +258,17 @@ class Protein implements Parametrized {
         return (score==null) ? null : score.toDoubleLabeling(this)
     }
 
+    /**
+     * Get cofactor extraction result, if cofactors were configured for this protein.
+     * Stored during {@code loadStructure()} via secondaryData.
+     *
+     * @return ExtractionResult or null if no cofactors configured
+     */
+    @Nullable
+    CofactorHandler.ExtractionResult getCofactorExtractionResult() {
+        (CofactorHandler.ExtractionResult) secondaryData.get(CofactorHandler.EXTRACTION_RESULT_KEY)
+    }
+
 //===========================================================================================================//
 
     List<Ligand> getRelevantLigands() {
@@ -556,6 +567,29 @@ class Protein implements Parametrized {
 
         allAtoms = Atoms.allFromStructure(structure).withIndex()
         proteinAtoms = Atoms.allFromGroups(residues*.group).withoutHydrogens()
+
+        // Include cofactor atoms in the protein surface (Issue #79 part 2).
+        // residues and proteinAtoms must be set before this - contact_res_ids specifier
+        // matching consults both.
+        CofactorHandler cofactorHandler = loaderParams?.cofactorHandler
+        if (cofactorHandler != null && cofactorHandler.isEnabled()) {
+            CofactorHandler.ExtractionResult cfResult = cofactorHandler.extractCofactorAtoms(this)
+
+            if (params.cofactor_max_protein_dist > 0) {
+                cofactorHandler.warnDistantCofactors(cfResult, proteinAtoms,
+                        params.cofactor_max_protein_dist, name)
+            }
+            if (onlyChains != null && fullStructure != null) {
+                cofactorHandler.warnChainExcludedCofactors(fullStructure, cfResult, name)
+            }
+
+            if (!cfResult.atoms.empty) {
+                proteinAtoms = Atoms.join([proteinAtoms, cfResult.atoms])
+            }
+            cofactorHandler.logResult(cfResult, name, structure)
+
+            secondaryData.put(CofactorHandler.EXTRACTION_RESULT_KEY, cfResult)
+        }
 
         log.info "structure atoms: $allAtoms.count"
         log.info "protein   atoms: $proteinAtoms.count"

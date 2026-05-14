@@ -1,14 +1,17 @@
 package cz.siret.prank.program.visualization.renderers
 
+import cz.siret.prank.domain.CofactorHandler
 import cz.siret.prank.domain.labeling.BinaryLabeling
-import org.biojava.nbio.structure.Atom
 import cz.siret.prank.domain.labeling.LabeledResidue
 import cz.siret.prank.domain.labeling.ResidueLabeling
+import cz.siret.prank.geom.Atoms
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.visualization.RenderingModel
 import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+import org.biojava.nbio.structure.Atom
+import org.biojava.nbio.structure.Group
 
 import java.awt.*
 import java.util.List
@@ -116,9 +119,11 @@ show surface, prot
 #show spheres, ligands
 #set sphere_color, gray60
 
-${renderLigands()} 
+${renderLigands()}
 
-${renderLabaledPoints()} 
+${renderCofactors()}
+
+${renderLabaledPoints()}
 
 ${renderResidueColoring()}
 
@@ -137,11 +142,60 @@ orient
 
         if (ligandAtomIds.empty) return ""
 
-"""                      
+"""
 select ligand_atoms, $idsOrList
 show spheres, ligand_atoms
 set sphere_color, red
 """
+    }
+
+    /**
+     * Render cofactor atoms as teal sticks, distinct from ligand spheres and protein cartoon.
+     *
+     * Emits one PyMOL selection per cofactor type (e.g. {@code cofactor_FAD},
+     * {@code cofactor_PLP}) so users can toggle them independently, plus an aggregate
+     * {@code cofactor_atoms} selection that drives the rendering. Unmatched cofactor
+     * specifiers are noted in a header comment for diagnostics.
+     */
+    private String renderCofactors() {
+        if (!params.vis_highlight_cofactors) return ""
+        CofactorHandler.ExtractionResult result = model.cofactorResult
+        if (result == null || result.atoms.empty) return ""
+
+        return cofactorPymolBlock(result)
+    }
+
+    /** Shared rendering of a cofactor ExtractionResult - keeps the logic in one place. */
+    static String cofactorPymolBlock(CofactorHandler.ExtractionResult result) {
+        StringBuilder sb = new StringBuilder()
+        sb << "# cofactors (HETATMs treated as protein surface)\n"
+        if (!result.unmatchedSpecifiers.isEmpty()) {
+            sb << "# unmatched specifiers (no group found): ${result.unmatchedSpecifiers}\n"
+        }
+        sb << "set_color cofactor_col, [73, 168, 199]\n"
+
+        // Per-name selections - addressable in PyMOL for toggling/colouring individual cofactors.
+        List<String> perNameSelectors = new ArrayList<>()
+        for (Map.Entry<String, List<Group>> e : result.foundGroups.entrySet()) {
+            String selName = "cofactor_" + e.key.replaceAll(/[^A-Za-z0-9]/, '_')
+            List<String> ids = new ArrayList<>()
+            for (Group g : e.value) {
+                for (Atom a : Atoms.allFromGroup(g).withoutHydrogens().list) {
+                    ids.add(a.PDBserial.toString())
+                }
+            }
+            if (ids.isEmpty()) continue
+            String idsOrList = ids.collect { "id $it" }.join(" or ")
+            sb << "select ${selName}, ${idsOrList}\n"
+            perNameSelectors << selName
+        }
+        if (perNameSelectors.isEmpty()) return ""
+
+        sb << "select cofactor_atoms, " << perNameSelectors.join(" or ") << "\n"
+        sb << "show sticks, cofactor_atoms\n"
+        sb << "color cofactor_col, cofactor_atoms\n"
+        sb << "set stick_radius, 0.18, cofactor_atoms\n"
+        return sb.toString()
     }
 
     private String renderResidueColoring() {

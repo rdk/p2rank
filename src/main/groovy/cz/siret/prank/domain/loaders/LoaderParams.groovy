@@ -1,9 +1,13 @@
 package cz.siret.prank.domain.loaders
 
+import cz.siret.prank.domain.CofactorHandler
 import cz.siret.prank.domain.Dataset
 import cz.siret.prank.program.params.Params
 import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
+import org.biojava.nbio.structure.Group
+
+import javax.annotation.Nullable
 
 /**
  * Protein file loader parameters
@@ -30,6 +34,27 @@ class LoaderParams {
 
     Set<String> getIgnoredHetGroups() {
         return ignoredHetGroups
+    }
+
+    /**
+     * Handler for cofactor processing and lookup. Populated from {@code Params.cofactors} or
+     * per-structure dataset column. Null when no cofactors are configured (default behaviour).
+     *
+     * Single source of truth for cofactor state - eliminates state duplication between
+     * LoaderParams and CofactorHandler.
+     */
+    @Nullable
+    CofactorHandler cofactorHandler = null
+
+    /**
+     * Check if a group is a configured cofactor. Delegates to {@link CofactorHandler#isCofactor},
+     * which is an O(1) identity lookup against the set of groups matched during
+     * {@code CofactorHandler.extractCofactorAtoms}.
+     *
+     * Thread-safe: each LoaderParams instance has its own handler.
+     */
+    boolean isCofactor(Group group) {
+        return cofactorHandler != null && cofactorHandler.isCofactor(group)
     }
 
 //    LoaderParams(LoaderParams lp) {

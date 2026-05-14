@@ -73,6 +73,8 @@ set stick_color, magenta
 
 ${renderLigands(pair.holoProtein)}
 
+${renderCofactors(pair.holoProtein)}
+
 # SAS points
 
 load "$pointsFileRelative", points
@@ -131,6 +133,18 @@ orient
         // return pair.prediction.protein.exposedAtoms.list.collect { "set surface_color, grey30, id $it.PDBserial \n set sphere_color, grey30, id $it.PDBserial" }.join("\n")
 
         return ""
+    }
+
+    /**
+     * Render cofactor atoms (matched via -cofactors) as teal sticks.
+     * Delegates to {@link NewPymolRenderer#cofactorPymolBlock} so the structure of the PML
+     * block stays identical between the two renderers.
+     */
+    private String renderCofactors(Protein protein) {
+        if (!params.vis_highlight_cofactors) return ""
+        def result = protein.cofactorExtractionResult
+        if (result == null || result.atoms.empty) return ""
+        return NewPymolRenderer.cofactorPymolBlock(result)
     }
 
     private String renderLigands(Protein protein) {

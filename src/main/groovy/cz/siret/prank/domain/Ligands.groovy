@@ -89,7 +89,11 @@ class Ligands implements Parametrized, Writable, Failable {
             relevantLigands = ligands
 
         } else {
+            // Filter cofactors out of the candidate list entirely - they are not ligands of
+            // any kind (relevant OR ignored). See Issue #79 part 2; the guard in
+            // isRelevantLigandGroup() below is defence-in-depth for direct callers.
             List<Group> ligandGroups = Struct.getLigandGroups(protein)
+                    .findAll { !loaderParams.isCofactor(it) }
 
             if (loaderParams.relevantLigandsDefined) {
                 log.info "Relevant ligands are explicitly defined in the dataset: " + loaderParams.relevantLigandDefinitions
@@ -170,7 +174,7 @@ class Ligands implements Parametrized, Writable, Failable {
             log.info "Loading ligand from separate file: [{}]", ligFile.name
             try {
                 Structure ligStructure = PdbUtils.loadFromFile(ligFile.absolutePath)
-                // Extract all non-water groups — these are dedicated ligand files, so all groups are ligand atoms
+                // Extract all non-water groups - these are dedicated ligand files, so all groups are ligand atoms
                 List<Group> groups = Struct.getGroups(ligStructure).findAll { Group g -> !g.isWater() }
                 if (groups.empty) {
                     log.warn "No non-water groups found in ligand file [{}], skipping", ligFile.name
@@ -203,7 +207,25 @@ class Ligands implements Parametrized, Writable, Failable {
         }
     }
 
+    /**
+     * Determines if a HETATM group should be treated as a relevant ligand.
+     *
+     * Exclusion order:
+     *   1. Cofactors (always excluded - they're part of protein surface)
+     *   2. Explicitly defined ligands (if relevantLigandsDefined)
+     *   3. Ignored het groups (from ignore_het_groups parameter)
+     *
+     * Cofactors take precedence over explicit ligand definitions: if a group is matched
+     * by both a cofactor specifier and a ligand definition, it is excluded from ligand
+     * detection (cofactors describe surface, never targets).
+     */
     private static boolean isRelevantLigandGroup(Group group, Protein protein, LoaderParams loaderParams) {
+        // Cofactor check first - O(1) identity lookup against the set of groups matched
+        // during CofactorHandler.extractCofactorAtoms() in Protein.loadStructure().
+        if (loaderParams.isCofactor(group)) {
+            return false
+        }
+
         if (loaderParams.relevantLigandsDefined) {
             for (Dataset.LigandDefinition ligDef : loaderParams.relevantLigandDefinitions) {
                 if (ligDef.matchesGroup(group, protein)) {
