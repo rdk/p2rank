@@ -132,39 +132,6 @@ class RPlotter implements Parametrized {
         rexec.runCode(rcode, label, outdir)
     }
 
-//    @Deprecated
-//    void plot1DVariableOld(String name) {
-//
-//        int column = header.indexOf(name)
-//
-//        String tabf = "../"+Futils.shortName(csvfile) //FileUtils.relativize(csvfile, outdir)
-//
-//        String rcode = """
-//            if (!require("ggplot2")) {
-//                  install.packages("ggplot2", dependencies = TRUE, repos = "http://cran.us.r-project.org")
-//                  library(ggplot2)
-//            }
-//            library(scales)
-//
-//            r <- c("green4","green3","yellow","gold","red3")
-//
-//            data <- read.csv("$tabf")
-//
-//            xx = names(data)[1]
-//            yy = names(data)[${column+1}]
-//
-//            p <- ggplot(data, aes_string(x=xx, y=yy, colour=yy, fill = yy))
-//
-//            p + geom_bar(stat="identity", position = 'dodge', alpha = 3/4, color="gray20") + scale_fill_gradientn(colours=r) + theme(axis.text.x = element_text(angle = 340, hjust = 0))
-//
-//            fname <- paste(yy,".png", sep="")
-//            ggsave(file=fname, dpi=$dpi)
-//        """
-//        // to add line plot: p  +  geom_line(size = 1, color="gray40") + geom_point(shape=18, size=4, color="gray20")
-//
-//        rexec.runCode(rcode, name, outdir)
-//    }
-
     /**
      *
      * @param tablef  2d csv table

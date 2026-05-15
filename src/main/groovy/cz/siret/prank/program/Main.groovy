@@ -462,7 +462,7 @@ class Main implements Parametrized, Writable {
     }
 
     /**
-     * @return false if successful, true it there was some (recoverable) error during execution
+     * @return false if successful, true if there was some (recoverable) error during execution
      */
     boolean run() {
 

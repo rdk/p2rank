@@ -119,8 +119,6 @@ import cz.siret.prank.program.params.Params
      */
     neutral_points_margin = 5.5
 
-    mask_unknown_residues = true
-
     /**
      * chem. properties representation neighbourhood radius in A
      */

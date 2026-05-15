@@ -11,7 +11,7 @@ Parameters can be then overridden in a custom config file (`-c <config.file>`) o
 
 Parameters can be set in 2 ways:
 1. on the command line `-<param_name> <value>`
-2. in config groovy file specified with `-c <config.file>` (see working.groovy for an example... `prank -c example.groovy`). 
+2. in config groovy file specified with `-c <config.file>` (see `example.groovy` for an example: `prank -c example.groovy`). 
 
 Parameters on the command line override those in the config file, which override defaults.
 
@@ -23,4 +23,4 @@ Parameter application priority (last wins):
 5. parameters on the command line
 
 To see a comprehensive list of all possible params see `Params.groovy` in the source code:
-https://github.com/rdk/p2rank/blob/master/src/main/groovy/cz/siret/prank/program/params/Params.groovy
+https://github.com/rdk/p2rank/blob/develop/src/main/groovy/cz/siret/prank/program/params/Params.groovy
