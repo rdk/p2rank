@@ -1,7 +1,6 @@
 package cz.siret.prank.features.generic;
 
-import org.codehaus.groovy.runtime.DefaultGroovyMethods;
-
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -61,13 +60,11 @@ public class GenericVector {
     }
 
     public List<Double> toList() {
-        return DefaultGroovyMethods.toList(data);
-    }
-
-    public void addTo(List<Double> list) {
-        for (int i = 0; i != data.length; i++) {
-            list.add(data[i]);
+        List<Double> list = new ArrayList<>(data.length);
+        for (double v : data) {
+            list.add(v);
         }
+        return list;
     }
 
     /**

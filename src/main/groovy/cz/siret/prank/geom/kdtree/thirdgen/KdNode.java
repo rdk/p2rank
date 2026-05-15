@@ -161,6 +161,7 @@ class KdNode<T> {
         return true;
     }
 
+    @SuppressWarnings("unchecked")
     private void splitLeafNode() {
         right = new KdNode<T>(dimensions, bucketCapacity);
         left = new KdNode<T>(dimensions, bucketCapacity);

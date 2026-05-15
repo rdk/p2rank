@@ -44,6 +44,7 @@ public final class Atoms implements Iterable<Atom> {
         list = new ArrayList<>(initialCapacity);
     }
 
+    @SuppressWarnings("unchecked")
     public Atoms(List<? extends Atom> list) {
         if (list == null) throw new AssertionError();
         this.list = (List<Atom>) list;
