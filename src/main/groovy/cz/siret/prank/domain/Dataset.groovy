@@ -380,6 +380,9 @@ class Dataset implements Parametrized, Writable, Failable {
             case "swinsite":
                 res = new SwinSiteLoader()
                 break
+            case "seq2pocket":
+                res = new Seq2PocketLoader()
+                break
             default:
                 throw new PrankException("Unknown prediction method specified in the dataset: $predictionMethod")
         }

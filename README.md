@@ -158,7 +158,9 @@ SiteHound,
 MetaPocket2,
 LISE,
 DeepSite,
-and PUResNetV2.0
+PUResNetV2.0,
+SwinSite,
+and Seq2Pocket
 are supported at the moment).
 See [rescoring documentation](documentation/rescoring.md) for details.
 
@@ -174,7 +176,7 @@ prank rescore fpocket.ds -o output_here   # explicitly specify output directory
 prank rescore fpocket.ds -c rescore_2024  # use new experimental rescoring model (recommended for alphafold models)
 ~~~
 
-For rescoring, the dataset file needs to have a specific 2-column format. See examples in `test_data/`: `fpocket.ds`, `concavity.ds`, `puresnet.ds`.
+For rescoring, the dataset file needs to have a specific 2-column format. See examples in `test_data/`: `fpocket.ds`, `concavity.ds`, `puresnet.ds`, `pocketeer.ds`, `swinsite.ds`.
 
 New experimental rescoring model `-c rescore_2024` shows promising results but hasn't been fully evaluated yet. It is recommended for AlphaFold models, NMR and cryo-EM structures since it doesn't depend on b-factor as a feature.
 
