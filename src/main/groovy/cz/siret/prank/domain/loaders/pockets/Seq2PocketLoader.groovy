@@ -94,8 +94,10 @@ class Seq2PocketLoader extends PredictionLoader {
                 String atomIdsField = cols[4].trim()
 
                 List<Atom> atomList = new ArrayList<>()
+                int requestedSerials = 0
                 if (queryProtein != null && !atomIdsField.isEmpty()) {
                     String[] tokens = WS.split(atomIdsField)
+                    requestedSerials = tokens.length
                     for (String tok : tokens) {
                         int serial = Integer.parseInt(tok)
                         Atom a = queryProtein.allAtoms.getByID(serial)
@@ -105,6 +107,14 @@ class Seq2PocketLoader extends PredictionLoader {
                             totalMissingSerials++
                         }
                     }
+                }
+                // skip degenerate pocket: input named atoms but none could be resolved.
+                // Such a pocket would carry empty surfaceAtoms and a null centroid,
+                // which would NPE downstream feature extraction.
+                if (requestedSerials > 0 && atomList.isEmpty()) {
+                    log.warn('Seq2Pocket: skipping pocket score={} in [{}] — none of {} atom serial(s) resolved',
+                            score, predFile.name, requestedSerials)
+                    continue
                 }
                 Atoms surfaceAtoms = new Atoms(atomList)
 

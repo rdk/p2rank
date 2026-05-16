@@ -110,6 +110,17 @@ class FPocketLoader extends PredictionLoader implements Parametrized {
 
             //println "loading het group $pocketIndex $pocketGroup.PDBName"
 
+            // degenerate pocket guard: empty voronoi-centers group would yield a
+            // null centroid (Atoms.centerOfMass returns null on empty list),
+            // which NPEs downstream feature extraction. Should not occur with
+            // real fpocket output, but defend against malformed input.
+            // Skipped BEFORE rank assignment so surviving ranks stay sequential.
+            if (g.empty) {
+                log.warn 'fpocket: skipping pocket at index={} — empty voronoi-centers group', pocketIndex
+                pocketIndex++
+                continue
+            }
+
             FPocketPocket pocket = new FPocketPocket()
             pocket.rank = rank++
             pocket.voronoiCenters = g
@@ -124,7 +135,7 @@ class FPocketLoader extends PredictionLoader implements Parametrized {
             Atoms surfaceAtoms = new Atoms()
             for (Atom atm in pocketAtmAtoms.list) {
                 Atom linkedAtom = protein.proteinAtoms.getByID(atm.PDBserial)
-                
+
                 if (linkedAtom != null) {
                     surfaceAtoms.add(linkedAtom)
                 } else {

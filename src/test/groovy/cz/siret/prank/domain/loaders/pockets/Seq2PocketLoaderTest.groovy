@@ -132,6 +132,24 @@ class Seq2PocketLoaderTest {
         assertEquals 0, p.pocketCount
     }
 
+    /**
+     * Synthetic fixture: pocket2's atom_ids reference non-existent serials
+     * (999000001..3). The loader should skip the degenerate pocket and keep
+     * pocket1 and pocket3, renumbering ranks to 1..2 after the sort.
+     */
+    @Test
+    void testSeq2Pocket_skipsPocketWithAllSerialsUnresolved() {
+        Prediction p = loadPrediction(
+                "$testResourcesDir/1a26A_unresolved",
+                "$distroDir/clean/1a26A.pdb"
+        )
+        assertEquals 2, p.pocketCount
+        assertEquals 0.9256007982336957d, p.pockets[0].score, DELTA
+        assertEquals 0.5913609095982143d, p.pockets[1].score, DELTA
+        assertEquals 1, p.pockets[0].rank
+        assertEquals 2, p.pockets[1].rank
+    }
+
     @Test
     void testEmptyDirectory() {
         // dir with no *_predictions.txt file should produce 0 pockets, not throw
