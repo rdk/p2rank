@@ -34,6 +34,12 @@ prank rescore test_data/pocketeer.ds -c rescore_2024          # use new experime
 | MetaPocket2 | `metapocket2` | PDB file with MPT residues | [paper](https://academic.oup.com/bioinformatics/article/27/15/2083/402380) |
 | LISE | `lise` | PDB file with HETATM records | [paper](https://academic.oup.com/nar/article/41/W1/W292/1094035) |
 | P2Rank | `p2rank` | `*_predictions.csv` file | [GitHub](https://github.com/rdk/p2rank), [paper](https://doi.org/10.1186/s13321-018-0285-8) |
+| SwinSite | `swinsite` | Per-protein directory with `grid<N>_score_<S>.mol2` files | [GitHub](https://github.com/ding-oh/SwinSite), [paper](https://doi.org/10.1021/acs.jcim.5c02734) |
+| Seq2Pocket | `seq2pocket` | Per-protein directory with `<ID>_predictions.txt` | [GitHub](https://github.com/skrhakv/seq2pocket), [paper](https://doi.org/10.64898/2026.01.28.702257) |
+
+The last two methods point the `prediction` column at a **per-protein directory**
+rather than a single file. See [Rescoring directory-based predictions](#rescoring-directory-based-predictions-swinsite-seq2pocket)
+below for an example.
 
 ## Dataset File Format
 
@@ -118,6 +124,29 @@ prank eval-rescore my_eval.ds
 This outputs evaluation metrics (DCA, DSO success rates, etc.) showing whether
 rescoring improved pocket ranking.
 
+### Rescoring directory-based predictions (SwinSite, Seq2Pocket)
+
+For these methods, the `prediction` column points to the per-protein output
+directory (not a single file). The loader picks up the expected files inside:
+`grid*_score_*.mol2` for SwinSite, `<ID>_predictions.txt` for Seq2Pocket.
+
+`my_swinsite.ds`:
+```text
+PARAM.PREDICTION_METHOD=swinsite
+
+HEADER: prediction protein
+
+swinsite_output/1abc  structures/1abc.pdb
+swinsite_output/2xyz  structures/2xyz.pdb
+```
+
+```bash
+prank rescore my_swinsite.ds
+```
+
+The same pattern applies to `seq2pocket`: point each row at the directory
+containing its `_predictions.txt`.
+
 ## Output
 
 For each protein, two files are generated in the output directory:
@@ -167,4 +196,19 @@ prank eval-rescore fpocket.ds -c rescore_2024
 ```
 
 This model shows promising results but has not been fully evaluated yet.
+
+## Conservation-aware rescoring (`rescore_conservation`)
+
+A rescoring model that incorporates per-residue sequence conservation scores
+alongside the standard P2Rank features. Works with any supported prediction
+method, not just Fpocket.
+
+```bash
+prank rescore fpocket.ds -c rescore_conservation \
+  -conservation_dirs path/to/cons/
+```
+
+Requires HMMER-based `.hom` conservation files (one per chain, named
+`{baseName}_{chainId}.hom`). See [conservation.md](conservation.md) for the
+file format and pipeline.
 
