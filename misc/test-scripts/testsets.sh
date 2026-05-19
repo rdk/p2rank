@@ -561,8 +561,8 @@ pocket_grid() {
     test ./prank.sh predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_format arrow.zst                                                              -out_subdir TEST/POCKET_GRID
     test ./prank.sh predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_format parquet                                                                -out_subdir TEST/POCKET_GRID
 
-    # Full descriptor menu
-    test ./prank.sh predict -f distro/test_data/1fbl.pdb -export_pocket_descriptors 1 -pocket_descriptors 'volume,sphericity,radius_of_gyration,num_residues,num_surface_atoms,num_grid_points'  -out_subdir TEST/POCKET_GRID
+    # Full descriptor menu (all seven shipped, including principal_moments)
+    test ./prank.sh predict -f distro/test_data/1fbl.pdb -export_pocket_descriptors 1 -pocket_descriptors 'volume,sphericity,radius_of_gyration,num_residues,num_surface_atoms,num_grid_points,principal_moments'  -out_subdir TEST/POCKET_GRID
 
     # Grid-free descriptors only — exercises the grid-build short-circuit (no
     # "PocketGrid built" log line should appear for these invocations).

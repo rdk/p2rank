@@ -124,10 +124,15 @@ Implementations live under
 
 4. **To include it in the default output**, also add the name to the
    `pocket_descriptors` default list in `Params.groovy`. The default is
-   declared explicitly rather than derived from `Registry.knownNames()`
-   so that adding a descriptor doesn't silently change every existing
-   user's output schema — that's intentional; skip step 4 if the new
-   descriptor is opt-in only.
+   declared explicitly (rather than derived from `Registry.knownNames()`)
+   so each addition to the default schema is a conscious choice — but
+   adding to the default IS a user-visible breaking change for anyone
+   parsing the output by column index. Two recommendations:
+   - Parse the descriptors file by column **name**, not by column index.
+   - When you add a descriptor to the default list, note it in
+     [`breaking-changes.md`](../breaking-changes.md).
+
+   Skip step 4 if the new descriptor is opt-in only.
 
 INT columns return their value as a `double` that the writer downcasts at
 output time, matching the existing `TableData` convention. Implementations

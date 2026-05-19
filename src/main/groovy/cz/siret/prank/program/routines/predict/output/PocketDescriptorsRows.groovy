@@ -78,7 +78,7 @@ final class PocketDescriptorsRows implements TableData {
         if (grid == null) {
             for (PocketDescriptor d : descriptors) {
                 if (d.needsGrid()) {
-                    throw new IllegalArgumentException(
+                    throw new cz.siret.prank.program.PrankException(
                             "Descriptor '${d.name()}' declares needsGrid()=true but a null " +
                             "PocketGrid was passed to PocketDescriptorsRows. Either build the " +
                             "grid upstream or drop this descriptor from -pocket_descriptors.")

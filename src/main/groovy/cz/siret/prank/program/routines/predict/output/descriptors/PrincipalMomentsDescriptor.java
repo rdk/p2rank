@@ -107,9 +107,15 @@ public final class PrincipalMomentsDescriptor implements PocketDescriptor {
         return new double[] { l1, l2, l3 };
     }
 
-    /** PSD eigenvalues should be ≥ 0; numerical noise can push them slightly negative. */
+    /**
+     * PSD eigenvalues should be ≥ 0; numerical noise can push them slightly negative.
+     * NaN is also clamped to 0 as defense-in-depth: {@code NaN < 0} is false, so a NaN
+     * eigenvalue would otherwise slip through and propagate to the CSV. The upstream
+     * {@code GridGenerator.isFiniteBox} guard already rejects non-finite inputs, but
+     * a future code path could bypass it.
+     */
     private static double clampNonNegative(double v) {
-        return v < 0d ? 0d : v;
+        return (v < 0d || !Double.isFinite(v)) ? 0d : v;
     }
 
 }

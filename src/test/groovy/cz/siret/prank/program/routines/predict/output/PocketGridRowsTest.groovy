@@ -45,7 +45,7 @@ class PocketGridRowsTest {
     @Test
     void multiPocketMembershipProducesMultipleRows() {
         // Point b is in both pockets → it appears twice (once per pocket).
-        PocketGridRows data = new PocketGridRows(buildTwoPocketGrid(), false)
+        PocketGridRows data = new PocketGridRows(buildTwoPocketGrid(), false, null, null, [] as List<String>)
         assertEquals(4, data.rowCount)  // 2 + 2 assignments
         assertEquals(['x', 'y', 'z', 'pocket'], data.header)
     }
@@ -62,16 +62,16 @@ class PocketGridRowsTest {
         assigned.put(1, bits(0))
         PocketGrid grid = new PocketGrid(new Atoms([a, unassigned]), 1.0d, 0d, 0d, 0d, idx, assigned)
 
-        PocketGridRows included = new PocketGridRows(grid, true)
+        PocketGridRows included = new PocketGridRows(grid, true, null, null, [] as List<String>)
         assertEquals(2, included.rowCount)  // 1 assigned + 1 unassigned
 
-        PocketGridRows omitted = new PocketGridRows(grid, false)
+        PocketGridRows omitted = new PocketGridRows(grid, false, null, null, [] as List<String>)
         assertEquals(1, omitted.rowCount)
     }
 
     @Test
     void sortOrderIsPocketThenCoords() {
-        PocketGridRows data = new PocketGridRows(buildTwoPocketGrid(), false)
+        PocketGridRows data = new PocketGridRows(buildTwoPocketGrid(), false, null, null, [] as List<String>)
         // Expected sort: (pocket=1, x=1,2), then (pocket=2, x=2,3).
         double[] r0 = data.getRow(0); assertEquals(1.0d, r0[0], 0.0d); assertEquals(1, (int) r0[3])
         double[] r1 = data.getRow(1); assertEquals(2.0d, r1[0], 0.0d); assertEquals(1, (int) r1[3])
@@ -81,7 +81,7 @@ class PocketGridRowsTest {
 
     @Test
     void columnTypes() {
-        PocketGridRows data = new PocketGridRows(buildTwoPocketGrid(), false)
+        PocketGridRows data = new PocketGridRows(buildTwoPocketGrid(), false, null, null, [] as List<String>)
         assertEquals(TableData.ColumnType.DOUBLE, data.getColumnType(0))
         assertEquals(TableData.ColumnType.DOUBLE, data.getColumnType(1))
         assertEquals(TableData.ColumnType.DOUBLE, data.getColumnType(2))

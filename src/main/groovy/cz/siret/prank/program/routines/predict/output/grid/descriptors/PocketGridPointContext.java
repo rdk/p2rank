@@ -23,4 +23,17 @@ public record PocketGridPointContext(
         @Nullable Pocket pocket,
         Protein protein,
         PocketGrid grid) {
+
+    // Compact validator — limits the blast radius of an int-arg swap. Doesn't catch
+    // pointIndex ↔ pocketRank swapped when both happen to be non-negative, but does
+    // catch the common cases (negative index or rank from a misuse).
+    public PocketGridPointContext {
+        if (pointIndex < 0) {
+            throw new IllegalArgumentException("pointIndex must be >= 0 (got " + pointIndex + ")");
+        }
+        if (pocketRank < 0) {
+            throw new IllegalArgumentException(
+                    "pocketRank must be >= 0 (0 = unassigned; got " + pocketRank + ")");
+        }
+    }
 }

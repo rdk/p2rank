@@ -118,6 +118,24 @@ class GridGeneratorBetweenTest {
     }
 
     @Test
+    void nanCoordInSasPointsThrowsClearError() {
+        // GridGenerator's (Box, edge) ctor guards against NaN/Inf input — without it,
+        // IEEEremainder(NaN, edge) silently produces NaN origins and a NaN-everywhere
+        // lattice. This test pins the throw so a future refactor that drops the guard
+        // can't reintroduce silent NaN propagation.
+        Atoms atoms = new Atoms([carbonAt(0d, 0d, 0d)])
+        Atoms sasWithNaN = new Atoms([
+                new Point(0d, 0d, 0d) as Atom,
+                new Point(Double.NaN, 0d, 0d) as Atom
+        ])
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class) {
+            GridGenerator.sampleGridPointsBetween(atoms, sasWithNaN, 1.0d, 3.0d, 0.5d)
+        } as IllegalArgumentException
+        assertTrue(e.message.toLowerCase().contains('non-finite'),
+                "expected non-finite-box error, got: ${e.message}")
+    }
+
+    @Test
     void returnedOriginMatchesGridShift() {
         // Sampler exposes the lattice origin it picked so downstream callers don't
         // recompute Box.aroundAtoms + shift. Sanity-check: the origin equals what

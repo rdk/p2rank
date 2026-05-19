@@ -96,6 +96,36 @@ Descriptor params:
 | `pocket_grid_volsite_radius` | `4.0` Å | Cutoff radius for the `volsite` indicator. Standard VolSite pharmacophore search distance. |
 | `pocket_grid_volsite_sigma` | `2.0` Å | Gaussian σ for `volsite_smooth`. Kernel truncated at `4σ`. |
 
+### Adding a new per-grid-point descriptor
+
+Implementations live under
+`src/main/groovy/cz/siret/prank/program/routines/predict/output/grid/descriptors/`.
+
+1. Implement the `PocketGridPointDescriptor` interface (`name`, `columnNames`,
+   `columnTypes`, `compute`). The shape mirrors the per-pocket
+   `PocketDescriptor` (see
+   [`export-pocket-descriptors.md`](export-pocket-descriptors.md#adding-a-new-descriptor)
+   for the full recipe), with two differences:
+   - **No `needsGrid()` method.** Every grid-point descriptor needs the grid
+     by definition — the grid is the substrate that defines what a grid point
+     is. The orchestrator always builds the grid when any grid-point
+     descriptor is selected.
+   - **No `AbstractScalarPocketDescriptor`-style adapter.** Both shipped
+     descriptors (`volsite`, `volsite_smooth`) are multi-column; if you add
+     the first scalar grid-point descriptor and it's the only one, implement
+     `columnNames()` as a single-element list and rely on the bare `name()`
+     output convention. If a second arrives, factor out an adapter then.
+
+2. Register in `PocketGridPointDescriptorRegistry`'s static initializer. The
+   registry rejects descriptors with duplicate `columnNames` at registration
+   time.
+
+3. Users opt in by name: `-pocket_grid_point_descriptors "volsite,my_new_descriptor"`.
+
+4. Default-empty is deliberate — adding a per-grid-point descriptor to the
+   default would expand the row count by columns × rows, which is materially
+   non-free (see cost rationale above). New descriptors should ship opt-in.
+
 ## Parameters
 
 | Parameter | Default | Notes |
@@ -151,7 +181,7 @@ The volume surface is rendered as a vdW-style surface (solvent probe = 0)
 of radius `vis_pocket_grid_volume_radius` (Å, auto-scaled to
 `0.85 × spacing` when the param is left at its `-1` sentinel; ≈ 1.02 Å
 at default spacing) around each grid point. The default sits just above
-the 3D-diagonal merge threshold (`spacing × √3 / 2 ≈ 0.87 × spacing`),
+the 3D-diagonal merge threshold (`spacing × √3 / 2 ≈ 0.866 × spacing`),
 so neighbors overlap in every direction and the surface reads as one
 clean continuous blob per pocket. Going much below `~spacing/2` leaves
 the spheres too disconnected for PyMOL's surface algorithm — most of

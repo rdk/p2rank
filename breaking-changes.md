@@ -27,6 +27,18 @@ All changes of that type should be rare and should be all listed here.
 * For additional internal evaluation-criterion fixes during the 2.6 dev cycle see
   [`documentation/dev/evaluation-metric-fixes-2.6.md`](documentation/dev/evaluation-metric-fixes-2.6.md).
 
+###### Pocket-descriptors export (opt-in feature)
+
+* Per-pocket descriptors `-export_pocket_descriptors` underwent a multi-column interface migration. The shipped default
+  list now contains **seven** descriptors (previously six), adds `principal_moments` (a 3-column descriptor emitting
+  `principal_moments.lambda1/lambda2/lambda3`), and reorders the existing six so `num_*` come first.
+  Scripts parsing the descriptors CSV/Arrow/Parquet output by **column name** are unaffected;
+  scripts parsing by **column index** need updating. See [`documentation/export-pocket-descriptors.md`](documentation/export-pocket-descriptors.md).
+* New opt-in `-vis_pocket_grid` (renamed from `-export_pocket_grid_pml`) emits both PyMOL `.pml` and ChimeraX `.cxc`
+  overlay scripts. The two viz-tuning knobs were renamed for namespace consistency:
+  `pocket_grid_vis_volume_radius` → `vis_pocket_grid_volume_radius` and
+  `pocket_grid_vis_gaussian_iso` → `vis_pocket_grid_gaussian_iso`. Old names hard-fail at startup with no aliases.
+
 ### 2.5.1
 
 none

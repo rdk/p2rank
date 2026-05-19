@@ -121,6 +121,10 @@ prank predict -c alphafold   test.ds     # use alphafold config and model (confi
    * **SAS points data**: coordinates and ligandability scores for solvent-accessible surface (SAS) points are saved in `visualizations/data/{protein_file}_points.pdb.gz`. Here:
      * Residue sequence number (position 23-26) represents the pocket rank (0 indicates no pocket).
      * B-factor column contains predicted ligandability score.
+   * **Opt-in tabular exports** (off by default):
+     * `-export_pocket_descriptors 1` → per-pocket geometric descriptors (volume, sphericity, radius of gyration, residue/atom counts, principal moments) in CSV/Arrow/Parquet. See [`documentation/export-pocket-descriptors.md`](documentation/export-pocket-descriptors.md).
+     * `-export_pocket_grid 1` → per-pocket 3D grid of points covering the empty space around predicted pockets, with optional per-grid-point descriptors (e.g. `volsite` pharmacophore indicators). See [`documentation/export-pocket-grid.md`](documentation/export-pocket-grid.md).
+     * `-vis_pocket_grid 1` → additional PyMOL/ChimeraX overlays of the grid for visualization.
 
 
 ### Configuration

@@ -21,24 +21,8 @@ class PocketGridChimeraXRendererTest {
     @TempDir
     Path tempDir
 
-    private static BitSet bits(int... values) {
-        BitSet b = new BitSet()
-        for (int v : values) b.set(v)
-        return b
-    }
-
     private static PocketGrid tinyGrid() {
-        Atom a = new Point(0d, 0d, 0d)
-        Atom b = new Point(1d, 0d, 0d)
-        Atom c = new Point(2d, 0d, 0d)
-        LongIntHashMap idx = new LongIntHashMap()
-        idx.put(PocketGrid.pack(0, 0, 0), 0)
-        idx.put(PocketGrid.pack(1, 0, 0), 1)
-        idx.put(PocketGrid.pack(2, 0, 0), 2)
-        Map<Integer, BitSet> assigned = new LinkedHashMap<>()
-        assigned.put(1, bits(0, 1))
-        assigned.put(2, bits(1, 2))
-        return new PocketGrid(new Atoms([a, b, c]), 1.0d, 0d, 0d, 0d, idx, assigned)
+        return RendererTestFixtures.tinyGrid()
     }
 
     @Test

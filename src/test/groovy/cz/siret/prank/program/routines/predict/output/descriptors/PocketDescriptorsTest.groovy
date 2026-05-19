@@ -270,6 +270,33 @@ class PocketDescriptorsTest {
         }
     }
 
+    /**
+     * Round-trip the register/unregister API: register a fixture, see it land in
+     * get/knownNames, unregister it, see it gone. Exercises the unregister code
+     * path that production callers never touch (it exists for tests + future
+     * descriptor plugins).
+     */
+    @Test
+    void registryUnregisterRemovesAddedDescriptor() {
+        String fixtureName = "__test_unregister_fixture__"
+        PocketDescriptor fixture = new AbstractScalarPocketDescriptor() {
+            @Override String name() { fixtureName }
+            @Override protected ColumnType scalarType() { ColumnType.DOUBLE }
+            @Override protected double computeScalar(PocketGridContext ctx) { 0d }
+        }
+        PocketDescriptorRegistry.register(fixture)
+        try {
+            assertEquals(fixture, PocketDescriptorRegistry.get(fixtureName))
+            assertTrue(PocketDescriptorRegistry.knownNames().contains(fixtureName))
+        } finally {
+            PocketDescriptorRegistry.unregister(fixtureName)
+        }
+        assertFalse(PocketDescriptorRegistry.knownNames().contains(fixtureName))
+        assertThrows(PrankException) {
+            PocketDescriptorRegistry.get(fixtureName)
+        }
+    }
+
     @Test
     void registryListsKnownNames() {
         Set<String> known = PocketDescriptorRegistry.knownNames()
@@ -373,6 +400,48 @@ class PocketDescriptorsTest {
         double rg = new RadiusOfGyrationDescriptor().compute(ctx(grid, p))[0]
         double sum = lambdas[0] + lambdas[1] + lambdas[2]
         assertEquals(rg * rg, sum, 1e-9d)
+    }
+
+    /**
+     * Boundary between the short-circuit ({@code n < 2}) and the full path.
+     * Two distinct points span exactly one axis, so λ₁ > 0 and the other two
+     * eigenvalues are 0. Per-dim variance of {0, 2} = mean((-1)² + 1²) = 1.
+     */
+    @Test
+    void principalMomentsAtExactlyTwoDistinctPointsHitsFullPath() {
+        List<Atom> pts = [new Point(0d, 0d, 0d), new Point(2d, 0d, 0d)]
+        PocketGrid grid = gridOfPoints(pts)
+        TestPocket p = new TestPocket(); p.rank = 1
+        double[] lambdas = new PrincipalMomentsDescriptor().compute(ctx(grid, p))
+        assertEquals(1.0d, lambdas[0], 1e-9d)
+        assertEquals(0.0d, lambdas[1], 1e-9d)
+        assertEquals(0.0d, lambdas[2], 1e-9d)
+    }
+
+    /**
+     * Two coincident points: cardinality=2 takes the full path, but every
+     * delta-from-centroid is 0, so the gyration tensor is zero and all
+     * eigenvalues come out zero. Verifies the full path handles the
+     * degenerate non-short-circuit case without producing NaN / negative
+     * eigenvalues from numerical noise.
+     */
+    @Test
+    void principalMomentsOfTwoCoincidentPointsIsAllZeros() {
+        // LongIntHashMap can't hold two entries with the same packed key — for
+        // a true "two atoms at the same coord" fixture we need two distinct
+        // lattice slots whose Atom positions happen to coincide. Build by hand.
+        Atom a = new Point(0d, 0d, 0d)
+        Atom b = new Point(0d, 0d, 0d)
+        LongIntHashMap idx = new LongIntHashMap()
+        idx.put(PocketGrid.pack(0, 0, 0), 0)
+        idx.put(PocketGrid.pack(1, 0, 0), 1)  // arbitrary distinct lattice slot
+        BitSet bs = new BitSet(); bs.set(0, 2)
+        Map<Integer, BitSet> assigned = [(1): bs] as LinkedHashMap
+        PocketGrid grid = new PocketGrid(new Atoms([a, b]), 1.0d, 0d, 0d, 0d, idx, assigned)
+        TestPocket p = new TestPocket(); p.rank = 1
+
+        double[] lambdas = new PrincipalMomentsDescriptor().compute(ctx(grid, p))
+        assertArrayEquals([0.0d, 0.0d, 0.0d] as double[], lambdas, 1e-9d)
     }
 
 }

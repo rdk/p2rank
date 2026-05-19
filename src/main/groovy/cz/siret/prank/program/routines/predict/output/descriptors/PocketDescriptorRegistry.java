@@ -45,6 +45,12 @@ public final class PocketDescriptorRegistry {
      */
     public static void register(PocketDescriptor d) {
         List<String> cols = d.columnNames();
+        List<?> types = d.columnTypes();
+        if (cols.size() != types.size()) {
+            throw new IllegalStateException(
+                    "Descriptor '" + d.name() + "' has columnNames.size()=" + cols.size()
+                    + " but columnTypes.size()=" + types.size() + "; they must be parallel.");
+        }
         if (cols.size() > 1 && new HashSet<>(cols).size() != cols.size()) {
             throw new IllegalStateException(
                     "Descriptor '" + d.name() + "' declares duplicate columnNames: " + cols);

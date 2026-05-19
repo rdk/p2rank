@@ -10,6 +10,7 @@ import org.biojava.nbio.structure.AtomImpl
 import org.biojava.nbio.structure.Element
 import org.biojava.nbio.structure.Group
 import org.biojava.nbio.structure.AminoAcidImpl
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -34,14 +35,28 @@ class VolsiteSmoothGridPointDescriptorTest {
     private static final int AROMATIC = 0, CATION = 1, ANION = 2,
                              HYDROPHOBIC = 3, ACCEPTOR = 4, DONOR = 5
 
+    private double savedSigma
+
     @BeforeEach
     void setSigma() {
+        savedSigma = Params.inst.pocket_grid_volsite_sigma
         Params.inst.pocket_grid_volsite_sigma = SIGMA
     }
 
-    private static Atom atomAt(String atomName, String resName, double x, double y, double z) {
+    @AfterEach
+    void restoreSigma() {
+        // Restore the global Params singleton so test classes that run after this
+        // one (and that read pocket_grid_volsite_sigma without pinning it) aren't
+        // affected by our pin.
+        Params.inst.pocket_grid_volsite_sigma = savedSigma
+    }
+
+    // Signature matches VolsiteGridPointDescriptorTest.atomAt (element, resName, atomName, x, y, z)
+    // — both tests build atoms the same way so calls don't get swapped between files.
+    private static Atom atomAt(String element, String resName, String atomName,
+                                double x, double y, double z) {
         AtomImpl a = new AtomImpl()
-        a.element = Element.C
+        a.element = Element.valueOfIgnoreCase(element)
         a.name = atomName
         a.x = x; a.y = y; a.z = z
         Group g = new AminoAcidImpl()
@@ -59,7 +74,7 @@ class VolsiteSmoothGridPointDescriptorTest {
     @Test
     void weightAtZeroDistanceIsOne() {
         // exp(0) = 1.0 exactly. Atom name "C" is hydrophobic.
-        Atom c = atomAt("C", "ALA", 0d, 0d, 0d)
+        Atom c = atomAt("C", "ALA", "C", 0d, 0d, 0d)
         double[] out = new VolsiteSmoothGridPointDescriptor().compute(
                 ctxAt(0d, 0d, 0d, new Atoms([c])))
         assertEquals(1.0d, out[HYDROPHOBIC], DELTA)
@@ -69,7 +84,7 @@ class VolsiteSmoothGridPointDescriptorTest {
     void weightAtSigmaMatchesGaussianFormula() {
         // At distance r = σ, weight = exp(-r²/(2σ²)) = exp(-1/2) ≈ 0.6065.
         double sigma = SIGMA
-        Atom c = atomAt("C", "ALA", sigma, 0d, 0d)
+        Atom c = atomAt("C", "ALA", "C", sigma, 0d, 0d)
         double[] out = new VolsiteSmoothGridPointDescriptor().compute(
                 ctxAt(0d, 0d, 0d, new Atoms([c])))
         assertEquals(Math.exp(-0.5d), out[HYDROPHOBIC], DELTA)
@@ -80,8 +95,8 @@ class VolsiteSmoothGridPointDescriptorTest {
         // Two hydrophobic atoms at distance σ each → sum = 2 × exp(-0.5).
         double sigma = SIGMA
         Atoms protein = new Atoms([
-                atomAt("C", "ALA", sigma, 0d, 0d),
-                atomAt("C", "ALA", 0d, sigma, 0d),
+                atomAt("C", "ALA", "C", sigma, 0d, 0d),
+                atomAt("C", "ALA", "C", 0d, sigma, 0d),
         ])
         double[] out = new VolsiteSmoothGridPointDescriptor().compute(
                 ctxAt(0d, 0d, 0d, protein))
@@ -94,7 +109,7 @@ class VolsiteSmoothGridPointDescriptorTest {
         // exactly 4σ IS included and contributes exp(-(4σ)²/(2σ²)) = exp(-8) ≈ 3.354e-4.
         // Pins the boundary semantic (cutoff is inclusive, not strict).
         double sigma = SIGMA
-        Atom c = atomAt("C", "ALA", 4d * sigma, 0d, 0d)
+        Atom c = atomAt("C", "ALA", "C", 4d * sigma, 0d, 0d)
         double[] out = new VolsiteSmoothGridPointDescriptor().compute(
                 ctxAt(0d, 0d, 0d, new Atoms([c])))
         assertEquals(Math.exp(-8d), out[HYDROPHOBIC], DELTA)
@@ -105,7 +120,7 @@ class VolsiteSmoothGridPointDescriptorTest {
         // 4σ is the hard cutoff (cutoutSphere is the gate). At 5σ the atom isn't even
         // in the kdtree result. Zero contribution.
         double sigma = SIGMA
-        Atom c = atomAt("C", "ALA", 5d * sigma, 0d, 0d)
+        Atom c = atomAt("C", "ALA", "C", 5d * sigma, 0d, 0d)
         double[] out = new VolsiteSmoothGridPointDescriptor().compute(
                 ctxAt(0d, 0d, 0d, new Atoms([c])))
         assertEquals(0d, out[HYDROPHOBIC], DELTA)

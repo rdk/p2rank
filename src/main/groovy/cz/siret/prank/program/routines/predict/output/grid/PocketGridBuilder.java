@@ -120,7 +120,7 @@ public final class PocketGridBuilder {
             case "morph_closing": return new MorphologicalCloser();
             case "none":          return new NoOpFiller();
             default:
-                throw new IllegalArgumentException(
+                throw new cz.siret.prank.program.PrankException(
                         "Unknown pocket_grid_fill strategy: '" + strategy
                         + "'. Expected one of: morph_closing, none.");
         }

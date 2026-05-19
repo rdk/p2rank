@@ -136,7 +136,7 @@ class PocketGridBuilderTest {
         TestPocket p = new TestPocket()
         p.rank = 1
         p.sasPoints = sasAt(0d, 0d, 0d)
-        assertThrows(IllegalArgumentException) {
+        assertThrows(cz.siret.prank.program.PrankException) {
             PocketGridBuilder.build(protein, [p] as List<Pocket>, bad)
         }
     }

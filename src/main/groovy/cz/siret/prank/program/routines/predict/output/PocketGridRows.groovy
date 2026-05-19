@@ -40,10 +40,6 @@ final class PocketGridRows implements TableData {
     /** [rowIndex][descriptorColumn] — flat across all descriptors; null when no descriptors. */
     private final double[][] descriptorValues
 
-    PocketGridRows(PocketGrid grid, boolean includeUnassigned) {
-        this(grid, includeUnassigned, null, null, Collections.<String> emptyList())
-    }
-
     PocketGridRows(PocketGrid grid, boolean includeUnassigned,
                    Protein protein, List<? extends Pocket> pockets,
                    List<String> descriptorNames) {
@@ -178,7 +174,7 @@ final class PocketGridRows implements TableData {
     double[] getColumn(int colIndex) {
         int n = rowPointIdx.length
         double[] out = new double[n]
-        if (colIndex == 3) {
+        if (colIndex == BASE_COLS - 1) {  // pocket column — INT
             for (int i = 0; i < n; i++) out[i] = rowPocket[i]
             return out
         }

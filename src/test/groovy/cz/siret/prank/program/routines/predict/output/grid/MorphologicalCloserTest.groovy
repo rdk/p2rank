@@ -110,9 +110,11 @@ class MorphologicalCloserTest {
     }
 
     @Test
-    void respectsMaxIters() {
+    void maxItersZeroIsNoOp() {
         // With max_iters=0 the closer should return the raw shell unchanged
-        // (no iteration runs).
+        // (no iteration runs). Also pins the silent-non-convergence-warning fix
+        // in 0e044f6b — the warning must NOT fire when maxIters=0 (a valid
+        // "disable fill" configuration).
         PocketGrid grid = buildCubeGrid(2, 2, 2)
         int centerIdx = grid.latticeIndex.get(PocketGrid.pack(1, 1, 1))
         BitSet raw = new BitSet()
@@ -122,6 +124,22 @@ class MorphologicalCloserTest {
 
         BitSet result = CLOSER.fill(raw, grid, 3, 0)
         assertFalse(result.get(centerIdx), "no fill when max_iters=0")
+    }
+
+    @Test
+    void maxItersOneRunsExactlyOneIteration() {
+        // One iteration of fill should be enough to close a single-cell U concavity:
+        // the surrounded center cell has many filled neighbors and gets promoted on
+        // iter 0. Pins behavior between the no-op (0) and converged cases.
+        PocketGrid grid = buildCubeGrid(2, 2, 2)
+        int centerIdx = grid.latticeIndex.get(PocketGrid.pack(1, 1, 1))
+        BitSet raw = new BitSet()
+        for (int i = 0; i < grid.pointCount; i++) {
+            if (i != centerIdx) raw.set(i)
+        }
+
+        BitSet result = CLOSER.fill(raw, grid, 3, 1)
+        assertTrue(result.get(centerIdx), "the surrounded center should fill in one iter")
     }
 
 }
