@@ -948,10 +948,12 @@ class Params {
 
     /**
      * Descriptors to compute and emit per pocket. Each entry must match a name
-     * registered in PocketDescriptorRegistry (volume, sphericity, radius_of_gyration,
-     * num_residues, num_surface_atoms, num_grid_points). Validated at startup.
-     * The default includes every shipped descriptor — they all share the same
-     * pocket-grid input, so adding more to the list is essentially free.
+     * registered in PocketDescriptorRegistry (num_residues, num_surface_atoms,
+     * num_grid_points, volume, sphericity, radius_of_gyration, principal_moments).
+     * Validated at startup. The default includes every shipped descriptor —
+     * the grid-derived ones share the same pocket-grid input, so adding more
+     * is cheap. principal_moments runs a small 3×3 eigendecomposition per
+     * pocket on top, still negligible vs the grid build itself.
      */
     @RuntimeParam
     List<String> pocket_descriptors = ["num_residues", "num_surface_atoms", "num_grid_points",

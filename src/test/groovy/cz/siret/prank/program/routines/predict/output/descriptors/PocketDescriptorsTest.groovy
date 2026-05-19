@@ -16,8 +16,9 @@ import org.junit.jupiter.api.Test
 import static org.junit.jupiter.api.Assertions.*
 
 /**
- * Tests the six shipped descriptors (volume, sphericity, radius_of_gyration,
- * num_residues, num_surface_atoms, num_grid_points) and the registry.
+ * Tests the seven shipped descriptors (volume, sphericity, radius_of_gyration,
+ * num_residues, num_surface_atoms, num_grid_points, principal_moments) and the
+ * registry.
  */
 @CompileStatic
 class PocketDescriptorsTest {

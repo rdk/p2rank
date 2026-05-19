@@ -74,9 +74,9 @@ Extra columns can be appended to each row via `-pocket_grid_point_descriptors`
 descriptors are **not** free: they run once per `(point, pocket)` row (often 10⁴–10⁵
 times per protein), each row touching a neighborhood of protein atoms. Compare with
 `-pocket_descriptors` (per-pocket), which defaults to all-shipped because adding
-descriptors there is essentially free once the grid is built (one extra value per
-pocket, not per point). Multi-column descriptors get the header prefix `"{name}."`
-— same convention as `-pocket_descriptors`.
+descriptors there is negligible once the grid is built — one extra value per pocket,
+not per point. Multi-column descriptors get the header prefix `"{name}."` — same
+convention as `-pocket_descriptors`.
 
 | Name | Columns | Description |
 |---|---|---|

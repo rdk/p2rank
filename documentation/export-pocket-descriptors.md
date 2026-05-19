@@ -61,11 +61,13 @@ the descriptor name; multi-column descriptors emit N columns prefixed with
 | `num_grid_points` | 1 × i32 | Total grid points assigned to the pocket (cardinality of the BitSet after shape fill). Raw count complement to `volume`. |
 | `principal_moments` | 3 × f64 | Three eigenvalues of the pocket grid points' gyration tensor (equal-weight PCA), sorted descending: `principal_moments.lambda1` ≥ `lambda2` ≥ `lambda3`. Unit Å². Shape signature: λ₁≈λ₂≈λ₃ → sphere; λ₁≫λ₂,λ₃ → rod; λ₁≈λ₂≫λ₃ → disk. Sum equals `radius_of_gyration²`. `0`s for pockets with <2 grid points. |
 
-`-pocket_descriptors` defaults to **all of the above** — they share the
-pocket-grid input, so adding more is essentially free once the grid is
-built. To narrow the set, list the wanted names comma-separated.
-Unknown names cause a fail-fast error at startup with the list of
-registered names.
+`-pocket_descriptors` defaults to **all of the above**. The grid-derived
+scalar descriptors share the same pocket-grid input, so adding or removing
+them costs essentially nothing once the grid is built. `principal_moments`
+adds a small 3×3 eigendecomposition per pocket — also negligible relative
+to the grid build itself. To narrow the set, list the wanted names
+comma-separated. Unknown names cause a fail-fast error at startup with
+the list of registered names.
 
 ## Parameters
 
@@ -105,8 +107,9 @@ Implementations live under
 
    For **scalar** descriptors (one column), extend `AbstractScalarPocketDescriptor`
    instead of implementing the interface directly — it boils the boilerplate down
-   to `name()`, `scalarType()`, and `computeScalar(ctx)`. The 6 base shipped
-   descriptors use this adapter.
+   to `name()`, `scalarType()`, and `computeScalar(ctx)`. Of the seven shipped
+   descriptors, six use this adapter; `principal_moments` (multi-column) implements
+   `PocketDescriptor` directly.
 
    For **multi-column** descriptors (e.g. `principal_moments` with three
    eigenvalues from a single decomposition), implement `PocketDescriptor`
