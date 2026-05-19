@@ -61,6 +61,22 @@ final class PocketDescriptorsRows implements TableData {
             descriptors.add(PocketDescriptorRegistry.get(name))
         }
 
+        // Honest contract: a null grid is acceptable only when every selected descriptor
+        // declares needsGrid()=false. The upstream gate in PocketGridOutputs already
+        // honors this, but this constructor is callable from elsewhere (tests, future
+        // callers); fail loudly here so a descriptor whose needsGrid() lies surfaces
+        // at construction time rather than via an NPE inside compute().
+        if (grid == null) {
+            for (PocketDescriptor d : descriptors) {
+                if (d.needsGrid()) {
+                    throw new IllegalArgumentException(
+                            "Descriptor '${d.name()}' declares needsGrid()=true but a null " +
+                            "PocketGrid was passed to PocketDescriptorsRows. Either build the " +
+                            "grid upstream or drop this descriptor from -pocket_descriptors.")
+                }
+            }
+        }
+
         // Build header + column types.
         List<String> h = new ArrayList<>()
         List<ColumnType> ct = new ArrayList<>()

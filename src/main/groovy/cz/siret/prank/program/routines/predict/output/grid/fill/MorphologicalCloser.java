@@ -1,6 +1,8 @@
 package cz.siret.prank.program.routines.predict.output.grid.fill;
 
 import cz.siret.prank.program.routines.predict.output.grid.PocketGrid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.BitSet;
 
@@ -21,6 +23,8 @@ import java.util.BitSet;
  */
 public final class MorphologicalCloser implements PocketShapeFiller {
 
+    private static final Logger log = LoggerFactory.getLogger(MorphologicalCloser.class);
+
     @Override
     public BitSet fill(BitSet rawShell, PocketGrid grid, int minNeighbors, int maxIters) {
         if (rawShell.isEmpty()) return (BitSet) rawShell.clone();
@@ -29,7 +33,9 @@ public final class MorphologicalCloser implements PocketShapeFiller {
         BitSet newlyAdded = (BitSet) rawShell.clone();
         int[] buf = new int[26];  // reused buffer for neighbor lookups, zero per-call alloc
 
-        for (int iter = 0; iter < maxIters; iter++) {
+        int iter = 0;
+        boolean converged = false;
+        for (; iter < maxIters; iter++) {
             // Step 1: collect candidates — unfilled cells adjacent to anything just promoted.
             BitSet candidates = new BitSet();
             for (int i = newlyAdded.nextSetBit(0); i >= 0; i = newlyAdded.nextSetBit(i + 1)) {
@@ -41,7 +47,7 @@ public final class MorphologicalCloser implements PocketShapeFiller {
                     }
                 }
             }
-            if (candidates.isEmpty()) break;
+            if (candidates.isEmpty()) { converged = true; break; }
 
             // Step 2: promote candidates whose filled-neighbor count meets threshold.
             BitSet promoted = new BitSet();
@@ -59,11 +65,17 @@ public final class MorphologicalCloser implements PocketShapeFiller {
                 }
             }
 
-            if (promoted.isEmpty()) break;
+            if (promoted.isEmpty()) { converged = true; break; }
             filled.or(promoted);
             newlyAdded = promoted;
         }
 
+        if (!converged) {
+            log.warn("MorphologicalCloser: hit maxIters={} without converging " +
+                    "(filled cells: {}, last iter promoted some). " +
+                    "Raise -pocket_grid_fill_max_iters or accept under-converged fill.",
+                    maxIters, filled.cardinality());
+        }
         return filled;
     }
 

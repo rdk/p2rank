@@ -54,6 +54,12 @@ public class GridGenerator implements Iterable<Point> {
         return new GridGenerator(box, edge);
     }
 
+    private static boolean isFiniteBox(Box box) {
+        return Double.isFinite(box.getMin().getX()) && Double.isFinite(box.getMin().getY())
+            && Double.isFinite(box.getMin().getZ()) && Double.isFinite(box.getMax().getX())
+            && Double.isFinite(box.getMax().getY()) && Double.isFinite(box.getMax().getZ());
+    }
+
 //===============================================================================================//
 
     public int getCount() {
@@ -208,6 +214,14 @@ public class GridGenerator implements Iterable<Point> {
         sasPoints.withKdTreeConditional();
 
         Box box = Box.aroundAtoms(sasPoints).withMargin(maxDist);
+        // Guard against NaN/Inf propagation from broken PDBs: IEEEremainder(NaN, edge) = NaN,
+        // which would make every lattice point NaN. Throw early with the offending input.
+        if (!isFiniteBox(box)) {
+            throw new IllegalArgumentException(
+                    "GridGenerator: non-finite bounding box for SAS points " +
+                    "(min=" + box.getMin() + ", max=" + box.getMax() + "). " +
+                    "Check input structure for NaN/Inf coordinates.");
+        }
         GridGenerator grid = GridGenerator.forBox(box, edge);
 
         double maxDistSqr = maxDist * maxDist;

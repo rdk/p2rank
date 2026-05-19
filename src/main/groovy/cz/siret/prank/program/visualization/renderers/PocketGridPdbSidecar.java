@@ -3,6 +3,8 @@ package cz.siret.prank.program.visualization.renderers;
 import cz.siret.prank.program.routines.predict.output.grid.PocketGrid;
 import cz.siret.prank.utils.Futils;
 import org.biojava.nbio.structure.Atom;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -37,6 +39,11 @@ import java.util.Map;
  */
 public final class PocketGridPdbSidecar {
 
+    private static final Logger log = LoggerFactory.getLogger(PocketGridPdbSidecar.class);
+
+    /** PDB serial column width (5 chars) — exceeded serials wrap via modulo. */
+    private static final int SERIAL_LIMIT = 100_000;
+
     private static final String PDB_LINE_FORMAT =
             "HETATM%5d  C   STP A%4d    %8.3f%8.3f%8.3f  1.00  0.00          C\n";
 
@@ -51,6 +58,13 @@ public final class PocketGridPdbSidecar {
                 BitSet indices = grid.getPocketToPointIndices().get(rank);
                 if (indices == null || indices.isEmpty()) continue;
                 serial = writePocket(pdb, grid, rank, indices, serial);
+            }
+            if (serial > SERIAL_LIMIT) {
+                log.warn("Pocket grid sidecar [{}] has {} atoms — exceeds the PDB " +
+                        "serial column width ({}); serials wrap and become non-unique. " +
+                        "PyMOL/ChimeraX rendering still works (we don't rely on serials), " +
+                        "but bond-inference tools may misbehave.",
+                        pdbPath, serial - 1, SERIAL_LIMIT);
             }
         }
     }
@@ -94,7 +108,7 @@ public final class PocketGridPdbSidecar {
         for (int i = indices.nextSetBit(0); i >= 0; i = indices.nextSetBit(i + 1)) {
             Atom p = grid.getAllPoints().list.get(i);
             pdb.printf(Locale.ROOT, PDB_LINE_FORMAT,
-                    serial % 100000, resi, p.getX(), p.getY(), p.getZ());
+                    serial % SERIAL_LIMIT, resi, p.getX(), p.getY(), p.getZ());
             serial++;
         }
         return serial;

@@ -244,18 +244,20 @@ final class PocketGridChimeraXRenderer {
         cxc.append("\nopen data/${label}_pocket_grid.pdb.gz format pdb id ${SURFACES_MODEL_ID}\n")
         cxc.append("rename #${SURFACES_MODEL_ID} \"pocket grid surfaces\"\n")
         cxc.append("hide #${SURFACES_MODEL_ID} atoms\n")
-        for (int rank = 1; rank <= maxRank; rank++) {
+        for (Integer rank : perPocketBasenames.keySet()) {
             cxc.append("color #${SURFACES_MODEL_ID}:${rank} pgc_${rank}\n")
         }
         cxc.append("setattr #${SURFACES_MODEL_ID} atoms radius ${String.format(Locale.ROOT, '%.3f', volumeRadius)}\n")
         String probeStr = String.format(Locale.ROOT, '%.3f', probeRadius)
         String gridStr = String.format(Locale.ROOT, '%.3f', surfaceGrid)
-        // surface #N:R creates a submodel with the next-free sub-ID. We create surfaces in
-        // rank order so sub-IDs come out as #SURFACES_MODEL_ID.1, .2, … — matching ranks
-        // directly. Rename each so the Models panel reads "pocket 1", "pocket 2", … instead
-        // of the auto-generated "1 surface", "2 surface", etc.
+        // surface #N:R creates a submodel with the next-free sub-ID. Iterate only ranks
+        // that actually have atoms in the loaded PDB (perPocketBasenames.keySet — empty
+        // pockets are dropped by the sidecar writer); subId tracks the IDs ChimeraX
+        // actually assigns. A rank-skip (rare, but possible if upstream skips a rank)
+        // used to mis-target the rename — e.g. rank 1 + rank 3 would have produced
+        // sub-IDs 1, 2 but the rename loop tried to rename .1, .3.
         int subId = 1
-        for (int rank = 1; rank <= maxRank; rank++) {
+        for (Integer rank : perPocketBasenames.keySet()) {
             cxc.append("surface #${SURFACES_MODEL_ID}:${rank} probeRadius ${probeStr} gridSpacing ${gridStr}\n")
             cxc.append("rename #${SURFACES_MODEL_ID}.${subId} \"pocket ${rank}\"\n")
             subId++

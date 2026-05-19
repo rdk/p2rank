@@ -52,7 +52,7 @@ public final class VdwRadiusTable {
 
     private static String resolveSymbol(Atom atom) {
         if (atom.getElement() != null) {
-            String s = atom.getElement().name();
+            String s = mapIsotope(atom.getElement().name());
             if (!Elements.ofString(s).equals(Elements.Unknown)) {
                 return s;
             }
@@ -60,12 +60,18 @@ public final class VdwRadiusTable {
         // Fall back to atom name prefix (matches CdkUtils.bioJavaToCDKAtom pattern).
         String name = atom.getName();
         if (name != null && !name.isEmpty()) {
-            String s = name.substring(0, 1);
+            String s = mapIsotope(name.substring(0, 1));
             if (!Elements.ofString(s).equals(Elements.Unknown)) {
                 return s;
             }
         }
         return "C";  // last-resort, same fallback as CdkUtils
+    }
+
+    /** Map hydrogen isotopes (D, T) to H — CDK's Elements enum doesn't distinguish them. */
+    private static String mapIsotope(String symbol) {
+        if ("D".equals(symbol) || "T".equals(symbol)) return "H";
+        return symbol;
     }
 
 }
