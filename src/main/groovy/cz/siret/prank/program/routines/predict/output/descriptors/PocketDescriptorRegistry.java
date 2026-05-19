@@ -3,7 +3,9 @@ package cz.siret.prank.program.routines.predict.output.descriptors;
 import cz.siret.prank.program.PrankException;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -12,11 +14,13 @@ import java.util.Set;
  * shipped set. Selection at runtime is name-driven via the
  * {@code -pocket_descriptors} list param.
  *
+ * <p>Mirrors {@link cz.siret.prank.program.routines.predict.output.grid.descriptors.PocketGridPointDescriptorRegistry}
+ * — same shape, same register/unregister/get/knownNames surface. Multi-column
+ * descriptors are validated at registration time (no duplicate sub-column names
+ * within one descriptor).
+ *
  * <p>Adding a new descriptor = drop a new {@link PocketDescriptor}
  * implementation in this package and register it here.
- *
- * <p>Java mirror of {@code PocketAssignerRegistry} — same pluggable-registry
- * pattern, same package layout.
  */
 public final class PocketDescriptorRegistry {
 
@@ -29,12 +33,33 @@ public final class PocketDescriptorRegistry {
         register(new NumResiduesDescriptor());
         register(new NumSurfaceAtomsDescriptor());
         register(new NumGridPointsDescriptor());
+        register(new PrincipalMomentsDescriptor());
     }
 
     private PocketDescriptorRegistry() {}
 
-    private static void register(PocketDescriptor d) {
+    /**
+     * Add a descriptor to the registry. Public so tests can register fixture
+     * descriptors and future external descriptor plugins can register without
+     * touching the static initializer.
+     */
+    public static void register(PocketDescriptor d) {
+        List<String> cols = d.columnNames();
+        if (cols.size() > 1 && new HashSet<>(cols).size() != cols.size()) {
+            throw new IllegalStateException(
+                    "Descriptor '" + d.name() + "' declares duplicate columnNames: " + cols);
+        }
         REGISTRY.put(d.name(), d);
+    }
+
+    /**
+     * Remove a descriptor by name. Intended for tests that register a fixture
+     * descriptor via {@link #register} and need to undo the side effect in an
+     * {@code @AfterAll} hook so the registry doesn't leak across test classes.
+     * No-op if {@code name} is not registered.
+     */
+    public static void unregister(String name) {
+        REGISTRY.remove(name);
     }
 
     /** @throws PrankException if {@code name} is unknown. */

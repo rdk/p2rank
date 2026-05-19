@@ -20,13 +20,13 @@ import java.util.List;
  * the volume ratio, so 1.0 = perfect sphere, low values = elongated /
  * irregular.
  */
-public final class SphericityDescriptor implements PocketDescriptor {
+public final class SphericityDescriptor extends AbstractScalarPocketDescriptor {
 
     @Override public String name() { return "sphericity"; }
-    @Override public ColumnType columnType() { return ColumnType.DOUBLE; }
+    @Override protected ColumnType scalarType() { return ColumnType.DOUBLE; }
 
     @Override
-    public double compute(PocketGridContext ctx) {
+    protected double computeScalar(PocketGridContext ctx) {
         BitSet indices = ctx.gridPointIndices();
         int n = indices.cardinality();
         if (n == 0) return 0.0d;

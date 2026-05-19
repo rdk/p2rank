@@ -118,4 +118,39 @@ class PocketDescriptorsRowsTest {
         assertEquals(['name', 'rank', 'score', 'center_x', 'center_y', 'center_z'], data.header)
     }
 
+    @Test
+    void multiColumnDescriptorEmitsPrefixedHeadersAndCorrectValues() {
+        // principal_moments is the only multi-column shipped descriptor today.
+        // Verifies the schema-build prefix rule AND that the row layout puts the
+        // descriptor's three eigenvalues in the correct trailing positions.
+        TestPocket p = pocket(1, "pocket.1", 0.5d, new Atoms([heavyAtomAt(0d, 0d, 0d)]))
+        PocketDescriptorsRows data = new PocketDescriptorsRows(
+                [p], ['principal_moments'], null, tinyGrid(1, 27))  // 3³ cube → isotropic eigenvalues
+        assertEquals(['name', 'rank', 'score', 'center_x', 'center_y', 'center_z',
+                      'principal_moments.lambda1', 'principal_moments.lambda2', 'principal_moments.lambda3'],
+                data.header)
+        double[] row = data.getRow(0)
+        assertEquals(9, row.length)
+        // For a tinyGrid 27-point sequence along x (not a real cube), the eigenvalues
+        // aren't isotropic — assert non-negative and sorted descending, which is the
+        // contract this row layout test cares about.
+        assertTrue(row[6] >= row[7], "λ₁ ≥ λ₂ in row")
+        assertTrue(row[7] >= row[8], "λ₂ ≥ λ₃ in row")
+        assertTrue(row[8] >= 0d, "λ₃ ≥ 0 in row")
+    }
+
+    @Test
+    void scalarAndMultiColumnDescriptorsAppearInRequestedOrder() {
+        // Mix scalar + multi: column order is determined by the descriptorNames list,
+        // and within each descriptor by its declared columnNames(). 'volume' (scalar)
+        // then 'principal_moments' (3 cols) → 4 trailing columns after the base.
+        TestPocket p = pocket(1, "pocket.1", 0.5d, new Atoms([heavyAtomAt(0d, 0d, 0d)]))
+        PocketDescriptorsRows data = new PocketDescriptorsRows(
+                [p], ['volume', 'principal_moments'], null, tinyGrid(1, 8))
+        assertEquals(['name', 'rank', 'score', 'center_x', 'center_y', 'center_z',
+                      'volume',
+                      'principal_moments.lambda1', 'principal_moments.lambda2', 'principal_moments.lambda3'],
+                data.header)
+    }
+
 }

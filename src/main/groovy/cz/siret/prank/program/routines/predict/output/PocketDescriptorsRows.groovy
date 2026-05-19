@@ -18,12 +18,19 @@ import org.biojava.nbio.structure.Atom
  *   [probability (DOUBLE) — only when at least one pocket has a calibrated
  *    probaTP set by the score transformer],
  *   center_x (DOUBLE), center_y (DOUBLE), center_z (DOUBLE),
- *   &lt;descriptor1&gt;, &lt;descriptor2&gt;, ...   // one column per requested descriptor
+ *   &lt;descriptor1 col(s)&gt;, &lt;descriptor2 col(s)&gt;, ...
  * </pre>
+ *
+ * <p>Each descriptor contributes 1 or more columns. Scalar descriptors emit
+ * one column headed by {@link PocketDescriptor#name()}; multi-column descriptors
+ * emit N columns prefixed with {@code "{name()}."} (e.g. principal_moments emits
+ * {@code principal_moments.lambda1}, {@code principal_moments.lambda2},
+ * {@code principal_moments.lambda3}).
  *
  * <p>{@code includeProbability} is derived from the data — no caller has to
  * thread the flag through. {@code descriptorNames} ordering is preserved in
- * the output columns.
+ * the output columns; columns within a multi-column descriptor follow the order
+ * declared by {@link PocketDescriptor#columnNames()}.
  */
 @CompileStatic
 final class PocketDescriptorsRows implements TableData {
@@ -34,8 +41,10 @@ final class PocketDescriptorsRows implements TableData {
     private final boolean includeProbability
     private final List<String> header
     private final ColumnType[] columnTypes
-    /** Pre-computed descriptor values: [pocketIndex][descriptorIndex]. */
+    /** Pre-computed descriptor values per pocket: flat array of all descriptor columns. */
     private final double[][] descriptorValues
+    /** Total number of descriptor columns across all descriptors (sum of arities). */
+    private final int totalDescriptorCols
 
     PocketDescriptorsRows(List<? extends Pocket> pockets,
                                  List<String> descriptorNames,
@@ -77,7 +86,8 @@ final class PocketDescriptorsRows implements TableData {
             }
         }
 
-        // Build header + column types.
+        // Build header + column types. Apply the "{name}.{col}" prefix rule for
+        // multi-column descriptors; scalar descriptors get the bare name().
         List<String> h = new ArrayList<>()
         List<ColumnType> ct = new ArrayList<>()
         h.add('name');         ct.add(ColumnType.STRING)
@@ -89,20 +99,35 @@ final class PocketDescriptorsRows implements TableData {
         h.add('center_x');     ct.add(ColumnType.DOUBLE)
         h.add('center_y');     ct.add(ColumnType.DOUBLE)
         h.add('center_z');     ct.add(ColumnType.DOUBLE)
+        int total = 0
         for (PocketDescriptor d : descriptors) {
-            h.add(d.name()); ct.add(d.columnType())
+            List<String> cols = d.columnNames()
+            List<ColumnType> types = d.columnTypes()
+            boolean multi = cols.size() > 1
+            for (int i = 0; i < cols.size(); i++) {
+                String headerName = multi ? d.name() + "." + cols.get(i) : d.name()
+                h.add(headerName)
+                ct.add(types.get(i))
+            }
+            total += cols.size()
         }
         this.header = h.asImmutable()
         this.columnTypes = ct.toArray(new ColumnType[0])
+        this.totalDescriptorCols = total
 
-        // Pre-compute descriptor values once.
-        this.descriptorValues = new double[pockets.size()][descriptors.size()]
+        // Pre-compute descriptor values once. Flat layout: descriptorValues[pocket][col],
+        // where col is the index into the flattened descriptor schema (in registration order).
+        this.descriptorValues = new double[pockets.size()][totalDescriptorCols]
         for (int i = 0; i < pockets.size(); i++) {
             Pocket p = pockets.get(i)
             BitSet indices = grid != null ? grid.indicesForPocket(p.rank) : new BitSet()
             PocketGridContext ctx = new PocketGridContext(p, protein, grid, indices)
-            for (int d = 0; d < descriptors.size(); d++) {
-                descriptorValues[i][d] = descriptors.get(d).compute(ctx)
+            int col = 0
+            for (PocketDescriptor d : descriptors) {
+                double[] vals = d.compute(ctx)
+                for (int k = 0; k < vals.length; k++) {
+                    descriptorValues[i][col++] = vals[k]
+                }
             }
         }
     }

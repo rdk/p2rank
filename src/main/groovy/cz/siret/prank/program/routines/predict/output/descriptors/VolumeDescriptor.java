@@ -8,13 +8,13 @@ import cz.siret.prank.program.routines.predict.output.TableData.ColumnType;
  *
  * <p>Unit: Å³. Accuracy scales with {@code pocket_grid_spacing}.
  */
-public final class VolumeDescriptor implements PocketDescriptor {
+public final class VolumeDescriptor extends AbstractScalarPocketDescriptor {
 
     @Override public String name() { return "volume"; }
-    @Override public ColumnType columnType() { return ColumnType.DOUBLE; }
+    @Override protected ColumnType scalarType() { return ColumnType.DOUBLE; }
 
     @Override
-    public double compute(PocketGridContext ctx) {
+    protected double computeScalar(PocketGridContext ctx) {
         double s = ctx.grid().getSpacing();
         return ctx.gridPointIndices().cardinality() * s * s * s;
     }

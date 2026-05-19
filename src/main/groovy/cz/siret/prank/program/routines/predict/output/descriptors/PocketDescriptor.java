@@ -2,41 +2,58 @@ package cz.siret.prank.program.routines.predict.output.descriptors;
 
 import cz.siret.prank.program.routines.predict.output.TableData.ColumnType;
 
+import java.util.List;
+
 /**
  * Pluggable per-pocket descriptor.
+ *
+ * <p>Each descriptor produces a fixed-arity vector — 1 column for scalar
+ * descriptors (extend {@link AbstractScalarPocketDescriptor}), N columns for
+ * multi-column descriptors (e.g. principal moments of inertia: three eigenvalues
+ * from a single decomposition).
+ *
+ * <p>Header convention (applied by
+ * {@link cz.siret.prank.program.routines.predict.output.PocketDescriptorsRows}):
+ * <ul>
+ *   <li>Scalar (size 1): the sub-name entry is IGNORED at output; column header
+ *       is exactly {@link #name()}.</li>
+ *   <li>Multi-column (size &gt; 1): each header becomes
+ *       {@code "{name()}.{columnNames().get(i)}"} — e.g.
+ *       {@code principal_moments.lambda1}.</li>
+ * </ul>
  *
  * <p>Implementations should be stateless and thread-safe (descriptors are
  * computed across pockets, potentially in parallel).
  *
- * <p>Numeric INT descriptors return their value as a {@code double} that
- * a writer can downcast to int; this matches the {@link cz.siret.prank.program.routines.predict.output.TableData}
- * convention (see {@link cz.siret.prank.program.routines.predict.output.PointExportData} for precedent).
+ * <p>INT columns return their value as a {@code double} that the writer
+ * downcasts at output time, matching the {@link cz.siret.prank.program.routines.predict.output.TableData}
+ * convention. Implementations must guarantee the value fits in i32.
  *
- * <p>This framework is intentionally <b>scalar-only</b> — each descriptor
- * produces exactly one column. The sibling
- * {@link cz.siret.prank.program.routines.predict.output.grid.descriptors.PocketGridPointDescriptor}
- * supports multi-column descriptors with a {@code "{name}.{col}"} header
- * convention; if you need that shape here, the two interfaces should be
- * unified rather than this one re-extended ad-hoc.
+ * <p>This interface is the sibling of
+ * {@link cz.siret.prank.program.routines.predict.output.grid.descriptors.PocketGridPointDescriptor};
+ * the two share the same shape (name + columnNames + columnTypes + double[] compute)
+ * so future descriptors can move between the two contexts without an interface
+ * mismatch.
  */
 public interface PocketDescriptor {
 
-    /** Stable name; matches a token in {@code -pocket_descriptors}. */
+    /** Stable name; matches a token in {@code -pocket_descriptors} and prefixes multi-column output headers. */
     String name();
 
-    /** Determines the output column's type in the descriptors file. */
-    ColumnType columnType();
-
     /**
-     * @return descriptor value for {@code ctx.pocket()}.
-     *
-     * <p>INT descriptors return their value as a {@code double} that the writer
-     * downcasts at output (matches the {@link cz.siret.prank.program.routines.predict.output.TableData}
-     * convention). Implementations must guarantee the value fits in i32 — for
-     * pocket-grid counts (cells, residues, atoms), that's many orders of
-     * magnitude of headroom.
+     * Column names this descriptor produces.
+     * <ul>
+     *   <li>Scalar (size 1): entry IGNORED at output; column header is exactly {@link #name()}.</li>
+     *   <li>Multi-column (size &gt; 1): each header becomes {@code "{name()}.{columnNames().get(i)}"}.</li>
+     * </ul>
      */
-    double compute(PocketGridContext ctx);
+    List<String> columnNames();
+
+    /** Parallel to {@link #columnNames()} — one entry per output column. */
+    List<ColumnType> columnTypes();
+
+    /** @return one value per {@link #columnNames()} entry, in the same order. */
+    double[] compute(PocketGridContext ctx);
 
     /**
      * Does {@link #compute} read the pocket grid ({@code ctx.grid()} or

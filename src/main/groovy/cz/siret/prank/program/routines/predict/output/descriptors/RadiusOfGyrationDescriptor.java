@@ -16,13 +16,13 @@ import java.util.List;
  * extent of the pocket. Two pockets with the same volume can have very different Rg
  * (compact vs. elongated). {@code Rg = 0} for an empty or single-point pocket.
  */
-public final class RadiusOfGyrationDescriptor implements PocketDescriptor {
+public final class RadiusOfGyrationDescriptor extends AbstractScalarPocketDescriptor {
 
     @Override public String name() { return "radius_of_gyration"; }
-    @Override public ColumnType columnType() { return ColumnType.DOUBLE; }
+    @Override protected ColumnType scalarType() { return ColumnType.DOUBLE; }
 
     @Override
-    public double compute(PocketGridContext ctx) {
+    protected double computeScalar(PocketGridContext ctx) {
         BitSet indices = ctx.gridPointIndices();
         int n = indices.cardinality();
         if (n < 2) return 0.0d;

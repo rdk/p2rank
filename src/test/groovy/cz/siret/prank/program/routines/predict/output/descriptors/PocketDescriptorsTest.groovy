@@ -70,7 +70,7 @@ class PocketDescriptorsTest {
     void volumeIs8For8UnitCells() {
         PocketGrid grid = gridOfPoints(cube(2))   // 2x2x2 = 8 points, spacing 1.0
         TestPocket p = new TestPocket(); p.rank = 1
-        double v = new VolumeDescriptor().compute(ctx(grid, p))
+        double v = new VolumeDescriptor().compute(ctx(grid, p))[0]
         assertEquals(8.0d, v, DELTA)
     }
 
@@ -88,7 +88,7 @@ class PocketDescriptorsTest {
         assigned.put(1, bs)
         PocketGrid grid = new PocketGrid(new Atoms(pts), 0.5d, 0d, 0d, 0d, index, assigned)
         TestPocket p = new TestPocket(); p.rank = 1
-        double v = new VolumeDescriptor().compute(ctx(grid, p))
+        double v = new VolumeDescriptor().compute(ctx(grid, p))[0]
         assertEquals(8 * 0.125d, v, DELTA)  // 8 cells × 0.5³
     }
 
@@ -100,7 +100,7 @@ class PocketDescriptorsTest {
         // V_pocket = 125, V_sphere = 4/3·π·3.46³ ≈ 173.5; ratio ≈ 0.72.
         PocketGrid grid = gridOfPoints(cube(5))
         TestPocket p = new TestPocket(); p.rank = 1
-        double s = new SphericityDescriptor().compute(ctx(grid, p))
+        double s = new SphericityDescriptor().compute(ctx(grid, p))[0]
         assertTrue(s > 0.5d, "cube sphericity ${s} too low")
         assertTrue(s <= 1.0d, "sphericity in [0,1]")
     }
@@ -117,7 +117,7 @@ class PocketDescriptorsTest {
         }
         PocketGrid grid = gridOfPoints(pts)
         TestPocket p = new TestPocket(); p.rank = 1
-        double s = new SphericityDescriptor().compute(ctx(grid, p))
+        double s = new SphericityDescriptor().compute(ctx(grid, p))[0]
         assertTrue(s < 0.2d, "flat disc sphericity ${s} too high")
     }
 
@@ -127,7 +127,7 @@ class PocketDescriptorsTest {
                 new LongIntHashMap(),
                 Collections.<Integer, BitSet> singletonMap(1, new BitSet()))
         TestPocket p = new TestPocket(); p.rank = 1
-        double s = new SphericityDescriptor().compute(ctx(empty, p))
+        double s = new SphericityDescriptor().compute(ctx(empty, p))[0]
         assertEquals(0.0d, s, DELTA)
     }
 
@@ -135,7 +135,7 @@ class PocketDescriptorsTest {
     void sphericityOneForSinglePoint() {
         PocketGrid grid = gridOfPoints([new Point(0d, 0d, 0d) as Atom])
         TestPocket p = new TestPocket(); p.rank = 1
-        double s = new SphericityDescriptor().compute(ctx(grid, p))
+        double s = new SphericityDescriptor().compute(ctx(grid, p))[0]
         assertEquals(1.0d, s, DELTA)
     }
 
@@ -147,7 +147,7 @@ class PocketDescriptorsTest {
         p.rank = 1
         p.surfaceAtoms = new Atoms([heavyAtomAt(0d, 0d, 0d), heavyAtomAt(1d, 0d, 0d), heavyAtomAt(2d, 0d, 0d)])
         PocketGrid grid = gridOfPoints([new Point(0d, 0d, 0d) as Atom])
-        double n = new NumSurfaceAtomsDescriptor().compute(ctx(grid, p))
+        double n = new NumSurfaceAtomsDescriptor().compute(ctx(grid, p))[0]
         assertEquals(3.0d, n, DELTA)
     }
 
@@ -161,8 +161,8 @@ class PocketDescriptorsTest {
         TestPocket pNull  = new TestPocket(); pNull.rank = 1   // surfaceAtoms stays null
         PocketGrid grid = gridOfPoints([new Point(0d, 0d, 0d) as Atom])
         NumResiduesDescriptor d = new NumResiduesDescriptor()
-        assertEquals(0.0d, d.compute(ctx(grid, pEmpty)), DELTA)
-        assertEquals(0.0d, d.compute(ctx(grid, pNull)), DELTA)
+        assertEquals(0.0d, d.compute(ctx(grid, pEmpty))[0], DELTA)
+        assertEquals(0.0d, d.compute(ctx(grid, pNull))[0], DELTA)
     }
 
     @Test
@@ -188,7 +188,7 @@ class PocketDescriptorsTest {
     void numGridPointsCountsAssignedCells() {
         PocketGrid grid = gridOfPoints(cube(3))   // 27 points, all assigned to pocket 1
         TestPocket p = new TestPocket(); p.rank = 1
-        double n = new NumGridPointsDescriptor().compute(ctx(grid, p))
+        double n = new NumGridPointsDescriptor().compute(ctx(grid, p))[0]
         assertEquals(27.0d, n, DELTA)
     }
 
@@ -198,7 +198,7 @@ class PocketDescriptorsTest {
                 new com.carrotsearch.hppc.LongIntHashMap(),
                 Collections.<Integer, BitSet> singletonMap(1, new BitSet()))
         TestPocket p = new TestPocket(); p.rank = 1
-        double n = new NumGridPointsDescriptor().compute(ctx(empty, p))
+        double n = new NumGridPointsDescriptor().compute(ctx(empty, p))[0]
         assertEquals(0.0d, n, DELTA)
     }
 
@@ -210,7 +210,7 @@ class PocketDescriptorsTest {
                 new com.carrotsearch.hppc.LongIntHashMap(),
                 Collections.<Integer, BitSet> singletonMap(1, new BitSet()))
         TestPocket p = new TestPocket(); p.rank = 1
-        double rg = new RadiusOfGyrationDescriptor().compute(ctx(empty, p))
+        double rg = new RadiusOfGyrationDescriptor().compute(ctx(empty, p))[0]
         assertEquals(0.0d, rg, DELTA)
     }
 
@@ -218,7 +218,7 @@ class PocketDescriptorsTest {
     void radiusOfGyrationZeroForSinglePoint() {
         PocketGrid grid = gridOfPoints([new Point(0d, 0d, 0d) as Atom])
         TestPocket p = new TestPocket(); p.rank = 1
-        double rg = new RadiusOfGyrationDescriptor().compute(ctx(grid, p))
+        double rg = new RadiusOfGyrationDescriptor().compute(ctx(grid, p))[0]
         assertEquals(0.0d, rg, DELTA)
     }
 
@@ -232,7 +232,7 @@ class PocketDescriptorsTest {
                 new Point(-1d, 0d, 0d) as Atom,
                 new Point(+1d, 0d, 0d) as Atom])
         TestPocket p = new TestPocket(); p.rank = 1
-        double rg = new RadiusOfGyrationDescriptor().compute(ctx(grid, p))
+        double rg = new RadiusOfGyrationDescriptor().compute(ctx(grid, p))[0]
         assertEquals(1.0d, rg, DELTA)
     }
 
@@ -245,7 +245,7 @@ class PocketDescriptorsTest {
     void radiusOfGyrationOfCube() {
         PocketGrid grid = gridOfPoints(cube(3))
         TestPocket p = new TestPocket(); p.rank = 1
-        double rg = new RadiusOfGyrationDescriptor().compute(ctx(grid, p))
+        double rg = new RadiusOfGyrationDescriptor().compute(ctx(grid, p))[0]
         assertEquals(Math.sqrt(2d), rg, 1e-6d)
     }
 
@@ -254,7 +254,8 @@ class PocketDescriptorsTest {
     @Test
     void registryResolvesKnownNames() {
         ['volume', 'sphericity', 'radius_of_gyration',
-         'num_residues', 'num_surface_atoms', 'num_grid_points'].each { String name ->
+         'num_residues', 'num_surface_atoms', 'num_grid_points',
+         'principal_moments'].each { String name ->
             PocketDescriptor d = PocketDescriptorRegistry.get(name)
             assertNotNull(d)
             assertEquals(name, d.name())
@@ -273,17 +274,104 @@ class PocketDescriptorsTest {
         Set<String> known = PocketDescriptorRegistry.knownNames()
         assertTrue(known.containsAll(
                 ['volume', 'sphericity', 'radius_of_gyration',
-                 'num_residues', 'num_surface_atoms', 'num_grid_points'] as Set))
+                 'num_residues', 'num_surface_atoms', 'num_grid_points',
+                 'principal_moments'] as Set))
     }
 
     @Test
     void columnTypesAreCorrect() {
-        assertEquals(ColumnType.DOUBLE, PocketDescriptorRegistry.get('volume').columnType())
-        assertEquals(ColumnType.DOUBLE, PocketDescriptorRegistry.get('sphericity').columnType())
-        assertEquals(ColumnType.DOUBLE, PocketDescriptorRegistry.get('radius_of_gyration').columnType())
-        assertEquals(ColumnType.INT, PocketDescriptorRegistry.get('num_residues').columnType())
-        assertEquals(ColumnType.INT, PocketDescriptorRegistry.get('num_surface_atoms').columnType())
-        assertEquals(ColumnType.INT, PocketDescriptorRegistry.get('num_grid_points').columnType())
+        // Scalar descriptors return a 1-element columnTypes() list; multi-column
+        // descriptors return the full list. Spot-check both groups.
+        assertEquals([ColumnType.DOUBLE], PocketDescriptorRegistry.get('volume').columnTypes())
+        assertEquals([ColumnType.DOUBLE], PocketDescriptorRegistry.get('sphericity').columnTypes())
+        assertEquals([ColumnType.DOUBLE], PocketDescriptorRegistry.get('radius_of_gyration').columnTypes())
+        assertEquals([ColumnType.INT], PocketDescriptorRegistry.get('num_residues').columnTypes())
+        assertEquals([ColumnType.INT], PocketDescriptorRegistry.get('num_surface_atoms').columnTypes())
+        assertEquals([ColumnType.INT], PocketDescriptorRegistry.get('num_grid_points').columnTypes())
+        assertEquals([ColumnType.DOUBLE, ColumnType.DOUBLE, ColumnType.DOUBLE],
+                PocketDescriptorRegistry.get('principal_moments').columnTypes())
+    }
+
+    // --- principal_moments ---
+
+    /**
+     * 3×3×3 cube centered at (1,1,1). All three principal axes are equivalent
+     * (cube is isotropic in axes-aligned directions), so the gyration tensor's
+     * eigenvalues all equal the per-dimension variance = 2/3.
+     */
+    @Test
+    void principalMomentsOfCubeAreEqual() {
+        PocketGrid grid = gridOfPoints(cube(3))
+        TestPocket p = new TestPocket(); p.rank = 1
+        double[] lambdas = new PrincipalMomentsDescriptor().compute(ctx(grid, p))
+        assertEquals(3, lambdas.length)
+        assertEquals(2d / 3d, lambdas[0], 1e-9d)
+        assertEquals(2d / 3d, lambdas[1], 1e-9d)
+        assertEquals(2d / 3d, lambdas[2], 1e-9d)
+    }
+
+    /**
+     * Two points along the x-axis: gyration tensor has λ₁ = (per-dim variance
+     * of x), the other two are zero. Distinguishes rod-like shape signatures.
+     */
+    @Test
+    void principalMomentsOfTwoPointsAlongAxis() {
+        Atom a = new Point(0d, 0d, 0d)
+        Atom b = new Point(2d, 0d, 0d)
+        LongIntHashMap idx = new LongIntHashMap()
+        idx.put(PocketGrid.pack(0, 0, 0), 0)
+        idx.put(PocketGrid.pack(2, 0, 0), 1)
+        BitSet bs = new BitSet(); bs.set(0, 2)
+        Map<Integer, BitSet> assigned = [(1): bs] as LinkedHashMap
+        PocketGrid grid = new PocketGrid(new Atoms([a, b]), 1.0d, 0d, 0d, 0d, idx, assigned)
+        TestPocket p = new TestPocket(); p.rank = 1
+        double[] lambdas = new PrincipalMomentsDescriptor().compute(ctx(grid, p))
+        // Per-dim variance of {0, 2} = mean((-1)² + 1²) = 1; other two dims have zero spread.
+        assertEquals(1.0d, lambdas[0], 1e-9d)
+        assertEquals(0.0d, lambdas[1], 1e-9d)
+        assertEquals(0.0d, lambdas[2], 1e-9d)
+    }
+
+    @Test
+    void principalMomentsEigenvaluesAreSortedDescending() {
+        // Square in the xy plane: variance(x) = variance(y) = some value > 0,
+        // variance(z) = 0. λ₁, λ₂ are equal (and > 0); λ₃ = 0. Verifies the sort.
+        List<Atom> pts = [
+                new Point(0d, 0d, 0d),
+                new Point(2d, 0d, 0d),
+                new Point(0d, 2d, 0d),
+                new Point(2d, 2d, 0d),
+        ]
+        PocketGrid grid = gridOfPoints(pts)
+        TestPocket p = new TestPocket(); p.rank = 1
+        double[] lambdas = new PrincipalMomentsDescriptor().compute(ctx(grid, p))
+        assertTrue(lambdas[0] >= lambdas[1], "λ₁ ≥ λ₂")
+        assertTrue(lambdas[1] >= lambdas[2], "λ₂ ≥ λ₃")
+        assertEquals(0.0d, lambdas[2], 1e-9d)  // flat in xy → λ₃ = 0
+    }
+
+    @Test
+    void principalMomentsOfEmptyOrSinglePocketIsAllZeros() {
+        // Cardinality < 2 short-circuits to zeros — see PrincipalMomentsDescriptor javadoc.
+        PocketGrid empty = gridOfPoints([])
+        TestPocket p = new TestPocket(); p.rank = 1
+        double[] lambdas = new PrincipalMomentsDescriptor().compute(ctx(empty, p))
+        assertArrayEquals([0.0d, 0.0d, 0.0d] as double[], lambdas, 0d)
+    }
+
+    /**
+     * Pairs with {@code radius_of_gyration}: trace(gyration tensor) = sum of
+     * eigenvalues = Rg². Pins the relationship between the two descriptors so
+     * a future change to one without the other gets caught.
+     */
+    @Test
+    void principalMomentsSumEqualsRadiusOfGyrationSquared() {
+        PocketGrid grid = gridOfPoints(cube(3))
+        TestPocket p = new TestPocket(); p.rank = 1
+        double[] lambdas = new PrincipalMomentsDescriptor().compute(ctx(grid, p))
+        double rg = new RadiusOfGyrationDescriptor().compute(ctx(grid, p))[0]
+        double sum = lambdas[0] + lambdas[1] + lambdas[2]
+        assertEquals(rg * rg, sum, 1e-9d)
     }
 
 }

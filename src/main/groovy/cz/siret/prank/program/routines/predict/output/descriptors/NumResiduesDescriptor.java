@@ -7,14 +7,14 @@ import cz.siret.prank.program.routines.predict.output.TableData.ColumnType;
  * {@code Pocket.getResidues()} which lazily derives the list from
  * {@code surfaceAtoms.distinctGroupsSorted}.
  */
-public final class NumResiduesDescriptor implements PocketDescriptor {
+public final class NumResiduesDescriptor extends AbstractScalarPocketDescriptor {
 
     @Override public String name() { return "num_residues"; }
-    @Override public ColumnType columnType() { return ColumnType.INT; }
+    @Override protected ColumnType scalarType() { return ColumnType.INT; }
     @Override public boolean needsGrid() { return false; }
 
     @Override
-    public double compute(PocketGridContext ctx) {
+    protected double computeScalar(PocketGridContext ctx) {
         return ctx.pocket().getResidues().size();
     }
 

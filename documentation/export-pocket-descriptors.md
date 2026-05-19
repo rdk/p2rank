@@ -17,8 +17,8 @@ counts, etc.) written to a tabular file alongside any `predict` or
 ## Quick start
 
 ```bash
-# Default: every shipped descriptor (volume, sphericity, radius_of_gyration,
-# num_residues, num_surface_atoms, num_grid_points)
+# Default: every shipped descriptor (num_residues, num_surface_atoms,
+# num_grid_points, volume, sphericity, radius_of_gyration, principal_moments)
 prank predict -f protein.pdb -export_pocket_descriptors 1
 
 # Narrow set + tighter grid for more accurate volume/sphericity
@@ -41,21 +41,25 @@ One row per predicted pocket.
 | `score` | f64 | Raw P2Rank pocket score |
 | `probability` | f64 | Calibrated probability from the score transformer. **Column is omitted entirely** when no transformer ran |
 | `center_x`, `center_y`, `center_z` | f64 | Pocket centroid coordinates |
-| *(one column per requested descriptor)* | f64 / i32 | See descriptor catalog below |
+| *(one or more columns per requested descriptor)* | f64 / i32 | See descriptor catalog below |
 
 Descriptor columns appear in the order given on the command line via
-`-pocket_descriptors`.
+`-pocket_descriptors`. Most descriptors emit a single column whose header is
+the descriptor name; multi-column descriptors emit N columns prefixed with
+`"{name}."` (e.g. `principal_moments.lambda1`, `principal_moments.lambda2`,
+`principal_moments.lambda3`).
 
 ## Descriptor catalog
 
-| Name | Output | Definition |
+| Name | Columns | Definition |
 |---|---|---|
-| `volume` | f64 | Pocket volume in **Å³**: `\|assigned grid points\| × pocket_grid_spacing³`. Accuracy scales with the lattice spacing (smaller `pocket_grid_spacing` → finer estimate). |
-| `sphericity` | f64 ∈ [0, 1] | `V_pocket / V_bounding_sphere`. Bounding sphere is centered at the **centroid of the pocket's grid points** (not `pocket.centroid` which is atom-derived); radius is the max distance from that centroid. Quantization-free. 1 = perfect sphere; ≪ 1 = elongated / irregular. |
-| `radius_of_gyration` | f64 | Radius of gyration in **Å**: `sqrt(mean(\|r_i - r_cm\|²))` over the pocket's grid points (equal weights). Absolute spatial extent — pairs well with `sphericity`, which only captures compactness. `0` for empty / single-point pockets. |
-| `num_residues` | i32 | Number of distinct residues touching the pocket (reuses `Pocket.getResidues()`). |
-| `num_surface_atoms` | i32 | Size of `pocket.surfaceAtoms`. |
-| `num_grid_points` | i32 | Total grid points assigned to the pocket (cardinality of the BitSet after shape fill). Raw count complement to `volume`. |
+| `volume` | 1 × f64 | Pocket volume in **Å³**: `\|assigned grid points\| × pocket_grid_spacing³`. Accuracy scales with the lattice spacing (smaller `pocket_grid_spacing` → finer estimate). |
+| `sphericity` | 1 × f64 ∈ [0, 1] | `V_pocket / V_bounding_sphere`. Bounding sphere is centered at the **centroid of the pocket's grid points** (not `pocket.centroid` which is atom-derived); radius is the max distance from that centroid. Quantization-free. 1 = perfect sphere; ≪ 1 = elongated / irregular. |
+| `radius_of_gyration` | 1 × f64 | Radius of gyration in **Å**: `sqrt(mean(\|r_i - r_cm\|²))` over the pocket's grid points (equal weights). Absolute spatial extent — pairs well with `sphericity`, which only captures compactness. `0` for empty / single-point pockets. |
+| `num_residues` | 1 × i32 | Number of distinct residues touching the pocket (reuses `Pocket.getResidues()`). |
+| `num_surface_atoms` | 1 × i32 | Size of `pocket.surfaceAtoms`. |
+| `num_grid_points` | 1 × i32 | Total grid points assigned to the pocket (cardinality of the BitSet after shape fill). Raw count complement to `volume`. |
+| `principal_moments` | 3 × f64 | Three eigenvalues of the pocket grid points' gyration tensor (equal-weight PCA), sorted descending: `principal_moments.lambda1` ≥ `lambda2` ≥ `lambda3`. Unit Å². Shape signature: λ₁≈λ₂≈λ₃ → sphere; λ₁≫λ₂,λ₃ → rod; λ₁≈λ₂≫λ₃ → disk. Sum equals `radius_of_gyration²`. `0`s for pockets with <2 grid points. |
 
 `-pocket_descriptors` defaults to **all of the above** — they share the
 pocket-grid input, so adding more is essentially free once the grid is
@@ -86,22 +90,31 @@ Implementations live under
 
 1. Implement the `PocketDescriptor` interface:
    ```java
-   String name();
-   ColumnType columnType();
-   double compute(PocketGridContext ctx);
-   boolean needsGrid();   // default true — override to false if compute()
-                          // doesn't read ctx.grid() or ctx.gridPointIndices()
+   String name();                          // CLI token and multi-column header prefix
+   List<String> columnNames();             // sub-names; scalar entry IGNORED at output
+   List<ColumnType> columnTypes();         // parallel to columnNames()
+   double[] compute(PocketGridContext);    // same length as columnNames()
+   boolean needsGrid();                    // default true; override to false if compute()
+                                           // doesn't read ctx.grid() or ctx.gridPointIndices()
    ```
    `PocketGridContext` exposes `pocket`, `protein`, `grid`, and the
    per-pocket `gridPointIndices` set. If your `compute()` only reads
    `ctx.pocket()` (i.e., domain fields like `surfaceAtoms` or `residues`),
    override `needsGrid()` to return `false` — that lets the orchestrator
    skip the full grid build when only grid-free descriptors are selected.
-   Leaving it at the default-true on a truly grid-free descriptor is not
-   incorrect, but forces a wasted build per protein.
+
+   For **scalar** descriptors (one column), extend `AbstractScalarPocketDescriptor`
+   instead of implementing the interface directly — it boils the boilerplate down
+   to `name()`, `scalarType()`, and `computeScalar(ctx)`. The 6 base shipped
+   descriptors use this adapter.
+
+   For **multi-column** descriptors (e.g. `principal_moments` with three
+   eigenvalues from a single decomposition), implement `PocketDescriptor`
+   directly; output column headers are `"{name()}.{columnNames()[i]}"`.
 
 2. Register the implementation in `PocketDescriptorRegistry`'s static
-   initializer (Java; no auto-discovery).
+   initializer (Java; no auto-discovery). The registry rejects descriptors
+   that declare duplicate `columnNames` at registration time.
 
 3. Users can opt into it by name via
    `-pocket_descriptors "volume,my_new_descriptor"`.
@@ -113,10 +126,9 @@ Implementations live under
    user's output schema — that's intentional; skip step 4 if the new
    descriptor is opt-in only.
 
-INT descriptors return their value as a `double` that the writer
-downcasts at output time, matching the existing `TableData` convention.
-Implementations must guarantee the value fits in i32 (no concern in
-practice for pocket-grid counts).
+INT columns return their value as a `double` that the writer downcasts at
+output time, matching the existing `TableData` convention. Implementations
+must guarantee the value fits in i32.
 
 ## See also
 

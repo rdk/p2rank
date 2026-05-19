@@ -954,8 +954,9 @@ class Params {
      * pocket-grid input, so adding more to the list is essentially free.
      */
     @RuntimeParam
-    List<String> pocket_descriptors = ["volume", "sphericity", "radius_of_gyration",
-                                       "num_residues", "num_surface_atoms", "num_grid_points"]
+    List<String> pocket_descriptors = ["num_residues", "num_surface_atoms", "num_grid_points",
+                                       "volume", "sphericity", "radius_of_gyration",
+                                       "principal_moments"]
 
     /**
      * Per-grid-point descriptors appended as extra columns to the pocket-grid

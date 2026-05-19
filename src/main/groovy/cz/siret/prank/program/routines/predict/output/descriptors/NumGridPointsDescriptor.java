@@ -9,13 +9,13 @@ import cz.siret.prank.program.routines.predict.output.TableData.ColumnType;
  * <p>Useful as a raw size complement to {@code volume}: scales linearly with
  * cell count whereas volume scales with {@code count * spacing³}.
  */
-public final class NumGridPointsDescriptor implements PocketDescriptor {
+public final class NumGridPointsDescriptor extends AbstractScalarPocketDescriptor {
 
     @Override public String name() { return "num_grid_points"; }
-    @Override public ColumnType columnType() { return ColumnType.INT; }
+    @Override protected ColumnType scalarType() { return ColumnType.INT; }
 
     @Override
-    public double compute(PocketGridContext ctx) {
+    protected double computeScalar(PocketGridContext ctx) {
         return ctx.gridPointIndices().cardinality();
     }
 
