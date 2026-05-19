@@ -235,13 +235,8 @@ class Main implements Parametrized, Writable {
                     "Known: ${knownAssigners}")
         }
 
-        // Every name in -pocket_descriptors must be registered. null/blank entries are
-        // rejected (rather than skipped) so a malformed config file fails fast instead
-        // of slipping through to the consumers (which would otherwise hit
-        // PocketDescriptorRegistry.get('') with a less useful error). Duplicates are
-        // rejected too — accepting them would produce a CSV with duplicate header cells
-        // and break Parquet's schema builder.
-        validateDescriptorList(params.pocket_descriptors,
+        cz.siret.prank.program.routines.predict.output.DescriptorListValidator.validate(
+                params.pocket_descriptors,
                 cz.siret.prank.program.routines.predict.output.descriptors.PocketDescriptorRegistry.knownNames(),
                 "pocket_descriptors")
 
@@ -285,7 +280,8 @@ class Main implements Parametrized, Writable {
                     "-vis_pocket_grid_gaussian_iso must be > 0 (got ${params.vis_pocket_grid_gaussian_iso}).")
         }
 
-        validateDescriptorList(params.pocket_grid_point_descriptors,
+        cz.siret.prank.program.routines.predict.output.DescriptorListValidator.validate(
+                params.pocket_grid_point_descriptors,
                 cz.siret.prank.program.routines.predict.output.grid.descriptors.PocketGridPointDescriptorRegistry.knownNames(),
                 "pocket_grid_point_descriptors")
         if (params.pocket_grid_volsite_radius <= 0d) {
@@ -302,31 +298,6 @@ class Main implements Parametrized, Writable {
             throw new PrankException(
                     "-vis_pocket_grid=true requires -export_pocket_grid=true " +
                     "(the grid renderers derive their PDB sidecar from the grid).")
-        }
-    }
-
-    /**
-     * Shared shape for validating a name-list param against a registry: rejects
-     * null/blank entries, unknown names, and duplicates. {@code paramName} is the
-     * Params property name (without the {@code -} prefix) used in error messages.
-     */
-    private static void validateDescriptorList(List<String> names, Set<String> known, String paramName) {
-        if (names == null) return
-        Set<String> seen = new HashSet<>()
-        for (String name : names) {
-            if (name == null || name.trim().isEmpty()) {
-                throw new PrankException(
-                        "-${paramName} contains an empty/null entry. Known: ${known}")
-            }
-            if (!known.contains(name)) {
-                throw new PrankException(
-                        "Unknown name in -${paramName}: '${name}'. Known: ${known}")
-            }
-            if (!seen.add(name)) {
-                throw new PrankException(
-                        "-${paramName} contains duplicate name '${name}'. " +
-                        "Each descriptor may be listed at most once.")
-            }
         }
     }
 

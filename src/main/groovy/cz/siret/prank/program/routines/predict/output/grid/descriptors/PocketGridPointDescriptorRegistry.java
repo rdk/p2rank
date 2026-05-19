@@ -29,7 +29,14 @@ public final class PocketGridPointDescriptorRegistry {
 
     private PocketGridPointDescriptorRegistry() {}
 
-    private static void register(PocketGridPointDescriptor d) {
+    /**
+     * Add a descriptor to the registry. Called from the static initializer for
+     * the shipped descriptors; also exposed for tests that need to register a
+     * fixture descriptor and for future external descriptor plugins. The
+     * registry has no remove/clear — a registered descriptor lives for the JVM's
+     * lifetime, which is intentional (CLI selection by name must be deterministic).
+     */
+    public static void register(PocketGridPointDescriptor d) {
         List<String> cols = d.columnNames();
         if (cols.size() > 1 && new HashSet<>(cols).size() != cols.size()) {
             throw new IllegalStateException(
