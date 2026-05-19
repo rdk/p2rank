@@ -261,6 +261,46 @@ class Main implements Parametrized, Writable {
             }
         }
 
+        // Numeric ranges: catch values that would silently produce a broken/empty grid
+        // (≤0 lattice edge → NaN lattice; ≤0 distance bounds → empty grid) or that are
+        // outside the algorithm's defined domain (26-neighborhood for morph closing).
+        if (params.pocket_grid_spacing <= 0d) {
+            throw new PrankException(
+                    "-pocket_grid_spacing must be > 0 (got ${params.pocket_grid_spacing}).")
+        }
+        if (params.pocket_grid_max_dist <= 0d) {
+            throw new PrankException(
+                    "-pocket_grid_max_dist must be > 0 (got ${params.pocket_grid_max_dist}).")
+        }
+        if (params.pocket_grid_atom_buffer < 0d) {
+            throw new PrankException(
+                    "-pocket_grid_atom_buffer must be ≥ 0 (got ${params.pocket_grid_atom_buffer}).")
+        }
+        if (params.pocket_grid_assign_cutoff <= 0d) {
+            throw new PrankException(
+                    "-pocket_grid_assign_cutoff must be > 0 (got ${params.pocket_grid_assign_cutoff}).")
+        }
+        if (params.pocket_grid_fill_min_neighbors < 1 || params.pocket_grid_fill_min_neighbors > 26) {
+            throw new PrankException(
+                    "-pocket_grid_fill_min_neighbors must be in [1, 26] " +
+                    "(26-neighborhood lattice; got ${params.pocket_grid_fill_min_neighbors}).")
+        }
+        if (params.pocket_grid_fill_max_iters < 0) {
+            throw new PrankException(
+                    "-pocket_grid_fill_max_iters must be ≥ 0 (got ${params.pocket_grid_fill_max_iters}).")
+        }
+        // -1 is the auto-scale sentinel; any other non-positive value would silently
+        // disable the surface (radius 0) or pass garbage to PyMOL/ChimeraX (negative vdw).
+        if (params.vis_pocket_grid_volume_radius != -1d && params.vis_pocket_grid_volume_radius <= 0d) {
+            throw new PrankException(
+                    "-vis_pocket_grid_volume_radius must be -1 (auto-scale) or > 0 " +
+                    "(got ${params.vis_pocket_grid_volume_radius}).")
+        }
+        if (params.vis_pocket_grid_gaussian_iso <= 0d) {
+            throw new PrankException(
+                    "-vis_pocket_grid_gaussian_iso must be > 0 (got ${params.vis_pocket_grid_gaussian_iso}).")
+        }
+
         // Grid viz depends on the grid export being enabled.
         if (params.vis_pocket_grid && !params.export_pocket_grid) {
             throw new PrankException(

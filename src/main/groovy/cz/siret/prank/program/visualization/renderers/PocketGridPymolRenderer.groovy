@@ -28,10 +28,10 @@ import java.util.Locale
  *       that {@code @}-includes the main pocket PML ({@code {label}_pymol.pml})
  *       and adds <b>four togglable layers per pocket</b>:
  *       <ul>
- *         <li>{@code pocket_grid_N} — discrete points as small spheres (ON by default)</li>
- *         <li>{@code pocket_vol_N}  — vdW-radius surface union (volumetric blob, OFF)</li>
- *         <li>{@code pocket_dens_N} — Gaussian-density iso-surface (smooth blob, OFF)</li>
- *         <li>{@code pocket_hull_N} — convex-hull wireframe (OFF, needs scipy)</li>
+ *         <li>{@code pocket_grid_N}  — discrete points as small spheres (ON by default)</li>
+ *         <li>{@code pocket_vol_N}   — vdW-radius surface union (volumetric blob, ON by default)</li>
+ *         <li>{@code pocket_gauss_N} — Gaussian-density iso-surface (smooth blob, OFF)</li>
+ *         <li>{@code pocket_hull_N}  — convex-hull wireframe (OFF, needs scipy)</li>
  *       </ul>
  *       Each layer is an independent PyMOL object — toggle via the right-panel
  *       eye icon or {@code enable}/{@code disable pocket_<layer>_*}.</li>
@@ -95,7 +95,7 @@ final class PocketGridPymolRenderer {
      * @param grid          pocket grid to render
      * @param volumeRadius  per-grid-point sphere radius (Å) for the
      *                      {@code pocket_vol_N} layer ({@code vis_pocket_grid_volume_radius}).
-     * @param gaussianIso   iso-surface threshold for the {@code pocket_dens_N}
+     * @param gaussianIso   iso-surface threshold for the {@code pocket_gauss_N}
      *                      gaussian-density layer ({@code vis_pocket_grid_gaussian_iso}).
      * @param outdir        root output directory (parent of {@code visualizations/})
      * @param label         per-protein label (typically {@code item.label})

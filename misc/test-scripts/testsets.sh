@@ -139,7 +139,7 @@ quick() {
     test ./prank.sh export-points -f distro/test_data/1fbl.pdb -export_points_format csv.gz                -out_subdir TEST/TESTS
 
     # test pocket grid + descriptors + PyMOL viz (all three exports in one go)
-    test ./prank.sh predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -export_pocket_descriptors 1 -export_pocket_grid_pml 1     -out_subdir TEST/TESTS
+    test ./prank.sh predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -export_pocket_descriptors 1 -vis_pocket_grid 1     -out_subdir TEST/TESTS
 
     # cofactors feature smoke test
     test ./prank.sh predict -f distro/test_data/liganated/1t7qa.pdb -cofactors COA                         -out_subdir TEST/TESTS
@@ -550,7 +550,7 @@ pocket_grid() {
     test ./prank.sh predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1                                                                                            -out_subdir TEST/POCKET_GRID
     test ./prank.sh predict -f distro/test_data/1fbl.pdb -export_pocket_descriptors 1                                                                                     -out_subdir TEST/POCKET_GRID
     test ./prank.sh predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -export_pocket_descriptors 1                                                               -out_subdir TEST/POCKET_GRID
-    test ./prank.sh predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -export_pocket_grid_pml 1                                                                  -out_subdir TEST/POCKET_GRID
+    test ./prank.sh predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -vis_pocket_grid 1                                                                  -out_subdir TEST/POCKET_GRID
 
     # All grid file formats
     test ./prank.sh predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_format csv                                                                    -out_subdir TEST/POCKET_GRID
@@ -581,7 +581,7 @@ pocket_grid() {
     # Validation: fail-fast checks (each must exit non-zero — uses test_expect_fail so the green [OK] is shown only when the command fails as designed)
     test_expect_fail ./prank.sh predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_fill cubist                                                                   -out_subdir TEST/POCKET_GRID
     test_expect_fail ./prank.sh predict -f distro/test_data/1fbl.pdb -export_pocket_descriptors 1 -pocket_descriptors 'not_a_descriptor'                                              -out_subdir TEST/POCKET_GRID
-    test_expect_fail ./prank.sh predict -f distro/test_data/1fbl.pdb -export_pocket_grid_pml 1                                                                                        -out_subdir TEST/POCKET_GRID
+    test_expect_fail ./prank.sh predict -f distro/test_data/1fbl.pdb -vis_pocket_grid 1                                                                                        -out_subdir TEST/POCKET_GRID
 
     # Rescore + dataset paths
     test ./prank.sh rescore  fpocket.ds  -export_pocket_grid 1 -export_pocket_descriptors 1                                                                               -out_subdir TEST/POCKET_GRID
@@ -600,7 +600,7 @@ pocket_grid() {
     test ./prank.sh predict chen11.ds     -c config/test-default  -export_pocket_grid 1 -export_pocket_descriptors 1  -out_subdir TEST/POCKET_GRID
     #test ./prank.sh predict fptrain.ds    -c config/test-default  -export_pocket_grid 1 -export_pocket_descriptors 1  -out_subdir TEST/POCKET_GRID
 
-    test ./prank.sh predict fptrain.ds    -c config/test-default  -export_pocket_grid 1 -export_pocket_descriptors 1 -visualizations 1 -export_pocket_grid_pml 1  -out_subdir TEST/POCKET_GRID
+    test ./prank.sh predict fptrain.ds    -c config/test-default  -export_pocket_grid 1 -export_pocket_descriptors 1 -visualizations 1 -vis_pocket_grid 1  -out_subdir TEST/POCKET_GRID
 
 
 }
