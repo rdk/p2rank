@@ -140,6 +140,17 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
      */
     private void doRescore(Prediction prediction, FeatureExtractor proteinExtractor, InstancePredictor instancePredictor) {
 
+        if (params.bench_skip_rescoring) {
+            // Null-op for benchmarking only — skip feature extraction and ML scoring.
+            // pocket.newScore passes through; downstream routines still see consistent state.
+            for (Pocket pocket : prediction.pockets) {
+                pocket.newScore = pocket.score
+                pocket.auxInfo.rawNewScore = pocket.score
+                pocket.auxInfo.samplePoints = 0
+            }
+            return
+        }
+
         proteinExtractor.prepareProteinPrototypeForPockets()
 
         // pocket score transformers

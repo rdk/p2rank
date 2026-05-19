@@ -220,4 +220,99 @@ class TableExporterTest {
                 schema.getType("pocket").asPrimitiveType().primitiveTypeName)
     }
 
+    // --- STRING column type tests ---
+
+    /** Mixed schema used across the STRING tests: name (STRING) | rank (INT) | score (DOUBLE) */
+    private static ArrayTableData mixedSchemaTable(List<String> names, List<Integer> ranks, List<Double> scores) {
+        def rows = (0..<names.size()).collect { int i ->
+            row(Double.NaN, ranks[i] as double, scores[i] as double)
+        }
+        def stringColumns = (Map<Integer, String[]>) [(0): names as String[]]
+        return new ArrayTableData(
+                ["name", "rank", "score"],
+                rows,
+                [1] as Set<Integer>,
+                stringColumns)
+    }
+
+    @Test
+    void csvWritesStringColumn() {
+        def data = mixedSchemaTable(["pocket.1", "pocket.2"], [1, 2], [0.5d, 0.3d])
+        def filepath = "$tempDir/strings.csv"
+
+        TableExporter.export(data, filepath, "csv")
+
+        def lines = new File(filepath).readLines()
+        assertEquals("name,rank,score", lines[0])
+        assertEquals("pocket.1,1,0.5", lines[1])
+        assertEquals("pocket.2,2,0.3", lines[2])
+    }
+
+    @Test
+    void csvQuotesValuesWithSpecialChars() {
+        def commaName = 'has,comma'
+        def quoteName = 'has"quote'
+        def newlineName = "has\nnewline"
+        def data = mixedSchemaTable([commaName, quoteName, newlineName], [1, 2, 3], [0.1d, 0.2d, 0.3d])
+        def filepath = "$tempDir/strings_special.csv"
+
+        TableExporter.export(data, filepath, "csv")
+
+        def content = new File(filepath).text
+        assertTrue(content.contains('"has,comma"'), "comma value must be quoted")
+        assertTrue(content.contains('"has""quote"'), "quote value must be quoted + escaped")
+        assertTrue(content.contains('"has\nnewline"'), "newline value must be quoted")
+    }
+
+    @Test
+    void arrowWritesStringColumnAsUtf8() {
+        def data = mixedSchemaTable(["alpha", "beta"], [1, 2], [0.5d, 0.6d])
+        def filepath = "$tempDir/strings.arrow"
+
+        TableExporter.export(data, filepath, "arrow")
+
+        new RootAllocator().withCloseable { allocator ->
+            new FileInputStream(filepath).withCloseable { is ->
+                new ArrowStreamReader(is, allocator).withCloseable { reader ->
+                    reader.loadNextBatch()
+                    def root = reader.vectorSchemaRoot
+                    def fields = root.schema.fields
+                    assertTrue(fields[0].type instanceof ArrowType.Utf8, "name should be Utf8")
+                    def vec = root.getVector("name")
+                    assertEquals("alpha", vec.getObject(0).toString())
+                    assertEquals("beta", vec.getObject(1).toString())
+                }
+            }
+        }
+    }
+
+    @Test
+    void parquetWritesStringColumnAsBinaryUtf8() {
+        def data = mixedSchemaTable(["pocket.1"], [1], [0.9d])
+        def filepath = "$tempDir/strings.parquet"
+
+        TableExporter.export(data, filepath, "parquet")
+
+        def metadata = ParquetReader.readMetadata(new File(filepath))
+        def schema = metadata.fileMetaData.schema
+        def nameType = schema.getType("name").asPrimitiveType()
+        assertEquals(PrimitiveType.PrimitiveTypeName.BINARY, nameType.primitiveTypeName)
+        // LogicalTypeAnnotation.stringType() round-trips
+        assertNotNull(nameType.logicalTypeAnnotation)
+        assertEquals("STRING", nameType.logicalTypeAnnotation.toString())
+    }
+
+    @Test
+    void csvNumericOnlyTableIsUnchangedByStringRefactor() {
+        // Regression: numeric-only schemas must produce identical output (no quoting,
+        // no string lookups) since this is the existing SAS-points export path.
+        def data = ArrayTableData.of(["x", "y"], [row(1.5d, 2.5d), row(3.5d, 4.5d)])
+        def filepath = "$tempDir/numeric.csv"
+
+        TableExporter.export(data, filepath, "csv")
+
+        def lines = new File(filepath).readLines()
+        assertEquals(["x,y", "1.5,2.5", "3.5,4.5"], lines)
+    }
+
 }

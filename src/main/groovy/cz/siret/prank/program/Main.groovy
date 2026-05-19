@@ -170,6 +170,103 @@ class Main implements Parametrized, Writable {
                         "from aa_mapping or change the cofactor specifier to fix.", overlapping
             }
         }
+
+        validateVisParams()
+        validatePocketGridParams()
+    }
+
+    /**
+     * Fail-fast validation for visualization params. Caught at startup so a typo
+     * (e.g. -vis_renderers pmol) doesn't silently produce no output after a
+     * full prediction run — the consumption sites check `'pymol' in vis_renderers`
+     * by strict membership, so an unknown name is a quiet no-op.
+     */
+    private void validateVisParams() {
+        Set<String> knownRenderers = ['pymol', 'chimerax'] as Set
+        List<String> rs = params.vis_renderers
+        if (rs == null) {
+            throw new PrankException("-vis_renderers is null. Expected a list of: ${knownRenderers.sort()}")
+        }
+        Set<String> seen = new HashSet<>()
+        for (String r : rs) {
+            if (r == null || r.trim().isEmpty()) {
+                throw new PrankException(
+                        "-vis_renderers contains an empty/null entry. Known: ${knownRenderers.sort()}")
+            }
+            if (!knownRenderers.contains(r)) {
+                throw new PrankException(
+                        "Unknown renderer in -vis_renderers: '${r}'. Known: ${knownRenderers.sort()}")
+            }
+            if (!seen.add(r)) {
+                throw new PrankException(
+                        "-vis_renderers contains duplicate '${r}'.")
+            }
+        }
+    }
+
+    /**
+     * Fail-fast validation for the pocket-grid export feature
+     * (see misc/todo/pocket_grid/SPEC.md).
+     */
+    private void validatePocketGridParams() {
+        // pocket_grid_format must be one of the values supported by TableExporter.
+        Set<String> allowedFormats = ['csv', 'csv.gz', 'csv.zst',
+                                       'arrow', 'arrow.gz', 'arrow.zst',
+                                       'parquet'] as Set
+        if (!allowedFormats.contains(params.pocket_grid_format)) {
+            throw new PrankException(
+                    "Invalid -pocket_grid_format '${params.pocket_grid_format}'. " +
+                    "Expected one of: ${allowedFormats.sort()}")
+        }
+
+        // pocket_grid_fill must be a known strategy.
+        Set<String> allowedFills = ['morph_closing', 'none'] as Set
+        if (!allowedFills.contains(params.pocket_grid_fill)) {
+            throw new PrankException(
+                    "Invalid -pocket_grid_fill '${params.pocket_grid_fill}'. " +
+                    "Expected one of: ${allowedFills.sort()}")
+        }
+
+        // pocket_grid_assigner must be a name registered in PocketAssignerRegistry.
+        Set<String> knownAssigners = cz.siret.prank.program.routines.predict.output.grid.assign.PocketAssignerRegistry.knownNames()
+        if (!knownAssigners.contains(params.pocket_grid_assigner)) {
+            throw new PrankException(
+                    "Invalid -pocket_grid_assigner '${params.pocket_grid_assigner}'. " +
+                    "Known: ${knownAssigners}")
+        }
+
+        // Every name in -pocket_descriptors must be registered. null/blank entries are
+        // rejected (rather than skipped) so a malformed config file fails fast instead
+        // of slipping through to the consumers (which would otherwise hit
+        // PocketDescriptorRegistry.get('') with a less useful error). Duplicates are
+        // rejected too — accepting them would produce a CSV with duplicate header cells
+        // and break Parquet's schema builder.
+        if (params.pocket_descriptors != null) {
+            Set<String> known = cz.siret.prank.program.routines.predict.output.descriptors.PocketDescriptorRegistry.knownNames()
+            Set<String> seen = new HashSet<>()
+            for (String name : params.pocket_descriptors) {
+                if (name == null || name.trim().isEmpty()) {
+                    throw new PrankException(
+                            "-pocket_descriptors contains an empty/null entry. Known: ${known}")
+                }
+                if (!known.contains(name)) {
+                    throw new PrankException(
+                            "Unknown name in -pocket_descriptors: '${name}'. Known: ${known}")
+                }
+                if (!seen.add(name)) {
+                    throw new PrankException(
+                            "-pocket_descriptors contains duplicate name '${name}'. " +
+                            "Each descriptor may be listed at most once.")
+                }
+            }
+        }
+
+        // Grid viz depends on the grid export being enabled.
+        if (params.vis_pocket_grid && !params.export_pocket_grid) {
+            throw new PrankException(
+                    "-vis_pocket_grid=true requires -export_pocket_grid=true " +
+                    "(the grid renderers derive their PDB sidecar from the grid).")
+        }
     }
 
     String evalDirParam(String dirParam, String relativePrefixDir) {

@@ -13,6 +13,7 @@ import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.params.Params
 import cz.siret.prank.program.routines.Routine
 import cz.siret.prank.program.routines.predict.output.GetcleftOutputCalculator
+import cz.siret.prank.program.routines.predict.output.PocketGridOutputs
 import cz.siret.prank.program.routines.predict.output.PointsExporter
 import cz.siret.prank.program.routines.results.PredictResults
 import cz.siret.prank.program.visualization.PredictionVisualizer
@@ -155,6 +156,9 @@ class PredictPocketsRoutine extends Routine {
                     new GetcleftOutputCalculator().generateGetcleftSasPdbFiles(pair.prediction, outdir)
                 }
 
+                // Pocket grid + descriptors export + optional PyMOL viz
+                // (see misc/todo/pocket_grid/SPEC.md).
+                PocketGridOutputs.exportIfEnabled(pair.prediction, item.protein, outdir, item.label)
             }
 
             if (produceVisualizations) {

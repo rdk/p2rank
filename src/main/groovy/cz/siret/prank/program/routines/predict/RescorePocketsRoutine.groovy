@@ -12,6 +12,7 @@ import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.routines.Routine
 import cz.siret.prank.program.routines.predict.external.FpocketAdHocHelper
+import cz.siret.prank.program.routines.predict.output.PocketGridOutputs
 import cz.siret.prank.program.routines.predict.output.PointsExporter
 import cz.siret.prank.program.visualization.PredictionVisualizer
 import cz.siret.prank.utils.Futils
@@ -127,6 +128,10 @@ class RescorePocketsRoutine extends Routine {
 
                 // Export SAS points with feature vectors and scores (pocket points only in rescore mode)
                 PointsExporter.tryExportPoints(rescorer.exportData, outdir, item.label)
+
+                // Pocket grid + descriptors export + optional PyMOL viz
+                // (see misc/todo/pocket_grid/SPEC.md).
+                PocketGridOutputs.exportIfEnabled(pair.prediction, item.protein, outdir, item.label)
             }
 
             if (produceVisualizations) {

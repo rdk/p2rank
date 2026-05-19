@@ -1,11 +1,22 @@
 package cz.siret.prank.program.routines.benchmark
 
 import cz.cuni.cusbg.surface.FasterNumericalSurface
+import cz.siret.prank.domain.Dataset
+import cz.siret.prank.domain.Pocket
+import cz.siret.prank.domain.PredictionPair
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.domain.loaders.electrostatics.DelphiCubeLoader
 import cz.siret.prank.domain.loaders.electrostatics.GaussianCube
 import cz.siret.prank.program.Main
+import cz.siret.prank.program.PrankException
+import cz.siret.prank.program.params.Params
 import cz.siret.prank.program.routines.Routine
+import cz.siret.prank.program.routines.predict.output.descriptors.PocketDescriptor
+import cz.siret.prank.program.routines.predict.output.descriptors.PocketDescriptorRegistry
+import cz.siret.prank.program.routines.predict.output.descriptors.PocketGridContext
+import cz.siret.prank.program.routines.predict.output.grid.PocketGrid
+import cz.siret.prank.program.routines.predict.output.grid.PocketGridBuilder
+import cz.siret.prank.program.routines.predict.output.grid.PocketGridConfig
 import cz.siret.prank.utils.Bench
 import cz.siret.prank.utils.CdkUtils
 import cz.siret.prank.utils.CmdLineArgs
@@ -45,6 +56,97 @@ class Benchmarks extends Routine {
 
         this."$subCommand"()
 
+    }
+
+//===========================================================================================================//
+
+    /**
+     * Pure grid-build benchmark: loads each dataset item, runs PocketGridBuilder.build,
+     * and (for completeness) computes each requested descriptor. Reports per-phase
+     * timings. Skips writers, rescoring, ML, visualizations. Single-threaded for
+     * reproducibility — use the sh wrapper (pocket_grid_dataset_bench.sh) for
+     * end-to-end multi-threaded numbers.
+     *
+     * Usage: prank bench pocket_grid <dataset.ds>
+     */
+    void pocket_grid() {
+        String datasetArg = args.unnamedArgs.size() > 1 ? args.unnamedArgs[1] : args.get("f")
+        if (datasetArg == null) {
+            throw new PrankException("Usage: prank bench pocket_grid <dataset.ds>")
+        }
+
+        String resolved = Main.findDataset(datasetArg)
+        Dataset dataset = Dataset.loadFromFile(resolved)
+        log.info "Benchmarking pocket grid build on {} items from [{}]", dataset.items.size(), dataset.label
+
+        PocketGridConfig config = PocketGridConfig.fromParams(Params.inst)
+
+        List<PocketDescriptor> descriptors = new ArrayList<>()
+        for (String name : Params.inst.pocket_descriptors) {
+            descriptors.add(PocketDescriptorRegistry.get(name))
+        }
+
+        long startMs = System.currentTimeMillis()
+        long loadNs = 0, buildNs = 0, descriptorNs = 0
+        long totalGridPoints = 0, totalAssignedPairs = 0, totalPockets = 0
+        int processed = 0, errors = 0
+
+        for (Dataset.Item item : dataset.items) {
+            try {
+                long t0 = System.nanoTime()
+                PredictionPair pair = item.predictionPair
+                Protein protein = pair.protein
+                List<? extends Pocket> pockets = pair.prediction.pockets
+                long t1 = System.nanoTime()
+
+                PocketGrid grid = PocketGridBuilder.build(protein, pockets, config)
+                long t2 = System.nanoTime()
+
+                for (Pocket pocket : pockets) {
+                    BitSet indices = grid.indicesForPocket(pocket.rank)
+                    PocketGridContext ctx = new PocketGridContext(pocket, protein, grid, indices)
+                    for (PocketDescriptor d : descriptors) {
+                        d.compute(ctx)
+                    }
+                    totalAssignedPairs += indices.cardinality()
+                }
+                long t3 = System.nanoTime()
+
+                loadNs       += t1 - t0
+                buildNs      += t2 - t1
+                descriptorNs += t3 - t2
+                totalGridPoints += grid.allPoints.count
+                totalPockets += pockets.size()
+                processed++
+            } catch (Exception e) {
+                log.error "Failed on item [{}]: {}", item.label, e.message
+                errors++
+            }
+        }
+
+        long totalMs = System.currentTimeMillis() - startMs
+        int n = Math.max(processed, 1)
+        // Per-item averages: FP division so small averages don't collapse to "0 ms"
+        // (e.g. 47 ms total over 100 items). Locale.ROOT on the format() call below
+        // keeps the output stable across JVM locales.
+        // Totals stay as integer ms — sub-ms precision is meaningless at the aggregate
+        // level, and long→{} slf4j formatting is already locale-independent.
+        double loadMsAvg = loadNs / 1e6 / n
+        double buildMsAvg = buildNs / 1e6 / n
+        double descMsAvg = descriptorNs / 1e6 / n
+        log.info "===== Pocket Grid Build Benchmark ====="
+        log.info "  Items processed:        {} (errors: {})", processed, errors
+        log.info "  Total pockets:          {}", totalPockets
+        log.info "  Total kept grid points: {}", totalGridPoints
+        log.info "  Total (point,pocket) pairs after fill: {}", totalAssignedPairs
+        log.info ""
+        log.info "  Load + parse pockets:   {} ms total, {} ms/protein avg",
+                loadNs / 1_000_000, String.format(java.util.Locale.ROOT, "%.2f", loadMsAvg)
+        log.info "  Grid build + assign:    {} ms total, {} ms/protein avg",
+                buildNs / 1_000_000, String.format(java.util.Locale.ROOT, "%.2f", buildMsAvg)
+        log.info "  Descriptors:            {} ms total, {} ms/protein avg",
+                descriptorNs / 1_000_000, String.format(java.util.Locale.ROOT, "%.2f", descMsAvg)
+        log.info "  Wall (incl. logging):   {} ms", totalMs
     }
 
 //===========================================================================================================//

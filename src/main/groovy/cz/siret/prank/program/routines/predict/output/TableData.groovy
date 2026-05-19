@@ -12,8 +12,13 @@ import groovy.transform.CompileStatic
 @CompileStatic
 interface TableData {
 
-    /** Logical type for a column. INT values are still stored as double in getRow/getColumn but are emitted as integers by writers. */
-    enum ColumnType { DOUBLE, INT }
+    /**
+     * Logical type for a column. INT values are still stored as double in getRow/getColumn
+     * but are emitted as integers by writers. STRING columns are accessed via
+     * {@link #getString(int, int)}; their cells in {@link #getRow(int)} / {@link #getColumn(int)}
+     * carry a placeholder (typically NaN) and are not read by writers.
+     */
+    enum ColumnType { DOUBLE, INT, STRING }
 
     /** Column names */
     List<String> getHeader()
@@ -46,9 +51,22 @@ interface TableData {
     /**
      * Logical type of column at index. Default is DOUBLE; override to mark integer columns
      * so writers can emit them as native integer types (CSV without decimals, Arrow Int32, Parquet INT32).
+     * Use {@link ColumnType#STRING} for textual columns; values are fetched via
+     * {@link #getString(int, int)}.
      */
     default ColumnType getColumnType(int colIndex) {
         return ColumnType.DOUBLE
+    }
+
+    /**
+     * Returns the string value at (rowIndex, colIndex) for STRING columns.
+     * Implementations MUST override this for any column where {@link #getColumnType(int)}
+     * returns {@link ColumnType#STRING}. Numeric columns must not call this method.
+     */
+    default String getString(int rowIndex, int colIndex) {
+        throw new UnsupportedOperationException(
+                "getString not implemented for column " + colIndex
+                + " (declared type: " + getColumnType(colIndex) + ")")
     }
 
 }

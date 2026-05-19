@@ -813,6 +813,160 @@ class Params {
     @RuntimeParam
     String export_points_format = "csv"
 
+    // ---------- Pocket grid + descriptors export (see documentation/export-pocket-grid.md) ----------
+
+    /**
+     * Export the per-protein pocket grid: a regular 3D lattice covering empty space
+     * around the protein, with each point tagged by the pocket(s) it belongs to.
+     * Long format: one row per (point, pocket) pair.
+     * Output: {outdir}/{name}_pocket_grid.{pocket_grid_format}
+     */
+    @RuntimeParam
+    boolean export_pocket_grid = false
+
+    /**
+     * Export per-pocket descriptors (volume, sphericity, ...) to a separate file.
+     * Output: {outdir}/{name}_pocket_descriptors.{pocket_grid_format}
+     *
+     * <p>If any selected descriptor needs the pocket grid (grid-derived: volume,
+     * sphericity, radius_of_gyration, num_grid_points), the grid is built even
+     * when {@link #export_pocket_grid} is 0 — only the grid file write is
+     * suppressed. With a descriptor list that contains only grid-free entries
+     * (num_residues, num_surface_atoms), the grid build itself is skipped.
+     */
+    @RuntimeParam
+    boolean export_pocket_descriptors = false
+
+    /**
+     * Render the pocket grid as an overlay script for every renderer in
+     * {@code vis_renderers} (PyMOL {@code .pml} and/or ChimeraX {@code .cxc}),
+     * with a shared gzipped PDB sidecar. Requires {@code export_pocket_grid=true}
+     * (validated at startup) and respects the master {@code -visualizations} switch.
+     * Output: {outdir}/visualizations/{name}_pocket_grid.{pml,cxc}
+     */
+    @RuntimeParam
+    boolean vis_pocket_grid = false
+
+    /**
+     * Format for the pocket_grid and pocket_descriptors files. Same allowed
+     * values as export_points_format: csv, csv.gz, csv.zst, arrow, arrow.gz,
+     * arrow.zst, parquet. Default csv.gz: per-protein grid files are O(MB)
+     * uncompressed and ~5× smaller gzipped, with no observable write-time hit.
+     */
+    @RuntimeParam
+    String pocket_grid_format = "csv.gz"
+
+    /**
+     * Include unassigned points (pocket = 0) in the grid export.
+     * Default off: only points assigned to at least one pocket are written.
+     */
+    @RuntimeParam
+    boolean pocket_grid_include_unassigned = false
+
+    /** Lattice edge in Å. Volume scales with this³. */
+    @RuntimeParam
+    double pocket_grid_spacing = 1.2d
+
+    /**
+     * Maximum distance (Å) from the nearest <i>pocket SAS point</i> (across all
+     * pockets) to keep a grid point. The grid lives only in the neighborhood of
+     * predicted pockets, not over the whole protein.
+     */
+    @RuntimeParam
+    double pocket_grid_max_dist = 4.0d
+
+    /**
+     * Additive buffer on the per-atom van der Waals exclusion: a grid point is
+     * dropped if its nearest-atom distance is less than vdw(atom) + buffer.
+     * Operates against protein atoms (cofactor atoms included when configured)
+     * — keeps grid points out of physical atom volume.
+     */
+    @RuntimeParam
+    double pocket_grid_atom_buffer = 1.0d
+
+    /**
+     * Distance cutoff (Å) for assigning a grid point to a pocket: a point is in
+     * pocket P if it is within this distance of any of P.sasPoints.
+     */
+    @RuntimeParam
+    double pocket_grid_assign_cutoff = 2.5d
+
+    /**
+     * Range-query strategy for the per-pocket "raw shell" computation:
+     *   kdtree     (default) — build a KdTree on the grid, range-query around each surface atom
+     *   voxel_hash           — walk the small cube of lattice cells per surface atom directly
+     * KdTree is typically faster for fine grids (small pocket_grid_spacing); voxel-hash is
+     * typically faster for coarse grids. Validated at startup.
+     */
+    @RuntimeParam
+    String pocket_grid_assigner = "kdtree"
+
+    /**
+     * Shape-fill strategy for the per-pocket grid region:
+     *   morph_closing  (default) — iterative lattice dilation, no extra deps
+     *   none                     — leave the raw shell as-is
+     * Validated at startup.
+     */
+    @RuntimeParam
+    String pocket_grid_fill = "morph_closing"
+
+    /** [morph_closing only] minimum filled-neighbor count to promote a candidate cell. Ignored for pocket_grid_fill=none. */
+    @RuntimeParam
+    int pocket_grid_fill_min_neighbors = 4
+
+    /** [morph_closing only] iteration cap (guard against runaway dilation). Ignored for pocket_grid_fill=none. */
+    @RuntimeParam
+    int pocket_grid_fill_max_iters = 10
+
+    /**
+     * Visualization-only knob (no effect on the exported grid CSV or descriptors).
+     * Sphere radius (Å) used by the volumetric surface layer in the grid PML:
+     * each grid point is rendered as a sphere of this radius, then PyMOL merges
+     * adjacent spheres into a continuous surface where they overlap.
+     *
+     * <p>Default {@code -1} is a sentinel meaning "auto-scale with spacing"
+     * → effective value is {@code 0.85 × pocket_grid_spacing}, which keeps the
+     * surface visually consistent across spacings. At default spacing (1.2)
+     * this gives ~1.02 Å, comfortably above the 3D-diagonal merge threshold
+     * ({@code spacing × √3 / 2 ≈ 0.866 × spacing}). Any positive value
+     * overrides with an absolute Å — but going much below {@code spacing/2}
+     * leaves the spheres too disconnected for PyMOL's surface algorithm and
+     * most of the mesh drops below the rendering threshold.
+     */
+    @RuntimeParam
+    double vis_pocket_grid_volume_radius = -1d
+
+    /**
+     * Visualization-only knob (no effect on the exported grid CSV or descriptors).
+     * Iso-surface threshold for the Gaussian-density layer in the grid PML.
+     * Lower values produce a looser surface that extends farther from each grid
+     * point (closer to the volumetric layer); higher values give a tighter
+     * surface around the densest regions. Default suits the default spacing.
+     */
+    @RuntimeParam
+    double vis_pocket_grid_gaussian_iso = 0.5d
+
+    /**
+     * Descriptors to compute and emit per pocket. Each entry must match a name
+     * registered in PocketDescriptorRegistry (volume, sphericity, radius_of_gyration,
+     * num_residues, num_surface_atoms, num_grid_points). Validated at startup.
+     * The default includes every shipped descriptor — they all share the same
+     * pocket-grid input, so adding more to the list is essentially free.
+     */
+    @RuntimeParam
+    List<String> pocket_descriptors = ["volume", "sphericity", "radius_of_gyration",
+                                       "num_residues", "num_surface_atoms", "num_grid_points"]
+
+    /**
+     * Benchmark-only: skip the per-SAS-point feature extraction and ML scoring in
+     * the rescorer. Each pocket's newScore is just passed through from its
+     * existing score. Use this to isolate the cost of grid build / descriptor
+     * compute / writers from the (much heavier) ML rescoring work. Has no effect
+     * outside the rescore command.
+     */
+    @RuntimeParam
+    boolean bench_skip_rescoring = false
+
     /**
      * number of random seed iterations
      *
@@ -844,7 +998,8 @@ class Params {
     boolean visualizations = true
 
     /**
-     * Renderers used to produce visualizations. Available renderers: [pymol, chimerax]
+     * Renderers used to produce visualizations. Available renderers: [pymol, chimerax].
+     * Validated at startup — unknown names, duplicates, or empty/null entries throw.
      */
     @RuntimeParam
     List<String> vis_renderers = ["pymol", "chimerax"]
