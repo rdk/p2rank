@@ -98,15 +98,8 @@ final class PocketGridRows implements TableData {
         ct.add(ColumnType.INT)  // pocket
         int totalDescriptorCols = 0
         for (PocketGridPointDescriptor d : descriptors) {
-            List<String> cols = d.columnNames()
-            List<ColumnType> types = d.columnTypes()
-            boolean multi = cols.size() > 1
-            for (int i = 0; i < cols.size(); i++) {
-                String header = multi ? d.name() + "." + cols.get(i) : d.name()
-                h.add(header)
-                ct.add(types.get(i))
-            }
-            totalDescriptorCols += cols.size()
+            totalDescriptorCols += DescriptorSchemaHelper.appendColumns(
+                    h, ct, d.name(), d.columnNames(), d.columnTypes())
         }
         this.header = h.asImmutable()
         this.columnTypes = ct.toArray(new ColumnType[0])

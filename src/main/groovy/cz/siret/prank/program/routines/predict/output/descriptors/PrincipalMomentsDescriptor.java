@@ -64,13 +64,8 @@ public final class PrincipalMomentsDescriptor implements PocketDescriptor {
 
         List<Atom> allPoints = ctx.grid().getAllPoints().list;
 
-        // Centroid (equal-weighted).
-        double sx = 0d, sy = 0d, sz = 0d;
-        for (int i = indices.nextSetBit(0); i >= 0; i = indices.nextSetBit(i + 1)) {
-            Atom p = allPoints.get(i);
-            sx += p.getX(); sy += p.getY(); sz += p.getZ();
-        }
-        double cx = sx / n, cy = sy / n, cz = sz / n;
+        double[] c = GridPointStats.centroid(indices, allPoints, n);
+        double cx = c[0], cy = c[1], cz = c[2];
 
         // Gyration tensor (3x3 symmetric): G_ab = (1/n) Σ (r_a - c_a)(r_b - c_b).
         // Accumulate off-diagonal once; the matrix is symmetric.

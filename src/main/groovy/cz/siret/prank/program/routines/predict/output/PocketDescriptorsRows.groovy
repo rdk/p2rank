@@ -101,15 +101,7 @@ final class PocketDescriptorsRows implements TableData {
         h.add('center_z');     ct.add(ColumnType.DOUBLE)
         int total = 0
         for (PocketDescriptor d : descriptors) {
-            List<String> cols = d.columnNames()
-            List<ColumnType> types = d.columnTypes()
-            boolean multi = cols.size() > 1
-            for (int i = 0; i < cols.size(); i++) {
-                String headerName = multi ? d.name() + "." + cols.get(i) : d.name()
-                h.add(headerName)
-                ct.add(types.get(i))
-            }
-            total += cols.size()
+            total += DescriptorSchemaHelper.appendColumns(h, ct, d.name(), d.columnNames(), d.columnTypes())
         }
         this.header = h.asImmutable()
         this.columnTypes = ct.toArray(new ColumnType[0])

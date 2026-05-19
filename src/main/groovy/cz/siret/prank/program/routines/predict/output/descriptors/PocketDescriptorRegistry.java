@@ -1,12 +1,9 @@
 package cz.siret.prank.program.routines.predict.output.descriptors;
 
-import cz.siret.prank.program.PrankException;
+import cz.siret.prank.program.routines.predict.output.NamedRegistryHelper;
 
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -15,16 +12,18 @@ import java.util.Set;
  * {@code -pocket_descriptors} list param.
  *
  * <p>Mirrors {@link cz.siret.prank.program.routines.predict.output.grid.descriptors.PocketGridPointDescriptorRegistry}
- * — same shape, same register/unregister/get/knownNames surface. Multi-column
- * descriptors are validated at registration time (no duplicate sub-column names
- * within one descriptor).
+ * — same shape, same {@code register/unregister/get/knownNames} surface.
+ * Common boilerplate is delegated to {@link NamedRegistryHelper}; the
+ * descriptor-specific invariant (matching {@code columnNames}/{@code columnTypes}
+ * sizes, no duplicate sub-column names) lives in {@link #validate}.
  *
  * <p>Adding a new descriptor = drop a new {@link PocketDescriptor}
  * implementation in this package and register it here.
  */
 public final class PocketDescriptorRegistry {
 
-    private static final Map<String, PocketDescriptor> REGISTRY = new LinkedHashMap<>();
+    private static final NamedRegistryHelper<PocketDescriptor> REG = new NamedRegistryHelper<>(
+            "pocket descriptor", PocketDescriptor::name, PocketDescriptorRegistry::validate);
 
     static {
         register(new VolumeDescriptor());
@@ -44,6 +43,29 @@ public final class PocketDescriptorRegistry {
      * touching the static initializer.
      */
     public static void register(PocketDescriptor d) {
+        REG.register(d);
+    }
+
+    /**
+     * Remove a descriptor by name. Intended for tests that register a fixture
+     * descriptor via {@link #register} and need to undo the side effect in an
+     * {@code @AfterAll} hook so the registry doesn't leak across test classes.
+     * No-op if {@code name} is not registered.
+     */
+    public static void unregister(String name) {
+        REG.unregister(name);
+    }
+
+    public static PocketDescriptor get(String name) {
+        return REG.get(name);
+    }
+
+    /** @return names in registration order. */
+    public static Set<String> knownNames() {
+        return REG.knownNames();
+    }
+
+    private static void validate(PocketDescriptor d) {
         List<String> cols = d.columnNames();
         List<?> types = d.columnTypes();
         if (cols.size() != types.size()) {
@@ -55,32 +77,6 @@ public final class PocketDescriptorRegistry {
             throw new IllegalStateException(
                     "Descriptor '" + d.name() + "' declares duplicate columnNames: " + cols);
         }
-        REGISTRY.put(d.name(), d);
-    }
-
-    /**
-     * Remove a descriptor by name. Intended for tests that register a fixture
-     * descriptor via {@link #register} and need to undo the side effect in an
-     * {@code @AfterAll} hook so the registry doesn't leak across test classes.
-     * No-op if {@code name} is not registered.
-     */
-    public static void unregister(String name) {
-        REGISTRY.remove(name);
-    }
-
-    /** @throws PrankException if {@code name} is unknown. */
-    public static PocketDescriptor get(String name) {
-        PocketDescriptor d = REGISTRY.get(name);
-        if (d == null) {
-            throw new PrankException(
-                    "Unknown pocket descriptor: '" + name + "'. Known: " + knownNames());
-        }
-        return d;
-    }
-
-    /** @return names in registration order ({@link LinkedHashMap}). */
-    public static Set<String> knownNames() {
-        return Collections.unmodifiableSet(REGISTRY.keySet());
     }
 
 }
