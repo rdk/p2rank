@@ -1,6 +1,5 @@
 package cz.siret.prank.features.implementation.volsite;
 
-import com.google.common.collect.ImmutableList;
 import cz.siret.prank.features.api.AtomFeatureCalculationContext;
 import cz.siret.prank.features.api.AtomFeatureCalculator;
 import org.biojava.nbio.structure.Atom;
@@ -12,15 +11,6 @@ import java.util.List;
  */
 public class VolsiteFeature extends AtomFeatureCalculator {
 
-    private static final List<String> HEADER = ImmutableList.of(
-        "vsAromatic",
-        "vsCation",
-        "vsAnion",
-        "vsHydrophobic",
-        "vsAcceptor",
-        "vsDonor"
-    );
-
     @Override
     public String getName() {
         return "volsite";
@@ -28,14 +18,14 @@ public class VolsiteFeature extends AtomFeatureCalculator {
 
     @Override
     public List<String> getHeader() {
-        return HEADER;
+        return VolSitePharmacophore.COLUMN_NAMES;
     }
 
     @Override
     public double[] calculateForAtom(Atom proteinSurfaceAtom, AtomFeatureCalculationContext context) {
         VolSitePharmacophore.AtomProps va = VolSitePharmacophore.getAtomProperties(proteinSurfaceAtom.getName(), context.getResidueCode());
 
-        double[] res = new double[HEADER.size()];
+        double[] res = new double[VolSitePharmacophore.COLUMN_NAMES.size()];
 
         res[0] = va.aromatic ? 1d : 0d;
         res[1] = va.cation ? 1d : 0d;

@@ -61,10 +61,36 @@ Long format. One row per `(point, pocket)` pair.
 |---|---|---|
 | `x`, `y`, `z` | f64 | Grid point coordinate (Å) |
 | `pocket` | i32 | Pocket rank this row belongs to (1-based). `0` only when `-pocket_grid_include_unassigned` is on. |
+| *(per-point descriptor columns)* | f64 / i32 | Appended in `-pocket_grid_point_descriptors` order. See the per-grid-point descriptors section below. |
 
 Rows are sorted by `pocket` ascending, then by `x`, `y`, `z` ascending.
 Pocket `0` (if enabled) goes last — readers that only care about
 assigned points can stop early.
+
+## Per-grid-point descriptors
+
+Extra columns can be appended to each row via `-pocket_grid_point_descriptors`
+(comma-separated names; default empty so the base 4-column schema stays
+unchanged for users who don't opt in). Multi-column descriptors get the
+header prefix `"{name}."` — same convention as `-pocket_descriptors`.
+
+| Name | Columns | Description |
+|---|---|---|
+| `volsite` | 6 × INT | Per-VolSite-pharmacophore indicator columns: `volsite.vsAromatic`, `volsite.vsCation`, `volsite.vsAnion`, `volsite.vsHydrophobic`, `volsite.vsAcceptor`, `volsite.vsDonor`. Each column is `1` if any protein atom carrying that pharmacophore type (per `VolSitePharmacophore`) lies within `-pocket_grid_volsite_radius` of the grid point, else `0`. |
+| `volsite_smooth` | 6 × DOUBLE | Gaussian-smoothed analogue of `volsite`. Each column is the sum of `exp(-r² / (2σ²))` over protein atoms carrying that pharmacophore type, where `σ = -pocket_grid_volsite_sigma`. Kernel truncated at `4σ`. Captures both proximity and atom count. |
+
+Atom-level pharmacophore classification reuses the same `VolSitePharmacophore`
+rules that drive the `volsite` per-atom feature in P2Rank's feature set — a
+`1` in `volsite.vsCation` here corresponds to the same atom type that would
+mark `vsCation=1` in `VolsiteFeature`.
+
+Descriptor params:
+
+| Parameter | Default | Notes |
+|---|---|---|
+| `pocket_grid_point_descriptors` | `[]` | List of names from `PocketGridPointDescriptorRegistry`. Validated at startup. |
+| `pocket_grid_volsite_radius` | `4.0` Å | Cutoff radius for the `volsite` indicator. Standard VolSite pharmacophore search distance. |
+| `pocket_grid_volsite_sigma` | `2.0` Å | Gaussian σ for `volsite_smooth`. Kernel truncated at `4σ`. |
 
 ## Parameters
 

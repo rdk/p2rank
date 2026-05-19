@@ -958,6 +958,37 @@ class Params {
                                        "num_residues", "num_surface_atoms", "num_grid_points"]
 
     /**
+     * Per-grid-point descriptors appended as extra columns to the pocket-grid
+     * export (one value per descriptor column per (point, pocket) row). Each
+     * entry must match a name in PocketGridPointDescriptorRegistry
+     * (volsite, volsite_smooth). Multi-column descriptors get the prefix
+     * "{name}." — e.g. volsite emits volsite.vsAromatic, volsite.vsCation,
+     * etc. Default is empty so the base x/y/z/pocket schema is unchanged for
+     * existing users. Validated at startup.
+     */
+    @RuntimeParam
+    List<String> pocket_grid_point_descriptors = []
+
+    /**
+     * Cutoff radius (Å) for the volsite per-grid-point descriptor:
+     * a pharmacophore type's indicator column is 1 iff any protein atom
+     * carrying that type is within this distance of the grid point.
+     * Default 4.0 matches the original VolSite pharmacophore search radius.
+     */
+    @RuntimeParam
+    double pocket_grid_volsite_radius = 4.0d
+
+    /**
+     * Gaussian σ (Å) for the volsite_smooth per-grid-point descriptor:
+     * each protein atom carrying a pharmacophore type contributes
+     * exp(-r²/(2σ²)) to that type's column. The kernel is truncated at
+     * 4σ (negligible tail). Default 2.0 gives a smooth analogue of the
+     * 4 Å volsite indicator at its default cutoff.
+     */
+    @RuntimeParam
+    double pocket_grid_volsite_sigma = 2.0d
+
+    /**
      * Benchmark-only: skip the per-SAS-point feature extraction and ML scoring in
      * the rescorer. Each pocket's newScore is just passed through from its
      * existing score. Use this to isolate the cost of grid build / descriptor

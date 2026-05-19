@@ -1,9 +1,19 @@
 package cz.siret.prank.features.implementation.volsite;
 
+import com.google.common.collect.ImmutableList;
+import cz.siret.prank.utils.PdbUtils;
+import org.biojava.nbio.structure.Atom;
+
+import java.util.List;
+
 /**
  * Adopted from VolSite druggability prediction method.
  */
 public class VolSitePharmacophore {
+
+    /** Single source of truth for the 6 VolSite pharmacophore column names. */
+    public static final List<String> COLUMN_NAMES = ImmutableList.of(
+            "vsAromatic", "vsCation", "vsAnion", "vsHydrophobic", "vsAcceptor", "vsDonor");
 
     public static class AtomProps {
         public boolean aromatic;
@@ -13,9 +23,14 @@ public class VolSitePharmacophore {
         public boolean acceptor;
         public boolean donor;
     }
-    
+
     private static boolean appartient(String a, String list) {
         return list.contains(a);
+    }
+
+    /** Convenience overload: derives residueCode from {@code PdbUtils.getCorrectedAtomResidueCode(atom)}. */
+    public static AtomProps getAtomProperties(Atom atom) {
+        return getAtomProperties(atom.getName(), PdbUtils.getCorrectedAtomResidueCode(atom));
     }
 
     /**

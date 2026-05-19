@@ -1,5 +1,7 @@
 package cz.siret.prank.program.routines.predict.output
 
+import cz.siret.prank.domain.Pocket
+import cz.siret.prank.domain.Protein
 import cz.siret.prank.program.params.Params
 import cz.siret.prank.program.routines.predict.output.grid.PocketGrid
 import groovy.transform.CompileStatic
@@ -25,18 +27,23 @@ final class PocketGridExporter {
      * Exceptions are caught and logged so an output-stage failure on one
      * protein doesn't take down the rest of the dataset.
      */
-    static void export(PocketGrid grid, String outdir, String label) {
+    static void export(PocketGrid grid, Protein protein, List<? extends Pocket> pockets,
+                       String outdir, String label) {
         try {
-            doExport(grid, outdir, label, Params.inst.pocket_grid_format,
-                    Params.inst.pocket_grid_include_unassigned)
+            doExport(grid, protein, pockets, outdir, label,
+                    Params.inst.pocket_grid_format,
+                    Params.inst.pocket_grid_include_unassigned,
+                    Params.inst.pocket_grid_point_descriptors)
         } catch (Throwable e) {
             log.error("Failed to export pocket grid for {}: {}", label, e.message, e)
         }
     }
 
-    private static void doExport(PocketGrid grid, String outdir, String label,
-                                 String format, boolean includeUnassigned) {
-        PocketGridRows data = new PocketGridRows(grid, includeUnassigned)
+    private static void doExport(PocketGrid grid, Protein protein, List<? extends Pocket> pockets,
+                                 String outdir, String label,
+                                 String format, boolean includeUnassigned,
+                                 List<String> descriptorNames) {
+        PocketGridRows data = new PocketGridRows(grid, includeUnassigned, protein, pockets, descriptorNames)
         String filepath = "${outdir}/${label}_pocket_grid.${format}"
 
         long start = System.currentTimeMillis()

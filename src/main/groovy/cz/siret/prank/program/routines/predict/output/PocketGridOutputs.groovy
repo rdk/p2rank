@@ -65,7 +65,7 @@ final class PocketGridOutputs {
         // vis_pocket_grid ⇒ export_pocket_grid, so grid is non-null whenever the
         // viz branch is taken.
         if (p.export_pocket_grid) {
-            PocketGridExporter.export(grid, outdir, label)
+            PocketGridExporter.export(grid, protein, pockets, outdir, label)
         }
         if (p.export_pocket_descriptors) {
             PocketDescriptorsExporter.export(pockets, grid, protein, outdir, label)

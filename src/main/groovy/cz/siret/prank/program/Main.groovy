@@ -241,25 +241,9 @@ class Main implements Parametrized, Writable {
         // PocketDescriptorRegistry.get('') with a less useful error). Duplicates are
         // rejected too — accepting them would produce a CSV with duplicate header cells
         // and break Parquet's schema builder.
-        if (params.pocket_descriptors != null) {
-            Set<String> known = cz.siret.prank.program.routines.predict.output.descriptors.PocketDescriptorRegistry.knownNames()
-            Set<String> seen = new HashSet<>()
-            for (String name : params.pocket_descriptors) {
-                if (name == null || name.trim().isEmpty()) {
-                    throw new PrankException(
-                            "-pocket_descriptors contains an empty/null entry. Known: ${known}")
-                }
-                if (!known.contains(name)) {
-                    throw new PrankException(
-                            "Unknown name in -pocket_descriptors: '${name}'. Known: ${known}")
-                }
-                if (!seen.add(name)) {
-                    throw new PrankException(
-                            "-pocket_descriptors contains duplicate name '${name}'. " +
-                            "Each descriptor may be listed at most once.")
-                }
-            }
-        }
+        validateDescriptorList(params.pocket_descriptors,
+                cz.siret.prank.program.routines.predict.output.descriptors.PocketDescriptorRegistry.knownNames(),
+                "pocket_descriptors")
 
         // Numeric ranges: catch values that would silently produce a broken/empty grid
         // (≤0 lattice edge → NaN lattice; ≤0 distance bounds → empty grid) or that are
@@ -301,11 +285,48 @@ class Main implements Parametrized, Writable {
                     "-vis_pocket_grid_gaussian_iso must be > 0 (got ${params.vis_pocket_grid_gaussian_iso}).")
         }
 
+        validateDescriptorList(params.pocket_grid_point_descriptors,
+                cz.siret.prank.program.routines.predict.output.grid.descriptors.PocketGridPointDescriptorRegistry.knownNames(),
+                "pocket_grid_point_descriptors")
+        if (params.pocket_grid_volsite_radius <= 0d) {
+            throw new PrankException(
+                    "-pocket_grid_volsite_radius must be > 0 (got ${params.pocket_grid_volsite_radius}).")
+        }
+        if (params.pocket_grid_volsite_sigma <= 0d) {
+            throw new PrankException(
+                    "-pocket_grid_volsite_sigma must be > 0 (got ${params.pocket_grid_volsite_sigma}).")
+        }
+
         // Grid viz depends on the grid export being enabled.
         if (params.vis_pocket_grid && !params.export_pocket_grid) {
             throw new PrankException(
                     "-vis_pocket_grid=true requires -export_pocket_grid=true " +
                     "(the grid renderers derive their PDB sidecar from the grid).")
+        }
+    }
+
+    /**
+     * Shared shape for validating a name-list param against a registry: rejects
+     * null/blank entries, unknown names, and duplicates. {@code paramName} is the
+     * Params property name (without the {@code -} prefix) used in error messages.
+     */
+    private static void validateDescriptorList(List<String> names, Set<String> known, String paramName) {
+        if (names == null) return
+        Set<String> seen = new HashSet<>()
+        for (String name : names) {
+            if (name == null || name.trim().isEmpty()) {
+                throw new PrankException(
+                        "-${paramName} contains an empty/null entry. Known: ${known}")
+            }
+            if (!known.contains(name)) {
+                throw new PrankException(
+                        "Unknown name in -${paramName}: '${name}'. Known: ${known}")
+            }
+            if (!seen.add(name)) {
+                throw new PrankException(
+                        "-${paramName} contains duplicate name '${name}'. " +
+                        "Each descriptor may be listed at most once.")
+            }
         }
     }
 
