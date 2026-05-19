@@ -2,7 +2,7 @@ package cz.siret.prank.program.routines.predict.output;
 
 import cz.siret.prank.program.PrankException;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -37,7 +37,9 @@ public final class DescriptorListValidator {
     public static void validate(List<String> names, Set<String> known, String paramName)
             throws PrankException {
         if (names == null) return;
-        Set<String> seen = new HashSet<>();
+        // LinkedHashSet so any future "all duplicates" debug output preserves the
+        // user-supplied order (HashSet would scramble it).
+        Set<String> seen = new LinkedHashSet<>();
         for (String name : names) {
             if (name == null || name.trim().isEmpty()) {
                 throw new PrankException(

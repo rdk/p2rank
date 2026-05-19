@@ -210,7 +210,10 @@ final class PocketGridChimeraXRenderer {
         cxc.append("transparency #1 ${PROTEIN_TRANSPARENCY_PCT}\n\n")
 
         // Named colors used by both layers — same palette as the standard pml.
-        for (int rank = 1; rank <= maxRank; rank++) {
+        // Iterate the present ranks only (the layer loops below do the same),
+        // so the .cxc doesn't emit unreferenced `color name pgc_N` lines for
+        // pockets that have no grid points.
+        for (Integer rank : perPocketBasenames.keySet()) {
             String hex = ColorUtils.colorToHex(palette.get(rank - 1))
             cxc.append("color name pgc_${rank} ${hex}\n")
         }

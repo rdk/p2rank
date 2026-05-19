@@ -51,8 +51,11 @@ final class PocketGridRows implements TableData {
         BitSet assignedUnion = new BitSet(grid.allPoints.count)
         int totalMemberships = 0  // (point, pocket) pairs
         for (BitSet bs : grid.pocketToPointIndices.values()) {
-            // Manually OR — Groovy's a.or(b) under @CompileStatic doesn't reliably
-            // call BitSet#or; it can route through Number.or-style operator overloading.
+            // Verified by bytecode inspection (2026-05): under @CompileStatic,
+            // assignedUnion.or(bs) dispatches to DefaultGroovyMethods.or(BitSet, BitSet)
+            // which RETURNS a new BitSet rather than mutating in place. The manual
+            // loop is the workaround. (If we ever want BitSet#or, move this block
+            // into a Java helper.)
             for (int b = bs.nextSetBit(0); b >= 0; b = bs.nextSetBit(b + 1)) {
                 assignedUnion.set(b)
             }

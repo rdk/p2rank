@@ -62,7 +62,11 @@ final class PocketDescriptorsRows implements TableData {
         // (Groovy double init); transformer outputs are typically > 0 even for
         // low-score pockets. A pocket genuinely transformed to exactly 0.0 is
         // possible but vanishingly rare with the existing transformers.
-        this.includeProbability = pockets.any { Pocket p -> p.auxInfo != null && p.auxInfo.probaTP > 0d }
+        boolean anyProba = false
+        for (Pocket p : pockets) {
+            if (p.auxInfo != null && p.auxInfo.probaTP > 0d) { anyProba = true; break }
+        }
+        this.includeProbability = anyProba
 
         // Resolve descriptor implementations (fail-fast at construction if name unknown).
         this.descriptors = new ArrayList<>(descriptorNames.size())

@@ -31,13 +31,18 @@ public final class MorphologicalCloser implements PocketShapeFiller {
 
         BitSet filled = (BitSet) rawShell.clone();
         BitSet newlyAdded = (BitSet) rawShell.clone();
+        // Scratch BitSets reused across iterations — cleared at the start of each iter
+        // and swapped with newlyAdded at the end so the loop allocates zero BitSets
+        // per iteration (vs the previous one-candidates + one-promoted per iter).
+        BitSet candidates = new BitSet();
+        BitSet promoted = new BitSet();
         int[] buf = new int[26];  // reused buffer for neighbor lookups, zero per-call alloc
 
         int iter = 0;
         boolean converged = false;
         for (; iter < maxIters; iter++) {
             // Step 1: collect candidates — unfilled cells adjacent to anything just promoted.
-            BitSet candidates = new BitSet();
+            candidates.clear();
             for (int i = newlyAdded.nextSetBit(0); i >= 0; i = newlyAdded.nextSetBit(i + 1)) {
                 int nn = grid.neighborsInto(i, buf);
                 for (int k = 0; k < nn; k++) {
@@ -50,7 +55,7 @@ public final class MorphologicalCloser implements PocketShapeFiller {
             if (candidates.isEmpty()) { converged = true; break; }
 
             // Step 2: promote candidates whose filled-neighbor count meets threshold.
-            BitSet promoted = new BitSet();
+            promoted.clear();
             for (int c = candidates.nextSetBit(0); c >= 0; c = candidates.nextSetBit(c + 1)) {
                 int nn = grid.neighborsInto(c, buf);
                 int count = 0;
@@ -67,7 +72,11 @@ public final class MorphologicalCloser implements PocketShapeFiller {
 
             if (promoted.isEmpty()) { converged = true; break; }
             filled.or(promoted);
+            // Swap: next iter reads from the just-promoted bits, prev newlyAdded becomes
+            // the next scratch (will be cleared at the top of the loop).
+            BitSet tmp = newlyAdded;
             newlyAdded = promoted;
+            promoted = tmp;
         }
 
         // maxIters=0 is a valid "disable fill" config — don't surface it as under-convergence.
