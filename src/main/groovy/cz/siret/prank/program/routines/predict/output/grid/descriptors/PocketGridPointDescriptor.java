@@ -15,6 +15,13 @@ import java.util.List;
  * the descriptor's responsibility if the cost matters).
  *
  * <p>Implementations should be stateless and thread-safe.
+ *
+ * <p>Every grid-point descriptor needs the grid by definition — the grid is the
+ * substrate that defines what "a grid point" is. The per-pocket descriptor
+ * interface has an optional {@code needsGrid()} method for cheap descriptors
+ * that only read pocket fields; this interface deliberately omits it. The
+ * orchestrator always builds the grid when any grid-point descriptor is
+ * selected.
  */
 public interface PocketGridPointDescriptor {
 

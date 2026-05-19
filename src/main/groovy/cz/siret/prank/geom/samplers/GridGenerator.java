@@ -39,6 +39,17 @@ public class GridGenerator implements Iterable<Point> {
 //===============================================================================================//
 
     public GridGenerator(Box box, double edge) {
+        // Guard against NaN/Inf propagation from broken PDBs: IEEEremainder(NaN, edge) = NaN,
+        // which would otherwise make every lattice point NaN. Lives in the constructor so
+        // every entry point (forBox, sampleGridPointsBetween, sampleGridPointsAroundAtoms)
+        // is covered without per-caller checks.
+        if (!isFiniteBox(box)) {
+            throw new IllegalArgumentException(
+                    "GridGenerator: non-finite bounding box " +
+                    "(min=" + box.getMin() + ", max=" + box.getMax() + "). " +
+                    "Check input structure for NaN/Inf coordinates.");
+        }
+
         this.edge = edge;
 
         originX = shift(box.getMin().getX(), box.getMax().getX(), edge);
@@ -214,15 +225,7 @@ public class GridGenerator implements Iterable<Point> {
         sasPoints.withKdTreeConditional();
 
         Box box = Box.aroundAtoms(sasPoints).withMargin(maxDist);
-        // Guard against NaN/Inf propagation from broken PDBs: IEEEremainder(NaN, edge) = NaN,
-        // which would make every lattice point NaN. Throw early with the offending input.
-        if (!isFiniteBox(box)) {
-            throw new IllegalArgumentException(
-                    "GridGenerator: non-finite bounding box for SAS points " +
-                    "(min=" + box.getMin() + ", max=" + box.getMax() + "). " +
-                    "Check input structure for NaN/Inf coordinates.");
-        }
-        GridGenerator grid = GridGenerator.forBox(box, edge);
+        GridGenerator grid = GridGenerator.forBox(box, edge);  // ctor guards against NaN/Inf box
 
         double maxDistSqr = maxDist * maxDist;
         Atoms res = new Atoms(grid.getCount() / 4);

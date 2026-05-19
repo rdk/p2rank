@@ -10,6 +10,7 @@ import org.biojava.nbio.structure.AtomImpl
 import org.biojava.nbio.structure.Element
 import org.biojava.nbio.structure.Group
 import org.biojava.nbio.structure.AminoAcidImpl
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 import static org.junit.jupiter.api.Assertions.*
@@ -23,9 +24,20 @@ import static org.junit.jupiter.api.Assertions.*
 class VolsiteSmoothGridPointDescriptorTest {
 
     private static final double DELTA = 1e-9
+    /**
+     * Sigma value the tests build their distance literals around. Pinned in
+     * {@link #setSigma} so other tests mutating {@code Params.inst.pocket_grid_volsite_sigma}
+     * can't silently shift our expectations.
+     */
+    private static final double SIGMA = 2.0d
 
     private static final int AROMATIC = 0, CATION = 1, ANION = 2,
                              HYDROPHOBIC = 3, ACCEPTOR = 4, DONOR = 5
+
+    @BeforeEach
+    void setSigma() {
+        Params.inst.pocket_grid_volsite_sigma = SIGMA
+    }
 
     private static Atom atomAt(String atomName, String resName, double x, double y, double z) {
         AtomImpl a = new AtomImpl()
@@ -56,7 +68,7 @@ class VolsiteSmoothGridPointDescriptorTest {
     @Test
     void weightAtSigmaMatchesGaussianFormula() {
         // At distance r = σ, weight = exp(-r²/(2σ²)) = exp(-1/2) ≈ 0.6065.
-        double sigma = Params.inst.pocket_grid_volsite_sigma
+        double sigma = SIGMA
         Atom c = atomAt("C", "ALA", sigma, 0d, 0d)
         double[] out = new VolsiteSmoothGridPointDescriptor().compute(
                 ctxAt(0d, 0d, 0d, new Atoms([c])))
@@ -66,7 +78,7 @@ class VolsiteSmoothGridPointDescriptorTest {
     @Test
     void weightsFromMultipleAtomsOfSameTypeSum() {
         // Two hydrophobic atoms at distance σ each → sum = 2 × exp(-0.5).
-        double sigma = Params.inst.pocket_grid_volsite_sigma
+        double sigma = SIGMA
         Atoms protein = new Atoms([
                 atomAt("C", "ALA", sigma, 0d, 0d),
                 atomAt("C", "ALA", 0d, sigma, 0d),
@@ -77,10 +89,22 @@ class VolsiteSmoothGridPointDescriptorTest {
     }
 
     @Test
+    void weightAtExactCutoffEqualsExpMinusEight() {
+        // The cutoff is 4σ. cutoutSphere is inclusive (dist <= radius), so an atom AT
+        // exactly 4σ IS included and contributes exp(-(4σ)²/(2σ²)) = exp(-8) ≈ 3.354e-4.
+        // Pins the boundary semantic (cutoff is inclusive, not strict).
+        double sigma = SIGMA
+        Atom c = atomAt("C", "ALA", 4d * sigma, 0d, 0d)
+        double[] out = new VolsiteSmoothGridPointDescriptor().compute(
+                ctxAt(0d, 0d, 0d, new Atoms([c])))
+        assertEquals(Math.exp(-8d), out[HYDROPHOBIC], DELTA)
+    }
+
+    @Test
     void atomBeyondCutoffContributesZero() {
         // 4σ is the hard cutoff (cutoutSphere is the gate). At 5σ the atom isn't even
         // in the kdtree result. Zero contribution.
-        double sigma = Params.inst.pocket_grid_volsite_sigma
+        double sigma = SIGMA
         Atom c = atomAt("C", "ALA", 5d * sigma, 0d, 0d)
         double[] out = new VolsiteSmoothGridPointDescriptor().compute(
                 ctxAt(0d, 0d, 0d, new Atoms([c])))

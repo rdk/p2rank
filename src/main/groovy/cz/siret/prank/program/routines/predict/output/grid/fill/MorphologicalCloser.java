@@ -70,7 +70,8 @@ public final class MorphologicalCloser implements PocketShapeFiller {
             newlyAdded = promoted;
         }
 
-        if (!converged) {
+        // maxIters=0 is a valid "disable fill" config — don't surface it as under-convergence.
+        if (!converged && maxIters > 0) {
             log.warn("MorphologicalCloser: hit maxIters={} without converging " +
                     "(filled cells: {}, last iter promoted some). " +
                     "Raise -pocket_grid_fill_max_iters or accept under-converged fill.",

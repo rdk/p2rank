@@ -12,6 +12,7 @@ import cz.siret.prank.program.routines.predict.output.grid.descriptors.PocketGri
 import cz.siret.prank.program.routines.predict.output.grid.descriptors.PocketGridPointDescriptorRegistry
 import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 
@@ -149,6 +150,13 @@ class PocketGridRowsTest {
         // is safe. Name is namespaced with underscores so it can't collide with any
         // user-facing CLI name.
         PocketGridPointDescriptorRegistry.register(new ScalarTestDescriptor())
+    }
+
+    @AfterAll
+    static void unregisterScalarFixture() {
+        // Avoid leaking the fixture into the JVM-wide registry — keeps other test
+        // classes' assertions on knownNames() deterministic regardless of test order.
+        PocketGridPointDescriptorRegistry.unregister(TEST_SCALAR_NAME)
     }
 
     @Test

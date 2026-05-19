@@ -58,6 +58,11 @@ public final class VdwRadiusTable {
             }
         }
         // Fall back to atom name prefix (matches CdkUtils.bioJavaToCDKAtom pattern).
+        // mapIsotope is applied here only as a safety net — a PDB atom *name*
+        // starting with "D" or "T" is more likely a heavier element (e.g. "DA" =
+        // DNA ribose carbon) than an isotope. Mis-mapping is benign for the grid
+        // sampler (vdw(H) vs vdw(C) keep-out band differs by < 0.5 Å), so we
+        // prioritise the isotope case rather than build a name-prefix exclusion list.
         String name = atom.getName();
         if (name != null && !name.isEmpty()) {
             String s = mapIsotope(name.substring(0, 1));

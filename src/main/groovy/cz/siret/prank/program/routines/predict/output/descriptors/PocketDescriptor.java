@@ -11,6 +11,13 @@ import cz.siret.prank.program.routines.predict.output.TableData.ColumnType;
  * <p>Numeric INT descriptors return their value as a {@code double} that
  * a writer can downcast to int; this matches the {@link cz.siret.prank.program.routines.predict.output.TableData}
  * convention (see {@link cz.siret.prank.program.routines.predict.output.PointExportData} for precedent).
+ *
+ * <p>This framework is intentionally <b>scalar-only</b> — each descriptor
+ * produces exactly one column. The sibling
+ * {@link cz.siret.prank.program.routines.predict.output.grid.descriptors.PocketGridPointDescriptor}
+ * supports multi-column descriptors with a {@code "{name}.{col}"} header
+ * convention; if you need that shape here, the two interfaces should be
+ * unified rather than this one re-extended ad-hoc.
  */
 public interface PocketDescriptor {
 

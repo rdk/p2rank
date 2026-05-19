@@ -87,8 +87,17 @@ public final class PocketGridPdbSidecar {
             if (indices == null || indices.isEmpty()) continue;
             String basename = labelPrefix + "_pocket_grid_" + rank + ".pdb.gz";
             String fullPath = dirPath + "/" + basename;
+            int endSerial;
             try (PrintWriter pdb = Futils.getGzipWriter(fullPath)) {
-                writePocket(pdb, grid, rank, indices, 1);
+                endSerial = writePocket(pdb, grid, rank, indices, 1);
+            }
+            // Same wrap-warning policy as write() — fires only when a single pocket has
+            // enough grid points to overflow the PDB serial column. Practically unreachable
+            // for real pockets but kept for parity with the combined writer.
+            if (endSerial > SERIAL_LIMIT) {
+                log.warn("Per-pocket grid sidecar [{}] has {} atoms — exceeds the PDB " +
+                        "serial column width ({}); serials wrap and become non-unique.",
+                        fullPath, endSerial - 1, SERIAL_LIMIT);
             }
             rankToBasename.put(rank, basename);
         }

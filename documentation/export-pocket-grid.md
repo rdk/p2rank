@@ -70,9 +70,13 @@ assigned points can stop early.
 ## Per-grid-point descriptors
 
 Extra columns can be appended to each row via `-pocket_grid_point_descriptors`
-(comma-separated names; default empty so the base 4-column schema stays
-unchanged for users who don't opt in). Multi-column descriptors get the
-header prefix `"{name}."` — same convention as `-pocket_descriptors`.
+(comma-separated names; default empty). Default-empty is deliberate — per-grid-point
+descriptors are **not** free: they run once per `(point, pocket)` row (often 10⁴–10⁵
+times per protein), each row touching a neighborhood of protein atoms. Compare with
+`-pocket_descriptors` (per-pocket), which defaults to all-shipped because adding
+descriptors there is essentially free once the grid is built (one extra value per
+pocket, not per point). Multi-column descriptors get the header prefix `"{name}."`
+— same convention as `-pocket_descriptors`.
 
 | Name | Columns | Description |
 |---|---|---|

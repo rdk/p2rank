@@ -965,6 +965,13 @@ class Params {
      * "{name}." — e.g. volsite emits volsite.vsAromatic, volsite.vsCation,
      * etc. Default is empty so the base x/y/z/pocket schema is unchanged for
      * existing users. Validated at startup.
+     *
+     * <p>Note: this knob is only consumed when {@code -export_pocket_grid 1};
+     * setting it without enabling the grid export silently does nothing.
+     * Same pattern as {@code -pocket_descriptors} requiring
+     * {@code -export_pocket_descriptors 1}. Not cross-checked at startup
+     * because both knobs are list-typed and an empty/default list is
+     * indistinguishable from "user wants nothing" at validation time.
      */
     @RuntimeParam
     List<String> pocket_grid_point_descriptors = []
