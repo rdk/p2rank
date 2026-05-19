@@ -1,5 +1,19 @@
 # Exporting the Pocket Grid
 
+> [!WARNING]
+> **Feature preview**. Shipping in the **2.6 release** with preview status.
+> The feature is mostly stable and working, but parameter names, default
+> parameter values (spacing, distance cutoffs, fill thresholds, etc.), the
+> default contents of the `-pocket_grid_point_descriptors` list (currently
+> empty), and the order of output columns may change before this feature
+> graduates in a future release. To stay compatible across releases, parse
+> the output by column name (not column index), and pass
+> `-pocket_grid_point_descriptors` explicitly with the set you want rather
+> than relying on the default.
+>
+> Feedback on parameter naming, descriptor ideas, and output schema
+> preferences is welcome via the project's GitHub issues.
+
 Export a regular 3D grid of points covering the empty space around the
 protein, with per-pocket assignment. Produced alongside any
 `predict` or `rescore` run when `-export_pocket_grid` is on.

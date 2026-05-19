@@ -1,5 +1,18 @@
 # Exporting Pocket Descriptors
 
+> [!WARNING]
+> **Feature preview**. Shipping in the **2.6 release** with preview status.
+> The feature is mostly stable and working, but parameter names, default
+> parameter values, the default contents of the `-pocket_descriptors` list
+> (currently seven descriptors), and the order of output columns may
+> change before this feature graduates in a future release. To stay
+> compatible across releases, parse the output by column name (not column
+> index), and pass `-pocket_descriptors` explicitly with the set you want
+> rather than relying on the default.
+>
+> Feedback on parameter naming, descriptor ideas, and output schema
+> preferences is welcome via the project's GitHub issues.
+
 Per-pocket geometric/chemical descriptors (volume, sphericity, residue
 counts, etc.) written to a tabular file alongside any `predict` or
 `rescore` run when `-export_pocket_descriptors` is on.
