@@ -481,6 +481,19 @@ cofactors_full() {
     fi
 }
 
+aa_mapping() {
+
+    title AA MAPPING FEATURE
+
+    # bundled pdbfixer preset (87-entry table)
+    test ./prank.sh predict -f distro/test_data/1fbl.pdb                                                                       -aa_mapping pdbfixer    -out_subdir TEST/AA_MAPPING
+
+    # dataset paths (predict / rescore / eval)
+    test ./prank.sh predict test.ds                                                                                            -aa_mapping pdbfixer    -out_subdir TEST/AA_MAPPING
+    test ./prank.sh rescore fpocket.ds                                                                                         -aa_mapping pdbfixer    -out_subdir TEST/AA_MAPPING
+    test ./prank.sh eval-predict -f distro/test_data/liganated/1aaxa.pdb                                                       -aa_mapping pdbfixer    -out_subdir TEST/AA_MAPPING
+}
+
 transform() {
 
   title TRANSFORM COMMANDS
@@ -564,6 +577,18 @@ pocket_grid() {
     # Full descriptor menu (all seven shipped, including principal_moments)
     test ./prank.sh predict -f distro/test_data/1fbl.pdb -export_pocket_descriptors 1 -pocket_descriptors 'volume,sphericity,radius_of_gyration,num_residues,num_surface_atoms,num_grid_points,principal_moments'  -out_subdir TEST/POCKET_GRID
 
+    # Per-grid-point descriptors (volsite, volsite_smooth), each at least once
+    test ./prank.sh predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_point_descriptors 'volsite'                                                       -out_subdir TEST/POCKET_GRID
+    test ./prank.sh predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_point_descriptors 'volsite_smooth'                                                -out_subdir TEST/POCKET_GRID
+    test ./prank.sh predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_point_descriptors 'volsite,volsite_smooth'                                        -out_subdir TEST/POCKET_GRID
+
+    # Per-grid-point descriptor knobs
+    test ./prank.sh predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_point_descriptors 'volsite'        -pocket_grid_volsite_radius 5.0                 -out_subdir TEST/POCKET_GRID
+    test ./prank.sh predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_point_descriptors 'volsite_smooth' -pocket_grid_volsite_sigma 1.5                  -out_subdir TEST/POCKET_GRID
+
+    # Full combo: per-pocket descriptors + per-grid-point descriptors + viz in one run
+    test ./prank.sh predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -export_pocket_descriptors 1 -pocket_grid_point_descriptors 'volsite,volsite_smooth' -vis_pocket_grid 1   -out_subdir TEST/POCKET_GRID
+
     # Grid-free descriptors only — exercises the grid-build short-circuit (no
     # "PocketGrid built" log line should appear for these invocations).
     test ./prank.sh predict -f distro/test_data/1fbl.pdb -export_pocket_descriptors 1 -pocket_descriptors 'num_residues,num_surface_atoms' -export_pocket_grid 0           -out_subdir TEST/POCKET_GRID
@@ -581,6 +606,7 @@ pocket_grid() {
     # Validation: fail-fast checks (each must exit non-zero — uses test_expect_fail so the green [OK] is shown only when the command fails as designed)
     test_expect_fail ./prank.sh predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_fill cubist                                                                   -out_subdir TEST/POCKET_GRID
     test_expect_fail ./prank.sh predict -f distro/test_data/1fbl.pdb -export_pocket_descriptors 1 -pocket_descriptors 'not_a_descriptor'                                              -out_subdir TEST/POCKET_GRID
+    test_expect_fail ./prank.sh predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_point_descriptors 'not_a_descriptor'                                         -out_subdir TEST/POCKET_GRID
     test_expect_fail ./prank.sh predict -f distro/test_data/1fbl.pdb -vis_pocket_grid 1                                                                                        -out_subdir TEST/POCKET_GRID
 
     # Rescore + dataset paths
@@ -779,6 +805,7 @@ tests() {
     basic
     cofactors
     cofactors_full
+    aa_mapping
 }
 
 all() {
