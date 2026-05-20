@@ -11,6 +11,8 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.parallel.Isolated
+import org.junit.jupiter.api.parallel.ResourceLock
 
 import static org.junit.jupiter.api.Assertions.*
 
@@ -18,6 +20,8 @@ import static org.junit.jupiter.api.Assertions.*
  * Tests for ResidueSite and site-based evaluation.
  */
 @Slf4j
+@Isolated
+@ResourceLock("Params")
 @CompileStatic
 class SiteMetricsTest {
 

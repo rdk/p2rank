@@ -1,7 +1,6 @@
 package cz.siret.prank.features.implementation.csv
 
 import cz.siret.prank.domain.Protein
-import cz.siret.prank.program.params.Params
 import org.biojava.nbio.structure.Atom
 import org.junit.jupiter.api.Test
 
@@ -16,7 +15,8 @@ class CsvFileFeatureTest {
 
     @Test
     void testCsvFeatureLoading() {
-        Params.inst.feat_csv_ignore_missing = false
+        // Params.inst.feat_csv_ignore_missing default is false (see Params.groovy);
+        // the test exercises the strict-lookup path implicitly.
         List<String> columns = ["pdbekb_conservation"]
 
         CsvFileFeatureValues feature = new CsvFileFeatureValues(false)

@@ -7,20 +7,41 @@ import cz.siret.prank.program.params.Params
 import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.AtomImpl
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
+import org.junit.jupiter.api.parallel.Isolated
+import org.junit.jupiter.api.parallel.ResourceLock
 
 import java.nio.file.Path
 import java.util.zip.GZIPInputStream
 
 import static org.junit.jupiter.api.Assertions.*
 
+@Isolated
+@ResourceLock("Params")
 @CompileStatic
 class PointsExporterTest {
 
     @TempDir
     Path tempDir
+
+    static boolean savedExportPoints
+    static String savedExportPointsFormat
+
+    @BeforeAll
+    static void snapshotParams() {
+        savedExportPoints = Params.inst.export_points
+        savedExportPointsFormat = Params.inst.export_points_format
+    }
+
+    @AfterAll
+    static void restoreParams() {
+        Params.inst.export_points = savedExportPoints
+        Params.inst.export_points_format = savedExportPointsFormat
+    }
 
     @BeforeEach
     void setUp() {

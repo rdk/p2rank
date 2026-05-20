@@ -3,6 +3,10 @@ package cz.siret.prank.domain.loaders.pockets
 import cz.siret.prank.domain.Prediction
 import cz.siret.prank.domain.Protein
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
+
+import java.nio.file.Files
+import java.nio.file.Path
 
 import static org.junit.jupiter.api.Assertions.*
 
@@ -127,6 +131,36 @@ class PocketeerLoaderTest {
                 "$distroDir/clean/2ck3b.pdb"
         )
         assertPocketeerPrediction(p, 3, 5.0235d)
+    }
+
+    /**
+     * PredictionLoader contract: prediction.protein must be the queryProtein
+     * passed in. See ConcavityLoaderTest for the full rationale.
+     */
+    @Test
+    void predictionIsBoundToQueryProtein() {
+        Protein queryProtein = Protein.load("$cifProteinDir/1fbl.cif")
+        Prediction p = new PocketeerLoader().loadPrediction(
+                "$testResourcesDir/pocketeer_1fbl.cif/pockets.json", queryProtein)
+
+        assertSame(queryProtein, p.protein)
+    }
+
+    /**
+     * Empty pockets.json (top-level []) loads without throwing and produces a
+     * Prediction with zero pockets.
+     */
+    @Test
+    void emptyPocketsJsonProducesEmptyPrediction(@TempDir Path tmp) {
+        Path emptyPocketsFile = tmp.resolve("pockets.json")
+        Files.writeString(emptyPocketsFile, "[]")
+
+        Protein queryProtein = Protein.load("$cifProteinDir/1fbl.cif")
+        Prediction p = new PocketeerLoader().loadPrediction(
+                emptyPocketsFile.toString(), queryProtein)
+
+        assertEquals(0, p.pocketCount)
+        assertSame(queryProtein, p.protein)
     }
 
 }

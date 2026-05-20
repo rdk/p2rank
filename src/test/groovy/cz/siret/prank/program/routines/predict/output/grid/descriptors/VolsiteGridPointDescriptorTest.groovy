@@ -13,6 +13,8 @@ import org.biojava.nbio.structure.AminoAcidImpl
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.parallel.Isolated
+import org.junit.jupiter.api.parallel.ResourceLock
 
 import static org.junit.jupiter.api.Assertions.*
 
@@ -25,6 +27,8 @@ import static org.junit.jupiter.api.Assertions.*
  * <p>Column order (matches {@code VolSitePharmacophore.COLUMN_NAMES}):
  * aromatic, cation, anion, hydrophobic, acceptor, donor.
  */
+@Isolated
+@ResourceLock("Params")
 @CompileStatic
 class VolsiteGridPointDescriptorTest {
 

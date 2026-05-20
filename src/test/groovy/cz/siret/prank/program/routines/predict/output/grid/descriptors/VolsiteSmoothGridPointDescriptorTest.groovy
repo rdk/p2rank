@@ -13,6 +13,8 @@ import org.biojava.nbio.structure.AminoAcidImpl
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.parallel.Isolated
+import org.junit.jupiter.api.parallel.ResourceLock
 
 import static org.junit.jupiter.api.Assertions.*
 
@@ -21,6 +23,8 @@ import static org.junit.jupiter.api.Assertions.*
  * across atoms, and the 4σ cutoff. These are the numeric facts that, if broken,
  * silently produce wrong scores — exactly what unit tests should catch.
  */
+@Isolated
+@ResourceLock("Params")
 @CompileStatic
 class VolsiteSmoothGridPointDescriptorTest {
 

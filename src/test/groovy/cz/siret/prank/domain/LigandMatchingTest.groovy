@@ -10,6 +10,8 @@ import org.biojava.nbio.structure.GroupType
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.parallel.Isolated
+import org.junit.jupiter.api.parallel.ResourceLock
 
 import static org.junit.jupiter.api.Assertions.*
 
@@ -27,6 +29,8 @@ import static org.junit.jupiter.api.Assertions.*
  * @see Struct#isLigandCandidateGroup(Group)
  */
 @Slf4j
+@Isolated
+@ResourceLock("Params")
 @CompileStatic
 class LigandMatchingTest {
 

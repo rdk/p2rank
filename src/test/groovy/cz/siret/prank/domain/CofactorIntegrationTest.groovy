@@ -2,10 +2,13 @@ package cz.siret.prank.domain
 
 import cz.siret.prank.domain.loaders.LoaderParams
 import groovy.transform.CompileStatic
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.EnabledIf
 import org.junit.jupiter.api.function.ThrowingSupplier
+import org.junit.jupiter.api.parallel.Isolated
+import org.junit.jupiter.api.parallel.ResourceLock
 
 import static cz.siret.prank.domain.Dataset.LigandDefinition
 import static org.junit.jupiter.api.Assertions.*
@@ -18,12 +21,16 @@ import static org.junit.jupiter.api.Assertions.*
  *    is skipped on environments that haven't downloaded the file.
  *  - {@code 1fbl.pdb} (no relevant cofactor) - for baseline / regression checks. Always available.
  */
+@Isolated
+@ResourceLock("Params")
 @CompileStatic
 class CofactorIntegrationTest {
 
     static final String TEST_DATA = "distro/test_data"
     static final String PDB_1AHP = "$TEST_DATA/1AHP.pdb"
     static final String PDB_1FBL = "$TEST_DATA/1fbl.pdb"
+
+    static boolean savedIgnoreLigandsSwitch
 
     static boolean has1AHP() {
         return new File(PDB_1AHP).exists()
@@ -39,7 +46,13 @@ class CofactorIntegrationTest {
 
     @BeforeAll
     static void setup() {
+        savedIgnoreLigandsSwitch = LoaderParams.ignoreLigandsSwitch
         LoaderParams.ignoreLigandsSwitch = false
+    }
+
+    @AfterAll
+    static void tearDown() {
+        LoaderParams.ignoreLigandsSwitch = savedIgnoreLigandsSwitch
     }
 
     // ===== Baseline / default behaviour =====

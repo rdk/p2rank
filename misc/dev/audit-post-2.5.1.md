@@ -285,24 +285,18 @@ Items kept open here are intentional carry-forwards.
 
 ## Test-isolation gaps
 
-- **`CofactorIntegrationTest.groovy:40-43`** mutates
-  `LoaderParams.ignoreLigandsSwitch` in `@BeforeAll` without
-  `@Isolated`/`@ResourceLock("Params")` and without saving/restoring. Compare
-  `CofactorPipelineTest.groovy:55-65` and `CofactorAnalyzeTest.groovy:32-44`
-  which do both correctly.
-
-- **`LigandMatchingTest`** snapshots `Params.INSTANCE` but is not
-  `@Isolated`/`@ResourceLock`-annotated.
-
-- **`VolsiteGridPointDescriptorTest` / `VolsiteSmoothGridPointDescriptorTest`**
-  mutate `Params.INSTANCE` in `@BeforeEach/@AfterEach` without the project's
-  standard `@Isolated`/`@ResourceLock("Params")` annotations.
+The Tier 6 cleanup pass on 2026-05-21 resolved the items below; only the
+registry thread-safety carry-forward remains. Note: JUnit5 parallel execution
+is not enabled in this project (no `junit-platform.properties`,
+no `parallel.enabled=true`), so `@Isolated`/`@ResourceLock` annotations are
+forward-compatibility documentation only. The real fix value here was the
+save/restore additions.
 
 - **`PocketDescriptorRegistry` / `PocketGridPointDescriptorRegistry`** —
-  `NamedRegistryHelper`-backed `LinkedHashMap` is not synchronized. The
-  public `register/unregister` is exposed for tests but lacks a
-  thread-safety note. If a future `register` happens during a feature
-  extractor read, behavior is undefined.
+  `NamedRegistryHelper`-backed `LinkedHashMap` is not synchronized. Production
+  paths only mutate at class init; tests use balanced `@BeforeAll`/`@AfterAll`
+  or `try`/`finally`. Latent issue only — surfaces if JUnit parallel execution
+  is ever enabled and two test classes register/unregister concurrently.
 
 ---
 
