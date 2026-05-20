@@ -643,6 +643,22 @@ pocket_grid_bench() {
 
 }
 
+# Long-running sweep: full descriptor menu (per-pocket + per-grid-point) on the
+# 4 main datasets with visualizations enabled. Not part of all() — opt-in only.
+pocket_grid_long() {
+
+    title POCKET GRID LONG - ALL DESCRIPTORS ON MAIN DATASETS
+
+    PG_DESCRIPTORS='volume,sphericity,radius_of_gyration,num_residues,num_surface_atoms,num_grid_points,principal_moments'
+    PG_POINT_DESCRIPTORS='volsite,volsite_smooth'
+
+    test ./prank.sh predict joined.ds     -c config/test-default  -export_pocket_grid 1 -export_pocket_descriptors 1 -pocket_descriptors "$PG_DESCRIPTORS" -pocket_grid_point_descriptors "$PG_POINT_DESCRIPTORS" -visualizations 1 -vis_pocket_grid 1  -out_subdir TEST/POCKET_GRID_LONG
+    test ./prank.sh predict holo4k.ds     -c config/test-default  -export_pocket_grid 1 -export_pocket_descriptors 1 -pocket_descriptors "$PG_DESCRIPTORS" -pocket_grid_point_descriptors "$PG_POINT_DESCRIPTORS" -visualizations 1 -vis_pocket_grid 1  -out_subdir TEST/POCKET_GRID_LONG
+    test ./prank.sh predict coach420.ds   -c config/test-default  -export_pocket_grid 1 -export_pocket_descriptors 1 -pocket_descriptors "$PG_DESCRIPTORS" -pocket_grid_point_descriptors "$PG_POINT_DESCRIPTORS" -visualizations 1 -vis_pocket_grid 1  -out_subdir TEST/POCKET_GRID_LONG
+    test ./prank.sh predict chen11.ds     -c config/test-default  -export_pocket_grid 1 -export_pocket_descriptors 1 -pocket_descriptors "$PG_DESCRIPTORS" -pocket_grid_point_descriptors "$PG_POINT_DESCRIPTORS" -visualizations 1 -vis_pocket_grid 1  -out_subdir TEST/POCKET_GRID_LONG
+
+}
+
 classifiers() {
 
     title TRAIN/EVAL USING DIFFERENT CLASSIFIERS
