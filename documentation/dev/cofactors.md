@@ -3,7 +3,6 @@
 Engineering record for the `-cofactors` feature (GitHub Issue #79, Part 2).
 
 For users: see [`../cofactors.md`](../cofactors.md).
-Planning history: `local/PLAN_COFACTORS_V7.md`.
 
 ## Status
 
@@ -18,8 +17,7 @@ Planning history: `local/PLAN_COFACTORS_V7.md`.
 
 ## Design Choices (R1–R24)
 
-Each entry links back to the plan's Refinement Log. The plan is the canonical source of full
-rationale; this table is the as-implemented record.
+Each entry corresponds to a refinement during design. This table is the as-implemented record.
 
 | ID  | Choice | As-implemented note |
 |-----|--------|---------------------|
@@ -29,9 +27,9 @@ rationale; this table is the as-implemented record.
 | R4  | Unmatched specifiers logged at DEBUG | Implemented in `logResult`. |
 | R5  | `Ligand.contactDistance` side-effect documented | Documented in user doc; behaviour inherited (no code change). |
 | R6  | Altloc + modified-name handling: no special code | Inherited from BioJava defaults. |
-| R7  | Per-feature atom-level behaviour table | Documented in user doc and plan §5.2. |
+| R7  | Per-feature atom-level behaviour table | Documented in user doc. |
 | R8  | Original CSV "treated as 0.0" claim - superseded by R17 | R17 supersedes; this entry is historical. |
-| R9  | 1-arg `Protein.load(String)` note for library users | Documented in user doc + plan §"Library API Support". |
+| R9  | 1-arg `Protein.load(String)` note for library users | Documented in user doc. |
 | R10 | Cofactor > explicit ligand precedence | Implemented in `Ligands.isRelevantLigandGroup` (cofactor guard fires first). Plus the upstream filter at `Ligands.loadForProtein` - see "Deviation from plan" below. |
 | R11 | Distant-cofactor INFO warning + `cofactor_max_protein_dist` param (default 15Å) | Implemented in `CofactorHandler.warnDistantCofactors`. |
 | R12 | Pipeline tests on existing `1t7qa.pdb` (COA) | `CofactorPipelineTest` exists; tests pass. |
@@ -80,12 +78,12 @@ surfaced 21 findings. They were addressed in three passes:
 20. `DataTableCsvTest` gained 4 cases: newline-in-value, CR-in-value, null cell renders as empty, pre-quoted value gets escaped.
 21. `pymolRendererEmitsPerNameSelections` now regex-validates each `select X, BODY` line - empty bodies and malformed selections would now fail the test.
 
-## Deviation from plan
+## Deviation from original design
 
 **Cofactors are now filtered out at `Ligands.loadForProtein` (before `splitByPredicate`),
 not only inside `Ligands.isRelevantLigandGroup`.**
 
-The plan called for a single guard at the top of `isRelevantLigandGroup`. That guard alone
+The original design called for a single guard at the top of `isRelevantLigandGroup`. That guard alone
 sends cofactors into `ignoredLigands` (because `splitByPredicate(ligandGroups, predicate)`
 puts predicate-false items in the "negative" bucket, which is then materialised as
 ignored ligands). The user-facing contract is "cofactors do not appear in any
@@ -120,7 +118,7 @@ Only `params.txt` and `run.log` differ (legitimate noise: `cofactors = []` vs
 
 Not run yet. Recommended next step: pick a dataset where many structures contain a
 real cofactor (e.g. `MG` or a flavoenzyme set) and capture DCA top-1/top-3/top-5 deltas.
-Use the result to decide whether Mitigation A or B (plan §5.8) is justified.
+Use the result to decide whether Mitigation A or B (see "Planned Future Improvements" below) is justified.
 
 ### Manual smoke test
 
@@ -143,7 +141,8 @@ Result:
 3. Case-sensitive group-name matching - by design, matches `ligands`-column behaviour.
    PDB/CIF files use uppercase residue names.
 4. AA-property feature dilution at SAS points near cofactors (R18). Drop-in safety
-   confirmed; effect-benchmark deferred. Mitigations A/B pre-designed in plan §5.8.
+   confirmed; effect-benchmark deferred. Mitigations A/B sketched under
+   "Planned Future Improvements" below.
 
 ## Planned Future Improvements
 
@@ -160,7 +159,7 @@ Ordered by likely user value. Each has a trigger that would justify the work.
    *Trigger:* user request, or benchmarking the feature on >1 release.
 5. **CSV column for cofactor metadata in prediction output** - would expose which atoms
    were on the surface in a structured form. *Trigger:* downstream-tool integration ask.
-6. **Mitigation A / B** (plan §5.8) - only if R18 effect benchmark shows score regression.
+6. **Mitigation A / B** - only if R18 effect benchmark shows score regression.
 7. **Per-cofactor weighting** - relative weight for cofactor atoms in feature aggregation.
    *Trigger:* if dilution turns out to need a finer-grained knob than mitigation A.
 8. **fpocket-rescore cofactor support** - fpocket has a hard-coded cofactor list. Plumbing

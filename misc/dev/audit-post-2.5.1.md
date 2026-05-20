@@ -255,10 +255,6 @@ focused cleanups.
 - **`LoaderParams.groovy:60-66`** commented-out copy constructor;
   `:20-22` stale `TODO get rid of this global variable` on `ignoreLigandsSwitch`.
 
-- **References to gitignored `local/PLAN_COFACTORS*.md`** in committed code:
-  `CofactorPipelineTest.groovy:38`, `CofactorAnalyzeTest.groovy:17`,
-  `documentation/dev/cofactors.md:6`.
-
 - **`FPocketLoader.groovy:149`**: `pocket.centroid = pocket.voronoiCenters.centerOfMass`
   is dead because the `getCentroid` override at line 42 always recomputes.
 

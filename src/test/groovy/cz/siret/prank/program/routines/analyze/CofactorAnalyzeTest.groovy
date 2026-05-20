@@ -14,7 +14,7 @@ import static cz.siret.prank.domain.Dataset.LigandDefinition
 import static org.junit.jupiter.api.Assertions.*
 
 /**
- * Tests for the building blocks of {@code analyze cofactors} (see local/PLAN_COFACTORS_ANALYZE.md §7).
+ * Tests for the building blocks of {@code analyze cofactors}.
  *
  * The {@code cmdCofactors} subcommand itself is exercised end-to-end by the smoke harness
  * (misc/test-scripts/testsets.sh, function {@code cofactors()}) because {@code AnalyzeRoutine}

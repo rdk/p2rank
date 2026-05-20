@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*
  * These exercise the loading path end-to-end (Protein.load → cofactor extraction →
  * ligand detection), but stop short of running a full prediction. The
  * full {@code prank predict} run is covered by the drop-in safety benchmark
- * (see PLAN §8.4, {@code benchmark/cofactors_dropin_safety.sh}).
+ * ({@code benchmark/cofactors_dropin_safety.sh}).
  */
 @Isolated
 @ResourceLock("Params")
