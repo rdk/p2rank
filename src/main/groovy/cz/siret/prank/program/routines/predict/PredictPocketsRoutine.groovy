@@ -156,8 +156,7 @@ class PredictPocketsRoutine extends Routine {
                     new GetcleftOutputCalculator().generateGetcleftSasPdbFiles(pair.prediction, outdir)
                 }
 
-                // Pocket grid + descriptors export + optional PyMOL viz
-                // (see misc/todo/pocket_grid/SPEC.md).
+                // Pocket grid + descriptors export + optional PyMOL viz.
                 PocketGridOutputs.exportIfEnabled(pair.prediction, item.protein, outdir, item.label)
             }
 

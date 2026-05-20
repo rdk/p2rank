@@ -33,14 +33,6 @@ focused cleanups.
   validate. Fix: `volatile` + DCL, or do one-shot init under a synchronized guard
   in `preProcessProtein`; update the concurrency test to construct under contention.
 
-- **PyMOL pocket-grid renderer ignores rank gaps.**
-  `src/main/groovy/cz/siret/prank/program/visualization/renderers/PocketGridPymolRenderer.groovy:167,201,242`
-  loop `for (rank = 1; rank <= maxRank; rank++)`. If a pocket rank is missing
-  (`{1,3}`), the script emits an empty `pocket_grid_2` and shifts palette indices.
-  ChimeraX was fixed in commit `a3efd084`; PyMOL still has the latent bug.
-  Comment at lines 131-132 even acknowledges it. Fix: iterate
-  `grid.pocketToPointIndices.keySet()` like ChimeraX does.
-
 - **Coulomb plumbing is dead code.**
   `EnergyCalculator.getAtomCharge` always returns 0
   (`src/main/groovy/cz/siret/prank/features/implementation/energy2/calc/EnergyCalculator.groovy:351-357`).
@@ -161,6 +153,17 @@ focused cleanups.
   everything into a `TreeMap` (`EvalResults.groovy:189`) — insertion order is
   lost. Either drop the misleading comment or use `LinkedHashMap` downstream.
 
+- **PyMOL pocket-grid renderer iterates `1..maxRank`; ChimeraX iterates
+  `perPocketBasenames.keySet()`.**
+  `PocketGridPymolRenderer.groovy:167,201,242`.
+  Cosmetic-only: P2Rank ranks pockets contiguously (every `predict`-path and
+  in-tree loader except `SiteHoundLoader` assign `i++`/`rank++`), and the
+  sidecar PDB strips ranks whose `filled` BitSet is empty. PyMOL therefore
+  emits empty `pocket_grid_N`/`pocket_vol_N`/`pocket_gauss_N`/`pocket_hull_N`
+  objects when the assigner produced no points for a small pocket — they
+  render as invisible but clutter the Models panel. Mirror the ChimeraX
+  iteration pattern (`a3efd084`) for parity; not a correctness fix.
+
 - **PyMOL grid `solvent_radius=0` vs ChimeraX non-zero probe.**
   `PocketGridPymolRenderer.groovy:189-190` vs `PocketGridChimeraXRenderer.groovy:264`.
   `vis_pocket_grid_volume_radius` means different things to the two renderers.
@@ -218,9 +221,6 @@ focused cleanups.
 
 - **`documentation/readme.md`** index misses `cofactors.md`, `conservation.md`,
   `export-pocket-grid.md`, `export-pocket-descriptors.md`.
-
-- **`misc/todo/pocket_grid/{SPEC,PLAN}.md`** still mention
-  `export_pocket_grid_pml` (renamed to `vis_pocket_grid`).
 
 - **CI matrix is `17,21,25,26` only** (`.github/workflows/develop.yml:23`).
   README claims "Java 17 or later (tested up to Java 25)"; 18–20/22/23/24 not
@@ -369,14 +369,15 @@ focused cleanups.
 1. **Fix `VoxelHashAssigner` cell-prune lower bound** (or drop it and rely on
    the post-fetch distance check). Restores the assigner-strategy equivalence
    the docs promise.
-2. **Apply the rank-gap fix to `PocketGridPymolRenderer`** — mirror what
-   commit `a3efd084` did for ChimeraX.
-3. **Make energy-feature lazy-init actually thread-safe**
+2. **Make energy-feature lazy-init actually thread-safe**
    (`MethylEnergyFeature`, `AbstractProbeEnergyFeature`); fix `ConcurrencyTest`
    to construct calculators under contention.
-4. **Guard `AhojSiteInfo.fromCsvRecord` with `record.isMapped(...)`** for the
+3. **Guard `AhojSiteInfo.fromCsvRecord` with `record.isMapped(...)`** for the
    new `rg`/`n_unp_pockets[_multichain]` columns, so the parser doesn't crash
    on older "full" CSVs.
+4. **Re-link `PUResNetLoader.surfaceAtoms` to `queryProtein`** by PDB serial
+   (mirror `FPocketLoader.groovy:137`); same identity-mismatch class as the
+   Concavity fix.
 5. **README/help.txt/`distro/prank.bat` trio**: bump the version badge, fix
    the `./make-disro.sh` typo, regenerate `help.txt` to list current commands,
    and bring Windows launcher JVM flags up to parity with the Bash launchers.

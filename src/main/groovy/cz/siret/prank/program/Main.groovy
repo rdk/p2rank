@@ -204,10 +204,7 @@ class Main implements Parametrized, Writable {
         }
     }
 
-    /**
-     * Fail-fast validation for the pocket-grid export feature
-     * (see misc/todo/pocket_grid/SPEC.md).
-     */
+    /** Fail-fast validation for the pocket-grid export feature. */
     private void validatePocketGridParams() {
         // pocket_grid_format must be one of the values supported by TableExporter.
         Set<String> allowedFormats = ['csv', 'csv.gz', 'csv.zst',

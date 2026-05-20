@@ -129,8 +129,7 @@ class RescorePocketsRoutine extends Routine {
                 // Export SAS points with feature vectors and scores (pocket points only in rescore mode)
                 PointsExporter.tryExportPoints(rescorer.exportData, outdir, item.label)
 
-                // Pocket grid + descriptors export + optional PyMOL viz
-                // (see misc/todo/pocket_grid/SPEC.md).
+                // Pocket grid + descriptors export + optional PyMOL viz.
                 PocketGridOutputs.exportIfEnabled(pair.prediction, item.protein, outdir, item.label)
             }
 
