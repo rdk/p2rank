@@ -20,7 +20,7 @@ It achieves high prediction success rates without relying on external software f
            
 ### ✨ What's new?
   
-* Upcoming **2.6** brings pocket-grid & per-pocket descriptor exports (with PyMOL/ChimeraX viz), cofactor-as-surface handling, modified-residue → canonical-AA mapping, and additional supported methods for rescoring (see [alpha release](https://github.com/rdk/p2rank/releases/tag/2.6-alpha)).
+* Upcoming **2.6** brings pocket-grid & per-pocket descriptor exports, cofactor-as-surface handling, modified to canonical residue mapping, and additional supported methods for rescoring (see [alpha release](https://github.com/rdk/p2rank/releases/tag/2.6-alpha)).
 * Version **2.5** brings speed optimizations (~2x faster prediction), ChimeraX visualizations, and improvements to rescoring (`fpocket-rescore` command).
 * Version **2.4.2** adds support for BinaryCIF (`.bcif`) input and rescoring of fpocket predictions in `.cif` format.          
 * Version **2.4** adds support for mmCIF (`.cif`) input and contains a special profile for predictions on AlphaFold models and NMR/cryo-EM structures.  
@@ -28,7 +28,7 @@ It achieves high prediction success rates without relying on external software f
 ### Requirements
 
 
- * **Runtime**: Java 17 or later (tested up to Java 25)
+ * **Runtime**: Java 17 or later (tested up to Java 26)
   * **Visualization** (optional): PyMOL or ChimeraX
 
   Runs on Linux, macOS, and Windows. \
