@@ -156,7 +156,7 @@ high_score = df.filter(pl.col('score') > 0.5)
 
 ## See also
 
-- [`export-pocket-grid.md`](export-pocket-grid.md) — 3D grid of points
+- [`export-pocket-grid.md`](export-pocket-grid.md): 3D grid of points
   covering empty space around the protein, tagged by predicted pocket
-- [`export-pocket-descriptors.md`](export-pocket-descriptors.md) —
+- [`export-pocket-descriptors.md`](export-pocket-descriptors.md):
   per-pocket geometric descriptors (volume, sphericity, ...)

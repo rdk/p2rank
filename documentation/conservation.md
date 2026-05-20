@@ -4,8 +4,8 @@
 
 Sequence conservation is a strong signal for predicting binding sites.
 Conservation-aware models have been available in [PrankWeb](https://prankweb.cz) for several years,
-but the underlying conservation pipeline was tightly integrated into the PrankWeb infrastructure
-and not separately usable by P2Rank users running predictions locally.
+but were previously only usable through PrankWeb (the conservation pipeline was bundled with
+PrankWeb's infrastructure rather than runnable on its own).
 
 Since **P2Rank 2.6.0** (including early `-dev` builds), users can obtain conservation scores
 on the fly from an external conservation server and use conservation-aware prediction models
