@@ -57,12 +57,4 @@ class LoaderParams {
         return cofactorHandler != null && cofactorHandler.isCofactor(group)
     }
 
-//    LoaderParams(LoaderParams lp) {
-//        this.ignoreLigands = lp.ignoreLigands
-//        this.ligandsSeparatedByTER = lp.ligandsSeparatedByTER
-//        this.relevantLigandsDefined = lp.relevantLigandsDefined
-//        this.relevantLigandDefinitions = lp.relevantLigandDefinitions
-//        this.ignoredHetGroups = lp.ignoredHetGroups
-//    }
-    
 }

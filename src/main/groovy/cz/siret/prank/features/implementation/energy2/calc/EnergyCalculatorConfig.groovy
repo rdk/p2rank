@@ -25,6 +25,9 @@ class EnergyCalculatorConfig {
 
     // File paths for parameter tables
     final String ljParamsCSV
+    // unused: AtomRole.classify is hardcoded; the shipped role-rules.csv is not read
+    // anywhere. Field + builder option kept for now in case role rules become
+    // data-driven.
     final String roleRulesCSV
     final String hbOverridesCSV
 

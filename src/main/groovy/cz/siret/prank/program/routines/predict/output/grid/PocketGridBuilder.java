@@ -51,9 +51,8 @@ public final class PocketGridBuilder {
      */
     public static PocketGrid build(Protein protein, List<? extends Pocket> pockets, PocketGridConfig config) {
         // The union of pocket SAS points drives both the lattice bounding box and the
-        // per-cell outer bound. Atoms.union dedups via HashSet — overkill here since
-        // per-pocket SAS sets are disjoint by construction (each SAS point belongs to
-        // one cluster), so Atoms.join (plain ArrayList concat) is the right tool.
+        // per-cell outer bound. Use Atoms.join (plain concat) since per-pocket SAS sets
+        // are disjoint by construction (each SAS point belongs to one cluster).
         List<Atoms> sasPerPocket = new ArrayList<>(pockets.size());
         for (Pocket pocket : pockets) {
             Atoms sas = pocket.getSasPoints();
@@ -93,8 +92,8 @@ public final class PocketGridBuilder {
             latticeIndex.put(grid.packLatticeKey(allPoints.list.get(i)), i);
         }
 
-        // Strategy selection happens once per build; the per-pocket loop calls them
-        // through the held locals (monomorphic dispatch, JIT-friendly).
+        // Strategy selection happens once per build; the per-pocket loop calls
+        // the held locals so each call site is at worst bimorphic in the JIT.
         PocketAssigner assigner = PocketAssignerRegistry.get(config.assignerStrategy());
         PocketShapeFiller filler = chooseFiller(config.fillStrategy());
         double assignCutoff = config.assignCutoff();

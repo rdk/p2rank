@@ -26,7 +26,7 @@ class MethylEnergyCloudXFullSF extends SasFeatureCalculator implements Parametri
     static final String NAME = "energy-cloudxf-ch3"
     static final String SEC_DATA_KEY = "PP_CH3"
 
-    // Immutable calculator instance
+    // Lazy-initialized calculator instance (see initializeCalculator)
     private LJEnergyCalculator calculator
 
     @Override

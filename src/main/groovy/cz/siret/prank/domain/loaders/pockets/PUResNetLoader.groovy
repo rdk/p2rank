@@ -21,10 +21,11 @@ import javax.annotation.Nullable
 class PUResNetLoader extends PredictionLoader implements Parametrized {
 
     /**
-     *
-     * @param predictionOutputFile  actually a pocket output dir
-     * @param queryProtein
-     * @return
+     * @param predictionOutputFile path to the PUResNet pocket output directory
+     *                             (a directory of {@code *pkt.pdb} files, one per pocket).
+     * @param queryProtein         protein the prediction is associated with (used for
+     *                             the {@code Prediction.queryProtein} binding only —
+     *                             pocket atoms are loaded from the sub-PDB files).
      */
     @Override
     Prediction loadPrediction(String predictionOutputFile, @Nullable Protein queryProtein) {
@@ -32,7 +33,7 @@ class PUResNetLoader extends PredictionLoader implements Parametrized {
     }
 
 
-    List<PUResNetPocket> loadPockets(String pocketDir, Protein liganatedProtein) {
+    List<PUResNetPocket> loadPockets(String pocketDir, Protein queryProtein) {
 
         List<File> pocketFiles = Futils.listFiles(pocketDir, {
             it.name.endsWith('pkt.pdb') && it.name != 'without_clus_pkt.pdb'
@@ -52,7 +53,9 @@ class PUResNetLoader extends PredictionLoader implements Parametrized {
             PUResNetPocket pocket = new PUResNetPocket(pocketAtoms)
             pocket.rank = i++
             pocket.name = Sutils.removeSuffix(Futils.baseName(pocketFile.name), '.pdb')
-            pocket.surfaceAtoms = pocketAtoms  // not all of them are necessarily on the surface but it s
+            // pocketAtoms come from the sub-PDB; treat the full set as surface atoms
+            // (not all are strictly on the surface, but PUResNet output doesn't distinguish).
+            pocket.surfaceAtoms = pocketAtoms
             pocket.centroid = pocketAtoms.getCentroid()
 
             res.add(pocket)

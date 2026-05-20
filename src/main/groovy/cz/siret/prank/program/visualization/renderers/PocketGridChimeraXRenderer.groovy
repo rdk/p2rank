@@ -73,7 +73,10 @@ final class PocketGridChimeraXRenderer {
     /**
      * Transparency (%) applied to the inherited protein surface so the grid
      * layers are visible through it. ChimeraX takes percentages (0-100); the
-     * PyMOL equivalent is the {@code 0.7} fraction.
+     * PyMOL renderer uses {@code PROTEIN_TRANSPARENCY = 0.5} for the same
+     * effect (PyMOL units = 0..1) — the two values are not numerically
+     * matched because the renderers compose differently with the underlying
+     * protein cartoon.
      */
     private static final int PROTEIN_TRANSPARENCY_PCT = 70
 

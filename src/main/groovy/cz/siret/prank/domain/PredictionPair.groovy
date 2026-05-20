@@ -58,11 +58,11 @@ class PredictionPair implements Parametrized {
      * first is 1
      * @return ... -1 = not identified
      */
-    static int rankOfIdentifiedPocket(BindingSite site, List<Pocket> pockets, PocketCriterion criterium, EvalContext context) {
+    static int rankOfIdentifiedPocket(BindingSite site, List<Pocket> pockets, PocketCriterion criterion, EvalContext context) {
 
         int rank = 1
         for (Pocket pocket in pockets) {
-            if (criterium.isIdentified(site, pocket, context)) {
+            if (criterion.isIdentified(site, pocket, context)) {
                 return rank
             }
             rank++
@@ -75,9 +75,9 @@ class PredictionPair implements Parametrized {
      * @return null if pocket has no ligand
      * Note: only searches ligands, not ResidueSites. For site-based evaluation see Evaluation.findSiteForPocket().
      */
-    Ligand findLigandForPocket(Pocket pocket, PocketCriterion criterium, EvalContext context) {
+    Ligand findLigandForPocket(Pocket pocket, PocketCriterion criterion, EvalContext context) {
         for (Ligand lig in ligands.relevantLigands) {
-            if (criterium.isIdentified(lig, pocket, context)) {
+            if (criterion.isIdentified(lig, pocket, context)) {
                 return lig
             }
         }
@@ -104,9 +104,9 @@ class PredictionPair implements Parametrized {
         prediction.pockets.findAll { Pocket p -> isCorrectlyPredictedPocket(p, assesor) }
     }
 
-    boolean isCorrectlyPredictedPocket(Pocket pocket, PocketCriterion criterium) {
+    boolean isCorrectlyPredictedPocket(Pocket pocket, PocketCriterion criterion) {
         for (Ligand lig : ligands.relevantLigands) {
-            if (criterium.isIdentified(lig, pocket, new EvalContext())) {
+            if (criterion.isIdentified(lig, pocket, new EvalContext())) {
                 return true
             }
         }

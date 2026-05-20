@@ -19,7 +19,7 @@ class MethylEnergyFeature extends SasFeatureCalculator implements Parametrized {
 
     static final String NAME = "energy-ch3"
 
-    // Immutable calculator instance
+    // Lazy-initialized calculator instance (see ensureCalculatorInitialized)
     private LJEnergyCalculator calculator
 
     /**

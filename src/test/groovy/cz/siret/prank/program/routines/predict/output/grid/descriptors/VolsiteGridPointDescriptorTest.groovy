@@ -78,7 +78,7 @@ class VolsiteGridPointDescriptorTest {
 
     @Test
     void atomOutsideRadiusContributesNothing() {
-        // Default -pocket_grid_volsite_radius is 4.0; place a hydrophobic atom at 5 Å.
+        // Radius is pinned to 4.0 in @BeforeEach; place a hydrophobic atom at 5 Å.
         Atom c = atomAt("C", "ALA", "C", 5d, 0d, 0d)
         double[] out = new VolsiteGridPointDescriptor().compute(
                 ctxAt(0d, 0d, 0d, new Atoms([c])))

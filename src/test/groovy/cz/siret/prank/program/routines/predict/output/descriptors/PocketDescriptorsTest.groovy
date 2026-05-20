@@ -108,8 +108,8 @@ class PocketDescriptorsTest {
 
     @Test
     void sphericityIsLowForFlatDisc() {
-        // 10x10x1 flat slab — radius ≈ sqrt(2)*5 ≈ 7.07; V_pocket = 100,
-        // V_sphere = 4/3·π·7.07³ ≈ 1480; ratio ≈ 0.067 — low.
+        // 10x10x1 flat slab — centroid at (4.5,4.5,0); max distance ≈ 6.36;
+        // V_pocket = 100, V_sphere = 4/3·π·6.36³ ≈ 1078; ratio ≈ 0.093 — low.
         List<Atom> pts = new ArrayList<>()
         for (int j = 0; j < 10; j++) {
             for (int i = 0; i < 10; i++) {

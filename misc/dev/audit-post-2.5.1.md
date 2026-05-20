@@ -241,74 +241,41 @@ focused cleanups.
 
 ## Stale comments / dead code
 
-- **"Immutable calculator instance" comments in 6 energy feature files** after
-  the lazy-init refactor: `MethylEnergyFeature.groovy:22`,
-  `MethylEnergyCloud{,X,XFull,X2,X2Full}SF.groovy:27/30`.
+The Tier 5 cleanup pass on 2026-05-21 resolved the entries below this section.
+Items kept open here are intentional carry-forwards.
 
 - **`EnergyCalculatorConfig.roleRulesCSV` + `role-rules.csv` resource are
   wired but read nowhere.** `EnergyCalculatorConfig.groovy:28,40,143,162-164`.
-  `AtomRole.classify` is hardcoded.
+  `AtomRole.classify` is hardcoded. Field is now marked `// unused:`; resolve
+  by either making `AtomRole` data-driven or deleting the plumbing.
 
-- **`PocketShapeFiller.java:24` and `Params.groovy:896-897`** use the term
-  "surface atom"; actual inputs are SAS points (pre-SAS-revision wording).
+- **`LoaderParams.groovy:20-22`** stale `TODO get rid of this global variable`
+  on `ignoreLigandsSwitch`. Pre-existing; still legitimate.
 
-- **`LoaderParams.groovy:60-66`** commented-out copy constructor;
-  `:20-22` stale `TODO get rid of this global variable` on `ignoreLigandsSwitch`.
-
-- **`FPocketLoader.groovy:149`**: `pocket.centroid = pocket.voronoiCenters.centerOfMass`
-  is dead because the `getCentroid` override at line 42 always recomputes.
+- **`FPocketLoader.groovy:149`** dead `pocket.centroid` write (overridden by
+  `getCentroid()`). Marked `// unused:`; kept until the override is removed.
 
 - **`FPocketLoader.groovy:155`** `// probably not needed` (years old);
-  `:142` fpocket3 TODO.
+  `:142` fpocket3 TODO. Both pre-existing.
 
-- **`ConcavityLoader.groovy:74`** `// TODO XXX` is meaningless;
-  `:91` `///X correctsorting…` typo log marker; the class is not `@CompileStatic`.
-
-- **`PUResNetLoader.groovy:55`** truncated comment mid-sentence (`// not all
-  of them are necessarily on the surface but it s`).
-  `:35` parameter named `liganatedProtein` but expects queryProtein.
-  `:23-28` javadoc is a stub.
+- **`ConcavityLoader.groovy`** not `@CompileStatic` — every other loader is.
+  Adding it risks surfacing latent type errors; do under a separate change
+  with a compile + test pass.
 
 - **`PocketeerLoaderTest`** missing `predictionIsBoundToQueryProtein` and
-  empty-input tests (every other new loader test has both).
+  empty-input tests (every other new loader test has both). Not actually a
+  stale-comment item — tracked here for completeness; belongs under
+  test-coverage gaps.
 
-- **`PocketGridBuilder.java:97-99`** "monomorphic dispatch, JIT-friendly"
-  comment is wrong — bimorphic with two impls registered.
+- **`MethylEnergyFeature.groovy:55,67-70`** commented-out try/catch skeleton +
+  commented alternative neighbour-atom path. Kept intentionally (decision
+  2026-05-21).
 
-- **`PredictionPair.groovy:61,78,107,109`** still uses `criterium` after
-  class rename (commit `2de315e9`).
+- **`misc/development-notes.md`** is down to a single 6-line note — kept
+  intentionally (decision 2026-05-21).
 
-- **`Evaluation.groovy:484`** rank-sentinel comment says 0; actual sentinel
-  is `-1` (`PredictionPair.rankOfIdentifiedPocket`).
-
-- **`Evaluation.groovy:132`** comment "Clear SAS points cache" — actually
-  clears per-site lazy lookup, not the EvalContext cache.
-
-- **`MethylEnergyFeature.groovy:67-70`** dangling try/catch skeleton;
-  `:55` commented alternative path.
-
-- **`prank.sh:13-15`** commented `-XX:+UseConcMarkSweepGC` (removed in JDK 14).
-
-- **`misc/development-notes.md`** is down to a single 6-line note —
-  merge into `misc/dev/technical-debt.md` or delete.
-
-- **`distro/config/default_rescore.groovy:46`** `//== FAETURES` typo.
-
-- **`distro/prank.bat:14`** last `set "JAVA_OPTS=%JAVA_OPTS%"` is a no-op.
-
-- **`PocketGridChimeraXRenderer.groovy:81`** says PyMOL transparency is 0.7;
-  actual `PROTEIN_TRANSPARENCY` in `PocketGridPymolRenderer.groovy:76` is 0.5.
-
-- **`PocketGridBuilder.java:54-56`** meta-commentary about
-  `Atoms.union`-vs-`Atoms.join` choice — reads as a leftover review note.
-
-- **`VolsiteGridPointDescriptorTest.groovy:81`** comment claims testing the
-  default `pocket_grid_volsite_radius=4.0`, but the test pins `RADIUS=4.0`
-  via `@BeforeEach`.
-
-- **`PocketDescriptorsTest.groovy:110-112`** arithmetic in the comment
-  (`≈ sqrt(2)*5 ≈ 7.07`) doesn't match the geometry (centroid at (4.5,4.5,0),
-  max dist ≈ 6.36). Asserted ratio still passes.
+- **`distro/prank.bat:14`** `set "JAVA_OPTS=%JAVA_OPTS%"` no-op. Kept
+  intentionally (decision 2026-05-21).
 
 - **`AbstractScalarPocketDescriptor.java:21-23`** comment says "both shipped
   descriptors are multi-column" — accurate today, will silently lie when a

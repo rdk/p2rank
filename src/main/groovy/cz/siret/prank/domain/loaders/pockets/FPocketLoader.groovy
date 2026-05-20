@@ -146,6 +146,9 @@ class FPocketLoader extends PredictionLoader implements Parametrized {
 
             pocket.surfaceAtoms = surfaceAtoms
             pocket.name = "pocket.$pocket.rank"
+            // unused: FPocketPocket.getCentroid() override always recomputes from
+            // voronoiCenters.centerOfMass, so this write is shadowed. Kept for now
+            // in case the override is ever removed.
             pocket.centroid = pocket.voronoiCenters.centerOfMass
             pocket.score = pocket.stats.pocketScore
 

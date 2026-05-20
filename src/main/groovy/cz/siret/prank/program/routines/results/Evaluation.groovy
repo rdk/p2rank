@@ -129,7 +129,8 @@ class Evaluation implements Parametrized {
         List<BindingSite> sites = pair.holoProtein.sites
         boolean isLigandMode = !sites.isEmpty() && sites[0] instanceof Ligand
 
-        // Clear SAS points cache
+        // Reset per-site cached SAS points so they're recomputed against this prediction's
+        // accessibleSurface (the cache is lazy on each BindingSite, not on EvalContext).
         for (BindingSite site : sites) {
             site.sasPoints = null
         }
@@ -481,7 +482,7 @@ class Evaluation implements Parametrized {
         int identified = 0
 
         for (LigRow ligRow in ligandRows) {
-            int rankForCriterium = ligRow.ranks[criterionIndex]  // Note: rank is 1-based, 0 means not found at all
+            int rankForCriterium = ligRow.ranks[criterionIndex]  // 1-based; -1 means not identified (PredictionPair.rankOfIdentifiedPocket)
 
             int rowTolerance = tolerance
             if (topNplusKmode) {

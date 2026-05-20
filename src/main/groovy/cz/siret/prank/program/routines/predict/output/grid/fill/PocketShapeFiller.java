@@ -21,7 +21,7 @@ public interface PocketShapeFiller {
 
     /**
      * @param rawShell     bitset of indices in {@code grid.getAllPoints()}
-     *                     that fall within the pocket's surface-atom cutoff
+     *                     that fall within the pocket's SAS-point cutoff
      * @param grid         the full pocket grid (for lattice-neighbor lookups)
      * @param minNeighbors morph_closing only — neighbor count threshold
      * @param maxIters     morph_closing only — iteration cap

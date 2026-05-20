@@ -71,7 +71,9 @@ class ConcavityLoader extends PredictionLoader {
             poc.gridPoints.each { Atom a -> a.setElement(Element.C)} // for center of mass calculation
 
             int distToSurface = POCKET_GRID_TO_SURFACE_DIST
-            while (poc.surfaceAtoms.empty && distToSurface<10) {    // TODO XXX
+            // Expand the surface-atom shell until non-empty (capped at 10 Å). Same
+            // idiom as SwinSiteLoader; candidate for extraction into a shared helper.
+            while (poc.surfaceAtoms.empty && distToSurface<10) {
                 poc.surfaceAtoms = protein.exposedAtoms.cutoutShell(poc.gridPoints, distToSurface)
                 if (poc.surfaceAtoms.empty) {
                     log.warn "no surface atoms in dist=$distToSurface from gridpoints"
@@ -88,7 +90,7 @@ class ConcavityLoader extends PredictionLoader {
             rank++
         }
 
-        ///X correct sorting by cocnavity score encoded in temp. value od atoms in pdb file
+        // Re-sort by concavity score (the score is encoded in the tempFactor of grid atoms in the input PDB).
         res = res.sort { Pocket a, Pocket b -> b.newScore <=> a.newScore } //descending
         int i = 1
         res.each {

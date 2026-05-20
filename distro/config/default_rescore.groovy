@@ -43,7 +43,7 @@ import cz.siret.prank.program.params.Params
      */
     ligand_protein_contact_distance = 4
 
-    //== FAETURES
+    //== FEATURES
 
     features = ["chem","volsite","protrusion","bfactor"]
 

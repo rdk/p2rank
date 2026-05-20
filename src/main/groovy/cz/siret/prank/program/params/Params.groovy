@@ -893,8 +893,8 @@ class Params {
 
     /**
      * Range-query strategy for the per-pocket "raw shell" computation:
-     *   kdtree     (default) — build a KdTree on the grid, range-query around each surface atom
-     *   voxel_hash           — walk the small cube of lattice cells per surface atom directly
+     *   kdtree     (default) — build a KdTree on the grid, range-query around each pocket SAS point
+     *   voxel_hash           — walk the small cube of lattice cells per pocket SAS point directly
      * KdTree is typically faster for fine grids (small pocket_grid_spacing); voxel-hash is
      * typically faster for coarse grids. Validated at startup.
      */
