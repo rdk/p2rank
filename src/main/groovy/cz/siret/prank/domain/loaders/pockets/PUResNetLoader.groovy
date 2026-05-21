@@ -4,6 +4,7 @@ import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Prediction
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.geom.Atoms
+import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.Sutils
@@ -73,10 +74,18 @@ class PUResNetLoader extends PredictionLoader implements Parametrized {
                 else dropped++
             }
             if (dropped > 0) {
-                log.warn('Pocket {}: {} atom(s) not re-linked against queryProtein (serial mismatch); using best-effort surface set',
-                        pocket.name, dropped)
+                log.warn('Pocket {}: {} atom(s) not re-linked against queryProtein (serial mismatch); using {} re-linked atom(s) only',
+                        pocket.name, dropped, surfaceAtoms.count)
             }
-            if (surfaceAtoms.empty) surfaceAtoms = pocketAtoms
+            // All atoms failed to re-link → wrong queryProtein passed in. Falling
+            // back to the foreign-Structure pocketAtoms would silently re-introduce
+            // the identity-mismatch bug this loader was rewritten to fix.
+            if (surfaceAtoms.empty) {
+                throw new PrankException(
+                        "PUResNet pocket '${pocket.name}': all ${pocketAtoms.count} atom(s) failed " +
+                        "to re-link against queryProtein by PDB serial — check that the queryProtein " +
+                        "matches the structure PUResNet was run on.")
+            }
 
             pocket.surfaceAtoms = surfaceAtoms
             pocket.centroid = surfaceAtoms.getCentroid()

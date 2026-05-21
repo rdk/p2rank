@@ -3,6 +3,7 @@ package cz.siret.prank.domain.loaders.pockets
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Prediction
 import cz.siret.prank.domain.Protein
+import cz.siret.prank.program.PrankException
 import org.biojava.nbio.structure.Atom
 import org.junit.jupiter.api.Test
 
@@ -24,6 +25,25 @@ class PUResNetLoaderTest {
 
         assertSame(queryProtein, p.protein)
         assertTrue(p.pocketCount > 0)
+    }
+
+    /**
+     * If the queryProtein has no matching PDB serials at all, the loader must
+     * hard-fail rather than silently fall back to the foreign-Structure pocket
+     * atoms. (Pre-fix, the silent fallback re-introduced the identity-mismatch
+     * bug the loader was rewritten to eliminate.)
+     */
+    @Test
+    void hardFailsWhenAllSerialsMissingFromQueryProtein() {
+        Protein queryProtein = Protein.load(PROTEIN)
+        // Replace the atom set with an empty one so every serial lookup misses.
+        queryProtein.proteinAtoms = new cz.siret.prank.geom.Atoms()
+
+        PrankException err = assertThrows(PrankException) {
+            new PUResNetLoader().loadPrediction(POCKETS, queryProtein)
+        }
+        assertTrue(err.message.contains("re-link"),
+                "exception should explain the mismatch; got: ${err.message}")
     }
 
     /**
