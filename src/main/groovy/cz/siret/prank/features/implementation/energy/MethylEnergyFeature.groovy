@@ -17,9 +17,15 @@ import org.biojava.nbio.structure.Atom
  *
  * The feature is registered as a singleton, so the LJEnergyCalculator field is
  * shared across worker threads. Guava's {@code Suppliers.memoize} gives us a
- * thread-safe lazy init that snapshots Params on first call. As with the
- * previous lazy-init, the snapshot wins for the lifetime of the JVM —
- * subsequent Params changes are NOT picked up.
+ * thread-safe lazy init that snapshots Params on first call.
+ *
+ * <p>Unlike the {@code MethylEnergyCloud*} variants (which rebuild the
+ * calculator per protein from current Params), this class freezes Params for
+ * the JVM lifetime — matching its pre-refactor behaviour. Calculator state is
+ * pure-function of Params and there's no per-protein precomputation, so the
+ * snapshot semantics are equivalent under normal use; the only observable
+ * difference would be a grid sweep over {@code energy_*} on this specific
+ * feature, which would not pick up param changes after the first call.
  */
 @Slf4j
 @CompileStatic

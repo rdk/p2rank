@@ -1,7 +1,5 @@
 package cz.siret.prank.features.implementation.energy2
 
-import com.google.common.base.Supplier
-import com.google.common.base.Suppliers
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.domain.labeling.LabeledPoint
 import cz.siret.prank.features.api.ProcessedItemContext
@@ -30,24 +28,6 @@ import static cz.siret.prank.utils.MathUtils.nanToZero
 abstract class AbstractProbeEnergyFeature extends SasFeatureCalculator implements Parametrized {
 
     /**
-     * Lazily-built {@link EnergyCalculator}. Memoized so a singleton feature
-     * instance can race-free initialize its calculator across worker threads.
-     * Snapshots Params on first call (subsequent Params changes are not picked
-     * up — matches the previous lazy-init behaviour).
-     */
-    protected final Supplier<EnergyCalculator> calculator = Suppliers.memoize({
-        EnergyCalculatorConfig cfg = new EnergyCalculatorConfig.Builder()
-            .rCutoff(params.energy_rc)
-            .rOn(params.energy_ron)
-            .rMin(params.energy_min_r)
-            .dielectricConstant(12.0)
-            .enableCoulomb(true)
-            .selectedProbes(EnumSet.of(getProbeType()))
-            .build()
-        new EnergyCalculator(cfg)
-    } as Supplier<EnergyCalculator>)
-
-    /**
      * Get the probe type that this feature calculates
      */
     abstract ProbeType getProbeType()
@@ -58,7 +38,13 @@ abstract class AbstractProbeEnergyFeature extends SasFeatureCalculator implement
     abstract String getSecondaryDataKey()
 
     /**
-     * Pre-process protein to compute probe energies at all SAS points
+     * Pre-process protein to compute probe energies at all SAS points.
+     *
+     * <p>The calculator is built from the current {@code Params} per protein
+     * (local variable). Using a singleton-field cache here would freeze
+     * Params for the lifetime of the JVM, which silently breaks grid sweeps
+     * that mutate {@code energy_*} mid-run (the previous Suppliers.memoize
+     * design hit this regression).
      */
     @Override
     void preProcessProtein(Protein protein, ProcessedItemContext itemContext) {
@@ -67,8 +53,15 @@ abstract class AbstractProbeEnergyFeature extends SasFeatureCalculator implement
             return  // already computed
         }
 
-        EnergyCalculator calc = calculator.get()
-        EnergyCalculatorConfig cfg = calc.config
+        EnergyCalculatorConfig cfg = new EnergyCalculatorConfig.Builder()
+            .rCutoff(params.energy_rc)
+            .rOn(params.energy_ron)
+            .rMin(params.energy_min_r)
+            .dielectricConstant(12.0)
+            .enableCoulomb(true)
+            .selectedProbes(EnumSet.of(getProbeType()))
+            .build()
+        EnergyCalculator calc = new EnergyCalculator(cfg)
 
         List<LabeledPoint> points = calcProbePoints(protein)
         for (LabeledPoint p : points) {

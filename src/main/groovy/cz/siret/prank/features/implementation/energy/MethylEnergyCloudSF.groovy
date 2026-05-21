@@ -1,7 +1,5 @@
 package cz.siret.prank.features.implementation.energy
 
-import com.google.common.base.Supplier
-import com.google.common.base.Suppliers
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.domain.labeling.LabeledPoint
 import cz.siret.prank.features.api.ProcessedItemContext
@@ -26,26 +24,17 @@ class MethylEnergyCloudSF extends SasFeatureCalculator implements Parametrized {
     static final String NAME = "energy-cloud-ch3"
     static final String SEC_DATA_KEY = "PP_CH3"
 
-    private final Supplier<LJEnergyCalculator> calculator = Suppliers.memoize({
-        new LJEnergyCalculator(
-            params.energy_probe_sigma,
-            params.energy_probe_epsilon,
-            params.energy_rc,
-            params.energy_ron,
-            params.energy_min_r,
-            params.energy_missing_elem_policy,
-            params.energy_fallback_sigma,
-            params.energy_fallback_epsilon
-        )
-    } as Supplier<LJEnergyCalculator>)
-
     @Override
     void preProcessProtein(Protein protein, ProcessedItemContext itemContext) {
         if (protein.secondaryData.containsKey(SEC_DATA_KEY)) {
             return  // already computed
         }
 
-        LJEnergyCalculator calc = calculator.get()
+        // Build the calculator from the current Params per protein. The
+        // previous shared-singleton lazy-init froze Params for the lifetime
+        // of the JVM, which broke grid sweeps that mutate energy_* mid-run.
+        // A local also dodges the singleton-field race we used to have.
+        LJEnergyCalculator calc = newCalculator()
         List<LabeledPoint> points = calcProbePoints(protein)
         for (LabeledPoint p : points) {
             Atoms neighbourAtoms = protein.proteinAtoms.cutoutSphere(p, params.energy_rc)
@@ -56,6 +45,19 @@ class MethylEnergyCloudSF extends SasFeatureCalculator implements Parametrized {
         ProbePoints probePoints = new ProbePoints(new Atoms(points).withKdTree())
 
         protein.secondaryData.put(SEC_DATA_KEY, probePoints)
+    }
+
+    private LJEnergyCalculator newCalculator() {
+        new LJEnergyCalculator(
+            params.energy_probe_sigma,
+            params.energy_probe_epsilon,
+            params.energy_rc,
+            params.energy_ron,
+            params.energy_min_r,
+            params.energy_missing_elem_policy,
+            params.energy_fallback_sigma,
+            params.energy_fallback_epsilon
+        )
     }
 
 //===========================================================================================================//

@@ -112,9 +112,6 @@ class EnergyCalculator {
         }
     }
 
-    /** Snapshot of the configuration this calculator was built from. */
-    EnergyCalculatorConfig getConfig() { return config }
-
     /**
      * Initialize the calculator with configuration
      */
