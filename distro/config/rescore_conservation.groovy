@@ -67,7 +67,7 @@ import cz.siret.prank.program.params.Params
      */
     classifier_train_stats = false
 
-    //== FAETURES ===================
+    //== FEATURES ===================
 
     features = ["chem","volsite","protrusion","bfactor","conservation"]
 

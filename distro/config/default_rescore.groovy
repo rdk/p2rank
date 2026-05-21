@@ -125,6 +125,38 @@ import cz.siret.prank.program.params.Params
     ignore_het_groups = ["HOH","DOD","WAT","NAG","MAN","UNK","GLC","ABA","MPD","GOL","SO4","PO4"]
 
     /**
+     * Non-canonical → canonical amino-acid residue-name mapping mode.
+     * Accepted values: `minimal` (default; pre-2.6 behaviour) or `pdbfixer`
+     * (comprehensive set of phosphorylated, methylated, acetylated residues,
+     * selenocysteine, histidine protonation variants, D-amino acids).
+     * See documentation/aa-mapping.md.
+     */
+    aa_mapping = "minimal"
+
+    /**
+     * Treat HETATM groups matching these specifiers as part of the protein
+     * surface instead of as ligands. Comma-separated list of group codes
+     * (e.g. `["FAD","PLP","HEM"]`). Bracketed sub-specifiers are supported
+     * (e.g. `"FAD[contact_res_ids:A_D246,A_T259]"`). Default: empty.
+     * See documentation/cofactors.md.
+     */
+    cofactors = []
+
+    /**
+     * Distance threshold (Å) above which a matched cofactor's centre of
+     * mass is considered "distant" from the nearest protein atom and
+     * triggers a WARN. The cofactor is still treated as surface; the
+     * warning is advisory.
+     */
+    cofactor_max_protein_dist = 15.0
+
+    /**
+     * Render matched cofactor atoms with a distinct PyMOL highlight
+     * (teal sticks) in pocket visualizations.
+     */
+    vis_highlight_cofactors = true
+
+    /**
      * positive point defining ligand types, accepted values: "relevant", "ignored", "small", "distant"
      */
     positive_def_ligtypes = ["relevant"]
