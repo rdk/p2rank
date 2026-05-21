@@ -1,6 +1,8 @@
 package cz.siret.prank.features.implementation.energy
 
 
+import com.google.common.base.Supplier
+import com.google.common.base.Suppliers
 import cz.siret.prank.features.api.SasFeatureCalculationContext
 import cz.siret.prank.features.api.SasFeatureCalculator
 import cz.siret.prank.geom.Atoms
@@ -12,6 +14,12 @@ import org.biojava.nbio.structure.Atom
 /**
  * SAS point feature: vdW-only methyl probe energy (no hydrogens).
  * Provides a single scalar per SAS point; units: kcal/mol. More negative = more favorable.
+ *
+ * The feature is registered as a singleton, so the LJEnergyCalculator field is
+ * shared across worker threads. Guava's {@code Suppliers.memoize} gives us a
+ * thread-safe lazy init that snapshots Params on first call. As with the
+ * previous lazy-init, the snapshot wins for the lifetime of the JVM —
+ * subsequent Params changes are NOT picked up.
  */
 @Slf4j
 @CompileStatic
@@ -19,15 +27,8 @@ class MethylEnergyFeature extends SasFeatureCalculator implements Parametrized {
 
     static final String NAME = "energy-ch3"
 
-    // Lazy-initialized calculator instance (see ensureCalculatorInitialized)
-    private LJEnergyCalculator calculator
-
-    /**
-     * Initialize the energy calculator with current parameters (lazy, called on first use per protein).
-     */
-    private void ensureCalculatorInitialized() {
-        if (calculator != null) return
-        calculator = new LJEnergyCalculator(
+    private final Supplier<LJEnergyCalculator> calculator = Suppliers.memoize({
+        new LJEnergyCalculator(
             params.energy_probe_sigma,
             params.energy_probe_epsilon,
             params.energy_rc,
@@ -37,7 +38,7 @@ class MethylEnergyFeature extends SasFeatureCalculator implements Parametrized {
             params.energy_fallback_sigma,
             params.energy_fallback_epsilon
         )
-    }
+    } as Supplier<LJEnergyCalculator>)
 
     @Override
     String getName() {
@@ -49,25 +50,12 @@ class MethylEnergyFeature extends SasFeatureCalculator implements Parametrized {
      */
     @Override
     double[] calculateForSasPoint(Atom sasPoint, SasFeatureCalculationContext context) {
-            ensureCalculatorInitialized()
-
-            // Get neighbor atoms around the SAS point
-            //Atoms neighbourAtoms = context.extractor.deepLayer.cutoutSphere(sasPoint, params.energy_rc)
-            Atoms neighbourAtoms = context.neighbourhoodAtoms
-
-            if (neighbourAtoms == null || neighbourAtoms.size() == 0) {
-                return [0.0] as double[]
-            }
-
-            // Calculate energy using the calculator (sasPoint is already an Atom)
-            double energy = calculator.computeEnergyForPoint(sasPoint, neighbourAtoms)
-
-            return [energy] as double[]
-
-//        } catch (Exception e) {
-//            log.error("Error calculating methyl energy for SAS point: ${e.message}", e)
-//            return [0.0] as double[]
-//        }
+        Atoms neighbourAtoms = context.neighbourhoodAtoms
+        if (neighbourAtoms == null || neighbourAtoms.size() == 0) {
+            return [0.0] as double[]
+        }
+        double energy = calculator.get().computeEnergyForPoint(sasPoint, neighbourAtoms)
+        return [energy] as double[]
     }
 
 }
