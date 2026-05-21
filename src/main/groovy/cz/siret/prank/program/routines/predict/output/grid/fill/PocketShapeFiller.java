@@ -25,8 +25,10 @@ public interface PocketShapeFiller {
      * @param grid         the full pocket grid (for lattice-neighbor lookups)
      * @param minNeighbors morph_closing only — neighbor count threshold
      * @param maxIters     morph_closing only — iteration cap
-     * @return bitset of indices after the fill step; may equal {@code rawShell}
-     *         for no-op strategies. Implementations must not mutate {@code rawShell}.
+     * @return a <b>freshly-allocated</b> bitset of indices after the fill step.
+     *         Implementations must not return {@code rawShell} (or share storage
+     *         with it) and must not mutate it — the caller owns the returned
+     *         BitSet and may mutate it freely (e.g. for per-pocket bookkeeping).
      */
     BitSet fill(BitSet rawShell, PocketGrid grid, int minNeighbors, int maxIters);
 

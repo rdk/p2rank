@@ -216,12 +216,12 @@ class Main implements Parametrized, Writable {
                     "Expected one of: ${allowedFormats.sort()}")
         }
 
-        // pocket_grid_fill must be a known strategy.
-        Set<String> allowedFills = ['morph_closing', 'none'] as Set
-        if (!allowedFills.contains(params.pocket_grid_fill)) {
+        // pocket_grid_fill must be a name registered in PocketShapeFillerRegistry.
+        Set<String> knownFills = cz.siret.prank.program.routines.predict.output.grid.fill.PocketShapeFillerRegistry.knownNames()
+        if (!knownFills.contains(params.pocket_grid_fill)) {
             throw new PrankException(
                     "Invalid -pocket_grid_fill '${params.pocket_grid_fill}'. " +
-                    "Expected one of: ${allowedFills.sort()}")
+                    "Known: ${knownFills}")
         }
 
         // pocket_grid_assigner must be a name registered in PocketAssignerRegistry.

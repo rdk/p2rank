@@ -8,9 +8,8 @@ import cz.siret.prank.geom.samplers.GridGenerator;
 import cz.siret.prank.geom.samplers.GridSample;
 import cz.siret.prank.program.routines.predict.output.grid.assign.PocketAssigner;
 import cz.siret.prank.program.routines.predict.output.grid.assign.PocketAssignerRegistry;
-import cz.siret.prank.program.routines.predict.output.grid.fill.MorphologicalCloser;
-import cz.siret.prank.program.routines.predict.output.grid.fill.NoOpFiller;
 import cz.siret.prank.program.routines.predict.output.grid.fill.PocketShapeFiller;
+import cz.siret.prank.program.routines.predict.output.grid.fill.PocketShapeFillerRegistry;
 import org.biojava.nbio.structure.Atom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,7 +94,7 @@ public final class PocketGridBuilder {
         // Strategy selection happens once per build; the per-pocket loop calls
         // the held locals so each call site is at worst bimorphic in the JIT.
         PocketAssigner assigner = PocketAssignerRegistry.get(config.assignerStrategy());
-        PocketShapeFiller filler = chooseFiller(config.fillStrategy());
+        PocketShapeFiller filler = PocketShapeFillerRegistry.get(config.fillStrategy());
         double assignCutoff = config.assignCutoff();
 
         assigner.initialize(grid);
@@ -112,17 +111,6 @@ public final class PocketGridBuilder {
         log.info("PocketGrid built: {} kept points, {} pockets, fill={}",
                 n, pockets.size(), config.fillStrategy());
         return grid;
-    }
-
-    private static PocketShapeFiller chooseFiller(String strategy) {
-        switch (strategy) {
-            case "morph_closing": return new MorphologicalCloser();
-            case "none":          return new NoOpFiller();
-            default:
-                throw new cz.siret.prank.program.PrankException(
-                        "Unknown pocket_grid_fill strategy: '" + strategy
-                        + "'. Expected one of: morph_closing, none.");
-        }
     }
 
 }
