@@ -1,6 +1,7 @@
 package cz.siret.prank.program.routines.predict.output.grid.descriptors;
 
 import com.google.common.collect.ImmutableList;
+import cz.siret.prank.features.implementation.volsite.VolSiteAtomTable;
 import cz.siret.prank.features.implementation.volsite.VolSitePharmacophore;
 import cz.siret.prank.features.implementation.volsite.VolSitePharmacophore.AtomProps;
 import cz.siret.prank.geom.Atoms;
@@ -31,6 +32,7 @@ public final class VolsiteSmoothGridPointDescriptor implements PocketGridPointDe
     @Override public String name() { return "volsite_smooth"; }
     @Override public List<String> columnNames() { return VolSitePharmacophore.COLUMN_NAMES; }
     @Override public List<ColumnType> columnTypes() { return TYPES; }
+    @Override public boolean isPocketAgnostic() { return true; }
 
     @Override
     public double[] compute(PocketGridPointContext ctx) {
@@ -40,12 +42,13 @@ public final class VolsiteSmoothGridPointDescriptor implements PocketGridPointDe
 
         Atoms nearby = ctx.protein().getProteinAtoms().cutoutSphere(ctx.point(), cutoff);
         Atom point = ctx.point();
+        VolSiteAtomTable table = VolSiteAtomTable.forProtein(ctx.protein());
 
         double aromatic = 0d, cation = 0d, anion = 0d;
         double hydrophobic = 0d, acceptor = 0d, donor = 0d;
 
         for (Atom a : nearby) {
-            AtomProps p = VolSitePharmacophore.getAtomProperties(a);
+            AtomProps p = table.get(a);
             // Skip atoms with no pharmacophore type — they contribute nothing.
             if (!(p.aromatic || p.cation || p.anion || p.hydrophobic || p.acceptor || p.donor)) {
                 continue;

@@ -1,6 +1,7 @@
 package cz.siret.prank.program.routines.predict.output.grid.descriptors;
 
 import com.google.common.collect.ImmutableList;
+import cz.siret.prank.features.implementation.volsite.VolSiteAtomTable;
 import cz.siret.prank.features.implementation.volsite.VolSitePharmacophore;
 import cz.siret.prank.features.implementation.volsite.VolSitePharmacophore.AtomProps;
 import cz.siret.prank.geom.Atoms;
@@ -33,17 +34,19 @@ public final class VolsiteGridPointDescriptor implements PocketGridPointDescript
     @Override public String name() { return "volsite"; }
     @Override public List<String> columnNames() { return VolSitePharmacophore.COLUMN_NAMES; }
     @Override public List<ColumnType> columnTypes() { return TYPES; }
+    @Override public boolean isPocketAgnostic() { return true; }
 
     @Override
     public double[] compute(PocketGridPointContext ctx) {
         double radius = Params.INSTANCE.getPocket_grid_volsite_radius();
         Atoms nearby = ctx.protein().getProteinAtoms().cutoutSphere(ctx.point(), radius);
+        VolSiteAtomTable table = VolSiteAtomTable.forProtein(ctx.protein());
 
         boolean aromatic = false, cation = false, anion = false;
         boolean hydrophobic = false, acceptor = false, donor = false;
 
         for (Atom a : nearby) {
-            AtomProps p = VolSitePharmacophore.getAtomProperties(a);
+            AtomProps p = table.get(a);
             if (p.aromatic)    aromatic = true;
             if (p.cation)      cation = true;
             if (p.anion)       anion = true;

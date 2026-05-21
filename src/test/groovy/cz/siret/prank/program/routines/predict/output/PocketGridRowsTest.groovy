@@ -144,19 +144,56 @@ class PocketGridRowsTest {
     }
     private static final String TEST_SCALAR_NAME = '__test_scalar_descriptor__'
 
+    /** Counting fixture: increments {@link #calls} per compute, declares pocket-agnostic. */
+    @CompileStatic
+    private static final class CountingAgnosticDescriptor implements PocketGridPointDescriptor {
+        static int calls = 0
+        @Override String name() { return TEST_AGNOSTIC_NAME }
+        @Override List<String> columnNames() { return ['n'] }
+        @Override List<TableData.ColumnType> columnTypes() { return [TableData.ColumnType.DOUBLE] }
+        @Override boolean isPocketAgnostic() { return true }
+        // Returns the pointIdx as a value — lets us verify the SAME cached result lands in
+        // every row for a multi-pocket point (i.e. result is per-point, not per-row).
+        @Override double[] compute(PocketGridPointContext ctx) {
+            calls++
+            return [(double) ctx.pointIndex()] as double[]
+        }
+    }
+    private static final String TEST_AGNOSTIC_NAME = '__test_counting_agnostic__'
+
+    /** Counting fixture: declares NOT pocket-agnostic (the default). Used to confirm the
+     *  runner does NOT cache and calls compute() once per (point, pocket) row. */
+    @CompileStatic
+    private static final class CountingNonAgnosticDescriptor implements PocketGridPointDescriptor {
+        static int calls = 0
+        @Override String name() { return TEST_NON_AGNOSTIC_NAME }
+        @Override List<String> columnNames() { return ['n'] }
+        @Override List<TableData.ColumnType> columnTypes() { return [TableData.ColumnType.DOUBLE] }
+        // Inherits isPocketAgnostic() = false (the safe default).
+        @Override double[] compute(PocketGridPointContext ctx) {
+            calls++
+            return [(double) ctx.pocketRank()] as double[]
+        }
+    }
+    private static final String TEST_NON_AGNOSTIC_NAME = '__test_counting_non_agnostic__'
+
     @BeforeAll
-    static void registerScalarFixture() {
+    static void registerFixtures() {
         // Idempotent: register() overwrites by name, so re-running tests in the same JVM
-        // is safe. Name is namespaced with underscores so it can't collide with any
+        // is safe. Names are namespaced with underscores so they can't collide with any
         // user-facing CLI name.
         PocketGridPointDescriptorRegistry.register(new ScalarTestDescriptor())
+        PocketGridPointDescriptorRegistry.register(new CountingAgnosticDescriptor())
+        PocketGridPointDescriptorRegistry.register(new CountingNonAgnosticDescriptor())
     }
 
     @AfterAll
-    static void unregisterScalarFixture() {
-        // Avoid leaking the fixture into the JVM-wide registry — keeps other test
+    static void unregisterFixtures() {
+        // Avoid leaking fixtures into the JVM-wide registry — keeps other test
         // classes' assertions on knownNames() deterministic regardless of test order.
         PocketGridPointDescriptorRegistry.unregister(TEST_SCALAR_NAME)
+        PocketGridPointDescriptorRegistry.unregister(TEST_AGNOSTIC_NAME)
+        PocketGridPointDescriptorRegistry.unregister(TEST_NON_AGNOSTIC_NAME)
     }
 
     @Test
@@ -172,6 +209,73 @@ class PocketGridRowsTest {
         double[] row = data.getRow(0)
         assertEquals(5, row.length)
         assertEquals(42.0d, row[4], 0d)
+    }
+
+    @Test
+    void pocketAgnosticDescriptorComputedOncePerPointEvenWhenInMultiplePockets() {
+        // buildTwoPocketGrid has point b (pointIdx 1) in BOTH pockets 1 and 2, plus
+        // a in pocket 1 only and c in pocket 2 only — three distinct points across
+        // 4 rows. A pocket-agnostic descriptor must compute() exactly 3 times, NOT 4.
+        CountingAgnosticDescriptor.calls = 0
+        PocketGridRows data = new PocketGridRows(buildTwoPocketGrid(),
+                emptyProtein(), [] as List<Pocket>, [TEST_AGNOSTIC_NAME])
+
+        assertEquals(4, data.rowCount)
+        assertEquals(3, CountingAgnosticDescriptor.calls,
+                "pocket-agnostic descriptor must compute once per pointIdx, not per row")
+
+        // The cached result for point b (pointIdx 1) should appear identically in both
+        // rows for that point (row 1 = pocket 1 + point b, row 2 = pocket 2 + point b
+        // per the documented sort order).
+        double[] r1 = data.getRow(1); assertEquals(1.0d, r1[4], 0d)   // pointIdx 1
+        double[] r2 = data.getRow(2); assertEquals(1.0d, r2[4], 0d)   // same pointIdx 1
+    }
+
+    @Test
+    void nonPocketAgnosticDescriptorComputedOncePerRow() {
+        // Same grid, but a descriptor with the default isPocketAgnostic() = false
+        // gets called once per row (4 times), so different rows for the SAME pointIdx
+        // can carry different per-pocket values.
+        CountingNonAgnosticDescriptor.calls = 0
+        PocketGridRows data = new PocketGridRows(buildTwoPocketGrid(),
+                emptyProtein(), [] as List<Pocket>, [TEST_NON_AGNOSTIC_NAME])
+
+        assertEquals(4, data.rowCount)
+        assertEquals(4, CountingNonAgnosticDescriptor.calls,
+                "non-agnostic descriptor must compute once per (point, pocket) row")
+
+        // Point b (pointIdx 1) appears in rows 1 (pocket 1) and 2 (pocket 2); the
+        // values must reflect the per-row pocket rank, not a single cached result.
+        double[] r1 = data.getRow(1); assertEquals(1.0d, r1[4], 0d)   // pocket rank 1
+        double[] r2 = data.getRow(2); assertEquals(2.0d, r2[4], 0d)   // pocket rank 2
+    }
+
+    @Test
+    void pocketAgnosticMemoSurvivesK3Overlap() {
+        // Higher-K overlap: build a grid where ONE point is shared across 3 pockets.
+        // Memo correctness must hold for K > 2 — guards against an off-by-one where
+        // the second-pocket hit caches but the third recomputes.
+        com.carrotsearch.hppc.LongIntHashMap idx = new com.carrotsearch.hppc.LongIntHashMap()
+        Atom p0 = new Point(0d, 0d, 0d)
+        idx.put(PocketGrid.pack(0, 0, 0), 0)
+        Map<Integer, BitSet> assigned = new LinkedHashMap<>()
+        assigned.put(1, bits(0))
+        assigned.put(2, bits(0))
+        assigned.put(3, bits(0))
+        PocketGrid grid = new PocketGrid(new Atoms([p0]), 1.0d, 0d, 0d, 0d, idx, assigned)
+
+        CountingAgnosticDescriptor.calls = 0
+        PocketGridRows data = new PocketGridRows(grid,
+                emptyProtein(), [] as List<Pocket>, [TEST_AGNOSTIC_NAME])
+
+        assertEquals(3, data.rowCount, "one point × three pockets = three rows")
+        assertEquals(1, CountingAgnosticDescriptor.calls,
+                "single pointIdx in K=3 pockets must compute exactly once")
+
+        // All three rows should carry the same cached value (pointIdx 0).
+        for (int i = 0; i < 3; i++) {
+            assertEquals(0.0d, data.getRow(i)[4], 0d, "row $i")
+        }
     }
 
 }

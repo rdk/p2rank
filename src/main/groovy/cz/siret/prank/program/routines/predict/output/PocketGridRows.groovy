@@ -94,6 +94,26 @@ final class PocketGridRows implements TableData {
                     rankToPocket.put(p.rank, p)
                 }
             }
+
+            // Pocket-agnostic memo: for descriptors whose result depends only on
+            // (point, protein), cache the per-point result and reuse it when the
+            // same pointIdx appears in subsequent (multi-pocket) rows. pointIdx is
+            // dense in [0, allPoints.count) so a flat double[][] is the right
+            // primitive shape — no boxing, direct array indexing.
+            //
+            // agnosticCache[d][pointIdx] is non-null once descriptor d has been
+            // computed for that point; subsequent rows for the same pointIdx
+            // bypass d.compute() and reuse the array. Inner arrays for non-agnostic
+            // descriptors are left null (the runner always recomputes).
+            int descCount = descriptors.size()
+            boolean[] agnostic = new boolean[descCount]
+            double[][][] agnosticCache = new double[descCount][][]
+            int pointCount = grid.allPoints.count
+            for (int d = 0; d < descCount; d++) {
+                agnostic[d] = descriptors.get(d).isPocketAgnostic()
+                if (agnostic[d]) agnosticCache[d] = new double[pointCount][]
+            }
+
             this.descriptorValues = new double[rowPointIdx.length][totalDescriptorCols]
             for (int i = 0; i < rowPointIdx.length; i++) {
                 int pointIdx = rowPointIdx[i]
@@ -103,8 +123,18 @@ final class PocketGridRows implements TableData {
                 PocketGridPointContext ctx = new PocketGridPointContext(
                         pointIdx, point, pocketRank, pocket, protein, grid)
                 int col = 0
-                for (PocketGridPointDescriptor d : descriptors) {
-                    double[] vals = d.compute(ctx)
+                for (int d = 0; d < descCount; d++) {
+                    double[] vals
+                    if (agnostic[d]) {
+                        double[][] dCache = agnosticCache[d]
+                        vals = dCache[pointIdx]
+                        if (vals == null) {
+                            vals = descriptors.get(d).compute(ctx)
+                            dCache[pointIdx] = vals
+                        }
+                    } else {
+                        vals = descriptors.get(d).compute(ctx)
+                    }
                     for (int k = 0; k < vals.length; k++) {
                         descriptorValues[i][col++] = vals[k]
                     }

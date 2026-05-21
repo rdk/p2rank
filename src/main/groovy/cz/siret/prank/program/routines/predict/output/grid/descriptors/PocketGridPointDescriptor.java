@@ -38,6 +38,21 @@ public interface PocketGridPointDescriptor {
     /** Parallel to columnNames(). */
     List<ColumnType> columnTypes();
 
+    /**
+     * Declares that {@link #compute} depends only on (point, protein), not on
+     * (pocket, pocketRank). When {@code true}, the runner caches the result per
+     * point and reuses it for every pocket the point belongs to.
+     *
+     * <p><b>Contract.</b> Implementations returning {@code true} MUST NOT read
+     * {@code ctx.pocket()} or {@code ctx.pocketRank()}. Violating this produces
+     * silently incorrect output: the result computed for the first pocket the
+     * point belongs to is reused as the result for the others.
+     *
+     * <p>Default is {@code false} — the safe, conservative choice that
+     * recomputes for every (point, pocket) row.
+     */
+    default boolean isPocketAgnostic() { return false; }
+
     /** One value per columnNames() entry, same order. */
     double[] compute(PocketGridPointContext ctx);
 
