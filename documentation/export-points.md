@@ -102,7 +102,7 @@ x,y,z,chem.hydrophobic,chem.aromatic,protrusion,...
 
 - **`NaN` floats** are written verbatim as the literal token `NaN` in CSV, and as the standard IEEE-754 NaN bit pattern in Arrow / Parquet. pandas / pyarrow / numpy parse this back as NaN without special handling.
 - **Infinities** are written as `∞` / `-∞` (UTF-8) in CSV — emit them only if your downstream tooling can read those tokens.
-- **`NaN` in INT columns** (e.g. `pocket`) is silently coerced to `0` at write time. Treat this as a bug-class signal: features should never produce non-finite values for integer columns.
+- **Non-finite or out-of-range values in INT columns** (e.g. `pocket`) raise an `ArithmeticException` at write time. Features should never produce non-finite values for integer columns; the strict check surfaces such bugs early.
 
 ## Example Analysis
 

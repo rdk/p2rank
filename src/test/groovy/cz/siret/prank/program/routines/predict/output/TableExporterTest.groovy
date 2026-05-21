@@ -203,6 +203,30 @@ class TableExporterTest {
     }
 
     @Test
+    void intColumnRejectsNaN() {
+        def data = ArrayTableData.ofWithInts(
+                ["score", "pocket"],
+                [row(0.5d, Double.NaN)],
+                1)
+        def err = assertThrows(ArithmeticException) {
+            TableExporter.export(data, "$tempDir/bad.csv", "csv")
+        }
+        assertTrue(err.message.contains("pocket"),
+                "exception should name the offending column; was: ${err.message}")
+    }
+
+    @Test
+    void intColumnRejectsOverflow() {
+        def data = ArrayTableData.ofWithInts(
+                ["score", "pocket"],
+                [row(0.5d, 1e12d)],   // 10^12 > Integer.MAX_VALUE (~2.15e9)
+                1)
+        assertThrows(ArithmeticException) {
+            TableExporter.export(data, "$tempDir/big.parquet", "parquet")
+        }
+    }
+
+    @Test
     void parquetIntColumnIsInt32() {
         def data = ArrayTableData.ofWithInts(
                 ["score", "pocket"],

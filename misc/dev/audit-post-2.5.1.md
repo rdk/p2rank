@@ -112,10 +112,6 @@ may drift as the surrounding files evolve.
   intentional; README's "tested up to Java 25" wording will refresh at the
   2.6 release.
 
-- **`PocketDescriptor.java:29-31` "fits in i32" contract** is unenforced; a
-  descriptor producing `1e20` for an INT column silently emits
-  `Integer.MAX_VALUE` or wraps. Add `Math.toIntExact` at the writer.
-
 - **`PointExportData.create()` doc says "(for predict mode)"**
   (`PointExportData.groovy:141`) but it's also used by `rescore`
   (`ModelBasedRescorer.groovy:97,168`).
@@ -192,14 +188,9 @@ only.
 
 ---
 
-## Top-2 next steps
+## Top-1 next step
 
-Real semantic bugs still latent, in priority order:
-
-1. **`PocketDescriptor.java` i32 contract** — add `Math.toIntExact` at the INT
-   writer (`TableExporter.groovy:142`). Turns silent overflow into a hard
-   error at write time.
-2. **`VoxelHashAssigner` cell-prune lower bound** — kdtree and voxel-hash
+1. **`VoxelHashAssigner` cell-prune lower bound** — kdtree and voxel-hash
    assigners should produce identical raw shells but don't (off-lattice query
    points hit the gap). Extend `bothAssignersProduceIdenticalRawShells` with
    an off-lattice point to lock in the regression.

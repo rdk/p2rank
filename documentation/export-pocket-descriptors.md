@@ -67,9 +67,11 @@ prefixed with `"{name}."` (e.g. `principal_moments.lambda1`,
   IEEE-754 NaN bit pattern in Arrow / Parquet. pandas / pyarrow / numpy parse
   this back as NaN without special handling.
 - **Infinities** are written as `∞` / `-∞` (UTF-8) in CSV.
-- **`NaN` in INT columns** (`rank`, `num_residues`, `num_surface_atoms`,
-  `num_grid_points`) is silently coerced to `0` at write time. Descriptors
-  should never produce non-finite values for integer columns.
+- **Non-finite or out-of-range values in INT columns** (`rank`,
+  `num_residues`, `num_surface_atoms`, `num_grid_points`) raise an
+  `ArithmeticException` at write time. Descriptors must never produce
+  non-finite values for integer columns; the strict check surfaces such
+  bugs early.
 
 ## Descriptor catalog
 

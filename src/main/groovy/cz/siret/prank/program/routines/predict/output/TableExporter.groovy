@@ -139,7 +139,7 @@ class TableExporter {
                             writer.print(quoteCsv(data.getString(i, c)))
                             break
                         case ColumnType.INT:
-                            writer.print(Long.toString((long) row[c]))
+                            writer.print(Integer.toString(toIntStrict(row[c], header.get(c))))
                             break
                         default:
                             writer.print(formatDouble(row[c]))
@@ -219,8 +219,9 @@ class TableExporter {
                 case ColumnType.INT:
                     double[] intColumn = data.getColumn(c)
                     IntVector intVector = (IntVector) root.getVector(header.get(c))
+                    String intColName = header.get(c)
                     for (int i = 0; i < rowCount; i++) {
-                        intVector.setSafe(i, (int) intColumn[i])
+                        intVector.setSafe(i, toIntStrict(intColumn[i], intColName))
                     }
                     break
                 default:
@@ -298,7 +299,8 @@ class TableExporter {
                         break
                     case ColumnType.INT:
                         if (row == null) row = data.getRow(rowIndex)
-                        valueWriter.write(header.get(i), Integer.valueOf((int) row[i]))
+                        valueWriter.write(header.get(i),
+                                Integer.valueOf(toIntStrict(row[i], header.get(i))))
                         break
                     default:
                         if (row == null) row = data.getRow(rowIndex)
@@ -339,6 +341,24 @@ class TableExporter {
 
     private static String formatDouble(double d) {
         return format(d, CSV_DECIMAL_PLACES)
+    }
+
+    /**
+     * Narrow an INT-column {@code double} value to {@code int}. Enforces the
+     * "INT columns must fit in i32" contract documented on
+     * {@code PocketDescriptor} and {@code PocketGridPointDescriptor}: rejects
+     * NaN, infinities, and any finite value outside the {@code int} range.
+     * Without this, NaN silently became 0 and overflow wrapped silently to
+     * {@code Integer.MAX_VALUE} / {@code MIN_VALUE} — the export docs now warn
+     * about that quirk but the code didn't enforce it.
+     */
+    private static int toIntStrict(double v, String columnName) {
+        if (Double.isNaN(v) || Double.isInfinite(v)) {
+            throw new ArithmeticException(
+                    "INT column '${columnName}' got non-finite value: ${v}")
+        }
+        long asLong = (long) v
+        return Math.toIntExact(asLong)
     }
 
 }
