@@ -12,17 +12,6 @@ may drift as the surrounding files evolve.
 
 ## Real bugs (conditional / non-default paths)
 
-- **`VoxelHashAssigner` cell-prune lower bound is too aggressive.**
-  `VoxelHashAssigner.java:58` uses `(di²+dj²+dk²)·spacing²` as a lower bound
-  that ignores the sub-cell offset of `q`. Concrete miss with shipping defaults:
-  `q=(0.59,0,0)`, `spacing=1.2`, `cutoff=2.5` skips a cell whose true distance
-  is ~2.17 Å. Silently breaks the "both assigners agree" invariant documented
-  on `PocketAssigner.java:23-26`. Existing test
-  (`PocketGridBuilderTest.groovy:158`) misses it because its single SAS point
-  lands exactly on a lattice center. Fix: correct the lower bound
-  (`max(0, |di|*spacing − spacing/2)` per axis), or drop the prune. Only hits
-  with `assigner=voxel_hash` (default is `kdtree`).
-
 - **Coulomb plumbing is dead code.** `EnergyCalculator.getAtomCharge` always
   returns 0 (`EnergyCalculator.groovy:351-357`). `enableCoulomb`,
   `dielectricConstant`, `coulombConstant` are structurally inert.
@@ -188,9 +177,9 @@ only.
 
 ---
 
-## Top-1 next step
+## Top next steps
 
-1. **`VoxelHashAssigner` cell-prune lower bound** — kdtree and voxel-hash
-   assigners should produce identical raw shells but don't (off-lattice query
-   points hit the gap). Extend `bothAssignersProduceIdenticalRawShells` with
-   an off-lattice point to lock in the regression.
+All Top-N entries from the 2026-05-22 sweep have shipped. Remaining items
+are either deferred design calls (Coulomb wiring, aromatic-cap semantics,
+Pocketeer centroid policy) or low-value perf/comment hygiene; pick from
+the lists above as the surrounding code is touched.

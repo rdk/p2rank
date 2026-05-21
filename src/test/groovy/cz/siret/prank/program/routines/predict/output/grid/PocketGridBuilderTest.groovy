@@ -181,6 +181,32 @@ class PocketGridBuilderTest {
     }
 
     @Test
+    void bothAssignersAgreeOnOffLatticeQueryPoint() {
+        // Regression: VoxelHashAssigner used (di² + dj² + dk²) × spacing² as the
+        // pre-prune lower bound — too tight whenever q sat off-lattice (the
+        // common case). Pick spacing=1.2, cutoff=2.5, and a SAS point at
+        // (0.59,0,0) so that the cell at (di=2,dj=1,dk=0) — world dist ≈ 2.17 Å
+        // from q — is correctly in-range but the broken prune used to skip it.
+        Atom anchor = carbonAt(0d, 0d, 0d)
+        Atom shell  = carbonAt(5d, 0d, 0d)
+        Protein protein = proteinWith(new Atoms([anchor, shell]))
+
+        TestPocket pocket = new TestPocket()
+        pocket.rank = 1
+        pocket.sasPoints = sasAt(0.59d, 0d, 0d)
+
+        PocketGridConfig kd = new PocketGridConfig(
+                1.2d, 5.0d, 0.5d, 2.5d, 'kdtree',     'none', 3, 5)
+        PocketGridConfig vh = new PocketGridConfig(
+                1.2d, 5.0d, 0.5d, 2.5d, 'voxel_hash', 'none', 3, 5)
+
+        BitSet kdShell = PocketGridBuilder.build(protein, [pocket] as List<Pocket>, kd).indicesForPocket(1)
+        BitSet vhShell = PocketGridBuilder.build(protein, [pocket] as List<Pocket>, vh).indicesForPocket(1)
+        assertFalse(kdShell.empty)
+        assertEquals(kdShell, vhShell, "off-lattice query: voxel-hash must agree with kdtree")
+    }
+
+    @Test
     void emptySasPointsYieldsEmptyAssignment() {
         // Edge case: a pocket without SAS points contributes nothing to the lattice box
         // and gets an empty assignment. The builder must not NPE.

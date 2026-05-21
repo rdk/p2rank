@@ -40,7 +40,6 @@ public final class VoxelHashAssigner implements PocketAssigner {
         // being beyond the spherical cutoff).
         int cellsRadius = (int) Math.ceil(assignCutoff / spacing);
         double cutoffSqr = assignCutoff * assignCutoff;
-        double spacingSqr = spacing * spacing;
 
         for (Atom q : inputPoints) {
             double sx = q.getX();
@@ -53,9 +52,16 @@ public final class VoxelHashAssigner implements PocketAssigner {
             for (int di = -cellsRadius; di <= cellsRadius; di++) {
                 for (int dj = -cellsRadius; dj <= cellsRadius; dj++) {
                     for (int dk = -cellsRadius; dk <= cellsRadius; dk++) {
-                        // Euclidean prune in lattice space — drop cells whose minimum
-                        // possible world-space distance already exceeds the cutoff.
-                        if ((di * di + dj * dj + dk * dk) * spacingSqr > cutoffSqr) continue;
+                        // Euclidean prune — lower bound on world-space distance from q
+                        // to the lattice point at (cx+di, cy+dj, cz+dk). q sits at most
+                        // spacing/2 away from its containing lattice point (cx,cy,cz),
+                        // so the lattice-point separation |di|*spacing along each axis
+                        // can be tightened down by spacing/2 in the worst case before
+                        // becoming a valid lower bound.
+                        double ldi = Math.max(0d, (Math.abs(di) - 0.5d)) * spacing;
+                        double ldj = Math.max(0d, (Math.abs(dj) - 0.5d)) * spacing;
+                        double ldk = Math.max(0d, (Math.abs(dk) - 0.5d)) * spacing;
+                        if (ldi * ldi + ldj * ldj + ldk * ldk > cutoffSqr) continue;
 
                         int idx = latticeIndex.getOrDefault(
                                 PocketGrid.pack(cx + di, cy + dj, cz + dk), PocketGrid.NOT_FOUND);
