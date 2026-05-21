@@ -1,7 +1,7 @@
 # Training residue and pocket score transformers
 
 As part of prediction output, P2Rank generates raw scores from the interval [0,∞) for all pockets and residues.
-The raw score is a value in `score` column in `*_pockets.csv` and `*_residues.csv`.
+The raw score is a value in `score` column in `*_predictions.csv` and `*_residues.csv`.
 Additionally, those files contain columns `probability` and `zscore` which contain raw scores transformed by pre-trained transformers.
 
 * `probability`: raw score [0,∞) ->  [0,1]

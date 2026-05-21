@@ -187,7 +187,7 @@ cofactors describe surface, not targets.
 
 ## Distant Cofactors
 
-By default, P2Rank logs an `INFO` warning when a matched cofactor's centre
+By default, P2Rank logs a `WARN` when a matched cofactor's centre
 of mass is more than `15 Å` from the nearest protein atom. This usually
 means the cofactor is a crystallization artifact or a free molecule in
 solvent, and you may want to exclude it.
@@ -386,7 +386,7 @@ prediction target.
 ### `chains` column / `-chains`
 
 Chain reduction runs before cofactor matching. A cofactor on an excluded
-chain is simply not found. P2Rank logs an `INFO` line when it detects that
+chain is simply not found. P2Rank logs a `WARN` line when it detects that
 the **name** of a missing cofactor exists in the unreduced structure
 (name-only check, see Known Limitations).
 

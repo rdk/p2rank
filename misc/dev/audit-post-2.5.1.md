@@ -121,7 +121,8 @@ focused cleanups.
 
 - **Sort-direction comment in `PrincipalMomentsDescriptor.java:96-101`** says
   "Sort descending." while `Arrays.sort` is ascending. Downstream indexing
-  compensates; comment is misleading.
+  compensates. **Not wanted** (decision 2026-05-21) — current behaviour is
+  correct, the comment ambiguity is acceptable.
 
 - **Cofactor case-sensitivity mismatch.** `CofactorHandler.parseOne`
   (`CofactorHandler.groovy:325-335`) uppercases; `Dataset.LigandDefinition.parse`
@@ -181,53 +182,31 @@ focused cleanups.
 - **README badge stuck at 2.5.1.** `README.md:11` vs `build.gradle:25`
   (`2.6.0-dev.9`). Typo `./make-disro.sh` at `README.md:225`.
 
-- **Removed flags/commands still referenced in docs:**
-  - `documentation/random-examples.md:7,12,17,22` — singular `-conservation_dir`
-    (removed in 2.2, renamed to `-conservation_dirs`).
-  - `documentation/hidden-commands.md:65` — `fasta-mask` (actual: `fasta-masked`).
-  - `documentation/hidden-commands.md:83` — `analyze reduce-to-chains`
-    (actual: `transform reduce-to-chains`).
-  - `documentation/training-score-transformers.md:4` — `*_pockets.csv` (actual:
-    `*_predictions.csv`).
-
-- **`src/main/resources/help.txt` is severely outdated.** Lists only 5 commands;
-  `Main.groovy:621-645` registers 12+. Typos `dafault`, `comamnd`. Doesn't
-  mention any 2.6 loader rescorers despite `documentation/rescoring.md`
-  describing 10.
-
-- **`distro/config/default.groovy:128-130`** comments `ignore_het_groups` as
-  "considered cofactor". After `-cofactors` shipped in 2.6, this is actively
-  misleading. Same comment in `distro/config/default_rescore.groovy:120-122`.
-
-- **`distro/config/default.groovy` is missing new params:**
-  `cofactors`, `cofactor_max_protein_dist`, `aa_mapping`, `vis_highlight_cofactors`.
-
-- **`documentation/cofactors.md:190,389`** say "logs an INFO warning"; code
-  logs `WARN` (`CofactorHandler.groovy:222,261`).
-  `documentation/dev/cofactors.md:36,39` also describe R11/R14 as "INFO"
-  while line 69 of the same file documents the promotion to WARN.
+- **`distro/config/default_rescore.groovy:120-122`** still has the misleading
+  "considered cofactor" wording on `ignore_het_groups` (the `default.groovy`
+  copy was fixed in the 2026-05-21 cleanup; the rescore config copy still
+  needs the same edit).
 
 - **`Params.groovy:536-537`** doc on cofactor matching is stale (claims
   case-sensitive — actually normalized).
 
-- **`feature-setup.md:8`** still says "P2Rank version: 2.4"; collapsibles
-  hardcode `P2Rank 2.3-dev.1`. Line 120 says "providing custom tables is not
-  implemented yet (as for P2Rank 2.4.2)" while the very next bullet describes
-  the `csv` feature that does this.
+- **`documentation/dev/cofactors.md:36,39`** describe R11/R14 as "INFO"
+  while line 69 of the same file documents the promotion to WARN — internal
+  inconsistency in the dev doc.
 
-- **`feature-setup.md:125`** typo `{peorein_file_name}`.
+- **CI matrix is `17,21,25,26` only** (`.github/workflows/develop.yml:23`) and
+  distribution switched temurin → oracle (commit `1997ab94`). **Not wanted**
+  (decision 2026-05-21) — Java-version coverage and CI distribution choice
+  are intentional; README's "tested up to Java 25" wording will refresh at
+  the 2.6 release.
 
-- **`documentation/aa-mapping.md:21`** typo `ommited`, extra space before comma.
+- **`PocketDescriptor.java:29-31` "fits in i32" contract** is unenforced;
+  a descriptor producing `1e20` for an INT column silently emits
+  `Integer.MAX_VALUE` or wraps. Add `Math.toIntExact` at the writer.
 
-- **`documentation/readme.md`** index misses `cofactors.md`, `conservation.md`,
-  `export-pocket-grid.md`, `export-pocket-descriptors.md`.
-
-- **CI matrix is `17,21,25,26` only** (`.github/workflows/develop.yml:23`).
-  README claims "Java 17 or later (tested up to Java 25)"; 18–20/22/23/24 not
-  exercised; "tested up to Java 25" lags the now-present 26.
-
-- **Distribution switched temurin → oracle** (`develop.yml:31`, commit
-  `1997ab94`). No doc note explains the choice.
+- **`PointExportData.create()` doc says "(for predict mode)"**
+  (`PointExportData.groovy:141`) but it's also used by `rescore`
+  (`ModelBasedRescorer.groovy:97,168`).
 
 - **`PocketDescriptor.java:29-31` "fits in i32" contract** is unenforced;
   a descriptor producing `1e20` for an INT column silently emits

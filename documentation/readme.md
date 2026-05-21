@@ -9,7 +9,11 @@ Note that the coverage is spotty and incomplete -- not all features and workflow
 |------|-------------|
 | [rescoring.md](rescoring.md) | Rescoring predictions from other pocket prediction methods (Fpocket, Pocketeer, etc.) |
 | [export-points.md](export-points.md) | Exporting SAS points with feature vectors and predicted ligandability scores |
+| [export-pocket-grid.md](export-pocket-grid.md) | Exporting per-pocket 3D grid points (PyMOL/ChimeraX-ready) |
+| [export-pocket-descriptors.md](export-pocket-descriptors.md) | Exporting per-pocket scalar descriptors (volume, sphericity, principal moments, ...) |
+| [cofactors.md](cofactors.md) | Treating selected HETATM groups as part of the protein surface |
 | [aa-mapping.md](aa-mapping.md) | Non-canonical amino acid residue mapping to standard residues |
+| [conservation.md](conservation.md) | Conservation-aware prediction (HMM-based) |
 | [hidden-commands.md](hidden-commands.md) | Miscellaneous hidden commands and analysis tools |
 | [random-examples.md](random-examples.md) | Assorted command-line examples for prediction and evaluation |
 

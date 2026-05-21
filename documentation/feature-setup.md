@@ -4,8 +4,6 @@
 This file describes feature vector configuration and provides introduction to adding new features.
 Useful only for training and evaluating new models.
 
-P2Rank version: 2.4
-
 ## Introduction
 
 P2Rank is based on predicting scores of SAS points that are described by feature vectors.
@@ -48,8 +46,6 @@ To check which features are enabled for a particular configuration run `print fe
   
 ```bash
 $ ./prank print features
-----------------------------------------------------------------------------------------------
- P2Rank 2.3-dev.1
 ----------------------------------------------------------------------------------------------
 
 Effectively enabled features:
@@ -117,12 +113,13 @@ If you want to add new features that are not implemented in P2Rank you have 3 op
         * atom types are: (ALA.C,ALA.CA,ALA.CB,...)
     * useful only if the values are the same for all proteins in the dataset (for example: hydrophobicity index of amino acids).
     * see example tables: `aa-propensities.csv` and `atomic-properties.csv`
-    * NOTE: providing custom tables is not implemented yet (as for P2Rank 2.4.2)
+    * NOTE: custom tables must be placed under `src/main/resources/tables/` and require a rebuild;
+      there is no CLI/config knob to point at an external path. For per-protein values, use the `csv` feature instead.
 * Use `csv` feature
     * allows defining values for every protein residue and/or every protein atom (for each protein separately) via external csv files
     * disadvantage: csv files must be manually calculated for each dataset  
     * Configuration:
-        * looks for csv files named `{peorein_file_name}.csv` in directories defined in `-feat_csv_directories` parameter
+        * looks for csv files named `{protein_file_name}.csv` in directories defined in `-feat_csv_directories` parameter
         * enabled value columns from csv files must be declared in `-feat_csv_columns`
         * `-feat_csv_ignore_missing` allows ignoring missing csv files, columns and rows
     * _TODO_: add more detailed documentation for csv feature
@@ -165,8 +162,6 @@ Further examples:
   
   ```bash
 $ ./prank print features -features '(chem,volsite,bfactor)' -feature_filters '(chem.atoms,volsite.*,bfactor.*)'
-----------------------------------------------------------------------------------------------
- P2Rank 2.3-dev.1
 ----------------------------------------------------------------------------------------------
 
 Effectively enabled features (after filtering):

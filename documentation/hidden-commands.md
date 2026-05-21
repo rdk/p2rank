@@ -62,7 +62,7 @@ Analyze a dataset with an explicitly specified residue labeling.
 ## Export chains to FASTA
                            
 `fasta-raw` exports residue codes as P2Rank sees them.
-`fasta-mask` will transform any possible non-letter code (such as `_` or `?`) to `X`.
+`fasta-masked` will transform any possible non-letter code (such as `_` or `?`) to `X`.
 
 ~~~sh
 # run in P2Rank root directory (distro in repo)
@@ -80,7 +80,7 @@ Analyze a dataset with an explicitly specified residue labeling.
 ## Reduce structure to chains
 
 ~~~sh
-./prank.sh analyze reduce-to-chains -f <structure_file> -chains <chain_names> -out_format <format_file_extension> -out_file <file_name>
+./prank.sh transform reduce-to-chains -f <structure_file> -chains <chain_names> -out_format <format_file_extension> -out_file <file_name>
 ~~~
 * `-f <>` required, structure fie in one of the formats `pdb|pdb.gz|cif|cif.gz`
 * `-chains` required, coma separated list of chain names, wildcards: `keep`, `all`

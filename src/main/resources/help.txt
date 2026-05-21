@@ -4,20 +4,33 @@
 
   commands:
 
-     predict       ... predict pockets (P2RANK)
-     eval-predict  ... evaluate model on a dataset with known ligands
-     rescore       ... rescore previously detected pockets (PRANK)
-     eval-rescore  ... evaluate rescoring model on a dataset with known ligands
-     export-points ... export SAS points with feature vectors (no model needed)
+     predict             ... predict pockets (P2RANK)
+     eval-predict        ... evaluate prediction model on a dataset with known ligands
+     rescore             ... rescore previously detected pockets (PRANK)
+     fpocket-rescore     ... run fpocket and rescore its pockets in one step
+     eval-rescore        ... evaluate rescoring model on a dataset with known ligands
+     export-points       ... export SAS points with feature vectors (no model needed)
+     analyze             ... miscellaneous analysis subcommands (residues, propensities, cofactors, ...)
+     transform           ... structure-transformation subcommands (e.g. reduce-to-chains)
+     print               ... print model info, feature list, etc.
+     preload-conservation ... download/preload conservation scores for a dataset
+     crossval            ... train/evaluate models with crossvalidation (advanced)
+     eval                ... generic evaluation (advanced)
+     bench               ... internal microbenchmarks (advanced)
+
+     Training-related experiment commands (traineval, ploop, hopt, ...) are
+     resolved via the experiment runner; see documentation/training-tutorial.md.
 
   datasets:
 
-        Dataset files for prediction should contain list of pdb files.
-        Dataset files for rescoring should contain list of protein files
-        that are outputs of one of the supported pocket prediction methods
-        (fpocket, ConCavity). In datasets for evaluation and training they
-        must be paired with liganated-proteins (correct solutions).
-        See example datasets in test_data/ directory.
+        Dataset files for prediction should contain a list of protein files
+        (.pdb, .pdb.gz, .cif, .cif.gz, .bcif, .bcif.gz, .cif.zst).
+        Dataset files for rescoring should contain protein files that are
+        outputs of one of the supported pocket prediction methods (fpocket,
+        ConCavity, PUResNet, Pocketeer, SwinSite, Seq2Pocket, and others -
+        see documentation/rescoring.md). In datasets for evaluation and
+        training they must be paired with liganated proteins (correct
+        solutions). See example datasets in test_data/ directory.
 
   options:
 
@@ -29,14 +42,14 @@
      -m <path>   use previously trained classifier file relative to models/ directory
 
      -o <path>   specify output directory (relative to working dir)
-                 default: test_output/<comamnd>_<dataset>
+                 default: test_output/<command>_<dataset>
 
   other parameters:
 
      -threads <int>         number of execution threads
-                            dafault: num. of processors + 1
+                            default: num. of processors + 1
 
-     -visualizations <0/1>  produce PyMOL visualizations
+     -visualizations <0/1>  produce PyMOL/ChimeraX visualizations
                             default: true
 
      -<param> <value>       for full list of parameters see config/default.groovy
