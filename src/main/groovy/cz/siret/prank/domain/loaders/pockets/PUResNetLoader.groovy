@@ -9,6 +9,7 @@ import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.Sutils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+import org.biojava.nbio.structure.Atom
 import org.biojava.nbio.structure.Structure
 
 import javax.annotation.Nullable
@@ -41,6 +42,13 @@ class PUResNetLoader extends PredictionLoader implements Parametrized {
 
         log.info('Found {} pocket files: {}', pocketFiles.size(), pocketFiles*.name)
 
+        // SAS points come from queryProtein.accessibleSurface; ensure it's computed
+        // before the per-pocket loop. Build the PDB-serial index on proteinAtoms so
+        // the per-atom re-link below uses O(1) lookups. Both calls are idempotent.
+        queryProtein.calcuateSurfaceAndExposedAtoms()
+        queryProtein.proteinAtoms.withIndex()
+        double sasCutoff = params.getSasCutoffDist()
+
         List<PUResNetPocket> res = new ArrayList<>()
         int i = 1
         for (File pocketFile : pocketFiles) {
@@ -53,10 +61,26 @@ class PUResNetLoader extends PredictionLoader implements Parametrized {
             PUResNetPocket pocket = new PUResNetPocket(pocketAtoms)
             pocket.rank = i++
             pocket.name = Sutils.removeSuffix(Futils.baseName(pocketFile.name), '.pdb')
-            // pocketAtoms come from the sub-PDB; treat the full set as surface atoms
-            // (not all are strictly on the surface, but PUResNet output doesn't distinguish).
-            pocket.surfaceAtoms = pocketAtoms
-            pocket.centroid = pocketAtoms.getCentroid()
+
+            // Re-link to queryProtein atoms by PDB serial. PUResNet's sub-PDB preserves
+            // source serials, so identity-based downstream ops (DSO/DSWO overlap,
+            // BindingSite intersection) work the same way they do for FPocketLoader.
+            Atoms surfaceAtoms = new Atoms()
+            int dropped = 0
+            for (Atom a : pocketAtoms) {
+                Atom linked = queryProtein.proteinAtoms.getByID(a.PDBserial)
+                if (linked != null) surfaceAtoms.add(linked)
+                else dropped++
+            }
+            if (dropped > 0) {
+                log.warn('Pocket {}: {} atom(s) not re-linked against queryProtein (serial mismatch); using best-effort surface set',
+                        pocket.name, dropped)
+            }
+            if (surfaceAtoms.empty) surfaceAtoms = pocketAtoms
+
+            pocket.surfaceAtoms = surfaceAtoms
+            pocket.centroid = surfaceAtoms.getCentroid()
+            pocket.sasPoints = queryProtein.accessibleSurface.points.cutoutShell(surfaceAtoms, sasCutoff)
 
             res.add(pocket)
         }
