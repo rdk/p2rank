@@ -1,11 +1,16 @@
 #!/usr/bin/env bash
 #
-# A/B benchmark for the pocket-grid + pocket-descriptors features.
+# A/B/C benchmark for the pocket-grid + pocket-descriptors features.
 #
-# Runs the SAME workload twice — once with both features ON, once with both
-# OFF — and reports the delta. That delta is the user-visible cost of the
-# features, which is the right number for tracking optimizations and
-# regressions over p2rank versions.
+# Runs the SAME workload three times and reports the deltas:
+#   A: all OFF                      (-export_pocket_grid 0  -export_pocket_descriptors 0)
+#   B: pocket descriptors ON only   (-export_pocket_grid 0  -export_pocket_descriptors 1)
+#   C: all ON                       (-export_pocket_grid 1  -export_pocket_descriptors 1)
+#
+# Deltas isolate the cost of each feature on top of the baseline:
+#   B-A: cost of pocket descriptors alone
+#   C-B: marginal cost of adding pocket-grid export on top of descriptors
+#   C-A: total cost of having both features enabled
 #
 # Pair with:
 #   - `./prank.sh bench pocket_grid <ds>` for the pure-build single-threaded
@@ -25,8 +30,8 @@
 #   --reps N            timed reps per config (default 3, plus one untimed warmup).
 #                       Use higher N for noisy environments; median is reported.
 #   --threads N         override -threads (default: prank's own default).
-#   --profile [jfr]     enable Java Flight Recorder for both runs; produces
-#                       jfr-A-<ts>.jfr and jfr-B-<ts>.jfr in the cwd.
+#   --profile [jfr]     enable Java Flight Recorder for all runs; produces
+#                       jfr-{A,B,C}-<ts>-rep<N>.jfr files in the cwd.
 #                       Open with JDK Mission Control or `jfr print`.
 #   --csv [FILE]        append a one-line summary to FILE (default
 #                       misc/test-scripts/bench-results.csv). Columns documented
@@ -96,19 +101,49 @@ done
 TARGET="${TARGET:-$DEFAULT_TARGET}"
 
 # --- Resolve target mode (file vs dataset) ---
-if [ -f "$TARGET" ]; then
-    MODE="file"
-    PRANK_ARGS=("predict" "-f" "$TARGET")
-    LABEL="$(basename "$TARGET")"
-else
-    # Strip trailing .ds; prank accepts either form.
-    MODE="dataset"
-    DATASET="${TARGET%.ds}"
-    PRANK_ARGS=("predict" "${DATASET}.ds")
-    LABEL="$DATASET"
-fi
+# Extension wins over file-existence: a `.ds` path is a dataset whether or not
+# the file exists at the current cwd (prank resolves dataset names against its
+# own dataset directories too). Structure files (.pdb/.cif/.bcif) go through
+# `-f`. Anything else is treated as a dataset name and let prank's resolver
+# sort it out.
+case "$TARGET" in
+    *.pdb|*.pdb.gz|*.cif|*.cif.gz|*.bcif|*.bcif.gz|*.cif.zst)
+        MODE="file"
+        PRANK_ARGS=("predict" "-f" "$TARGET")
+        LABEL="$(basename "$TARGET")"
+        ;;
+    *)
+        MODE="dataset"
+        DATASET="${TARGET%.ds}"
+        PRANK_ARGS=("predict" "${DATASET}.ds")
+        LABEL="$(basename "$DATASET")"
+        ;;
+esac
 
 [ -n "$THREADS" ] && PRANK_ARGS+=("-threads" "$THREADS")
+
+# --- Discover all registered descriptors so config A exercises everything ---
+# Source-tree grep against the descriptor source dirs — when someone registers
+# a new descriptor in the registry, this picks it up automatically without a
+# script update. Both lists are passed to both configs; config B's
+# export-flags are off so the lists are inert (nothing computes), keeping the
+# command-line shape symmetric between A and B.
+discover_names() {
+    local dir="$1"
+    grep -hE 'name\(\) \{ return "' "$dir"/*.java 2>/dev/null \
+        | sed -E 's/.*return "([^"]+)".*/\1/' \
+        | sort -u | paste -sd, -
+}
+POCKET_DESC=$(discover_names \
+    src/main/groovy/cz/siret/prank/program/routines/predict/output/descriptors)
+GRID_DESC=$(discover_names \
+    src/main/groovy/cz/siret/prank/program/routines/predict/output/grid/descriptors)
+if [ -z "$POCKET_DESC" ] || [ -z "$GRID_DESC" ]; then
+    echo "Could not discover descriptors — are you running from the repo root?" >&2
+    exit 1
+fi
+PRANK_ARGS+=("-pocket_descriptors" "($POCKET_DESC)"
+             "-pocket_grid_point_descriptors" "($GRID_DESC)")
 
 # --- Captured environment ---
 GIT_REV="$(git rev-parse --short HEAD 2>/dev/null || echo 'unknown')"
@@ -128,23 +163,27 @@ cat <<EOF
 ============================================================
  pocket-grid features A/B bench
 
- target:     ${LABEL}   (${MODE})
- threads:    ${THREADS:-(prank default)}
- reps:       ${REPS} timed + 1 warmup
- profile:    ${PROFILE:-off}
- git rev:    ${GIT_REV}${GIT_DIRTY}
- p2rank ver: ${P2RANK_VER}
- java:       ${JAVA_VER}
- host:       ${HOST}
- date (UTC): ${DATE_ISO}
+ target:      ${LABEL}   (${MODE})
+ threads:     ${THREADS:-(prank default)}
+ reps:        ${REPS} timed + 1 warmup
+ profile:     ${PROFILE:-off}
+ git rev:     ${GIT_REV}${GIT_DIRTY}
+ p2rank ver:  ${P2RANK_VER}
+ java:        ${JAVA_VER}
+ host:        ${HOST}
+ date (UTC):  ${DATE_ISO}
+
+ pocket desc: (${POCKET_DESC})
+ grid desc:   (${GRID_DESC})
 ============================================================
 EOF
 
 # --- Worker: run prank once, return wall-time ms via stdout ---
 run_one() {
-    local cfg="$1"      # "A" or "B"
-    local on_flag="$2"  # "1" or "0"
-    local rep="$3"      # rep number (0 = warmup)
+    local cfg="$1"        # "A" | "B" | "C"
+    local grid_flag="$2"  # "1" or "0" for -export_pocket_grid
+    local desc_flag="$3"  # "1" or "0" for -export_pocket_descriptors
+    local rep="$4"        # rep number (0 = warmup)
     local out_subdir="${OUT_BASE}/${cfg}/rep${rep}"
 
     local jfr_arg=""
@@ -159,8 +198,8 @@ run_one() {
     local start_ns end_ns
     start_ns=$(date +%s%N)
     JAVA_OPTS="${JAVA_OPTS:-} ${jfr_arg}" ./prank.sh "${PRANK_ARGS[@]}" \
-        -export_pocket_grid "${on_flag}" \
-        -export_pocket_descriptors "${on_flag}" \
+        -export_pocket_grid "${grid_flag}" \
+        -export_pocket_descriptors "${desc_flag}" \
         -visualizations 0 \
         -out_subdir "${out_subdir}" \
         > "${out_subdir}.log" 2>&1
@@ -193,56 +232,76 @@ median() {
     '
 }
 
-# --- A/B loop ---
+# --- A/B/C loop ---
 mkdir -p "${OUT_BASE}"
-declare -a A_TIMES B_TIMES
+declare -a A_TIMES B_TIMES C_TIMES
 
 run_config() {
     local cfg="$1"
-    local on="$2"
-    local -n times_arr="$3"
+    local grid="$2"
+    local desc="$3"
+    local label="$4"
+    local -n times_arr="$5"
 
-    [ "$QUIET" -eq 0 ] && echo "Config $cfg (features=${on}):"
+    [ "$QUIET" -eq 0 ] && echo "Config $cfg (${label}):"
     # Warmup (untimed)
-    if ! run_one "$cfg" "$on" 0 >/dev/null; then exit 1; fi
+    if ! run_one "$cfg" "$grid" "$desc" 0 >/dev/null; then exit 1; fi
     [ "$QUIET" -eq 0 ] && echo "  warmup: done"
 
     for r in $(seq 1 "$REPS"); do
         local ms
-        if ! ms=$(run_one "$cfg" "$on" "$r"); then exit 1; fi
+        if ! ms=$(run_one "$cfg" "$grid" "$desc" "$r"); then exit 1; fi
         times_arr+=("$ms")
         [ "$QUIET" -eq 0 ] && printf '  rep %d: %s ms\n' "$r" "$ms"
     done
     echo
 }
 
-run_config A 1 A_TIMES
-run_config B 0 B_TIMES
+run_config A 0 0 "all OFF"          A_TIMES
+run_config B 0 1 "descriptors only" B_TIMES
+run_config C 1 1 "all ON"           C_TIMES
 
 A_MEDIAN=$(printf '%s\n' "${A_TIMES[@]}" | median)
 B_MEDIAN=$(printf '%s\n' "${B_TIMES[@]}" | median)
-DELTA_MS=$(awk -v a="$A_MEDIAN" -v b="$B_MEDIAN" 'BEGIN { printf "%.0f\n", a - b }')
-DELTA_PCT=$(awk -v a="$A_MEDIAN" -v b="$B_MEDIAN" 'BEGIN { if (b == 0) { print "inf" } else { printf "%.1f\n", (a - b) / b * 100 } }')
+C_MEDIAN=$(printf '%s\n' "${C_TIMES[@]}" | median)
+
+delta_ms() {
+    awk -v hi="$1" -v lo="$2" 'BEGIN { printf "%.0f\n", hi - lo }'
+}
+delta_pct() {
+    # percentage relative to the baseline (lo). awk handles lo==0 by printing "inf".
+    awk -v hi="$1" -v lo="$2" 'BEGIN { if (lo == 0) { print "inf" } else { printf "%.1f\n", (hi - lo) / lo * 100 } }'
+}
+
+BA_MS=$(delta_ms  "$B_MEDIAN" "$A_MEDIAN")
+BA_PCT=$(delta_pct "$B_MEDIAN" "$A_MEDIAN")
+CB_MS=$(delta_ms  "$C_MEDIAN" "$B_MEDIAN")
+CB_PCT=$(delta_pct "$C_MEDIAN" "$B_MEDIAN")
+CA_MS=$(delta_ms  "$C_MEDIAN" "$A_MEDIAN")
+CA_PCT=$(delta_pct "$C_MEDIAN" "$A_MEDIAN")
 
 # --- Summary ---
 cat <<EOF
 ============================================================
  Summary
 
- A (features ON ):  ${A_TIMES[*]}  ->  median ${A_MEDIAN} ms
- B (features OFF):  ${B_TIMES[*]}  ->  median ${B_MEDIAN} ms
+ A (all OFF         ):  ${A_TIMES[*]}  ->  median ${A_MEDIAN} ms
+ B (descriptors only):  ${B_TIMES[*]}  ->  median ${B_MEDIAN} ms
+ C (all ON          ):  ${C_TIMES[*]}  ->  median ${C_MEDIAN} ms
 
- Delta (feature cost):  ${DELTA_MS} ms  (${DELTA_PCT}% overhead)
+ Descriptors cost (B-A):  ${BA_MS} ms  (${BA_PCT}%)
+ Grid export cost (C-B):  ${CB_MS} ms  (${CB_PCT}%)
+ Total feature  (C-A):    ${CA_MS} ms  (${CA_PCT}%)
 ============================================================
 EOF
 
 # --- CSV log ---
 if [ -n "$CSV_FILE" ]; then
     if [ ! -f "$CSV_FILE" ]; then
-        echo "date_utc,git_rev,p2rank_ver,java_major,host,target,mode,threads,reps,on_median_ms,off_median_ms,delta_ms,delta_pct" \
+        echo "date_utc,git_rev,p2rank_ver,java_major,host,target,mode,threads,reps,a_median_ms,b_median_ms,c_median_ms,ba_delta_ms,ba_delta_pct,cb_delta_ms,cb_delta_pct,ca_delta_ms,ca_delta_pct" \
             > "$CSV_FILE"
     fi
-    echo "${DATE_ISO},${GIT_REV}${GIT_DIRTY},${P2RANK_VER},${JAVA_MAJOR},${HOST},${LABEL},${MODE},${THREADS:-default},${REPS},${A_MEDIAN},${B_MEDIAN},${DELTA_MS},${DELTA_PCT}" \
+    echo "${DATE_ISO},${GIT_REV}${GIT_DIRTY},${P2RANK_VER},${JAVA_MAJOR},${HOST},${LABEL},${MODE},${THREADS:-default},${REPS},${A_MEDIAN},${B_MEDIAN},${C_MEDIAN},${BA_MS},${BA_PCT},${CB_MS},${CB_PCT},${CA_MS},${CA_PCT}" \
         >> "$CSV_FILE"
     echo "CSV: appended one row to ${CSV_FILE}"
 fi
