@@ -22,9 +22,6 @@ prank rescore  fpocket.ds    -export_pocket_grid 1 -pocket_grid_format arrow.zst
 
 # Also produce PyMOL/ChimeraX visualization overlays
 prank predict -f protein.pdb -export_pocket_grid 1 -vis_pocket_grid 1
-
-# Include unassigned points (debugging the grid generator)
-prank predict -f protein.pdb -export_pocket_grid 1 -pocket_grid_include_unassigned 1
 ```
 
 ## Algorithm
@@ -68,12 +65,10 @@ Long format. One row per `(point, pocket)` pair.
 | Column | Type | Description |
 |---|---|---|
 | `x`, `y`, `z` | f64 | Grid point coordinate (Å) |
-| `pocket` | i32 | Pocket rank this row belongs to (1-based). `0` only when `-pocket_grid_include_unassigned` is on. |
+| `pocket` | i32 | Pocket rank this row belongs to (1-based; always > 0 — unassigned grid points are not emitted). |
 | *(per-point descriptor columns)* | f64 / i32 | Appended in `-pocket_grid_point_descriptors` order. See the per-grid-point descriptors section below. |
 
 Rows are sorted by `pocket` ascending, then by `x`, `y`, `z` ascending.
-Pocket `0` (if enabled) goes last, so readers that only care about
-assigned points can stop early.
 
 ## Per-grid-point descriptors
 
@@ -142,7 +137,6 @@ Implementations live under
 | `export_pocket_grid` | `false` | Master gate for the grid file |
 | `vis_pocket_grid` | `false` | Also render grid-overlay scripts for every renderer in `-vis_renderers` (PyMOL `.pml` and/or ChimeraX `.cxc`). Requires `export_pocket_grid=true`. |
 | `pocket_grid_format` | `csv.gz` | One of `csv`, `csv.gz`, `csv.zst`, `arrow`, `arrow.gz`, `arrow.zst`, `parquet` |
-| `pocket_grid_include_unassigned` | `false` | Write `pocket=0` rows for points outside every pocket |
 | `pocket_grid_spacing` | `1.2` Å | Lattice edge. Volume scales with this³ |
 | `pocket_grid_max_dist` | `4.0` Å | Outer bound. Drop points farther than this from any **pocket SAS point** (not from the protein as a whole). |
 | `pocket_grid_atom_buffer` | `1.0` Å | Inner bound. Drop points where `dist(nearest atom) < vdw(nearest) + buffer`. |

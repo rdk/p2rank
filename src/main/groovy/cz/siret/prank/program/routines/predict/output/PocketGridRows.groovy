@@ -13,11 +13,11 @@ import org.biojava.nbio.structure.Atom
  * Long-format export of {@link PocketGrid}: one row per (point, pocket) pair.
  *
  * <p>A grid point assigned to K pockets contributes K rows. Unassigned points
- * appear once with {@code pocket = 0} only if {@code includeUnassigned} is on.
+ * are never emitted — they don't carry useful information for downstream
+ * pocket analysis and inflate the file size.
  *
  * <p>Sort order (documented spec contract): {@code pocket} ascending, then
- * {@code x}, {@code y}, {@code z} ascending. Unassigned rows (if included) go
- * last so readers that only care about assigned points can stop early.
+ * {@code x}, {@code y}, {@code z} ascending.
  *
  * <p>Base schema: {@code x, y, z, pocket}. Each entry in {@code descriptors}
  * appends one or more columns; multi-column descriptors get the
@@ -40,33 +40,21 @@ final class PocketGridRows implements TableData {
     /** [rowIndex][descriptorColumn] — flat across all descriptors; null when no descriptors. */
     private final double[][] descriptorValues
 
-    PocketGridRows(PocketGrid grid, boolean includeUnassigned,
-                   Protein protein, List<? extends Pocket> pockets,
+    PocketGridRows(PocketGrid grid, Protein protein,
+                   List<? extends Pocket> pockets,
                    List<String> descriptorNames) {
         List<PocketGridPointDescriptor> descriptors = resolveDescriptors(descriptorNames)
         this.grid = grid
 
-        // Compute the union of assigned point indices (across pockets) — sizes the
-        // output and identifies unassigned points when enabled.
-        BitSet assignedUnion = new BitSet(grid.allPoints.count)
         int totalMemberships = 0  // (point, pocket) pairs
         for (BitSet bs : grid.pocketToPointIndices.values()) {
-            // Verified by bytecode inspection (2026-05): under @CompileStatic,
-            // assignedUnion.or(bs) dispatches to DefaultGroovyMethods.or(BitSet, BitSet)
-            // which RETURNS a new BitSet rather than mutating in place. The manual
-            // loop is the workaround. (If we ever want BitSet#or, move this block
-            // into a Java helper.)
-            for (int b = bs.nextSetBit(0); b >= 0; b = bs.nextSetBit(b + 1)) {
-                assignedUnion.set(b)
-            }
             totalMemberships += bs.cardinality()
         }
-        int unassignedCount = includeUnassigned ? grid.allPoints.count - assignedUnion.cardinality() : 0
 
-        rowPointIdx = new int[totalMemberships + unassignedCount]
+        rowPointIdx = new int[totalMemberships]
         rowPocket = new int[rowPointIdx.length]
 
-        // Write pocket rows in rank order, each sorted by (x, y, z); unassigned (pocket=0) last.
+        // Write pocket rows in rank order, each sorted by (x, y, z).
         List<Atom> allPoints = grid.allPoints.list
         int w = 0
         List<Integer> ranks = new ArrayList<>(grid.pocketToPointIndices.keySet())
@@ -79,18 +67,6 @@ final class PocketGridRows implements TableData {
             for (Integer idx : sorted) {
                 rowPointIdx[w] = idx
                 rowPocket[w] = rank
-                w++
-            }
-        }
-        if (includeUnassigned) {
-            List<Integer> unassigned = new ArrayList<>(unassignedCount)
-            for (int i = 0; i < allPoints.size(); i++) {
-                if (!assignedUnion.get(i)) unassigned.add(i)
-            }
-            sortByCoord(unassigned, allPoints)
-            for (Integer idx : unassigned) {
-                rowPointIdx[w] = idx
-                rowPocket[w] = 0
                 w++
             }
         }
@@ -110,7 +86,8 @@ final class PocketGridRows implements TableData {
         if (descriptors.isEmpty()) {
             this.descriptorValues = null
         } else {
-            // Build rank → Pocket lookup; pocket=0 (unassigned) maps to null.
+            // Build rank → Pocket lookup. Every row has a non-zero rank since
+            // unassigned points are no longer emitted.
             Map<Integer, Pocket> rankToPocket = new HashMap<>()
             if (pockets != null) {
                 for (Pocket p : pockets) {
@@ -122,7 +99,7 @@ final class PocketGridRows implements TableData {
                 int pointIdx = rowPointIdx[i]
                 int pocketRank = rowPocket[i]
                 Atom point = allPoints.get(pointIdx)
-                Pocket pocket = pocketRank == 0 ? null : rankToPocket.get(pocketRank)
+                Pocket pocket = rankToPocket.get(pocketRank)
                 PocketGridPointContext ctx = new PocketGridPointContext(
                         pointIdx, point, pocketRank, pocket, protein, grid)
                 int col = 0

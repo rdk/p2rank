@@ -859,13 +859,6 @@ class Params {
     @RuntimeParam
     String pocket_grid_format = "csv.gz"
 
-    /**
-     * Include unassigned points (pocket = 0) in the grid export.
-     * Default off: only points assigned to at least one pocket are written.
-     */
-    @RuntimeParam
-    boolean pocket_grid_include_unassigned = false
-
     /** Lattice edge in Å. Volume scales with this³. */
     @RuntimeParam
     double pocket_grid_spacing = 1.2d
@@ -935,6 +928,12 @@ class Params {
      * overrides with an absolute Å — but going much below {@code spacing/2}
      * leaves the spheres too disconnected for PyMOL's surface algorithm and
      * most of the mesh drops below the rendering threshold.
+     *
+     * <p><b>Renderer divergence:</b> the value is used as a raw vdW radius in
+     * PyMOL ({@code solvent_radius=0}) so the visible radius equals this
+     * setting exactly. ChimeraX renders with its non-zero default probe
+     * (~0.4 Å), so the visible radius there is roughly this setting + the
+     * probe — a few tenths of an Å larger than PyMOL for the same input.
      */
     @RuntimeParam
     double vis_pocket_grid_volume_radius = -1d

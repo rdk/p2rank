@@ -716,7 +716,10 @@ class Evaluation implements Parametrized {
      * Todo optimize closures
      */
     Map getStats() {
-        def m = new LinkedHashMap() // keep insertion order
+        // Note: insertion order here is informational only — EvalResults.getStats()
+        // copies into a TreeMap for the user-facing stats CSV, so the on-disk
+        // column order is alphabetical regardless of the order we build below.
+        def m = new LinkedHashMap()
 
         m.PROTEINS = proteinCount
         m.POCKETS = pocketCount

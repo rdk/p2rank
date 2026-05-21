@@ -45,14 +45,14 @@ class PocketGridRowsTest {
     @Test
     void multiPocketMembershipProducesMultipleRows() {
         // Point b is in both pockets → it appears twice (once per pocket).
-        PocketGridRows data = new PocketGridRows(buildTwoPocketGrid(), false, null, null, [] as List<String>)
+        PocketGridRows data = new PocketGridRows(buildTwoPocketGrid(),null, null, [] as List<String>)
         assertEquals(4, data.rowCount)  // 2 + 2 assignments
         assertEquals(['x', 'y', 'z', 'pocket'], data.header)
     }
 
     @Test
-    void unassignedIncludedWhenOptedIn() {
-        // Add an extra unassigned point.
+    void unassignedPointsAreNotEmitted() {
+        // Add an extra unassigned point. PocketGridRows should never emit it.
         Atom a = new Point(1.0d, 0d, 0d)
         Atom unassigned = new Point(5.0d, 0d, 0d)
         LongIntHashMap idx = new LongIntHashMap()
@@ -62,16 +62,16 @@ class PocketGridRowsTest {
         assigned.put(1, bits(0))
         PocketGrid grid = new PocketGrid(new Atoms([a, unassigned]), 1.0d, 0d, 0d, 0d, idx, assigned)
 
-        PocketGridRows included = new PocketGridRows(grid, true, null, null, [] as List<String>)
-        assertEquals(2, included.rowCount)  // 1 assigned + 1 unassigned
-
-        PocketGridRows omitted = new PocketGridRows(grid, false, null, null, [] as List<String>)
-        assertEquals(1, omitted.rowCount)
+        PocketGridRows data = new PocketGridRows(grid, null, null, [] as List<String>)
+        assertEquals(1, data.rowCount)  // 1 assigned; the unassigned point is skipped
+        double[] row = data.getRow(0)
+        assertEquals(1.0d, row[0], 0.0d)
+        assertEquals(1, (int) row[3])  // pocket = 1, not 0
     }
 
     @Test
     void sortOrderIsPocketThenCoords() {
-        PocketGridRows data = new PocketGridRows(buildTwoPocketGrid(), false, null, null, [] as List<String>)
+        PocketGridRows data = new PocketGridRows(buildTwoPocketGrid(),null, null, [] as List<String>)
         // Expected sort: (pocket=1, x=1,2), then (pocket=2, x=2,3).
         double[] r0 = data.getRow(0); assertEquals(1.0d, r0[0], 0.0d); assertEquals(1, (int) r0[3])
         double[] r1 = data.getRow(1); assertEquals(2.0d, r1[0], 0.0d); assertEquals(1, (int) r1[3])
@@ -81,7 +81,7 @@ class PocketGridRowsTest {
 
     @Test
     void columnTypes() {
-        PocketGridRows data = new PocketGridRows(buildTwoPocketGrid(), false, null, null, [] as List<String>)
+        PocketGridRows data = new PocketGridRows(buildTwoPocketGrid(),null, null, [] as List<String>)
         assertEquals(TableData.ColumnType.DOUBLE, data.getColumnType(0))
         assertEquals(TableData.ColumnType.DOUBLE, data.getColumnType(1))
         assertEquals(TableData.ColumnType.DOUBLE, data.getColumnType(2))
@@ -98,7 +98,7 @@ class PocketGridRowsTest {
     void descriptorColumnsPrefixedWithDescriptorName() {
         // Multi-column descriptor (volsite, 6 cols) must produce 6 prefixed
         // headers; the prefix rule is documented contract for the export.
-        PocketGridRows data = new PocketGridRows(buildTwoPocketGrid(), false,
+        PocketGridRows data = new PocketGridRows(buildTwoPocketGrid(),
                 emptyProtein(), [] as List<Pocket>, ['volsite'])
         assertEquals(['x', 'y', 'z', 'pocket',
                       'volsite.vsAromatic', 'volsite.vsCation', 'volsite.vsAnion',
@@ -112,7 +112,7 @@ class PocketGridRowsTest {
         // The point of the test is the row LAYOUT (base 4 then 6 descriptor cols),
         // not the descriptor's numeric semantics — that's covered in
         // VolsiteGridPointDescriptorTest.
-        PocketGridRows data = new PocketGridRows(buildTwoPocketGrid(), false,
+        PocketGridRows data = new PocketGridRows(buildTwoPocketGrid(),
                 emptyProtein(), [] as List<Pocket>, ['volsite'])
         double[] row = data.getRow(0)
         assertEquals(10, row.length)
@@ -127,7 +127,7 @@ class PocketGridRowsTest {
     void unknownDescriptorNameThrowsAtConstruction() {
         PocketGrid grid = buildTwoPocketGrid()
         PrankException e = assertThrows(PrankException.class) {
-            new PocketGridRows(grid, false, emptyProtein(), [] as List<Pocket>, ['no_such_descriptor'])
+            new PocketGridRows(grid, emptyProtein(), [] as List<Pocket>, ['no_such_descriptor'])
         } as PrankException
         // The message must name the typo so the user can fix it.
         assertTrue(e.message.contains('no_such_descriptor'),
@@ -165,7 +165,7 @@ class PocketGridRowsTest {
         // one column. A single-column descriptor's header is exactly name() — sub-name
         // is ignored. None of the shipped descriptors are scalar, so this branch
         // exists for future descriptors and the registered fixture exercises it.
-        PocketGridRows data = new PocketGridRows(buildTwoPocketGrid(), false,
+        PocketGridRows data = new PocketGridRows(buildTwoPocketGrid(),
                 emptyProtein(), [] as List<Pocket>, [TEST_SCALAR_NAME])
         assertEquals(['x', 'y', 'z', 'pocket', TEST_SCALAR_NAME], data.header)
         // The value 42 from compute() must land in the trailing descriptor column.

@@ -69,11 +69,6 @@ behaviour — kept in the file so they don't get re-raised.
   `EnergyCalculator.groovy:146-179`. Boxing per neighbor per probe in the hot
   loop. Legacy `LJEnergyCalculator.computeEnergyForPoint` returns `double`.
 
-- **`Evaluation.getStats()` returns `LinkedHashMap`** (comment claims "keep
-  insertion order"), but the immediate caller `EvalResults.getStats()` puts
-  everything into a `TreeMap` (`EvalResults.groovy:189`) — insertion order is
-  lost. Either drop the misleading comment or use `LinkedHashMap` downstream.
-
 - **PyMOL pocket-grid renderer iterates `1..maxRank`; ChimeraX iterates
   `perPocketBasenames.keySet()`.** `PocketGridPymolRenderer.groovy:167,201,242`.
   Cosmetic-only: P2Rank ranks pockets contiguously, and the sidecar PDB strips
@@ -82,16 +77,6 @@ behaviour — kept in the file so they don't get re-raised.
   the assigner produced no points for a small pocket — invisible but clutters
   the Models panel. Mirror the ChimeraX pattern for parity; not a correctness
   fix.
-
-- **PyMOL grid `solvent_radius=0` vs ChimeraX non-zero probe.**
-  `PocketGridPymolRenderer.groovy:189-190` vs `PocketGridChimeraXRenderer.groovy:264`.
-  `vis_pocket_grid_volume_radius` means different things to the two renderers.
-  Documented in code; not in the param help.
-
-- **`pocket=0` (unassigned) points never reach the PDB sidecar.**
-  `PocketGridPdbSidecar.java:67-69` iterates `grid.getPocketToPointIndices()`
-  only. When `-pocket_grid_include_unassigned 1`, CSV/Parquet has the rows but
-  visualization silently drops them. Document or extend.
 
 ---
 
@@ -106,10 +91,6 @@ behaviour — kept in the file so they don't get re-raised.
   — Java-version coverage and CI distribution choice are
   intentional; README's "tested up to Java 25" wording will refresh at the
   2.6 release.
-
-- **`PointExportData.create()` doc says "(for predict mode)"**
-  (`PointExportData.groovy:141`) but it's also used by `rescore`
-  (`ModelBasedRescorer.groovy:97,168`).
 
 ---
 

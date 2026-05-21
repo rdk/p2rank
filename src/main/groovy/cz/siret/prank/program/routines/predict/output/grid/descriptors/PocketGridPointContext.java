@@ -11,10 +11,10 @@ import javax.annotation.Nullable;
  * Per-(point, pocket-row) context passed to {@link PocketGridPointDescriptor#compute}.
  *
  * <p>{@code pointIndex} is the index into {@code grid.getAllPoints()}; {@code point}
- * is the convenience shortcut. {@code pocketRank} is 1-based; {@code 0} means the
- * row is for an unassigned grid point (only present when
- * {@code -pocket_grid_include_unassigned} is set). {@code pocket} is non-null iff
- * {@code pocketRank > 0}.
+ * is the convenience shortcut. {@code pocketRank} is 1-based and always > 0 —
+ * unassigned grid points are not emitted as rows. {@code pocket} is always
+ * non-null. The {@link Nullable} annotation is kept for future-proofing
+ * (subclasses that synthesise contexts could choose to pass null).
  */
 public record PocketGridPointContext(
         int pointIndex,
