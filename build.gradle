@@ -132,13 +132,11 @@ test {
     inputs.dir "$distroDir/test_data"
     inputs.files("$distroDir/models", "$distroDir/config/default.groovy")
 
-    // listen to events in the test execution lifecycle
-    beforeTest { descriptor ->
-        logger.lifecycle("Running test: " + descriptor)
-    }
-
     testLogging {
-        //events = "failed" // "standardOut", "standardError", "passed", "skipped"
+        // 'started' replaces the old beforeTest { } closure (deprecated in
+        // Gradle 9.5, slated for removal in Gradle 10). Possible events:
+        // started, passed, failed, skipped, standardOut, standardError.
+        events 'started', 'failed'
 
         showExceptions = true
         exceptionFormat = "full"
