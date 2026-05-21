@@ -57,6 +57,20 @@ header is the descriptor name; multi-column descriptors emit N columns
 prefixed with `"{name}."` (e.g. `principal_moments.lambda1`,
 `principal_moments.lambda2`, `principal_moments.lambda3`).
 
+### Non-finite values and degenerate pockets
+
+- Shape descriptors (`volume`, `radius_of_gyration`, `principal_moments`,
+  `sphericity`) return **0** for degenerate pockets (empty or single-point).
+  Use the `num_grid_points` / `num_surface_atoms` columns to distinguish a
+  real "0" from a "we couldn't compute".
+- **`NaN` floats** are written as the literal token `NaN` in CSV and as the
+  IEEE-754 NaN bit pattern in Arrow / Parquet. pandas / pyarrow / numpy parse
+  this back as NaN without special handling.
+- **Infinities** are written as `∞` / `-∞` (UTF-8) in CSV.
+- **`NaN` in INT columns** (`rank`, `num_residues`, `num_surface_atoms`,
+  `num_grid_points`) is silently coerced to `0` at write time. Descriptors
+  should never produce non-finite values for integer columns.
+
 ## Descriptor catalog
 
 | Name | Columns | Definition |

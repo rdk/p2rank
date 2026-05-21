@@ -98,6 +98,12 @@ x,y,z,chem.hydrophobic,chem.aromatic,protrusion,...
 - Export is disabled when using `-output_only_stats 1`
 - `pocket` matches the `rank` column of `*_predictions.csv`. Boundary points that fall within the extended shells of two pockets (controlled by `extended_pocket_cutoff`) are labeled with the **best** (lowest) rank they belong to.
 
+### Non-finite values
+
+- **`NaN` floats** are written verbatim as the literal token `NaN` in CSV, and as the standard IEEE-754 NaN bit pattern in Arrow / Parquet. pandas / pyarrow / numpy parse this back as NaN without special handling.
+- **Infinities** are written as `∞` / `-∞` (UTF-8) in CSV — emit them only if your downstream tooling can read those tokens.
+- **`NaN` in INT columns** (e.g. `pocket`) is silently coerced to `0` at write time. Treat this as a bug-class signal: features should never produce non-finite values for integer columns.
+
 ## Example Analysis
 
 **Python (CSV):**

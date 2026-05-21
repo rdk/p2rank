@@ -49,6 +49,19 @@ public final class PocketGridPdbSidecar {
 
     private PocketGridPdbSidecar() {}
 
+    /**
+     * Idempotent write: only writes if the file doesn't already exist.
+     * Used by the renderers so that the second renderer-to-run is a no-op
+     * (the combined PDB is shared between PyMOL and ChimeraX overlays).
+     *
+     * @return {@code true} if the file was written, {@code false} if it already existed.
+     */
+    public static boolean ensureWritten(PocketGrid grid, String pdbPath) {
+        if (Futils.exists(pdbPath)) return false;
+        write(grid, pdbPath);
+        return true;
+    }
+
     /** Write all pockets' grid points to one combined gzipped PDB. */
     public static void write(PocketGrid grid, String pdbPath) {
         try (PrintWriter pdb = Futils.getGzipWriter(pdbPath)) {

@@ -533,8 +533,11 @@ class Params {
      *   "FAD[atom_id:12345]"                      - by PDB atom serial
      *   "FAD[contact_res_ids:A_D246,A_T259,...]"  - by surrounding polymer residues
      *
-     * Group names are matched against group.PDBName exactly (case-sensitive).
-     * BioJava returns uppercase PDB names so in practice "FAD" matches and "fad" does not.
+     * Group names are normalized to upper-case before matching against
+     * group.PDBName, so {@code "fad"} and {@code "FAD"} both match FAD groups.
+     * (BioJava returns uppercase PDB names; the case-fold is applied in
+     * {@link CofactorHandler#parseAndValidate} for cofactors specifically —
+     * the dataset 'ligands' column does NOT case-fold, so use uppercase there.)
      * Validation happens at startup via LigandDefinition.parse().
      *
      * Can be overridden per-structure using the 'cofactors' column in dataset files.

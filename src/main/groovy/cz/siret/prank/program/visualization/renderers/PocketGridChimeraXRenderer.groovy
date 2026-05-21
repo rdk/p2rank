@@ -155,11 +155,12 @@ final class PocketGridChimeraXRenderer {
         String pdbPath = "${dataDir}/${label}_pocket_grid.pdb.gz"
         String cxcPath = "${vizDir}/${label}_pocket_grid.cxc"
 
-        // Combined sidecar (shared with the PyMOL overlay — written redundantly here
-        // so the cxc works even when only chimerax is in vis_renderers).
-        PocketGridPdbSidecar.write(grid, pdbPath)
-        // Per-pocket sidecars (ChimeraX-only — used to seed per-pocket sphere submodels
-        // via `open … id 99.N`, since ChimeraX `split` can't partition by residue).
+        // Idempotent write — the combined PDB is shared with the PyMOL overlay,
+        // so whichever renderer runs first writes it and the second is a no-op.
+        PocketGridPdbSidecar.ensureWritten(grid, pdbPath)
+        // Per-pocket sidecars are ChimeraX-only — used to seed per-pocket sphere
+        // submodels via `open … id 99.N`, since ChimeraX `split` can't partition
+        // by residue.
         LinkedHashMap<Integer, String> perPocketBasenames = PocketGridPdbSidecar.writePerPocket(grid, dataDir, label)
         writeCxc(volumeRadius, grid.spacing, label, perPocketBasenames, cxcPath)
 

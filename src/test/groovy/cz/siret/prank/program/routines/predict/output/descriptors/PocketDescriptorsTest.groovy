@@ -133,11 +133,13 @@ class PocketDescriptorsTest {
     }
 
     @Test
-    void sphericityOneForSinglePoint() {
+    void sphericityZeroForSinglePoint() {
+        // Degenerate (n ≤ 1) returns 0.0 — consistent with the other shape
+        // descriptors (volume, radius_of_gyration, principal_moments).
         PocketGrid grid = gridOfPoints([new Point(0d, 0d, 0d) as Atom])
         TestPocket p = new TestPocket(); p.rank = 1
         double s = new SphericityDescriptor().compute(ctx(grid, p))[0]
-        assertEquals(1.0d, s, DELTA)
+        assertEquals(0.0d, s, DELTA)
     }
 
     // --- num_surface_atoms ---

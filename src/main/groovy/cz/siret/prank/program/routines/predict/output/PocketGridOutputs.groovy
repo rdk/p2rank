@@ -88,7 +88,9 @@ final class PocketGridOutputs {
             }
             if ('chimerax' in p.vis_renderers) {
                 // ChimeraX renderer has only 2 layers (spheres + vdW surface); the PyMOL-only
-                // gaussian-iso param is not passed.
+                // gaussian-iso param is not passed. The combined sidecar is shared with the
+                // PyMOL overlay — PocketGridPdbSidecar.ensureWritten makes the second
+                // renderer's write a no-op when the first already wrote it.
                 PocketGridChimeraXRenderer.render(grid, volRadius, outdir, label)
             }
         }

@@ -118,7 +118,9 @@ final class PocketGridPymolRenderer {
         String pdbPath = "${dataDir}/${label}_pocket_grid.pdb.gz"
         String pmlPath = "${vizDir}/${label}_pocket_grid.pml"
 
-        PocketGridPdbSidecar.write(grid, pdbPath)
+        // Idempotent write — the combined PDB is shared with the ChimeraX overlay,
+        // so whichever renderer runs first writes it and the second is a no-op.
+        PocketGridPdbSidecar.ensureWritten(grid, pdbPath)
         writePml(maxRank, volumeRadius, gaussianIso, grid.spacing, label, pmlPath)
 
         log.info('PocketGridPymolRenderer: wrote {} and {}', pdbPath, pmlPath)

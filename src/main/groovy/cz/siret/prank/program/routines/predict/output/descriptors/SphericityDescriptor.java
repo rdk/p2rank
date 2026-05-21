@@ -19,6 +19,10 @@ import java.util.List;
  * <p>Quantization-free (no surface-area approximation): the value is exactly
  * the volume ratio, so 1.0 = perfect sphere, low values = elongated /
  * irregular.
+ *
+ * <p>Degenerate pockets ({@code n ≤ 1}) return {@code 0.0} — consistent with
+ * {@code volume}, {@code radius_of_gyration}, {@code principal_moments},
+ * which all degrade to 0 on insufficient input.
  */
 public final class SphericityDescriptor extends AbstractScalarPocketDescriptor {
 
@@ -45,7 +49,7 @@ public final class SphericityDescriptor extends AbstractScalarPocketDescriptor {
             if (d2 > maxSqr) maxSqr = d2;
         }
         double r = Math.sqrt(maxSqr);
-        if (r <= 0d) return 1.0d;  // degenerate: single point → "perfectly spherical"
+        if (r <= 0d) return 0.0d;  // degenerate: single point — consistent with other descriptors
 
         double s = ctx.grid().getSpacing();
         double vPocket = n * s * s * s;
