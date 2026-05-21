@@ -138,7 +138,8 @@ class PointExportData implements TableData {
     // --- Factory Methods ---
 
     /**
-     * Creates export data with score and pocket columns (for predict mode).
+     * Creates export data with score and pocket columns. Used by both
+     * {@code predict} (full SAS) and {@code rescore} (pocket-only SAS) modes.
      */
     static PointExportData create(List<LabeledPoint> labeledPoints,
                                   List<FeatureVector> featureVectors,

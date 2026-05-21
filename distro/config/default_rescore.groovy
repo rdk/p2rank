@@ -117,7 +117,10 @@ import cz.siret.prank.program.params.Params
     neighbourhood_radius = 8
 
     /**
-     * HETATM groups that are considered cofactor and ignored
+     * HETATM group codes that are excluded from ligand detection
+     * (waters, crystallization buffers, common sugars, etc.).
+     * Note: this is unrelated to the `-cofactors` feature, which treats
+     * matched groups as part of the protein surface.
      */
     ignore_het_groups = ["HOH","DOD","WAT","NAG","MAN","UNK","GLC","ABA","MPD","GOL","SO4","PO4"]
 

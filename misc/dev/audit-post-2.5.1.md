@@ -65,12 +65,6 @@ may drift as the surrounding files evolve.
   compensates. **Not wanted** (decision 2026-05-21) — current behaviour is
   correct, the comment ambiguity is acceptable.
 
-- **`distro/prank.bat` misses JVM flags.** Lines 11-13 set only the three
-  `--add-opens`. Missing `--enable-native-access=ALL-UNNAMED` and the Java-23+
-  `--sun-misc-unsafe-memory-access=allow` block that `distro/prank` and
-  `prank.sh` apply. zstd-jni native warnings + future-Java compatibility gap on
-  Windows.
-
 - **`atomRoleCache`/`atomChargeCache` keyed by BioJava `Atom` identity.**
   `EnergyCalculator.groovy:131-132`. Atoms across proteins are distinct
   identities; cache never hits across proteins and grows monotonically — slow
@@ -114,16 +108,8 @@ may drift as the surrounding files evolve.
 ## Doc / config drift
 
 - **README badge stuck at 2.5.1.** `README.md:11` vs `build.gradle:25`
-  (`2.6-alpha`). Typo `./make-disro.sh` at `README.md:226`.
-
-- **`distro/config/default_rescore.groovy:120-122`** still has the misleading
-  "considered cofactor" wording on `ignore_het_groups` (the `default.groovy`
-  copy was fixed in the 2026-05-21 cleanup; the rescore config copy still needs
-  the same edit).
-
-- **`documentation/dev/cofactors.md:36,39`** describe R11/R14 as "INFO" while
-  line 69 of the same file documents the promotion to WARN — internal
-  inconsistency in the dev doc.
+  (`2.6-alpha`). Kept until 2.6 leaves alpha. (The `./make-disro.sh` typo
+  on `README.md:226` was fixed 2026-05-22.)
 
 - **CI matrix is `17,21,25,26` only** (`.github/workflows/develop.yml:23`) and
   distribution switched temurin → oracle (commit `1997ab94`). **Not wanted**
@@ -211,21 +197,17 @@ only.
 
 ---
 
-## Top-5 next steps (refresh)
+## Top-3 next steps
 
-Lowest-cost remaining items, in rough payoff-per-effort order:
+Real semantic bugs still latent, in priority order:
 
-1. **`distro/config/default_rescore.groovy` `ignore_het_groups` comment** —
-   mirror the fix already applied to `default.groovy`. One-line edit.
-2. **README badge + `make-disro.sh` typo** (`README.md:11,226`). Two-character
-   diff.
-3. **`PointExportData.create()` javadoc** (`PointExportData.groovy:141`) —
-   drop "(for predict mode)". Mechanical.
-4. **`PocketDescriptor.java` i32 contract** — add `Math.toIntExact` at the INT
-   writer (`TableExporter.groovy:142`). Surfaces overflows that the new export
-   docs warn about but the code doesn't enforce.
-5. **`VoxelHashAssigner` cell-prune lower bound** — the only remaining
-   correctness bug in this backlog. Only hits with `assigner=voxel_hash`;
-   once fixed, the `bothAssignersProduceIdenticalRawShells` test in
-   `PocketGridBuilderTest` should be extended with an off-lattice query
-   point so the regression can't come back.
+1. **`Evaluation.closestPocket()` honors `site_eval_sas_pts_as_atoms`** — currently
+   uses `site.atoms.dist(p.centroid)` unconditionally, so DCC/DCA-flavored
+   `closestPocketDist` is wrong when that param is enabled.
+2. **`PocketDescriptor.java` i32 contract** — add `Math.toIntExact` at the INT
+   writer (`TableExporter.groovy:142`). Turns silent overflow into a hard
+   error at write time.
+3. **`VoxelHashAssigner` cell-prune lower bound** — kdtree and voxel-hash
+   assigners should produce identical raw shells but don't (off-lattice query
+   points hit the gap). Extend `bothAssignersProduceIdenticalRawShells` with
+   an off-lattice point to lock in the regression.

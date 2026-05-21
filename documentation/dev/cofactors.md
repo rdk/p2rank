@@ -31,10 +31,10 @@ Each entry corresponds to a refinement during design. This table is the as-imple
 | R8  | Original CSV "treated as 0.0" claim - superseded by R17 | R17 supersedes; this entry is historical. |
 | R9  | 1-arg `Protein.load(String)` note for library users | Documented in user doc. |
 | R10 | Cofactor > explicit ligand precedence | Implemented in `Ligands.isRelevantLigandGroup` (cofactor guard fires first). Plus the upstream filter at `Ligands.loadForProtein` - see "Deviation from plan" below. |
-| R11 | Distant-cofactor INFO warning + `cofactor_max_protein_dist` param (default 15Å) | Implemented in `CofactorHandler.warnDistantCofactors`. |
+| R11 | Distant-cofactor WARN + `cofactor_max_protein_dist` param (default 15Å) | Implemented in `CofactorHandler.warnDistantCofactors`. |
 | R12 | Pipeline tests on existing `1t7qa.pdb` (COA) | `CofactorPipelineTest` exists; tests pass. |
 | R13 | `ExtractionResult` stored on `Protein.secondaryData` | `Protein.cofactorExtractionResult` accessor added. |
-| R14 | Chain-reduction "lost cofactors" INFO warning | `warnChainExcludedCofactors` implemented; name-only matching (documented limitation). |
+| R14 | Chain-reduction "lost cofactors" WARN | `warnChainExcludedCofactors` implemented; name-only matching (documented limitation). |
 | R15 | `load_ligands_from_separate_files` interaction is cosmetic | Not exercised by tests; documented in user doc Known Limitations. |
 | R16 | Reuse `Dataset.LigandDefinition` for specifier syntax + identity-based `isCofactor(Group)` | Implemented as planned. Identity set is `Collections.newSetFromMap(new IdentityHashMap<>())`. |
 | R17 | `CsvFileFeature` cofactor bypass | Implemented as a 5-line guard at top of `calculateForAtom`. Uses `loaderParams?.isCofactor(group)`. |
