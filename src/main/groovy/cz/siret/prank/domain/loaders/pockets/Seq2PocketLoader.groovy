@@ -4,6 +4,7 @@ import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Prediction
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.geom.Atoms
+import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
@@ -38,7 +39,7 @@ import java.util.regex.Pattern
  */
 @Slf4j
 @CompileStatic
-class Seq2PocketLoader extends PredictionLoader {
+class Seq2PocketLoader extends PredictionLoader implements Parametrized {
 
     /** Suffix of the only file in the per-protein dir that this loader reads. */
     private static final String PREDICTIONS_SUFFIX = '_predictions.txt'
@@ -122,6 +123,11 @@ class Seq2PocketLoader extends PredictionLoader {
                 pocket.score = score
                 pocket.surfaceAtoms = surfaceAtoms
                 pocket.centroid = surfaceAtoms.empty ? null : surfaceAtoms.centroid
+                if (queryProtein != null && !surfaceAtoms.empty) {
+                    queryProtein.calcuateSurfaceAndExposedAtoms()
+                    pocket.sasPoints = queryProtein.accessibleSurface.points
+                            .cutoutShell(surfaceAtoms, params.getSasCutoffDist())
+                }
                 res.add(pocket)
             }
         }

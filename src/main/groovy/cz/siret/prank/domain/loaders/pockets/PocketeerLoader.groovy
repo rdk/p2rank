@@ -5,6 +5,7 @@ import cz.siret.prank.domain.Prediction
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Point
+import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.Sutils
 import groovy.transform.CompileStatic
@@ -19,7 +20,7 @@ import javax.annotation.Nullable
  */
 @Slf4j
 @CompileStatic
-class PocketeerLoader extends PredictionLoader {
+class PocketeerLoader extends PredictionLoader implements Parametrized {
 
     @Override
     Prediction loadPrediction(String predictionOutputFile, @Nullable Protein queryProtein) {
@@ -107,6 +108,11 @@ class PocketeerLoader extends PredictionLoader {
                 }
             }
             pocket.surfaceAtoms = surfaceAtoms
+            if (!surfaceAtoms.empty) {
+                queryProtein.calcuateSurfaceAndExposedAtoms()
+                pocket.sasPoints = queryProtein.accessibleSurface.points
+                        .cutoutShell(surfaceAtoms, params.getSasCutoffDist())
+            }
         }
 
         return pocket

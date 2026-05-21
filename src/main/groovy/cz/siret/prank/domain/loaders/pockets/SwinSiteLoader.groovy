@@ -5,6 +5,7 @@ import cz.siret.prank.domain.Prediction
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Point
+import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.Futils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
@@ -38,7 +39,7 @@ import java.util.regex.Pattern
  */
 @Slf4j
 @CompileStatic
-class SwinSiteLoader extends PredictionLoader {
+class SwinSiteLoader extends PredictionLoader implements Parametrized {
 
     /** Distance from grid points used to define pocket surface atoms (A). */
     static final double SURFACE_ATOMS_CUTOFF = 4.5d
@@ -90,6 +91,7 @@ class SwinSiteLoader extends PredictionLoader {
             pocket.stats.realVolumeApprox = gridPoints.count * VOXEL_VOLUME_A3
 
             if (queryProtein != null) {
+                queryProtein.calcuateSurfaceAndExposedAtoms()
                 double dist = SURFACE_ATOMS_CUTOFF
                 while (pocket.surfaceAtoms.empty && dist < SURFACE_ATOMS_MAX_CUTOFF) {
                     pocket.surfaceAtoms = queryProtein.exposedAtoms.cutoutShell(gridPoints, dist)
@@ -98,6 +100,8 @@ class SwinSiteLoader extends PredictionLoader {
                     }
                     dist += 1.0
                 }
+                pocket.sasPoints = queryProtein.accessibleSurface.points
+                        .cutoutShell(pocket.surfaceAtoms, params.getSasCutoffDist())
             }
 
             res.add(pocket)
