@@ -10,6 +10,7 @@ import cz.siret.prank.geom.Struct
 import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
 import cz.siret.prank.prediction.pockets.criteria.*
+import cz.siret.prank.program.params.Params
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.MathUtils
 import groovy.util.logging.Slf4j
@@ -78,17 +79,23 @@ class Evaluation implements Parametrized {
     }
 
     /**
-     * considering DCA measure
+     * Pocket closest to {@code site} under DCA semantics. Honors
+     * {@code site_eval_sas_pts_as_atoms} the same way {@link DCA} does so the
+     * reported {@code closestPocketDist} matches the criterion that other
+     * eval columns are computed under.
+     *
+     * <p>Package-visible for the regression test in {@code EvaluationClosestPocketTest}.
      */
-    private static Pocket closestPocket(BindingSite site, List<Pocket> pockets) {
+    static Pocket closestPocket(BindingSite site, List<Pocket> pockets) {
         if (pockets.empty) return null
 
+        Atoms sitePoints = sitePointsForEval(site)
         Pocket res = null
         double minDist = Double.MAX_VALUE
 
         for (Pocket p : pockets) {
             if (p.centroid == null) continue
-            double dist = site.atoms.dist(p.centroid)
+            double dist = sitePoints.dist(p.centroid)
             if (dist < minDist) {
                 minDist = dist
                 res = p
@@ -96,6 +103,15 @@ class Evaluation implements Parametrized {
         }
 
         return res
+    }
+
+    /**
+     * Mirrors {@link DCA#getSitePoints}. {@code site_eval_sas_pts_as_atoms}
+     * selects whether DCA-family distances measure against the site's atom
+     * set or its SAS-point set.
+     */
+    private static Atoms sitePointsForEval(BindingSite site) {
+        return Params.inst.site_eval_sas_pts_as_atoms ? site.sasPoints : site.atoms
     }
 
     private static double getAvgConservationForAtoms(Atoms atoms, ConservationScore score) {
@@ -251,7 +267,7 @@ class Evaluation implements Parametrized {
 
             Pocket closest = closestPocket(site, pockets)
             if (closest != null) {
-                row.closestPocketDist = site.atoms.dist(closest.centroid)
+                row.closestPocketDist = sitePointsForEval(site).dist(closest.centroid)
             } else {
                 row.closestPocketDist = Double.NaN
             }

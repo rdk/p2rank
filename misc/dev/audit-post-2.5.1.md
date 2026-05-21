@@ -74,11 +74,6 @@ may drift as the surrounding files evolve.
   `EnergyCalculator.groovy:146-179`. Boxing per neighbor per probe in the hot
   loop. Legacy `LJEnergyCalculator.computeEnergyForPoint` returns `double`.
 
-- **`Evaluation.closestPocket()` ignores `site_eval_sas_pts_as_atoms`.**
-  `Evaluation.groovy:81` doc says "considering DCA measure" but uses
-  `site.atoms.dist(p.centroid)` unconditionally. Diverges from DCA semantics
-  when the param is enabled.
-
 - **`Evaluation.getStats()` returns `LinkedHashMap`** (comment claims "keep
   insertion order"), but the immediate caller `EvalResults.getStats()` puts
   everything into a `TreeMap` (`EvalResults.groovy:189`) — insertion order is
@@ -197,17 +192,14 @@ only.
 
 ---
 
-## Top-3 next steps
+## Top-2 next steps
 
 Real semantic bugs still latent, in priority order:
 
-1. **`Evaluation.closestPocket()` honors `site_eval_sas_pts_as_atoms`** — currently
-   uses `site.atoms.dist(p.centroid)` unconditionally, so DCC/DCA-flavored
-   `closestPocketDist` is wrong when that param is enabled.
-2. **`PocketDescriptor.java` i32 contract** — add `Math.toIntExact` at the INT
+1. **`PocketDescriptor.java` i32 contract** — add `Math.toIntExact` at the INT
    writer (`TableExporter.groovy:142`). Turns silent overflow into a hard
    error at write time.
-3. **`VoxelHashAssigner` cell-prune lower bound** — kdtree and voxel-hash
+2. **`VoxelHashAssigner` cell-prune lower bound** — kdtree and voxel-hash
    assigners should produce identical raw shells but don't (off-lattice query
    points hit the gap). Extend `bothAssignersProduceIdenticalRawShells` with
    an off-lattice point to lock in the regression.
