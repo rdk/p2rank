@@ -1,12 +1,12 @@
-# Post-2.5.1 Audit Findings
+# Post-2.5.1 Audit Tech Debt
 
-Punch-list captured from a 10-agent audit of all changes between tag `2.5.1`
-and `develop` (branch `develop`, ~218 commits, ~523 files). Items resolved by
-follow-up work are removed; items deferred or marked **Not wanted** are kept
-with the decision date.
+Working tech-debt backlog distilled from a 10-agent audit of all changes
+between tag `2.5.1` and `develop` (originally ~218 commits, ~523 files).
+Items resolved by follow-up work are removed; items deferred or marked
+**Not wanted** are kept with the decision date.
 
-File paths are repo-relative; line numbers reflect state at audit time and may
-drift.
+File paths are repo-relative; line numbers reflect state at last revision and
+may drift as the surrounding files evolve.
 
 ---
 
@@ -37,15 +37,15 @@ drift.
   doesn't exercise the divergence. Decide per-atom vs per-point capping and
   align doc + test.
 
-- **Centroid-source divergence across pocket loaders.** Pocketeer uses the
-  server-supplied JSON `centroid`; FPocket uses voronoi centerOfMass;
-  Concavity/PUResNet use geometric centroid; Seq2Pocket/SwinSite use
-  `gridPoints.centroid`/`surfaceAtoms.centroid`. No documented contract.
-  Either document the policy or normalize to geometric.
-
-- **`RescorePocketsRoutine.checkDataset` has an empty truthy branch.**
-  `RescorePocketsRoutine.groovy:48-56` has `if (runFpocketAdHoc) { /* comment */ }`
-  — the check appears inverted. Re-verify intended semantics.
+- **Pocketeer uses the server-supplied centroid; all other loaders derive
+  geometric.** `PocketeerLoader.groovy:67-72` reads
+  `pocketMap.get('centroid')` from the upstream JSON, while FPocket / Concavity
+  / PUResNet / Seq2Pocket / SwinSite all converge on a geometric centroid
+  (FPocket via `voronoiCenters.centerOfMass` where the points are all-Carbon ≡
+  geometric; ConcavityLoader sets every grid atom's element to C before the
+  centroid call; `Atoms.getCentroid()` itself is unweighted). The Pocketeer
+  upstream centroid may be mass-weighted or otherwise differently defined.
+  Either document the contract or normalize Pocketeer to geometric.
 
 - **`Sutils.parseList` not bracket-aware** — see the long-form entry in
   `misc/dev/technical-debt.md`. Mitigated by `CofactorHandler` defensive
@@ -105,7 +105,7 @@ drift.
   Documented in code; not in the param help.
 
 - **`pocket=0` (unassigned) points never reach the PDB sidecar.**
-  `PocketGridPdbSidecar.java:56-60` iterates `grid.getPocketToPointIndices()`
+  `PocketGridPdbSidecar.java:67-69` iterates `grid.getPocketToPointIndices()`
   only. When `-pocket_grid_include_unassigned 1`, CSV/Parquet has the rows but
   visualization silently drops them. Document or extend.
 
@@ -114,7 +114,7 @@ drift.
 ## Doc / config drift
 
 - **README badge stuck at 2.5.1.** `README.md:11` vs `build.gradle:25`
-  (`2.6-alpha`). Typo `./make-disro.sh` at `README.md:225`.
+  (`2.6-alpha`). Typo `./make-disro.sh` at `README.md:226`.
 
 - **`distro/config/default_rescore.groovy:120-122`** still has the misleading
   "considered cofactor" wording on `ignore_het_groups` (the `default.groovy`
@@ -151,19 +151,15 @@ drift.
 - **`LoaderParams.groovy:20-22`** stale `TODO get rid of this global variable`
   on `ignoreLigandsSwitch`. Pre-existing; still legitimate.
 
-- **`FPocketLoader.groovy:149`** dead `pocket.centroid` write (overridden by
+- **`FPocketLoader.groovy:152`** dead `pocket.centroid` write (overridden by
   `getCentroid()`). Marked `// unused:`; kept until the override is removed.
 
-- **`FPocketLoader.groovy:155`** `// probably not needed` (years old);
+- **`FPocketLoader.groovy:159`** `// probably not needed` (years old);
   `:142` fpocket3 TODO. Both pre-existing.
 
 - **`ConcavityLoader.groovy`** not `@CompileStatic` — every other loader is.
   Adding it risks surfacing latent type errors; do under a separate change
   with a compile + test pass.
-
-- **`MethylEnergyFeature.groovy:55,67-70`** commented-out try/catch skeleton +
-  commented alternative neighbour-atom path. Kept intentionally (decision
-  2026-05-21).
 
 - **`misc/development-notes.md`** is down to a single 6-line note — kept
   intentionally (decision 2026-05-21).
@@ -198,8 +194,8 @@ only.
 
 - **`computeEnergyForPoint` boxes doubles** (above).
 
-- **`EnergyCalculator.groovy:170`** `config.probeParams[probe]` `EnumMap.get`
-  per neighbor per probe; hoist to a pre-sized `ProbeParams[]` indexed by
+- **`EnergyCalculator.groovy:173`** `config.probeParams[probe]` `Map.get` per
+  neighbor per probe; hoist to a pre-sized `ProbeParams[]` indexed by
   `probeIdx`.
 
 - **`PocketGridBuilder.java:83`** `Map<Integer, BitSet> pocketToPointIndices`
@@ -209,9 +205,6 @@ only.
   perf gain is in the noise (~0.01%) and the API refactor across renderers
   + exporters + descriptors isn't justified.
 
-- **`MorphologicalCloser.fill` clones empty rawShell**
-  (`MorphologicalCloser.java:30`); unnecessary, inconsistent with `NoOpFiller`.
-
 - **`KdTreeAssigner.computeRawShell` dedup branch is dead**
   (`KdTreeAssigner.java:41`): every atom returned by the KD tree is in
   `latticeIndex` by construction.
@@ -220,20 +213,19 @@ only.
 
 ## Top-5 next steps (refresh)
 
-The previous Top-5 has been substantially worked through. Lowest-cost
-remaining items, in rough payoff-per-effort order:
+Lowest-cost remaining items, in rough payoff-per-effort order:
 
 1. **`distro/config/default_rescore.groovy` `ignore_het_groups` comment** —
    mirror the fix already applied to `default.groovy`. One-line edit.
-2. **README badge + `make-disro.sh` typo** (`README.md:11,225`). Two-character
+2. **README badge + `make-disro.sh` typo** (`README.md:11,226`). Two-character
    diff.
 3. **`PointExportData.create()` javadoc** (`PointExportData.groovy:141`) —
    drop "(for predict mode)". Mechanical.
 4. **`PocketDescriptor.java` i32 contract** — add `Math.toIntExact` at the INT
    writer (`TableExporter.groovy:142`). Surfaces overflows that the new export
    docs warn about but the code doesn't enforce.
-5. **`VoxelHashAssigner` cell-prune lower bound** — the only remaining Tier-2
-   correctness bug. Only hits with `assigner=voxel_hash`; once fixed, the
-   `bothAssignersProduceIdenticalRawShells` test in `PocketGridBuilderTest`
-   should be extended with an off-lattice query point so the regression can't
-   come back.
+5. **`VoxelHashAssigner` cell-prune lower bound** — the only remaining
+   correctness bug in this backlog. Only hits with `assigner=voxel_hash`;
+   once fixed, the `bothAssignersProduceIdenticalRawShells` test in
+   `PocketGridBuilderTest` should be extended with an off-lattice query
+   point so the regression can't come back.
