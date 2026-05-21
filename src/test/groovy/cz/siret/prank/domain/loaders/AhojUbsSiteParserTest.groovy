@@ -2,6 +2,10 @@ package cz.siret.prank.domain.loaders
 
 import groovy.transform.CompileStatic
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
+
+import java.nio.file.Files
+import java.nio.file.Path
 
 import static org.junit.jupiter.api.Assertions.*
 
@@ -171,6 +175,31 @@ class AhojUbsSiteParserTest {
         AhojSiteInfo info = defs[0].ahojSiteInfo
         assertNotNull(info)
         assertEquals("holo", info.pocketClass)
+    }
+
+    // --- Partial-format / missing-column test ---
+
+    /**
+     * Older "full"-ish CSVs may have {@code pocket_class} (the marker that
+     * triggers AhojSiteInfo attachment) but lack newer columns like {@code rg}
+     * and {@code n_unp_pockets*}. fromCsvRecord must degrade missing fields
+     * to per-type sentinels rather than throwing.
+     */
+    @Test
+    void partialFullFormatCsvParsesWithoutThrowing(@TempDir Path tmp) {
+        Path csv = tmp.resolve("partial.csv")
+        Files.writeString(csv,
+            "site_uid,afdb_filename,chain_resi,center_x,center_y,center_z,pocket_class,pocket_score\n" +
+            "s1,A.cif.gz,A_42,1.0,2.0,3.0,apo,0.75\n")
+
+        ExplicitSitesIndex index = AhojUbsSiteParser.parse(csv.toString())
+        ExplicitSitesIndex.SiteDef sd = index.getDefsForProtein("A.cif.gz")[0]
+
+        assertNotNull(sd.ahojSiteInfo)
+        assertEquals("apo", sd.ahojSiteInfo.pocketClass)
+        assertEquals(0.75d, sd.ahojSiteInfo.pocketScore, DELTA)
+        assertTrue(Double.isNaN(sd.ahojSiteInfo.rg), "missing rg column should be NaN, not throw")
+        assertEquals(0, sd.ahojSiteInfo.nUnpPockets, "missing n_unp_pockets should be 0")
     }
 
     // --- Cross-format consistency test ---

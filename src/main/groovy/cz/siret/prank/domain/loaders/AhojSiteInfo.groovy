@@ -80,29 +80,38 @@ class AhojSiteInfo {
 
     /**
      * Creates an AhojSiteInfo from a CSV record.
-     * Assumes the record's header contains all required columns.
+     *
+     * Each column is read independently via {@link #optInt} / {@link #optDouble} /
+     * {@link #optString}, so missing columns degrade to the per-type sentinel
+     * (int → 0, double → NaN, string → "") rather than throwing. This lets
+     * older "full" CSVs (which had {@code pocket_class} but not yet
+     * {@code rg} / {@code n_unp_pockets[_multichain]}) parse without crashing.
      */
-    static AhojSiteInfo fromCsvRecord(CSVRecord record) {
+    static AhojSiteInfo fromCsvRecord(CSVRecord r) {
         AhojSiteInfo info = new AhojSiteInfo()
-        info.nUnpPockets            = parseInt(record.get(COL_N_UNP_POCKETS))
-        info.nUnpPocketsMultichain  = parseInt(record.get(COL_N_UNP_POCKETS_MULTICHAIN))
-        info.pocketClass            = record.get(COL_POCKET_CLASS)
-        info.pocketDensityCombined  = parseDouble(record.get(COL_POCKET_DENSITY_COMBINED))
-        info.pocketDensityPair      = parseDouble(record.get(COL_POCKET_DENSITY_PAIR))
-        info.pocketDensityStrongest = parseDouble(record.get(COL_POCKET_DENSITY_STRONGEST))
-        info.pocketOverlapMode      = parseDouble(record.get(COL_POCKET_OVERLAP_MODE))
-        info.pocketOverlapOverall   = parseDouble(record.get(COL_POCKET_OVERLAP_OVERALL))
-        info.pocketOverlapPair      = parseDouble(record.get(COL_POCKET_OVERLAP_PAIR))
-        info.pocketSeparationPair   = parseDouble(record.get(COL_POCKET_SEPARATION_PAIR))
-        info.pocketPApo             = parseDouble(record.get(COL_POCKET_P_APO))
-        info.pocketPHolo            = parseDouble(record.get(COL_POCKET_P_HOLO))
-        info.pocketScore            = parseDouble(record.get(COL_POCKET_SCORE))
-        info.modelPocketPlddt       = parseDouble(record.get(COL_MODEL_POCKET_PLDDT))
-        info.nApoAvg                = parseDouble(record.get(COL_N_APO_AVG))
-        info.nHoloAvg               = parseDouble(record.get(COL_N_HOLO_AVG))
-        info.rg                     = parseDouble(record.get(COL_RG))
+        info.nUnpPockets            = optInt   (r, COL_N_UNP_POCKETS)
+        info.nUnpPocketsMultichain  = optInt   (r, COL_N_UNP_POCKETS_MULTICHAIN)
+        info.pocketClass            = optString(r, COL_POCKET_CLASS)
+        info.pocketDensityCombined  = optDouble(r, COL_POCKET_DENSITY_COMBINED)
+        info.pocketDensityPair      = optDouble(r, COL_POCKET_DENSITY_PAIR)
+        info.pocketDensityStrongest = optDouble(r, COL_POCKET_DENSITY_STRONGEST)
+        info.pocketOverlapMode      = optDouble(r, COL_POCKET_OVERLAP_MODE)
+        info.pocketOverlapOverall   = optDouble(r, COL_POCKET_OVERLAP_OVERALL)
+        info.pocketOverlapPair      = optDouble(r, COL_POCKET_OVERLAP_PAIR)
+        info.pocketSeparationPair   = optDouble(r, COL_POCKET_SEPARATION_PAIR)
+        info.pocketPApo             = optDouble(r, COL_POCKET_P_APO)
+        info.pocketPHolo            = optDouble(r, COL_POCKET_P_HOLO)
+        info.pocketScore            = optDouble(r, COL_POCKET_SCORE)
+        info.modelPocketPlddt       = optDouble(r, COL_MODEL_POCKET_PLDDT)
+        info.nApoAvg                = optDouble(r, COL_N_APO_AVG)
+        info.nHoloAvg               = optDouble(r, COL_N_HOLO_AVG)
+        info.rg                     = optDouble(r, COL_RG)
         return info
     }
+
+    private static int    optInt   (CSVRecord r, String name) { r.isMapped(name) ? parseInt(r.get(name))    : 0 }
+    private static double optDouble(CSVRecord r, String name) { r.isMapped(name) ? parseDouble(r.get(name)) : Double.NaN }
+    private static String optString(CSVRecord r, String name) { r.isMapped(name) ? r.get(name)              : "" }
 
     /**
      * Returns values in the same order as {@link #EXPORT_COLUMNS}.
