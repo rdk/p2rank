@@ -1,12 +1,18 @@
-# Post-2.5.1 Audit Tech Debt
+# Tech Debt Backlog
 
-Working tech-debt backlog distilled from a 10-agent audit of all changes
-between tag `2.5.1` and `develop` (originally ~218 commits, ~523 files).
-Items resolved by follow-up work are removed; items deferred or marked
-**Not wanted** are kept with the decision date.
+Active punch-list of small bugs, inconsistencies, and follow-up items. New
+entries get added as they're found; resolved entries are removed.
 
-File paths are repo-relative; line numbers reflect state at last revision and
-may drift as the surrounding files evolve.
+Companion to [`technical-debt.md`](technical-debt.md), which holds long-form
+analyses (issue + workaround + proper fix + trigger) for items that need more
+than a one-liner.
+
+Originated from a 10-agent post-2.5.1 audit but has been continuously
+maintained since; the file is the live backlog, not an audit archive.
+
+File paths are repo-relative; line numbers may drift as the surrounding files
+evolve. Items marked **Not wanted** are explicit decisions to keep current
+behaviour — kept in the file so they don't get re-raised.
 
 ---
 
@@ -51,7 +57,7 @@ may drift as the surrounding files evolve.
 
 - **Sort-direction comment in `PrincipalMomentsDescriptor.java:96-101`** says
   "Sort descending." while `Arrays.sort` is ascending. Downstream indexing
-  compensates. **Not wanted** (decision 2026-05-21) — current behaviour is
+  compensates. **Not wanted** — current behaviour is
   correct, the comment ambiguity is acceptable.
 
 - **`atomRoleCache`/`atomChargeCache` keyed by BioJava `Atom` identity.**
@@ -97,7 +103,7 @@ may drift as the surrounding files evolve.
 
 - **CI matrix is `17,21,25,26` only** (`.github/workflows/develop.yml:23`) and
   distribution switched temurin → oracle (commit `1997ab94`). **Not wanted**
-  (decision 2026-05-21) — Java-version coverage and CI distribution choice are
+  — Java-version coverage and CI distribution choice are
   intentional; README's "tested up to Java 25" wording will refresh at the
   2.6 release.
 
@@ -128,10 +134,10 @@ may drift as the surrounding files evolve.
   with a compile + test pass.
 
 - **`misc/development-notes.md`** is down to a single 6-line note — kept
-  intentionally (decision 2026-05-21).
+  intentionally.
 
 - **`distro/prank.bat:14`** `set "JAVA_OPTS=%JAVA_OPTS%"` no-op. Kept
-  intentionally (decision 2026-05-21).
+  intentionally.
 
 - **`AbstractScalarPocketDescriptor.java:21-23`** comment says "both shipped
   descriptors are multi-column" — accurate today, will silently lie when a
@@ -139,13 +145,12 @@ may drift as the surrounding files evolve.
 
 ---
 
-## Test-isolation gaps (open carry-forward)
+## Test-isolation gaps
 
-The Tier 6 cleanup pass on 2026-05-21 resolved everything except the registry
-thread-safety entry. JUnit5 parallel execution is not enabled in this project
-(no `junit-platform.properties`, no `parallel.enabled=true`), so
-`@Isolated`/`@ResourceLock` annotations are forward-compatibility documentation
-only.
+JUnit5 parallel execution is not enabled in this project (no
+`junit-platform.properties`, no `parallel.enabled=true`), so
+`@Isolated`/`@ResourceLock` annotations are forward-compatibility
+documentation only.
 
 - **`PocketDescriptorRegistry` / `PocketGridPointDescriptorRegistry`** —
   `NamedRegistryHelper`-backed `LinkedHashMap` is not synchronized. Production
@@ -166,7 +171,7 @@ only.
 
 - **`PocketGridBuilder.java:83`** `Map<Integer, BitSet> pocketToPointIndices`
   uses boxed `Integer` keys while the rest of the file goes to lengths to
-  avoid boxing. **Not wanted** (decision 2026-05-22) — traced ~200-400 box
+  avoid boxing. **Not wanted** — traced ~200-400 box
   operations per protein at this site versus ~10⁵-10⁶ in the hot path; the
   perf gain is in the noise (~0.01%) and the API refactor across renderers
   + exporters + descriptors isn't justified.
@@ -175,11 +180,3 @@ only.
   (`KdTreeAssigner.java:41`): every atom returned by the KD tree is in
   `latticeIndex` by construction.
 
----
-
-## Top next steps
-
-All Top-N entries from the 2026-05-22 sweep have shipped. Remaining items
-are either deferred design calls (Coulomb wiring, aromatic-cap semantics,
-Pocketeer centroid policy) or low-value perf/comment hygiene; pick from
-the lists above as the surrounding code is touched.

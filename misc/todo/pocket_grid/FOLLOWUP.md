@@ -1,14 +1,22 @@
-# Pocket Grid — Future Descriptor Ideas
+# Pocket Grid — Follow-ups
 
-Concrete descriptors sketched but not implemented. Each was designed
-during the post-squash audit cycle and explicitly deferred until either
-the underlying perf framework lands or a real workload makes the feature
-worth shipping.
+Post-ship work for the pocket-grid feature. Two flavors:
+
+- **[Future descriptor ideas](#future-descriptor-ideas)** — concrete designs
+  sketched but not implemented, deferred until the underlying perf framework
+  lands or a real workload justifies them.
+- **[Perf observations](#perf-observations)** — loose notes gathered while
+  benchmarking; not blocking work, captured here so the mitigation isn't
+  re-derived later.
+
+---
+
+## Future descriptor ideas
 
 None of these are bugs or blockers. They are ideas with enough detail to
 pick up later without re-deriving the design.
 
-## Prerequisite: the `ComputeCache` framework
+### Prerequisite: the `ComputeCache` framework
 
 Three of the four ideas below assume a per-protein compute cache the
 descriptors can use to share precomputed per-protein resources (e.g. an
@@ -44,9 +52,9 @@ noticeable cost on a real protein. Then implement, in order:
 
 Stop after (3) unless one of the descriptors below has a concrete user.
 
-## Grid-point descriptor ideas
+### Grid-point descriptor ideas
 
-### `local_atom_density` — 2 × i32
+#### `local_atom_density` — 2 × i32
 
 Counts of polar / hydrophobic protein atoms within R Å of the grid point.
 
@@ -57,7 +65,7 @@ Counts of polar / hydrophobic protein atoms within R Å of the grid point.
 - Param: `pocket_grid_atom_density_radius` (default ~4.0 Å).
 - Pocket-agnostic, so eligible for the per-point cache idiom.
 
-### `electrostatic_proximity` — 1 × f64
+#### `electrostatic_proximity` — 1 × f64
 
 Coulomb sum `Σ q_i / r_i` over protein atoms within R Å, using partial
 charges from an embedded force-field table (AMBER ff14SB-ish, or simpler
@@ -71,7 +79,7 @@ per-element averages as a fallback for unknown atom names).
 - Pocket-agnostic, eligible for per-point cache.
 - Sets a precedent for any future MM-flavored descriptor.
 
-### `conservation_proximity` — 2 × f64
+#### `conservation_proximity` — 2 × f64
 
 Max + mean residue conservation score over residues within R Å of the
 grid point. Useful when conservation data is loaded
@@ -85,9 +93,9 @@ grid point. Useful when conservation data is loaded
 - Param: `pocket_grid_conservation_radius` (default ~5.0 Å).
 - Pocket-agnostic, eligible for per-point cache.
 
-## Per-pocket descriptor idea
+### Per-pocket descriptor idea
 
-### `residue_chemistry_summary` — 5 × f64
+#### `residue_chemistry_summary` — 5 × f64
 
 Fractions over the pocket's surface residues, broken into five chemical
 classes:
@@ -107,7 +115,7 @@ Sum to 1.0 (or close, depending on how His is split between polar and basic).
 - Cheap; no radius param.
 - Per-pocket scope means no per-point cache needed.
 
-## What's deliberately NOT here
+### What's deliberately NOT here
 
 - **`nearest_atom`** descriptor — looked tempting but it would just use
   the already-cached `Atoms.kdTree`. No new per-protein resource. Skip.
@@ -121,10 +129,44 @@ Sum to 1.0 (or close, depending on how His is split between polar and basic).
   descriptor with 9 columns or three separate 3-column descriptors).
   Defer until someone has a use case.
 
-## Cross-references
+### Cross-references
 
 - Design discussion: see commit history around 2026-05; the
   ComputeCache sketch lived in conversation and is not in a source file.
 - Audit findings that motivated this: the "Tier 4 efficiency"
   items (Pre-classify atoms, per-point cache, hoist Params reads) in
   the post-squash audit cycle.
+
+---
+
+## Perf observations
+
+Loose observations gathered while benchmarking; not blocking work.
+
+### JIT Code Cache fills on long runs
+
+On the coach420-fpocket bench at 16 threads we saw 2 Full GCs caused by
+`CodeCache GC Threshold` (a JIT code cache sweep, not heap GC). Each took
+~70 ms and reduced cached compiled code from ~3 GB down to ~350 MB. On a
+420-protein run this is in the noise (~140 ms / 27 s ≈ 0.5%), but on
+multi-hour `eval`/`crossvalidate` runs the JIT will repeatedly fill and
+sweep, hurting steady-state throughput.
+
+Mitigation if it ever shows up as a real cost: bump
+`-XX:ReservedCodeCacheSize=512m` (default is 256m on most JDKs) in
+`prank.sh`'s `JAVA_OPTS`. Easy to verify with `-Xlog:gc*` on a long run —
+if `CodeCache GC Threshold` events disappear and steady-state time
+improves, that's the fix.
+
+### Per-protein parallelism gap
+
+After the HPPC `LongIntHashMap` swap (commit b48caeec), coach420
+pocket-grid export at 16 threads runs at ~35% CPU utilization on the
+grid/writer phase, despite GC being ~1.5% (negligible). The remaining
+gap is structural — grid build + write is single-threaded per protein,
+and the dataset has variance in protein size so the tail straggles.
+
+If this becomes worth chasing: parallelize the per-pocket loop inside
+`PocketGridBuilder.build` (the assigner + filler calls are independent
+per pocket). Likely 1.2-1.5× speedup on the multi-pocket proteins
+without disturbing the single-pocket common case.
