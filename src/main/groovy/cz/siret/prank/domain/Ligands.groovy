@@ -79,7 +79,7 @@ class Ligands implements Parametrized, Writable, Failable {
 
         if (loaderParams.loadLigandsFromSeparateFiles) {
             // Load ligands from separate "ligand_*" files instead of from the primary structure file
-            loadLigandsFromSeparateFiles(protein, pdbFileName)
+            loadLigandsFromSeparateFiles(protein, pdbFileName, loaderParams)
 
         } else if (loaderParams.ligandsSeparatedByTER) {
             // ligands are separated by TER lines in specific datasets (CHEN11)
@@ -137,10 +137,15 @@ class Ligands implements Parametrized, Writable, Failable {
      * within a file are merged into a single ligand). All such ligands are treated as relevant.
      * All ligands found in the primary structure file are placed into ignoredLigands.
      */
-    private void loadLigandsFromSeparateFiles(Protein protein, String pdbFileName) {
+    private void loadLigandsFromSeparateFiles(Protein protein, String pdbFileName, LoaderParams loaderParams) {
 
-        // Move all ligands from the primary structure file to ignoredLigands
+        // Move all ligands from the primary structure file to ignoredLigands.
+        // Cofactors are filtered out here for the same reason as in the
+        // non-separate branch (Issue #79 part 2): they are part of the surface,
+        // not "ignored ligands". Without this filter, a cofactor present in the
+        // primary file would surface as an ignored Ligand with ~0 contact dist.
         List<Group> primaryLigandGroups = Struct.getLigandGroups(protein)
+                .findAll { !loaderParams.isCofactor(it) }
         List<Atoms> primaryAtomGroups = primaryLigandGroups.collect { Atoms.allFromGroup(it) }
         ignoredLigands = makeLigands(primaryAtomGroups, protein)
         log.info "Moved {} ligands from primary file to ignored: {}", ignoredLigands.size(), ignoredLigands*.name

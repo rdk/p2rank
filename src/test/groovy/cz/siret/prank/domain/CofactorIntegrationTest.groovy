@@ -108,6 +108,21 @@ class CofactorIntegrationTest {
 
     @Test
     @EnabledIf("has1AHP")
+    void cofactorIsNotMovedToIgnoredWhenLoadingFromSeparateFiles() {
+        // Default branch already filters cofactors out of getLigandGroups; the
+        // separate-files branch in Ligands.loadLigandsFromSeparateFiles must do
+        // the same so a cofactor doesn't surface as an ignored Ligand.
+        def lp = loaderParamsWithCofactors(["PLP"])
+        lp.loadLigandsFromSeparateFiles = true
+
+        Protein protein = Protein.load(PDB_1AHP, lp)
+
+        assertFalse(protein.ligands.ignoredLigands*.name.any { ((String) it).contains("PLP") },
+                "PLP should be filtered out of ignoredLigands in separate-files mode")
+    }
+
+    @Test
+    @EnabledIf("has1AHP")
     void cofactorsExcludedFromLigandDetection() {
         def protein = Protein.load(PDB_1AHP, loaderParamsWithCofactors(["PLP"]))
 
