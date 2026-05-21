@@ -146,6 +146,29 @@ class SwinSiteLoaderTest {
         assertSame(queryProtein, p.protein)
     }
 
+    /**
+     * surfaceAtoms must reference the SAME Atom instances as queryProtein's
+     * exposedAtoms (identity, not just equality), so downstream set ops
+     * (DSO/DSWO overlap, BindingSite intersection) hit. SwinSite uses the
+     * same cutoutShell-from-exposedAtoms pattern as ConcavityLoader; this
+     * is the bug class that once shipped there. sasPoints must also be
+     * derived so the pocket isn't a half-built object.
+     */
+    @Test
+    void surfaceAtomsBelongToQueryProtein() {
+        Protein queryProtein = Protein.load("$distroDir/clean/1tjw_A.pdb")
+        queryProtein.calcuateSurfaceAndExposedAtoms()
+        Prediction p = new SwinSiteLoader().loadPrediction(
+                "$distroDir/predictions/swinsite/1tjw_A", queryProtein)
+
+        def pocket = p.pockets[0]
+        assertFalse(pocket.surfaceAtoms.empty)
+        def a = pocket.surfaceAtoms.list[0]
+        assertSame(a, queryProtein.exposedAtoms.withIndex().getByID(a.PDBserial))
+        assertNotNull(pocket.sasPoints)
+        assertFalse(pocket.sasPoints.empty)
+    }
+
     @Test
     void testEmptyDirectory() {
         // missing/empty dir should produce 0 pockets, not throw
