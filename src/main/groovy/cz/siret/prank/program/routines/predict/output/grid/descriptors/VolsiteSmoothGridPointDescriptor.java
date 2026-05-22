@@ -35,7 +35,7 @@ public final class VolsiteSmoothGridPointDescriptor implements PocketGridPointDe
     @Override public boolean isPocketAgnostic() { return true; }
 
     @Override
-    public double[] compute(PocketGridPointContext ctx) {
+    public void compute(PocketGridPointContext ctx, double[] out, int offset) {
         double sigma = Params.INSTANCE.getPocket_grid_volsite_sigma();
         double cutoff = CUTOFF_SIGMAS * sigma;
         double twoSigmaSqr = 2d * sigma * sigma;
@@ -67,7 +67,12 @@ public final class VolsiteSmoothGridPointDescriptor implements PocketGridPointDe
             if (p.donor)       donor       += w;
         }
 
-        return new double[] { aromatic, cation, anion, hydrophobic, acceptor, donor };
+        out[offset    ] = aromatic;
+        out[offset + 1] = cation;
+        out[offset + 2] = anion;
+        out[offset + 3] = hydrophobic;
+        out[offset + 4] = acceptor;
+        out[offset + 5] = donor;
     }
 
 }

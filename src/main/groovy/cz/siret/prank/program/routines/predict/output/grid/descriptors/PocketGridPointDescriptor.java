@@ -46,7 +46,12 @@ public interface PocketGridPointDescriptor {
      */
     default boolean isPocketAgnostic() { return false; }
 
-    /** One value per columnNames() entry, same order. */
-    double[] compute(PocketGridPointContext ctx);
+    /**
+     * Write {@code columnNames().size()} doubles into {@code out[offset .. offset+N)}.
+     * Direct-write SPI rather than {@code return double[]} so the runner can hand
+     * descriptors the destination cell of the output row directly — saves a per-call
+     * allocation and a copy loop on the hot path.
+     */
+    void compute(PocketGridPointContext ctx, double[] out, int offset);
 
 }

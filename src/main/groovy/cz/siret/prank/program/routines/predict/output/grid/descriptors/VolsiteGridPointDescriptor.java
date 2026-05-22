@@ -37,7 +37,7 @@ public final class VolsiteGridPointDescriptor implements PocketGridPointDescript
     @Override public boolean isPocketAgnostic() { return true; }
 
     @Override
-    public double[] compute(PocketGridPointContext ctx) {
+    public void compute(PocketGridPointContext ctx, double[] out, int offset) {
         double radius = Params.INSTANCE.getPocket_grid_volsite_radius();
         Atoms nearby = ctx.protein().getProteinAtoms().cutoutSphere(ctx.point(), radius);
         VolSiteAtomTable table = VolSiteAtomTable.forProtein(ctx.protein());
@@ -58,14 +58,12 @@ public final class VolsiteGridPointDescriptor implements PocketGridPointDescript
             if (aromatic && cation && anion && hydrophobic && acceptor && donor) break;
         }
 
-        return new double[] {
-                aromatic ? 1d : 0d,
-                cation ? 1d : 0d,
-                anion ? 1d : 0d,
-                hydrophobic ? 1d : 0d,
-                acceptor ? 1d : 0d,
-                donor ? 1d : 0d
-        };
+        out[offset    ] = aromatic    ? 1d : 0d;
+        out[offset + 1] = cation      ? 1d : 0d;
+        out[offset + 2] = anion       ? 1d : 0d;
+        out[offset + 3] = hydrophobic ? 1d : 0d;
+        out[offset + 4] = acceptor    ? 1d : 0d;
+        out[offset + 5] = donor       ? 1d : 0d;
     }
 
 }

@@ -141,7 +141,7 @@ class PocketGridRowsTest {
         @Override String name() { return TEST_SCALAR_NAME }
         @Override List<String> columnNames() { return ['ignored'] }
         @Override List<TableData.ColumnType> columnTypes() { return [TableData.ColumnType.DOUBLE] }
-        @Override double[] compute(PocketGridPointContext ctx) { return [42.0d] as double[] }
+        @Override void compute(PocketGridPointContext ctx, double[] out, int offset) { out[offset] = 42.0d }
     }
     private static final String TEST_SCALAR_NAME = '__test_scalar_descriptor__'
 
@@ -153,11 +153,11 @@ class PocketGridRowsTest {
         @Override List<String> columnNames() { return ['n'] }
         @Override List<TableData.ColumnType> columnTypes() { return [TableData.ColumnType.DOUBLE] }
         @Override boolean isPocketAgnostic() { return true }
-        // Returns the pointIdx as a value — lets us verify the SAME cached result lands in
+        // Writes the pointIdx — lets us verify the SAME cached result lands in
         // every row for a multi-pocket point (i.e. result is per-point, not per-row).
-        @Override double[] compute(PocketGridPointContext ctx) {
+        @Override void compute(PocketGridPointContext ctx, double[] out, int offset) {
             calls++
-            return [(double) ctx.pointIndex()] as double[]
+            out[offset] = (double) ctx.pointIndex()
         }
     }
     private static final String TEST_AGNOSTIC_NAME = '__test_counting_agnostic__'
@@ -171,9 +171,9 @@ class PocketGridRowsTest {
         @Override List<String> columnNames() { return ['n'] }
         @Override List<TableData.ColumnType> columnTypes() { return [TableData.ColumnType.DOUBLE] }
         // Inherits isPocketAgnostic() = false (the safe default).
-        @Override double[] compute(PocketGridPointContext ctx) {
+        @Override void compute(PocketGridPointContext ctx, double[] out, int offset) {
             calls++
-            return [(double) ctx.pocketRank()] as double[]
+            out[offset] = (double) ctx.pocketRank()
         }
     }
     private static final String TEST_NON_AGNOSTIC_NAME = '__test_counting_non_agnostic__'

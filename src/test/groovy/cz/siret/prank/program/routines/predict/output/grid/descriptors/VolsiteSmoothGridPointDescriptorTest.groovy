@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.Isolated
 import org.junit.jupiter.api.parallel.ResourceLock
 
+import static cz.siret.prank.program.routines.predict.output.grid.descriptors.PocketGridPointDescriptors.computeArr
 import static org.junit.jupiter.api.Assertions.*
 
 /**
@@ -75,11 +76,12 @@ class VolsiteSmoothGridPointDescriptorTest {
         return new PocketGridPointContext(0, new Point(x, y, z), 0, null, p, null)
     }
 
+
     @Test
     void weightAtZeroDistanceIsOne() {
         // exp(0) = 1.0 exactly. Atom name "C" is hydrophobic.
         Atom c = atomAt("C", "ALA", "C", 0d, 0d, 0d)
-        double[] out = new VolsiteSmoothGridPointDescriptor().compute(
+        double[] out = computeArr(new VolsiteSmoothGridPointDescriptor(),
                 ctxAt(0d, 0d, 0d, new Atoms([c])))
         assertEquals(1.0d, out[HYDROPHOBIC], DELTA)
     }
@@ -89,7 +91,7 @@ class VolsiteSmoothGridPointDescriptorTest {
         // At distance r = σ, weight = exp(-r²/(2σ²)) = exp(-1/2) ≈ 0.6065.
         double sigma = SIGMA
         Atom c = atomAt("C", "ALA", "C", sigma, 0d, 0d)
-        double[] out = new VolsiteSmoothGridPointDescriptor().compute(
+        double[] out = computeArr(new VolsiteSmoothGridPointDescriptor(),
                 ctxAt(0d, 0d, 0d, new Atoms([c])))
         assertEquals(Math.exp(-0.5d), out[HYDROPHOBIC], DELTA)
     }
@@ -102,7 +104,7 @@ class VolsiteSmoothGridPointDescriptorTest {
                 atomAt("C", "ALA", "C", sigma, 0d, 0d),
                 atomAt("C", "ALA", "C", 0d, sigma, 0d),
         ])
-        double[] out = new VolsiteSmoothGridPointDescriptor().compute(
+        double[] out = computeArr(new VolsiteSmoothGridPointDescriptor(),
                 ctxAt(0d, 0d, 0d, protein))
         assertEquals(2d * Math.exp(-0.5d), out[HYDROPHOBIC], DELTA)
     }
@@ -114,7 +116,7 @@ class VolsiteSmoothGridPointDescriptorTest {
         // Pins the boundary semantic (cutoff is inclusive, not strict).
         double sigma = SIGMA
         Atom c = atomAt("C", "ALA", "C", 4d * sigma, 0d, 0d)
-        double[] out = new VolsiteSmoothGridPointDescriptor().compute(
+        double[] out = computeArr(new VolsiteSmoothGridPointDescriptor(),
                 ctxAt(0d, 0d, 0d, new Atoms([c])))
         assertEquals(Math.exp(-8d), out[HYDROPHOBIC], DELTA)
     }
@@ -125,7 +127,7 @@ class VolsiteSmoothGridPointDescriptorTest {
         // in the kdtree result. Zero contribution.
         double sigma = SIGMA
         Atom c = atomAt("C", "ALA", "C", 5d * sigma, 0d, 0d)
-        double[] out = new VolsiteSmoothGridPointDescriptor().compute(
+        double[] out = computeArr(new VolsiteSmoothGridPointDescriptor(),
                 ctxAt(0d, 0d, 0d, new Atoms([c])))
         assertEquals(0d, out[HYDROPHOBIC], DELTA)
     }

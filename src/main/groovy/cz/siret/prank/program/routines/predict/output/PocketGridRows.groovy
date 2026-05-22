@@ -100,35 +100,62 @@ final class PocketGridRows implements TableData {
             // non-agnostic descriptors — the inner-loop null-check selects the path.
             int descCount = descriptors.size()
             PocketGridPointDescriptor[] descArr = descriptors.toArray(new PocketGridPointDescriptor[0])
+            // Column counts hoisted once; the runner trusts each descriptor's
+            // compute() to write exactly descCols[d] doubles starting at
+            // out[descOffsets[d]]. A descriptor that miscounts overruns into
+            // the next descriptor's columns silently — descCols sourced from
+            // the same columnNames() the header builder used pins this contract.
+            int[] descCols = new int[descCount]
+            int[] descOffsets = new int[descCount]
+            int runningOffset = 0
+            for (int d = 0; d < descCount; d++) {
+                descCols[d] = descArr[d].columnNames().size()
+                descOffsets[d] = runningOffset
+                runningOffset += descCols[d]
+            }
+            assert runningOffset == totalDescriptorCols : "descriptor column-count mismatch"
             double[][][] agnosticCache = new double[descCount][][]
             int pointCount = grid.allPoints.count
             for (int d = 0; d < descCount; d++) {
                 if (descArr[d].isPocketAgnostic()) agnosticCache[d] = new double[pointCount][]
             }
 
+            // One pooled context reused for every row. Descriptors must not retain
+            // references past their compute() call — documented contract on
+            // PocketGridPointContext.
+            PocketGridPointContext ctx = new PocketGridPointContext()
+
             this.descriptorValues = new double[rowPointIdx.length][totalDescriptorCols]
+            // Rows are emitted in pocket-rank order (see the sort above), so the
+            // rank-to-pocket lookup repeats across runs of equal-rank rows. Hoist
+            // it across the run so each rank is resolved once, not per row.
+            int currentRank = -1
+            Pocket pocket = null
             for (int i = 0; i < rowPointIdx.length; i++) {
                 int pointIdx = rowPointIdx[i]
                 int pocketRank = rowPocket[i]
+                if (pocketRank != currentRank) {
+                    currentRank = pocketRank
+                    pocket = rankToPocket.get(pocketRank)
+                }
                 Atom point = allPoints.get(pointIdx)
-                Pocket pocket = rankToPocket.get(pocketRank)
-                PocketGridPointContext ctx = new PocketGridPointContext(
-                        pointIdx, point, pocketRank, pocket, protein, grid)
-                int col = 0
+                ctx.reset(pointIdx, point, pocketRank, pocket, protein, grid)
+                double[] rowOut = descriptorValues[i]
                 for (int d = 0; d < descCount; d++) {
+                    int off = descOffsets[d]
+                    int len = descCols[d]
                     double[][] dCache = agnosticCache[d]
-                    double[] vals
                     if (dCache != null) {
-                        vals = dCache[pointIdx]
-                        if (vals == null) {
-                            vals = descArr[d].compute(ctx)
-                            dCache[pointIdx] = vals
+                        double[] cached = dCache[pointIdx]
+                        if (cached == null) {
+                            cached = new double[len]
+                            descArr[d].compute(ctx, cached, 0)
+                            dCache[pointIdx] = cached
                         }
+                        System.arraycopy(cached, 0, rowOut, off, len)
                     } else {
-                        vals = descArr[d].compute(ctx)
-                    }
-                    for (int k = 0; k < vals.length; k++) {
-                        descriptorValues[i][col++] = vals[k]
+                        // Non-agnostic: write directly into the output row.
+                        descArr[d].compute(ctx, rowOut, off)
                     }
                 }
             }

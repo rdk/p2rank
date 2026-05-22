@@ -30,10 +30,12 @@ import java.util.List;
  * convention. Implementations must guarantee the value fits in i32.
  *
  * <p>This interface is the sibling of
- * {@link cz.siret.prank.program.routines.predict.output.grid.descriptors.PocketGridPointDescriptor};
- * the two share the same shape (name + columnNames + columnTypes + double[] compute)
- * so future descriptors can move between the two contexts without an interface
- * mismatch.
+ * {@link cz.siret.prank.program.routines.predict.output.grid.descriptors.PocketGridPointDescriptor}.
+ * The metadata methods (name, columnNames, columnTypes) match; the {@code compute}
+ * signatures differ — this one returns a {@code double[]} (Npockets/protein ~tens,
+ * allocation is not a hot path) while the grid-point variant uses a direct-write
+ * {@code compute(ctx, out, offset)} to avoid per-row allocation in its 10⁴–10⁵
+ * per-protein loop.
  */
 public interface PocketDescriptor {
 

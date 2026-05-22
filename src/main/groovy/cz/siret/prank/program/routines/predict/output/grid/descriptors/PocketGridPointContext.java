@@ -15,19 +15,36 @@ import javax.annotation.Nullable;
  * unassigned grid points are not emitted as rows. {@code pocket} is always
  * non-null. The {@link Nullable} annotation is kept for future-proofing
  * (subclasses that synthesise contexts could choose to pass null).
+ *
+ * <p>Mutable on purpose: the runner allocates ONE instance and resets it per row
+ * via {@link #reset}. Descriptors must not retain references across calls — the
+ * fields will change on the next iteration. Pooling avoids ~50 k per-protein
+ * record allocations in the hot loop.
  */
-public record PocketGridPointContext(
-        int pointIndex,
-        Atom point,
-        int pocketRank,
-        @Nullable Pocket pocket,
-        Protein protein,
-        PocketGrid grid) {
+public final class PocketGridPointContext {
 
-    // Compact validator — limits the blast radius of an int-arg swap. Doesn't catch
-    // pointIndex ↔ pocketRank swapped when both happen to be non-negative, but does
-    // catch the common cases (negative index or rank from a misuse).
-    public PocketGridPointContext {
+    private int pointIndex;
+    private Atom point;
+    private int pocketRank;
+    @Nullable private Pocket pocket;
+    private Protein protein;
+    private PocketGrid grid;
+
+    public PocketGridPointContext() {}
+
+    /** Convenience constructor for tests + non-pooled use. */
+    public PocketGridPointContext(int pointIndex, Atom point, int pocketRank,
+                                  @Nullable Pocket pocket, Protein protein, PocketGrid grid) {
+        reset(pointIndex, point, pocketRank, pocket, protein, grid);
+    }
+
+    /**
+     * Mutate the context to point at the next row. Validates non-negative
+     * {@code pointIndex} / {@code pocketRank} — limits the blast radius of an
+     * int-arg swap at the call site.
+     */
+    public void reset(int pointIndex, Atom point, int pocketRank,
+                      @Nullable Pocket pocket, Protein protein, PocketGrid grid) {
         if (pointIndex < 0) {
             throw new IllegalArgumentException("pointIndex must be >= 0 (got " + pointIndex + ")");
         }
@@ -35,5 +52,18 @@ public record PocketGridPointContext(
             throw new IllegalArgumentException(
                     "pocketRank must be >= 0 (0 = unassigned; got " + pocketRank + ")");
         }
+        this.pointIndex = pointIndex;
+        this.point = point;
+        this.pocketRank = pocketRank;
+        this.pocket = pocket;
+        this.protein = protein;
+        this.grid = grid;
     }
+
+    public int pointIndex() { return pointIndex; }
+    public Atom point() { return point; }
+    public int pocketRank() { return pocketRank; }
+    @Nullable public Pocket pocket() { return pocket; }
+    public Protein protein() { return protein; }
+    public PocketGrid grid() { return grid; }
 }

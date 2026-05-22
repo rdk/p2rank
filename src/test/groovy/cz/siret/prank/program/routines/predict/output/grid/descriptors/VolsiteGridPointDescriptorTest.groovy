@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.Isolated
 import org.junit.jupiter.api.parallel.ResourceLock
 
+import static cz.siret.prank.program.routines.predict.output.grid.descriptors.PocketGridPointDescriptors.computeArr
 import static org.junit.jupiter.api.Assertions.*
 
 /**
@@ -73,7 +74,7 @@ class VolsiteGridPointDescriptorTest {
     void singleHydrophobicAtomNearbySetsOnlyHydrophobic() {
         // Atom name "C" + any residue → hydrophobic (first branch in VolSitePharmacophore).
         Atom c = atomAt("C", "ALA", "C", 1d, 0d, 0d)  // 1 Å from grid point — well inside default 4 Å
-        double[] out = new VolsiteGridPointDescriptor().compute(
+        double[] out = computeArr(new VolsiteGridPointDescriptor(),
                 ctxAt(0d, 0d, 0d, new Atoms([c])))
 
         assertEquals(1d, out[HYDROPHOBIC])
@@ -84,7 +85,7 @@ class VolsiteGridPointDescriptorTest {
     void atomOutsideRadiusContributesNothing() {
         // Radius is pinned to 4.0 in @BeforeEach; place a hydrophobic atom at 5 Å.
         Atom c = atomAt("C", "ALA", "C", 5d, 0d, 0d)
-        double[] out = new VolsiteGridPointDescriptor().compute(
+        double[] out = computeArr(new VolsiteGridPointDescriptor(),
                 ctxAt(0d, 0d, 0d, new Atoms([c])))
 
         for (int i = 0; i < 6; i++) assertEquals(0d, out[i], 0d, "col $i")
@@ -99,7 +100,7 @@ class VolsiteGridPointDescriptorTest {
                 atomAt("O", "ASP", "OD1", 0d, 1d, 0d),
                 atomAt("ZN", "ZN", "ZN",  0d, 0d, 1d),
         ])
-        double[] out = new VolsiteGridPointDescriptor().compute(
+        double[] out = computeArr(new VolsiteGridPointDescriptor(),
                 ctxAt(0d, 0d, 0d, protein))
 
         assertEquals(1d, out[DONOR])
@@ -112,7 +113,7 @@ class VolsiteGridPointDescriptorTest {
 
     @Test
     void emptyNeighborhoodAllZeros() {
-        double[] out = new VolsiteGridPointDescriptor().compute(
+        double[] out = computeArr(new VolsiteGridPointDescriptor(),
                 ctxAt(0d, 0d, 0d, new Atoms()))
         for (int i = 0; i < 6; i++) assertEquals(0d, out[i], 0d)
     }
@@ -124,7 +125,7 @@ class VolsiteGridPointDescriptorTest {
         // a regression that overwrites one with the other would slip through if
         // every other test only exercises one-flag atoms.
         Atom nd1His = atomAt("N", "HIS", "ND1", 1d, 0d, 0d)
-        double[] out = new VolsiteGridPointDescriptor().compute(
+        double[] out = computeArr(new VolsiteGridPointDescriptor(),
                 ctxAt(0d, 0d, 0d, new Atoms([nd1His])))
 
         assertEquals(1d, out[DONOR])

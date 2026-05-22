@@ -48,16 +48,17 @@ public final class ElectrostaticsGridPointDescriptor implements PocketGridPointD
     @Override public boolean isPocketAgnostic() { return true; }
 
     @Override
-    public double[] compute(PocketGridPointContext ctx) {
+    public void compute(PocketGridPointContext ctx, double[] out, int offset) {
         Params p = Params.INSTANCE;
         PartialChargeTable table = PartialChargeTable.forProtein(ctx.protein());
         Atoms nearby = ctx.protein().getProteinAtoms()
                 .cutoutSphere(ctx.point(), p.getElectrostatics_radius());
         CoulombKernel.Result r = CoulombKernel.accumulate(
                 ctx.point(), nearby, table, p.getElectrostatics_min_r());
-        return new double[]{
-                r.potential(), r.fieldMagnitude(), r.positive(), r.negative(),
-                CoulombKernel.polarityRatio(r.positive(), r.negative())
-        };
+        out[offset    ] = r.potential();
+        out[offset + 1] = r.fieldMagnitude();
+        out[offset + 2] = r.positive();
+        out[offset + 3] = r.negative();
+        out[offset + 4] = CoulombKernel.polarityRatio(r.positive(), r.negative());
     }
 }
