@@ -21,16 +21,25 @@ Some features are more naturally defined for atoms rather than for SAS points an
  2. Check `config/train-default.groovy` config file. It contains configuration ideal for training new models, but you might need to make changes or override some params on the command line. 
  
  3. Train with the new feature
+    * verify the feature is registered under the expected name before running training/ploop:
+        ```bash
+        ./prank.sh print features -extra_features '(new_feature)'
+        ```
+        (See `print features` documentation in [feature-setup.md](feature-setup.md#check-enabled-features).)
     * train with the new feature by adding its name to the list of `-features`. e.g.:
         - in the groovy config file: `features = ["protrusion","bfactor","new_feature"]`
-        - on the command line: `-features '(protrusion,bfactor,new_feature)'` 
+        - on the command line: `-features '(protrusion,bfactor,new_feature)'`
+    * alternatively, use `-extra_features` to ADD candidates on top of the default `-features` list
+      without re-stating it. The natural ploop pattern is `-extra_features '((),(new_feature))'`
+      which evaluates baseline-vs-baseline+candidate.
     * if the feature has arbitrary parameters, they can be optimized with `prank ploop` or `prank hopt` commands
         - see the [hyperparameter optimization tutorial](hyperparameter-optimization-tutorial.md) 
     * you can even compare different feature sets running `prank ploop ...`. e.g.:
         - `-features '((protrusion),(new_feature),(protrusion,new_feature))'`
           
 
-Note: due to the variance in trained classifiers it is important to consider average results of several runs (by using e.g `-loop 10`) when comparing features.
+> [!NOTE]
+> Due to the variance in trained classifiers it is important to consider average results of several runs (by using e.g `-loop 10`) when comparing features.
 
 
 ## Feature importances
@@ -98,11 +107,11 @@ Default P2Rank models are not optimized for residue metrics.
 
 #### First, we run training and evaluation for models with and without conservation to illustrate mentioned points.
                                      
-Notes: 
-* The default model was trained with `-sample_negatives_from_decoys 1` and the default conservation model with `-sample_negatives_from_decoys 0`.
-  Here we need to use the same value: otherwise the distribution of positive and negative instances (SAS points) would be different 
-  and `point_AUPRC` and `point_AUC` would be incomparable.
-* Training on `chen11-fpocket.ds` because we are using `sample_negatives_from_decoys 1`.                   
+> [!IMPORTANT]
+> When comparing models trained with different `-features` / `-extra_features` setups, **always use the same value of `-sample_negatives_from_decoys`** across the runs you're comparing. The default model was trained with `1`, the default conservation model with `0`; mixing the two gives incomparable `point_AUPRC` / `point_AUC` because the positive/negative SAS-point distributions differ. The case study below pins `-sample_negatives_from_decoys 1` because training is on `chen11-fpocket.ds`.
+
+Notes:
+* Training on `chen11-fpocket.ds` because we are using `sample_negatives_from_decoys 1`.
 * `-loop 10` does 10 runs with different random seed and averages results.
 
 ~~~bash

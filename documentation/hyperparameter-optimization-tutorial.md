@@ -31,6 +31,10 @@ Examples:
 * list of numbers: `'(1,2,3,4)'`
 * list of strings: `'(RandomForest,FasterForest,FasterForest2)'`
 * list of lists: `'((protrusion,bfactor,volsite),(protrusion,bfactor),(protrusion),())'`
+    * **`()` denotes an empty list** — useful as a "baseline" cell in list-of-strings
+      grids. Particularly natural with `-extra_features`:
+      `-extra_features '((),(my_new),(my_new,my_other))'` evaluates the default
+      feature set alone, then with `my_new` added, then with both candidates.
 
 **Range expression**: `[min:max:step]` example: `[-1:1.5:0.5]`
 Valid only for numerical parameters.
@@ -76,6 +80,11 @@ Quick test run:
 
 (Then check `run.log` in n results directory for errors. Check if R plots are generated correctly.)
 
+> `-loop 1 -rf_trees 5 -rf_depth 5` are **smoke-test knobs** — they cut runtime by
+> ~100× by training a tiny single-seed model. Use them to verify wiring/syntax;
+> never report results from a run configured this way. For real evaluation use
+> the "Feature set comparisons" recipe below.
+
 Feature set comparisons:
 ~~~sh
 ./prank.sh ploop -c config/train-new-default \      
@@ -89,6 +98,26 @@ Feature set comparisons:
     -loop 10 -rf_trees 100 -rf_depth 10 \      
     -features '((protrusion,bfactor),(protrusion,bfactor,new_feature))'` 
 ~~~
+
+#### Result directory layout
+
+After `prank ploop ... -out_subdir FOO -label BAR` completes, results land in
+`<results_dir>/<version>/FOO/ploop_<train>_<eval>_<label>/` (the `<results_dir>`
+is set in `local-env.sh`; the version segment is auto-derived). Contents:
+
+| File / dir | What it is |
+|---|---|
+| `selected_stats.csv` | Headline metrics-per-grid-cell table — usually what you want |
+| `param_stats.csv` | Full per-cell metrics (every recorded stat) |
+| `tables/<metric>.csv` | One CSV per metric for plotting (e.g. `DCA_4_0.csv`) |
+| `plots/`, `plots_sorted/` | R-generated PNGs when `Rscript` is on the PATH |
+| `runs/<NNNN>_<cell>/` | Per-grid-cell sub-runs including per-seed logs |
+| `params.txt` | Effective parameter dump for the run |
+| `run.log.zip` | Compressed run log |
+| `status.done` | Sentinel file written on clean exit |
+
+In `selected_stats.csv`, grid cells appear as the literal list value:
+`"()"` denotes the empty/baseline cell, `"(my_new)"` the candidate, etc.
 
 ## Bayesian optimization (hopt command)
 

@@ -23,6 +23,12 @@ Composition of feature vector is influenced by parameters:
     * list of enabled feature calculators    
     * default: `(chem,volsite,protrusion,bfactor)` 
     * `atom_table` and `residue_table` features are implicitly enabled by default
+* `-extra_features`
+    * list of feature calculators appended **on top of** `-features`
+    * default: empty
+    * the effective feature set is `features ∪ extra_features`
+    * useful when you want to compare a candidate against the default baseline without restating the baseline list every time — see also the
+      `((),(my_new),(my_new,my_other))` ploop pattern in [hyperparameter-optimization-tutorial.md](hyperparameter-optimization-tutorial.md)
 * `-atom_table_features` and `-residue_table_features` 
     * determine which columns from atom type and residue type tables are enabled   
 * `-feature_filters`
@@ -106,7 +112,12 @@ Effective feature vector header (i.e. enabled sub-features):
 If you want to add new features that are not implemented in P2Rank you have 3 options:
 * Implement a new feature calculator in Java or Groovy
     * this is not too difficult and has an advantage that the feature will be calculated automatically for new datasets
-    * For introduction see [new feature tutorial](new-feature-evaluation-tutorial.md) 
+    * For introduction see [new feature tutorial](new-feature-evaluation-tutorial.md)
+    * Atom features are auto-projected to SAS points by the model. If you ALSO want
+      to expose an explicit SAS-projected variant (e.g. for `-export_points` output
+      or for selecting it by a different name on the command line), additionally
+      register `AtomicToSasFeatWrapper(new MyFeature())` — it registers under the
+      name `my_feature_sas` (the wrapped feature's name with a `_sas` suffix). 
 * Provide custom atom type and residue type tables for `atom_table` and `residue_table` features
     * allow defining values for residue types and atom types
         * residue types are: (ALA,ARG,ASN,...)

@@ -47,6 +47,17 @@ Note: for continuous work/experimentation it is better to clone the git repo, ha
 The reason is that this way it will be easy to download updates (`git pull`) ot switch to a different P2Rank version (`git checkout`) while config will stay put in `local-env.sh`. 
 If you decide to use downloaded `.tar.gz` distribution or `.zip` source package this will not be as easy, and you will need to manually update the config each time you download an update.
 
+#### What `local-env.sh` typically sets
+
+`./prank.sh` sources `local-env.sh` from the repo root before launching the JVM. Common contents:
+
+* `JAVA_HOME`, `JAVA_LOCALENV_PARAMS` — pick a JDK and pass `-Xmx32G` plus other JVM flags
+* `PRANK_LOCALENV_PARAMS` — extra prank CLI args appended to every invocation
+* `dataset_base_dir` (via `PRANK_LOCALENV_PARAMS=-c <config>`) — typically `../p2rank-datasets`
+* output base directory — see `output_base_dir` parameter in [Params.groovy](https://github.com/rdk/p2rank/blob/develop/src/main/groovy/cz/siret/prank/program/params/Params.groovy)
+
+By default training/eval/ploop results land under `<output_base_dir>/<p2rank_version>/<out_subdir>/...` — e.g. `~/p2rank-results/2.6-alpha/EVAL_NEW_FEATURES/ploop_chen11-fpocket_joined_RUN1/`. The `<p2rank_version>` segment is derived automatically and lets results from different versions coexist.
+
 ## Training and evaluation
 
 To train a model on one dataset and evaluate its performance on the other use `prank traineval` command. 
