@@ -112,7 +112,10 @@ class TableExporter {
     // --- CSV Writer ---
 
     private static void writeCsv(TableData data, String filepath, Compression compression) {
-        createOutputStream(filepath, compression).withCloseable { OutputStream out ->
+        // try-with-resources instead of Groovy's withCloseable {} so the body is
+        // statically compiled — the row-write loop is the hot path and a closure
+        // wrapper shows up under its own _closure1.doCall stack frame in JFR.
+        try (OutputStream out = createOutputStream(filepath, compression)) {
             PrintWriter writer = new PrintWriter(new OutputStreamWriter(out))
 
             // Header
@@ -169,16 +172,14 @@ class TableExporter {
 
     private static void writeArrow(TableData data, String filepath, Compression compression) {
         // Streaming format doesn't require seeking, so we can write directly to any output stream
-        createOutputStream(filepath, compression).withCloseable { OutputStream out ->
-            new RootAllocator().withCloseable { allocator ->
-                VectorSchemaRoot.create(buildSchema(data), allocator).withCloseable { root ->
-                    populateVectors(root, data)
-                    new ArrowStreamWriter(root, null, Channels.newChannel(out)).withCloseable { writer ->
-                        writer.start()
-                        writer.writeBatch()
-                        writer.end()
-                    }
-                }
+        try (OutputStream out = createOutputStream(filepath, compression);
+             RootAllocator allocator = new RootAllocator();
+             VectorSchemaRoot root = VectorSchemaRoot.create(buildSchema(data), allocator)) {
+            populateVectors(root, data)
+            try (ArrowStreamWriter writer = new ArrowStreamWriter(root, null, Channels.newChannel(out))) {
+                writer.start()
+                writer.writeBatch()
+                writer.end()
             }
         }
     }
@@ -251,7 +252,7 @@ class TableExporter {
 
         Dehydrator<Integer> dehydrator = new RowDehydrator(data, header, types)
 
-        ParquetWriter.writeFile(schema, outputFile, dehydrator).withCloseable { ParquetWriter<Integer> writer ->
+        try (ParquetWriter<Integer> writer = ParquetWriter.writeFile(schema, outputFile, dehydrator)) {
             int rowCount = data.getRowCount()
             for (int i = 0; i < rowCount; i++) {
                 writer.write(Integer.valueOf(i))
