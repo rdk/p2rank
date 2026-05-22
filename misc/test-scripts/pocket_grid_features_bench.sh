@@ -42,6 +42,9 @@
 #   --keep-output       leave the prediction outputs on disk for inspection.
 #                       Default: cleaned after each rep so repeated runs don't
 #                       accumulate.
+#   --no-warmup         skip the untimed warmup rep before each config. Use for
+#                       smoke runs or when measuring cold-start cost. Default
+#                       is to warm up so JIT compiles before the first timed rep.
 #   -h | --help         show this help and exit.
 #
 # Examples:
@@ -68,6 +71,7 @@ PROFILE=""
 CSV_FILE=""
 QUIET=0
 KEEP_OUTPUT=0
+NO_WARMUP=0
 
 # --- Parse args ---
 TARGET=""
@@ -94,6 +98,7 @@ while [ $# -gt 0 ]; do
                         fi ;;
         --quiet)        QUIET=1; shift ;;
         --keep-output)  KEEP_OUTPUT=1; shift ;;
+        --no-warmup)    NO_WARMUP=1; shift ;;
         --)             shift; break ;;
         -*) echo "unknown option: $1" >&2; exit 2 ;;
         *)  if [ -z "$TARGET" ]; then TARGET="$1"; shift
@@ -173,7 +178,7 @@ cat <<EOF
  target:      ${LABEL}   (${MODE})
  threads:     ${THREADS:-(prank default)}
  grid spacing: 1.0 Å (bench-pinned for cross-version comparability; prank default is 1.2)
- reps:        ${REPS} timed + 1 warmup
+ reps:        ${REPS} timed$( [ "$NO_WARMUP" -eq 1 ] && echo ", no warmup" || echo ", + 1 warmup" )
  profile:     ${PROFILE:-off}
  git rev:     ${GIT_REV}${GIT_DIRTY}
  p2rank ver:  ${P2RANK_VER}
@@ -262,9 +267,10 @@ run_config() {
     local -n times_arr="$7"
 
     [ "$QUIET" -eq 0 ] && echo "Config $cfg (${label}):"
-    # Warmup (untimed)
-    if ! run_one "$cfg" "$grid" "$desc" "$pocket_list" "$grid_list" 0 >/dev/null; then exit 1; fi
-    [ "$QUIET" -eq 0 ] && echo "  warmup: done"
+    if [ "$NO_WARMUP" -eq 0 ]; then
+        if ! run_one "$cfg" "$grid" "$desc" "$pocket_list" "$grid_list" 0 >/dev/null; then exit 1; fi
+        [ "$QUIET" -eq 0 ] && echo "  warmup: done"
+    fi
 
     for r in $(seq 1 "$REPS"); do
         local ms
