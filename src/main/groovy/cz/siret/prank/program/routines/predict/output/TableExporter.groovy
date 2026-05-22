@@ -27,8 +27,6 @@ import java.nio.charset.StandardCharsets
 import java.util.zip.Deflater
 import java.util.zip.GZIPOutputStream
 
-import static cz.siret.prank.utils.Formatter.format
-
 /**
  * Exports tabular double data to CSV, Arrow, or Parquet format with optional compression.
  *
@@ -55,8 +53,12 @@ class TableExporter {
     /** Zstd compression level (1-22, where 1=fastest, 22=best compression, 3=default) */
     private static final int ZSTD_LEVEL = 16
 
-    /** Decimal places for formatting doubles in CSV output */
+    /** Decimal places for formatting doubles in CSV output. Doubles are pre-rounded
+     *  to this precision before {@link Double#toString} formats the shortest
+     *  round-trip representation, matching the legacy {@code DecimalFormat("0.#######")}
+     *  output contract. */
     private static final int CSV_DECIMAL_PLACES = 7
+    private static final double CSV_ROUND_SCALE = 1e7d
 
     private TableExporter() {}
 
@@ -339,8 +341,58 @@ class TableExporter {
         }
     }
 
+    /**
+     * Fast CSV-cell formatter for {@code double} values. Was a hot path —
+     * {@code DecimalFormat.format} appeared at ~2.2 % of total wall on the
+     * pocket-grid bench — so this delegates to the JDK's Schubfach-based
+     * {@link Double#toString} (the JDK-built-in equivalent of Ryu since
+     * Java 19), with pre-rounding to {@link #CSV_DECIMAL_PLACES} so output
+     * matches the legacy {@code DecimalFormat("0.#######")} contract:
+     *
+     * <ul>
+     *   <li>integer-valued doubles render without a trailing {@code .0}
+     *       ({@code 1.0} → {@code "1"}, not {@code "1.0"})</li>
+     *   <li>trailing zeros after the decimal point are stripped
+     *       (already given by {@code Double.toString}'s shortest form)</li>
+     *   <li>at most 7 digits after the decimal point
+     *       (without pre-rounding, {@code 1.0 / 3.0} would expand from
+     *       {@code "0.3333333"} to the full 16-digit round-trip form)</li>
+     * </ul>
+     *
+     * <p>NaN and infinities use {@code Double.toString}'s {@code "NaN"} /
+     * {@code "Infinity"} / {@code "-Infinity"} spellings — locale-independent
+     * unlike DecimalFormat's defaults.
+     */
     private static String formatDouble(double d) {
-        return format(d, CSV_DECIMAL_PLACES)
+        // Indicator descriptors (volsite hard) are 0/1 on every row; making this
+        // the first branch wins on the common case for the dataset that motivated
+        // the optimization. Negative-zero compares equal to positive-zero so it
+        // also takes this path.
+        if (d == 0d) return "0"
+        if (d == 1d) return "1"
+
+        // Math.round on (NaN * scale) yields 0L and silently produces "0";
+        // catch non-finite values BEFORE pre-rounding so they round-trip
+        // through Double.toString cleanly.
+        if (!Double.isFinite(d)) return Double.toString(d)
+
+        // Pre-round to 7 decimal places. The (d * 1e7) intermediate stays
+        // within long range for any value with |d| < ~9.2e8, which covers all
+        // descriptor and coordinate outputs by orders of magnitude. Above that
+        // we'd silently saturate Math.round — fall back to the un-rounded
+        // toString to avoid losing the value entirely.
+        if (d > 9.2e8d || d < -9.2e8d) return Double.toString(d)
+        double rounded = Math.round(d * CSV_ROUND_SCALE) / CSV_ROUND_SCALE
+        String s = Double.toString(rounded)
+
+        // Double.toString always emits at least one digit after the decimal
+        // point, so integer-valued rounds come back as "5.0", "12.0", etc.
+        // Strip the trailing ".0" to match DecimalFormat("0.#######").
+        int len = s.length()
+        if (len >= 2 && s.charAt(len - 1) == ('0' as char) && s.charAt(len - 2) == ('.' as char)) {
+            return s.substring(0, len - 2)
+        }
+        return s
     }
 
     /**

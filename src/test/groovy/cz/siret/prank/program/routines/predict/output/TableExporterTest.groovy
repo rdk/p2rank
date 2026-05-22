@@ -37,6 +37,53 @@ class TableExporterTest {
     }
 
     @Test
+    void csvDoubleFormatterMatchesLegacyOutputContract() {
+        // Pins the "0.#######" output shape the legacy DecimalFormat-based formatter
+        // produced. The fast formatter rebuild swapped that for JDK Double.toString
+        // (Schubfach since Java 19) plus pre-rounding; this test guards the shape
+        // contract so the swap can't drift on a future JDK upgrade.
+        //
+        // Note: any future change to the bench-format contract (e.g. switching to
+        // full round-trip representation) should update both this test and the
+        // {@code formatDouble} javadoc together.
+        def data = ArrayTableData.of(
+                ["v"],
+                [
+                    row(0d),                  // exact zero — indicator-off fast path
+                    row(1d),                  // exact one  — indicator-on fast path
+                    row(0.5d),                // simple fraction, shortest form
+                    row(5d),                  // integer-valued double — trailing ".0" must be stripped
+                    row(1.0d / 3.0d),         // long fractional — must round to 7 places
+                    row(-2.5d),               // negative value preserved verbatim
+                    row(1.2345678d),          // exactly 7 places — no rounding effect
+                    row(1.23456789d),         // 8 places — last digit must be rounded
+                ])
+        def filepath = "$tempDir/test_format.csv"
+        TableExporter.export(data, filepath, "csv")
+
+        def lines = new File(filepath).readLines()
+        assertEquals(["v", "0", "1", "0.5", "5", "0.3333333", "-2.5", "1.2345678", "1.2345679"],
+                lines, "CSV double-formatter output drifted from the legacy contract")
+    }
+
+    @Test
+    void csvHandlesNaNAndInfinityWithoutSilentZero() {
+        // The fast path uses Math.round(d * 1e7); on NaN that yields 0L and would
+        // silently produce "0" in the output, masking a real bug upstream. The
+        // formatter must short-circuit non-finite values to Double.toString's
+        // own (locale-independent) spellings.
+        def data = ArrayTableData.of(
+                ["v"],
+                [row(Double.NaN), row(Double.POSITIVE_INFINITY), row(Double.NEGATIVE_INFINITY)])
+        def filepath = "$tempDir/test_nonfinite.csv"
+        TableExporter.export(data, filepath, "csv")
+
+        def lines = new File(filepath).readLines()
+        assertEquals(["v", "NaN", "Infinity", "-Infinity"], lines,
+                "non-finite doubles must round-trip through Double.toString, not silently become 0")
+    }
+
+    @Test
     void exportsCsvGzipCompressed() {
         def data = ArrayTableData.of(["col"], [row(1.5d)])
         def filepath = "$tempDir/test.csv.gz"
