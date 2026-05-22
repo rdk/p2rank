@@ -1,16 +1,18 @@
 #!/usr/bin/env bash
 #
-# A/B/C benchmark for the pocket-grid + pocket-descriptors features.
+# A/M/B/C benchmark for the pocket-grid + pocket-descriptors features.
 #
-# Runs the SAME workload three times and reports the deltas:
-#   A: all OFF                      (-export_pocket_grid 0  -export_pocket_descriptors 0)
-#   B: pocket descriptors ON only   (-export_pocket_grid 0  -export_pocket_descriptors 1)
-#   C: all ON                       (-export_pocket_grid 1  -export_pocket_descriptors 1)
+# Runs the SAME workload four times and reports the deltas:
+#   A: all OFF                      (no exports, no descriptors compute)
+#   M: minimal pocket descriptors   (export_pocket_descriptors 1, pocket_descriptors=(volume), no grid)
+#   B: all pocket descriptors       (export_pocket_descriptors 1, full auto-discovered list, no grid)
+#   C: all ON                       (B plus -export_pocket_grid 1, full auto-discovered grid list)
 #
-# Deltas isolate the cost of each feature on top of the baseline:
-#   B-A: cost of pocket descriptors alone
-#   C-B: marginal cost of adding pocket-grid export on top of descriptors
-#   C-A: total cost of having both features enabled
+# Deltas isolate the cost of each layer:
+#   M-A: floor cost of having any per-pocket descriptor at all (just the cheapest one)
+#   B-M: cost of the other 9 pocket descriptors on top of volume
+#   C-B: marginal cost of adding pocket-grid export on top
+#   C-A: total cost of having all features enabled
 #
 # Pair with:
 #   - `./prank.sh bench pocket_grid <ds>` for the pure-build single-threaded
@@ -28,7 +30,7 @@
 #
 # options:
 #   --reps N            timed reps per config (default 3, plus one untimed warmup).
-#                       Use higher N for noisy environments; median is reported.
+#                       Use higher N for noisy environments; mean is reported.
 #   --threads N         override -threads (default: prank's own default).
 #   --profile [jfr]     enable Java Flight Recorder for all runs; produces
 #                       jfr-{A,B,C}-<ts>-rep<N>.jfr files in the cwd.
@@ -44,7 +46,7 @@
 #
 # Examples:
 #
-#   # Quick smoke during development, 3 reps + warmup, median printed:
+#   # Quick smoke during development, 3 reps + warmup, mean printed:
 #   ./misc/test-scripts/pocket_grid_features_bench.sh
 #
 #   # Real dataset, 8 threads, JFR-profiled:
@@ -122,12 +124,16 @@ esac
 
 [ -n "$THREADS" ] && PRANK_ARGS+=("-threads" "$THREADS")
 
-# --- Discover all registered descriptors so config A exercises everything ---
+# Pin grid spacing for the bench so runs are comparable across versions and
+# more sensitive to grid-export cost than the production default (1.2 Å).
+# 1.0 Å is a finer grid → more grid points → ~1.7× the per-protein work in
+# the grid path, which makes optimizations / regressions easier to read.
+PRANK_ARGS+=("-pocket_grid_spacing" "1.0")
+
+# --- Discover all registered descriptors so configs B and C exercise everything ---
 # Source-tree grep against the descriptor source dirs — when someone registers
 # a new descriptor in the registry, this picks it up automatically without a
-# script update. Both lists are passed to both configs; config B's
-# export-flags are off so the lists are inert (nothing computes), keeping the
-# command-line shape symmetric between A and B.
+# script update.
 discover_names() {
     local dir="$1"
     grep -hE 'name\(\) \{ return "' "$dir"/*.java 2>/dev/null \
@@ -142,8 +148,9 @@ if [ -z "$POCKET_DESC" ] || [ -z "$GRID_DESC" ]; then
     echo "Could not discover descriptors — are you running from the repo root?" >&2
     exit 1
 fi
-PRANK_ARGS+=("-pocket_descriptors" "($POCKET_DESC)"
-             "-pocket_grid_point_descriptors" "($GRID_DESC)")
+# Minimal mode M uses only the volume descriptor — cheapest existing pocket
+# descriptor, exercises the export pipeline at floor cost.
+MIN_POCKET_DESC="volume"
 
 # --- Captured environment ---
 GIT_REV="$(git rev-parse --short HEAD 2>/dev/null || echo 'unknown')"
@@ -165,6 +172,7 @@ cat <<EOF
 
  target:      ${LABEL}   (${MODE})
  threads:     ${THREADS:-(prank default)}
+ grid spacing: 1.0 Å (bench-pinned for cross-version comparability; prank default is 1.2)
  reps:        ${REPS} timed + 1 warmup
  profile:     ${PROFILE:-off}
  git rev:     ${GIT_REV}${GIT_DIRTY}
@@ -173,17 +181,20 @@ cat <<EOF
  host:        ${HOST}
  date (UTC):  ${DATE_ISO}
 
- pocket desc: (${POCKET_DESC})
- grid desc:   (${GRID_DESC})
+ pocket desc (full set used in B and C): (${POCKET_DESC})
+ pocket desc (minimal — used in M):      (${MIN_POCKET_DESC})
+ grid desc (used in C):                  (${GRID_DESC})
 ============================================================
 EOF
 
 # --- Worker: run prank once, return wall-time ms via stdout ---
 run_one() {
-    local cfg="$1"        # "A" | "B" | "C"
-    local grid_flag="$2"  # "1" or "0" for -export_pocket_grid
-    local desc_flag="$3"  # "1" or "0" for -export_pocket_descriptors
-    local rep="$4"        # rep number (0 = warmup)
+    local cfg="$1"             # "A" | "M" | "B" | "C"
+    local grid_flag="$2"       # "1" or "0" for -export_pocket_grid
+    local desc_flag="$3"       # "1" or "0" for -export_pocket_descriptors
+    local pocket_desc_list="$4"  # csv of pocket descriptor names (no parens), or empty to skip
+    local grid_desc_list="$5"    # csv of grid descriptor names (no parens), or empty to skip
+    local rep="$6"             # rep number (0 = warmup)
     local out_subdir="${OUT_BASE}/${cfg}/rep${rep}"
 
     local jfr_arg=""
@@ -195,9 +206,16 @@ run_one() {
 
     mkdir -p "$(dirname "${out_subdir}.log")"
 
+    # Build per-mode extra args. Lists are only passed when non-empty so each
+    # mode's command line shows exactly what was selected.
+    local extra_args=()
+    [ -n "$pocket_desc_list" ] && extra_args+=("-pocket_descriptors" "(${pocket_desc_list})")
+    [ -n "$grid_desc_list" ]   && extra_args+=("-pocket_grid_point_descriptors" "(${grid_desc_list})")
+
     local start_ns end_ns
     start_ns=$(date +%s%N)
     JAVA_OPTS="${JAVA_OPTS:-} ${jfr_arg}" ./prank.sh "${PRANK_ARGS[@]}" \
+        "${extra_args[@]}" \
         -export_pocket_grid "${grid_flag}" \
         -export_pocket_descriptors "${desc_flag}" \
         -visualizations 0 \
@@ -218,52 +236,54 @@ run_one() {
     echo "$elapsed_ms"
 }
 
-# --- Median helper (integer ms) ---
-median() {
-    # stdin: one number per line; stdout: middle (or avg of two middles for even N)
-    sort -n | awk '
-        { a[NR] = $1 }
+# --- Mean helper (rounded ms) ---
+mean() {
+    # stdin: one number per line; stdout: arithmetic mean rounded to integer ms.
+    awk '
+        { sum += $1; n++ }
         END {
-            if (NR == 0) { print "NaN"; exit }
-            mid = int((NR + 1) / 2)
-            if (NR % 2 == 1) { print a[mid] }
-            else             { print (a[mid] + a[mid+1]) / 2 }
+            if (n == 0) { print "NaN"; exit }
+            printf "%.0f\n", sum / n
         }
     '
 }
 
-# --- A/B/C loop ---
+# --- A/M/B/C loop ---
 mkdir -p "${OUT_BASE}"
-declare -a A_TIMES B_TIMES C_TIMES
+declare -a A_TIMES M_TIMES B_TIMES C_TIMES
 
 run_config() {
     local cfg="$1"
     local grid="$2"
     local desc="$3"
-    local label="$4"
-    local -n times_arr="$5"
+    local pocket_list="$4"   # csv of pocket descriptor names, empty to skip the flag
+    local grid_list="$5"     # csv of grid descriptor names, empty to skip the flag
+    local label="$6"
+    local -n times_arr="$7"
 
     [ "$QUIET" -eq 0 ] && echo "Config $cfg (${label}):"
     # Warmup (untimed)
-    if ! run_one "$cfg" "$grid" "$desc" 0 >/dev/null; then exit 1; fi
+    if ! run_one "$cfg" "$grid" "$desc" "$pocket_list" "$grid_list" 0 >/dev/null; then exit 1; fi
     [ "$QUIET" -eq 0 ] && echo "  warmup: done"
 
     for r in $(seq 1 "$REPS"); do
         local ms
-        if ! ms=$(run_one "$cfg" "$grid" "$desc" "$r"); then exit 1; fi
+        if ! ms=$(run_one "$cfg" "$grid" "$desc" "$pocket_list" "$grid_list" "$r"); then exit 1; fi
         times_arr+=("$ms")
         [ "$QUIET" -eq 0 ] && printf '  rep %d: %s ms\n' "$r" "$ms"
     done
     echo
 }
 
-run_config A 0 0 "all OFF"          A_TIMES
-run_config B 0 1 "descriptors only" B_TIMES
-run_config C 1 1 "all ON"           C_TIMES
+run_config A 0 0 ""                 ""             "all OFF"               A_TIMES
+run_config M 0 1 "${MIN_POCKET_DESC}" ""            "minimal (volume only)" M_TIMES
+run_config B 0 1 "${POCKET_DESC}"   ""             "all pocket descriptors" B_TIMES
+run_config C 1 1 "${POCKET_DESC}"   "${GRID_DESC}" "all ON (+ grid)"        C_TIMES
 
-A_MEDIAN=$(printf '%s\n' "${A_TIMES[@]}" | median)
-B_MEDIAN=$(printf '%s\n' "${B_TIMES[@]}" | median)
-C_MEDIAN=$(printf '%s\n' "${C_TIMES[@]}" | median)
+A_MEAN=$(printf '%s\n' "${A_TIMES[@]}" | mean)
+M_MEAN=$(printf '%s\n' "${M_TIMES[@]}" | mean)
+B_MEAN=$(printf '%s\n' "${B_TIMES[@]}" | mean)
+C_MEAN=$(printf '%s\n' "${C_TIMES[@]}" | mean)
 
 delta_ms() {
     awk -v hi="$1" -v lo="$2" 'BEGIN { printf "%.0f\n", hi - lo }'
@@ -273,35 +293,42 @@ delta_pct() {
     awk -v hi="$1" -v lo="$2" 'BEGIN { if (lo == 0) { print "inf" } else { printf "%.1f\n", (hi - lo) / lo * 100 } }'
 }
 
-BA_MS=$(delta_ms  "$B_MEDIAN" "$A_MEDIAN")
-BA_PCT=$(delta_pct "$B_MEDIAN" "$A_MEDIAN")
-CB_MS=$(delta_ms  "$C_MEDIAN" "$B_MEDIAN")
-CB_PCT=$(delta_pct "$C_MEDIAN" "$B_MEDIAN")
-CA_MS=$(delta_ms  "$C_MEDIAN" "$A_MEDIAN")
-CA_PCT=$(delta_pct "$C_MEDIAN" "$A_MEDIAN")
+MA_MS=$(delta_ms  "$M_MEAN" "$A_MEAN")
+MA_PCT=$(delta_pct "$M_MEAN" "$A_MEAN")
+BM_MS=$(delta_ms  "$B_MEAN" "$M_MEAN")
+BM_PCT=$(delta_pct "$B_MEAN" "$M_MEAN")
+BA_MS=$(delta_ms  "$B_MEAN" "$A_MEAN")
+BA_PCT=$(delta_pct "$B_MEAN" "$A_MEAN")
+CB_MS=$(delta_ms  "$C_MEAN" "$B_MEAN")
+CB_PCT=$(delta_pct "$C_MEAN" "$B_MEAN")
+CA_MS=$(delta_ms  "$C_MEAN" "$A_MEAN")
+CA_PCT=$(delta_pct "$C_MEAN" "$A_MEAN")
 
 # --- Summary ---
 cat <<EOF
 ============================================================
  Summary
 
- A (all OFF         ):  ${A_TIMES[*]}  ->  median ${A_MEDIAN} ms
- B (descriptors only):  ${B_TIMES[*]}  ->  median ${B_MEDIAN} ms
- C (all ON          ):  ${C_TIMES[*]}  ->  median ${C_MEDIAN} ms
+ A (all OFF              ):  ${A_TIMES[*]}  ->  mean ${A_MEAN} ms
+ M (volume only, no grid ):  ${M_TIMES[*]}  ->  mean ${M_MEAN} ms
+ B (all pocket descriptors):  ${B_TIMES[*]}  ->  mean ${B_MEAN} ms
+ C (all ON + grid         ):  ${C_TIMES[*]}  ->  mean ${C_MEAN} ms
 
- Descriptors cost (B-A):  ${BA_MS} ms  (${BA_PCT}%)
- Grid export cost (C-B):  ${CB_MS} ms  (${CB_PCT}%)
- Total feature  (C-A):    ${CA_MS} ms  (${CA_PCT}%)
+ Min-descriptor floor (M-A):  ${MA_MS} ms  (${MA_PCT}%)
+ Rest of descriptors  (B-M):  ${BM_MS} ms  (${BM_PCT}%)
+ All pocket descriptors (B-A): ${BA_MS} ms  (${BA_PCT}%)
+ Grid export cost     (C-B):  ${CB_MS} ms  (${CB_PCT}%)
+ Total feature cost   (C-A):  ${CA_MS} ms  (${CA_PCT}%)
 ============================================================
 EOF
 
 # --- CSV log ---
 if [ -n "$CSV_FILE" ]; then
     if [ ! -f "$CSV_FILE" ]; then
-        echo "date_utc,git_rev,p2rank_ver,java_major,host,target,mode,threads,reps,a_median_ms,b_median_ms,c_median_ms,ba_delta_ms,ba_delta_pct,cb_delta_ms,cb_delta_pct,ca_delta_ms,ca_delta_pct" \
+        echo "date_utc,git_rev,p2rank_ver,java_major,host,target,mode,threads,reps,a_mean_ms,m_mean_ms,b_mean_ms,c_mean_ms,ma_delta_ms,ma_delta_pct,bm_delta_ms,bm_delta_pct,ba_delta_ms,ba_delta_pct,cb_delta_ms,cb_delta_pct,ca_delta_ms,ca_delta_pct" \
             > "$CSV_FILE"
     fi
-    echo "${DATE_ISO},${GIT_REV}${GIT_DIRTY},${P2RANK_VER},${JAVA_MAJOR},${HOST},${LABEL},${MODE},${THREADS:-default},${REPS},${A_MEDIAN},${B_MEDIAN},${C_MEDIAN},${BA_MS},${BA_PCT},${CB_MS},${CB_PCT},${CA_MS},${CA_PCT}" \
+    echo "${DATE_ISO},${GIT_REV}${GIT_DIRTY},${P2RANK_VER},${JAVA_MAJOR},${HOST},${LABEL},${MODE},${THREADS:-default},${REPS},${A_MEAN},${M_MEAN},${B_MEAN},${C_MEAN},${MA_MS},${MA_PCT},${BM_MS},${BM_PCT},${BA_MS},${BA_PCT},${CB_MS},${CB_PCT},${CA_MS},${CA_PCT}" \
         >> "$CSV_FILE"
     echo "CSV: appended one row to ${CSV_FILE}"
 fi

@@ -20,7 +20,7 @@ import java.util.List;
  * <p>Parallel to
  * {@link cz.siret.prank.program.routines.predict.output.grid.descriptors.PocketGridPointDescriptor}'s
  * "single-column impls use a one-element list" convention (no shared adapter
- * exists for that interface yet because both shipped descriptors are multi-column).
+ * exists for that interface yet because both registered descriptors are multi-column).
  */
 public abstract class AbstractScalarPocketDescriptor implements PocketDescriptor {
 

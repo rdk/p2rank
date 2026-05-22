@@ -37,6 +37,7 @@ public final class PocketDipoleMagnitudeDescriptor extends AbstractScalarPocketD
 
     @Override public String name() { return "pocket_dipole_magnitude"; }
     @Override protected ColumnType scalarType() { return ColumnType.DOUBLE; }
+    @Override public boolean needsGrid() { return false; }
 
     @Override
     protected double computeScalar(PocketGridContext ctx) {

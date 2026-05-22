@@ -120,7 +120,7 @@ behaviour — kept in the file so they don't get re-raised.
 - **`distro/prank.bat:14`** `set "JAVA_OPTS=%JAVA_OPTS%"` no-op. Kept
   intentionally.
 
-- **`AbstractScalarPocketDescriptor.java:21-23`** comment says "both shipped
+- **`AbstractScalarPocketDescriptor.java:21-23`** comment says "both registered
   descriptors are multi-column" — accurate today, will silently lie when a
   scalar grid-point descriptor is added.
 

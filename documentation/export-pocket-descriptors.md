@@ -8,25 +8,29 @@
 > parse by column **name**, and pass `-pocket_descriptors` explicitly.
 > Feedback welcome via GitHub issues.
 
-Per-pocket geometric/chemical descriptors (volume, sphericity, residue
-counts, etc.) written to a tabular file alongside any `predict` or
-`rescore` run when `-export_pocket_descriptors` is on.
+Per-pocket geometric, shape, and electrostatic descriptors (volume,
+sphericity, residue counts, net charge, dipole magnitude, etc.) written
+to a tabular file alongside any `predict` or `rescore` run when
+`-export_pocket_descriptors` is on.
 
-> **Cost note.** Most shipped descriptors (`volume`, `sphericity`,
+> **Cost note.** The shape descriptors (`volume`, `sphericity`,
 > `radius_of_gyration`, `num_grid_points`, `principal_moments`) read
 > the pocket grid, so selecting any of them triggers the full grid
 > build (lattice + assignment + shape fill) even with
 > `-export_pocket_grid 0`. The `-export_pocket_grid` flag only
-> suppresses the per-protein grid file, not the computation.
-> `num_residues` and `num_surface_atoms` do **not** need the grid;
-> selecting only those two with `-export_pocket_grid 0` skips the grid
+> suppresses the per-protein grid file, not the computation. The
+> grid-free descriptors (`num_residues`, `num_surface_atoms`,
+> `pocket_net_charge`, `pocket_charge_polarity`,
+> `pocket_dipole_magnitude`) iterate `pocket.surfaceAtoms` only;
+> selecting only those with `-export_pocket_grid 0` skips the grid
 > build entirely.
 
 ## Quick start
 
 ```bash
-# Default: every shipped descriptor (num_residues, num_surface_atoms,
-# num_grid_points, volume, sphericity, radius_of_gyration, principal_moments)
+# Default: every registered descriptor — num_residues, num_surface_atoms,
+# num_grid_points, volume, sphericity, radius_of_gyration, principal_moments,
+# pocket_net_charge, pocket_charge_polarity, pocket_dipole_magnitude
 prank predict -f protein.pdb -export_pocket_descriptors 1
 
 # Narrow set + tighter grid for more accurate volume/sphericity
@@ -84,14 +88,18 @@ prefixed with `"{name}."` (e.g. `principal_moments.lambda1`,
 | `num_surface_atoms` | 1 × i32 | Size of `pocket.surfaceAtoms`. |
 | `num_grid_points` | 1 × i32 | Total grid points assigned to the pocket (cardinality of the BitSet after shape fill). Raw count complement to `volume`. |
 | `principal_moments` | 3 × f64 | Three eigenvalues of the pocket grid points' gyration tensor (equal-weight PCA), sorted descending: `principal_moments.lambda1` ≥ `lambda2` ≥ `lambda3`. Unit Å². Shape signature: λ₁≈λ₂≈λ₃ → sphere; λ₁≫λ₂,λ₃ → rod; λ₁≈λ₂≫λ₃ → disk. Sum equals `radius_of_gyration²`. `0`s for pockets with <2 grid points. |
+| `pocket_net_charge` | 1 × f64 | Sum of AMBER ff14SB partial charges of `pocket.surfaceAtoms`, in elementary charge units (`e`). Positive net = anion-binding site, negative = cation-binding, ≈ 0 = neutral / hydrophobic. Atoms outside the AMBER table get an element-bucket fallback. See [electrostatics implementation report](../misc/dev/ELECTROSTATICS_IMPLEMENTATION.md) for the cascade. |
+| `pocket_charge_polarity` | 3 × f64 | `pocket_charge_polarity.positive` and `.negative` are the total cationic and anionic charge in `e` (the latter as a positive magnitude); `.ratio` = `(pos − neg) / (pos + neg + ε)` ∈ [−1, 1] is the normalised polarity. Distinguishes neutral pockets (low magnitudes) from bipolar pockets (large cancelling charges) that `pocket_net_charge` collapses to ≈ 0. |
+| `pocket_dipole_magnitude` | 1 × f64 | Magnitude of the dipole moment of `pocket.surfaceAtoms` about their geometric centroid, in `e·Å`. Two pockets with identical `pocket_net_charge` can differ massively in dipole — bipolar pockets with opposing charge patches have a large dipole; uniformly neutral pockets have zero. |
 
 `-pocket_descriptors` defaults to **all of the above**. The grid-derived
 scalar descriptors share the same pocket-grid input, so adding or
 removing them costs essentially nothing once the grid is built.
-`principal_moments` adds a small 3×3 eigendecomposition per pocket,
-also negligible relative to the grid build itself. To narrow the set,
-list the wanted names comma-separated. Unknown names cause a fail-fast
-error at startup with the list of registered names.
+`principal_moments` adds a small 3×3 eigendecomposition per pocket;
+the electrostatic descriptors share one walk over `pocket.surfaceAtoms`
+via `PocketChargeStats`. All sub-millisecond per pocket. To narrow the
+set, list the wanted names comma-separated. Unknown names cause a
+fail-fast error at startup with the list of registered names.
 
 ## Parameters
 
@@ -103,7 +111,7 @@ file format for both outputs). The descriptor-specific knobs are:
 | Parameter | Default | Notes |
 |---|---|---|
 | `export_pocket_descriptors` | `false` | Master gate |
-| `pocket_descriptors` | all shipped descriptors | List of descriptor names to compute. See catalog above. |
+| `pocket_descriptors` | all registered descriptors | List of descriptor names to compute. See catalog above. |
 
 The grid generator's params (`pocket_grid_spacing`, `_max_dist`,
 `_atom_buffer`, `_assign_cutoff`, `_fill`, `_fill_*`) directly affect
@@ -134,9 +142,10 @@ Implementations live under
    For **scalar** descriptors (one column), extend
    `AbstractScalarPocketDescriptor` instead of implementing the
    interface directly. It boils the boilerplate down to `name()`,
-   `scalarType()`, and `computeScalar(ctx)`. Of the seven shipped
-   descriptors, six use this adapter; `principal_moments`
-   (multi-column) implements `PocketDescriptor` directly.
+   `scalarType()`, and `computeScalar(ctx)`. Of the ten registered
+   descriptors, eight use this adapter; `principal_moments` and
+   `pocket_charge_polarity` (both multi-column) implement
+   `PocketDescriptor` directly.
 
    For **multi-column** descriptors (e.g. `principal_moments` with
    three eigenvalues from a single decomposition), implement

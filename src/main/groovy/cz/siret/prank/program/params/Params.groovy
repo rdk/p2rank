@@ -950,26 +950,34 @@ class Params {
 
     /**
      * Descriptors to compute and emit per pocket. Each entry must match a name
-     * registered in PocketDescriptorRegistry (num_residues, num_surface_atoms,
-     * num_grid_points, volume, sphericity, radius_of_gyration, principal_moments).
-     * Validated at startup. The default includes every shipped descriptor —
-     * the grid-derived ones share the same pocket-grid input, so adding more
-     * is cheap. principal_moments runs a small 3×3 eigendecomposition per
-     * pocket on top, still negligible vs the grid build itself.
+     * registered in PocketDescriptorRegistry. Validated at startup.
+     *
+     * <p>Default: every registered descriptor — the grid-derived ones share the
+     * pocket-grid build, so adding more is cheap; the electrostatic ones
+     * iterate {@code pocket.surfaceAtoms} once via {@code PocketChargeStats},
+     * sub-millisecond per pocket. Inert when {@code -export_pocket_descriptors 0}
+     * (the default — none of the per-pocket compute fires).
      */
     @RuntimeParam
     List<String> pocket_descriptors = ["num_residues", "num_surface_atoms", "num_grid_points",
                                        "volume", "sphericity", "radius_of_gyration",
-                                       "principal_moments"]
+                                       "principal_moments",
+                                       "pocket_net_charge", "pocket_charge_polarity",
+                                       "pocket_dipole_magnitude"]
 
     /**
      * Per-grid-point descriptors appended as extra columns to the pocket-grid
      * export (one value per descriptor column per (point, pocket) row). Each
-     * entry must match a name in PocketGridPointDescriptorRegistry
-     * (volsite, volsite_smooth). Multi-column descriptors get the prefix
-     * "{name}." — e.g. volsite emits volsite.vsAromatic, volsite.vsCation,
-     * etc. Default is empty so the base x/y/z/pocket schema is unchanged for
-     * existing users. Validated at startup.
+     * entry must match a name in PocketGridPointDescriptorRegistry. Multi-column
+     * descriptors get the prefix "{name}." — e.g. volsite emits volsite.vsAromatic,
+     * volsite.vsCation, etc. Validated at startup.
+     *
+     * <p>Default: every registered descriptor (volsite, volsite_smooth,
+     * electrostatics — 13 columns total). Inert when
+     * {@code -export_pocket_grid 0} (the default — no per-(point, pocket) work
+     * fires). Users who want only some descriptors override this list with a
+     * subset; users who want the base x/y/z/pocket schema only override with
+     * an empty list.
      *
      * <p>Note: this knob is only consumed when {@code -export_pocket_grid 1};
      * setting it without enabling the grid export silently does nothing.
@@ -979,7 +987,7 @@ class Params {
      * indistinguishable from "user wants nothing" at validation time.
      */
     @RuntimeParam
-    List<String> pocket_grid_point_descriptors = []
+    List<String> pocket_grid_point_descriptors = ["volsite", "volsite_smooth", "electrostatics"]
 
     /**
      * Cutoff radius (Å) for the volsite per-grid-point descriptor:

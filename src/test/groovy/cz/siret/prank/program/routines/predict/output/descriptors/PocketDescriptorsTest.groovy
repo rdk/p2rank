@@ -16,8 +16,9 @@ import org.junit.jupiter.api.Test
 import static org.junit.jupiter.api.Assertions.*
 
 /**
- * Tests the seven shipped descriptors (volume, sphericity, radius_of_gyration,
- * num_residues, num_surface_atoms, num_grid_points, principal_moments) and the
+ * Tests the registered descriptors (volume, sphericity, radius_of_gyration,
+ * num_residues, num_surface_atoms, num_grid_points, principal_moments,
+ * pocket_net_charge, pocket_charge_polarity, pocket_dipole_magnitude) and the
  * registry.
  */
 @CompileStatic
@@ -258,7 +259,8 @@ class PocketDescriptorsTest {
     void registryResolvesKnownNames() {
         ['volume', 'sphericity', 'radius_of_gyration',
          'num_residues', 'num_surface_atoms', 'num_grid_points',
-         'principal_moments'].each { String name ->
+         'principal_moments',
+         'pocket_net_charge', 'pocket_charge_polarity', 'pocket_dipole_magnitude'].each { String name ->
             PocketDescriptor d = PocketDescriptorRegistry.get(name)
             assertNotNull(d)
             assertEquals(name, d.name())
@@ -305,7 +307,8 @@ class PocketDescriptorsTest {
         assertTrue(known.containsAll(
                 ['volume', 'sphericity', 'radius_of_gyration',
                  'num_residues', 'num_surface_atoms', 'num_grid_points',
-                 'principal_moments'] as Set))
+                 'principal_moments',
+                 'pocket_net_charge', 'pocket_charge_polarity', 'pocket_dipole_magnitude'] as Set))
     }
 
     @Test

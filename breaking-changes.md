@@ -29,11 +29,21 @@ All changes of that type should be rare and should be all listed here.
 
 ###### Pocket-descriptors export (opt-in feature)
 
-* Per-pocket descriptors `-export_pocket_descriptors` underwent a multi-column interface migration. The shipped default
-  list now contains **seven** descriptors (previously six), adds `principal_moments` (a 3-column descriptor emitting
-  `principal_moments.lambda1/lambda2/lambda3`), and reorders the existing six so `num_*` come first.
+* Per-pocket descriptors `-export_pocket_descriptors` underwent a multi-column interface migration. The built-in default
+  list now contains **ten** descriptors (previously six), adds `principal_moments` (a 3-column descriptor emitting
+  `principal_moments.lambda1/lambda2/lambda3`) and three electrostatic descriptors
+  (`pocket_net_charge`, `pocket_charge_polarity` with 3 sub-columns positive/negative/ratio, and
+  `pocket_dipole_magnitude`), and reorders the existing six so `num_*` come first.
   Scripts parsing the descriptors CSV/Arrow/Parquet output by **column name** are unaffected;
   scripts parsing by **column index** need updating. See [`documentation/export-pocket-descriptors.md`](documentation/export-pocket-descriptors.md).
+
+###### Pocket-grid per-point descriptors (opt-in feature)
+
+* The `-pocket_grid_point_descriptors` default was previously empty (no per-point columns appended to the grid
+  CSV). It now contains **all three** registered per-grid-point descriptors:
+  `volsite` (6 cols), `volsite_smooth` (6 cols), `electrostatics` (5 cols) — 17 extra columns per (point, pocket) row
+  when `-export_pocket_grid 1`. To restore the prior bare x/y/z/pocket schema, pass
+  `-pocket_grid_point_descriptors ''`. See [`documentation/export-pocket-grid.md`](documentation/export-pocket-grid.md).
 * New opt-in `-vis_pocket_grid` (renamed from `-export_pocket_grid_pml`) emits both PyMOL `.pml` and ChimeraX `.cxc`
   overlay scripts. The two viz-tuning knobs were renamed for namespace consistency:
   `pocket_grid_vis_volume_radius` → `vis_pocket_grid_volume_radius` and

@@ -21,6 +21,7 @@ public final class PocketNetChargeDescriptor extends AbstractScalarPocketDescrip
 
     @Override public String name() { return "pocket_net_charge"; }
     @Override protected ColumnType scalarType() { return ColumnType.DOUBLE; }
+    @Override public boolean needsGrid() { return false; }
 
     @Override
     protected double computeScalar(PocketGridContext ctx) {

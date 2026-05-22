@@ -73,32 +73,41 @@ Rows are sorted by `pocket` ascending, then by `x`, `y`, `z` ascending.
 ## Per-grid-point descriptors
 
 Extra columns can be appended to each row via `-pocket_grid_point_descriptors`
-(comma-separated names; default empty). Default-empty is deliberate:
-per-grid-point descriptors are **not** free. They run once per
-`(point, pocket)` row (often 10⁴–10⁵ times per protein), each row touching
-a neighborhood of protein atoms. Compare with `-pocket_descriptors`
-(per-pocket), which defaults to all-shipped because adding descriptors there
-is negligible once the grid is built: one extra value per pocket, not per
-point. Multi-column descriptors get the header prefix `"{name}."`, same
+(comma-separated names; default: all registered descriptors — see the catalog
+below). Setting this knob without `-export_pocket_grid 1` is inert: the
+per-grid-point compute only runs when the grid is being exported.
+Multi-column descriptors get the header prefix `"{name}."`, same
 convention as `-pocket_descriptors`.
+
+> **Cost note.** Per-grid-point descriptors run once per
+> `(point, pocket)` row (often 10⁴–10⁵ times per protein), each touching
+> a neighborhood of protein atoms. The runner memoises pocket-agnostic
+> descriptors (volsite, volsite_smooth, electrostatics are all pocket-
+> agnostic today) once per `pointIdx` so multi-pocket overlap doesn't
+> multiply the cost. Pass a subset list to opt out of unwanted columns.
 
 | Name | Columns | Description |
 |---|---|---|
 | `volsite` | 6 × i32 | Per-VolSite-pharmacophore indicator columns: `volsite.vsAromatic`, `volsite.vsCation`, `volsite.vsAnion`, `volsite.vsHydrophobic`, `volsite.vsAcceptor`, `volsite.vsDonor`. Each column is `1` if any protein atom carrying that pharmacophore type (per `VolSitePharmacophore`) lies within `-pocket_grid_volsite_radius` of the grid point, else `0`. |
 | `volsite_smooth` | 6 × f64 | Gaussian-smoothed analogue of `volsite`. Each column is the sum of `exp(-r² / (2σ²))` over protein atoms carrying that pharmacophore type, where `σ = -pocket_grid_volsite_sigma`. Kernel truncated at `4σ`. Captures both proximity and atom count. |
+| `electrostatics` | 5 × f64 | Coulomb-flavour scalars over protein atoms within `-electrostatics_radius` of the grid point, using AMBER ff14SB partial charges (with element-bucket fallback for HETATM atoms). Columns: `electrostatics.potential` = `Σ qᵢ/rᵢ` (signed, `e/Å`); `electrostatics.field_magnitude` = `‖Σ qᵢ·r⃗ᵢ/rᵢ³‖` (`e/Å²`); `electrostatics.positive` and `electrostatics.negative` = same potential restricted to cationic / anionic charges; `electrostatics.polarity` = `(pos − neg) / (pos + neg + ε)` ∈ [−1, 1] normalised polarity. All five share one neighbor walk via `CoulombKernel`. See [electrostatics implementation report](../misc/dev/ELECTROSTATICS_IMPLEMENTATION.md). |
 
 Atom-level pharmacophore classification reuses the same `VolSitePharmacophore`
 rules that drive the `volsite` per-atom feature in P2Rank's feature set:
 a `1` in `volsite.vsCation` here corresponds to the same atom type that
-would mark `vsCation=1` in `VolsiteFeature`.
+would mark `vsCation=1` in `VolsiteFeature`. The electrostatics descriptor
+reuses the same `PartialChargeTable` consumed by the SAS-level
+`electrostatics` feature.
 
 Descriptor params:
 
 | Parameter | Default | Notes |
 |---|---|---|
-| `pocket_grid_point_descriptors` | `[]` | List of names from `PocketGridPointDescriptorRegistry`. Validated at startup. |
+| `pocket_grid_point_descriptors` | `volsite, volsite_smooth, electrostatics` | List of names from `PocketGridPointDescriptorRegistry`. Validated at startup. Set to an empty list to skip per-point compute and emit only x/y/z/pocket. |
 | `pocket_grid_volsite_radius` | `4.0` Å | Cutoff radius for the `volsite` indicator. Standard VolSite pharmacophore search distance. |
 | `pocket_grid_volsite_sigma` | `2.0` Å | Gaussian σ for `volsite_smooth`. Kernel truncated at `4σ`. |
+| `electrostatics_radius` | `6.0` Å | Cutoff radius for the `electrostatics` descriptor's Coulomb sum. |
+| `electrostatics_min_r` | `1.5` Å | Lower clamp on `r` to avoid the 1/r singularity at vdW overlap. |
 
 ### Adding a new per-grid-point descriptor
 
@@ -114,21 +123,24 @@ Implementations live under
      by definition: the grid is the substrate that defines what a grid point
      is. The orchestrator always builds the grid when any grid-point
      descriptor is selected.
-   - **No `AbstractScalarPocketDescriptor`-style adapter.** Both shipped
-     descriptors (`volsite`, `volsite_smooth`) are multi-column; if you add
-     the first scalar grid-point descriptor and it's the only one, implement
-     `columnNames()` as a single-element list and rely on the bare `name()`
-     output convention. If a second arrives, factor out an adapter then.
+   - **No `AbstractScalarPocketDescriptor`-style adapter.** All three registered
+     descriptors (`volsite`, `volsite_smooth`, `electrostatics`) are
+     multi-column; if you add the first scalar grid-point descriptor and it's
+     the only one, implement `columnNames()` as a single-element list and rely
+     on the bare `name()` output convention. If a second arrives, factor out
+     an adapter then.
 
 2. Register in `PocketGridPointDescriptorRegistry`'s static initializer. The
    registry rejects descriptors with duplicate `columnNames` at registration
    time.
 
-3. Users opt in by name: `-pocket_grid_point_descriptors "volsite,my_new_descriptor"`.
+3. Users override the active set by name: `-pocket_grid_point_descriptors "volsite,my_new_descriptor"`.
 
-4. Default-empty is deliberate: adding a per-grid-point descriptor to the
-   default would expand the row count by columns × rows, which is materially
-   non-free (see cost rationale above). New descriptors should ship opt-in.
+4. To include the new descriptor in the default schema, add its name to the
+   `pocket_grid_point_descriptors` default list in `Params.groovy`. Adding to
+   the default IS a user-visible breaking change for anyone parsing the CSV
+   by column index. Note it in [`breaking-changes.md`](../breaking-changes.md)
+   and parse the output by column **name**, not by index.
 
 ## Parameters
 

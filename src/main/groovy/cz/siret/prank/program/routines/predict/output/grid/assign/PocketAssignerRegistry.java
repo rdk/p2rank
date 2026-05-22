@@ -9,7 +9,7 @@ import java.util.Set;
 
 /**
  * Static registry of {@link PocketAssigner} strategies. Populated at class-load with
- * the two shipped assigners. Selection at runtime is name-driven via
+ * the two built-in assigners. Selection at runtime is name-driven via
  * {@code -pocket_grid_assigner}.
  *
  * <p>Adding a new assigner = drop a new {@link PocketAssigner} implementation in this

@@ -120,7 +120,7 @@ class PocketDescriptorsRowsTest {
 
     @Test
     void multiColumnDescriptorEmitsPrefixedHeadersAndCorrectValues() {
-        // principal_moments is the only multi-column shipped descriptor today.
+        // principal_moments is the only multi-column registered descriptor today.
         // Verifies the schema-build prefix rule AND that the row layout puts the
         // descriptor's three eigenvalues in the correct trailing positions.
         TestPocket p = pocket(1, "pocket.1", 0.5d, new Atoms([heavyAtomAt(0d, 0d, 0d)]))

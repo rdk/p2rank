@@ -209,7 +209,7 @@ class PocketGridRowsTest {
     void scalarDescriptorEmitsBareNameWithNoPrefix() {
         // The "{name}.{col}" prefix rule applies ONLY when a descriptor has more than
         // one column. A single-column descriptor's header is exactly name() — sub-name
-        // is ignored. None of the shipped descriptors are scalar, so this branch
+        // is ignored. None of the registered descriptors are scalar, so this branch
         // exists for future descriptors and the registered fixture exercises it.
         PocketGridRows data = new PocketGridRows(buildTwoPocketGrid(),
                 emptyProtein(), [] as List<Pocket>, [TEST_SCALAR_NAME])

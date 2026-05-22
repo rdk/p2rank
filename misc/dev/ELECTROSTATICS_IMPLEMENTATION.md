@@ -222,7 +222,7 @@ Three review rounds applied:
 ### Round 1 — plan review (5 agents)
 Lenses: elegance, maintainability, extensibility, readability, speed. All 5
 verdicts: "with fixes" / "adequate with hotspots" — no redesign called. Plan
-shipped with mid-implementation discoveries documented (e.g. graceful-fallback
+landed with mid-implementation discoveries documented (e.g. graceful-fallback
 choice in `PartialChargeTable.get`).
 
 ### Round 2 — post-implementation simplify (3 agents)

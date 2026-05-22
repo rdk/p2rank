@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 
 /**
  * Static registry of {@link PocketShapeFiller} strategies. Populated at class-load
- * with the two shipped fillers. Selection at runtime is name-driven via
+ * with the two built-in fillers. Selection at runtime is name-driven via
  * {@code -pocket_grid_fill}.
  *
  * <p>Mirrors {@code PocketAssignerRegistry} on purpose so the two parallel

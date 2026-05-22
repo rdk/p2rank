@@ -34,6 +34,7 @@ public final class PocketChargePolarityDescriptor implements PocketDescriptor {
     @Override public String name() { return "pocket_charge_polarity"; }
     @Override public List<String> columnNames() { return COLUMN_NAMES; }
     @Override public List<ColumnType> columnTypes() { return TYPES; }
+    @Override public boolean needsGrid() { return false; }
 
     @Override
     public double[] compute(PocketGridContext ctx) {

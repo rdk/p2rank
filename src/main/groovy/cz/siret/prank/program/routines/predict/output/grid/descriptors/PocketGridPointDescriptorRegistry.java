@@ -32,7 +32,7 @@ public final class PocketGridPointDescriptorRegistry {
 
     /**
      * Add a descriptor to the registry. Called from the static initializer for
-     * the shipped descriptors; also exposed for tests that need to register a
+     * the registered descriptors; also exposed for tests that need to register a
      * fixture descriptor and for future external descriptor plugins.
      */
     public static void register(PocketGridPointDescriptor d) {

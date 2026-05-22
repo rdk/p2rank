@@ -8,7 +8,7 @@ import java.util.Set;
 
 /**
  * Static registry of pocket descriptors. Populated at class-load with the
- * shipped set. Selection at runtime is name-driven via the
+ * built-in set. Selection at runtime is name-driven via the
  * {@code -pocket_descriptors} list param.
  *
  * <p>Mirrors {@link cz.siret.prank.program.routines.predict.output.grid.descriptors.PocketGridPointDescriptorRegistry}

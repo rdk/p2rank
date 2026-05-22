@@ -36,9 +36,11 @@ final class PocketGridOutputs {
      * {@code export_pocket_grid} nor {@code vis_pocket_grid} is set AND
      * every selected descriptor opts out via {@link
      * cz.siret.prank.program.routines.predict.output.descriptors.PocketDescriptor#needsGrid}.
-     * Today {@code num_residues} and {@code num_surface_atoms} are the two
-     * grid-free descriptors; selecting only those alongside
-     * {@code -export_pocket_grid 0} runs almost-zero overhead per protein.
+     * Today the grid-free descriptors are {@code num_residues},
+     * {@code num_surface_atoms}, {@code pocket_net_charge},
+     * {@code pocket_charge_polarity}, and {@code pocket_dipole_magnitude};
+     * selecting only those alongside {@code -export_pocket_grid 0} runs
+     * almost-zero overhead per protein.
      */
     static void exportIfEnabled(Prediction prediction, Protein protein,
                                 String outdir, String label) {

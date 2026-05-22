@@ -10,12 +10,13 @@ import static org.junit.jupiter.api.Assertions.*
 class PocketGridPointDescriptorRegistryTest {
 
     @Test
-    void shippedDescriptorsAreRegistered() {
-        // If someone removes one of the shipped descriptors, the CLI -pocket_grid_point_descriptors
+    void builtInDescriptorsAreRegistered() {
+        // If someone removes one of the registered descriptors, the CLI -pocket_grid_point_descriptors
         // default no longer resolves and existing user config files start to fail. This test
-        // pins both shipped names.
+        // pins the registered names.
         assertNotNull(PocketGridPointDescriptorRegistry.get('volsite'))
         assertNotNull(PocketGridPointDescriptorRegistry.get('volsite_smooth'))
+        assertNotNull(PocketGridPointDescriptorRegistry.get('electrostatics'))
     }
 
     @Test
