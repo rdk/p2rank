@@ -52,7 +52,11 @@ public final class PartialChargeTable {
         IdentityHashMap<Atom, Double> m = new IdentityHashMap<>(atoms.size());
         for (Atom a : atoms) {
             String res = PdbUtils.getCorrectedAtomResidueCode(a);
-            double q = AmberCharges.get(res, a.getName());
+            // Use the united-atom table (H charges merged into bonded heavy atoms),
+            // because PDB-loaded protein structures typically don't carry explicit
+            // hydrogens — the all-atom value alone would inverted-sign cationic
+            // residues like LYS (NZ all-atom −0.39 e, NZ united +0.63 e).
+            double q = AmberCharges.getUnited(res, a.getName());
             if (Double.isNaN(q)) q = elementFallback(a.getElement());
             m.put(a, q);
         }

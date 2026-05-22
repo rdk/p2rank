@@ -2,6 +2,7 @@ package cz.siret.prank.features.implementation.electrostatics;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * AMBER ff14SB partial-charge lookup table, in elementary charge units (<i>e</i>).
@@ -41,19 +42,57 @@ import java.util.Map;
  */
 public final class AmberCharges {
 
-    /** Per-residue dictionary of (atom name → charge in e). Keys are uppercase. */
+    /** Per-residue all-atom dictionary (atom name → charge in e), as published in ff14SB. Keys uppercase. */
     private static final Map<String, Map<String, Double>> TABLE = new HashMap<>();
+
+    /** Per-residue united-atom dictionary — heavy atoms only, with each H's charge
+     *  rolled into the heavy atom it bonds to. Built by {@link #buildUnitedAtomTable}
+     *  in the static initializer after the all-atom TABLE is populated. */
+    private static final Map<String, Map<String, Double>> UNITED_TABLE = new HashMap<>();
 
     private AmberCharges() {}
 
     /**
+     * All-atom lookup — returns the published ff14SB charge for the atom as-is.
+     *
+     * <p>For most P2Rank workloads you want {@link #getUnited} instead: standard
+     * PDB structures don't include hydrogens, so asking for the heavy atom's
+     * all-atom charge alone undercounts (and inverts the sign for cationic
+     * residues like LYS — its all-atom NZ is −0.39 e, but the residue's actual
+     * cationic character lives on the H atoms with +0.34 e each).
+     *
      * @return partial charge in <i>e</i> for the (residue, atom) pair, or
      *         {@link Double#NaN} if the pair isn't in the table.
      *         Case-insensitive on both arguments.
      */
     public static double get(String residueCode, String atomName) {
+        return lookup(TABLE, residueCode, atomName);
+    }
+
+    /**
+     * United-atom lookup — for the heavy atom, returns its ff14SB charge plus
+     * the sum of its bonded hydrogens' charges. The right shape for protein
+     * structures that don't carry explicit hydrogens (i.e. almost every PDB).
+     *
+     * <p>Example: LYS NZ all-atom is −0.3854; LYS NZ united is
+     * −0.3854 + 3 × 0.3400 = +0.6346 — correctly reflecting LYS's cationic
+     * side-chain ammonium.
+     *
+     * <p>For hydrogen atoms the lookup returns NaN — their charge has been
+     * absorbed into the heavy atom they bond to.
+     *
+     * @return united-atom partial charge in <i>e</i>, or
+     *         {@link Double#NaN} if the pair isn't in the heavy-atom table.
+     *         Case-insensitive on both arguments.
+     */
+    public static double getUnited(String residueCode, String atomName) {
+        return lookup(UNITED_TABLE, residueCode, atomName);
+    }
+
+    private static double lookup(Map<String, Map<String, Double>> table,
+                                 String residueCode, String atomName) {
         if (residueCode == null || atomName == null) return Double.NaN;
-        Map<String, Double> residue = TABLE.get(residueCode.toUpperCase());
+        Map<String, Double> residue = table.get(residueCode.toUpperCase());
         if (residue == null) return Double.NaN;
         Double q = residue.get(atomName.toUpperCase());
         return q == null ? Double.NaN : q;
@@ -294,5 +333,87 @@ public final class AmberCharges {
         // === HIS aliases HIE (most common protonation state at physiological pH) ===
         // Share the inner map by reference — TABLE is read-only post-init.
         TABLE.put("HIS", TABLE.get("HIE"));
+
+        buildUnitedAtomTable();
+    }
+
+    // ----------------------------------------------------------------------
+    // United-atom table derivation
+    // ----------------------------------------------------------------------
+
+    /**
+     * Build {@link #UNITED_TABLE} by folding each hydrogen's charge into the
+     * heavy atom it's bonded to. Run once during static init after
+     * {@link #TABLE} is populated.
+     *
+     * <p>Why: standard PDB structures don't ship explicit hydrogens, so an
+     * all-atom lookup misses the H charges entirely — and many side chains
+     * carry their net charge on the H atoms (LYS NZ + 3 HZs sum to +1 e;
+     * just NZ is −0.39 e). United-atom representation moves the H charges
+     * onto the heavy atom they bond to, restoring the residue's net charge
+     * on the atoms that actually exist in the structure.
+     *
+     * <p>The H→heavy mapping uses the PDB atom-name convention: an H atom
+     * named "H&lt;suffix&gt;" bonds to the heavy atom whose name suffix matches
+     * (after optionally stripping a trailing digit that distinguishes
+     * multiple Hs on the same heavy). Concrete examples:
+     * <ul>
+     *   <li>H (backbone) → N</li>
+     *   <li>HA → CA</li>
+     *   <li>HB1/HB2/HB3 → CB (strip trailing digit)</li>
+     *   <li>HZ1/HZ2/HZ3 → NZ (LYS — strip trailing digit, prefix is N)</li>
+     *   <li>HG21/HG22/HG23 → CG2 (THR — strip trailing digit)</li>
+     *   <li>HH11/HH12/HH21/HH22 → NH1/NH2 (ARG)</li>
+     * </ul>
+     */
+    private static void buildUnitedAtomTable() {
+        for (Map.Entry<String, Map<String, Double>> resEntry : TABLE.entrySet()) {
+            String residue = resEntry.getKey();
+            Map<String, Double> allAtom = resEntry.getValue();
+
+            Map<String, Double> heavy = new HashMap<>();
+            for (Map.Entry<String, Double> e : allAtom.entrySet()) {
+                if (!e.getKey().startsWith("H")) {
+                    heavy.put(e.getKey(), e.getValue());
+                }
+            }
+
+            for (Map.Entry<String, Double> e : allAtom.entrySet()) {
+                String hName = e.getKey();
+                if (!hName.startsWith("H")) continue;
+                String bonded = findHeavyBondedTo(hName, heavy.keySet());
+                if (bonded == null) {
+                    throw new IllegalStateException(
+                            "Could not find heavy-atom bonding partner for " + residue + "/" + hName);
+                }
+                heavy.merge(bonded, e.getValue(), Double::sum);
+            }
+
+            UNITED_TABLE.put(residue, heavy);
+        }
+        // Keep HIS aliasing HIE in the united-atom table too — same reasoning as the all-atom path.
+        UNITED_TABLE.put("HIS", UNITED_TABLE.get("HIE"));
+    }
+
+    /**
+     * Resolve an H atom name to the heavy atom in the same residue that it bonds to.
+     * Strategy: strip the leading 'H' to get a suffix, then try matching the suffix
+     * against any heavy atom in the residue (with prefix C/N/O/S). If no match,
+     * progressively strip trailing digits (handles HB1/HB2/HB3 → CB).
+     *
+     * @return the heavy atom name (key in {@code heavy}), or {@code null} if no match
+     */
+    private static String findHeavyBondedTo(String hName, Set<String> heavyNames) {
+        String suffix = hName.substring(1);
+        while (true) {
+            for (String prefix : new String[]{"C", "N", "O", "S"}) {
+                String candidate = prefix + suffix;
+                if (heavyNames.contains(candidate)) return candidate;
+            }
+            if (suffix.isEmpty() || !Character.isDigit(suffix.charAt(suffix.length() - 1))) {
+                return null;
+            }
+            suffix = suffix.substring(0, suffix.length() - 1);
+        }
     }
 }

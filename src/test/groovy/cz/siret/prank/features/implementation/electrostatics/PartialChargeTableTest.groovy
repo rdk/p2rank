@@ -104,7 +104,7 @@ class PartialChargeTableTest {
     }
 
     @Test
-    void chargesMatchAmberTableForStandardResidues() {
+    void chargesMatchUnitedAtomTableForStandardResidues() {
         // For any atom whose (residue, name) is in the AMBER table, the cached
         // value must equal the table lookup. Catches a build()-logic regression
         // where the fallback overwrites a real AMBER value.
@@ -118,7 +118,9 @@ class PartialChargeTableTest {
             // that PdbUtils.correctResidueCode rewrites.
             String res = PdbUtils.getCorrectedAtomResidueCode(atom)
             String name = atom.name
-            double amber = AmberCharges.get(res, name)
+            // PartialChargeTable now uses the united-atom representation (H charges
+            // merged into bonded heavy atoms), since PDB files lack explicit Hs.
+            double amber = AmberCharges.getUnited(res, name)
             if (Double.isNaN(amber)) continue
             assertEquals(amber, table.get(atom), 1e-9d,
                     "AMBER mismatch on $res/$name")

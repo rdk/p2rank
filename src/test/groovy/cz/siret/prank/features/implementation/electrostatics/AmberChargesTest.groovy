@@ -111,6 +111,53 @@ class AmberChargesTest {
     }
 
     @Test
+    void unitedAtomTableSignsAreCorrectForCationicResidues() {
+        // The bug this guards: standard PDB files don't carry explicit H atoms,
+        // so the all-atom lookup of LYS NZ returns −0.3854 e, sign-flipped from
+        // the residue's actual cationic character. The united-atom value rolls
+        // the three HZ hydrogens (+0.34 e each) into NZ, giving +0.6346 e.
+        double lysNzUnited = AmberCharges.getUnited("LYS", "NZ")
+        assertTrue(lysNzUnited > 0,
+                "LYS NZ united-atom must be positive (was ${lysNzUnited})")
+        // Sanity: ARG guanidinium nitrogens must also flip to net positive once HHs merge.
+        double argNh1United = AmberCharges.getUnited("ARG", "NH1")
+        assertTrue(argNh1United > 0,
+                "ARG NH1 united-atom must be positive (was ${argNh1United})")
+        // Sanity: ASP carboxylate oxygens stay strongly negative (no H attached).
+        assertTrue(AmberCharges.getUnited("ASP", "OD1") < -0.5d, "ASP OD1 must remain anionic")
+    }
+
+    @Test
+    void unitedAtomTableHasNoHydrogenEntries() {
+        // United-atom table is heavy-atoms-only; H atoms should return NaN.
+        assertTrue(Double.isNaN(AmberCharges.getUnited("LYS", "HZ1")))
+        assertTrue(Double.isNaN(AmberCharges.getUnited("ALA", "HA")))
+        assertTrue(Double.isNaN(AmberCharges.getUnited("ALA", "H")))
+    }
+
+    @Test
+    void unitedAtomChargedResiduesStillSumToFormalCharge() {
+        // Same invariant as the all-atom test but over heavy atoms only.
+        // LYS: net +1
+        String[] lysHeavy = ["N","CA","CB","CG","CD","CE","NZ","C","O"]
+        double lysSum = 0d
+        for (String a : lysHeavy) lysSum += AmberCharges.getUnited("LYS", a)
+        assertEquals(1d, lysSum, NET_TOL, "LYS united heavy atoms ≈ +1")
+
+        // ASP: net −1
+        String[] aspHeavy = ["N","CA","CB","CG","OD1","OD2","C","O"]
+        double aspSum = 0d
+        for (String a : aspHeavy) aspSum += AmberCharges.getUnited("ASP", a)
+        assertEquals(-1d, aspSum, NET_TOL, "ASP united heavy atoms ≈ −1")
+
+        // ALA: net 0
+        String[] alaHeavy = ["N","CA","CB","C","O"]
+        double alaSum = 0d
+        for (String a : alaHeavy) alaSum += AmberCharges.getUnited("ALA", a)
+        assertEquals(0d, alaSum, NET_TOL, "ALA united heavy atoms ≈ 0")
+    }
+
+    @Test
     void hisAliasesToHie() {
         // HIS is the default protonation state at physiological pH; we alias to HIE.
         // The lookup must work for both names.
