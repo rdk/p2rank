@@ -8,23 +8,12 @@ import java.util.IdentityHashMap;
 import java.util.List;
 
 /**
- * Per-protein cache of {@link VolSitePharmacophore#getAtomProperties(Atom)} keyed by atom identity.
- *
- * <p>Built once per protein on first access and memoized on {@code Protein.secondaryData}.
- * Replaces ~50k × ~30 per-(point, atom) calls in the volsite grid-point descriptors —
- * each of which allocates {@link AtomProps}, runs {@code toUpperCase}, and walks ~30
- * {@code String.contains} branches — with one table-build (~13k entries for a large
- * protein, ~1 MB) plus one identity-hashmap lookup per query.
+ * Per-protein identity-keyed cache of {@link VolSitePharmacophore#getAtomProperties(Atom)}.
  *
  * <p>Identity-keyed because the kd-tree returns the same {@link Atom} references that
- * were put in {@code Protein.proteinAtoms}; reference-equality is both faster and the
- * semantically correct relation here.
- *
- * <p>Assumes single-threaded access per protein — p2rank's worker pool partitions
- * datasets by protein, so {@code secondaryData} lookups serialize within one worker.
- *
- * <p>The canonical pharmacophore rules live in {@link VolSitePharmacophore}; this class
- * is a pure cache and stays in lock-step automatically when those rules change.
+ * were put in {@code Protein.proteinAtoms}; reference-equality is both correct and faster.
+ * Single-writer per protein: p2rank's worker pool partitions datasets by protein, so
+ * {@code secondaryData} lookups serialize within one worker.
  */
 public final class VolSiteAtomTable {
 
@@ -36,16 +25,9 @@ public final class VolSiteAtomTable {
         this.byAtom = byAtom;
     }
 
-    /**
-     * Get-or-build the table for {@code protein}. Cached on the protein's
-     * {@code secondaryData} — repeated calls return the same instance.
-     */
     public static VolSiteAtomTable forProtein(Protein protein) {
-        VolSiteAtomTable cached = (VolSiteAtomTable) protein.getSecondaryData().get(SECONDARY_DATA_KEY);
-        if (cached != null) return cached;
-        VolSiteAtomTable built = build(protein);
-        protein.getSecondaryData().put(SECONDARY_DATA_KEY, built);
-        return built;
+        return (VolSiteAtomTable) protein.getSecondaryData()
+                .computeIfAbsent(SECONDARY_DATA_KEY, k -> build(protein));
     }
 
     private static VolSiteAtomTable build(Protein protein) {

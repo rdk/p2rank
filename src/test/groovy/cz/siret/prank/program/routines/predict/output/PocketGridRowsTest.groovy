@@ -14,6 +14,7 @@ import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 import static org.junit.jupiter.api.Assertions.*
@@ -196,6 +197,14 @@ class PocketGridRowsTest {
         PocketGridPointDescriptorRegistry.unregister(TEST_NON_AGNOSTIC_NAME)
     }
 
+    @BeforeEach
+    void resetCounters() {
+        // Robust against a prior test throwing before its inline reset — guarantees
+        // each test sees zero counters regardless of execution order.
+        CountingAgnosticDescriptor.calls = 0
+        CountingNonAgnosticDescriptor.calls = 0
+    }
+
     @Test
     void scalarDescriptorEmitsBareNameWithNoPrefix() {
         // The "{name}.{col}" prefix rule applies ONLY when a descriptor has more than
@@ -216,7 +225,6 @@ class PocketGridRowsTest {
         // buildTwoPocketGrid has point b (pointIdx 1) in BOTH pockets 1 and 2, plus
         // a in pocket 1 only and c in pocket 2 only — three distinct points across
         // 4 rows. A pocket-agnostic descriptor must compute() exactly 3 times, NOT 4.
-        CountingAgnosticDescriptor.calls = 0
         PocketGridRows data = new PocketGridRows(buildTwoPocketGrid(),
                 emptyProtein(), [] as List<Pocket>, [TEST_AGNOSTIC_NAME])
 
@@ -236,7 +244,6 @@ class PocketGridRowsTest {
         // Same grid, but a descriptor with the default isPocketAgnostic() = false
         // gets called once per row (4 times), so different rows for the SAME pointIdx
         // can carry different per-pocket values.
-        CountingNonAgnosticDescriptor.calls = 0
         PocketGridRows data = new PocketGridRows(buildTwoPocketGrid(),
                 emptyProtein(), [] as List<Pocket>, [TEST_NON_AGNOSTIC_NAME])
 
@@ -264,7 +271,6 @@ class PocketGridRowsTest {
         assigned.put(3, bits(0))
         PocketGrid grid = new PocketGrid(new Atoms([p0]), 1.0d, 0d, 0d, 0d, idx, assigned)
 
-        CountingAgnosticDescriptor.calls = 0
         PocketGridRows data = new PocketGridRows(grid,
                 emptyProtein(), [] as List<Pocket>, [TEST_AGNOSTIC_NAME])
 
