@@ -28,6 +28,14 @@ class PocketDescriptorsTest {
 
     private static final double DELTA = 1e-9d
 
+    /** Single source of truth for the registry assertions — bump on every new descriptor. */
+    private static final List<String> EXPECTED_REGISTERED_NAMES = [
+            'volume', 'sphericity', 'radius_of_gyration',
+            'num_residues', 'num_surface_atoms', 'num_grid_points',
+            'principal_moments',
+            'pocket_net_charge', 'pocket_charge_polarity', 'pocket_dipole_magnitude',
+    ].asImmutable()
+
     /** Build a PocketGrid containing exactly {@code points}, spacing 1.0, one pocket holding all of them. */
     private static PocketGrid gridOfPoints(List<Atom> points) {
         LongIntHashMap index = new LongIntHashMap()
@@ -257,10 +265,7 @@ class PocketDescriptorsTest {
 
     @Test
     void registryResolvesKnownNames() {
-        ['volume', 'sphericity', 'radius_of_gyration',
-         'num_residues', 'num_surface_atoms', 'num_grid_points',
-         'principal_moments',
-         'pocket_net_charge', 'pocket_charge_polarity', 'pocket_dipole_magnitude'].each { String name ->
+        EXPECTED_REGISTERED_NAMES.each { String name ->
             PocketDescriptor d = PocketDescriptorRegistry.get(name)
             assertNotNull(d)
             assertEquals(name, d.name())
@@ -303,12 +308,7 @@ class PocketDescriptorsTest {
 
     @Test
     void registryListsKnownNames() {
-        Set<String> known = PocketDescriptorRegistry.knownNames()
-        assertTrue(known.containsAll(
-                ['volume', 'sphericity', 'radius_of_gyration',
-                 'num_residues', 'num_surface_atoms', 'num_grid_points',
-                 'principal_moments',
-                 'pocket_net_charge', 'pocket_charge_polarity', 'pocket_dipole_magnitude'] as Set))
+        assertTrue(PocketDescriptorRegistry.knownNames().containsAll(EXPECTED_REGISTERED_NAMES as Set))
     }
 
     @Test
