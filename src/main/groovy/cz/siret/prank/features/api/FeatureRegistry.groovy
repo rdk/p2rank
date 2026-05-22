@@ -16,8 +16,10 @@ import cz.siret.prank.features.implementation.contactres.ContactResidue1Position
 import cz.siret.prank.features.implementation.contactres.ContactResiduesPositionFeature
 import cz.siret.prank.features.implementation.contactres.ContactResiduesRF
 import cz.siret.prank.features.implementation.csv.CsvFileFeature
-import cz.siret.prank.features.implementation.electrostatics.ElectrostaticsTempAtomFeature
-import cz.siret.prank.features.implementation.electrostatics.ElectrostaticsTempSasFeature
+import cz.siret.prank.features.implementation.electrostatics.DelphiCubeAtomFeature
+import cz.siret.prank.features.implementation.electrostatics.DelphiCubeSasFeature
+import cz.siret.prank.features.implementation.electrostatics.ElectrostaticsSasFeature
+import cz.siret.prank.features.implementation.electrostatics.PartialChargeFeature
 import cz.siret.prank.features.implementation.energy.*
 import cz.siret.prank.features.implementation.energy2.*
 import cz.siret.prank.features.implementation.histogram.PairHistogramFeature
@@ -143,8 +145,12 @@ class FeatureRegistry {
 
         register new CsvFileFeature()
 
-        register new ElectrostaticsTempSasFeature()
-        register new ElectrostaticsTempAtomFeature()
+        register new DelphiCubeSasFeature()
+        register new DelphiCubeAtomFeature()
+
+        register new PartialChargeFeature()
+        register new AtomicToSasFeatWrapper(new PartialChargeFeature())
+        register new ElectrostaticsSasFeature()
 
         register new IsExposedAtomFeature()
         register new AtomicToSasFeatWrapper(new IsExposedAtomFeature())

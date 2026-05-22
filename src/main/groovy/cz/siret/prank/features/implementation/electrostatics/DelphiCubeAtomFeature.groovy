@@ -10,15 +10,19 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 
-import static cz.siret.prank.features.implementation.electrostatics.ElectrostaticsTempSasFeature.CubePreloader.ensureCubeLoaded
-import static cz.siret.prank.features.implementation.electrostatics.ElectrostaticsTempSasFeature.cubeValueForPoint
+import static cz.siret.prank.features.implementation.electrostatics.DelphiCubeSasFeature.CubePreloader.ensureCubeLoaded
+import static cz.siret.prank.features.implementation.electrostatics.DelphiCubeSasFeature.cubeValueForPoint
 
 /**
+ * Atom-level feature: reads electrostatic potential from precomputed Delphi
+ * cube files on disk. The CLI/CSV feature key remains
+ * {@code electrostatics_temp_atomic} for back-compat.
  *
+ * <p>Distinct from {@link PartialChargeFeature} which uses AMBER partial charges.
  */
 @Slf4j
 @CompileStatic
-class ElectrostaticsTempAtomFeature extends AtomFeatureCalculator implements Parametrized, Writable {
+class DelphiCubeAtomFeature extends AtomFeatureCalculator implements Parametrized, Writable {
 
     @Override
     String getName() {

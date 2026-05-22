@@ -17,14 +17,19 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 
-import static cz.siret.prank.features.implementation.electrostatics.ElectrostaticsTempSasFeature.CubePreloader.ensureCubeLoaded
+import static cz.siret.prank.features.implementation.electrostatics.DelphiCubeSasFeature.CubePreloader.ensureCubeLoaded
 
 /**
- * Temporary implementation of external electrostatics feature
+ * SAS-point feature: reads electrostatic potential from precomputed Delphi
+ * cube files on disk (one .cube per protein, located via {@code -electrostatics_dirs}).
+ * The CLI/CSV feature key remains {@code electrostatics_temp} for back-compat.
+ *
+ * <p>Distinct from {@link ElectrostaticsSasFeature} which computes Coulomb
+ * sums internally from AMBER partial charges.
  */
 @Slf4j
 @CompileStatic
-class ElectrostaticsTempSasFeature extends SasFeatureCalculator implements Parametrized, Failable {
+class DelphiCubeSasFeature extends SasFeatureCalculator implements Parametrized, Failable {
 
     static final String CUBE_ATTR = 'electrostatics_cube'
 

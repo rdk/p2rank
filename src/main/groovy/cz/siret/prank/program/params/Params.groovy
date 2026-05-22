@@ -1001,6 +1001,32 @@ class Params {
     double pocket_grid_volsite_sigma = 2.0d
 
     /**
+     * Cutoff radius (Å) for Coulomb-sum electrostatics features (SAS-point
+     * feature + pocket-grid descriptor). 6.0 Å is the standard "local
+     * electrostatics" range in protein–ligand interaction literature —
+     * longer than volsite's 4 Å (VDW-driven pharmacophore contacts) and
+     * shorter than the 9 Å used for full LJ + Coulomb energy probes in
+     * {@link cz.siret.prank.features.implementation.energy.MethylEnergyCloudSF}
+     * (governed by {@code energy_rc}). 6 Å captures first-shell H-bonding
+     * and salt-bridge partners while staying short enough that the {@code 1/r}
+     * envelope dominates and the truncation doesn't bias the gradient.
+     */
+    @RuntimeParam
+    double electrostatics_radius = 6.0d
+
+    /**
+     * Minimum atom-to-probe distance (Å) used in Coulomb 1/r — guards against
+     * the 1/0 singularity when a SAS or grid probe point sits inside an atom's
+     * vdW radius (rare but possible at the probe-radius boundary). 1.5 Å is
+     * just below typical heavy-atom vdW radii (C ≈ 1.7, N ≈ 1.55, O ≈ 1.52)
+     * and roughly equal to a polar H–acceptor contact distance — beyond
+     * this the Coulomb formula is well-behaved; below it the value would
+     * blow up unphysically.
+     */
+    @RuntimeParam
+    double electrostatics_min_r = 1.5d
+
+    /**
      * Benchmark-only: skip the per-SAS-point feature extraction and ML scoring in
      * the rescorer. Each pocket's newScore is just passed through from its
      * existing score. Use this to isolate the cost of grid build / descriptor

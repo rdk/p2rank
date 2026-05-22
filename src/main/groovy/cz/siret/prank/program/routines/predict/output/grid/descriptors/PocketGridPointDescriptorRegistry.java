@@ -25,6 +25,7 @@ public final class PocketGridPointDescriptorRegistry {
     static {
         register(new VolsiteGridPointDescriptor());
         register(new VolsiteSmoothGridPointDescriptor());
+        register(new ElectrostaticsGridPointDescriptor());
     }
 
     private PocketGridPointDescriptorRegistry() {}

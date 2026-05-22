@@ -33,6 +33,9 @@ public final class PocketDescriptorRegistry {
         register(new NumSurfaceAtomsDescriptor());
         register(new NumGridPointsDescriptor());
         register(new PrincipalMomentsDescriptor());
+        register(new PocketNetChargeDescriptor());
+        register(new PocketChargePolarityDescriptor());
+        register(new PocketDipoleMagnitudeDescriptor());
     }
 
     private PocketDescriptorRegistry() {}
