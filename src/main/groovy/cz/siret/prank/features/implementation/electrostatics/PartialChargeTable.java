@@ -12,8 +12,8 @@ import java.util.List;
  * Per-protein identity-keyed cache of atomic partial charges in elementary
  * charge units ({@code e}).
  *
- * <p>Built once per protein from {@link AmberCharges#get(String, String)} with
- * element-bucket charges as the backstop (see {@link #elementFallback}).
+ * <p>Built once per protein from {@link AmberCharges#getUnited(String, String)}
+ * with element-bucket charges as the backstop (see {@link #elementFallback}).
  * Memoized on {@code Protein.secondaryData} — identical lifecycle to
  * {@link cz.siret.prank.features.implementation.volsite.VolSiteAtomTable}.
  *
@@ -21,6 +21,14 @@ import java.util.List;
  * from this table. Single-writer per protein (p2rank's worker pool partitions
  * datasets by protein, so {@code secondaryData} lookups serialize within one
  * worker).
+ *
+ * <p><b>Charge convention:</b> as of the united-atom fix, the cached values
+ * are the <i>united-atom</i> AMBER ff14SB charges (heavy atom + bonded H
+ * charges merged onto the heavy atom). This is the right shape for PDB
+ * structures that don't carry explicit hydrogens. Earlier revisions called
+ * {@link AmberCharges#get} (all-atom), which sign-flipped cationic side
+ * chains for hydrogen-less inputs; numerical values for the same input
+ * differ from those revisions.
  */
 public final class PartialChargeTable {
 

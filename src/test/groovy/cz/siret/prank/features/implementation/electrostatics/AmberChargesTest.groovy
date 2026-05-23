@@ -111,20 +111,21 @@ class AmberChargesTest {
     }
 
     @Test
-    void unitedAtomTableSignsAreCorrectForCationicResidues() {
+    void unitedAtomCanonicalValues() {
         // The bug this guards: standard PDB files don't carry explicit H atoms,
         // so the all-atom lookup of LYS NZ returns −0.3854 e, sign-flipped from
         // the residue's actual cationic character. The united-atom value rolls
         // the three HZ hydrogens (+0.34 e each) into NZ, giving +0.6346 e.
-        double lysNzUnited = AmberCharges.getUnited("LYS", "NZ")
-        assertTrue(lysNzUnited > 0,
-                "LYS NZ united-atom must be positive (was ${lysNzUnited})")
-        // Sanity: ARG guanidinium nitrogens must also flip to net positive once HHs merge.
-        double argNh1United = AmberCharges.getUnited("ARG", "NH1")
-        assertTrue(argNh1United > 0,
-                "ARG NH1 united-atom must be positive (was ${argNh1United})")
-        // Sanity: ASP carboxylate oxygens stay strongly negative (no H attached).
-        assertTrue(AmberCharges.getUnited("ASP", "OD1") < -0.5d, "ASP OD1 must remain anionic")
+        //
+        // Pin exact expected values: regressions in the H→heavy mapping must
+        // show up as a numeric diff, not just a sign flip.
+        assertEquals(-0.3854d + 3 * 0.3400d, AmberCharges.getUnited("LYS", "NZ"), EPS,
+                "LYS NZ united = NZ + 3·HZ")
+        assertEquals(-0.8627d + 2 * 0.4478d, AmberCharges.getUnited("ARG", "NH1"), EPS,
+                "ARG NH1 united = NH1 + HH11 + HH12")
+        // ASP OD1 stays anionic — no H attached, value unchanged from all-atom.
+        assertEquals(-0.8014d, AmberCharges.getUnited("ASP", "OD1"), EPS,
+                "ASP OD1 united = all-atom OD1 (no H attached)")
     }
 
     @Test
@@ -143,6 +144,12 @@ class AmberChargesTest {
         double lysSum = 0d
         for (String a : lysHeavy) lysSum += AmberCharges.getUnited("LYS", a)
         assertEquals(1d, lysSum, NET_TOL, "LYS united heavy atoms ≈ +1")
+
+        // ARG: net +1
+        String[] argHeavy = ["N","CA","CB","CG","CD","NE","CZ","NH1","NH2","C","O"]
+        double argSum = 0d
+        for (String a : argHeavy) argSum += AmberCharges.getUnited("ARG", a)
+        assertEquals(1d, argSum, NET_TOL, "ARG united heavy atoms ≈ +1")
 
         // ASP: net −1
         String[] aspHeavy = ["N","CA","CB","CG","OD1","OD2","C","O"]

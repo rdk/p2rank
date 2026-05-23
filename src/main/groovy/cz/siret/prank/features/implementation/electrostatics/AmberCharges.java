@@ -50,6 +50,11 @@ public final class AmberCharges {
      *  in the static initializer after the all-atom TABLE is populated. */
     private static final Map<String, Map<String, Double>> UNITED_TABLE = new HashMap<>();
 
+    /** Element-letter prefixes of heavy atoms in standard amino-acid residues.
+     *  Must be declared BEFORE the static block so it's non-null when
+     *  {@link #buildUnitedAtomTable} reaches {@link #findHeavyBondedTo}. */
+    private static final String[] HEAVY_ELEMENT_PREFIXES = {"C", "N", "O", "S"};
+
     private AmberCharges() {}
 
     /**
@@ -365,6 +370,12 @@ public final class AmberCharges {
      *   <li>HG21/HG22/HG23 → CG2 (THR — strip trailing digit)</li>
      *   <li>HH11/HH12/HH21/HH22 → NH1/NH2 (ARG)</li>
      * </ul>
+     *
+     * <p>The string-based H detection ({@code name.startsWith("H")}) is correct
+     * for the modern PDB names in our embedded ff14SB table. For runtime
+     * Atom-level H detection across alternative PDB conventions
+     * (e.g. legacy "2HA" style), see
+     * {@link cz.siret.prank.geom.Struct#isHydrogenAtom}.
      */
     private static void buildUnitedAtomTable() {
         for (Map.Entry<String, Map<String, Double>> resEntry : TABLE.entrySet()) {
@@ -406,7 +417,7 @@ public final class AmberCharges {
     private static String findHeavyBondedTo(String hName, Set<String> heavyNames) {
         String suffix = hName.substring(1);
         while (true) {
-            for (String prefix : new String[]{"C", "N", "O", "S"}) {
+            for (String prefix : HEAVY_ELEMENT_PREFIXES) {
                 String candidate = prefix + suffix;
                 if (heavyNames.contains(candidate)) return candidate;
             }
