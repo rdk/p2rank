@@ -68,7 +68,7 @@ class PhysicsFeaturesIT {
             assertTrue(s >= 0d, "sensor negative at $r.key")
             assertTrue(e >= 0d, "effectiveness negative at $r.key")
             assertTrue(f >= 0d, "msf negative at $r.key")
-            if (r.group.getAtom("CA") != null) {
+            if (r.aminoAcid?.getCA() != null) {
                 withCa++
                 if (f > 0d) maxMsf = Math.max(maxMsf, f)
             } else {

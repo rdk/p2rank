@@ -36,7 +36,7 @@ import org.ejml.interfaces.decomposition.EigenDecomposition_F64
 @CompileStatic
 class AnmModel {
 
-    static final String CACHE_KEY = "anm_model"
+    private static final String CACHE_KEY = "anm_model"
 
     /** Map: Residue.Key → index in the ANM (only residues with a Cα are present). */
     final Map<Residue.Key, Integer> indexByKey
@@ -70,12 +70,7 @@ class AnmModel {
      * Returns the cached AnmModel for this protein, computing it on first access.
      */
     static AnmModel getOrCompute(Protein protein, Params params) {
-        AnmModel cached = (AnmModel) protein.secondaryData.get(CACHE_KEY)
-        if (cached != null) return cached
-
-        AnmModel model = compute(protein, params)
-        protein.secondaryData.put(CACHE_KEY, model)
-        return model
+        (AnmModel) protein.secondaryData.computeIfAbsent(CACHE_KEY, { k -> compute(protein, params) })
     }
 
     //---------------------------------------------------------------------//
@@ -89,7 +84,7 @@ class AnmModel {
         List<double[]> coords = new ArrayList<>(residues.size())
         int skipped = 0
         for (Residue r : residues) {
-            Atom ca = r.group.getAtom("CA")
+            Atom ca = r.aminoAcid?.getCA()
             if (ca == null) { skipped++; continue }
             withCa.add(r)
             coords.add([ca.x, ca.y, ca.z] as double[])

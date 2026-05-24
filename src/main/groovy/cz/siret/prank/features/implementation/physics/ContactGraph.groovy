@@ -36,7 +36,7 @@ import groovy.util.logging.Slf4j
 @CompileStatic
 class ContactGraph {
 
-    static final String CACHE_KEY = "contact_graph"
+    private static final String CACHE_KEY = "contact_graph"
 
     final Map<Residue.Key, Integer> indexByKey
     final double[] betweenness
@@ -56,12 +56,7 @@ class ContactGraph {
     double degreeFor(Residue r)      { Integer i = indexByKey.get(r.key); i == null ? 0d : degree[i] }
 
     static ContactGraph getOrCompute(Protein protein, Params params) {
-        ContactGraph cached = (ContactGraph) protein.secondaryData.get(CACHE_KEY)
-        if (cached != null) return cached
-
-        ContactGraph g = compute(protein, params)
-        protein.secondaryData.put(CACHE_KEY, g)
-        return g
+        (ContactGraph) protein.secondaryData.computeIfAbsent(CACHE_KEY, { k -> compute(protein, params) })
     }
 
     //---------------------------------------------------------------------//
@@ -84,6 +79,12 @@ class ContactGraph {
         for (int i = 0; i < n; i++) adj.add(new ArrayList<Integer>())
 
         // Atom-level cutoff query. Atoms.areWithinDistance lazily builds a KD-tree.
+        // TODO(perf, large N): the per-residue KD-tree is only built when an
+        // Atoms set exceeds Atoms.KD_TREE_THRESHOLD (15), which most single
+        // residues miss — so this falls through to brute-force pair scans.
+        // For N≳400 residues, replacing this loop with a single protein-wide
+        // KD-tree of all heavy atoms + per-atom radius query (dedup'd to
+        // residue indices) reduces work ~O(N²·k²) → ~O(N·k·log(N·k)).
         List<Atoms> resAtoms = new ArrayList<>(n)
         for (Residue r : residues) resAtoms.add(r.atoms)
 
@@ -115,6 +116,12 @@ class ContactGraph {
 
     //---------------------------------------------------------------------//
     //  Brandes (2001) — unweighted betweenness centrality
+    //  TODO(perf, large N): HPPC primitive collections (IntArrayList /
+    //  IntArrayDeque, already on classpath via build.gradle) would remove
+    //  the Integer boxing in the hot inner loops here and in
+    //  computeClosenessByComponent below. Typical 2-3× speedup on Brandes.
+    //  Negligible at N=200; worth doing if profiling shows ContactGraph
+    //  dominating for N≳400.
     //---------------------------------------------------------------------//
 
     static double[] computeBetweenness(List<List<Integer>> adj, int n) {
