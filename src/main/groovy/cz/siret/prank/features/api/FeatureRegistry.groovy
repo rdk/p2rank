@@ -16,6 +16,12 @@ import cz.siret.prank.features.implementation.contactres.ContactResidue1Position
 import cz.siret.prank.features.implementation.contactres.ContactResiduesPositionFeature
 import cz.siret.prank.features.implementation.contactres.ContactResiduesRF
 import cz.siret.prank.features.implementation.csv.CsvFileFeature
+import cz.siret.prank.features.implementation.physics.AnmEffectivenessRF
+import cz.siret.prank.features.implementation.physics.AnmMsfRF
+import cz.siret.prank.features.implementation.physics.AnmSensorRF
+import cz.siret.prank.features.implementation.physics.CgBetweennessRF
+import cz.siret.prank.features.implementation.physics.CgClosenessRF
+import cz.siret.prank.features.implementation.physics.CgDegreeRF
 import cz.siret.prank.features.implementation.electrostatics.DelphiCubeAtomFeature
 import cz.siret.prank.features.implementation.electrostatics.DelphiCubeSasFeature
 import cz.siret.prank.features.implementation.electrostatics.ElectrostaticsSasFeature
@@ -180,6 +186,20 @@ class FeatureRegistry {
 
         register new HybridizationFeature()
         register new AtomicToSasFeatWrapper(new HybridizationFeature())
+
+        // physics-based residue descriptors (ANM + contact graph)
+        register new ResidueToSasFeatWrapper(new AnmSensorRF())
+        register new ResidueToAtomicFeatWrapper(new AnmSensorRF())
+        register new ResidueToSasFeatWrapper(new AnmEffectivenessRF())
+        register new ResidueToAtomicFeatWrapper(new AnmEffectivenessRF())
+        register new ResidueToSasFeatWrapper(new AnmMsfRF())
+        register new ResidueToAtomicFeatWrapper(new AnmMsfRF())
+        register new ResidueToSasFeatWrapper(new CgBetweennessRF())
+        register new ResidueToAtomicFeatWrapper(new CgBetweennessRF())
+        register new ResidueToSasFeatWrapper(new CgClosenessRF())
+        register new ResidueToAtomicFeatWrapper(new CgClosenessRF())
+        register new ResidueToSasFeatWrapper(new CgDegreeRF())
+        register new ResidueToAtomicFeatWrapper(new CgDegreeRF())
 
         // Register new feature implementations here
 

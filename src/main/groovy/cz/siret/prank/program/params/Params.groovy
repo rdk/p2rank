@@ -288,6 +288,42 @@ class Params {
     double ss_cloud_radius = 10
 
     /**
+     * Cutoff distance (Angstrom) for ANM spring connections between Cα atoms.
+     * Used by features anm_sensor, anm_effectiveness, anm_msf.
+     */
+    @ModelParam
+    double feat_anm_cutoff = 10.0
+
+    /**
+     * Uniform spring constant (γ) in the ANM Hessian. Standard ANM uses γ=1
+     * since absolute scale cancels in PRS ratios and only sets the unit of MSF.
+     */
+    @ModelParam
+    double feat_anm_gamma = 1.0
+
+    /**
+     * Number of non-trivial ANM modes kept after discarding 6 zero modes.
+     * PRS and MSF are summed over these modes.
+     */
+    @ModelParam
+    int feat_anm_n_modes = 20
+
+    /**
+     * Absolute eigenvalue threshold for treating an ANM mode as a rigid-body
+     * (zero-frequency) mode. Modes below this are discarded before keeping
+     * feat_anm_n_modes vibrational modes.
+     */
+    @ModelParam
+    double feat_anm_zero_mode_threshold = 1e-6
+
+    /**
+     * Heavy-atom distance cutoff (Angstrom) defining edges in the residue
+     * contact graph used by features cg_betweenness, cg_closeness, cg_degree.
+     */
+    @ModelParam
+    double feat_cgraph_cutoff = 4.5
+
+    /**
      * Directories in which to look for conservation score files.
      * Path is absolute or relative to the dataset directory.
      * If null or empty: look in the same directory as protein file
