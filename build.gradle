@@ -59,7 +59,10 @@ processResources {
     ]
 }
 
-tasks.register('copyDependenciesToDist', Copy) {
+tasks.register('copyDependenciesToDist', Sync) {
+    // Sync (not Copy) so renamed/removed transitive deps don't leave stale
+    // jars in distro/bin/lib — a stale ejml-core-0.39.jar shadowing the
+    // resolved 0.43.1 caused a NoSuchFieldError at runtime once.
     from configurations.runtimeClasspath
     into "$distroDir/bin/lib"
 }
