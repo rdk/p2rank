@@ -19,16 +19,16 @@ import org.biojava.nbio.structure.Atom
  * directly at each query SAS point — no separate probe surface, no KD-tree,
  * no cloud statistics. Returns a single scalar per probe.
  *
- * <p>Eliminates the main bottleneck of energy2 features: building 5 separate
- * SAS surfaces with full energy evaluation at every surface point.
- * Instead, one EnergyCalculator is cached per protein and called once
- * per query SAS point with the protein's neighbour atoms.
+ * <p>All 5 probe energies are computed in a single
+ * {@code computeEnergyForPoint} call and cached per SAS point so that
+ * the 5 concrete features share the neighbour-data precomputation.
  */
 @Slf4j
 @CompileStatic
 abstract class AbstractDirectProbeEnergyFeature extends SasFeatureCalculator implements Parametrized {
 
     private static final String CALC_CACHE_KEY = "energy3_calculator"
+    private static final String POINT_CACHE_KEY = "energy3_point_cache"
 
     abstract ProbeType getProbeType()
 
@@ -39,7 +39,7 @@ abstract class AbstractDirectProbeEnergyFeature extends SasFeatureCalculator imp
 
     @Override
     void preProcessProtein(Protein protein, ProcessedItemContext itemContext) {
-        protein.secondaryData.computeIfAbsent(CALC_CACHE_KEY, { k ->
+        if (!protein.secondaryData.containsKey(CALC_CACHE_KEY)) {
             EnergyCalculatorConfig cfg = new EnergyCalculatorConfig.Builder()
                 .rCutoff(params.energy_rc)
                 .rOn(params.energy_ron)
@@ -50,13 +50,16 @@ abstract class AbstractDirectProbeEnergyFeature extends SasFeatureCalculator imp
                 .selectedProbes(EnumSet.allOf(ProbeType))
                 .build()
 
+            EnergyCalculator calc
             if (cfg.enableCoulomb) {
                 PartialChargeTable charges = PartialChargeTable.forProtein(protein)
-                return new EnergyCalculator(cfg, charges.&get)
+                calc = new EnergyCalculator(cfg, charges.&get)
             } else {
-                return new EnergyCalculator(cfg)
+                calc = new EnergyCalculator(cfg)
             }
-        })
+            protein.secondaryData.put(CALC_CACHE_KEY, calc)
+            protein.secondaryData.put(POINT_CACHE_KEY, new PointEnergyCache())
+        }
     }
 
     @Override
@@ -66,24 +69,29 @@ abstract class AbstractDirectProbeEnergyFeature extends SasFeatureCalculator imp
             return [0d] as double[]
         }
 
-        Atoms neighbours = context.neighbourhoodAtoms
-        if (neighbours == null || neighbours.isEmpty()) {
-            return [0d] as double[]
-        }
+        PointEnergyCache cache = (PointEnergyCache) context.protein.secondaryData.get(POINT_CACHE_KEY)
+        List<Double> energies = cache.getOrCompute(sasPoint, calc, context.neighbourhoodAtoms)
 
-        List<Double> energies = calc.computeEnergyForPoint(sasPoint, neighbours)
-
-        int idx = probeIndex()
-        return [energies.get(idx)] as double[]
+        return [energies.get(getProbeType().ordinal())] as double[]
     }
 
-    private int probeIndex() {
-        ProbeType target = getProbeType()
-        int i = 0
-        for (ProbeType pt : ProbeType.values()) {
-            if (pt == target) return i
-            i++
+    @CompileStatic
+    static class PointEnergyCache {
+        private Atom lastPoint
+        private List<Double> lastEnergies
+
+        synchronized List<Double> getOrCompute(Atom point, EnergyCalculator calc, Atoms neighbours) {
+            if (lastPoint != null && lastPoint.is(point)) {
+                return lastEnergies
+            }
+            if (neighbours == null || neighbours.isEmpty()) {
+                lastPoint = point
+                lastEnergies = [0d, 0d, 0d, 0d, 0d] as List<Double>
+                return lastEnergies
+            }
+            lastPoint = point
+            lastEnergies = calc.computeEnergyForPoint(point, neighbours)
+            return lastEnergies
         }
-        return 0
     }
 }

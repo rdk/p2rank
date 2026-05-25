@@ -329,5 +329,57 @@ class CurveMetricsTest {
             assertEquals(wekaAuc, ourAuc, 0.02,
                 "AUC should match Weka on 50-element dataset");
         }
+
+        @Test
+        void matchesWekaOnRealisticImbalancedDataset() {
+            // Simulate P2Rank-like score distribution: ~10% positive, many ties
+            // from random forest discrete probabilities (0.0, 0.05, 0.10, ...)
+            int n = 1000;
+            double[] scores = new double[n];
+            boolean[] obs = new boolean[n];
+            java.util.Random rng = new java.util.Random(42);
+            for (int i = 0; i < n; i++) {
+                // Discrete scores in 0.05 increments (simulates 20-tree forest)
+                scores[i] = Math.round(rng.nextDouble() * 20) / 20.0;
+                // 10% positive rate, biased toward higher scores
+                obs[i] = rng.nextDouble() < (0.05 + 0.15 * scores[i]);
+            }
+
+            PredictedScores ps1 = preds(scores, obs);
+            PredictedScores ps2 = preds(scores, obs);
+
+            double ourAuc = CurveMetrics.areaUnderROC(ps1);
+            double ourAuprc = CurveMetrics.areaUnderPRC(ps1);
+            WekaStatsHelper weka = new WekaStatsHelper(ps2);
+            double wekaAuc = weka.areaUnderROC();
+            double wekaAuprc = weka.areaUnderPRC();
+
+            assertEquals(wekaAuc, ourAuc, 0.01,
+                "AUC on 1000 imbalanced predictions: ours=" + ourAuc + " weka=" + wekaAuc);
+            assertEquals(wekaAuprc, ourAuprc, 0.03,
+                "AUPRC on 1000 imbalanced predictions: ours=" + ourAuprc + " weka=" + wekaAuprc);
+        }
+
+        @Test
+        void matchesWekaOnLargeDatasetWithTies() {
+            // 5000 predictions, heavy ties (only 10 distinct score levels)
+            int n = 5000;
+            double[] scores = new double[n];
+            boolean[] obs = new boolean[n];
+            java.util.Random rng = new java.util.Random(123);
+            for (int i = 0; i < n; i++) {
+                scores[i] = rng.nextInt(10) / 10.0;  // 0.0 to 0.9
+                obs[i] = rng.nextDouble() < (0.02 + 0.2 * scores[i]);
+            }
+
+            PredictedScores ps1 = preds(scores, obs);
+            PredictedScores ps2 = preds(scores, obs);
+
+            double ourAuc = CurveMetrics.areaUnderROC(ps1);
+            double wekaAuc = new WekaStatsHelper(ps2).areaUnderROC();
+
+            assertEquals(wekaAuc, ourAuc, 0.01,
+                "AUC on 5000 tied predictions: ours=" + ourAuc + " weka=" + wekaAuc);
+        }
     }
 }

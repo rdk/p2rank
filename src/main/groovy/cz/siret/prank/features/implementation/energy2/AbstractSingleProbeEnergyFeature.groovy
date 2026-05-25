@@ -12,7 +12,13 @@ import org.biojava.nbio.structure.Atom
  * Single-scalar variant of the energy2 probe features. Returns just the
  * energy at the nearest precomputed probe point (1 dimension instead of 9).
  * Shares the same precomputed ProbePoints cache as the full 9-dim variant.
+ *
+ * @deprecated Superseded by energy3 direct-at-point features (e3-*) which
+ * compute energy at the query SAS point without building a separate probe
+ * surface. e3 is 25× faster on holo4k with equivalent predictive signal.
+ * Retained for reproducibility of earlier experiments.
  */
+@Deprecated
 @Slf4j
 @CompileStatic
 abstract class AbstractSingleProbeEnergyFeature extends AbstractProbeEnergyFeature {
