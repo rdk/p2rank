@@ -197,15 +197,62 @@ class EnergyCalculatorTest {
             .selectedProbes(EnumSet.of(ProbeType.CATION_SP))
             .enableCoulomb(true)
             .build()
-        calculator = new EnergyCalculator(config)
 
         Atom point = createAtom("C", 0, 0, 0)
         Atom neighbor = createAtom("O", 4.0, 0, 0)
 
-        List<Double> energies = calculator.computeEnergyForPoint(point, new Atoms([neighbor]))
+        // No supplier → pure LJ (Coulomb collapses to 0)
+        double ljOnly = new EnergyCalculator(config)
+                .computeEnergyForPoint(point, new Atoms([neighbor])).get(0)
 
-        // Should have non-zero energy from LJ (Coulomb will be zero since atom charges are 0)
-        assertNotEquals(0.0, energies[0], 1e-10)
+        // With a synthetic −1.0 e charge on the neighbor, CATION_SP (+0.5 e probe)
+        // should add an attractive (negative) Coulomb contribution.
+        double withCoulomb = new EnergyCalculator(config, { Atom a -> a.is(neighbor) ? -1.0d : 0.0d })
+                .computeEnergyForPoint(point, new Atoms([neighbor])).get(0)
+
+        assertNotEquals(0.0d, ljOnly, 1e-10, "pure LJ path should be non-zero")
+        assertTrue(withCoulomb < ljOnly,
+                "wiring a negative charge should make CATION_SP more attractive: $withCoulomb !< $ljOnly")
+    }
+
+    @Test
+    void testCationCoulombScalesWithDielectric() {
+        // Higher dielectric damps Coulomb → energy closer to LJ-only.
+        Atom point = createAtom("C", 0, 0, 0)
+        Atom neighbor = createAtom("O", 4.0, 0, 0)
+        def supplier = { Atom a -> a.is(neighbor) ? -1.0d : 0.0d } as java.util.function.ToDoubleFunction<Atom>
+
+        EnergyCalculatorConfig lowD = new EnergyCalculatorConfig.Builder()
+                .selectedProbes(EnumSet.of(ProbeType.CATION_SP)).enableCoulomb(true)
+                .dielectricConstant(4.0).build()
+        EnergyCalculatorConfig highD = new EnergyCalculatorConfig.Builder()
+                .selectedProbes(EnumSet.of(ProbeType.CATION_SP)).enableCoulomb(true)
+                .dielectricConstant(80.0).build()
+
+        double atLowD = new EnergyCalculator(lowD, supplier)
+                .computeEnergyForPoint(point, new Atoms([neighbor])).get(0)
+        double atHighD = new EnergyCalculator(highD, supplier)
+                .computeEnergyForPoint(point, new Atoms([neighbor])).get(0)
+
+        // Attractive: low dielectric is more negative than high dielectric.
+        assertTrue(atLowD < atHighD,
+                "lower dielectric should give stronger Coulomb attraction: lowD=$atLowD highD=$atHighD")
+    }
+
+    @Test
+    void testEnableCoulombFlagSuppressesSupplier() {
+        EnergyCalculatorConfig cfg = new EnergyCalculatorConfig.Builder()
+                .selectedProbes(EnumSet.of(ProbeType.CATION_SP)).enableCoulomb(false).build()
+        Atom point = createAtom("C", 0, 0, 0)
+        Atom neighbor = createAtom("O", 4.0, 0, 0)
+
+        // Supplier returns charge but enableCoulomb=false should bypass it entirely
+        double withFlagOff = new EnergyCalculator(cfg, { Atom a -> -1.0d } as java.util.function.ToDoubleFunction<Atom>)
+                .computeEnergyForPoint(point, new Atoms([neighbor])).get(0)
+        double pureLj = new EnergyCalculator(cfg)
+                .computeEnergyForPoint(point, new Atoms([neighbor])).get(0)
+
+        assertEquals(pureLj, withFlagOff, 1e-12, "enableCoulomb=false should ignore the supplier")
     }
 
     @Test

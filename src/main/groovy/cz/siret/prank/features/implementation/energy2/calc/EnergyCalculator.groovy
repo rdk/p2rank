@@ -8,6 +8,8 @@ import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 import org.biojava.nbio.structure.Element
 
+import java.util.function.ToDoubleFunction
+
 /**
  * Batch calculator: computes multiple Tier-1 single-point probe energies in one pass (no hydrogens).
  * Shares distances, window s(r), and 1/r powers across probes to avoid redundant work.
@@ -37,6 +39,15 @@ class EnergyCalculator {
     // Parameter tables
     private final Map<Element, LJParams> ljParams
     private final Map<Integer, HBParams> hbOverrides
+
+    /**
+     * Per-atom charge lookup (e units). When null and {@code enableCoulomb=true},
+     * the Coulomb term collapses to a no-op (every charge is 0). Decoupled
+     * via {@link ToDoubleFunction} so {@code energy2.calc} doesn't have to
+     * depend on the {@code electrostatics} package — callers wire in
+     * {@code PartialChargeTable.forProtein(protein)::get} or any other supplier.
+     */
+    private final ToDoubleFunction<Atom> chargeSupplier
 
     // Counter for warnings
     private volatile int missingParamWarningCount = 0
@@ -109,10 +120,23 @@ class EnergyCalculator {
     }
 
     /**
-     * Initialize the calculator with configuration
+     * Initialize the calculator with configuration. Coulomb term will be a
+     * no-op (every charge = 0) — use the 2-arg constructor to wire in a real
+     * charge source.
      */
     EnergyCalculator(EnergyCalculatorConfig config) {
+        this(config, null)
+    }
+
+    /**
+     * Initialize with configuration and a per-atom charge supplier. The
+     * supplier is consulted once per neighbor in {@link #precomputeNeighborData}
+     * when {@code config.enableCoulomb} is true; pass null (or use the 1-arg
+     * ctor) to disable Coulomb regardless of config.
+     */
+    EnergyCalculator(EnergyCalculatorConfig config, ToDoubleFunction<Atom> chargeSupplier) {
         this.config = config
+        this.chargeSupplier = chargeSupplier
 
         // Cache constants
         this.RC = config.rCutoff
@@ -127,8 +151,9 @@ class EnergyCalculator {
         this.ljParams = loadLJParamsFromCSV()
         this.hbOverrides = loadHBOverridesFromCSV()
 
-        log.info("EnergyCalculator initialized: rc={}, ron={}, min_r={}, probes={}, {} LJ elements, {} HB overrides loaded",
-                 RC, RON, MIN_R, selectedProbesList, ljParams.size(), hbOverrides.size())
+        log.info("EnergyCalculator initialized: rc={}, ron={}, min_r={}, probes={}, {} LJ elements, {} HB overrides loaded, chargeSupplier={}",
+                 RC, RON, MIN_R, selectedProbesList, ljParams.size(), hbOverrides.size(),
+                 chargeSupplier == null ? "none (Coulomb=0)" : "wired")
     }
 
     /**
@@ -211,10 +236,13 @@ class EnergyCalculator {
                 logMissingParamWarning(element)
             }
 
-            // Charge assignment is a TODO stub (see audit note). When wired to
-            // PartialChargeTable (Wave 2), this will return real AMBER ff14SB
-            // charges; until then CATION_SP Coulomb is effectively no-op.
-            double charge = 0.0d
+            // Skip the charge lookup when Coulomb is globally disabled OR
+            // no supplier was wired — the Coulomb branch in computeProbeAtomEnergy
+            // guards on `charge != 0.0` anyway, but skipping is a perf win when
+            // the supplier is doing an IdentityHashMap lookup per neighbor.
+            double charge = (config.enableCoulomb && chargeSupplier != null)
+                    ? chargeSupplier.applyAsDouble(atom)
+                    : 0.0d
 
             AtomRole role = AtomRole.classify(atom)
 

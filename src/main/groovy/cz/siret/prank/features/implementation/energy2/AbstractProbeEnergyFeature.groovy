@@ -5,6 +5,7 @@ import cz.siret.prank.domain.labeling.LabeledPoint
 import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.features.api.SasFeatureCalculationContext
 import cz.siret.prank.features.api.SasFeatureCalculator
+import cz.siret.prank.features.implementation.electrostatics.PartialChargeTable
 import cz.siret.prank.features.implementation.energy.ProbePoints
 import cz.siret.prank.features.implementation.energy2.calc.EnergyCalculator
 import cz.siret.prank.features.implementation.energy2.calc.EnergyCalculatorConfig
@@ -61,7 +62,18 @@ abstract class AbstractProbeEnergyFeature extends SasFeatureCalculator implement
             .enableCoulomb(params.energy2_enable_coulomb)
             .selectedProbes(EnumSet.of(getProbeType()))
             .build()
-        EnergyCalculator calc = new EnergyCalculator(cfg)
+
+        // Wire AMBER ff14SB partial charges into the calculator so CATION_SP's
+        // Coulomb term actually fires (was a no-op until the audit). The table
+        // is per-protein cached in secondaryData by PartialChargeTable.forProtein,
+        // shared with the standalone electrostatics SAS feature.
+        EnergyCalculator calc
+        if (cfg.enableCoulomb) {
+            PartialChargeTable charges = PartialChargeTable.forProtein(protein)
+            calc = new EnergyCalculator(cfg, charges.&get)
+        } else {
+            calc = new EnergyCalculator(cfg)
+        }
 
         List<LabeledPoint> points = calcProbePoints(protein)
         for (LabeledPoint p : points) {

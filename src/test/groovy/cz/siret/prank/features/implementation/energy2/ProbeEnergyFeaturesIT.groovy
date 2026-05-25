@@ -120,4 +120,45 @@ class ProbeEnergyFeaturesIT {
         // Should still produce finite scores; just no Coulomb contribution
         runProbe(new CationProbeEnergyFeature(), p)
     }
+
+    @Test
+    void cationCoulombFiresWhenWiredToPartialChargeTable() {
+        // Same protein, same SAS sample, two CATION_SP runs that differ only in
+        // whether Coulomb is on. With the Wave-2 wiring to PartialChargeTable
+        // they should produce materially different scores; before the wiring
+        // both runs would have been identical (charge=0 stub).
+        Params.INSTANCE.energy2_enable_coulomb = true
+        Protein pCoulomb = load()
+        new CationProbeEnergyFeature().preProcessProtein(pCoulomb,
+                new ProcessedItemContext(null, [:] as Map<String, String>))
+        ProbePoints withCoulomb = (ProbePoints) pCoulomb.secondaryData.get(
+                new CationProbeEnergyFeature().getSecondaryDataKey())
+
+        Params.INSTANCE.energy2_enable_coulomb = false
+        Protein pNoCoulomb = load()
+        new CationProbeEnergyFeature().preProcessProtein(pNoCoulomb,
+                new ProcessedItemContext(null, [:] as Map<String, String>))
+        ProbePoints noCoulomb = (ProbePoints) pNoCoulomb.secondaryData.get(
+                new CationProbeEnergyFeature().getSecondaryDataKey())
+
+        // Compare the per-point energy distributions; at least some probe points
+        // must differ once Coulomb is wired in.
+        double[] withScores = ProbePoints.extractScores(withCoulomb.points)
+        double[] withoutScores = ProbePoints.extractScores(noCoulomb.points)
+        assertEquals(withScores.length, withoutScores.length,
+                "same protein → same sampled SAS surface")
+
+        int differing = 0
+        double maxAbsDelta = 0d
+        for (int i = 0; i < withScores.length; i++) {
+            double d = withScores[i] - withoutScores[i]
+            if (Math.abs(d) > 1e-9) differing++
+            maxAbsDelta = Math.max(maxAbsDelta, Math.abs(d))
+        }
+        assertTrue(differing > 0,
+                "Coulomb should change at least some CATION_SP probe-point scores once wired " +
+                "to PartialChargeTable; got 0 differing of ${withScores.length}")
+        assertTrue(maxAbsDelta > 1e-6,
+                "Coulomb contribution magnitude too small to be the wiring: max|Δ|=$maxAbsDelta")
+    }
 }
