@@ -157,7 +157,7 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
             write "training classifier ${model.classifier.getClass().name} on dataset with ${trainVectors.count} instances"
 
             def trainTimer = startTimer()
-            trainModel(model, trainVectors)
+            featureImportances = trainModelAndExtractImportances(model, trainVectors)
             trainTime = trainTimer.time
             logTime "model trained in " + formatTime(trainTime)
 
@@ -166,7 +166,6 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
                 model.saveToFile(modelf)
             }
             trainStats = calculateTrainStats(model.classifier, trainVectors)
-            featureImportances = calcFeatureImportances(model)
 
             if (cacheModels) {
                 write "storing model to cache (key: $modelCacheKey)"
@@ -199,8 +198,10 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
     }
 
 
-    void trainModel(Model model, FeatureVectors data) {
+    List<Double> trainModelAndExtractImportances(Model model, FeatureVectors data) {
         WekaUtils.trainClassifier(model.asWekaClassifier(), data)
+
+        List<Double> importances = calcFeatureImportances(model)
 
         if (params.rf_flatten) {
             if (ModelConverter.isFlattableClassifier(model.classifier)) {
@@ -211,6 +212,8 @@ class TrainEvalRoutine extends EvalRoutine implements Parametrized  {
                 throw new IllegalStateException("Trying to flatten classifier that does not support it: " + model.classifier.class.simpleName)
             }
         }
+
+        return importances
     }
 
     private List<Double> calcFeatureImportances(Model model) {
