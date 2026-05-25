@@ -51,6 +51,11 @@ class MethylEnergyFeature extends SasFeatureCalculator implements Parametrized {
         return NAME
     }
 
+    @Override
+    List<String> getHeader() {
+        return [NAME]
+    }
+
     /**
      * Feature computes per-point energy only; no changes to training, ranking, or clustering.
      */

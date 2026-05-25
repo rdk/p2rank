@@ -1,13 +1,8 @@
 package cz.siret.prank.features.implementation.energy
 
-import cz.siret.prank.domain.Protein
 import cz.siret.prank.domain.labeling.LabeledPoint
-import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.features.api.SasFeatureCalculationContext
-import cz.siret.prank.features.api.SasFeatureCalculator
 import cz.siret.prank.geom.Atoms
-import cz.siret.prank.geom.Surface
-import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.utils.StatSample2
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
@@ -17,58 +12,17 @@ import static cz.siret.prank.utils.MathUtils.nanToZero
 
 /**
  * SAS point feature: vdW-only methyl probe energy (no hydrogens).
- * Provides a single scalar per SAS point; units: kcal/mol. More negative = more favorable.
+ * Per-SAS-point feature vector: 9 sub-features = [nearest] + [mean,min,vpa,relstd] × 2
+ * for inner (energy_cloud_radius) and outer (energy_cloud_radius2) shell.
+ * Units: kcal/mol. More negative = more favorable.
  */
 @Slf4j
 @CompileStatic
-class MethylEnergyCloudX2SF extends SasFeatureCalculator implements Parametrized {
+class MethylEnergyCloudX2SF extends AbstractMethylEnergyCloudSF {
 
     static final String NAME = "energy-cloudx2-ch3"
-    static final String SEC_DATA_KEY = "PP_CH3"
 
-    @Override
-    void preProcessProtein(Protein protein, ProcessedItemContext itemContext) {
-        if (protein.secondaryData.containsKey(SEC_DATA_KEY)) {
-            return  // already computed
-        }
-
-        // Build the calculator from current Params per protein (see
-        // MethylEnergyCloudSF for rationale).
-        LJEnergyCalculator calc = new LJEnergyCalculator(
-            params.energy_probe_sigma, params.energy_probe_epsilon,
-            params.energy_rc, params.energy_ron, params.energy_min_r,
-            params.energy_missing_elem_policy,
-            params.energy_fallback_sigma, params.energy_fallback_epsilon)
-
-        List<LabeledPoint> points = calcProbePoints(protein)
-        for (LabeledPoint p : points) {
-            Atoms neighbourAtoms = protein.proteinAtoms.cutoutSphere(p, params.energy_rc)
-            double energy = calc.computeEnergyForPoint(p, neighbourAtoms)
-            p.score = energy
-        }
-
-        ProbePoints probePoints = new ProbePoints(new Atoms(points).withKdTree())
-
-        protein.secondaryData.put(SEC_DATA_KEY, probePoints)
-    }
-
-//===========================================================================================================//
-
-    private List<LabeledPoint> calcProbePoints(Protein protein) {
-        Surface surf = Surface.computeAccessibleSurface(protein.proteinAtoms, params.xenergy_solvent_radius, params.xenergy_tessellation)
-
-        List<LabeledPoint> res = new ArrayList<>(surf.points.size())
-        for (Atom point : surf.points) {
-            res.add(new LabeledPoint(point, false)) // initially unlabeled
-        }
-
-        return res
-    }
-
-    @Override
-    String getName() {
-        return NAME
-    }
+    @Override String getName() { NAME }
 
     @Override
     List<String> getHeader() {
@@ -79,18 +33,14 @@ class MethylEnergyCloudX2SF extends SasFeatureCalculator implements Parametrized
         ]
     }
 
-    /**
-     * Feature computes per-point energy only; no changes to training, ranking, or clustering.
-     */
     @Override
     double[] calculateForSasPoint(Atom sasPoint, SasFeatureCalculationContext context) {
+        ProbePoints probePoints = getProbePoints(context.protein)
 
-        ProbePoints probePoints = (ProbePoints) context.protein.secondaryData.get(SEC_DATA_KEY)
-
-        Atoms.SphereLayers layers = probePoints.points.cutoutLayers(sasPoint, params.energy_cloud_radius, params.energy_cloud_radius2)
+        Atoms.SphereLayers layers = probePoints.points.cutoutLayers(
+            sasPoint, params.energy_cloud_radius, params.energy_cloud_radius2)
         Atoms cloudPoints = layers.innerSphere
         Atoms cloudPoints2 = params.xenergy_cloud2_layered ? layers.outerLayer : layers.outerSphere
-
 
         if (cloudPoints.size() == 0) {
             log.warn("No probe points found in cloud for SAS point, returning 0.0 energy")
@@ -98,9 +48,8 @@ class MethylEnergyCloudX2SF extends SasFeatureCalculator implements Parametrized
         }
 
         double nearestPointEnergy = ((LabeledPoint) cloudPoints.findNearest(sasPoint)).score
-
-        StatSample2 stats = new StatSample2(cloudPoints.collect { ((LabeledPoint) it).score } as List<Double>)
-        StatSample2 stats2 = new StatSample2(cloudPoints2.collect { ((LabeledPoint) it).score } as List<Double>)
+        StatSample2 stats = new StatSample2(extractScores(cloudPoints))
+        StatSample2 stats2 = new StatSample2(extractScores(cloudPoints2))
 
         return [
             nearestPointEnergy,
@@ -113,7 +62,5 @@ class MethylEnergyCloudX2SF extends SasFeatureCalculator implements Parametrized
             nanToZero(stats2.vpa),
             nanToZero(stats2.relativeStddev),
         ] as double[]
-
     }
-
 }

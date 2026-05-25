@@ -1884,6 +1884,24 @@ class Params {
     @ModelParam
     double xenergy_solvent_radius = 1.6
 
+    /**
+     * Effective dielectric for the Coulomb term in the energy2 probe suite
+     * (CATION_SP). Higher values damp electrostatics, modelling implicit
+     * solvent screening. Default 12 is a midrange protein-interior value.
+     * Per-probe σ/ε/charge/HB-r0 remain baked in (see audit follow-ups).
+     */
+    @ModelParam
+    double energy2_dielectric = 12.0
+
+    /**
+     * Master switch for the Coulomb term across all energy2 probes. When
+     * false, CATION_SP collapses to pure LJ. Even when true, the term is
+     * currently a no-op until {@code EnergyCalculator.getAtomCharge} is wired
+     * to the AMBER ff14SB PartialChargeTable (Wave 2 follow-up).
+     */
+    @ModelParam
+    boolean energy2_enable_coulomb = true
+
 //===========================================================================================================//
 
     /**

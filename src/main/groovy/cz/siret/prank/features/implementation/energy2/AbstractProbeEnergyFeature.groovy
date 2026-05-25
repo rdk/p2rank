@@ -57,8 +57,8 @@ abstract class AbstractProbeEnergyFeature extends SasFeatureCalculator implement
             .rCutoff(params.energy_rc)
             .rOn(params.energy_ron)
             .rMin(params.energy_min_r)
-            .dielectricConstant(12.0)
-            .enableCoulomb(true)
+            .dielectricConstant(params.energy2_dielectric)
+            .enableCoulomb(params.energy2_enable_coulomb)
             .selectedProbes(EnumSet.of(getProbeType()))
             .build()
         EnergyCalculator calc = new EnergyCalculator(cfg)
@@ -132,8 +132,8 @@ abstract class AbstractProbeEnergyFeature extends SasFeatureCalculator implement
         // Extract energy statistics from the probe point clouds
         double nearestPointEnergy = ((LabeledPoint) cloudPoints.findNearest(sasPoint)).score
 
-        StatSample2 stats = new StatSample2(cloudPoints.collect { ((LabeledPoint) it).score } as List<Double>)
-        StatSample2 stats2 = new StatSample2(cloudPoints2.collect { ((LabeledPoint) it).score } as List<Double>)
+        StatSample2 stats = new StatSample2(ProbePoints.extractScores(cloudPoints))
+        StatSample2 stats2 = new StatSample2(ProbePoints.extractScores(cloudPoints2))
 
         return [
             nearestPointEnergy,

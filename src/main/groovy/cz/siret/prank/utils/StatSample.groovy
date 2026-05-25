@@ -6,7 +6,12 @@ import static cz.siret.prank.utils.MathUtils.safeDiv
 import static java.lang.Math.sqrt
 
 /**
- * Double vector with basic stats
+ * Double vector with basic stats. Used only by {@code MethylEnergyCloudSF}.
+ *
+ * <p><b>Note:</b> {@link #getRelativeStdev()} returns stddev/mean × <b>100</b>
+ * (percentage scale), unlike {@link StatSample2#getRelativeStddev()} which
+ * returns stddev/mean (ratio scale). Do not casually swap one for the other —
+ * the 100× difference would silently change feature values.
  */
 @CompileStatic
 class StatSample {

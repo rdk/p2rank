@@ -8,8 +8,6 @@ import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 import org.biojava.nbio.structure.Element
 
-import java.util.concurrent.ConcurrentHashMap
-
 /**
  * Batch calculator: computes multiple Tier-1 single-point probe energies in one pass (no hydrogens).
  * Shares distances, window s(r), and 1/r powers across probes to avoid redundant work.
@@ -39,8 +37,6 @@ class EnergyCalculator {
     // Parameter tables
     private final Map<Element, LJParams> ljParams
     private final Map<Integer, HBParams> hbOverrides
-    private final Map<Atom, AtomRole> atomRoleCache
-    private final Map<Atom, Double> atomChargeCache
 
     // Counter for warnings
     private volatile int missingParamWarningCount = 0
@@ -126,10 +122,6 @@ class EnergyCalculator {
         this.INV_RC_MINUS_RON = 1.0 / RC_MINUS_RON
         this.K_E = config.coulombConstant
         this.selectedProbesList = new ArrayList<>(config.selectedProbes)
-
-        // Initialize thread-safe caches
-        this.atomRoleCache = new ConcurrentHashMap<>()
-        this.atomChargeCache = new ConcurrentHashMap<>()
 
         // Load parameter tables
         this.ljParams = loadLJParamsFromCSV()
@@ -219,11 +211,12 @@ class EnergyCalculator {
                 logMissingParamWarning(element)
             }
 
-            // Get charge (0 if coulomb disabled or unavailable)
-            double charge = config.enableCoulomb ? getAtomCharge(atom) : 0.0 as double
+            // Charge assignment is a TODO stub (see audit note). When wired to
+            // PartialChargeTable (Wave 2), this will return real AMBER ff14SB
+            // charges; until then CATION_SP Coulomb is effectively no-op.
+            double charge = 0.0d
 
-            // Get role classification
-            AtomRole role = getAtomRole(atom)
+            AtomRole role = AtomRole.classify(atom)
 
             data.add(new NeighborData(r, invR, invR2, invR6, invR10, invR12,
                                     switchValue, element, sigma, epsilon, charge, role, true))
@@ -335,24 +328,6 @@ class EnergyCalculator {
             return 1.0
         } else {
             return 0.5 * (1.0 + Math.cos(PI * (r - RON) * INV_RC_MINUS_RON))
-        }
-    }
-
-    /**
-     * Get atom role with caching
-     */
-    private AtomRole getAtomRole(Atom atom) {
-        return atomRoleCache.computeIfAbsent(atom) { AtomRole.classify(it) }
-    }
-
-    /**
-     * Get atom charge with caching (returns 0 if not available)
-     */
-    private double getAtomCharge(Atom atom) {
-        return atomChargeCache.computeIfAbsent(atom) { Atom a ->
-            // For now, return 0.0 as charge assignment is complex
-            // This could be extended to read from PDB charge fields or force field
-            return 0.0 as Double
         }
     }
 

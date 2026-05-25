@@ -12,7 +12,13 @@ import org.apache.commons.math3.stat.descriptive.summary.Sum;
 import java.util.Collection;
 
 /**
- * Extended statistical sample with lazy evaluation of stats.
+ * Extended statistical sample with lazy evaluation of stats. Used by every
+ * Methyl Cloud variant except {@code MethylEnergyCloudSF} and by the energy2
+ * probe features.
+ *
+ * <p><b>Note:</b> {@link #getRelativeStddev()} returns stddev/mean (ratio
+ * scale), unlike {@link StatSample#getRelativeStdev()} which returns
+ * stddev/mean × 100 (percentage scale). Not interchangeable.
  */
 public class StatSample2 {
 
