@@ -6,6 +6,7 @@ import cz.siret.prank.geom.Atoms
 import cz.siret.prank.program.params.Params
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+import org.biojava.nbio.structure.Atom
 
 /**
  * Per-protein residue contact graph plus the three derived centrality measures
@@ -73,37 +74,46 @@ class ContactGraph {
 
         if (n == 0) return new ContactGraph(indexByKey, new double[0], new double[0], new double[0])
 
-        // adjacency list — use ArrayLists of boxed ints because n×heavyAtom pair
-        // tests dominate cost anyway; structure cost is negligible.
-        List<List<Integer>> adj = new ArrayList<>(n)
-        for (int i = 0; i < n; i++) adj.add(new ArrayList<Integer>())
+        // Build one protein-wide heavy-atom KD-tree, with PDBserial → residue
+        // index lookup, then per-atom radius query and dedupe to residue pairs.
+        // Replaces an earlier O(N²) per-pair scan that fell through to a
+        // brute-force Groovy path (Struct.areWithinDistance) and serialized
+        // all 16 worker threads on a single Groovy CacheableCallSite monitor
+        // under parallel eval on large datasets (holo4k).
+        List<Atom> flatAtoms = new ArrayList<>(n * 8)
+        Map<Integer, Integer> atomToResIdx = new HashMap<>(n * 8)
+        for (int i = 0; i < n; i++) {
+            for (Atom a : residues.get(i).atoms) {
+                flatAtoms.add(a)
+                atomToResIdx.put(a.PDBserial, i)
+            }
+        }
+        Atoms allAtoms = new Atoms(flatAtoms).withKdTree()
 
-        // Atom-level cutoff query. Atoms.areWithinDistance lazily builds a KD-tree.
-        // TODO(perf, large N): the per-residue KD-tree is only built when an
-        // Atoms set exceeds Atoms.KD_TREE_THRESHOLD (15), which most single
-        // residues miss — so this falls through to brute-force pair scans.
-        // For N≳400 residues, replacing this loop with a single protein-wide
-        // KD-tree of all heavy atoms + per-atom radius query (dedup'd to
-        // residue indices) reduces work ~O(N²·k²) → ~O(N·k·log(N·k)).
-        List<Atoms> resAtoms = new ArrayList<>(n)
-        for (Residue r : residues) resAtoms.add(r.atoms)
+        // adj sets auto-dedupe across (i, j) found from multiple atom pairs;
+        // converted to lists for the BFS/Brandes inner loops downstream.
+        List<Set<Integer>> adjSets = new ArrayList<>(n)
+        for (int i = 0; i < n; i++) adjSets.add(new HashSet<Integer>())
 
         double cutoff = params.feat_cgraph_cutoff
         for (int i = 0; i < n; i++) {
-            Atoms ai = resAtoms.get(i)
-            if (ai.count == 0) continue
-            for (int j = i + 1; j < n; j++) {
-                Atoms aj = resAtoms.get(j)
-                if (aj.count == 0) continue
-                if (ai.areWithinDistance(aj, cutoff)) {
-                    adj.get(i).add(j)
-                    adj.get(j).add(i)
+            for (Atom a : residues.get(i).atoms) {
+                Atoms neighbors = allAtoms.cutoutSphere(a, cutoff)
+                for (Atom b : neighbors) {
+                    Integer j = atomToResIdx.get(b.PDBserial)
+                    if (j != null && j.intValue() != i) {
+                        adjSets.get(i).add(j)
+                    }
                 }
             }
         }
 
+        List<List<Integer>> adj = new ArrayList<>(n)
         double[] degree = new double[n]
-        for (int i = 0; i < n; i++) degree[i] = adj.get(i).size()
+        for (int i = 0; i < n; i++) {
+            adj.add(new ArrayList<Integer>(adjSets.get(i)))
+            degree[i] = adjSets.get(i).size()
+        }
 
         double[] betweenness = computeBetweenness(adj, n)
         double[] closeness   = computeClosenessByComponent(adj, n)
