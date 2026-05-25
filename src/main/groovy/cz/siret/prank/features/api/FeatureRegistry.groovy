@@ -28,6 +28,7 @@ import cz.siret.prank.features.implementation.electrostatics.ElectrostaticsSasFe
 import cz.siret.prank.features.implementation.electrostatics.PartialChargeFeature
 import cz.siret.prank.features.implementation.energy.*
 import cz.siret.prank.features.implementation.energy2.*
+import cz.siret.prank.features.implementation.energy3.*
 import cz.siret.prank.features.implementation.histogram.PairHistogramFeature
 import cz.siret.prank.features.implementation.propensity.AaPropensityFeature
 import cz.siret.prank.features.implementation.propensity.AtomTypePropensityFeature
@@ -187,6 +188,12 @@ class FeatureRegistry {
         register new HBDonorSingleProbeEnergyFeature()
         register new AromaticRingSingleProbeEnergyFeature()
         register new CationSingleProbeEnergyFeature()
+
+        register new NeutralApolarDirectFeature()
+        register new HBDonorDirectFeature()
+        register new HBAcceptorDirectFeature()
+        register new AromaticRingDirectFeature()
+        register new CationDirectFeature()
 
 
 
