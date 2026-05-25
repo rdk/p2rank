@@ -84,6 +84,8 @@ class EnergyCalculator {
     /**
      * Precomputed neighbor data for efficiency
      */
+    private static final Set<String> AROMATIC_RESIDUES = Set.of("PHE", "TYR", "TRP", "HIS")
+
     @CompileStatic
     private static class NeighborData {
         final double r
@@ -99,10 +101,11 @@ class EnergyCalculator {
         final double charge
         final AtomRole role
         final boolean active
+        final boolean aromatic
 
         NeighborData(double r, double invR, double invR2, double invR6, double invR10, double invR12,
                     double switchValue, Element element, double sigma, double epsilon,
-                    double charge, AtomRole role, boolean active) {
+                    double charge, AtomRole role, boolean active, boolean aromatic) {
             this.r = r
             this.invR = invR
             this.invR2 = invR2
@@ -116,6 +119,7 @@ class EnergyCalculator {
             this.charge = charge
             this.role = role
             this.active = active
+            this.aromatic = aromatic
         }
     }
 
@@ -246,8 +250,11 @@ class EnergyCalculator {
 
             AtomRole role = AtomRole.classify(atom)
 
+            String resName = atom.getGroup()?.getPDBName()?.trim()?.toUpperCase()
+            boolean aromatic = resName != null && AROMATIC_RESIDUES.contains(resName)
+
             data.add(new NeighborData(r, invR, invR2, invR6, invR10, invR12,
-                                    switchValue, element, sigma, epsilon, charge, role, true))
+                                    switchValue, element, sigma, epsilon, charge, role, true, aromatic))
         }
 
         return data
@@ -261,12 +268,15 @@ class EnergyCalculator {
 
         switch (probe) {
             case ProbeType.NEUTRAL_APOLAR_SP:
-            case ProbeType.AROMATIC_RING_SP:
-                // Pure LJ energy
                 totalEnergy = computeLJEnergy(probeParams, neighbor)
+                break
 
-                // Apply energy cap for aromatic rings
-                if (probe == ProbeType.AROMATIC_RING_SP && totalEnergy < probeParams.energyMinCap) {
+            case ProbeType.AROMATIC_RING_SP:
+                if (config.aromaticOnly && !neighbor.aromatic) {
+                    break
+                }
+                totalEnergy = computeLJEnergy(probeParams, neighbor)
+                if (totalEnergy < probeParams.energyMinCap) {
                     totalEnergy = probeParams.energyMinCap
                 }
                 break

@@ -146,6 +146,57 @@ class EnergyCalculatorTest {
     }
 
     @Test
+    void testAromaticOnlySkipsNonAromaticNeighbors() {
+        config = new EnergyCalculatorConfig.Builder()
+            .selectedProbes(EnumSet.of(ProbeType.AROMATIC_RING_SP))
+            .aromaticOnly(true)
+            .build()
+        calculator = new EnergyCalculator(config)
+
+        Atom point = createAtom("C", 0, 0, 0)
+        Atom pheAtom = createAtom("C", 3.5, 0, 0, "PHE", "CG")
+        Atom alaAtom = createAtom("C", 3.5, 0, 0, "ALA", "CB")
+
+        List<Double> pheEnergies = calculator.computeEnergyForPoint(point, new Atoms([pheAtom]))
+        List<Double> alaEnergies = calculator.computeEnergyForPoint(point, new Atoms([alaAtom]))
+
+        assertTrue(pheEnergies[0] != 0d, "aromatic probe should interact with PHE atom")
+        assertEquals(0d, alaEnergies[0], 1e-15, "aromatic probe should skip ALA atom when aromaticOnly=true")
+    }
+
+    @Test
+    void testAromaticOnlyDisabledInteractsWithAllAtoms() {
+        config = new EnergyCalculatorConfig.Builder()
+            .selectedProbes(EnumSet.of(ProbeType.AROMATIC_RING_SP))
+            .aromaticOnly(false)
+            .build()
+        calculator = new EnergyCalculator(config)
+
+        Atom point = createAtom("C", 0, 0, 0)
+        Atom alaAtom = createAtom("C", 3.5, 0, 0, "ALA", "CB")
+
+        List<Double> energies = calculator.computeEnergyForPoint(point, new Atoms([alaAtom]))
+        assertTrue(energies[0] != 0d, "aromatic probe should interact with ALA when aromaticOnly=false")
+    }
+
+    @Test
+    void testAromaticOnlyRecognizesAllAromaticResidues() {
+        config = new EnergyCalculatorConfig.Builder()
+            .selectedProbes(EnumSet.of(ProbeType.AROMATIC_RING_SP))
+            .aromaticOnly(true)
+            .build()
+        calculator = new EnergyCalculator(config)
+
+        Atom point = createAtom("C", 0, 0, 0)
+
+        for (String res : ["PHE", "TYR", "TRP", "HIS"]) {
+            Atom neighbor = createAtom("C", 3.5, 0, 0, res, "CG")
+            List<Double> energies = calculator.computeEnergyForPoint(point, new Atoms([neighbor]))
+            assertTrue(energies[0] != 0d, "$res should be recognized as aromatic")
+        }
+    }
+
+    @Test
     void testHBAcceptorProbeOnlyInteractsWithDonors() {
         config = new EnergyCalculatorConfig.Builder()
             .selectedProbes(EnumSet.of(ProbeType.HB_ACCEPTOR_SP))

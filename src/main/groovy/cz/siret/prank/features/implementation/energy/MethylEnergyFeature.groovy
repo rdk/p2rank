@@ -61,7 +61,12 @@ class MethylEnergyFeature extends SasFeatureCalculator implements Parametrized {
      */
     @Override
     double[] calculateForSasPoint(Atom sasPoint, SasFeatureCalculationContext context) {
-        Atoms neighbourAtoms = context.neighbourhoodAtoms
+        Atoms neighbourAtoms
+        if (params.energy_use_calculator_cutoff) {
+            neighbourAtoms = context.protein.proteinAtoms.cutoutSphere(sasPoint, params.energy_rc)
+        } else {
+            neighbourAtoms = context.neighbourhoodAtoms
+        }
         if (neighbourAtoms == null || neighbourAtoms.size() == 0) {
             return [0.0] as double[]
         }

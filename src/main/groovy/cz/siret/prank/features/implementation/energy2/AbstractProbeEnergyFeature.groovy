@@ -60,6 +60,7 @@ abstract class AbstractProbeEnergyFeature extends SasFeatureCalculator implement
             .rMin(params.energy_min_r)
             .dielectricConstant(params.energy2_dielectric)
             .enableCoulomb(params.energy2_enable_coulomb)
+            .aromaticOnly(params.energy2_aromatic_only)
             .selectedProbes(EnumSet.of(getProbeType()))
             .build()
 

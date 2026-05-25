@@ -17,6 +17,9 @@ class EnergyCalculatorConfig {
     final boolean enableCoulomb
     final double coulombConstant = 332.06371 // kcal·Å·mol⁻¹·e⁻²
 
+    // Aromatic-ring probe interacts only with aromatic residue atoms
+    final boolean aromaticOnly
+
     // Probe selection
     final Set<ProbeType> selectedProbes
 
@@ -38,6 +41,7 @@ class EnergyCalculatorConfig {
         this.rMin = 1.8
         this.dielectricConstant = 12.0
         this.enableCoulomb = true
+        this.aromaticOnly = false
         this.selectedProbes = EnumSet.allOf(ProbeType.class)
         this.ljParamsCSV = "/tables/energy/lj-params.csv"
         this.roleRulesCSV = "/tables/energy/role-rules.csv"
@@ -48,6 +52,7 @@ class EnergyCalculatorConfig {
     // Builder constructor
     EnergyCalculatorConfig(double rCutoff, double rOn, double rMin,
                           double dielectricConstant, boolean enableCoulomb,
+                          boolean aromaticOnly,
                           Set<ProbeType> selectedProbes,
                           String ljParamsCSV, String roleRulesCSV, String hbOverridesCSV,
                           Map<ProbeType, ProbeParams> probeParams) {
@@ -64,6 +69,7 @@ class EnergyCalculatorConfig {
         this.rMin = rMin
         this.dielectricConstant = dielectricConstant
         this.enableCoulomb = enableCoulomb
+        this.aromaticOnly = aromaticOnly
         this.selectedProbes = new HashSet<>(selectedProbes)
         this.ljParamsCSV = ljParamsCSV
         this.roleRulesCSV = roleRulesCSV
@@ -141,6 +147,7 @@ class EnergyCalculatorConfig {
         private double rMin = 1.8
         private double dielectricConstant = 12.0
         private boolean enableCoulomb = true
+        private boolean aromaticOnly = false
         private Set<ProbeType> selectedProbes = EnumSet.allOf(ProbeType.class)
         private String ljParamsCSV = "/tables/energy/lj-params.csv"
         private String roleRulesCSV = "/tables/energy/role-rules.csv"
@@ -155,6 +162,9 @@ class EnergyCalculatorConfig {
         }
         public Builder enableCoulomb(boolean enableCoulomb) {
             this.enableCoulomb = enableCoulomb; return this
+        }
+        public Builder aromaticOnly(boolean aromaticOnly) {
+            this.aromaticOnly = aromaticOnly; return this
         }
         public Builder selectedProbes(Set<ProbeType> selectedProbes) {
             this.selectedProbes = selectedProbes; return this
@@ -177,7 +187,7 @@ class EnergyCalculatorConfig {
                 new EnergyCalculatorConfig().createDefaultProbeParams()
 
             return new EnergyCalculatorConfig(
-                rCutoff, rOn, rMin, dielectricConstant, enableCoulomb,
+                rCutoff, rOn, rMin, dielectricConstant, enableCoulomb, aromaticOnly,
                 selectedProbes, ljParamsCSV, roleRulesCSV, hbOverridesCSV, params
             )
         }

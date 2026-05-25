@@ -1902,6 +1902,24 @@ class Params {
     @ModelParam
     boolean energy2_enable_coulomb = true
 
+    /**
+     * When true, the aromatic-ring probe (energy2-aromatic-ring) only interacts
+     * with atoms belonging to aromatic residues (PHE, TYR, TRP, HIS).
+     * When false (default), it interacts with all protein heavy atoms.
+     */
+    @ModelParam
+    boolean energy2_aromatic_only = false
+
+    /**
+     * When true, MethylEnergyFeature (energy-ch3) fetches neighbour atoms at
+     * energy_rc (matching the calculator's switching-function cutoff) instead
+     * of the global neighbourhood_radius. This both widens the radius (8 → 9 Å
+     * by default) and switches the atom source from exposed-only surface atoms
+     * to all protein heavy atoms (matching the energy-cloud variants).
+     */
+    @ModelParam
+    boolean energy_use_calculator_cutoff = false
+
 //===========================================================================================================//
 
     /**
