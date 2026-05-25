@@ -182,6 +182,12 @@ class FeatureRegistry {
         register new AromaticRingProbeEnergyFeature()
         register new CationProbeEnergyFeature()
 
+        register new NeutralApolarSingleProbeEnergyFeature()
+        register new HBAcceptorSingleProbeEnergyFeature()
+        register new HBDonorSingleProbeEnergyFeature()
+        register new AromaticRingSingleProbeEnergyFeature()
+        register new CationSingleProbeEnergyFeature()
+
 
 
         register new HybridizationFeature()
