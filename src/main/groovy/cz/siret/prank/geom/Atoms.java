@@ -204,7 +204,7 @@ public final class Atoms implements Iterable<Atom> {
         if (kdTree != null && getCount() > KD_TREE_THRESHOLD) {
             return kdTree.nearestDist(a) <= dist;
         } else {
-            return Struct.areWithinDistance(a, this.list, dist);
+            return PerfUtils.areWithinDistance(a, this.list, dist);
         }
     }
 
@@ -237,7 +237,7 @@ public final class Atoms implements Iterable<Atom> {
     }
 
     public boolean areDistantFromAtomAtLeast(Atom a, double dist) {
-        return Struct.areDistantAtLeast(a, this.list, dist);
+        return PerfUtils.areDistantAtLeast(a, this.list, dist);
     }
 
     public Atom findNearest(Atom point) {

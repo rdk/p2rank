@@ -64,6 +64,44 @@ public class PerfUtils {
         return Math.sqrt(x*x + y*y + z*z);
     }
 
+    /**
+     * Java equivalent of Struct.areWithinDistance. The Groovy version's inner
+     * loop went through invokedynamic and serialized all concurrent callers on
+     * a single CacheableCallSite monitor, capping multi-threaded throughput.
+     */
+    public static boolean areWithinDistance(Atom a, List<Atom> list, double dist) {
+        final double sqr = dist * dist;
+        final double ax = a.getX();
+        final double ay = a.getY();
+        final double az = a.getZ();
+        for (Atom b : list) {
+            final double dx = ax - b.getX();
+            final double dy = ay - b.getY();
+            final double dz = az - b.getZ();
+            if (dx*dx + dy*dy + dz*dz <= sqr) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** Java equivalent of Struct.areDistantAtLeast. See areWithinDistance for context. */
+    public static boolean areDistantAtLeast(Atom a, List<Atom> list, double dist) {
+        final double sqr = dist * dist;
+        final double ax = a.getX();
+        final double ay = a.getY();
+        final double az = a.getZ();
+        for (Atom b : list) {
+            final double dx = ax - b.getX();
+            final double dy = ay - b.getY();
+            final double dz = az - b.getZ();
+            if (dx*dx + dy*dy + dz*dz < sqr) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public static double sqrDistL(Atom a, List<Atom> list) {
         if (list==null || list.isEmpty()) {
             //log.debug "!! dist to empty list of atoms"
