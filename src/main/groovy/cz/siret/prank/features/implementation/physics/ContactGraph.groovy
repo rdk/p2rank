@@ -2,6 +2,7 @@ package cz.siret.prank.features.implementation.physics
 
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.domain.Residue
+import cz.siret.prank.domain.ResidueChain
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.program.params.Params
 import groovy.transform.CompileStatic
@@ -9,13 +10,17 @@ import groovy.util.logging.Slf4j
 import org.biojava.nbio.structure.Atom
 
 /**
- * Per-protein residue contact graph plus the three derived centrality measures
+ * Per-chain residue contact graph plus the three derived centrality measures
  * (betweenness, closeness, degree). Built once per Protein in preProcessProtein
  * and cached in Protein.secondaryData[CACHE_KEY].
  *
- * Edges: two residues are connected if any pair of their heavy atoms lies
- * within Params.feat_cgraph_cutoff (Å). Nodes are all residues from
- * Protein.residues, in their natural list order.
+ * Centrality is computed independently for each chain: edges connect residues
+ * within the same chain only, so inter-chain contacts at quaternary interfaces
+ * do not inflate betweenness or degree. Results from all chains are merged
+ * into protein-wide lookup arrays keyed by Residue.Key.
+ *
+ * Edges: two residues in the same chain are connected if any pair of their
+ * heavy atoms lies within Params.feat_cgraph_cutoff (Å).
  *
  * Protein structure networks and node degree:
  *   Brinda, K.V. & Vishveshwara, S. (2005). A Network Representation of Protein
@@ -28,10 +33,8 @@ import org.biojava.nbio.structure.Atom
  *   https://doi.org/10.1016/j.jmb.2004.10.055
  *
  * Adaptation in P2Rank: graph is unweighted; closeness is normalized within
- * each connected component (CC_i = (n_comp − 1) / Σ_{j in comp} d(i,j)) so
- * multi-chain or fragmented structures don't punish small components with
- * artificial zeros. Betweenness uses standard Brandes; degree is the
- * adjacency-list cardinality.
+ * each connected component (CC_i = (n_comp − 1) / Σ_{j in comp} d(i,j)).
+ * Betweenness uses standard Brandes; degree is the adjacency-list cardinality.
  */
 @Slf4j
 @CompileStatic
@@ -67,59 +70,73 @@ class ContactGraph {
     private static ContactGraph compute(Protein protein, Params params) {
         long t0 = System.currentTimeMillis()
 
-        List<Residue> residues = protein.residues.list
-        int n = residues.size()
-        Map<Residue.Key, Integer> indexByKey = new HashMap<>(n)
-        for (int i = 0; i < n; i++) indexByKey.put(residues.get(i).key, i)
+        List<Residue> allResidues = protein.residues.list
+        int totalN = allResidues.size()
+        Map<Residue.Key, Integer> indexByKey = new HashMap<>(totalN)
+        for (int i = 0; i < totalN; i++) indexByKey.put(allResidues.get(i).key, i)
 
-        if (n == 0) return new ContactGraph(indexByKey, new double[0], new double[0], new double[0])
+        if (totalN == 0) return new ContactGraph(indexByKey, new double[0], new double[0], new double[0])
 
-        // Build one protein-wide heavy-atom KD-tree, with PDBserial → residue
-        // index lookup, then per-atom radius query and dedupe to residue pairs.
-        // Replaces an earlier O(N²) per-pair scan that fell through to a
-        // brute-force Groovy path (Struct.areWithinDistance) and serialized
-        // all 16 worker threads on a single Groovy CacheableCallSite monitor
-        // under parallel eval on large datasets (holo4k).
-        List<Atom> flatAtoms = new ArrayList<>(n * 8)
-        Map<Integer, Integer> atomToResIdx = new HashMap<>(n * 8)
-        for (int i = 0; i < n; i++) {
-            for (Atom a : residues.get(i).atoms) {
-                flatAtoms.add(a)
-                atomToResIdx.put(a.PDBserial, i)
-            }
-        }
-        Atoms allAtoms = new Atoms(flatAtoms).withKdTree()
-
-        // adj sets auto-dedupe across (i, j) found from multiple atom pairs;
-        // converted to lists for the BFS/Brandes inner loops downstream.
-        List<Set<Integer>> adjSets = new ArrayList<>(n)
-        for (int i = 0; i < n; i++) adjSets.add(new HashSet<Integer>())
+        double[] betweenness = new double[totalN]
+        double[] closeness = new double[totalN]
+        double[] degree = new double[totalN]
 
         double cutoff = params.feat_cgraph_cutoff
-        for (int i = 0; i < n; i++) {
-            for (Atom a : residues.get(i).atoms) {
-                Atoms neighbors = allAtoms.cutoutSphere(a, cutoff)
-                for (Atom b : neighbors) {
-                    Integer j = atomToResIdx.get(b.PDBserial)
-                    if (j != null && j.intValue() != i) {
-                        adjSets.get(i).add(j)
+
+        for (ResidueChain chain : protein.residueChains) {
+            List<Residue> chainResidues = chain.residues
+            int n = chainResidues.size()
+            if (n == 0) continue
+
+            int[] globalIdx = new int[n]
+            for (int i = 0; i < n; i++) {
+                globalIdx[i] = indexByKey.get(chainResidues.get(i).key)
+            }
+
+            List<Atom> flatAtoms = new ArrayList<>(n * 8)
+            Map<Integer, Integer> atomToLocalIdx = new HashMap<>(n * 8)
+            for (int i = 0; i < n; i++) {
+                for (Atom a : chainResidues.get(i).atoms) {
+                    flatAtoms.add(a)
+                    atomToLocalIdx.put(a.PDBserial, i)
+                }
+            }
+            Atoms chainAtoms = new Atoms(flatAtoms).withKdTree()
+
+            List<Set<Integer>> adjSets = new ArrayList<>(n)
+            for (int i = 0; i < n; i++) adjSets.add(new HashSet<Integer>())
+
+            for (int i = 0; i < n; i++) {
+                for (Atom a : chainResidues.get(i).atoms) {
+                    Atoms neighbors = chainAtoms.cutoutSphere(a, cutoff)
+                    for (Atom b : neighbors) {
+                        Integer j = atomToLocalIdx.get(b.PDBserial)
+                        if (j != null && j.intValue() != i) {
+                            adjSets.get(i).add(j)
+                        }
                     }
                 }
             }
+
+            List<List<Integer>> adj = new ArrayList<>(n)
+            for (int i = 0; i < n; i++) {
+                adj.add(new ArrayList<Integer>(adjSets.get(i)))
+            }
+
+            double[] chainBet = computeBetweenness(adj, n)
+            double[] chainClose = computeClosenessByComponent(adj, n)
+
+            for (int i = 0; i < n; i++) {
+                int gi = globalIdx[i]
+                betweenness[gi] = chainBet[i]
+                closeness[gi] = chainClose[i]
+                degree[gi] = (double) adjSets.get(i).size()
+            }
         }
 
-        List<List<Integer>> adj = new ArrayList<>(n)
-        double[] degree = new double[n]
-        for (int i = 0; i < n; i++) {
-            adj.add(new ArrayList<Integer>(adjSets.get(i)))
-            degree[i] = adjSets.get(i).size()
-        }
-
-        double[] betweenness = computeBetweenness(adj, n)
-        double[] closeness   = computeClosenessByComponent(adj, n)
-
-        log.debug "ContactGraph: N={} cutoff={} built in {} ms (protein {})",
-                n, cutoff, System.currentTimeMillis() - t0, protein.name
+        log.debug "ContactGraph: N={} chains={} cutoff={} built in {} ms (protein {})",
+                totalN, protein.residueChains.size(), cutoff,
+                System.currentTimeMillis() - t0, protein.name
 
         return new ContactGraph(indexByKey, betweenness, closeness, degree)
     }

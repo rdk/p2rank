@@ -2,6 +2,7 @@ package cz.siret.prank.features.implementation.physics
 
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.domain.Residue
+import cz.siret.prank.domain.ResidueChain
 import cz.siret.prank.domain.loaders.LoaderParams
 import cz.siret.prank.program.params.Params
 import groovy.transform.CompileStatic
@@ -25,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.*
 class PhysicsFeaturesIT {
 
     static final String PDB_1T7QA = "distro/test_data/liganated/1t7qa.pdb"
+    static final String PDB_11AS = "src/test/resources/data/11as.pdb"
 
     static Params savedParams
 
@@ -112,6 +114,50 @@ class PhysicsFeaturesIT {
         assertTrue(maxBet > 0d, "some residue should have non-zero betweenness")
         assertTrue(maxClose > 0d, "some residue should have non-zero closeness")
         assertTrue(maxDeg >= 3d, "a typical protein has residues with several contacts (got max degree $maxDeg)")
+    }
+
+    @Test
+    void contactGraphPerChainOnMultiChainProtein() {
+        File f = new File(PDB_11AS)
+        assertTrue(f.exists(), "expected test PDB at $PDB_11AS")
+        Protein p = Protein.load(PDB_11AS, new LoaderParams())
+
+        assertTrue(p.residueChains.size() >= 2,
+                "11as should have at least 2 chains (got ${p.residueChains.size()})")
+
+        ContactGraph g = ContactGraph.getOrCompute(p, Params.INSTANCE)
+        assertNotNull(g)
+
+        for (Residue r : p.residues) {
+            double b = g.betweennessFor(r)
+            double c = g.closenessFor(r)
+            double d = g.degreeFor(r)
+            assertTrue(Double.isFinite(b), "betweenness non-finite at $r.key")
+            assertTrue(Double.isFinite(c), "closeness non-finite at $r.key")
+            assertTrue(Double.isFinite(d), "degree non-finite at $r.key")
+            assertTrue(b >= 0d && b <= 1d, "betweenness out of [0,1] at $r.key: $b")
+            assertTrue(c >= 0d && c <= 1d, "closeness out of [0,1] at $r.key: $c")
+            assertTrue(d >= 0d, "degree negative at $r.key")
+        }
+
+        ResidueChain chainA = p.getResidueChain("A")
+        ResidueChain chainB = p.getResidueChain("B")
+        assertNotNull(chainA, "expected chain A")
+        assertNotNull(chainB, "expected chain B")
+
+        double maxBetA = 0d, maxBetB = 0d
+        for (Residue r : chainA.residues) maxBetA = Math.max(maxBetA, g.betweennessFor(r))
+        for (Residue r : chainB.residues) maxBetB = Math.max(maxBetB, g.betweennessFor(r))
+
+        assertTrue(maxBetA > 0d, "chain A should have non-zero betweenness")
+        assertTrue(maxBetB > 0d, "chain B should have non-zero betweenness")
+
+        double relDiff = Math.abs(maxBetA - maxBetB) / Math.max(maxBetA, maxBetB)
+        assertTrue(relDiff < 0.5,
+                "homodimer chains should have similar max betweenness (A=$maxBetA, B=$maxBetB, relDiff=$relDiff)")
+
+        ContactGraph g2 = ContactGraph.getOrCompute(p, Params.INSTANCE)
+        assertSame(g, g2, "ContactGraph should be cached per protein")
     }
 
     @Test
