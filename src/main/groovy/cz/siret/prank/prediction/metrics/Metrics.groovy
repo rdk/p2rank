@@ -367,14 +367,12 @@ class Metrics implements Parametrized {
 
         res.logLoss = calcLogLoss(predictions)
 
-        // AUC, AUPRC
-
-        WekaStatsHelper wekaHelper = new WekaStatsHelper(predictions)
-        res.AUC = wekaHelper.areaUnderROC()
-        res.AUPRC = wekaHelper.areaUnderPRC()
-        wekaHelper = null // allow gc
-        if (res.AUC==Double.NaN) log.error "Calculated AUC is NaN"
-        if (res.AUPRC==Double.NaN) log.error "Calculated AUPRC is NaN"
+        // AUC, AUPRC — computed directly from sorted primitive arrays
+        // (replaces WekaStatsHelper which allocated ~96 bytes/prediction in Weka objects)
+        res.AUC = CurveMetrics.areaUnderROC(predictions)
+        res.AUPRC = CurveMetrics.areaUnderPRC(predictions)
+        if (Double.isNaN(res.AUC)) log.error "Calculated AUC is NaN"
+        if (Double.isNaN(res.AUPRC)) log.error "Calculated AUPRC is NaN"
         log.debug "AUC: {}", res.AUC
         log.debug "AUPRC: {}", res.AUPRC
 
