@@ -150,12 +150,12 @@ test {
     }
 
     testlogger {
-        theme 'mocha'
-        showPassed true
-        showSkipped true
-        showFailed true
-        showStandardStreams false
-        slowThreshold 2000
+        theme = 'mocha'
+        showPassed = true
+        showSkipped = true
+        showFailed = true
+        showStandardStreams = false
+        slowThreshold = 2000
     }
 
     // listen to standard out and standard error of the test JVM(s)
