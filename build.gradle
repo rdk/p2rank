@@ -16,6 +16,7 @@ buildscript {  // for "com.github.ben-manes.versions" plugin
 plugins {
     id 'java'
     id 'groovy'
+    id 'com.adarshr.test-logger' version '4.0.0'
 }
 
 apply plugin: "com.github.ben-manes.versions"   //  ./gradlew dependencyUpdates
@@ -136,10 +137,9 @@ test {
     inputs.files("$distroDir/models", "$distroDir/config/default.groovy")
 
     testLogging {
-        // 'started' replaces the old beforeTest { } closure (deprecated in
-        // Gradle 9.5, slated for removal in Gradle 10). Possible events:
-        // started, passed, failed, skipped, standardOut, standardError.
-        events 'started', 'failed'
+        // Minimal config — com.adarshr.test-logger plugin handles console rendering.
+        // Keep 'failed' so Gradle's own summary still reports failures.
+        events 'failed'
 
         showExceptions = true
         exceptionFormat = "full"
@@ -147,6 +147,15 @@ test {
         showStackTraces = true
 
         showStandardStreams = false
+    }
+
+    testlogger {
+        theme 'mocha'
+        showPassed true
+        showSkipped true
+        showFailed true
+        showStandardStreams false
+        slowThreshold 2000
     }
 
     // listen to standard out and standard error of the test JVM(s)
