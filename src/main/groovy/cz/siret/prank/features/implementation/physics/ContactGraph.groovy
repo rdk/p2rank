@@ -1,5 +1,8 @@
 package cz.siret.prank.features.implementation.physics
 
+import com.carrotsearch.hppc.IntArrayDeque
+import com.carrotsearch.hppc.IntArrayList
+import com.carrotsearch.hppc.IntHashSet
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.domain.Residue
 import cz.siret.prank.domain.ResidueChain
@@ -103,8 +106,8 @@ class ContactGraph {
             }
             Atoms chainAtoms = new Atoms(flatAtoms).withKdTree()
 
-            List<Set<Integer>> adjSets = new ArrayList<>(n)
-            for (int i = 0; i < n; i++) adjSets.add(new HashSet<Integer>())
+            IntHashSet[] adjSets = new IntHashSet[n]
+            for (int i = 0; i < n; i++) adjSets[i] = new IntHashSet()
 
             for (int i = 0; i < n; i++) {
                 for (Atom a : chainResidues.get(i).atoms) {
@@ -112,15 +115,15 @@ class ContactGraph {
                     for (Atom b : neighbors) {
                         Integer j = atomToLocalIdx.get(b.PDBserial)
                         if (j != null && j.intValue() != i) {
-                            adjSets.get(i).add(j)
+                            adjSets[i].add(j)
                         }
                     }
                 }
             }
 
-            List<List<Integer>> adj = new ArrayList<>(n)
+            int[][] adj = new int[n][]
             for (int i = 0; i < n; i++) {
-                adj.add(new ArrayList<Integer>(adjSets.get(i)))
+                adj[i] = adjSets[i].toArray()
             }
 
             double[] chainBet = computeBetweenness(adj, n)
@@ -130,7 +133,7 @@ class ContactGraph {
                 int gi = globalIdx[i]
                 betweenness[gi] = chainBet[i]
                 closeness[gi] = chainClose[i]
-                degree[gi] = (double) adjSets.get(i).size()
+                degree[gi] = (double) adjSets[i].size()
             }
         }
 
@@ -143,15 +146,9 @@ class ContactGraph {
 
     //---------------------------------------------------------------------//
     //  Brandes (2001) — unweighted betweenness centrality
-    //  TODO(perf, large N): HPPC primitive collections (IntArrayList /
-    //  IntArrayDeque, already on classpath via build.gradle) would remove
-    //  the Integer boxing in the hot inner loops here and in
-    //  computeClosenessByComponent below. Typical 2-3× speedup on Brandes.
-    //  Negligible at N=200; worth doing if profiling shows ContactGraph
-    //  dominating for N≳400.
     //---------------------------------------------------------------------//
 
-    static double[] computeBetweenness(List<List<Integer>> adj, int n) {
+    static double[] computeBetweenness(int[][] adj, int n) {
         double[] cb = new double[n]
         if (n < 3) return cb
 
@@ -159,52 +156,53 @@ class ContactGraph {
         int[] sigma = new int[n]
         int[] dist = new int[n]
         double[] delta = new double[n]
-        List<List<Integer>> preds = new ArrayList<>(n)
-        for (int i = 0; i < n; i++) preds.add(new ArrayList<Integer>())
+        IntArrayList[] preds = new IntArrayList[n]
+        for (int i = 0; i < n; i++) preds[i] = new IntArrayList()
 
-        ArrayDeque<Integer> queue = new ArrayDeque<>(n)
+        IntArrayDeque queue = new IntArrayDeque(n)
 
         for (int s = 0; s < n; s++) {
-            // reset per source
             int top = 0
             for (int i = 0; i < n; i++) {
                 sigma[i] = 0
                 dist[i] = -1
                 delta[i] = 0d
-                preds.get(i).clear()
+                preds[i].elementsCount = 0
             }
             sigma[s] = 1
             dist[s] = 0
             queue.clear()
-            queue.add(s)
+            queue.addLast(s)
 
             while (!queue.isEmpty()) {
-                int v = queue.poll()
+                int v = queue.removeFirst()
                 stack[top++] = v
-                for (int w : adj.get(v)) {
+                int[] neighbors = adj[v]
+                for (int ni = 0; ni < neighbors.length; ni++) {
+                    int w = neighbors[ni]
                     if (dist[w] < 0) {
                         dist[w] = dist[v] + 1
-                        queue.add(w)
+                        queue.addLast(w)
                     }
                     if (dist[w] == dist[v] + 1) {
                         sigma[w] += sigma[v]
-                        preds.get(w).add(v)
+                        preds[w].add(v)
                     }
                 }
             }
 
-            // accumulate dependencies in reverse BFS order
             for (int idx = top - 1; idx >= 0; idx--) {
                 int w = stack[idx]
-                for (int v : preds.get(w)) {
+                int[] predBuf = preds[w].buffer
+                int predCount = preds[w].elementsCount
+                for (int pi = 0; pi < predCount; pi++) {
+                    int v = predBuf[pi]
                     delta[v] += ((double) sigma[v] / (double) sigma[w]) * (1d + delta[w])
                 }
                 if (w != s) cb[w] += delta[w]
             }
         }
 
-        // undirected normalization: each pair counted twice → divide by 2,
-        // then by (N-1)(N-2)/2 to map to [0, 1] (Brandes convention).
         double norm = 2d / (((double)(n - 1)) * ((double)(n - 2)))
         for (int i = 0; i < n; i++) cb[i] = (cb[i] / 2d) * norm
         return cb
@@ -215,29 +213,31 @@ class ContactGraph {
     //  CC_i = (n_comp - 1) / Σ_{j in same component, j != i} d(i, j)
     //---------------------------------------------------------------------//
 
-    static double[] computeClosenessByComponent(List<List<Integer>> adj, int n) {
+    static double[] computeClosenessByComponent(int[][] adj, int n) {
         double[] cc = new double[n]
         if (n == 0) return cc
 
         int[] dist = new int[n]
-        ArrayDeque<Integer> queue = new ArrayDeque<>(n)
+        IntArrayDeque queue = new IntArrayDeque(n)
 
         for (int s = 0; s < n; s++) {
             for (int i = 0; i < n; i++) dist[i] = -1
             dist[s] = 0
             queue.clear()
-            queue.add(s)
+            queue.addLast(s)
             int reached = 1
             long sumDist = 0L
 
             while (!queue.isEmpty()) {
-                int v = queue.poll()
-                for (int w : adj.get(v)) {
+                int v = queue.removeFirst()
+                int[] neighbors = adj[v]
+                for (int ni = 0; ni < neighbors.length; ni++) {
+                    int w = neighbors[ni]
                     if (dist[w] < 0) {
                         dist[w] = dist[v] + 1
                         sumDist += dist[w]
                         reached++
-                        queue.add(w)
+                        queue.addLast(w)
                     }
                 }
             }
@@ -245,7 +245,7 @@ class ContactGraph {
             if (sumDist > 0L) {
                 cc[s] = ((double)(reached - 1)) / ((double) sumDist)
             } else {
-                cc[s] = 0d  // isolated singleton
+                cc[s] = 0d
             }
         }
         return cc
