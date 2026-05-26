@@ -285,14 +285,6 @@ class Evaluation implements Parametrized {
                 row.contactAtoms = contactAtomSet.count
                 row.residues = protein.residues.getDistinctForAtoms(contactAtomSet).size()
                 row.atomIds = (lig.atoms*.PDBserial).toSorted() as List<Integer>
-
-                List<LabeledPoint> ligPoints = allLigLabeledPoints.cutoutShell(lig.atoms, LIG_SAS_CUTOFF).toList() as List<LabeledPoint>
-                ligPoints.sort { -it.score }
-                List<Double> ptScores = ligPoints.collect { it.score }
-                row.avgPointScore = avg ptScores
-                row.maxPointScore = ptScores.empty ? 0d : ptScores[0]
-                row.avgMax3PointScore = avg head(3, ptScores)
-                row.avgMaxHalfPointScore = avg head(MathUtils.ceilDiv(ptScores.size(), 2), ptScores)
             } else {
                 ResidueSite rs = (ResidueSite) site
                 row.siteType = "explicit"
@@ -303,19 +295,22 @@ class Evaluation implements Parametrized {
                 row.centerToProtDist = Double.NaN
                 row.proteinDist = Double.NaN
                 row.sasDist = Double.NaN
-                row.avgPointScore = Double.NaN
-                row.maxPointScore = Double.NaN
-                row.avgMax3PointScore = Double.NaN
-                row.avgMaxHalfPointScore = Double.NaN
                 row.atomIds = emptyList()
                 row.ahojSiteInfo = (AhojSiteInfo) rs.secondaryData.get(ResidueSite.KEY_AHOJ_SITE_INFO)
             }
 
-            // Site reachability: count SAS points near the site scored above pred_point_threshold
+            // Site reachability and point score stats (unified for both ligand and explicit sites)
             List<LabeledPoint> siteNearPoints = labeledPoints.cutoutShell(site.atoms, LIG_SAS_CUTOFF).toList() as List<LabeledPoint>
             int hotCount = (int) siteNearPoints.count { it.score >= params.pred_point_threshold }
             row.hotPointCount = hotCount
             row.siteReachabilityScore = Math.min((double) hotCount / params.pred_min_cluster_size, 1.0d)
+
+            siteNearPoints.sort { -it.score }
+            List<Double> ptScores = siteNearPoints.collect { it.score }
+            row.avgPointScore = avg ptScores
+            row.maxPointScore = ptScores.empty ? 0d : ptScores[0]
+            row.avgMax3PointScore = avg head(3, ptScores)
+            row.avgMaxHalfPointScore = avg head(MathUtils.ceilDiv(ptScores.size(), 2), ptScores)
 
             tmpLigRows.add(row)
         }
