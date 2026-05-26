@@ -75,18 +75,18 @@ abstract class AbstractDirectProbeEnergyFeature extends SasFeatureCalculator imp
         return [energies.get(getProbeType().ordinal())] as double[]
     }
 
+    /**
+     * Single-slot cache: stores the last SAS point's energies so the 5
+     * concrete features sharing this cache avoid redundant computation.
+     * Not thread-safe — callers process one point at a time per protein.
+     */
     @CompileStatic
     static class PointEnergyCache {
         private Atom lastPoint
         private List<Double> lastEnergies
 
-        synchronized List<Double> getOrCompute(Atom point, EnergyCalculator calc, Atoms neighbours) {
+        List<Double> getOrCompute(Atom point, EnergyCalculator calc, Atoms neighbours) {
             if (lastPoint != null && lastPoint.is(point)) {
-                return lastEnergies
-            }
-            if (neighbours == null || neighbours.isEmpty()) {
-                lastPoint = point
-                lastEnergies = [0d, 0d, 0d, 0d, 0d] as List<Double>
                 return lastEnergies
             }
             lastPoint = point
