@@ -1894,10 +1894,9 @@ class Params {
     double energy2_dielectric = 12.0
 
     /**
-     * Master switch for the Coulomb term across all energy2 probes. When
-     * false, CATION_SP collapses to pure LJ. Even when true, the term is
-     * currently a no-op until {@code EnergyCalculator.getAtomCharge} is wired
-     * to the AMBER ff14SB PartialChargeTable (Wave 2 follow-up).
+     * Master switch for the Coulomb term across all energy2/energy3 probes.
+     * When false, CATION_SP collapses to pure LJ. Uses AMBER ff14SB partial
+     * charges via PartialChargeTable.
      */
     @ModelParam
     boolean energy2_enable_coulomb = true

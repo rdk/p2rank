@@ -442,7 +442,6 @@ class Evaluation implements Parametrized {
         protRow.surfOverlapN0 = overlapN0.surfaceOverlap
         protRow.surfOverlapN2 = overlapN2.surfaceOverlap
 
-        // TODO revisit: consider prot averaging vs ligand averaging etc...
         List<BindingSite> succSites = sites.findAll { it.predictedPocket != null }
         List<Pocket> succPockets = succSites.collect { it.predictedPocket }
         Atoms succLigSasp = union( (succSites*.sasPoints).toList() )

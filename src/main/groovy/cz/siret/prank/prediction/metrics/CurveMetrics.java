@@ -2,8 +2,7 @@ package cz.siret.prank.prediction.metrics;
 
 /**
  * Memory-efficient AUC and AUPRC computation directly from sorted
- * {@link PredictedScores}. Replaces the Weka-based {@link WekaStatsHelper}
- * which allocates ~96 bytes per prediction in intermediate objects.
+ * {@link PredictedScores}.
  *
  * <p>Both metrics are computed in a single O(N) pass over the
  * descending-score-sorted primitive arrays, using zero extra allocation

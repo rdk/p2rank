@@ -50,20 +50,19 @@ class PocketPredictor implements Parametrized {
         double score = 0
         try {
             List<LabeledPoint> sasPoints = pocketPoints.collect { (LabeledPoint)it }.toList()
-            for (LabeledPoint p : sasPoints) {
-                p.score = scorePoint(p, allSasPoints)
+            double[] pointScores = new double[sasPoints.size()]
+            for (int i = 0; i < sasPoints.size(); i++) {
+                pointScores[i] = scorePoint(sasPoints.get(i), allSasPoints)
             }
 
-            sasPoints = sasPoints.sort { // descending
-                LabeledPoint a, LabeledPoint b -> b.score <=> a.score
-            }
+            Integer[] order = new Integer[sasPoints.size()]
+            for (int i = 0; i < order.length; i++) order[i] = i
+            Arrays.sort(order, { Integer a, Integer b -> Double.compare(pointScores[b], pointScores[a]) } as Comparator<Integer>)
 
-            List<LabeledPoint> scoringPoints = sasPoints
-            if (SCORE_POINT_LIMIT > 0) {
-                scoringPoints = Cutils.head(SCORE_POINT_LIMIT, sasPoints)
+            int limit = (SCORE_POINT_LIMIT > 0) ? Math.min(SCORE_POINT_LIMIT, order.length) : order.length
+            for (int i = 0; i < limit; i++) {
+                score += pointScores[order[i]]
             }
-
-            score = (double) scoringPoints.collect { it.score }.sum(0)
 
             if (params.score_pockets_by == "conservation" || params.score_pockets_by == "combi") {
                 ConservationScore conservationScore = protein.conservationScore
