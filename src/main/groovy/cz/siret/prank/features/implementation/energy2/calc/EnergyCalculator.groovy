@@ -144,13 +144,6 @@ class EnergyCalculator {
     }
 
     /**
-     * Clear per-atom cache. Call when switching proteins.
-     */
-    void clearAtomCache() {
-        atomDataCache.clear()
-    }
-
-    /**
      * Precomputed neighbor data for efficiency
      */
     @CompileStatic

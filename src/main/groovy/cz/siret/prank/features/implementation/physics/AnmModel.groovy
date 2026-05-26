@@ -195,10 +195,14 @@ class AnmModel {
             }
         }
 
-        // PRS matrix: PRS_ij² = (1/3) Σ_a Σ_b (residueModes[j][a] · residueModes[i][b])²
-        double[][] prs = new double[n][n]
+        // PRS: sensor = col avg, effectiveness = row avg of PRS_ij.
+        // Computed on-the-fly without materializing the N×N matrix.
+        double[] sensor = new double[n]
+        double[] effectiveness = new double[n]
         double oneThird = 1d / 3d
+        double invN = 1d / n
         for (int i = 0; i < n; i++) {
+            double rowSum = 0d
             for (int j = 0; j < n; j++) {
                 double sumSq = 0d
                 for (int a = 0; a < 3; a++) {
@@ -210,24 +214,13 @@ class AnmModel {
                         sumSq += dot * dot
                     }
                 }
-                prs[i][j] = Math.sqrt(oneThird * sumSq)
+                double prsVal = Math.sqrt(oneThird * sumSq)
+                rowSum += prsVal
+                sensor[j] += prsVal
             }
-        }
-
-        // sensor = col avg, effectiveness = row avg
-        double[] sensor = new double[n]
-        double[] effectiveness = new double[n]
-        double invN = 1d / n
-        for (int i = 0; i < n; i++) {
-            double rowSum = 0d
-            for (int j = 0; j < n; j++) rowSum += prs[i][j]
             effectiveness[i] = rowSum * invN
         }
-        for (int j = 0; j < n; j++) {
-            double colSum = 0d
-            for (int i = 0; i < n; i++) colSum += prs[i][j]
-            sensor[j] = colSum * invN
-        }
+        for (int j = 0; j < n; j++) sensor[j] *= invN
 
         // MSF = Σ_a Σ_k residueModes[j][a][k]² = Σ_a Σ_k u_k[3j+a]²/λ_k
         double[] msf = new double[n]
