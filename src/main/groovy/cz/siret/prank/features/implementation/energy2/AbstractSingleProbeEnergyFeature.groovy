@@ -42,6 +42,6 @@ abstract class AbstractSingleProbeEnergyFeature extends AbstractProbeEnergyFeatu
         }
 
         double energy = ((LabeledPoint) cloud.findNearest(sasPoint)).score
-        return [energy] as double[]
+        return [Double.isNaN(energy) ? 0d : energy] as double[]
     }
 }
