@@ -70,7 +70,7 @@ class EnergyCalculatorConfig {
         this.dielectricConstant = dielectricConstant
         this.enableCoulomb = enableCoulomb
         this.aromaticOnly = aromaticOnly
-        this.selectedProbes = new HashSet<>(selectedProbes)
+        this.selectedProbes = EnumSet.copyOf(selectedProbes)
         this.ljParamsCSV = ljParamsCSV
         this.roleRulesCSV = roleRulesCSV
         this.hbOverridesCSV = hbOverridesCSV
