@@ -82,10 +82,77 @@ class EnergyCalculator {
     }
 
     /**
-     * Precomputed neighbor data for efficiency
+     * Per-atom invariants cached across SAS points. These properties depend
+     * only on the atom identity, not on the query point, so they are computed
+     * once per atom and reused for every SAS point that sees this neighbour.
      */
     private static final Set<String> AROMATIC_RESIDUES = Set.of("PHE", "TYR", "TRP", "HIS")
 
+    @CompileStatic
+    private static class AtomData {
+        final double sigma
+        final double epsilon
+        final double charge
+        final AtomRole role
+        final boolean aromatic
+        final boolean skip  // true for hydrogens or atoms with no element
+
+        AtomData(double sigma, double epsilon, double charge, AtomRole role, boolean aromatic, boolean skip) {
+            this.sigma = sigma; this.epsilon = epsilon; this.charge = charge
+            this.role = role; this.aromatic = aromatic; this.skip = skip
+        }
+    }
+
+    private final Map<Integer, AtomData> atomDataCache = new HashMap<>()
+
+    private AtomData getAtomData(Atom atom) {
+        int serial = atom.PDBserial
+        if (serial != 0) {
+            AtomData cached = atomDataCache.get(serial)
+            if (cached != null) return cached
+        }
+
+        Element element = atom.getElement()
+        if (element == Element.H || element == null) {
+            AtomData ad = new AtomData(0, 0, 0, new AtomRole(false, false, 0), false, true)
+            if (serial != 0) atomDataCache.put(serial, ad)
+            return ad
+        }
+
+        LJParams ljParam = ljParams[element]
+        double sigma = ljParam ? ljParam.sigma : 3.5d
+        double epsilon = ljParam ? ljParam.epsilon : 0.1d
+
+        if (!ljParam) {
+            logMissingParamWarning(element)
+        }
+
+        double charge = (config.enableCoulomb && chargeSupplier != null)
+                ? chargeSupplier.applyAsDouble(atom)
+                : 0.0d
+
+        AtomRole role = AtomRole.classify(atom)
+
+        String resName = atom.getGroup()?.getPDBName()?.trim()?.toUpperCase()
+        boolean aromatic = resName != null && AROMATIC_RESIDUES.contains(resName)
+
+        AtomData ad = new AtomData(sigma, epsilon, charge, role, aromatic, false)
+        if (serial != 0) {
+            atomDataCache.put(serial, ad)
+        }
+        return ad
+    }
+
+    /**
+     * Clear per-atom cache. Call when switching proteins.
+     */
+    void clearAtomCache() {
+        atomDataCache.clear()
+    }
+
+    /**
+     * Precomputed neighbor data for efficiency
+     */
     @CompileStatic
     private static class NeighborData {
         final double r
@@ -206,55 +273,25 @@ class EnergyCalculator {
         List<NeighborData> data = new ArrayList<>()
 
         for (Atom atom : neighbours) {
-            // Skip hydrogens everywhere
-            if (atom.getElement() == Element.H) {
-                continue
-            }
+            AtomData ad = getAtomData(atom)
+            if (ad.skip) continue
 
-            // Calculate distance
             double r = Struct.dist(atom, point)
-            if (r >= RC) {
-                continue  // Beyond cutoff, skip entirely
-            }
+            if (r >= RC) continue
 
-            // Clamp distance to prevent singularities
             r = Math.max(r, MIN_R)
 
-            // Compute reusable powers
             double invR = 1.0 / r
             double invR2 = invR * invR
             double invR6 = invR2 * invR2 * invR2
             double invR10 = invR6 * invR2 * invR2
             double invR12 = invR6 * invR6
 
-            // Compute smooth switch value
             double switchValue = computeSwitchValue(r)
 
-            // Get atom parameters
-            Element element = atom.getElement()
-            LJParams ljParam = ljParams[element]
-            double sigma = ljParam ? ljParam.sigma : 3.5 as double  // fallback
-            double epsilon = ljParam ? ljParam.epsilon : 0.1 as double  // fallback
-
-            if (!ljParam) {
-                logMissingParamWarning(element)
-            }
-
-            // Skip the charge lookup when Coulomb is globally disabled OR
-            // no supplier was wired — the Coulomb branch in computeProbeAtomEnergy
-            // guards on `charge != 0.0` anyway, but skipping is a perf win when
-            // the supplier is doing an IdentityHashMap lookup per neighbor.
-            double charge = (config.enableCoulomb && chargeSupplier != null)
-                    ? chargeSupplier.applyAsDouble(atom)
-                    : 0.0d
-
-            AtomRole role = AtomRole.classify(atom)
-
-            String resName = atom.getGroup()?.getPDBName()?.trim()?.toUpperCase()
-            boolean aromatic = resName != null && AROMATIC_RESIDUES.contains(resName)
-
             data.add(new NeighborData(r, invR, invR2, invR6, invR10, invR12,
-                                    switchValue, element, sigma, epsilon, charge, role, true, aromatic))
+                                    switchValue, atom.getElement(), ad.sigma, ad.epsilon,
+                                    ad.charge, ad.role, true, ad.aromatic))
         }
 
         return data
