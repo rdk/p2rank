@@ -209,7 +209,9 @@ class Evaluation implements Parametrized {
             protRow.distantLigNames = ""
         }
 
-        // === Ligand-only pre-computation ===
+        // === Pre-computation ===
+
+        Atoms labeledPoints = new Atoms(pair.prediction.labeledPoints ?: emptyList())
 
         int n_ligSasPoints = 0
         int n_ligSasPointsCovered = 0
@@ -221,7 +223,6 @@ class Evaluation implements Parametrized {
 
         if (isLigandMode) {
             Ligands ligands = pair.ligands
-            Atoms labeledPoints = new Atoms(pair.prediction.labeledPoints ?: emptyList())
 
             // overlaps and coverages
             n_ligSasPoints = calcCoveragesProt(protRow, pair, sites, sasPoints, pockets)
@@ -309,6 +310,12 @@ class Evaluation implements Parametrized {
                 row.atomIds = emptyList()
                 row.ahojSiteInfo = (AhojSiteInfo) rs.secondaryData.get(ResidueSite.KEY_AHOJ_SITE_INFO)
             }
+
+            // Site reachability: count SAS points near the site scored above pred_point_threshold
+            List<LabeledPoint> siteNearPoints = labeledPoints.cutoutShell(site.atoms, LIG_SAS_CUTOFF).toList() as List<LabeledPoint>
+            int hotCount = (int) siteNearPoints.count { it.score >= params.pred_point_threshold }
+            row.hotPointCount = hotCount
+            row.siteReachabilityScore = Math.min((double) hotCount / params.pred_min_cluster_size, 1.0d)
 
             tmpLigRows.add(row)
         }
@@ -753,6 +760,11 @@ class Evaluation implements Parametrized {
         m.AVG_LIG_AVG_MAX3_POINT_SCORE = avg ligandRows, { it.avgMax3PointScore }
         m.AVG_LIG_AVG_MAXHALF_POINT_SCORE = avg ligandRows, { it.avgMaxHalfPointScore }
 
+        m.SITE_REACHABILITY     = avg ligandRows, { it.siteReachabilityScore }
+        m.SITE_REACHABLE_RATE   = div((long) ligandRows.count { it.hotPointCount >= 1 }, ligandCount)
+        m.SITE_CLUSTERABLE_RATE = div((long) ligandRows.count { it.hotPointCount >= params.pred_min_cluster_size }, ligandCount)
+        m.SITE_UNREACHABLE      = (long) ligandRows.count { it.hotPointCount == 0 }
+
         m.AVG_POCKETS = avgPockets
         m.AVG_POCKET_SURF_ATOMS = avgPocketSurfAtoms
         m.AVG_POCKET_SURF_ATOMS_TRUE_POCKETS = avgPocketSurfAtomsTruePockets
@@ -964,7 +976,7 @@ class Evaluation implements Parametrized {
      */
     String toLigandsCSV() {
         StringBuilder csv = new StringBuilder()
-        csv <<  "file, #ligands, ligand, chain, ligCode, #atoms, dca4rank, closestPocketDist, proteinDist, centerToProteinDist, sasDist, #contactProteinAtoms, atomIds\n"
+        csv <<  "file, #ligands, ligand, chain, ligCode, #atoms, dca4rank, closestPocketDist, proteinDist, centerToProteinDist, sasDist, #contactProteinAtoms, hotPointCount, siteReachability, atomIds\n"
         for (LigRow r : ligandRows) {
             List rec = new ArrayList()
 
@@ -981,6 +993,8 @@ class Evaluation implements Parametrized {
             rec.add fmtCsv(r.centerToProtDist)
             rec.add fmtCsv(r.sasDist)
             rec.add r.contactAtoms
+            rec.add r.hotPointCount
+            rec.add fmtCsv(r.siteReachabilityScore)
             rec.add r.atomIds.join(" ")
 
             csv << rec.join(", ") << "\n"
@@ -996,7 +1010,7 @@ class Evaluation implements Parametrized {
         boolean hasAhojInfo = ligandRows.any { it.ahojSiteInfo != null }
 
         StringBuilder csv = new StringBuilder()
-        String header = "file, site_type, #sites, site, chain, ligCode, #atoms, #residues, center_x, center_y, center_z, site_radius, dca4rank, closestPocketDist, proteinDist, centerToProteinDist, sasDist, #contactProteinAtoms"
+        String header = "file, site_type, #sites, site, chain, ligCode, #atoms, #residues, center_x, center_y, center_z, site_radius, dca4rank, closestPocketDist, proteinDist, centerToProteinDist, sasDist, #contactProteinAtoms, hotPointCount, siteReachability"
         if (hasAhojInfo) {
             header += ", " + AhojSiteInfo.EXPORT_COLUMNS.join(", ")
         }
@@ -1022,6 +1036,8 @@ class Evaluation implements Parametrized {
             rec.add fmtCsv(r.centerToProtDist)
             rec.add fmtCsv(r.sasDist)
             rec.add r.contactAtoms
+            rec.add r.hotPointCount
+            rec.add fmtCsv(r.siteReachabilityScore)
             if (hasAhojInfo) {
                 rec.addAll(r.ahojSiteInfo != null ? r.ahojSiteInfo.toExportValues() : AhojSiteInfo.emptyExportValues())
             }
@@ -1147,6 +1163,9 @@ class Evaluation implements Parametrized {
         double maxPointScore
         double avgMax3PointScore
         double avgMaxHalfPointScore
+
+        int hotPointCount = 0
+        double siteReachabilityScore = 0d
 
         List<Integer> atomIds
         List<Integer> ranks // of identified pocket for given criterion starting with 1 (-1 = not identified)
