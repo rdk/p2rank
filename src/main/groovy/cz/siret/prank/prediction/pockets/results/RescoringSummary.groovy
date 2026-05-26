@@ -19,7 +19,7 @@ class RescoringSummary {
 
     private String changeVisualAid(int change) {
         int MAX = 16
-        int n = prediction.pocketCount
+        int n = prediction.reorderedPockets.size()
 
         int absc = change.abs()
 

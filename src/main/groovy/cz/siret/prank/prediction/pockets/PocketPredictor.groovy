@@ -134,10 +134,6 @@ class PocketPredictor implements Parametrized {
         int i = 0
         pockets.each {
             i++
-
-            it.name = "pocket" + i
-            it.rank = i
-
             int count = it.cache.count as int
             double score = it.newScore
             int surfAtoms = it.surfaceAtoms.count

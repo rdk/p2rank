@@ -6,17 +6,36 @@ import cz.siret.prank.domain.labeling.LabeledPoint
 import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.prediction.pockets.PrankPocket
+import cz.siret.prank.program.params.Params
 import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.AtomImpl
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.parallel.Isolated
+import org.junit.jupiter.api.parallel.ResourceLock
 
 import static org.junit.jupiter.api.Assertions.assertEquals
 
 /**
  * Tests for PocketRescorer point→pocket labeling semantics.
+ * Uses predict mode (params.predictions=true) so the rescore sort branch is skipped.
  */
+@Isolated
+@ResourceLock("Params")
 @CompileStatic
 class PocketRescorerTest {
+
+    static boolean savedPredictions
+
+    @BeforeAll
+    static void snapshot() {
+        savedPredictions = Params.inst.predictions
+        Params.inst.predictions = true
+    }
+
+    @AfterAll
+    static void restore() { Params.inst.predictions = savedPredictions }
 
     /**
      * When a LabeledPoint belongs to multiple pockets (extended shells overlap),
@@ -32,10 +51,7 @@ class PocketRescorerTest {
         Pocket a = makePocket(10.0d, [onlyA, sharedPoint])
         Pocket b = makePocket(5.0d, [onlyB, sharedPoint])
 
-        Prediction prediction = new Prediction(null, [a, b])
-        // reorderPockets() does not populate reorderedPockets when params.predictions is true
-        // (the production caller does it); pre-set it sorted by newScore desc.
-        prediction.reorderedPockets = [a, b]
+        Prediction prediction = makePredictionWithReorderedPockets([a, b])
 
         new StubRescorer().reorderPockets(prediction, null)
 
@@ -57,8 +73,7 @@ class PocketRescorerTest {
         Pocket a = makePocket(10.0d, [pa])
         Pocket b = makePocket(5.0d, [pb])
 
-        Prediction prediction = new Prediction(null, [a, b])
-        prediction.reorderedPockets = [a, b]
+        Prediction prediction = makePredictionWithReorderedPockets([a, b])
 
         new StubRescorer().reorderPockets(prediction, null)
 
@@ -67,6 +82,13 @@ class PocketRescorerTest {
     }
 
     // --- Helpers ---
+
+    /** In predict mode, reorderedPockets must be pre-set (production does this in ModelBasedRescorer). */
+    private static Prediction makePredictionWithReorderedPockets(List<Pocket> pockets) {
+        Prediction pred = new Prediction(null, pockets)
+        pred.reorderedPockets = new ArrayList<>(pockets)
+        return pred
+    }
 
     private static LabeledPoint makePoint(double x, double y, double z) {
         AtomImpl atom = new AtomImpl()

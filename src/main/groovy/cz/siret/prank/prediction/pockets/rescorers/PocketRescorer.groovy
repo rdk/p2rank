@@ -3,11 +3,9 @@ package cz.siret.prank.prediction.pockets.rescorers
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Prediction
 import cz.siret.prank.domain.Protein
-import cz.siret.prank.domain.labeling.LabeledPoint
 import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.program.params.Parametrized
-import cz.siret.prank.utils.Cutils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
@@ -43,7 +41,8 @@ abstract class PocketRescorer implements Parametrized {
     abstract void rescorePockets(Prediction prediction, ProcessedItemContext context);
 
     /**
-     * reorder pockets or make new pocket predictions
+     * Reorder pockets or make new pocket predictions, then finalize
+     * rank/newRank/name/LabeledPoint.pocket assignments.
      */
     void reorderPockets(Prediction prediction, ProcessedItemContext context) {
 
@@ -57,66 +56,10 @@ abstract class PocketRescorer implements Parametrized {
         }
 
         if (params.predictions) {
-            setRanks(prediction)
+            prediction.finalizePredictedPockets()
+        } else {
+            prediction.finalizeRescoredPockets()
         }
-
-        setNewRanks(prediction)
-
-    }
-
-    private void setNewRanks(Prediction prediction) {
-        int i = 1
-        for (Pocket pocket : prediction.reorderedPockets) {
-            pocket.newRank = i++
-        }
-
-        // Label SAS points with the BEST (lowest) pocket newRank they belong to.
-        // Extended pocket shells can overlap (extended_pocket_cutoff > 0), so a single
-        // LabeledPoint can appear in multiple pocket.labeledPoints lists. Iterating
-        // best-first (reorderedPockets is sorted by newScore descending) and only
-        // writing when the point is still unlabeled ensures the lowest newRank wins.
-        for (Pocket pocket : prediction.reorderedPockets) {
-            for (LabeledPoint lp : pocket.labeledPoints) {
-                if (lp.pocket == 0) {
-                    lp.pocket = pocket.newRank
-                }
-            }
-        }
-    }
-
-    private void setRanks(Prediction prediction) {
-        int i = 1
-        for (Pocket pocket : prediction.pockets) {
-            pocket.rank = i++
-        }
-    }
-
-    /**
-     *
-     * @param n reorder only first #true pockets + n
-     */
-    void reorderFirstNPockets(Prediction prediction, ProcessedItemContext context, int n) {
-
-        rescorePockets(prediction, context)
-
-        log.info "reordering first $n of $prediction.pocketCount pockets"
-
-        ArrayList<Pocket> head = new ArrayList<>(Cutils.head(n, prediction.pockets))
-        ArrayList<Pocket> tail = new ArrayList<>(Cutils.tail(n, prediction.pockets))
-
-        reorder(head)
-
-        prediction.pockets = head + tail
-
-        setNewRanks(prediction)
-    }
-
-    void reorder(ArrayList<Pocket> pockets) {
-        pockets.sort(new Comparator<Pocket>() {
-            int compare(Pocket o1, Pocket o2) {
-                return Double.compare(o2.newScore, o1.newScore)
-            }
-        })
     }
 
 }

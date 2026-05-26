@@ -115,10 +115,15 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
             // generate predictions
             if (params.predictions) {
                 prediction.pockets = new PocketPredictor().predictPockets(labeledPoints, prediction.protein)
-                prediction.reorderedPockets = prediction.pockets
+                prediction.reorderedPockets = new ArrayList<>(prediction.pockets)
                 prediction.labeledPoints = labeledPoints
 
                 if (params.label_residues) {
+                    // ResidueLabelings.pocketReferenceLabeling reads pocket.rank, which
+                    // is only set by finalizePockets. Call it early here; reorderPockets()
+                    // calls it again after any filtering — safe because finalizePockets is
+                    // idempotent when the pocket lists haven't changed between calls.
+                    prediction.finalizePredictedPockets()
                     prediction.residueLabelings = ResidueLabelings.calculate(prediction, model, extractor.sampledPoints.points, labeledPoints, context)
                 }
             }
