@@ -36,8 +36,14 @@ class DSWO extends PocketCriterion {
             return false
         }
 
-        double ligCov = (double) counts.intersectionCount / site.sasPoints.count
-        double pocCov = (double) counts.intersectionCount / pocket.sasPoints.count
+        int siteSasCount = site.sasPoints.count
+        int pocketSasCount = pocket.sasPoints.count
+        if (siteSasCount == 0 || pocketSasCount == 0) {
+            return false
+        }
+
+        double ligCov = (double) counts.intersectionCount / siteSasCount
+        double pocCov = (double) counts.intersectionCount / pocketSasCount
 
         return (ligCov >= ligandCoverageThreshold) && (pocCov >= pocketCoverageThreshold)
     }

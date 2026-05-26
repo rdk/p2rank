@@ -46,8 +46,6 @@ class SeedLoop extends EvalRoutine {
             mkdirs(innerRoutine.outdir)
 
             results.addSubResults(innerRoutine.execute())
-
-            params.seed += 1
         }
 
         results.logAndStore(outdir, params.classifier)

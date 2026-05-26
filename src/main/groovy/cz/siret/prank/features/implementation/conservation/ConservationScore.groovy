@@ -102,8 +102,19 @@ class ConservationScore implements Parametrized {
 
     ResidueLabeling<Double> toDoubleLabeling(Protein p) {
         ResidueLabeling<Double> labeling = new ResidueLabeling<>(p.residues.size())
+        int missing = 0
         for (Residue r : p.residues) {
-            labeling.add(r, getScoreForResidueSafe(r.residueNumber))
+            Double val = getScoreForResidue(r.residueNumber)
+            if (val == null) {
+                missing++
+                labeling.add(r, 0d)
+            } else {
+                labeling.add(r, val)
+            }
+        }
+        if (missing > 0) {
+            log.warn "Conservation: {} of {} residues have no score and default to 0 [{}]",
+                    missing, p.residues.size(), p.name
         }
         return labeling
     }
