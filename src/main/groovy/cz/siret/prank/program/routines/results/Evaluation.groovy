@@ -743,7 +743,7 @@ class Evaluation implements Parametrized {
         m.AVG_PROT_NON_BINDING_CONSERVATION = avg(proteinRows, {it -> it.avgNonBindingConservation})
 
         m.AVG_LIG_CENTER_TO_PROT_DIST = avgLigCenterToProtDist
-        m.AVG_LIG_CLOSTES_POCKET_DIST = avgClosestPocketDist
+        m.AVG_LIG_CLOSEST_POCKET_DIST = avgClosestPocketDist
         m.LIGAND_COVERAGE = ligandCoverage
 
         m.AVG_DSO_TOPN0    = avgLigProt proteinRows, { it.surfOverlapN0      }  // avg by proteins (unlike DCA and others)

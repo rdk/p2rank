@@ -80,11 +80,17 @@ class Ligand implements BindingSite, Parametrized {
         return atoms
     }
 
+    @Override
     Atoms getSasPoints() {
         if (sasPoints==null) {
             sasPoints = protein.accessibleSurface.points.cutoutShell(this.atoms, params.ligand_induced_volume_cutoff)
         }
         return sasPoints
+    }
+
+    @Override
+    void setSasPoints(Atoms sasPoints) {
+        this.sasPoints = sasPoints
     }
 
     Atom getCentroid() {
