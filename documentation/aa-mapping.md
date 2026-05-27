@@ -37,9 +37,10 @@ prank predict -f protein.pdb -aa_mapping /path/to/my-mappings.csv
 
 Any value other than `minimal` or `pdbfixer` is treated as a file path.
 
-A custom file **replaces** all built-in mappings (it does not extend them).
-To add entries on top of the pdbfixer set, copy the bundled [`aa-mapping-pdbfixer.csv`](../src/main/resources/mappings/aa-mapping-pdbfixer.csv)
-and append your entries.
+> [!IMPORTANT]
+> A custom file **replaces** all built-in mappings (it does not extend them).
+> To add entries on top of the pdbfixer set, copy the bundled [`aa-mapping-pdbfixer.csv`](../src/main/resources/mappings/aa-mapping-pdbfixer.csv)
+> and append your entries.
 
 Format - two-column CSV:
 

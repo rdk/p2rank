@@ -7,8 +7,9 @@ Additionally, those files contain columns `probability` and `zscore` which conta
 * `probability`: raw score [0,∞) ->  [0,1]
 * `zscore`: raw score [0,∞) -> (-∞,∞)
 
-These transformers are model/parametrization dependent and need to be trained/calibrated for each model on some calibration dataset.
-HOLO4K was used for this purpose for the default P2Rank pocket prediction model.
+> [!IMPORTANT]
+> These transformers are model/parametrization dependent and need to be trained/calibrated for each model on some calibration dataset.
+> HOLO4K was used for this purpose for the default P2Rank pocket prediction model.
 
 
 To train transformers for a new model defined in `newmodel.groovy` execute the following command:

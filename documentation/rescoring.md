@@ -195,7 +195,8 @@ prank fpocket-rescore test.ds -c rescore_2024
 prank eval-rescore fpocket.ds -c rescore_2024
 ```
 
-This model shows promising results but has not been fully evaluated yet.
+> [!WARNING]
+> This model shows promising results but has not been fully evaluated yet.
 
 ## Conservation-aware rescoring (`rescore_conservation`)
 

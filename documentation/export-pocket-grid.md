@@ -79,6 +79,7 @@ per-grid-point compute only runs when the grid is being exported.
 Multi-column descriptors get the header prefix `"{name}."`, same
 convention as `-pocket_descriptors`.
 
+> [!NOTE]
 > **Cost note.** Per-grid-point descriptors run once per
 > `(point, pocket)` row (often 10⁴–10⁵ times per protein), each touching
 > a neighborhood of protein atoms. The runner memoises pocket-agnostic

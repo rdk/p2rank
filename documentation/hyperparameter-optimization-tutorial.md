@@ -80,6 +80,7 @@ Quick test run:
 
 (Then check `run.log` in n results directory for errors. Check if R plots are generated correctly.)
 
+> [!WARNING]
 > `-loop 1 -rf_trees 5 -rf_depth 5` are **smoke-test knobs** — they cut runtime by
 > ~100× by training a tiny single-seed model. Use them to verify wiring/syntax;
 > never report results from a run configured this way. For real evaluation use

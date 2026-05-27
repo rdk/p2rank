@@ -20,11 +20,12 @@ P2Rank ships with pre-trained models that include conservation features:
 | `conservation_hmm` | For standard experimental structures (X-ray) | `-c conservation_hmm` |
 | `alphafold_conservation_hmm` | For AlphaFold, cryo-EM, and NMR models (no b-factor feature) | `-c alphafold_conservation_hmm` |
 
-Note: The pre-trained conservation-aware models shipped with P2Rank were trained
-using HMM-based conservation scores (Jensen-Shannon divergence, `.hom` format).
-Using conservation scores from a different method (e.g. with different score distribution or format)
-is not expected to produce good results and may not work at all.
-If you want to use a different conservation method, you would need to retrain the model.
+> [!IMPORTANT]
+> The pre-trained conservation-aware models shipped with P2Rank were trained
+> using HMM-based conservation scores (Jensen-Shannon divergence, `.hom` format).
+> Using conservation scores from a different method (e.g. with different score distribution or format)
+> is not expected to produce good results and may not work at all.
+> If you want to use a different conservation method, you would need to retrain the model.
 
 ## Quick Start
 
@@ -62,8 +63,9 @@ Files are matched by naming convention: `{proteinBaseName}_{chainId}.hom` (e.g.,
 prank predict protein.pdb -c conservation_hmm -conservation_dirs ./my_scores/
 ```
 
-Note: `-conservation_type` is only needed when using a provider or the cache mechanism.
-With pre-computed files and `-conservation_dirs`, files are matched by name convention alone.
+> [!NOTE]
+> `-conservation_type` is only needed when using a provider or the cache mechanism.
+> With pre-computed files and `-conservation_dirs`, files are matched by name convention alone.
 
 ### 2. External Conservation Server (since 2.6.0)
 
@@ -89,9 +91,10 @@ and returns the raw `.hom` TSV content.
 The HMM conservation pipeline is available as a Docker image
 (not published on Docker Hub yet, but can be built from `prankweb` repo).
 
-Note: These instructions will be simplified in the near future
-when the conservation server becomes part of the official P2Rank docker image
-or is published as a separate dedicated docker image.
+> [!NOTE]
+> These instructions will be simplified in the near future
+> when the conservation server becomes part of the official P2Rank docker image
+> or is published as a separate dedicated docker image.
 
 See also https://github.com/rdk/prankweb/tree/conservation-server/executor-p2rank/conservation.
 
@@ -170,8 +173,9 @@ When a conservation provider is configured, scores are resolved in this order:
 
 ## Preloading Conservation Cache (Pre-calculating Conservation Scores)
 
-Note that conservation calculation is computationally intensive
-and typically takes several minutes per chain (depending on sequence length and hardware).
+> [!IMPORTANT]
+> Conservation calculation is computationally intensive
+> and typically takes several minutes per chain (depending on sequence length and hardware).
 
 The `preload-conservation` command fetches and caches conservation scores for all chains in a dataset
 without running predictions. This is useful on large datasets for catching any errors related to conservation
@@ -232,9 +236,10 @@ prank predict dataset.ds \
   -conservation_disable_cache true
 ```
 
-Note: `-conservation_dirs` points to `./conservation/hmm` because preloading
-creates the layout `{conservation_cache_dir}/{conservation_type}/`, so score files
-end up in `./conservation/hmm/*.hom`.
+> [!NOTE]
+> `-conservation_dirs` points to `./conservation/hmm` because preloading
+> creates the layout `{conservation_cache_dir}/{conservation_type}/`, so score files
+> end up in `./conservation/hmm/*.hom`.
 
 ## Parameters Reference
 

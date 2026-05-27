@@ -18,9 +18,10 @@ For each group named in `-cofactors` (or in the dataset `cofactors` column):
    any `*_predictions.csv` or `*_residues.csv` ligand listings, and does not
    affect pocket ranking as a target.
 
-The same trained model is used; this is a runtime configuration only.
-With the default empty list (`cofactors = []`) behaviour is byte-for-byte
-identical to earlier P2Rank versions.
+> [!NOTE]
+> The same trained model is used; this is a runtime configuration only.
+> With the default empty list (`cofactors = []`) behaviour is byte-for-byte
+> identical to earlier P2Rank versions.
 
 ## When to Use This
 
@@ -63,8 +64,9 @@ prank predict -f protein.pdb -cofactors 'FAD[group_id:A_600]'
 prank predict -f protein.pdb -cofactors 'FAD,HEM[group_id:A_300]'
 ```
 
-Quote the argument when it contains square brackets so the shell does not
-interpret them.
+> [!TIP]
+> Quote the argument when it contains square brackets so the shell does not
+> interpret them.
 
 ## Dataset Files (`.ds`)
 
@@ -81,10 +83,11 @@ HEADER: protein     cofactors
         1fbl.pdb
 ```
 
-A **blank** cofactors column for a row means "inherit the global `-cofactors`
-setting for this structure" - it does **not** mean "no cofactors". To force no
-cofactors for a specific row, leave `-cofactors` off entirely and leave the
-column blank, or remove the row from the dataset.
+> [!WARNING]
+> A **blank** cofactors column for a row means "inherit the global `-cofactors`
+> setting for this structure" - it does **not** mean "no cofactors". To force no
+> cofactors for a specific row, leave `-cofactors` off entirely and leave the
+> column blank, or remove the row from the dataset.
 
 Combined with other columns:
 
@@ -378,10 +381,11 @@ adjacent metal-coordinated pockets.
 
 ### Explicit ligand definitions (`ligands` column)
 
-If the same group is named in both the `ligands` and `cofactors` columns,
-the cofactor side wins - the group is treated as surface. This is the only
-sensible reading of "this group is a cofactor": it must not also be a
-prediction target.
+> [!IMPORTANT]
+> If the same group is named in both the `ligands` and `cofactors` columns,
+> the cofactor side wins - the group is treated as surface. This is the only
+> sensible reading of "this group is a cofactor": it must not also be a
+> prediction target.
 
 ### `chains` column / `-chains`
 
@@ -473,13 +477,14 @@ AA-property features but still count toward the average's divisor - so
 the AA signal is diluted in proportion to the cofactor fraction of the
 neighbourhood.
 
-P2Rank's prediction models were trained on protein-only data where every
-surface atom had full AA-property values. The dilution introduces a small
-feature-distribution shift the trained model wasn't directly exposed to.
-For typical sites (a cofactor occupying a minor fraction of the
-neighbourhood), the shift is small. Predictions remain useful, but you
-should treat raw pocket scores from cofactor-enabled runs as not strictly
-comparable to cofactor-disabled runs on the same structure.
+> [!WARNING]
+> P2Rank's prediction models were trained on protein-only data where every
+> surface atom had full AA-property values. The dilution introduces a small
+> feature-distribution shift the trained model wasn't directly exposed to.
+> For typical sites (a cofactor occupying a minor fraction of the
+> neighbourhood), the shift is small. Predictions remain useful, but you
+> should treat raw pocket scores from cofactor-enabled runs as not strictly
+> comparable to cofactor-disabled runs on the same structure.
 
 If you observe noticeably different pocket rankings with and without
 `-cofactors` on a structure where you expect them to be similar, that's

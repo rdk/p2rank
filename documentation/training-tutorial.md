@@ -42,10 +42,11 @@ Training and optimization runs can be run from the project directory (repo root)
 * copy `misc/local-env.sh` to root directory of the project and edit it according to your machine (the file is then included by `prank.sh`)
   * `cd p2rank; cp misc/local-env.sh .` 
 * set available memory with `-Xmx32G` parameter. You will need a lot of memory: at least to store the whole training dataset of feature vectors and a trained model and then some (see _Required memory and memory/time trade-offs_) 
-    
-Note: for continuous work/experimentation it is better to clone the git repo, have a local java config in `local-env.sh`, and use `prank.sh` for running experiments (as described here).
-The reason is that this way it will be easy to download updates (`git pull`) ot switch to a different P2Rank version (`git checkout`) while config will stay put in `local-env.sh`. 
-If you decide to use downloaded `.tar.gz` distribution or `.zip` source package this will not be as easy, and you will need to manually update the config each time you download an update.
+
+> [!TIP]
+> For continuous work/experimentation it is better to clone the git repo, have a local java config in `local-env.sh`, and use `prank.sh` for running experiments (as described here).
+> This way it will be easy to download updates (`git pull`) or switch to a different P2Rank version (`git checkout`) while config will stay put in `local-env.sh`.
+> If you decide to use downloaded `.tar.gz` distribution or `.zip` source package this will not be as easy, and you will need to manually update the config each time you download an update.
 
 #### What `local-env.sh` typically sets
 
@@ -101,7 +102,8 @@ Parameters that influence memory/time trade-off:
 Additional notes:
 * Subsampling and supersampling influence the size of training vector dataset and required memory (see _Dealing with class imbalances_).
 * Memory also grows linearly with "bag size" (`-rf_bagsize`) but this would generally be in range (50%-100%).
-* Keep in mind how JVM deals with compressed OOPs. Basically it doesn't make sense to have heap size between 32G and ~48G.
+> [!NOTE]
+> Keep in mind how JVM deals with compressed OOPs. Basically it doesn't make sense to have heap size between 32G and ~48G.
 
 
 ### Historical note on the dataset format

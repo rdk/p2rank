@@ -13,6 +13,7 @@ sphericity, residue counts, net charge, dipole magnitude, etc.) written
 to a tabular file alongside any `predict` or `rescore` run when
 `-export_pocket_descriptors` is on.
 
+> [!NOTE]
 > **Cost note.** The shape descriptors (`volume`, `sphericity`,
 > `radius_of_gyration`, `num_grid_points`, `principal_moments`) read
 > the pocket grid, so selecting any of them triggers the full grid

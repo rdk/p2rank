@@ -14,8 +14,9 @@ prank export-points -f protein.pdb -export_points_format parquet
 prank export-points dataset.ds     -export_points_format arrow.zst
 ```
 
-The `export-points` command calculates SAS surface points with feature vectors and exports them directly - **no model is loaded and no prediction is made**.
-This means the output does **not** contain `score` or `pocket` columns, but you are free to use any custom feature setup via `-features` and `-extra_features` parameters.
+> [!NOTE]
+> The `export-points` command calculates SAS surface points with feature vectors and exports them directly: **no model is loaded and no prediction is made**.
+> This means the output does **not** contain `score` or `pocket` columns, but you are free to use any custom feature setup via `-features` and `-extra_features` parameters.
 
 ### `predict` / `rescore` - export alongside prediction
 
@@ -33,8 +34,9 @@ prank rescore joined-fpocket.ds -export_points 1 -export_points_format arrow.zst
 ```
 
 With `predict`/`rescore`, the output includes a `score` column with predicted ligandability and a `pocket` column with the predicted pocket rank (`0` if the point is not assigned to any pocket).
-However, because prediction relies on a pre-trained model that expects a particular set and order of features,
-you **cannot** customize the feature setup (changing `-features` or `-extra_features` would break the model).
+> [!WARNING]
+> Because prediction relies on a pre-trained model that expects a particular set and order of features,
+> you **cannot** customize the feature setup (changing `-features` or `-extra_features` would break the model).
 
 ### Which command to use?
 
@@ -74,9 +76,10 @@ x,y,z,chem.hydrophobic,chem.aromatic,protrusion,...
 | `export_points` | `false` | `true` / `false` |
 | `export_points_format` | `csv` | `csv`, `csv.gz`, `csv.zst`, `arrow`, `arrow.gz`, `arrow.zst`, `parquet` |
 
-**Arrow format** preserves full double precision. Offers faster loading and lower memory usage compared to CSV.
-
-**Parquet format** is a columnar storage format widely supported by data analysis tools (pandas, polars, DuckDB, Spark). Uses SNAPPY compression internally.
+> [!TIP]
+> **Arrow format** preserves full double precision. Offers faster loading and lower memory usage compared to CSV.
+>
+> **Parquet format** is a columnar storage format widely supported by data analysis tools (pandas, polars, DuckDB, Spark). Uses SNAPPY compression internally.
 
 ## Format Recommendations
 

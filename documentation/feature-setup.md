@@ -36,9 +36,10 @@ Composition of feature vector is influenced by parameters:
 
 #### Configuration syntax
 
-Note that the syntax for list-of-strings parameter value is different on the command line and in a `*.groovy` config file:
-* command line: `-features '(chem,volsite,protrusion,bfactor)'`
-* config file: `features = ['chem','volsite','protrusion','bfactor']` (Groovy syntax)
+> [!NOTE]
+> The syntax for list-of-strings parameter value is different on the command line and in a `*.groovy` config file:
+> * command line: `-features '(chem,volsite,protrusion,bfactor)'`
+> * config file: `features = ['chem','volsite','protrusion','bfactor']` (Groovy syntax)
 
 #### Check enabled features
 
@@ -124,7 +125,7 @@ If you want to add new features that are not implemented in P2Rank you have 3 op
         * atom types are: (ALA.C,ALA.CA,ALA.CB,...)
     * useful only if the values are the same for all proteins in the dataset (for example: hydrophobicity index of amino acids).
     * see example tables: `aa-propensities.csv` and `atomic-properties.csv`
-    * NOTE: custom tables must be placed under `src/main/resources/tables/` and require a rebuild;
+    * **Important:** custom tables must be placed under `src/main/resources/tables/` and require a rebuild;
       there is no CLI/config knob to point at an external path. For per-protein values, use the `csv` feature instead.
 * Use `csv` feature
     * allows defining values for every protein residue and/or every protein atom (for each protein separately) via external csv files
