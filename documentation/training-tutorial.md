@@ -6,7 +6,7 @@ This file provides an introduction for people who want to train and evaluate the
 ## Kick-start examples
 
 ~~~sh
-./prank.sh traineval -t <training_dataset> -e <evaluation_dataset>  # train and evaluate model (execute n run with different random seed, see -loop and -seed params)
+./prank.sh traineval -t <training_dataset> -e <evaluation_dataset>  # train and evaluate model (execute N runs with different random seeds, see -loop and -seed params)
 ./prank.sh crossval <dataset>                                       # run crossvalidation on a single dataset (see -folds param)
 
 ./prank.sh ploop -t <training_dataset> -e <evaluation_dataset> -paramA '[min:max:step]'  # iterate through param values
@@ -20,14 +20,14 @@ P2Rank uses global static parameters object. In the code, it can be accessed wit
 
 Parameters can be set in 2 ways:
 1. on the command line `-<param_name> <value>`
-2. in config groovy file specified with `-c <config.file>` (see working.groovy for an example... `prank -c working.groovy`). 
+2. in config groovy file specified with `-c <config.file>` (see `example.groovy` in the config directory... `prank -c example`). 
 
 Parameters on the command line override those in the config file, which override defaults.
 
 Parameter application priority (last wins):
 1. default values in `Params.groovy`
 2. defaults in `config/default.groovy`
-3. (optionally) defaults in `config/default_rescore.groovy` only if you run `prank rescore ...`
+3. (optionally) defaults in `config/default_rescore.groovy` only if you run a rescore command (`prank rescore`, `prank fpocket-rescore`, or `prank eval-rescore`)
 4. `-c <config.file>`
 5. command line
 
@@ -48,7 +48,7 @@ Training and optimization runs can be run from the project directory (repo root)
 > This way it will be easy to download updates (`git pull`) or switch to a different P2Rank version (`git checkout`) while config will stay put in `local-env.sh`.
 > If you decide to use downloaded `.tar.gz` distribution or `.zip` source package this will not be as easy, and you will need to manually update the config each time you download an update.
 
-#### What `local-env.sh` typically sets
+### What `local-env.sh` typically sets
 
 `./prank.sh` sources `local-env.sh` from the repo root before launching the JVM. Common contents:
 
@@ -65,14 +65,14 @@ To train a model on one dataset and evaluate its performance on the other use `p
 
 Example:
 ~~~sh
-./prank.sh traineval -loop 10 -seed 42 -t <training_dataset> -e <evaluation_dataset>`
+./prank.sh traineval -loop 10 -seed 42 -t <training_dataset> -e <evaluation_dataset>
 ~~~
 Runs 10 training/evaluation cycles with different values of a random seed starting at 42. 
 Results of any single train/eval run and averaged results will be written to the output directory.
 
 Related parameters:
 * use `-delete_models 0` to keep model files after evaluation.
-* use `-delete_vactors 0` to export feature vector files 
+* use `-delete_vectors 0` to export feature vector files 
 * `-feature_importances <bool>`: calculate feature importances (works only if `-classifier` supports it, examples: `RandomForest`, `FastRandomForest`, `FasterForest`)
 * `-fail_fast <bool>`: stop processing the dataset on the first unrecoverable error with a dataset item
 
@@ -86,18 +86,16 @@ However, required memory during training grows linearly with the number trees tr
 so you may need to lower the number of threads.
 
 Parameters that influence memory/time trade-off:
-* `-cache_datasets` determines whether datasets of proteins are kept in memory between runs**. Related parameters: 
+* `-cache_datasets <bool>`: keep datasets (structures and SAS points) in memory between crossval/traineval iterations.
+   For single-pass training (`-loop 1`) it does not make sense to keep it on.
+   Turn off when evaluating the model on huge datasets that won't fit to memory (e.g. the whole PDB).
+   When switched off, it will leave more memory for RF at the cost of needing to parse all pdb files again. Related parameters: 
     - `-clear_prim_caches` clear primary caches (protein structures) between runs (when iterating params or seed)
     - `-clear_sec_caches` clear secondary caches (protein surfaces etc.) between runs (when iterating params or seed)
 * `-rf_threads` number of trees trained in parallel 
-* `-rf_trees`, `-fr_depth` influence the size of the model in memory      
+* `-rf_trees`, `-rf_depth` influence the size of the model in memory      
 * `-rf_bagsize` influences memory needed for training and training time (default is `100`% but good results can be achieved with `55` or less)
 * `-crossval_threads` when running crossvalidation it determines how many models are trained at the same time. Set to `1` if you don't have enough memory.
-
-* `-cache_datasets <bool>`: keep datasets (structures and SAS points) in memory between crossval/traineval iterations. 
-   For single-pass training (`-loop 1`) it does not make sense to keep it on.
-   Turn off when evaluating the model on huge datasets that won't fit to memory (e.g. the whole PDB). 
-   When switched off, it will leave more memory for RF at the cost of needing to parse all pdb files again.
 
 Additional notes:
 * Subsampling and supersampling influence the size of training vector dataset and required memory (see _Dealing with class imbalances_).
@@ -139,7 +137,7 @@ Ways to deal with class imbalances:
  
 * cutoffs and margins (in relation to distance `D = <dist. to closest ligand atom>`)
     - `-positive_point_ligand_distance` points with `D < positive_point_ligand_distance` are considered positives
-    - `-neutral_points_margin` if `> 0` points between `(positive_point_ligand_distance, neutral_point_margin)` are ignored  
+    - `-neutral_points_margin` if `> 0` points between `(positive_point_ligand_distance, positive_point_ligand_distance + neutral_points_margin)` are ignored  
     - `-train_lig_cutoff` if `> 0` points with `train_lig_cutoff < D` are ignored
 * subsampling and supersampling
     - `-subsample`
@@ -185,12 +183,12 @@ The location of the output directory for any given run is influenced by several 
 
 ## Classifiers / Machine learning algorithms
 
-P2Rank can use different ML algorithms by changing value of `-classifter` parameter (e.g. `-classifter FasterForest`). 
+P2Rank can use different ML algorithms by changing value of `-classifier` parameter (e.g. `-classifier FasterForest`). 
 
 Random Forests implementations:
 * `RandomForest`: Original implementation from Weka. Slow and memory consuming but can have marginally better predictive performance. Uses entropy. 
 * `FastRandomForest`: New faster implementation by Dan Supek. Uses entropy.
-* `FasterForest`: Streamlined implementation of `FastRandomForest`. It s faster and uses less memory, should have the same predictive performance. Uses entropy.
+* `FasterForest`: Streamlined implementation of `FastRandomForest`. It's faster and uses less memory, should have the same predictive performance. Uses entropy.
 * `FasterForest2`: Even faster version. Can have slightly lower predictive performance. Uses GINI. 
      
 Notes:
@@ -199,7 +197,7 @@ Notes:
 * (for developers) to integrate new algorithms start in `ClassifierFactory.groovy`.
        
 
-#### Comparing training time
+### Comparing training time
               
 For illustration here is a comparison of training times on one particular dataset.
 Value in cells is training time in minutes.     

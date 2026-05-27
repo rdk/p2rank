@@ -71,7 +71,7 @@ prefixed with `"{name}."` (e.g. `principal_moments.lambda1`,
 - **`NaN` floats** are written as the literal token `NaN` in CSV and as the
   IEEE-754 NaN bit pattern in Arrow / Parquet. pandas / pyarrow / numpy parse
   this back as NaN without special handling.
-- **Infinities** are written as `∞` / `-∞` (UTF-8) in CSV.
+- **Infinities** are written as `Infinity` / `-Infinity` in CSV.
 - **Non-finite or out-of-range values in INT columns** (`rank`,
   `num_residues`, `num_surface_atoms`, `num_grid_points`) raise an
   `ArithmeticException` at write time. Descriptors must never produce

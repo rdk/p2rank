@@ -1009,7 +1009,7 @@ class Params {
      * volsite.vsCation, etc. Validated at startup.
      *
      * <p>Default: every registered descriptor (volsite, volsite_smooth,
-     * electrostatics — 13 columns total). Inert when
+     * electrostatics — 17 columns total). Inert when
      * {@code -export_pocket_grid 0} (the default — no per-(point, pocket) work
      * fires). Users who want only some descriptors override this list with a
      * subset; users who want the base x/y/z/pocket schema only override with

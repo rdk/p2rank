@@ -10,7 +10,7 @@ P2Rank is based on predicting scores of SAS points that are described by feature
 A feature vector is basically an array of real numbers (`double[]`) with a header (i.e. each element has a unique name).
 
 P2Rank comes with a set of implemented feature calculators.
-Each calculator has a name and calculates an array of a certain length (e.g. for `volsite` n=5, `bfactor` n=1).
+Each calculator has a name and calculates an array of a certain length (e.g. for `volsite` n=6, `bfactor` n=1).
 
 We will use the term *feature* for feature calculator (e.g. `chem`) and *sub-feature* for an individual element - single scalar number (e.g. `chem.atoms`).
 

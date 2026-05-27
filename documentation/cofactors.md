@@ -576,9 +576,10 @@ Check the syntax table above.
 
 ## Known Limitations
 
-- **Case-sensitive group names.** Group names are matched against
-  `group.PDBName` exactly. In practice this means uppercase, since BioJava
-  normalizes PDB residue names on load.
+- **Case-sensitive specifier contents.** The group-name prefix (e.g. `FAD`)
+  is normalized to uppercase (case-insensitive), but the contents of `[...]`
+  specifiers (`group_id`, `contact_res_ids`) are case-significant. Chain IDs
+  and residue codes must match the case used in the structure file.
 - **AA-property feature dilution.** Cofactor atoms participate in the
   feature aggregation at each SAS point but contribute zero values for
   AA-property features. This dilutes the polymer signal at SAS points near

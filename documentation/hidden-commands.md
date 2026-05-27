@@ -47,6 +47,28 @@ Analyze a dataset with an explicitly specified residue labeling.
 ~~~
 
 
+### cofactors
+
+Survey HETATM groups in a structure or dataset, and dry-run a `-cofactors` configuration.
+See [cofactors.md](cofactors.md#discovery--diagnostics) for full documentation.
+
+~~~sh
+./prank.sh analyze cofactors -f protein.pdb                              # survey all HETATM groups
+./prank.sh analyze cofactors -f protein.pdb -cofactors FAD,PLP           # dry-run: which specifiers match?
+./prank.sh analyze cofactors dataset.ds     -cofactors FAD,PLP           # dry-run on a dataset
+~~~
+
+
+### conservation
+
+Load and print per-residue conservation scores for each chain.
+See [conservation.md](conservation.md#debugging-sequence-and-conservation-mapping) for full documentation.
+
+~~~sh
+./prank.sh analyze conservation dataset.ds -threads 1 -visualizations true
+~~~
+
+
 ## Export feature vectors for further analysis
 
 `-delete_vectors 0`           
@@ -67,13 +89,12 @@ Analyze a dataset with an explicitly specified residue labeling.
 ~~~sh
 # run in P2Rank root directory (distro in repo)
 
-./prank analyze fasta-raw test_data/basic.ds         # dataset
-./prank analyze fasta-raw -f test_data/2W83.pdb      # single file
-./prank analyze fasta-raw test_data/basic.ds 
+./prank.sh analyze fasta-raw test_data/basic.ds         # dataset
+./prank.sh analyze fasta-raw -f test_data/2W83.pdb      # single file
 
-./prank analyze fasta-masked test_data/basic.ds      # dataset
-./prank analyze fasta-masked -f test_data/2W83.pdb   # single file
-./prank analyze fasta-masked test_data/basic.ds -o out_dir  # specify output directory
+./prank.sh analyze fasta-masked test_data/basic.ds      # dataset
+./prank.sh analyze fasta-masked -f test_data/2W83.pdb   # single file
+./prank.sh analyze fasta-masked test_data/basic.ds -o out_dir  # specify output directory
 ~~~
    
 
@@ -115,15 +136,15 @@ Examples:
 Check which features are enabled for a particular configuration.
 
 ~~~sh
-./prank print features                          # for default config
-./prank print features -c other_config.groovy   # for custom config
+./prank.sh print features                          # for default config
+./prank.sh print features -c other_config.groovy   # for custom config
 ~~~
 
 ### Print model info
 
 Print information about trained model (`*.model` file).
 
-~~~
-./prank print model-info                     # for default model
-./prank print model-info -m model2.model     # for custom model
+~~~sh
+./prank.sh print model-info                     # for default model
+./prank.sh print model-info -m model2.model     # for custom model
 ~~~

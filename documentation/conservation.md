@@ -7,7 +7,7 @@ Conservation-aware models have been available in [PrankWeb](https://prankweb.cz)
 but were previously only usable through PrankWeb (the conservation pipeline was bundled with
 PrankWeb's infrastructure rather than runnable on its own).
 
-Since **P2Rank 2.6.0** (including early `-dev` builds), users can obtain conservation scores
+Since **P2Rank 2.6** (available in alpha builds), users can obtain conservation scores
 on the fly from an external conservation server and use conservation-aware prediction models
 directly from the command line.
 
@@ -100,7 +100,7 @@ See also https://github.com/rdk/prankweb/tree/conservation-server/executor-p2ran
 
 ```bash
 # for now, you need to build the image from the `conservation-server` branch of the prankweb repo fork
-git clone -b conservation-server git@github.com:rdk/prankweb.git
+git clone -b conservation-server https://github.com/rdk/prankweb.git
 cd prankweb
 
 # to avoid running docker as root, add current user to docker group (you may need to log out and back in for this to take effect)
@@ -247,6 +247,7 @@ prank predict dataset.ds \
 
 | Parameter | Default | Description |
 |-----------|---------|-------------|
+| `load_conservation` | `false` | Master switch for loading conservation scores. Automatically set to `true` by the conservation-aware configs (`conservation_hmm`, `alphafold_conservation_hmm`). Must be enabled explicitly in custom configs. |
 | `conservation_type` | `null` | Type of conservation scores. Determines cache subdirectory. Currently: `hmm` |
 | `conservation_dirs` | `[]` | Directories to search for pre-computed score files. Relative to dataset dir. |
 

@@ -70,6 +70,15 @@ Long format. One row per `(point, pocket)` pair.
 
 Rows are sorted by `pocket` ascending, then by `x`, `y`, `z` ascending.
 
+### Non-finite values
+
+- **`NaN` floats** are written as the literal token `NaN` in CSV, and as the
+  standard IEEE-754 NaN bit pattern in Arrow / Parquet. pandas / pyarrow / numpy
+  parse this back as NaN without special handling.
+- **Infinities** are written as `Infinity` / `-Infinity` in CSV.
+- **Non-finite or out-of-range values in INT columns** (e.g. `pocket`) raise an
+  `ArithmeticException` at write time. The strict check surfaces such bugs early.
+
 ## Per-grid-point descriptors
 
 Extra columns can be appended to each row via `-pocket_grid_point_descriptors`
@@ -253,7 +262,8 @@ PyMOL load time.
 - [`export-pocket-descriptors.md`](export-pocket-descriptors.md):
   per-pocket geometric descriptors written to a sibling file. Most
   descriptors are grid-derived and trigger this same grid build even
-  with `-export_pocket_grid 0`; the exceptions are `num_residues` and
-  `num_surface_atoms` (no grid needed).
+  with `-export_pocket_grid 0`; the exceptions are `num_residues`,
+  `num_surface_atoms`, `pocket_net_charge`, `pocket_charge_polarity`,
+  and `pocket_dipole_magnitude` (no grid needed).
 - [`export-points.md`](export-points.md): SAS-points export (the
   closest analogue for surface-only data).

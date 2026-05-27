@@ -18,7 +18,8 @@ Residue codes not in the active mapping pass through unchanged.
 
 **`pdbfixer`** covers comprehensive set of phosphorylated, methylated, and acetylated residues, selenocysteine, 
 histidine protonation variants, D-amino acids, and other modifications. 
-Derived from pdbfixer 1.12 (2025-10-01), with one mapping omitted.
+Derived from pdbfixer (commit `94cfa4c`, extracted February 2026), with minor modifications
+(see [`src/main/resources/mappings/README.md`](../src/main/resources/mappings/README.md) for details).
 
 ## Usage
 

@@ -104,13 +104,13 @@ x,y,z,chem.hydrophobic,chem.aromatic,protrusion,...
 ### Non-finite values
 
 - **`NaN` floats** are written verbatim as the literal token `NaN` in CSV, and as the standard IEEE-754 NaN bit pattern in Arrow / Parquet. pandas / pyarrow / numpy parse this back as NaN without special handling.
-- **Infinities** are written as `∞` / `-∞` (UTF-8) in CSV — emit them only if your downstream tooling can read those tokens.
+- **Infinities** are written as `Infinity` / `-Infinity` in CSV.
 - **Non-finite or out-of-range values in INT columns** (e.g. `pocket`) raise an `ArithmeticException` at write time. Features should never produce non-finite values for integer columns; the strict check surfaces such bugs early.
 
 ## Example Analysis
 
 **Python (CSV):**
-~~~python
+```python
 import pandas as pd
 df = pd.read_csv('protein_points.csv.gz')
 high_score = df[df['score'] > 0.5]
@@ -118,10 +118,10 @@ print(df.describe())
 
 # Per-pocket aggregated descriptors (predict / rescore output only):
 pocket_descriptors = df[df['pocket'] > 0].groupby('pocket').mean()
-~~~
+```
 
 **Python (Arrow):**
-~~~python
+```python
 import pyarrow as pa
 
 # Uncompressed
@@ -136,10 +136,10 @@ with gzip.open('protein_points.arrow.gz', 'rb') as f:
 import zstandard as zstd
 with open('protein_points.arrow.zst', 'rb') as f:
     df = pa.ipc.open_stream(zstd.ZstdDecompressor().stream_reader(f)).read_pandas()
-~~~
+```
 
 **Python (Parquet):**
-~~~python
+```python
 import pandas as pd
 df = pd.read_parquet('protein_points.parquet')
 
@@ -147,10 +147,10 @@ df = pd.read_parquet('protein_points.parquet')
 import pyarrow.parquet as pq
 table = pq.read_table('protein_points.parquet')
 df = table.to_pandas()
-~~~
+```
 
 **Python (Polars):**
-~~~python
+```python
 import polars as pl
 
 # Parquet (fastest)
@@ -161,7 +161,7 @@ df = pl.read_csv('protein_points.csv.gz')
 
 # Filter high-scoring points
 high_score = df.filter(pl.col('score') > 0.5)
-~~~
+```
 
 ## See also
 

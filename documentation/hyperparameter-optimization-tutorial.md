@@ -24,7 +24,7 @@ For that, you need to use the `prank ploop` command and list or range expression
 
 Supported parameter types: numerical, boolean, string, and 'list of strings' (e.g. value of param `-features` has type 'list of strings').
 
-#### Defining grid
+### Defining grid
 **List expression**: `(val1,val2,...)` 
 
 Examples:
@@ -67,18 +67,18 @@ cd plots
 find rcode | xargs -P 16 -I '{}' Rscript '{}' 
 ~~~
 
-#### Real examples
+### Real examples
     
 Quick test run:
 ~~~sh   
 ./prank.sh ploop 
-    -c config/train-new-default     \      # override default config with config/train-new-default.groovy config file
-    -t chen11-fpocket.ds            \      # crossvalidate on chen11 datasest
+    -c config/train-default          \      # override default config with config/train-default.groovy config file
+    -t chen11-fpocket.ds            \      # crossvalidate on chen11 dataset
     -loop 1 -rf_trees 5 -rf_depth 5 \      # make it quick (1 pass, small model)
-    -features '((protrusion,bfactor),(protrusion,bfactor,new_feature))'` 
+    -features '((protrusion,bfactor),(protrusion,bfactor,new_feature))'
 ~~~
 
-(Then check `run.log` in n results directory for errors. Check if R plots are generated correctly.)
+(Then check `run.log` in the results directory for errors. Check if R plots are generated correctly.)
 
 > [!WARNING]
 > `-loop 1 -rf_trees 5 -rf_depth 5` are **smoke-test knobs** — they cut runtime by
@@ -88,19 +88,19 @@ Quick test run:
 
 Feature set comparisons:
 ~~~sh
-./prank.sh ploop -c config/train-new-default \      
+./prank.sh ploop -c config/train-default \      
     -t chen11-fpocket.ds                \  # crossvalidate on chen11 dataset    
     -loop 10 -rf_trees 100 -rf_depth 10 \      
-    -features '((protrusion,bfactor),(protrusion,bfactor,new_feature))'` 
+    -features '((protrusion,bfactor),(protrusion,bfactor,new_feature))'
 
-./prank.sh ploop -c config/train-new-default \      
+./prank.sh ploop -c config/train-default \      
     -t chen11-fpocket.ds                \  # train on chen11 
     -e joined.ds                        \  # and evaluate on a different dataset
     -loop 10 -rf_trees 100 -rf_depth 10 \      
-    -features '((protrusion,bfactor),(protrusion,bfactor,new_feature))'` 
+    -features '((protrusion,bfactor),(protrusion,bfactor,new_feature))'
 ~~~
 
-#### Result directory layout
+### Result directory layout
 
 After `prank ploop ... -out_subdir FOO -label BAR` completes, results land in
 `<results_dir>/<version>/FOO/ploop_<train>_<eval>_<label>/` (the `<results_dir>`
@@ -131,7 +131,7 @@ Hopt command (`prank hopt`) implements Bayesian optimization using one of the in
 
 Integrated optimizers (values of `-hopt_optimizer` parameter):
 * `pygpgo` : __pyGPGO__  (https://github.com/josejimenezluna/pyGPGO)
-* `spearmint` : __Speramint__  (https://github.com/HIPS/Spearmint.git)
+* `spearmint` : __Spearmint__  (https://github.com/HIPS/Spearmint.git)
 
 (Other optimization tools might be integrated with little work. See how integration with *pyGPGO* is implemented in `HPyGpgoOptimizer.groovy`).
                              
@@ -150,11 +150,11 @@ Requirements: Python >3.5.
 pip install pyGPGO
 ```
 
-## Run optimization
+### Run optimization
 
 Examples:
 ```sh
-./prank.sh hopt -c config/train-new-default -out_subdir HOPT -label TREES  \
+./prank.sh hopt -c config/train-default -out_subdir HOPT -label TREES  \
     -t chen11-fpocket.ds \
     -e joined.ds \
     -hopt_optimizer 'pygpgo' \
@@ -171,7 +171,7 @@ Examples:
 # but rather in aggregating results into pockets.
 # We can allow to train only one RF model in the beginning (-hopt_train_only_once 1).
 # Note: this is not really ideal because of overfitting to a one particular RF model.    
-./prank.sh hopt -c config/train-new-default -out_subdir HOPT -label TREES  \
+./prank.sh hopt -c config/train-default -out_subdir HOPT -label TREES  \
     -t chen11-fpocket.ds \
     -e joined.ds \
     -hopt_optimizer 'pygpgo' \
@@ -189,6 +189,11 @@ Examples:
 
 ### Install Spearmint (on ubuntu)
 
+> [!WARNING]
+> Spearmint requires Python 2.7 (EOL since 2020) and MongoDB. These instructions
+> may not work on modern Linux distributions (Ubuntu 22.04+). Consider using
+> pyGPGO instead.
+
 Requirements: Python 2.7 and MongoDB.
 
 ```sh
@@ -200,13 +205,13 @@ git clone https://github.com/rdk/Spearmint.git     # fork fixing scipy.weave pro
 sudo pip install -e Spearmint
 ```
 
-## Run optimization 
+### Run optimization 
 
 Example:
 ```sh
 pkill python; sudo pkill mongo;   # prepare clean slate (careful, your other python programs might die too)
 
-./prank.sh hopt -c config/train-new-default -out_subdir HOPT -label TREES  \
+./prank.sh hopt -c config/train-default -out_subdir HOPT -label TREES  \
     -t chen11-fpocket.ds \
     -e joined.ds \
     -hopt_optimizer 'spearmint' \
