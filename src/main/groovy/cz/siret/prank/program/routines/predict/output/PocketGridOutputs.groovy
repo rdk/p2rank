@@ -51,7 +51,7 @@ final class PocketGridOutputs {
             return
         }
 
-        List<? extends Pocket> pockets = prediction.pockets
+        List<? extends Pocket> pockets = prediction.outputPockets
 
         // Grid is needed if it's exported, rendered, OR if any selected descriptor reads it.
         boolean needGrid =

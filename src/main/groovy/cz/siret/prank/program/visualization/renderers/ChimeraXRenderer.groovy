@@ -66,7 +66,7 @@ view
     private StringBuilder colorPockets(PredictionPair pair) {
         StringBuilder res = new StringBuilder()
 
-        List<Pocket> pockets = pair.prediction.reorderedPockets
+        List<Pocket> pockets = pair.prediction.outputPockets
         int n = pockets.size()
         List<String> colors = generatePocketColors(n).collect { ColorUtils.colorToHex(it) }
 

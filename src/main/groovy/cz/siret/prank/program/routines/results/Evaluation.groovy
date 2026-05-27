@@ -317,7 +317,9 @@ class Evaluation implements Parametrized {
 
         // === PocketRows ===
 
+        int pocketIdx = 0
         for (Pocket pocket in pockets) {
+            pocketIdx++
             PocketRow prow = new PocketRow()
             prow.protName = pair.name
             prow.pocketName = pocket.name
@@ -329,7 +331,7 @@ class Evaluation implements Parametrized {
             prow.oldScore = pocket.stats.pocketScore
             prow.score = pocket.newScore
             prow.rank = pocket.rank
-            prow.newRank = pocket.newRank
+            prow.newRank = pocketIdx
             prow.auxInfo = pocket.auxInfo
 
             if (score != null) {

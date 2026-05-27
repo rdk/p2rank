@@ -130,7 +130,7 @@ class EvalPocketsRoutine extends EvalRoutine {
             if (params.predictions) {
                 results.eval.addPrediction(pair, pair.prediction.pockets)
             } else { // rescore
-                results.eval.addPrediction(pair, pair.prediction.reorderedPockets)
+                results.eval.addPrediction(pair, pair.prediction.rescoredPockets)
                 results.origEval.addPrediction(pair, pair.prediction.pockets)
                 writeOriginalPocketStats(pair, orig_pockets_dir)
             }

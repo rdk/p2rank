@@ -48,6 +48,9 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
     // SAS points with ligandability score for prediction and visualization
     List<LabeledPoint> labeledPoints = new ArrayList<>()
 
+    // Stored during rescorePockets for use by residue labeling after filtering
+    private Atoms sampledSasPoints
+
     // Data for point export (null if export disabled)
     PointExportData exportData = null
 
@@ -76,9 +79,9 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
         if (params.predictions || visualizeAllSurface) {
 
             FeatureExtractor extractor = (proteinExtractor as PrankFeatureExtractor).createInstanceForWholeProtein()
+            sampledSasPoints = extractor.sampledPoints.points
 
-
-            int n_points = extractor.sampledPoints.points.count
+            int n_points = sampledSasPoints.count
             labeledPoints = new ArrayList<>(n_points)
             for (Atom point : extractor.sampledPoints.points) {
                 labeledPoints.add(new LabeledPoint(point))
@@ -115,21 +118,28 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
             // generate predictions
             if (params.predictions) {
                 prediction.pockets = new PocketPredictor().predictPockets(labeledPoints, prediction.protein)
-                prediction.reorderedPockets = new ArrayList<>(prediction.pockets)
+                prediction.outputPockets = new ArrayList<>(prediction.pockets)
                 prediction.labeledPoints = labeledPoints
-
-                if (params.label_residues) {
-                    // ResidueLabelings.pocketReferenceLabeling reads pocket.rank, which
-                    // is only set by finalizePockets. Call it early here; reorderPockets()
-                    // calls it again after any filtering — safe because finalizePockets is
-                    // idempotent when the pocket lists haven't changed between calls.
-                    prediction.finalizePredictedPockets()
-                    prediction.residueLabelings = ResidueLabelings.calculate(prediction, model, extractor.sampledPoints.points, labeledPoints, context)
-                }
             }
         }
 
         proteinExtractor.finalizeProteinPrototype()
+    }
+
+    @Override
+    void reorderPockets(Prediction prediction, ProcessedItemContext context) {
+        super.reorderPockets(prediction, context)
+
+        // Residue labeling runs AFTER filtering + finalization so that pocket.rank
+        // values in the residue CSV match the final filtered output.
+        if (params.predictions && params.label_residues) {
+            if (sampledSasPoints == null || labeledPoints == null) {
+                throw new IllegalStateException("rescorePockets must run before residue labeling")
+            }
+            prediction.residueLabelings = ResidueLabelings.calculate(
+                prediction, model, sampledSasPoints, labeledPoints, context
+            )
+        }
     }
 
     boolean isPositivePoint(Atom point, Atoms ligandAtoms) {

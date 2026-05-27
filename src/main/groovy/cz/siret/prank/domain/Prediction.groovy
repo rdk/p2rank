@@ -25,7 +25,15 @@ class Prediction {
      * Output pocket list: may be reordered (rescore) or filtered (predict).
      * Always a separate copy from {@link #pockets}.
      */
-    List<Pocket> reorderedPockets
+    List<Pocket> outputPockets
+
+    /**
+     * Rescored pocket list before output filtering. Used by eval in rescore mode
+     * so that success rates reflect the full rescored ranking, not the filtered output.
+     * Null in predict mode (eval uses {@link #pockets} directly).
+     */
+    @Nullable
+    List<Pocket> rescoredPockets
 
     /**
      *  SAS points with ligandability score for prediction and visualization.
@@ -47,11 +55,9 @@ class Prediction {
 
     /**
      * Finalize predicted pockets: assign rank, newRank, name, and
-     * LabeledPoint.pocket fields. Use after P2Rank prediction where
-     * rank and name are generated (not loaded from an external method).
-     *
-     * <p>May be called more than once (e.g. early for residue labeling, then
-     * again after filtering). Idempotent when pocket lists haven't changed.
+     * LabeledPoint.pocket fields on {@link #outputPockets}. Use after
+     * P2Rank prediction where rank and name are generated (not loaded
+     * from an external method).
      */
     void finalizePredictedPockets() {
         doFinalizePockets(true)
@@ -66,13 +72,58 @@ class Prediction {
         doFinalizePockets(false)
     }
 
+    /**
+     * Filter pockets by score, probability, and count limits.
+     * Input list must be sorted by descending newScore.
+     *
+     * @return new filtered list (never mutates the input; returns the same
+     *         reference when all filter params are at their disabled defaults)
+     */
+    static List<Pocket> filterPockets(List<Pocket> pockets,
+                                      int maxPockets,
+                                      double minScore,
+                                      double minProbability,
+                                      int minPockets) {
+        boolean hasScoreFilter = !Double.isNaN(minScore)
+        boolean hasProbFilter  = !Double.isNaN(minProbability)
+
+        if (maxPockets == 0 && !hasScoreFilter && !hasProbFilter && minPockets == 0) {
+            return pockets
+        }
+
+        if (minPockets > 0 && maxPockets > 0 && minPockets > maxPockets) {
+            log.warn "pred_min_pockets ({}) > pred_max_pockets ({}); max takes precedence",
+                    minPockets, maxPockets
+        }
+
+        List<Pocket> filtered
+        if (hasScoreFilter || hasProbFilter) {
+            filtered = pockets.findAll { Pocket p ->
+                (!hasScoreFilter || p.newScore >= minScore) &&
+                (!hasProbFilter  || p.auxInfo.probaTP >= minProbability)
+            }
+        } else {
+            filtered = new ArrayList<>(pockets)
+        }
+
+        if (minPockets > 0 && filtered.size() < minPockets) {
+            filtered = new ArrayList<>(pockets.take(Math.min(minPockets, pockets.size())))
+        }
+
+        if (maxPockets > 0 && filtered.size() > maxPockets) {
+            filtered = new ArrayList<>(filtered.take(maxPockets))
+        }
+
+        return filtered
+    }
+
     private void doFinalizePockets(boolean assignRankAndName) {
-        if (reorderedPockets == null) {
-            throw new IllegalStateException("reorderedPockets must be set before finalizePockets()")
+        if (outputPockets == null) {
+            throw new IllegalStateException("outputPockets must be set before finalizePredictedPockets/finalizeRescoredPockets")
         }
 
         int i = 1
-        for (Pocket pocket : reorderedPockets) {
+        for (Pocket pocket : outputPockets) {
             pocket.newRank = i
             if (assignRankAndName) {
                 pocket.rank = i
@@ -92,10 +143,10 @@ class Prediction {
         // Assignment pass: only surviving (reordered) pockets get numbered.
         // Extended pocket shells can overlap (extended_pocket_cutoff > 0), so a
         // single LabeledPoint can appear in multiple pocket.labeledPoints lists.
-        // Iterating best-first (reorderedPockets is sorted by newScore descending)
+        // Iterating best-first (outputPockets is sorted by newScore descending)
         // and only writing when lp.pocket is still 0 ensures the best (lowest)
         // newRank wins for shared points.
-        for (Pocket pocket : reorderedPockets) {
+        for (Pocket pocket : outputPockets) {
             if (pocket.labeledPoints == null) continue
             for (LabeledPoint lp : pocket.labeledPoints) {
                 if (lp.pocket == 0) {

@@ -39,7 +39,7 @@ class PredictionSummary {
 
         sb << HEADER << "\n"
 
-        for (Pocket p : prediction.reorderedPockets) {
+        for (Pocket p : prediction.outputPockets) {
 
             String score = formatScore(p.newScore)
             String proba = formatProbScore(p.auxInfo.probaTP)

@@ -15,14 +15,19 @@ abstract class Pocket {
     List<LabeledPoint> labeledPoints = null  // labeled SAS points
 
     /**
-     * original rank of predicted pocket, starting with 1
+     * Algorithm rank (1-based). In predict mode, position in the score-sorted
+     * unfiltered list. In rescore mode, original rank from the external method.
+     * Set on ALL pockets (including filtered-out ones) before output filtering.
      */
     int rank
 
     double score = Double.NaN
 
     /**
-     * rank of pocket after rescoring
+     * Output rank (1-based). Position in {@code prediction.outputPockets}
+     * after filtering and finalization. Only meaningful on pockets that
+     * survived filtering; filtered-out pockets retain the pre-filter value.
+     * Eval derives rank from list position, not from this field.
      */
     int newRank
     double newScore

@@ -83,10 +83,10 @@ class PocketRescorerTest {
 
     // --- Helpers ---
 
-    /** In predict mode, reorderedPockets must be pre-set (production does this in ModelBasedRescorer). */
+    /** In predict mode, outputPockets must be pre-set (production does this in ModelBasedRescorer). */
     private static Prediction makePredictionWithReorderedPockets(List<Pocket> pockets) {
         Prediction pred = new Prediction(null, pockets)
-        pred.reorderedPockets = new ArrayList<>(pockets)
+        pred.outputPockets = new ArrayList<>(pockets)
         return pred
     }
 

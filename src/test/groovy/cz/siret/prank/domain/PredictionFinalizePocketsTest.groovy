@@ -18,7 +18,7 @@ class PredictionFinalizePocketsTest {
         Pocket b = makePocket(5.0d, [makePoint()])
 
         Prediction pred = new Prediction(null, [a, b])
-        pred.reorderedPockets = [a, b]
+        pred.outputPockets = [a, b]
         pred.finalizePredictedPockets()
 
         assertEquals(1, a.rank)
@@ -39,7 +39,7 @@ class PredictionFinalizePocketsTest {
         b.name = "pocket.1"
 
         Prediction pred = new Prediction(null, [a, b])
-        pred.reorderedPockets = [b, a]
+        pred.outputPockets = [b, a]
         pred.finalizeRescoredPockets()
 
         assertEquals(3, a.rank, "original rank preserved")
@@ -60,7 +60,7 @@ class PredictionFinalizePocketsTest {
         Pocket b = makePocket(5.0d, [onlyB, shared])
 
         Prediction pred = new Prediction(null, [a, b])
-        pred.reorderedPockets = [a, b]
+        pred.outputPockets = [a, b]
         pred.finalizePredictedPockets()
 
         assertEquals(1, shared.pocket, "shared point gets best newRank")
@@ -75,7 +75,7 @@ class PredictionFinalizePocketsTest {
 
         Pocket a = makePocket(10.0d, [pt])
         Prediction pred = new Prediction(null, [a])
-        pred.reorderedPockets = [a]
+        pred.outputPockets = [a]
         pred.finalizePredictedPockets()
 
         assertEquals(1, pt.pocket, "stale pocket value should be reset")
@@ -84,7 +84,7 @@ class PredictionFinalizePocketsTest {
     @Test
     void emptyPocketListIsHandled() {
         Prediction pred = new Prediction(null, [])
-        pred.reorderedPockets = []
+        pred.outputPockets = []
         pred.finalizePredictedPockets()
         // no exception
     }
@@ -93,7 +93,7 @@ class PredictionFinalizePocketsTest {
     void nullLabeledPointsListIsHandled() {
         Pocket a = makePocket(10.0d, null)
         Prediction pred = new Prediction(null, [a])
-        pred.reorderedPockets = [a]
+        pred.outputPockets = [a]
         pred.finalizePredictedPockets()
 
         assertEquals(1, a.newRank)
@@ -106,13 +106,13 @@ class PredictionFinalizePocketsTest {
 
         List<Pocket> originalPockets = [a, b]
         Prediction pred = new Prediction(null, originalPockets)
-        pred.reorderedPockets = new ArrayList<>(originalPockets)
+        pred.outputPockets = new ArrayList<>(originalPockets)
 
-        pred.reorderedPockets.remove(b)
+        pred.outputPockets.remove(b)
         pred.finalizePredictedPockets()
 
         assertEquals(2, pred.pockets.size(), "original list unmodified")
-        assertEquals(1, pred.reorderedPockets.size(), "filtered list has 1")
+        assertEquals(1, pred.outputPockets.size(), "filtered list has 1")
         assertEquals(1, a.newRank)
     }
 
@@ -125,14 +125,14 @@ class PredictionFinalizePocketsTest {
         Pocket b = makePocket(5.0d, [ptB])
 
         Prediction pred = new Prediction(null, [a, b])
-        pred.reorderedPockets = new ArrayList<>([a, b])
+        pred.outputPockets = new ArrayList<>([a, b])
         pred.finalizePredictedPockets()
 
         assertEquals(1, ptA.pocket)
         assertEquals(2, ptB.pocket)
 
         // Filter out pocket b and re-finalize
-        pred.reorderedPockets = [a]
+        pred.outputPockets = [a]
         pred.finalizePredictedPockets()
 
         assertEquals(1, ptA.pocket)

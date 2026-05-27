@@ -173,6 +173,7 @@ class Main implements Parametrized, Writable {
 
         validateVisParams()
         validatePocketGridParams()
+        validatePocketFilterParams()
     }
 
     /**
@@ -295,6 +296,23 @@ class Main implements Parametrized, Writable {
             throw new PrankException(
                     "-vis_pocket_grid=true requires -export_pocket_grid=true " +
                     "(the grid renderers derive their PDB sidecar from the grid).")
+        }
+    }
+
+    /** Fail-fast validation for pocket output filter params. */
+    private void validatePocketFilterParams() {
+        if (params.pred_max_pockets < 0) {
+            throw new PrankException(
+                    "-pred_max_pockets must be >= 0 (got ${params.pred_max_pockets}).")
+        }
+        if (params.pred_min_pockets < 0) {
+            throw new PrankException(
+                    "-pred_min_pockets must be >= 0 (got ${params.pred_min_pockets}).")
+        }
+        double p = params.pred_min_pocket_probability
+        if (!Double.isNaN(p) && (p < 0d || p > 1d)) {
+            throw new PrankException(
+                    "-pred_min_pocket_probability must be NaN (disabled) or in [0, 1] (got ${p}).")
         }
     }
 

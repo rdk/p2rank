@@ -98,7 +98,7 @@ class ResidueLabelings implements Parametrized {
 
         residues.each { labels.put(it.key, 0) }
 
-        for (Pocket p  : prediction.pockets.reverse()) {    // pockets on top of the list have priority in labeling residues
+        for (Pocket p  : prediction.outputPockets.reverse()) {    // pockets on top of the list have priority in labeling residues
             PrankPocket pp = (PrankPocket) p
             pp.residues.each {
                 labels.put(it.key, pp.rank) 

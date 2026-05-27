@@ -111,11 +111,11 @@ orient
     private String colorPocketSurfaces(PredictionPair pair) {
         StringBuilder res = new StringBuilder()
 
-        int nPockets = pair.prediction.reorderedPockets.size()
+        int nPockets = pair.prediction.outputPockets.size()
         List<Color> colors = PredictionVisualizer.generatePocketColors(nPockets)
 
         int i = 1
-        pair.prediction.reorderedPockets.each { Pocket pocket ->
+        pair.prediction.outputPockets.each { Pocket pocket ->
             String ids = pocket.surfaceAtoms.indexes.join(",")
             String name = "surf_pocket$i"
             String ncol = "pcol$i"
@@ -187,11 +187,11 @@ color $color, $label
         res << "# pocket centroids\n"
 
         if (pair.prediction != null) {
-            int nPockets = pair.prediction.reorderedPockets.size()
+            int nPockets = pair.prediction.outputPockets.size()
             List<Color> colors = PredictionVisualizer.generatePocketColors(nPockets)
 
             int i = 1
-            for (Pocket pocket : pair.prediction.reorderedPockets) {
+            for (Pocket pocket : pair.prediction.outputPockets) {
                 if (pocket.centroid != null) {
                     String name = "pocket_center_$i"
                     String ncol = "pccol$i"

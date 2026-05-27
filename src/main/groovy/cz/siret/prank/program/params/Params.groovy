@@ -1337,6 +1337,37 @@ class Params {
     double pred_protein_surface_cutoff = 3.5
 
     /**
+     * Maximum number of predicted pockets to report. 0 = no limit.
+     * Takes precedence over pred_min_pockets when both are set.
+     */
+    @RuntimeParam
+    int pred_max_pockets = 0
+
+    /**
+     * Minimum pocket score (newScore) to include in output.
+     * NaN = disabled (default). Pockets below this threshold are dropped.
+     */
+    @RuntimeParam
+    double pred_min_pocket_score = Double.NaN
+
+    /**
+     * Minimum pocket probability (probaTP) to include in output.
+     * NaN = disabled (default). Requires probatp_transformer to be configured;
+     * pockets without a probability score (probaTP=0) pass a threshold of 0
+     * but are filtered out by any positive threshold (e.g. 0.01).
+     */
+    @RuntimeParam
+    double pred_min_pocket_probability = Double.NaN
+
+    /**
+     * Always return at least this many pockets even if they fall below
+     * score/probability thresholds. 0 = no guarantee (default).
+     * Capped by the actual number of pockets found and by pred_max_pockets.
+     */
+    @RuntimeParam
+    int pred_min_pockets = 0
+
+    /**
      * Prefix output directory with date and time
      */
     @RuntimeParam

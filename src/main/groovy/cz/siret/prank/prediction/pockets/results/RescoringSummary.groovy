@@ -19,7 +19,7 @@ class RescoringSummary {
 
     private String changeVisualAid(int change) {
         int MAX = 16
-        int n = prediction.reorderedPockets.size()
+        int n = prediction.outputPockets.size()
 
         int absc = change.abs()
 
@@ -40,7 +40,7 @@ class RescoringSummary {
 
         sb << "name,score,rank,old_rank,change,change_visual_aid" << '\n'
 
-        for (p in prediction.reorderedPockets) {
+        for (p in prediction.outputPockets) {
             int change = p.rank - p.newRank
 
             String fmtScore = PerfUtils.formatDouble(p.newScore)

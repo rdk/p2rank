@@ -35,7 +35,7 @@ class GetcleftOutputCalculator implements Parametrized, Writable {
         Chain virtChain = new ChainImpl()
         virtChain.setName("Z")
 
-        for (Pocket pocket : prediction.reorderedPockets) {
+        for (Pocket pocket : prediction.outputPockets) {
             Atoms cleftPoints = new Atoms(pocket.sasPoints.count)
 
             HetatomImpl virtualPocketGroup = new HetatomImpl() ///  "SPH"
