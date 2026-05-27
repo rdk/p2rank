@@ -209,7 +209,8 @@ method, not just Fpocket.
 > [!NOTE]
 > This model depends on the B-factor feature and is intended for experimental
 > (X-ray) structures. For AlphaFold, NMR, or cryo-EM structures, use
-> `rescore_2024` instead (which is not conservation-aware).
+> `rescore_2024` instead. There is currently no conservation-aware rescoring
+> model for non-X-ray structures.
 
 ```bash
 prank rescore fpocket.ds -c rescore_conservation \

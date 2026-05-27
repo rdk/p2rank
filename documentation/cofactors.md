@@ -158,7 +158,7 @@ to match - the whole group is then included.
 ### `contact_res_ids`
 
 A list of residue identifiers that must all be present in the polymer
-neighbourhood (within ~7 Å) of the cofactor. Each entry is
+neighbourhood (within 7 Å) of the cofactor. Each entry is
 `chain_aaCode_resNumber` (e.g. `A_D246` = chain A, Asp 246) or
 `chain_resNumber` (e.g. `A_246`) when you don't want to check the residue
 type. Useful when the cofactor's `group_id` is unstable but its binding
@@ -223,7 +223,7 @@ Output files (in the analyze output directory):
 
 | File | Content |
 |---|---|
-| `het_groups.csv` | One row per HETATM group instance. Columns: `protein`, `het_name`, `chain`, `res_num`, `group_id`, `n_heavy_atoms`, `dist_to_protein`, `currently_classified_as` (`relevant_ligand` / `ignored` / `cofactor`) |
+| `het_groups.csv` | One row per HETATM group instance. Columns: `protein`, `het_name`, `chain`, `res_num`, `group_id`, `n_heavy_atoms`, `dist_to_protein`, `currently_classified_as` (`relevant_ligand` / `ignored` / `cofactor` / `other`) |
 | `het_groups_summary.txt` | Per-name frequency table across the dataset, sorted by structure-coverage |
 | `visualizations/<protein>.pml` | PyMOL script highlighting any configured cofactors (if `-visualizations 1`) |
 

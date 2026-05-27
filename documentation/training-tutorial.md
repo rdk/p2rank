@@ -80,9 +80,9 @@ Related parameters:
 
 Memory consumption can be drastically influenced by some parameters.
 
-Random Forest implementations train trees in parallel using the number of threads defined in`-rf_threads` variable.
+Random Forest implementations train trees in parallel using the number of threads defined in `-rf_threads` variable.
 Ideally, this would be set to the number of physical CPU cores in the machine.
-However, required memory during training grows linearly with the number trees trained in parallel (`-rf_threads`), 
+However, required memory during training grows linearly with the number of trees trained in parallel (`-rf_threads`), 
 so you may need to lower the number of threads.
 
 Parameters that influence memory/time trade-off:
@@ -147,7 +147,7 @@ Ways to deal with class imbalances:
 * using different density of points on Solvent Accessible Surface for positives and negatives. It is also possible to use different density for training and evaluation.
     - `-tessellation`, `-train_tessellation`, `-train_tessellation_negatives` 
     - by default `tessellation = train_tessellation = train_tessellation_negatives = 2`
-    - higher tesselation equals higher density = more points
+    - higher tessellation equals higher density = more points
 * class weight balancing
     - use `-balance_class_weights 1` in combination with `-target_class_weight_ratio`
     - works only with weight sensitive classifiers (`RandomForest`, `FastRandomForest`, `FasterForest`, `FasterForest2`)

@@ -54,7 +54,7 @@ _(this section is work in progress)_
 How to evaluate whether the new feature is useful?
 Is it helping to predict more binding sites, and/or more precisely predict their shape? 
                                                    
-This question is more complicated that it may seem. 
+This question is more complicated than it may seem. 
                                    
 * Short answer: If it improves `point_AUPRC`, it is discriminative, and it has a potential to help P2Rank to make better predictions.
 * Slightly longer answer: Better way to compare models is using `DCA` metrics (`DCA_4_0`,`DCA_4_2`...) in combination with some metric 
@@ -88,8 +88,8 @@ Details and a case study follows.
 
 
 There are 3 related but distinct problems that should be distinguished:
-1. Problem of predicting ligand biding sites.
-2. Binary classification problem of predicting ligandablity of SAS points.
+1. Problem of predicting ligand binding sites.
+2. Binary classification problem of predicting ligandability of SAS points.
 3. Binary classification problem of predicting binding residues.
 
 We are mainly focused on 1., while considering 3. just a poor way of looking at and evaluating binding site prediction methods.

@@ -31,29 +31,28 @@ It is also possible to train pocket score transformers for rescoring models:
 
 
 
-After transformers are trained, they should be adequately renamed to reflect an association with the new model and configured in `newmodel.groovy`:
+After transformers are trained, they should be adequately renamed to reflect an association with the new model and configured in `newmodel.groovy`.
+Paths use the `{models_dir}` template which resolves to `distro/models` at runtime.
+Pocket transformers go in `_score_transform/`, residue transformers in `_score_transform/residue/`.
+
 ~~~groovy
 /**
  * Path to a JSON file that contains parameters of a transformer from raw score to "z-score calculated from the distribution of true pockets" (pocket.auxInfo.zScoreTP).
- * Use path relative to distro/models/score.
  */
-zscoretp_transformer = "newmodel_zscoretp.json"
+zscoretp_transformer = "{models_dir}/_score_transform/newmodel_ZscoreTpTransformer.json"
 
 /**
  * Path to a JSON file that contains parameters of a transformer from raw score to "probability that pocket with a given score is true pocket" (pocket.auxInfo.probaTP).
- * Use path relative to distro/models/score.
  */
-probatp_transformer = "newmodel_probatp.json"
+probatp_transformer = "{models_dir}/_score_transform/newmodel_ProbabilityScoreTransformer.json"
 
 /**
  * Path to a JSON file that contains parameters of a transformer from raw score to "z-score calculated from the distribution of all residue scores".
- * Use path relative to distro/models/score.
  */
-zscoretp_res_transformer = "residue/newmodel_zscore.json"
+zscoretp_res_transformer = "{models_dir}/_score_transform/residue/newmodel_ZscoreTpTransformer.json"
 
 /**
  * Path to a JSON file that contains parameters of a transformer from raw score to "probability that residue with a given score is true (binding) residue".
- * Use path relative to distro/models/score.
  */
-probatp_res_transformer = "residue/newmodel_proba.json"
+probatp_res_transformer = "{models_dir}/_score_transform/residue/newmodel_ProbabilityScoreTransformer.json"
 ~~~

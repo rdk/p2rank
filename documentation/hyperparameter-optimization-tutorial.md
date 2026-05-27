@@ -135,7 +135,7 @@ Integrated optimizers (values of `-hopt_optimizer` parameter):
 
 (Other optimization tools might be integrated with little work. See how integration with *pyGPGO* is implemented in `HPyGpgoOptimizer.groovy`).
                              
-By default, optimization goal is to maximize value of a metric in `-hopt_objective` parameter (e.g. `-hopt_objective DCA_4_0)`).
+By default, optimization goal is to maximize value of a metric in `-hopt_objective` parameter (e.g. `-hopt_objective DCA_4_0`).
 For minimization, prefix metric name with minus sign: `-hopt_objective "'-point_LOG_LOSS'"`.
 
 Supported parameter types: `double`, `int`, `boolean`. 

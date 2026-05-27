@@ -103,8 +103,8 @@ See [conservation.md](conservation.md#debugging-sequence-and-conservation-mappin
 ~~~sh
 ./prank.sh transform reduce-to-chains -f <structure_file> -chains <chain_names> -out_format <format_file_extension> -out_file <file_name>
 ~~~
-* `-f <>` required, structure fie in one of the formats `pdb|pdb.gz|cif|cif.gz`
-* `-chains` required, coma separated list of chain names, wildcards: `keep`, `all`
+* `-f <>` required, structure file in one of the formats `pdb|pdb.gz|cif|cif.gz`
+* `-chains` required, comma-separated list of chain names, wildcards: `keep`, `all`
   * in the case of mmcif files, values refer to old PDB chain names (author id), not mmcif ids
   * `keep` keeps the structure as is, just saves with required format (may not work perfectly due to biojava), useful for debugging
   * `*` is not the same as keeping structure as is, but runs the reduction procedure with all the chains, useful for debugging

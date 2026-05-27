@@ -22,7 +22,7 @@ Composition of feature vector is influenced by parameters:
 * `-features` 
     * list of enabled feature calculators    
     * default: `(chem,volsite,protrusion,bfactor)` 
-    * `atom_table` and `residue_table` features are implicitly enabled by default
+    * `atom_table` is implicitly enabled when `-atom_table_features` is non-empty (true by default); `residue_table` is implicitly enabled when `-residue_table_features` is non-empty (empty by default, so not active out of the box)
 * `-extra_features`
     * list of feature calculators appended **on top of** `-features`
     * default: empty
@@ -34,14 +34,14 @@ Composition of feature vector is influenced by parameters:
 * `-feature_filters`
     * see "Filtering features" section below
 
-#### Configuration syntax
+### Configuration syntax
 
 > [!NOTE]
 > The syntax for list-of-strings parameter value is different on the command line and in a `*.groovy` config file:
 > * command line: `-features '(chem,volsite,protrusion,bfactor)'`
 > * config file: `features = ['chem','volsite','protrusion','bfactor']` (Groovy syntax)
 
-#### Check enabled features
+### Check enabled features
 
 To check which features are enabled for a particular configuration run `print features` command:
 ```bash
@@ -166,7 +166,7 @@ Further examples:
 * `-feature_filters '(-chem.*)'` - include all except those with prefix "chem."
 * `-feature_filters '(-chem.*,chem.hydrophobicity)'` - include all except those with prefix "chem.", but include "chem.hydrophobicity"
 * `-feature_filters '(chem.hydrophobicity)'` - include only "chem.hydrophobicity"
-* `-feature_filters '(chem.*,-chem.hydrophobicity,-chem.atoms)` - include only those with prefix "chem.", except "chem.hydrophobicity" and "chem.atoms"
+* `-feature_filters '(chem.*,-chem.hydrophobicity,-chem.atoms)'` - include only those with prefix "chem.", except "chem.hydrophobicity" and "chem.atoms"
 
 
 <details>
@@ -199,7 +199,7 @@ Effective feature vector header (i.e. enabled sub-features):
   ```
 </details>
 
-#### Filtering and grid optimization
+### Filtering and grid optimization
 
 You can use `-feature_filters` param in combination with grid optimization (`ploop` command).
 For details see [hyperparameter optimization tutorial](hyperparameter-optimization-tutorial.md).

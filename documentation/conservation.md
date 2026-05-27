@@ -67,7 +67,7 @@ prank predict protein.pdb -c conservation_hmm -conservation_dirs ./my_scores/
 > `-conservation_type` is only needed when using a provider or the cache mechanism.
 > With pre-computed files and `-conservation_dirs`, files are matched by name convention alone.
 
-### 2. External Conservation Server (since 2.6.0)
+### 2. External Conservation Server (since 2.6)
 
 Configure P2Rank to fetch scores from an HTTP server on demand.
 Fetched scores are cached locally so subsequent runs reuse them.
@@ -247,9 +247,8 @@ prank predict dataset.ds \
 
 | Parameter | Default | Description |
 |-----------|---------|-------------|
-| `load_conservation` | `false` | Master switch for loading conservation scores. Automatically set to `true` by the conservation-aware configs (`conservation_hmm`, `alphafold_conservation_hmm`). Must be enabled explicitly in custom configs. |
 | `conservation_type` | `null` | Type of conservation scores. Determines cache subdirectory. Currently: `hmm` |
-| `conservation_dirs` | `[]` | Directories to search for pre-computed score files. Relative to dataset dir. |
+| `conservation_dirs` | `[]` | Directories to search for pre-computed score files. Absolute or relative to dataset dir. |
 
 ### Provider
 
@@ -271,7 +270,7 @@ prank predict dataset.ds \
 
 | Parameter | Default | Description |
 |-----------|---------|-------------|
-| `fail_on_conserv_seq_mismatch` | `false` | Fail when sequences in the structure and score file do not match exactly. |
+| `fail_on_conserv_seq_mismatch` | `false` | Fail when sequences in the structure and score file do not match exactly. Only has effect when `fail_fast` is also `true`. |
 
 ## Non-Standard Residue Mapping
 
