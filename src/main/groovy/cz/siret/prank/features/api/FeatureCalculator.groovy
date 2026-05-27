@@ -39,7 +39,10 @@ interface FeatureCalculator {
      * (Optionally) perform preliminary calculations on the whole protein.
      * Store the calculated data into protein.secondaryData map.
      *
-     * @param protein
+     * <p>Thread-safety: calculator instances may be shared across threads
+     * processing different proteins concurrently. Implementations must NOT
+     * store per-protein state in instance fields — use protein.secondaryData
+     * or local variables instead.
      */
     void preProcessProtein(Protein protein, ProcessedItemContext context)
 

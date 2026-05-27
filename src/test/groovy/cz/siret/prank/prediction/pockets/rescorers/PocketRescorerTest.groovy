@@ -26,16 +26,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals
 @CompileStatic
 class PocketRescorerTest {
 
-    static boolean savedPredictions
-
     @BeforeAll
-    static void snapshot() {
-        savedPredictions = Params.inst.predictions
+    static void init() {
+        Params.INSTANCE = new Params()
         Params.inst.predictions = true
     }
 
     @AfterAll
-    static void restore() { Params.inst.predictions = savedPredictions }
+    static void restore() { Params.INSTANCE = new Params() }
 
     /**
      * When a LabeledPoint belongs to multiple pockets (extended shells overlap),

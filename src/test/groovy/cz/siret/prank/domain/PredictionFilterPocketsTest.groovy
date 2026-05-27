@@ -79,16 +79,18 @@ class PredictionFilterPocketsTest {
     }
 
     @Test
-    void probaTpZeroNotFilteredWhenDisabled() {
+    void probaTpZeroPassesWhenProbabilityFilterDisabled() {
         Pocket a = pocket(10, 0.0d)
-        List<Pocket> result = Prediction.filterPockets([a], 0, Double.NaN, Double.NaN, 0)
+        // maxPockets=10 forces past early-return so the findAll closure actually runs
+        List<Pocket> result = Prediction.filterPockets([a], 10, Double.NaN, Double.NaN, 0)
         assertEquals(1, result.size(), "probaTP=0 should pass when probability filter is NaN (disabled)")
     }
 
     @Test
-    void negativeScorePassesWhenDisabled() {
+    void negativeScorePassesWhenScoreFilterDisabled() {
         Pocket a = pocket(-5.0d)
-        List<Pocket> result = Prediction.filterPockets([a], 0, Double.NaN, Double.NaN, 0)
+        // maxPockets=10 forces past early-return so the findAll closure actually runs
+        List<Pocket> result = Prediction.filterPockets([a], 10, Double.NaN, Double.NaN, 0)
         assertEquals(1, result.size(), "negative score should pass when score filter is NaN (disabled)")
     }
 

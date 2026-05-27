@@ -211,7 +211,11 @@ class Evaluation implements Parametrized {
 
         // === Pre-computation ===
 
-        Atoms labeledPoints = new Atoms(pair.prediction.labeledPoints ?: emptyList())
+        List lp = pair.prediction.labeledPoints
+        if (lp == null && !sites.isEmpty()) {
+            log.debug "No labeledPoints for [{}] — site reachability and point score stats will be zero", pair.name
+        }
+        Atoms labeledPoints = new Atoms(lp ?: emptyList())
 
         int n_ligSasPoints = 0
         int n_ligSasPointsCovered = 0
