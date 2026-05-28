@@ -1069,7 +1069,7 @@ Inspect these files first when a batch run reports errors but finished without a
 
 | Parameter | Default | Description |
 |---|---|---|
-| `-c` | none | Configuration profile (e.g., `alphafold`, `conservation_hmm`) |
+| `-c` | `default` | Configuration profile (e.g., `alphafold`, `conservation_hmm`) |
 | `-chains` | all (`keep`) | Restrict prediction to specific chains (e.g., `A,B`) |
 | `-cofactors` | none | HETATM groups to treat as protein surface (e.g., `FAD,HEM`) |
 | `-aa_mapping` | `minimal` | Non-canonical residue mapping: `minimal`, `pdbfixer`, or path to CSV |
