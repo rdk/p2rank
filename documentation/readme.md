@@ -18,7 +18,6 @@ This directory contains documentation and tutorials for P2Rank.
 | [aa-mapping.md](aa-mapping.md) | Non-canonical amino acid residue mapping to standard residues |
 | [conservation.md](conservation.md) | Conservation-aware prediction (HMM-based) |
 | [hidden-commands.md](hidden-commands.md) | Miscellaneous hidden commands and analysis tools |
-| [random-examples.md](random-examples.md) | Assorted command-line examples for prediction and evaluation |
 
 ## Training
 
