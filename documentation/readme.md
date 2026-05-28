@@ -17,7 +17,7 @@ This directory contains documentation and tutorials for P2Rank.
 | [cofactors.md](cofactors.md) | Treating selected HETATM groups as part of the protein surface |
 | [aa-mapping.md](aa-mapping.md) | Non-canonical amino acid residue mapping to standard residues |
 | [conservation.md](conservation.md) | Conservation-aware prediction (HMM-based) |
-| [hidden-commands.md](hidden-commands.md) | Miscellaneous hidden commands and analysis tools |
+| [utility-commands.md](utility-commands.md) | Reference for `analyze`, `transform`, and `print` subcommands |
 
 ## Training
 

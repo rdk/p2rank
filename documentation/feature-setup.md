@@ -238,3 +238,17 @@ Example:
 ```            
 This command will run train-eval experiments for 3 different feature setups by applying a different list of feature filters. 
 For each feature setup, it will run 10 train-eval cycles (using different random seed) and calculate average results. 
+
+
+## Exporting feature vectors
+
+Use the `traineval` command with `-delete_vectors 0` to dump the computed
+feature vectors of every SAS point alongside its label. The `xyz` dummy
+feature stores the 3D coordinates of each point, which is useful for
+downstream geometric analysis.
+
+~~~bash
+./prank.sh traineval -t test_data/basic.ds -e test_data/basic.ds \
+    -loop 1 -delete_vectors 0 -sample_negatives_from_decoys 0 \
+    -features '(chem,volsite,protrusion,bfactor,xyz)'
+~~~

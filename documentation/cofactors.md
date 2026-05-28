@@ -624,7 +624,7 @@ Check the syntax table above.
 - [`feature-setup.md`](feature-setup.md) - how feature values are
   calculated. See the [Feature Values for Cofactor Atoms](#feature-values-for-cofactor-atoms)
   section above for cofactor-specific behaviour.
-- [`hidden-commands.md`](hidden-commands.md) - other `prank analyze`
+- [`utility-commands.md`](utility-commands.md) - other `prank analyze`
   subcommands. The cofactor-specific `prank analyze cofactors` is
   documented under "Discovery & Diagnostics" above.
 - `documentation/dev/cofactors.md` (engineering doc) - implementation status,

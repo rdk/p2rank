@@ -1002,32 +1002,12 @@ Inspect these files first when a batch run reports errors but finished without a
 | `eval-rescore` | Evaluate rescoring accuracy on proteins with known ligands using DCA and other criteria |
 | `export-points` | Export SAS points with feature vectors (standalone, no prediction model needed). Distinct from the `-export_points 1` flag on `predict`, which includes predicted scores. |
 | `preload-conservation` | Pre-download conservation scores for a dataset |
-| `analyze` | Analysis subcommands (see below) |
-| `transform` | Structure transformation subcommands |
-| `print` | Introspection (features, model-info, params, feature-sets, transform-model). See [hidden-commands.md](hidden-commands.md#print). |
+| `analyze` | Analysis subcommands. See [utility-commands.md#analyze](utility-commands.md#analyze). |
+| `transform` | Structure / dataset / model transformation subcommands. See [utility-commands.md#transform](utility-commands.md#transform). |
+| `print` | Introspection subcommands (features, model-info, params, ...). See [utility-commands.md#print](utility-commands.md#print). |
 | `help` | Show help and version info |
 
-**Analyze subcommands:**
-
-| Subcommand | Description |
-|---|---|
-| `analyze cofactors` | Survey HETATM groups, dry-run cofactor configuration |
-| `analyze conservation` | Inspect conservation scores mapped to residues |
-| `analyze residues` | List all residues with secondary structure and binding info |
-| `analyze binding-residues` | List residues that bind relevant ligands |
-| `analyze labeled-residues` | Analyze a dataset with explicit residue labeling |
-| `analyze fasta-raw` | Export sequences exactly as P2Rank sees them |
-| `analyze fasta-masked` | Export sequences with non-standard residue codes masked to X |
-
-**Other subcommands:**
-
-| Subcommand | Description |
-|---|---|
-| `transform reduce-to-chains` | Extract specific chains from a structure file |
-| `print features` | Show enabled features for a configuration |
-| `print feature-sets` | Print just the list of effectively enabled features |
-| `print model-info` | Show information about a trained model |
-| `print params` | Dump the effective parameters (CLI args plus resolved defaults) |
+For training, cross-validation, and grid optimization commands (`traineval`, `ploop`, etc.), see [training-tutorial.md](training-tutorial.md).
 
 ### 12.2 Important Parameters
 
