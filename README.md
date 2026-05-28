@@ -25,6 +25,8 @@ It achieves high prediction success rates without relying on external software f
 * Version **2.4.2** adds support for BinaryCIF (`.bcif`) input and rescoring of fpocket predictions in `.cif` format.          
 * Version **2.4** adds support for mmCIF (`.cif`) input and contains a special profile for predictions on AlphaFold models and NMR/cryo-EM structures.  
 
+Version 2.6 also brings substantially improved documentation, headlined by a new comprehensive **[User Guide](documentation/user-guide.md)** that covers installation, prediction, rescoring, configuration, performance tuning, and troubleshooting in one place. Several topic-specific docs have been added or expanded alongside it (see the [documentation index](documentation/readme.md)).
+
 ### Requirements
 
 * **Runtime**: Java 17 or later (tested up to Java 26)
