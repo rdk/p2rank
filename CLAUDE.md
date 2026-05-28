@@ -25,3 +25,13 @@ Use them when a piece of information is **meta** relative to the surrounding
 text (a caveat, a platform-specific note, an "off by default" flag, a
 citation reminder). Don't overuse: if every paragraph has a box, none
 stand out.
+
+**No em-dashes (`—`, U+2014) in any documentation.** Hard rule. Use `:`,
+`,`, `(...)`, or `--`.
+
+## Don't flag these in doc reviews
+
+- **`README.md` rescoring list omits P2Rank itself.** The list enumerates
+  *other* tools whose pockets P2Rank rescores. Intentional.
+- **`README.md` release badge may lag `build.gradle`.** Updated at release,
+  not on alpha bumps. Mismatch during alpha cycles is expected.

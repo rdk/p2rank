@@ -22,14 +22,14 @@ to a tabular file alongside any `predict` or `rescore` run when
 > suppresses the per-protein grid file, not the computation. The
 > grid-free descriptors (`num_residues`, `num_surface_atoms`,
 > `pocket_net_charge`, `pocket_charge_polarity`,
-> `pocket_dipole_magnitude`) iterate `pocket.surfaceAtoms` only;
-> selecting only those with `-export_pocket_grid 0` skips the grid
-> build entirely.
+> `pocket_dipole_magnitude`) operate on `pocket.surfaceAtoms` and the
+> derived residue list only; selecting only those with
+> `-export_pocket_grid 0` skips the grid build entirely.
 
 ## Quick start
 
 ```bash
-# Default: every registered descriptor — num_residues, num_surface_atoms,
+# Default: every registered descriptor: num_residues, num_surface_atoms,
 # num_grid_points, volume, sphericity, radius_of_gyration, principal_moments,
 # pocket_net_charge, pocket_charge_polarity, pocket_dipole_magnitude
 prank predict -f protein.pdb -export_pocket_descriptors 1
@@ -49,7 +49,7 @@ One row per predicted pocket.
 
 | Column | Type | Notes |
 |---|---|---|
-| `name` | string | `pocket.name` (e.g. `pocket.1`) |
+| `name` | string | `pocket.name` (e.g. `pocket1`) |
 | `rank` | i32 | 1-based pocket rank |
 | `score` | f64 | Raw P2Rank pocket score |
 | `probability` | f64 | Calibrated probability from the score transformer. **Column is omitted entirely** when no transformer ran. |
@@ -83,7 +83,7 @@ prefixed with `"{name}."` (e.g. `principal_moments.lambda1`,
 | Name | Columns | Definition |
 |---|---|---|
 | `volume` | 1 × f64 | Pocket volume in **Å³**: `\|assigned grid points\| × pocket_grid_spacing³`. Accuracy scales with the lattice spacing (smaller `pocket_grid_spacing` → finer estimate). |
-| `sphericity` | 1 × f64 ∈ [0, 1] | `V_pocket / V_bounding_sphere`. Bounding sphere is centered at the **centroid of the pocket's grid points** (not `pocket.centroid`, which is atom-derived); radius is the max distance from that centroid. Quantization-free. 1 = perfect sphere; ≪ 1 = elongated / irregular. |
+| `sphericity` | 1 × f64 ∈ [0, 1] | `V_pocket / V_bounding_sphere`. Bounding sphere is centered at the **centroid of the pocket's grid points** (not `pocket.centroid`, which is atom-derived); radius is the max distance from that centroid. Bounding sphere is continuous; volume numerator inherits the same lattice quantization as `volume`. 1 = perfect sphere; ≪ 1 = elongated / irregular. |
 | `radius_of_gyration` | 1 × f64 | Radius of gyration in **Å**: `sqrt(mean(\|r_i - r_cm\|²))` over the pocket's grid points (equal weights). Absolute spatial extent; pairs well with `sphericity`, which only captures compactness. `0` for empty / single-point pockets. |
 | `num_residues` | 1 × i32 | Number of distinct residues touching the pocket (reuses `Pocket.getResidues()`). |
 | `num_surface_atoms` | 1 × i32 | Size of `pocket.surfaceAtoms`. |
@@ -91,7 +91,7 @@ prefixed with `"{name}."` (e.g. `principal_moments.lambda1`,
 | `principal_moments` | 3 × f64 | Three eigenvalues of the pocket grid points' gyration tensor (equal-weight PCA), sorted descending: `principal_moments.lambda1` ≥ `lambda2` ≥ `lambda3`. Unit Å². Shape signature: λ₁≈λ₂≈λ₃ → sphere; λ₁≫λ₂,λ₃ → rod; λ₁≈λ₂≫λ₃ → disk. Sum equals `radius_of_gyration²`. `0`s for pockets with <2 grid points. |
 | `pocket_net_charge` | 1 × f64 | Sum of AMBER ff14SB partial charges of `pocket.surfaceAtoms`, in elementary charge units (`e`). Positive net = anion-binding site, negative = cation-binding, ≈ 0 = neutral / hydrophobic. Atoms outside the AMBER table get an element-bucket fallback. See [electrostatics implementation report](../misc/dev/ELECTROSTATICS_IMPLEMENTATION.md) for the cascade. |
 | `pocket_charge_polarity` | 3 × f64 | `pocket_charge_polarity.positive` and `.negative` are the total cationic and anionic charge in `e` (the latter as a positive magnitude); `.ratio` = `(pos − neg) / (pos + neg + ε)` ∈ [−1, 1] is the normalised polarity. Distinguishes neutral pockets (low magnitudes) from bipolar pockets (large cancelling charges) that `pocket_net_charge` collapses to ≈ 0. |
-| `pocket_dipole_magnitude` | 1 × f64 | Magnitude of the dipole moment of `pocket.surfaceAtoms` about their geometric centroid, in `e·Å`. Two pockets with identical `pocket_net_charge` can differ massively in dipole — bipolar pockets with opposing charge patches have a large dipole; uniformly neutral pockets have zero. |
+| `pocket_dipole_magnitude` | 1 × f64 | Magnitude of the dipole moment of `pocket.surfaceAtoms` about their geometric centroid, in `e·Å`. Two pockets with identical `pocket_net_charge` can differ massively in dipole: bipolar pockets with opposing charge patches have a large dipole; uniformly neutral pockets have zero. |
 
 `-pocket_descriptors` defaults to **all of the above**. The grid-derived
 scalar descriptors share the same pocket-grid input, so adding or

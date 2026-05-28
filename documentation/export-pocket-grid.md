@@ -65,7 +65,7 @@ Long format. One row per `(point, pocket)` pair.
 | Column | Type | Description |
 |---|---|---|
 | `x`, `y`, `z` | f64 | Grid point coordinate (Å) |
-| `pocket` | i32 | Pocket rank this row belongs to (1-based; always > 0 — unassigned grid points are not emitted). |
+| `pocket` | i32 | Pocket rank this row belongs to (1-based; always > 0; unassigned grid points are not emitted). |
 | *(per-point descriptor columns)* | f64 / i32 | Appended in `-pocket_grid_point_descriptors` order. See the per-grid-point descriptors section below. |
 
 Rows are sorted by `pocket` ascending, then by `x`, `y`, `z` ascending.
@@ -82,7 +82,7 @@ Rows are sorted by `pocket` ascending, then by `x`, `y`, `z` ascending.
 ## Per-grid-point descriptors
 
 Extra columns can be appended to each row via `-pocket_grid_point_descriptors`
-(comma-separated names; default: all registered descriptors — see the catalog
+(comma-separated names; default: all registered descriptors; see the catalog
 below). Setting this knob without `-export_pocket_grid 1` is inert: the
 per-grid-point compute only runs when the grid is being exported.
 Multi-column descriptors get the header prefix `"{name}."`, same

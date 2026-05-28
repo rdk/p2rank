@@ -42,6 +42,7 @@ P2Rank requires no installation. Binary packages are available as GitHub Release
 * **Download**: https://github.com/rdk/p2rank/releases
 * Source code: https://github.com/rdk/p2rank
 * Datasets: https://github.com/rdk/p2rank-datasets
+* **[User Guide](documentation/user-guide.md)**: comprehensive documentation for new and advanced users
 
 ### Usage
 

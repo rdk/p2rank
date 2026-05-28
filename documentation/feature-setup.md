@@ -27,7 +27,7 @@ Composition of feature vector is influenced by parameters:
     * list of feature calculators appended **on top of** `-features`
     * default: empty
     * the effective feature set is `features ∪ extra_features`
-    * useful when you want to compare a candidate against the default baseline without restating the baseline list every time — see also the
+    * useful when you want to compare a candidate against the default baseline without restating the baseline list every time; see also the
       `((),(my_new),(my_new,my_other))` ploop pattern in [hyperparameter-optimization-tutorial.md](hyperparameter-optimization-tutorial.md)
 * `-atom_table_features` and `-residue_table_features` 
     * determine which columns from atom type and residue type tables are enabled   
@@ -117,7 +117,7 @@ If you want to add new features that are not implemented in P2Rank you have 3 op
     * Atom features are auto-projected to SAS points by the model. If you ALSO want
       to expose an explicit SAS-projected variant (e.g. for `-export_points` output
       or for selecting it by a different name on the command line), additionally
-      register `AtomicToSasFeatWrapper(new MyFeature())` — it registers under the
+      register `AtomicToSasFeatWrapper(new MyFeature())`; it registers under the
       name `my_feature_sas` (the wrapped feature's name with a `_sas` suffix). 
 * Provide custom atom type and residue type tables for `atom_table` and `residue_table` features
     * allow defining values for residue types and atom types
@@ -147,8 +147,8 @@ Examples of individual filters:
  * `*` - include all
  * `chem.*` - include all with prefix "chem."
  * `-chem.*` - exclude all with prefix "chem."
- * `chem.hydrophobicity` - include particular sub-feature
- * `-chem.hydrophobicity` - exclude particular sub-feature
+ * `chem.hydrophobic` - include particular sub-feature
+ * `-chem.hydrophobic` - exclude particular sub-feature
 
 Filters are applied sequentially.
 
@@ -164,9 +164,9 @@ Further examples:
 * `-feature_filters '(*)'` - include all
 * `-feature_filters '(*,-chem.*)'` - include all except those with prefix "chem."
 * `-feature_filters '(-chem.*)'` - include all except those with prefix "chem."
-* `-feature_filters '(-chem.*,chem.hydrophobicity)'` - include all except those with prefix "chem.", but include "chem.hydrophobicity"
-* `-feature_filters '(chem.hydrophobicity)'` - include only "chem.hydrophobicity"
-* `-feature_filters '(chem.*,-chem.hydrophobicity,-chem.atoms)'` - include only those with prefix "chem.", except "chem.hydrophobicity" and "chem.atoms"
+* `-feature_filters '(-chem.*,chem.hydrophobic)'` - include all except those with prefix "chem.", but include "chem.hydrophobic"
+* `-feature_filters '(chem.hydrophobic)'` - include only "chem.hydrophobic"
+* `-feature_filters '(chem.*,-chem.hydrophobic,-chem.atoms)'` - include only those with prefix "chem.", except "chem.hydrophobic" and "chem.atoms"
 
 
 <details>

@@ -223,7 +223,7 @@ Output files (in the analyze output directory):
 
 | File | Content |
 |---|---|
-| `het_groups.csv` | One row per HETATM group instance. Columns: `protein`, `het_name`, `chain`, `res_num`, `group_id`, `n_heavy_atoms`, `dist_to_protein`, `currently_classified_as` (`relevant_ligand` / `ignored` / `cofactor` / `other`) |
+| `het_groups.csv` | One row per HETATM group instance. Columns: `protein`, `het_name`, `chain`, `res_num`, `group_id`, `n_heavy_atoms`, `dist_to_protein`, `currently_classified_as` (`relevant_ligand` / `ignored` / `cofactor` / `other`), `would_be_cofactor` (always present; constant 0 without `-cofactors`, populated 0/1 in dry-run mode) |
 | `het_groups_summary.txt` | Per-name frequency table across the dataset, sorted by structure-coverage |
 | `visualizations/<protein>.pml` | PyMOL script highlighting any configured cofactors (if `-visualizations 1`) |
 
@@ -247,8 +247,10 @@ Additional outputs:
 |---|---|
 | `cofactor_matches.csv` | One row per (structure, specifier) pair. Columns: `protein`, `specifier`, `matched_count`, `matched_group_ids`, `unmatched_reason` |
 
-`het_groups.csv` gains a `would_be_cofactor` column (0/1) so you can diff
-it against `currently_classified_as` to confirm the proposed change.
+In dry-run mode the `would_be_cofactor` column in `het_groups.csv` is
+populated with 0/1 values (the column is always declared, but stays 0
+without `-cofactors`) so you can diff it against `currently_classified_as`
+to confirm the proposed change.
 
 Console summary (also written to `het_groups_summary.txt`):
 
@@ -283,8 +285,8 @@ left at their defaults):
 
 | Element | Default style |
 |---|---|
-| Protein chain | Cartoon |
-| Ligand atoms | Sticks (magenta, default PyMOL style) |
+| Protein chain | Surface (`color bluewhite`) |
+| Ligand atoms | Red spheres (selection `ligand_atoms`, rendered by default) |
 | Ligand atoms when `-vis_highlight_ligands 1` | Red/violet spheres (separate selections in the older renderer) |
 | **Cofactor atoms** (when `-cofactors` set) | **Teal sticks** (`#49A8C7`) |
 | Pocket pseudoatoms | Per-pocket palette |
@@ -295,10 +297,13 @@ The renderer emits one PyMOL selection per cofactor name, plus an aggregate.
 For `-cofactors FAD,PLP` you get:
 
 ```
-select cofactor_FAD, id <FAD atom serials...>
-select cofactor_PLP, id <PLP atom serials...>
+select cofactor_FAD, id 123 or id 124 or id 125 or ...
+select cofactor_PLP, id 456 or id 457 or id 458 or ...
 select cofactor_atoms, cofactor_FAD or cofactor_PLP
 ```
+
+Each atom appears in its own `id <serial>` clause; PyMOL does not accept a
+comma-separated atom-id list, so the renderer joins the clauses with `or`.
 
 In PyMOL you can address `cofactor_FAD` and `cofactor_PLP` directly to,
 e.g., colour them differently, hide one of them, or zoom in. The bracketed
@@ -377,6 +382,13 @@ adjacent metal-coordinated pockets.
 | CU | Copper | Electron transfer |
 | CA | Calcium | Signaling, structural |
 
+> [!NOTE]
+> `CA` is also the PDB atom name for protein C-alpha backbone atoms. The
+> cofactor specifier matches on residue name (HETATM group name), not on
+> atom name, so `-cofactors CA` correctly selects calcium ions and does
+> not touch backbone atoms. The shared spelling can still be confusing
+> when reading PDB files by hand.
+
 ## Interactions with Other Features
 
 ### Explicit ligand definitions (`ligands` column)
@@ -406,7 +418,8 @@ emits a startup warning:
 ```
 WARN  Cofactor specifier(s) name(s) [PLP] are also covered by the active
 aa_mapping. Cofactor atom features will be computed using the mapped AA's
-table entries instead of cofactor defaults.
+table entries instead of cofactor defaults. Remove the entry from
+aa_mapping or change the cofactor specifier to fix.
 ```
 
 If you see this warning and didn't intend the override, either:
@@ -507,20 +520,22 @@ is logged only when `-cofactors` is non-empty. If it's missing, check:
 
 ### "I don't see the per-structure 'included' message"
 
-Either the specifier matched no groups, or P2Rank exited before processing
-that structure. Enable DEBUG to see the available HETATM groups:
+The "included" message is logged at INFO level, so it appears at any log
+level (it is not gated behind DEBUG). If you don't see it, the specifier
+matched no groups, or P2Rank exited before processing that structure.
 
-```bash
-prank predict -f protein.pdb -cofactors FAD -log_level DEBUG
-```
-
-You should then see one of:
+When the specifier matched, you will see:
 
 ```
 Structure protein.pdb: included 1 cofactor type(s) as protein surface (FAD: 53 atoms)
 ```
 
-or
+If the specifier matched nothing, P2Rank instead emits a DEBUG-level
+message listing the available HETATM groups. Enable DEBUG to see it:
+
+```bash
+prank predict -f protein.pdb -cofactors FAD -log_level DEBUG
+```
 
 ```
 Structure protein.pdb: cofactor specifier(s) [FAD] matched no groups. Available HETATM groups: [...]

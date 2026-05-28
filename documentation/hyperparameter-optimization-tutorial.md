@@ -31,7 +31,7 @@ Examples:
 * list of numbers: `'(1,2,3,4)'`
 * list of strings: `'(RandomForest,FasterForest,FasterForest2)'`
 * list of lists: `'((protrusion,bfactor,volsite),(protrusion,bfactor),(protrusion),())'`
-    * **`()` denotes an empty list** — useful as a "baseline" cell in list-of-strings
+    * **`()` denotes an empty list**, useful as a "baseline" cell in list-of-strings
       grids. Particularly natural with `-extra_features`:
       `-extra_features '((),(my_new),(my_new,my_other))'` evaluates the default
       feature set alone, then with `my_new` added, then with both candidates.
@@ -70,33 +70,38 @@ find rcode | xargs -P 16 -I '{}' Rscript '{}'
 ### Real examples
     
 Quick test run:
-~~~sh   
-./prank.sh ploop 
-    -c config/train-default          \      # override default config with config/train-default.groovy config file
-    -t chen11-fpocket.ds            \      # crossvalidate on chen11 dataset
-    -loop 1 -rf_trees 5 -rf_depth 5 \      # make it quick (1 pass, small model)
+~~~sh
+# override default config with config/train-default.groovy
+# crossvalidate on chen11 dataset
+# make it quick (1 pass, small model)
+./prank.sh ploop \
+    -c config/train-default \
+    -t chen11-fpocket.ds \
+    -loop 1 -rf_trees 5 -rf_depth 5 \
     -features '((protrusion,bfactor),(protrusion,bfactor,new_feature))'
 ~~~
 
 (Then check `run.log` in the results directory for errors. Check if R plots are generated correctly.)
 
 > [!WARNING]
-> `-loop 1 -rf_trees 5 -rf_depth 5` are **smoke-test knobs** — they cut runtime by
+> `-loop 1 -rf_trees 5 -rf_depth 5` are **smoke-test knobs**; they cut runtime by
 > ~100× by training a tiny single-seed model. Use them to verify wiring/syntax;
 > never report results from a run configured this way. For real evaluation use
 > the "Feature set comparisons" recipe below.
 
 Feature set comparisons:
 ~~~sh
-./prank.sh ploop -c config/train-default \      
-    -t chen11-fpocket.ds                \  # crossvalidate on chen11 dataset    
-    -loop 10 -rf_trees 100 -rf_depth 10 \      
+# crossvalidate on chen11 dataset
+./prank.sh ploop -c config/train-default \
+    -t chen11-fpocket.ds \
+    -loop 10 -rf_trees 100 -rf_depth 10 \
     -features '((protrusion,bfactor),(protrusion,bfactor,new_feature))'
 
-./prank.sh ploop -c config/train-default \      
-    -t chen11-fpocket.ds                \  # train on chen11 
-    -e joined.ds                        \  # and evaluate on a different dataset
-    -loop 10 -rf_trees 100 -rf_depth 10 \      
+# train on chen11 and evaluate on a different dataset
+./prank.sh ploop -c config/train-default \
+    -t chen11-fpocket.ds \
+    -e joined.ds \
+    -loop 10 -rf_trees 100 -rf_depth 10 \
     -features '((protrusion,bfactor),(protrusion,bfactor,new_feature))'
 ~~~
 
@@ -108,7 +113,7 @@ is set in `local-env.sh`; the version segment is auto-derived). Contents:
 
 | File / dir | What it is |
 |---|---|
-| `selected_stats.csv` | Headline metrics-per-grid-cell table — usually what you want |
+| `selected_stats.csv` | Headline metrics-per-grid-cell table (usually what you want) |
 | `param_stats.csv` | Full per-cell metrics (every recorded stat) |
 | `tables/<metric>.csv` | One CSV per metric for plotting (e.g. `DCA_4_0.csv`) |
 | `plots/`, `plots_sorted/` | R-generated PNGs when `Rscript` is on the PATH |

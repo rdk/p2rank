@@ -69,6 +69,26 @@ See [conservation.md](conservation.md#debugging-sequence-and-conservation-mappin
 ~~~
 
 
+### Other analyze subcommands
+
+| Subcommand | Description |
+|---|---|
+| `binding-sites` | Per-site stats (atoms/residues/radius/center) for ligand or explicit-site datasets. |
+| `binding-site-centers` | Compute each `SiteCenterMethod` for every site and report distances between methods, to SAS, and to protein. |
+| `aa-propensities` | Per-AA propensity of being labeled as binding (over exposed residues). |
+| `atomtype-propensities` | Per-atom-type propensity of contacting a relevant ligand. |
+| `aa-surf-seq-duplets` | Ordered sequence-duplet propensities starting from exposed residues. |
+| `aa-surf-seq-triplets` | Sequence-triplet propensities for exposed residues. |
+| `all-propensities` | Run all four propensity analyses above in one pass. |
+| `proteins` | Per-structure dataset stats (chains, residues, atoms, ligands, peptides). |
+| `parse-proteins` | Parse every dataset item and report load errors. |
+| `chains` | Per-chain stats (id, mmcif id, length, residue string). |
+| `chains-residues` | `chains` plus a residue-detail CSV per chain. |
+| `peptides` | List peptide chains per protein. |
+| `convert-dataset-to-atomid` | Rewrite a dataset using `[atom_id:N]` ligand specifiers. |
+| `print-volsite-table` | Dump the VolSite atom-property table used by `volsite` features. |
+
+
 ## Export feature vectors for further analysis
 
 `-delete_vectors 0`           
@@ -128,6 +148,16 @@ Examples:
 ./prank.sh transform reduce-to-chains -f distro/test_data/2W83.pdb.gz -chains A,B  -out_format cif                              # output: <out_dir>/2W83_A,B.cif
 ~~~
 
+### Other transform subcommands
+
+| Subcommand | Description |
+|---|---|
+| `aaindex1-to-csv` | Convert an AAIndex1 `-f <file>` to a CSV table indexed by amino acid. |
+| `flatten-rf-model` | Re-save a Random Forest model with `rf_flatten=true` for faster inference. |
+| `model-to-v3-format` | Convert a legacy model to the v3 directory layout (`model.zst`). |
+| `loop-flatten-rf-model` | Repeatedly flatten a model in a loop (developer benchmark). |
+| `bench-flatten-optimizers` | Placeholder for flatten optimizer benchmarks (developer). |
+
 ## Print
             
 
@@ -148,3 +178,11 @@ Print information about trained model (`*.model` file).
 ./prank.sh print model-info                     # for default model
 ./prank.sh print model-info -m model2.model     # for custom model
 ~~~
+
+### Other print subcommands
+
+| Subcommand | Description |
+|---|---|
+| `feature-sets` | Print just the list of effectively enabled features (no sub-feature header). |
+| `params` | Dump the effective parameters (CLI args plus resolved defaults). |
+| `transform-model` | Re-serialize a model with the current `Futils` Zstd writer (developer utility). |

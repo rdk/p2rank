@@ -22,7 +22,8 @@ P2Rank ships with pre-trained models that include conservation features:
 
 > [!IMPORTANT]
 > The pre-trained conservation-aware models shipped with P2Rank were trained
-> using HMM-based conservation scores (Jensen-Shannon divergence, `.hom` format).
+> using HMM-based conservation scores (`.hom` format, a file extension inherited
+> from the legacy JSD scoring method).
 > Using conservation scores from a different method (e.g. with different score distribution or format)
 > is not expected to produce good results and may not work at all.
 > If you want to use a different conservation method, you would need to retrain the model.
@@ -31,7 +32,7 @@ P2Rank ships with pre-trained models that include conservation features:
 
 ```bash
 # Predict with conservation (fetching scores from a server)
-prank predict protein.pdb \
+prank predict -f protein.pdb \
   -c conservation_hmm \
   -conservation_type hmm \
   -conservation_provider hmm_server \
@@ -60,7 +61,7 @@ Place `.hom` score files next to the protein files (or in directories specified 
 Files are matched by naming convention: `{proteinBaseName}_{chainId}.hom` (e.g., `2W83_A.hom`).
 
 ```bash
-prank predict protein.pdb -c conservation_hmm -conservation_dirs ./my_scores/
+prank predict -f protein.pdb -c conservation_hmm -conservation_dirs ./my_scores/
 ```
 
 > [!NOTE]
@@ -73,7 +74,7 @@ Configure P2Rank to fetch scores from an HTTP server on demand.
 Fetched scores are cached locally so subsequent runs reuse them.
 
 ```bash
-prank predict protein.pdb \
+prank predict -f protein.pdb \
   -c conservation_hmm \
   -conservation_type hmm \
   -conservation_provider hmm_server \
@@ -113,6 +114,9 @@ mkdir -p /ssd/p2rank-conservation-docker-data/hmm-based
 cd /ssd/p2rank-conservation-docker-data/hmm-based
 wget https://ftp.expasy.org/databases/uniprot/current_release/uniref/uniref50/uniref50.fasta.gz && gunzip uniref50.fasta.gz
 
+# return to the prankweb repo (compose file lives there)
+cd -
+
 # build/rebuild docker image (only necessary after changes in this repo)
 docker compose build conservation-server
 
@@ -149,7 +153,7 @@ For example, for protein `{protein_dir}/{baseName}.pdb` conservation files would
 
 To use a custom cache directory instead use the `-conservation_cache_dir` parameter:
 ```bash
-prank predict protein.pdb \
+prank predict -f protein.pdb \
   -c conservation_hmm \
   -conservation_type hmm \
   -conservation_provider hmm_server \
@@ -231,7 +235,7 @@ prank preload-conservation dataset.ds \
 # 2. Run prediction using -conservation_dirs, with cache disabled
 #    (scores are loaded directly from the directory, no cache is read or written)
 prank predict dataset.ds \
-  -c alphafold_conservation_hmm \
+  -c conservation_hmm \
   -conservation_dirs ./conservation/hmm \
   -conservation_disable_cache true
 ```
@@ -240,6 +244,12 @@ prank predict dataset.ds \
 > `-conservation_dirs` points to `./conservation/hmm` because preloading
 > creates the layout `{conservation_cache_dir}/{conservation_type}/`, so score files
 > end up in `./conservation/hmm/*.hom`.
+
+> [!NOTE]
+> `-conservation_disable_cache true` only has an effect when a conservation provider
+> is also configured for the predict step. With `-conservation_dirs` alone (no provider),
+> the cache path is never consulted, so the flag is a no-op but harmless. It is included
+> here so the same command remains correct if you later add a provider to the predict step.
 
 ## Parameters Reference
 

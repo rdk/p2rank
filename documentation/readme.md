@@ -1,7 +1,9 @@
 # Documentation
 
 This directory contains documentation and tutorials for P2Rank.
-Note that the coverage is spotty and incomplete -- not all features and workflows are documented here.
+
+> **Start here:** the [User Guide](user-guide.md) is a comprehensive introduction covering
+> installation, prediction, rescoring, configuration, performance tuning, and more.
 
 ## Usage
 

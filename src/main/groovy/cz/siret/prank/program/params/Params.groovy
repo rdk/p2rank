@@ -156,8 +156,8 @@ class Params {
      *   <li> "*" - include all
      *   <li> "chem.*" - include all with prefix "chem."
      *   <li> "-chem.*" - exclude all with prefix "chem."
-     *   <li> "chem.hydrophobicity" - include particular sub-feature
-     *   <li> "-chem.hydrophobicity" - exclude particular sub-feature
+     *   <li> "chem.hydrophobic" - include particular sub-feature
+     *   <li> "-chem.hydrophobic" - exclude particular sub-feature
      * </ul>
      *
      * If the first filter in feature_filters starts with "-", include-all filter ("*") is implicitly applied to the front.
@@ -168,9 +168,9 @@ class Params {
      *   <li> ["*"] - include all
      *   <li> ["*","-chem.*"] - include all except those with prefix "chem."
      *   <li> ["-chem.*"] - include all except those with prefix "chem."
-     *   <li> ["-chem.*","chem.hydrophobicity"] - include all except those with prefix "chem.", but include "chem.hydrophobicity"
-     *   <li> ["chem.hydrophobicity"] - include only "chem.hydrophobicity"
-     *   <li> ["chem.*","-chem.hydrophobicity","-chem.atoms"] - include only those with prefix "chem.", except "chem.hydrophobicity" and "chem.atoms"
+     *   <li> ["-chem.*","chem.hydrophobic"] - include all except those with prefix "chem.", but include "chem.hydrophobic"
+     *   <li> ["chem.hydrophobic"] - include only "chem.hydrophobic"
+     *   <li> ["chem.*","-chem.hydrophobic","-chem.atoms"] - include only those with prefix "chem.", except "chem.hydrophobic" and "chem.atoms"
      * </ul>
      */
     @ModelParam

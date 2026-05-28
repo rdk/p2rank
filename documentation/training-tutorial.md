@@ -52,12 +52,12 @@ Training and optimization runs can be run from the project directory (repo root)
 
 `./prank.sh` sources `local-env.sh` from the repo root before launching the JVM. Common contents:
 
-* `JAVA_HOME`, `JAVA_LOCALENV_PARAMS` — pick a JDK and pass `-Xmx32G` plus other JVM flags
-* `PRANK_LOCALENV_PARAMS` — extra prank CLI args appended to every invocation
-* `dataset_base_dir` (via `PRANK_LOCALENV_PARAMS=-c <config>`) — typically `../p2rank-datasets`
-* output base directory — see `output_base_dir` parameter in [Params.groovy](https://github.com/rdk/p2rank/blob/develop/src/main/groovy/cz/siret/prank/program/params/Params.groovy)
+* `JAVA_HOME`, `JAVA_LOCALENV_PARAMS`: pick a JDK and pass `-Xmx32G` plus other JVM flags
+* `PRANK_LOCALENV_PARAMS`: extra prank CLI args appended to every invocation
+* `dataset_base_dir` (via `PRANK_LOCALENV_PARAMS=-c <config>`): typically `../p2rank-datasets`
+* output base directory: see `output_base_dir` parameter in [Params.groovy](https://github.com/rdk/p2rank/blob/develop/src/main/groovy/cz/siret/prank/program/params/Params.groovy)
 
-By default training/eval/ploop results land under `<output_base_dir>/<p2rank_version>/<out_subdir>/...` — e.g. `~/p2rank-results/2.6-alpha/EVAL_NEW_FEATURES/ploop_chen11-fpocket_joined_RUN1/`. The `<p2rank_version>` segment is derived automatically and lets results from different versions coexist.
+By default training/eval/ploop results land under `<output_base_dir>/<p2rank_version>/<out_subdir>/...`, e.g. `~/p2rank-results/2.6-alpha/EVAL_NEW_FEATURES/ploop_chen11-fpocket_joined_RUN1/`. The `<p2rank_version>` segment is derived automatically and lets results from different versions coexist.
 
 ## Training and evaluation
 
@@ -161,7 +161,7 @@ To run crossvalidation on a single dataset use the `prank crossval` command.
 
 Example:
 ~~~sh
-./prank crossval -loop 10 -seed 42 -folds 5 <dataset>    
+./prank.sh crossval -loop 10 -seed 42 -folds 5 <dataset>    
 ~~~
 Runs 10 independent 5-fold crossvalidation runs with different values of a random seed starting at 42. Averaged results will be written to the output directory.
 
