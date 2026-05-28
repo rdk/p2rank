@@ -15,15 +15,26 @@ or template libraries are required: give P2Rank a structure file and it returns 
 
 P2Rank predicts **where** small-molecule ligands are likely to bind on a protein surface. It outputs
 a ranked list of putative binding pockets with scores, probabilities, pocket-lining residues, and
-ready-to-open visualization scripts.
+ready-to-open visualization scripts. Predictions are **ligand-agnostic**: P2Rank identifies sites
+where *some* small-molecule ligand is likely to bind, not sites for any particular ligand of interest.
 
-### What P2Rank does NOT do
+### Why use P2Rank
 
-P2Rank predicts generic, ligand-agnostic binding sites: it identifies where
-*some* small-molecule ligand is likely to bind, not where a *particular* ligand
-of interest would bind. It does not perform docking, estimate binding affinity,
-detect protein-protein interaction sites, or distinguish allosteric from
-orthosteric pockets.
+- **High success rate** at putting the true binding site in the top one or two ranked pockets, on
+  standard benchmarks
+- **Fast and scalable**: single-CPU prediction takes seconds per protein and the dataset mode
+  processes many structures in parallel
+- **No external dependencies**: no template database, no homology search, no other software
+  required at prediction time
+- **Standalone CLI** suitable for batch processing, scripting, and reproducible pipelines
+- **Calibrated probabilities** in addition to raw scores, so ranking can be combined with a
+  threshold
+- **Adapts to structure type**: shipped configs for X-ray, AlphaFold/cryo-EM/NMR, and
+  conservation-aware prediction
+- **Rescores other tools' pockets** (Fpocket, Pocketeer, etc.), often improving their ranking
+- **Rich output for downstream analysis**: SAS points, per-pocket descriptors, 3D pocket grids,
+  PyMOL and ChimeraX visualizations
+- **Open source** under MIT license
 
 ### P2Rank vs PrankWeb
 
