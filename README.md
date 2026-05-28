@@ -227,6 +227,12 @@ This project uses [Gradle](https://gradle.org/) build system via included Gradle
 Requires a **JDK** (not JRE) 17 or later on `PATH` or via `JAVA_HOME`.
 On Windows, use `bash` to run build commands (installed by default with [Git for Windows](https://git-scm.com/download/win)).
 
+> [!NOTE]
+> `distro/prank` is the production launcher you'll also find in the downloaded release.
+> `prank.sh` (repo root) is the development launcher used during training and feature work,
+> as described in the training tutorial. Routine prediction work uses `distro/prank`
+> (or just `prank` if the directory is on your `PATH`).
+
 ```ruby
 git clone https://github.com/rdk/p2rank.git && cd p2rank
 ./make.sh          # after this, you can use the program by running ./prank.sh or ./distro/prank

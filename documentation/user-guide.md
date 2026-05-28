@@ -601,11 +601,21 @@ fpocket_output/1abc_out/1abc_out.pdb  structures/1abc.pdb
 fpocket_output/2xyz_out/2xyz_out.pdb  structures/2xyz.pdb
 ```
 
+`PARAM.PREDICTION_METHOD` accepts: `fpocket`, `pocketeer`, `puresnet`, `concavity`,
+`sitehound`, `deepsite`, `metapocket2`, `lise`, `swinsite`, `seq2pocket`, `p2rank`.
+See [rescoring.md](rescoring.md#supported-methods) for the input format expected by each.
+
 ### 8.4 Output
 
-- `*_rescored.csv`: re-ranked pockets with old and new ranks
+- `*_rescored.csv`: re-ranked pockets with columns `name, score, rank, old_rank, change, change_visual_aid` (see [rescoring.md](rescoring.md) for full schema)
 - `*_predictions.csv`: full pocket details (same format as `predict` output)
 - Visualizations (unless disabled)
+
+> [!NOTE]
+> The `probability` column in `_rescored.csv` and `_predictions.csv` is calibrated specifically
+> for rescoring **Fpocket** predictions. Probabilities reported when rescoring output from
+> other methods (Pocketeer, ConCavity, etc.) are not separately calibrated and should be
+> interpreted with caution.
 
 > [!NOTE]
 > For AlphaFold or cryo-EM structures, use `-c rescore_2024` which does not depend on B-factor values.
@@ -681,11 +691,36 @@ See [cofactors.md](cofactors.md) for precise specifier syntax, dataset integrati
 
 ### 9.3 Exporting Data for Downstream Analysis
 
-For the three opt-in tabular exports (SAS point features, pocket descriptors, pocket grid), their flags, output formats, and usage examples, see [Section 6.3](#63-tabular-data-exports).
+P2Rank can export detailed numerical data for downstream analysis. All three exports are off by default.
+
+| Export | Flag | Output file | Description |
+|---|---|---|---|
+| SAS point features | `-export_points 1` | `{name}_points.{format}` | Per-point coordinates, feature values, predicted scores, pocket assignment |
+| Pocket descriptors | `-export_pocket_descriptors 1` | `{name}_pocket_descriptors.{format}` | Per-pocket volume, sphericity, charge, dipole, residue counts |
+| Pocket grid | `-export_pocket_grid 1` | `{name}_pocket_grid.{format}` | 3D lattice points covering pocket empty space, with pharmacophore descriptors |
+
+**Output format** is controlled by two parameters:
+
+- `-export_points_format` for SAS point export (default: `csv`)
+- `-pocket_grid_format` for both the pocket grid and pocket descriptor exports (default: `csv.gz`)
+
+Supported formats: `csv`, `csv.gz`, `csv.zst`, `arrow`, `arrow.gz`, `arrow.zst`, `parquet`.
+
+```bash
+prank predict -f protein.pdb -export_points 1 -export_points_format parquet
+prank predict -f protein.pdb -export_pocket_descriptors 1 -pocket_grid_format csv
+prank predict -f protein.pdb -export_pocket_grid 1 -pocket_grid_format arrow.zst
+```
+
+> [!TIP]
+> For Python analysis (pandas, polars, DuckDB), use `parquet`. For maximum compatibility with other tools, use `csv`. For the smallest files, use `csv.zst`.
 
 A Jupyter notebook demonstrating output analysis is available at `documentation/notebooks/analyze_p2rank_output.ipynb`.
 
-See: [export-points.md](export-points.md), [export-pocket-descriptors.md](export-pocket-descriptors.md), [export-pocket-grid.md](export-pocket-grid.md).
+See the detailed documentation for each export:
+- [export-points.md](export-points.md)
+- [export-pocket-descriptors.md](export-pocket-descriptors.md)
+- [export-pocket-grid.md](export-pocket-grid.md)
 
 
 ## 10. Common Recipes
@@ -1012,7 +1047,7 @@ Inspect these files first when a batch run reports errors but finished without a
 
 | Parameter | Default | Description |
 |---|---|---|
-| `-pred_point_threshold` | `0.35` | Minimum ligandability score for a SAS point to be considered positive |
+| `-pred_point_threshold` | `0.35` | Minimum ligandability score for a SAS point to be considered positive (rescoring configs `rescore_2024` and `rescore_conservation` override this to `0.4`) |
 | `-pred_min_cluster_size` | `3` | Minimum number of positive SAS points to form a pocket |
 | `-pred_max_pockets` | `0` (no limit) | Maximum number of pockets to report |
 | `-pred_min_pocket_score` | disabled | Minimum raw score for a pocket to be reported |

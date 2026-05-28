@@ -105,7 +105,7 @@ Additional notes:
 
 
 ### Historical note on the dataset format
-(This section should be moved to historical notes as soon as there will be a new default P2Rank model.)
+<!-- This section should be moved to historical notes as soon as there will be a new default P2Rank model. -->
 
 Parameter `-sample_negatives_from_decoys` determines how points are sampled from the proteins in a training dataset. 
 If `sample_negatives_from_decoys = false` all the points from the protein surface are used. 
