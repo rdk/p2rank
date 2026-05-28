@@ -621,10 +621,10 @@ See [rescoring.md](rescoring.md#supported-methods) for the input format expected
 - Visualizations (unless disabled)
 
 > [!NOTE]
-> The `probability` column in `_rescored.csv` and `_predictions.csv` is calibrated specifically
-> for rescoring **Fpocket** predictions. Probabilities reported when rescoring output from
-> other methods (Pocketeer, ConCavity, etc.) are not separately calibrated and should be
-> interpreted with caution.
+> The `probability` column in the regenerated `_predictions.csv` is calibrated
+> specifically for rescoring **Fpocket** predictions. Probabilities reported when
+> rescoring output from other methods (Pocketeer, ConCavity, etc.) are not
+> separately calibrated and should be interpreted with caution.
 
 > [!NOTE]
 > For AlphaFold or cryo-EM structures, use `-c rescore_2024` which does not depend on B-factor values.

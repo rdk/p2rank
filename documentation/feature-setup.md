@@ -112,7 +112,9 @@ Effective feature vector header (i.e. enabled sub-features):
 
 The table below lists feature calculators that ship with P2Rank. Use the names with
 `-features` or `-extra_features`. For the full effective sub-feature list of any
-configuration, run `./prank print features -c <config>`.
+configuration, run `./prank print features -c <config>`. For the authoritative
+list (including training-internal variants), see
+`src/main/groovy/cz/siret/prank/features/api/FeatureRegistry.groovy`.
 
 | Name | Description |
 |---|---|
@@ -124,27 +126,14 @@ configuration, run `./prank print features -c <config>`.
 | `residue_table` | Residue-type table lookup (columns selected by `-residue_table_features`) |
 | `conservation` | Sequence conservation score (requires `-conservation_dirs` or HMM provider) |
 | `asa` | Accessible surface area |
-| `propensity` | AA / atom-type binding propensities |
-| `secstruct` | Secondary structure indicators |
+| `aa-propensity`, `atomtype-propensity`, `duplets`, `triplets` | AA / atom-type / sequence-duplet / triplet binding propensities |
+| `ss`, `sss` (+ `ss_cloud`, `sss_cloud`, `sss_motif`) | Secondary structure (full + simplified, cloud and motif variants) |
 | `contactres` | Contact-residue features |
 | `electrostatics` | AMBER ff14SB Coulomb potential evaluated at four distance scales |
-| `energy`, `energy2`, `energy3` | Probe-energy features (LJ + Coulomb, different probe parameterisations) |
-| `physics` | ANM (sensor / effectiveness / MSF) and contact-graph centrality measures |
+| `energy-*` (+ `energy-cloud*-ch3`), `energy2-*` / `e2s-*`, `e3-*` | Probe-energy features at several force-field parameterisations and aggregation scales |
+| `anm_sensor`, `anm_effectiveness`, `anm_msf`, `cg_betweenness`, `cg_closeness`, `cg_degree` | Physics: ANM modes and contact-graph centrality measures |
 | `csv` | Per-protein values supplied through external CSV files (see "Adding new features" below) |
 | `xyz` | Dummy feature exposing the 3D coordinates of each SAS point (useful for `-export_points`) |
-
-### Site reachability metrics
-
-Independently of feature calculators, the evaluation code computes per-site
-reachability metrics that show up in `_predictions.csv` and dataset-level summaries:
-
-- `SITE_REACHABILITY` — minimum SAS-point distance from the site centre
-- `SITE_REACHABLE_RATE` — fraction of sites with at least one SAS point inside `-extended_pocket_cutoff`
-- `SITE_CLUSTERABLE_RATE` — fraction of sites whose reachable SAS points form a cluster large enough to seed a pocket
-- `SITE_UNREACHABLE` — sites with no SAS point within the cutoff
-
-These metrics are useful for diagnosing why otherwise-trainable models fail on
-particular datasets (typically buried sites or aggressive surface tessellation).
 
 
 ## Adding new features
