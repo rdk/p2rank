@@ -64,7 +64,7 @@ Presentation slides introducing the original version of the algorithm: [Slides (
 
 ### Publications
 
-If you use P2Rank, please cite relevant papers: <a href="/misc/citations.md" title="go to the BibTex citations" target="_blank"><img align="right" src="https://img.shields.io/badge/BibTeX-eee"></img></a>
+If you use P2Rank, please cite relevant papers: <a href="misc/citations.md" title="go to the BibTex citations" target="_blank"><img align="right" src="https://img.shields.io/badge/BibTeX-eee"></img></a>
 
 * [Software article](https://doi.org/10.1186/s13321-018-0285-8) about P2Rank pocket prediction tool  
  Krivak R, Hoksza D. ***P2Rank: machine learning based tool for rapid and accurate prediction of ligand binding sites from protein structure.*** Journal of Cheminformatics. 2018 Aug.  

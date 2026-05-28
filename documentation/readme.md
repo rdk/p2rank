@@ -2,6 +2,7 @@
 
 This directory contains documentation and tutorials for P2Rank.
 
+> [!IMPORTANT]
 > **Start here:** the [User Guide](user-guide.md) is a comprehensive introduction covering
 > installation, prediction, rescoring, configuration, performance tuning, and more.
 

@@ -4,6 +4,21 @@
 
 # P2Rank User Guide
 
+## Contents
+
+1. [Introduction](#1-introduction)
+2. [Quick Start](#2-quick-start)
+3. [Choosing a Configuration Profile](#3-choosing-a-configuration-profile)
+4. [Input Formats and Dataset Files](#4-input-formats-and-dataset-files)
+5. [Understanding the Output](#5-understanding-the-output)
+6. [Controlling Prediction Output](#6-controlling-prediction-output)
+7. [Performance Tuning](#7-performance-tuning)
+8. [Rescoring Predictions from Other Methods](#8-rescoring-predictions-from-other-methods)
+9. [Advanced Features](#9-advanced-features)
+10. [Common Recipes](#10-common-recipes)
+11. [Troubleshooting](#11-troubleshooting)
+12. [Reference](#12-reference)
+
 ## 1. Introduction
 
 P2Rank is a stand-alone command-line tool for predicting ligand-binding sites from protein structure.
@@ -487,9 +502,6 @@ prank predict -f protein.pdb -export_pocket_grid 1 -vis_pocket_grid 1
     space of each predicted pocket. Left: surface view with grid. Right: dense grid view with ligand sticks for reference.
 </i></p>
 
-> [!TIP]
-> When iterating on visualization settings, process a single structure with `-f` first. Once you are satisfied, switch to a dataset file for the full batch.
-
 ### 6.3 Tabular Data Exports
 
 P2Rank can export detailed numerical data for downstream analysis. All three exports are off by default.
@@ -562,12 +574,9 @@ Even with visualizations enabled, you can skip copying structure files to the ou
 prank predict dataset.ds -vis_copy_proteins 0
 ```
 
-### 7.4 Memory
+### 7.4 Other Tuning Options
 
-The `prank` script sets a 2 GB heap by default. For very large structures or batch runs, increase `-Xmx` by editing the script directly. See [Section 11: OutOfMemoryError](#outofmemoryerror) for the exact steps and caveats.
-
-### 7.5 Other Tuning Options
-
+- **Memory:** the `prank` script sets a 2 GB heap by default; for very large structures or batch runs, edit `-Xmx` in the script. See [Section 11: OutOfMemoryError](#outofmemoryerror) for the exact steps and caveats.
 - **Surface density:** the `-tessellation` parameter controls SAS point density. The default is `2`. Higher values give finer surface sampling but slower processing. Rarely needs changing.
 - **Resilient batch processing:** by default (`-fail_fast 0`), P2Rank continues processing remaining structures if one fails. Set `-fail_fast 1` to stop immediately on the first error.
 
@@ -995,7 +1004,7 @@ Inspect these files first when a batch run reports errors but finished without a
 | `preload-conservation` | Pre-download conservation scores for a dataset |
 | `analyze` | Analysis subcommands (see below) |
 | `transform` | Structure transformation subcommands |
-| `print` | Print model info, feature lists |
+| `print` | Introspection (features, model-info, params, feature-sets, transform-model). See [hidden-commands.md](hidden-commands.md#print). |
 | `help` | Show help and version info |
 
 **Analyze subcommands:**
@@ -1016,7 +1025,9 @@ Inspect these files first when a batch run reports errors but finished without a
 |---|---|
 | `transform reduce-to-chains` | Extract specific chains from a structure file |
 | `print features` | Show enabled features for a configuration |
+| `print feature-sets` | Print just the list of effectively enabled features |
 | `print model-info` | Show information about a trained model |
+| `print params` | Dump the effective parameters (CLI args plus resolved defaults) |
 
 ### 12.2 Important Parameters
 
