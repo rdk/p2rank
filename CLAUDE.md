@@ -35,3 +35,13 @@ stand out.
   *other* tools whose pockets P2Rank rescores. Intentional.
 - **`README.md` release badge may lag `build.gradle`.** Updated at release,
   not on alpha bumps. Mismatch during alpha cycles is expected.
+- **`README.md` Publications list "nested" indentation** (PrankWeb 3 / PrankWeb 1
+  rendered as sub-list under PrankWeb 4). Intentional grouping.
+- **`README.md` has a duplicate `rescore_2024` recommendation** (once inline in
+  a code-block comment, once in the paragraph below). Intentional emphasis.
+- **`README.md` Usage section uses `<pre><b>...</b></pre>` HTML** for the
+  signature command. Intentional styling.
+- **`README.md` trailing whitespace and double blank lines** at various places.
+  Intentional spacing / Markdown hard-break formatting.
+- **`README.md` Java version phrasing "tested up to Java 26"** rather than
+  enumerating the CI matrix. Intentional.

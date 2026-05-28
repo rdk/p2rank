@@ -10,7 +10,7 @@ Ligand-binding site prediction based on machine learning.
 
 <a href="https://github.com/rdk/p2rank/releases" title="go to the release page"><img src="https://img.shields.io/badge/release-2.5.1-green.svg"></img></a>
 [![Build Status](https://github.com/rdk/p2rank/actions/workflows/develop.yml/badge.svg)](https://github.com/rdk/p2rank/actions)
-[![License: MIT](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](/LICENSE.txt)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](/LICENSE.txt)
 ![GitHub all releases](https://img.shields.io/github/downloads/rdk/p2rank/total)
 
 ### Description
@@ -20,19 +20,18 @@ It achieves high prediction success rates without relying on external software f
            
 ### ✨ What's new?
   
-* Upcoming **2.6** brings pocket-grid & per-pocket descriptor exports, cofactor-as-surface handling, modified to canonical residue mapping, and additional supported methods for rescoring (see [alpha release](https://github.com/rdk/p2rank/releases/tag/2.6-alpha)).
+* Available in **2.6** (alpha): pocket-grid & per-pocket descriptor exports, cofactor-as-surface handling, modified to canonical residue mapping, and additional supported methods for rescoring (see [alpha release](https://github.com/rdk/p2rank/releases/tag/2.6-alpha)).
 * Version **2.5** brings speed optimizations (~2x faster prediction), ChimeraX visualizations, and improvements to rescoring (`fpocket-rescore` command).
 * Version **2.4.2** adds support for BinaryCIF (`.bcif`) input and rescoring of fpocket predictions in `.cif` format.          
 * Version **2.4** adds support for mmCIF (`.cif`) input and contains a special profile for predictions on AlphaFold models and NMR/cryo-EM structures.  
 
 ### Requirements
 
+* **Runtime**: Java 17 or later (tested up to Java 26)
+* **Visualization** (optional): PyMOL or ChimeraX
 
- * **Runtime**: Java 17 or later (tested up to Java 26)
-  * **Visualization** (optional): PyMOL or ChimeraX
-
-  Runs on Linux, macOS, and Windows. \
-  On Windows, run from Git Bash to avoid command-line formatting issues.
+Runs on Linux, macOS, and Windows. \
+On Windows, run from Git Bash to avoid command-line formatting issues.
 
 
 ### Setup
@@ -43,6 +42,7 @@ P2Rank requires no installation. Binary packages are available as GitHub Release
 * Source code: https://github.com/rdk/p2rank
 * Datasets: https://github.com/rdk/p2rank-datasets
 * **[User Guide](documentation/user-guide.md)**: comprehensive documentation for new and advanced users
+* All documentation: [documentation/](documentation/readme.md)
 
 ### Usage
 
@@ -268,7 +268,7 @@ Both Fpocket and P2Rank have many configurable parameters that influence behavio
 This program builds upon software written by other people, either through library dependencies or through code included in its source tree (where no library builds were available). Notably:
 * FastRandomForest by Fran Supek (https://code.google.com/archive/p/fast-random-forest/)
 * FastRandomForest 2.0 (https://github.com/GenomeDataScience/FastRandomForest)
-* KDTree by Rednaxela (http://robowiki.net/wiki/User:Rednaxela/kD-Tree)
+* KDTree by Rednaxela (https://robowiki.net/wiki/User:Rednaxela/kD-Tree)
 * BioJava (https://github.com/biojava)
 * Chemistry Development Kit (https://github.com/cdk)
 
