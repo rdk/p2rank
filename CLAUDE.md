@@ -45,3 +45,7 @@ stand out.
   Intentional spacing / Markdown hard-break formatting.
 - **`README.md` Java version phrasing "tested up to Java 26"** rather than
   enumerating the CI matrix. Intentional.
+- **`README.md` says SAS-point file's residue sequence is in "position 23-26"**.
+  That is the standard PDB resSeq field (columns 23-26). `PredictionVisualizer`
+  uses `%2d` so the value sits in columns 25-26 of that field. The README
+  description matches the PDB spec; do not change it to "columns 25-26".

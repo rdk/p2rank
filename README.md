@@ -20,7 +20,7 @@ It achieves high prediction success rates without relying on external software f
            
 ### ✨ What's new?
   
-* Available in **2.6** (alpha): pocket-grid & per-pocket descriptor exports, cofactor-as-surface handling, modified to canonical residue mapping, and additional supported methods for rescoring (see [alpha release](https://github.com/rdk/p2rank/releases/tag/2.6-alpha)).
+* Available in **2.6** (alpha): pocket-grid & per-pocket descriptor exports, [cofactor-as-surface handling](documentation/cofactors.md), [modified-to-canonical residue mapping](documentation/aa-mapping.md), and additional supported methods for rescoring (see [alpha release](https://github.com/rdk/p2rank/releases/tag/2.6-alpha)).
 * Version **2.5** brings speed optimizations (~2x faster prediction), ChimeraX visualizations, and improvements to rescoring (`fpocket-rescore` command).
 * Version **2.4.2** adds support for BinaryCIF (`.bcif`) input and rescoring of fpocket predictions in `.cif` format.          
 * Version **2.4** adds support for mmCIF (`.cif`) input and contains a special profile for predictions on AlphaFold models and NMR/cryo-EM structures.  
@@ -105,10 +105,14 @@ prank predict -f test_data/1fbl.cif.zst  # run on a single cif file compressed w
 prank predict -threads 8     test.ds     # specify num. of working threads for parallel dataset processing
 prank predict -o output_here test.ds     # explicitly specify output directory
 
-prank predict -c alphafold   test.ds     # use alphafold config and model (config/alphafold.groovy)  
-                                         # this profile is recommended for AlphaFold models, NMR and cryo-EM 
-                                         # structures since it doesn't depend on b-factor as a feature         
+prank predict -c alphafold   test.ds     # use alphafold config and model (config/alphafold.groovy)
 ~~~
+
+> [!TIP]
+> Use `-c alphafold` for **AlphaFold models, NMR ensembles, and cryo-EM structures**.
+> The default model uses B-factor as a feature, which is meaningful for X-ray crystal
+> structures but stores pLDDT confidence in AlphaFold models and resolution-based values
+> in cryo-EM. The `alphafold` config drops B-factor from the feature set.
 
 ### Prediction output 
 
@@ -218,6 +222,7 @@ prank eval-rescore -c rescore_2024 fpocket.ds    # evaluate specific rescoring m
 ## 🏗️ Build from sources
 
 This project uses [Gradle](https://gradle.org/) build system via included Gradle wrapper.
+Requires a **JDK** (not JRE) 17 or later on `PATH` or via `JAVA_HOME`.
 On Windows, use `bash` to run build commands (installed by default with [Git for Windows](https://git-scm.com/download/win)).
 
 ```ruby
@@ -249,8 +254,7 @@ Some practical differences:
     - has a much smaller memory footprint 
     - runs faster when executed on a single protein
     - produces a high number of less relevant pockets (and since the default scoring function isn't very effective, the most relevant pockets often don't get to the top)
-    - contains MDpocket algorithm for pocket predictions from molecular trajectories 
-    - still better documented
+    - contains MDpocket algorithm for pocket predictions from molecular trajectories
 * **P2Rank** 
     - achieves significantly higher identification success rates when considering top-ranked pockets
     - produces a smaller number of more relevant pockets
