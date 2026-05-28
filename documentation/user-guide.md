@@ -19,12 +19,11 @@ ready-to-open visualization scripts.
 
 ### What P2Rank does NOT do
 
-- **Ligand docking**: P2Rank does not predict how a specific ligand binds or in what pose.
-- **Binding affinity**: it does not estimate how strongly a ligand binds.
-- **Protein-protein interaction sites**: it is trained on small-molecule binding sites only.
-- **Allosteric site detection**: it does not distinguish allosteric from orthosteric pockets.
-
-In short, P2Rank predicts *where* ligands bind, not *what* binds or *how strongly*.
+P2Rank predicts generic, ligand-agnostic binding sites: it identifies where
+*some* small-molecule ligand is likely to bind, not where a *particular* ligand
+of interest would bind. It does not perform docking, estimate binding affinity,
+detect protein-protein interaction sites, or distinguish allosteric from
+orthosteric pockets.
 
 ### P2Rank vs PrankWeb
 
