@@ -14,6 +14,7 @@ import cz.siret.prank.prediction.pockets.PocketPredictor
 import cz.siret.prank.prediction.pockets.PointScoreCalculator
 import cz.siret.prank.prediction.transformation.ScoreTransformer
 import cz.siret.prank.program.ml.Model
+import cz.siret.prank.program.ml.ModelCompatibility
 import cz.siret.prank.program.params.Parametrized
 import cz.siret.prank.program.routines.predict.output.PointExportData
 import groovy.transform.CompileStatic
@@ -58,6 +59,12 @@ class ModelBasedRescorer extends PocketRescorer implements Parametrized  {
     ModelBasedRescorer(Model model, FeatureExtractor extractorFactory) {
         this.extractorFactory = extractorFactory
         this.model = model
+
+        // Fail fast (or warn) if the loaded model was trained with a different feature header than
+        // the one the current configuration produces, which would otherwise yield silently wrong predictions.
+        if (extractorFactory instanceof PrankFeatureExtractor) {
+            ModelCompatibility.check(model, ((PrankFeatureExtractor) extractorFactory).vectorHeader, params.fail_on_model_feature_mismatch)
+        }
     }
 
     /**

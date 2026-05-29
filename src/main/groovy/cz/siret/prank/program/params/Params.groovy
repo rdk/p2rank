@@ -1232,6 +1232,15 @@ class Params {
     boolean predictions = true
 
     /**
+     * Validate that a loaded model's stored feature header (features.txt) matches the feature header
+     * produced by the current configuration before predicting.
+     * true  = fail with a clear error on mismatch (recommended; prevents silently wrong predictions).
+     * false = only log a warning and continue (use only if deliberately running a model with a non-matching config).
+     */
+    @RuntimeParam
+    boolean fail_on_model_feature_mismatch = true
+
+    /**
      * Residue prediction mode (as opposed to full pocket prediction mode)
      */
     @RuntimeParam

@@ -27,6 +27,15 @@ All changes of that type should be rare and should be all listed here.
 * For additional internal evaluation-criterion fixes during the 2.6 dev cycle see
   [`documentation/dev/evaluation-metric-fixes-2.6.md`](documentation/dev/evaluation-metric-fixes-2.6.md).
 
+###### Model / config compatibility check
+
+* Prediction and rescoring now validate that the loaded model's stored feature header (`features.txt`) matches the
+  feature header produced by the current configuration. On mismatch the run fails fast with an actionable error
+  (expected vs actual features) instead of silently producing incorrect predictions. This is controlled by the new
+  `fail_on_model_feature_mismatch` parameter (default `true`); set `-fail_on_model_feature_mismatch 0` to downgrade
+  the failure to a warning. Legacy models without a stored header (v1/v2 files, or v3 directories lacking
+  `features.txt`) are not affected. All bundled models match their shipped configs, so default usage is unaffected.
+
 ###### Pocket-descriptors export (opt-in feature)
 
 * Per-pocket descriptors `-export_pocket_descriptors` underwent a multi-column interface migration. The built-in default

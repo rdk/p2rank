@@ -29,6 +29,12 @@ class Model {
     String label
     Object classifier  // Classifier or BinaryForest (flattened random forest)
 
+    /** Feature vector header stored alongside the model (v3 features.txt); null for legacy/headerless models. */
+    @Nullable List<String> storedFeatureHeader
+
+    /** Directory the model was loaded from (v3 format); null when loaded from a v1/v2 file. */
+    @Nullable String sourceDir
+
     Model(String label, Object classifier) {
         this.label = label
         this.classifier = Objects.requireNonNull(classifier)
@@ -89,6 +95,16 @@ class Model {
         model = new ModelConverter().applyConversions(model)
 
         model.disableParallelism()
+
+        // Attach feature-header provenance for v3 directory models (used by the config/model compatibility check).
+        // Done after conversions so it lands on the final Model instance.
+        if (Futils.isDirectory(fileOrDir)) {
+            model.sourceDir = fileOrDir
+            String headerFile = fileOrDir + "/features.txt"
+            if (Futils.exists(headerFile)) {
+                model.storedFeatureHeader = Futils.readLines(headerFile).collect { it.trim() }.findAll { !it.isEmpty() }
+            }
+        }
 
         return model
     }
