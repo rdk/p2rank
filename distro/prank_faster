@@ -11,7 +11,7 @@
 #   2. C1-only JIT (-XX:TieredStopAtLevel=1) - p2rank prediction runs are short enough
 #                that the C2 optimizing compiler never pays back its own compilation cost.
 #                C1 warms up far faster and wins for every prediction workload tested
-#                (single protein up to 90-protein batches). Benchmarked across 4 JVMs:
+#                (single protein up to 300-protein batches). Benchmarked across 4 JVMs:
 #                helps GraalVM 25 / HotSpot 25 / HotSpot 17, but is a no-op on JDK 21
 #                (where full tiered + ParallelGC is fastest), so it is skipped on 21.
 #                For very large/long jobs (thousands of proteins, training) set
@@ -27,14 +27,19 @@
 #
 
 #
-# Set maximum memory for JVM heap (keep < 32g so compressed oops + CDS stay enabled)
+# Set maximum memory for JVM heap (keep < 32g so compressed oops + CDS stay enabled).
+# Only apply the 2g default when the caller has not already set -Xmx in JAVA_OPTS,
+# so e.g. JAVA_OPTS="-Xmx4g" actually takes effect (otherwise the later -Xmx wins).
 #
-export JAVA_OPTS="$JAVA_OPTS -Xmx2048m"
+case "$JAVA_OPTS" in
+    *-Xmx*) ;;                                       # caller set their own heap; leave it
+    *) export JAVA_OPTS="$JAVA_OPTS -Xmx2048m" ;;
+esac
 
 #
 # Set this to change the Java installation that will be used to run the program:
 #
-#JAVA_HOME="/opt/java8"
+#JAVA_HOME="/opt/java25"
 
 
 if [[ "$OSTYPE" = msys* ]] ; then

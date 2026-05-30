@@ -8,7 +8,7 @@ export JAVA_OPTS="$JAVA_OPTS -Xmx2048m"
 #
 # Set this to change the Java installation that will be used to run the program:
 #
-#JAVA_HOME="/opt/java8"
+#JAVA_HOME="/opt/java25"
 
 
 export JAVA_OPTS="$JAVA_OPTS"

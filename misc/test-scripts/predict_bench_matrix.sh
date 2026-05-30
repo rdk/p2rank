@@ -9,7 +9,7 @@
 #
 # Extending with a new JVM is just another argument - pass its SDKMAN name or a path
 # to its JAVA_HOME. The script auto-detects per-JVM capabilities (the Java 23+
-# --sun-misc-unsafe flag, and the Java 24+ AOT cache) and skips configs a JVM can't run.
+# --sun-misc-unsafe flag, and the Java 25+ one-step AOT cache) and skips configs a JVM can't run.
 #
 # Usage:
 #   ./misc/test-scripts/predict_bench_matrix.sh [JRE...] [options]
@@ -25,7 +25,7 @@
 #       --cds   LIST     comma list from {off,appcds,aot}   (default: off,appcds)
 #       --jit   LIST     comma list from {tiered,c1}        (default: tiered,c1)
 #       --gc    LIST     comma list from {g1,parallel,serial} (default: g1,parallel,serial)
-#       --aot            shorthand for adding 'aot' to --cds (JDK 24+ JVMs only)
+#       --aot            shorthand for adding 'aot' to --cds (JDK 25+ JVMs only; uses one-step -XX:AOTCacheOutput)
 #       --csv FILE       also write the raw rows to FILE (default: a temp file, path printed)
 #       --list           list available SDKMAN candidates and exit
 #   -h, --help           show this help
@@ -152,7 +152,7 @@ for spec in "${SPECS[@]}"; do
                         FLAGS="$BASE $jitf $gcf -XX:ArchiveClassesAtExit=$local_arch.jsa"; run1 "$J" "${PROTEINS[0]}"
                         FLAGS="$BASE $jitf $gcf -XX:SharedArchiveFile=$local_arch.jsa" ;;
                     aot)
-                        if [[ "$maj" -lt 24 ]] 2>/dev/null; then echo "   (skip aot: JDK $maj < 24)" >&2; continue; fi
+                        if [[ "$maj" -lt 25 ]] 2>/dev/null; then echo "   (skip aot: JDK $maj < 25, one-step -XX:AOTCacheOutput needs JDK 25+)" >&2; continue; fi
                         rm -f "$local_arch.aot"
                         FLAGS="$BASE -Xlog:aot=off $jitf $gcf -XX:AOTCacheOutput=$local_arch.aot"; run1 "$J" "${PROTEINS[0]}"
                         FLAGS="$BASE -Xlog:aot=off $jitf $gcf -XX:AOTCache=$local_arch.aot" ;;
