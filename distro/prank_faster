@@ -1,0 +1,111 @@
+#!/usr/bin/env bash
+
+#
+# Faster drop-in replacement for ./prank
+#
+# Speedups over the stock launcher (measured on JDK 25, see below):
+#   1. AppCDS  - caches parsed/linked application classes (Groovy, BioJava, p2rank)
+#                in a shared archive, cutting class-loading + verification at startup.
+#                The archive is built automatically on the first run and reused after;
+#                it is rebuilt whenever bin/p2rank.jar changes.
+#   2. C1-only JIT (-XX:TieredStopAtLevel=1) - p2rank prediction runs are short enough
+#                that the C2 optimizing compiler never pays back its own compilation cost.
+#                C1 warms up far faster and wins for every prediction workload tested
+#                (single protein up to 90-protein batches). Benchmarked across 4 JVMs:
+#                helps GraalVM 25 / HotSpot 25 / HotSpot 17, but is a no-op on JDK 21
+#                (where full tiered + ParallelGC is fastest), so it is skipped on 21.
+#                For very large/long jobs (thousands of proteins, training) set
+#                PRANK_FULL_JIT=1 to re-enable C2 everywhere.
+#   3. ParallelGC - throughput-oriented collector, cheaper to spin up than G1 for these
+#                short batch runs.
+#
+# Heap stays at 2g: that keeps compressed oops enabled (heap < 32g), which is what lets
+# the JVM map its base CDS archive - a >32g heap silently disables CDS entirely.
+#
+# Override the heap with: JAVA_OPTS="-Xmx4g" ./prank_faster ...
+# Disable C1-only mode with: PRANK_FULL_JIT=1 ./prank_faster ...
+#
+
+#
+# Set maximum memory for JVM heap (keep < 32g so compressed oops + CDS stay enabled)
+#
+export JAVA_OPTS="$JAVA_OPTS -Xmx2048m"
+
+#
+# Set this to change the Java installation that will be used to run the program:
+#
+#JAVA_HOME="/opt/java8"
+
+
+if [[ "$OSTYPE" = msys* ]] ; then
+    PATH_SEPARATOR=';' # for win ... we want this script to run on Windows with MSYS / Git Bash
+else
+    PATH_SEPARATOR=':' # for unix
+fi
+
+THIS_SCRIPT_DIR_REL_PATH=`dirname "${BASH_SOURCE[0]}"`
+export INSTALL_DIR="$THIS_SCRIPT_DIR_REL_PATH"
+
+JARFILE="${INSTALL_DIR}/bin/p2rank.jar"
+CLASSPATH="${JARFILE}${PATH_SEPARATOR}${INSTALL_DIR}/bin/lib/*"
+
+# Determine the Java command to use to start the JVM.
+if [ -n "$JAVA_HOME" ] ; then
+    JAVACMD="$JAVA_HOME/bin/java"
+else
+    JAVACMD="java"
+fi
+
+# JVM flags for compatibility with Java 17+
+# --add-opens: required by Apache Arrow and Netty for direct memory access via sun.misc.Unsafe
+# --enable-native-access: required by zstd-jni for native library loading
+export JAVA_OPTS="$JAVA_OPTS --add-opens=java.base/java.nio=ALL-UNNAMED"
+export JAVA_OPTS="$JAVA_OPTS --add-opens=java.base/sun.nio.ch=ALL-UNNAMED"
+export JAVA_OPTS="$JAVA_OPTS --add-opens=java.base/jdk.internal.misc=ALL-UNNAMED"
+export JAVA_OPTS="$JAVA_OPTS --enable-native-access=ALL-UNNAMED"
+
+# Parse the major version. Anchor on `version "` (unique in the line) and take the
+# first number inside the quotes; a plain `.*"\([0-9]*\)` is greedy and matches through
+# the CLOSING quote of `"21.0.10"`, yielding an empty string on modern LTS version
+# lines like:  java version "21.0.10" 2026-01-20 LTS
+JAVA_MAJOR_VERSION=$("$JAVACMD" -version 2>&1 | head -1 | sed -E 's/.*version "([0-9]+).*/\1/')
+
+# --sun-misc-unsafe-memory-access: suppresses warnings from parquet-hadoop CleanUtil
+# which uses sun.misc.Unsafe (upstream unfixed). Only available in Java 23+.
+if [ "$JAVA_MAJOR_VERSION" -ge 23 ] 2>/dev/null; then
+    export JAVA_OPTS="$JAVA_OPTS --sun-misc-unsafe-memory-access=allow"
+fi
+
+# ---- speedups ----------------------------------------------------------------
+
+# throughput collector, cheap startup
+export JAVA_OPTS="$JAVA_OPTS -XX:+UseParallelGC"
+
+# C1-only JIT (-XX:TieredStopAtLevel=1) unless the caller asks for full tiered
+# compilation. Benchmarked across 4 JVMs: C1-only wins on GraalVM 25, HotSpot 25,
+# and HotSpot 17, but gives NO benefit on JDK 21 (where full tiered + ParallelGC is
+# actually fastest) - so it is skipped there. PRANK_FULL_JIT=1 forces full tiering
+# everywhere (use for very large batches / training, where C2 throughput pays off).
+if [ "${PRANK_FULL_JIT:-0}" != "1" ] && [ "$JAVA_MAJOR_VERSION" != "21" ]; then
+    export JAVA_OPTS="$JAVA_OPTS -XX:TieredStopAtLevel=1"
+fi
+
+# AppCDS: build the shared archive on first run / when the jar changes, reuse it after.
+# CDS load failures are non-fatal (warning only) since we don't pass -Xshare:on, so a
+# stale archive or JVM upgrade just falls back to normal class loading.
+#
+# -Xlog:cds=off silences benign diagnostics: the dynamic archive layers on the JDK's
+# base archive (built without our --add-opens / --enable-native-access flags), so the
+# module-property consistency check logs error-level "Disabling optimized module
+# handling" lines on every run. CDS still loads and class data is still shared - the
+# messages are cosmetic - so we route the cds log tag off to keep output clean.
+export JAVA_OPTS="$JAVA_OPTS -Xlog:cds=off"
+ARCHIVE="${INSTALL_DIR}/bin/p2rank-appcds.jsa"
+if [ -f "$ARCHIVE" ] && [ "$ARCHIVE" -nt "$JARFILE" ]; then
+    export JAVA_OPTS="$JAVA_OPTS -XX:SharedArchiveFile=${ARCHIVE}"
+else
+    # first run (or jar updated): record classes loaded during this run into the archive
+    export JAVA_OPTS="$JAVA_OPTS -XX:ArchiveClassesAtExit=${ARCHIVE}"
+fi
+
+"$JAVACMD" $JAVA_OPTS -cp "${CLASSPATH}" cz.siret.prank.program.Main "$@"

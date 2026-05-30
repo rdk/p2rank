@@ -41,7 +41,11 @@ export JAVA_OPTS="$JAVA_OPTS --enable-native-access=ALL-UNNAMED"
 
 # --sun-misc-unsafe-memory-access: suppresses warnings from parquet-hadoop CleanUtil
 # which uses sun.misc.Unsafe (upstream unfixed). Only available in Java 23+.
-JAVA_MAJOR_VERSION=$("$JAVACMD" -version 2>&1 | head -1 | sed 's/.*"\([0-9]*\).*/\1/')
+# Anchor the parse on `version "` (unique in the line) and take the first number inside
+# the quotes. A plain `.*"\([0-9]*\)` is greedy and matches through the CLOSING quote of
+# `"21.0.10"`, yielding an empty string on modern LTS lines like:
+#   java version "21.0.10" 2026-01-20 LTS
+JAVA_MAJOR_VERSION=$("$JAVACMD" -version 2>&1 | head -1 | sed -E 's/.*version "([0-9]+).*/\1/')
 if [ "$JAVA_MAJOR_VERSION" -ge 23 ] 2>/dev/null; then
     export JAVA_OPTS="$JAVA_OPTS --sun-misc-unsafe-memory-access=allow"
 fi
