@@ -10,7 +10,7 @@ not from changing p2rank code.
 
 > [!TIP]
 > If you just want the fast launcher and not the theory, jump to
-> [The ready-made launcher: `prank_faster`](#the-ready-made-launcher-prank_faster).
+> [The ready-made launcher: `prank_faster`](#3-the-ready-made-launcher-prank_faster).
 
 ---
 
@@ -21,10 +21,16 @@ A single `prank predict -f some.pdb` run on a small protein spends roughly:
 | phase | share | depends on protein size? |
 |---|---|---|
 | JVM + Groovy runtime startup | ~25% | no |
-| Config parse (`default.groovy` via ConfigSlurper) | ~20% | no |
-| RF model deserialization | ~28% | no |
+| Config parse (`default.groovy` via GroovyShell) | ~20% | no |
+| RF model deserialization | ~25% | no |
 | First-protein work incl. JIT warmup | ~25% | a little |
 | **Actual pocket-prediction compute** | **~5%** | yes |
+
+> [!NOTE]
+> These shares are reference figures from one machine and shift with hardware, protein
+> size and JDK. Regenerate the breakdown on your box with
+> `misc/test-scripts/predict_bench.sh --phases`. The exact percentages matter less than
+> the takeaway: compute is a small slice, fixed overhead dominates.
 
 In other words a small-protein run is **~95% fixed overhead**. That overhead is paid
 **once per JVM process**, so the single most effective optimization is not a flag at
@@ -35,6 +41,8 @@ all:
 > instead of launching `prank predict -f` once per protein. The ~1.3s fixed cost is then
 > amortized across the whole dataset (measured ~18-23x faster per protein on a batch).
 > Dataset paths are absolute or relative to the `.ds` file, not the working directory.
+> Within that one JVM, `-threads N` controls how many proteins are processed in parallel
+> (default `nCPU+1`); the batch is processed by a fixed thread pool of that size.
 
 Everything below optimizes the *fixed overhead* and the *per-protein compute* for cases
 where you cannot batch (interactive single-file runs) or want batches to finish sooner.
@@ -90,6 +98,11 @@ that investment pays off. Restricting to the C1 (client) compiler with
 
 - p2rank prediction is not memory-hungry: even a 12k-atom protein peaks near ~1 GB RSS.
   `-Xmx2048m` is plenty for prediction.
+
+> [!TIP]
+> To reproduce the ~1 GB figure, measure peak resident set, not heap: on Linux run
+> `/usr/bin/time -v distro/prank predict -f some.pdb` and read "Maximum resident set size".
+
 - **Critical interaction with CDS:** a heap >= 32 GB disables compressed oops, which
   changes which base CDS archive the JVM needs. Most JDK distributions do **not** ship
   the matching archive, so a large heap **silently disables CDS entirely** (see the
@@ -124,8 +137,8 @@ Usage:
 ```bash
 distro/prank_faster predict -f distro/test_data/1fbl.pdb      # first run builds the archive
 distro/prank_faster predict -f distro/test_data/1fbl.pdb      # subsequent runs are faster
-PRANK_FULL_JIT=1 distro/prank_faster predict big.ds           # full C2 for huge batches / training
-JAVA_OPTS=-Xmx4g distro/prank_faster predict huge.pdb         # bigger heap (keep < 32 GB)
+PRANK_FULL_JIT=1 distro/prank_faster predict distro/test_data/basic.ds    # full C2 for huge batches / training
+JAVA_OPTS=-Xmx4g distro/prank_faster predict -f distro/test_data/1fbl.pdb # bigger heap (keep < 32 GB)
 ```
 
 Measured result vs the stock `distro/prank`: roughly **-33% on single proteins** and
@@ -134,6 +147,16 @@ Measured result vs the stock `distro/prank`: roughly **-33% on single proteins**
 > [!NOTE]
 > CDS, JIT tier and GC never change p2rank's output. They only change timing. Always
 > diff `_predictions.csv` after any tuning change to confirm this on your build.
+
+> [!NOTE]
+> **On Windows.** `prank_faster` is a bash script: it runs under Git Bash / MSYS (it
+> detects `$OSTYPE=msys*` and switches the classpath separator to `;`), not in `cmd.exe`.
+> There is no `prank_faster.bat`. If you launch via the native `distro/prank.bat`, it only
+> sets the compatibility flags (heap, `--add-opens`, `--enable-native-access`), not the
+> speedups. To get them, add these JVM-portable flags to `JAVA_OPTS` in `prank.bat`:
+> `-XX:+UseParallelGC`, `-XX:TieredStopAtLevel=1` (omit on JDK 21), and AppCDS via
+> `-XX:ArchiveClassesAtExit=<path>` on the first run then `-XX:SharedArchiveFile=<path>`
+> after. See the flag list in section 8.
 
 ---
 
@@ -166,7 +189,7 @@ If you can choose: **Oracle HotSpot 25 (LTS)** is the recommended JVM for the pr
 
 The optimal config differs by *command class*, not by single-vs-batch:
 
-| | prediction (`predict`, `rescore`) | training / eval (`train`, `traineval`, `eval-predict`) |
+| | prediction (`predict`, `rescore`) | training / eval (`traineval`, `crossval`, `eval-predict`) |
 |---|---|---|
 | JIT | C1-only (except JDK 21) | full tiered C2 (`PRANK_FULL_JIT=1`) |
 | Heap | 2 GB | large, may exceed 32 GB |
@@ -185,7 +208,7 @@ Three scripts under `misc/test-scripts/` (run `./gradlew assemble` first; they u
 distro jar):
 
 ```bash
-# Per-protein timing + JFR profile + startup phase breakdown, on the current JVM:
+# Three independent modes on the current JVM (per-protein timing, JFR profile, phase breakdown):
 misc/test-scripts/predict_bench.sh --compare       # stock vs prank_faster
 misc/test-scripts/predict_bench.sh --profile       # JFR hot-method profile
 misc/test-scripts/predict_bench.sh --phases        # startup phase breakdown
@@ -199,7 +222,9 @@ misc/test-scripts/predict_bench_matrix.sh --list   # what JVMs are installed
 ```
 
 The matrix script auto-detects per-JVM capabilities and skips configs a JVM cannot run
-(e.g. AOT on < 24). Missing JVMs are reported and skipped, never fatal; with no JVM
+(e.g. AOT on < 25; the script uses the one-step `-XX:AOTCacheOutput`, which needs JDK 25+,
+so JDK 24's two-step AOT cache is not exercised). Missing JVMs are reported and skipped,
+never fatal; with no JVM
 argument it benchmarks the current `java`. Add a new JVM simply by passing its SDKMAN
 name or a path to its JAVA_HOME.
 
@@ -218,17 +243,33 @@ name or a path to its JAVA_HOME.
 > reports "unsupported". This is the most common way to accidentally lose the biggest win.
 > Symptom to check: run with `-Xlog:cds` and look for "Loading static archive failed".
 
+> [!NOTE]
+> **Confirming CDS is actually active.** Absence of a failure message does not prove the
+> archive is being used. To positively confirm, run with `-Xlog:class+load=info` and check
+> that p2rank and Groovy classes report `source: shared objects file`, for example:
+>
+> ```bash
+> JAVA_OPTS="-Xlog:class+load=info" distro/prank_faster predict -f distro/test_data/1fbl.pdb \
+>   | grep -E "(cz\.siret|groovy\.).*shared objects file" | head
+> ```
+>
+> Do this on a *reuse* run, not the archive-building run: `prank_faster` rebuilds the archive
+> whenever `p2rank.jar` changes (and on first run), and during a build run those classes load
+> from the jar, not from the archive. This check is independent of `-Xlog:cds=off`: that flag
+> only silences the `cds` log tag, it does not suppress `class+load` output.
+
 > [!WARNING]
 > **`-Xlog:aot=off` is only valid on JDK 24+.** The `aot` log tag does not exist on 17/21,
 > where passing it aborts JVM startup. Only add AOT-related flags after checking the major
-> version. (The matrix script and `prank_faster` handle this for you.)
+> version. (The matrix script handles this by gating AOT behind a version check; `prank_faster` sidesteps it entirely by not using AOT.)
 
 > [!WARNING]
 > **JDK major-version parsing.** A naive `sed 's/.*"\([0-9]*\).*/\1/'` is greedy and matches
 > through the closing quote of `"21.0.10"`, returning an empty string on modern LTS version
 > lines like `java version "21.0.10" 2026-01-20 LTS`. Use `sed -E 's/.*version "([0-9]+).*/\1/'`
-> (anchored on the unique `version "`). The same bug previously made the launchers' Java-23+
-> flag gate silently never fire.
+> (anchored on the unique `version "`). The same bug previously made the stock `prank` /
+> `prank.sh` launchers' Java-23+ flag gate silently never fire (`prank_faster` shipped with
+> the fixed parse).
 
 > [!NOTE]
 > **Benign CDS log noise.** A dynamic archive layers on the JDK's base archive, which was
@@ -254,9 +295,14 @@ Recommended flags for the **prediction** path (what `prank_faster` applies):
 -XX:+UseParallelGC
 -XX:TieredStopAtLevel=1            # omit on JDK 21
 -XX:SharedArchiveFile=<app.jsa>    # built once via -XX:ArchiveClassesAtExit
--XX:AOTCache=<app.aot>             # optional, JDK 24+, instead of SharedArchiveFile
 -Xlog:cds=off                      # cosmetic noise suppression
 ```
+
+> [!NOTE]
+> `prank_faster` does not use the AOT cache. On JDK 24+ you can swap AppCDS for the
+> AOT cache manually with `-XX:AOTCache=<app.aot>` instead of `-XX:SharedArchiveFile`
+> (creation is two-step on 24, one-step on 25+; see the bonus lever in section 2). It is
+> an opt-in further ~3-7%, not part of the `prank_faster` baseline.
 
 Recommended flags for the **training / large-batch** path:
 
