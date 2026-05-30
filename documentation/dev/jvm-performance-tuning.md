@@ -28,8 +28,9 @@ A single `prank predict -f some.pdb` run on a small protein spends roughly:
 
 > [!NOTE]
 > These shares are reference figures from one machine and shift with hardware, protein
-> size and JDK. Regenerate the breakdown on your box with
-> `misc/test-scripts/predict_bench.sh --phases`. The exact percentages matter less than
+> size and JDK. Re-measure the phase timings on your box with
+> `misc/test-scripts/predict_bench.sh --phases` (it prints per-line wall-clock timestamps;
+> derive the shares by differencing them). The exact percentages matter less than
 > the takeaway: compute is a small slice, fixed overhead dominates.
 
 In other words a small-protein run is **~95% fixed overhead**. That overhead is paid
@@ -77,7 +78,7 @@ compiling hot methods to fast native code, but a prediction run usually finishes
 that investment pays off. Restricting to the C1 (client) compiler with
 `-XX:TieredStopAtLevel=1` warms up far faster.
 
-- Impact: large on GraalVM (its C2 is the heaviest to initialize, ~-18%), moderate on
+- Impact: large on GraalVM (its optimizing compiler is the heaviest to initialize, ~-18%), moderate on
   HotSpot 17/25/26 (~-5% to -9%).
 - Measured to win for every prediction workload up to **300 proteins in one JVM** -- C2
   never amortized within a prediction run at that scale.
@@ -142,7 +143,7 @@ JAVA_OPTS=-Xmx4g distro/prank_faster predict -f distro/test_data/1fbl.pdb # bigg
 ```
 
 Measured result vs the stock `distro/prank`: roughly **-33% on single proteins** and
-**-37% on a 30-protein batch**, with byte-identical predictions.
+**-37% on a 30-protein batch**, with identical predictions.
 
 > [!NOTE]
 > CDS, JIT tier and GC never change p2rank's output. They only change timing. Always
@@ -152,7 +153,7 @@ Measured result vs the stock `distro/prank`: roughly **-33% on single proteins**
 > **On Windows.** `prank_faster` is a bash script: it runs under Git Bash / MSYS (it
 > detects `$OSTYPE=msys*` and switches the classpath separator to `;`), not in `cmd.exe`.
 > There is no `prank_faster.bat`. If you launch via the native `distro/prank.bat`, it only
-> sets the compatibility flags (heap, `--add-opens`, `--enable-native-access`), not the
+> sets the compatibility flags (such as heap, `--add-opens`, `--enable-native-access`), not the
 > speedups. To get them, add these JVM-portable flags to `JAVA_OPTS` in `prank.bat`:
 > `-XX:+UseParallelGC`, `-XX:TieredStopAtLevel=1` (omit on JDK 21), and AppCDS via
 > `-XX:ArchiveClassesAtExit=<path>` on the first run then `-XX:SharedArchiveFile=<path>`
@@ -208,12 +209,12 @@ Three scripts under `misc/test-scripts/` (run `./gradlew assemble` first; they u
 distro jar):
 
 ```bash
-# Three independent modes on the current JVM (per-protein timing, JFR profile, phase breakdown):
+# Modes on the current JVM (stock-vs-faster comparison, JFR profile, phase breakdown):
 misc/test-scripts/predict_bench.sh --compare       # stock vs prank_faster
 misc/test-scripts/predict_bench.sh --profile       # JFR hot-method profile
 misc/test-scripts/predict_bench.sh --phases        # startup phase breakdown
 
-# Compare chosen JVMs (also verifies predictions are identical across them):
+# Compare chosen JVMs (also checks the reference protein's predictions match across them):
 misc/test-scripts/predict_bench_jres.sh 25.0.2-oracle 21.0.10-oracle
 
 # Full tuning matrix (CDS x JIT x GC, + AOT where supported) across JVMs:
@@ -242,6 +243,16 @@ name or a path to its JAVA_HOME.
 > GraalVM) do not ship. The base archive fails to map and `-XX:ArchiveClassesAtExit` then
 > reports "unsupported". This is the most common way to accidentally lose the biggest win.
 > Symptom to check: run with `-Xlog:cds` and look for "Loading static archive failed".
+
+> [!WARNING]
+> **The AppCDS archive is JDK-specific, but only rebuilt on jar change.** `prank_faster`
+> rebuilds `bin/p2rank-appcds.jsa` when `p2rank.jar` changes, not when you switch JDK or
+> `JAVA_HOME`. Archives are tied to the exact JVM, so a stale archive from another JDK
+> fails to map and you silently fall back to full class loading (CDS failures are non-fatal).
+> After changing JVM, delete `distro/bin/p2rank-appcds.jsa` to force a rebuild. Likewise the
+> archive path is fixed under the install's `bin/`, so a **read-only or shared install**
+> cannot create it on first run and silently pays full startup cost every time. Use the
+> confirmation check below to detect both cases.
 
 > [!NOTE]
 > **Confirming CDS is actually active.** Absence of a failure message does not prove the

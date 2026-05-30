@@ -4,7 +4,7 @@
 # Faster drop-in replacement for ./prank
 #
 # Speedups over the stock launcher (measured on JDK 25, see below):
-#   1. AppCDS  - caches parsed/linked application classes (Groovy, BioJava, p2rank)
+#   1. AppCDS  - caches parsed/verified application classes (Groovy, BioJava, p2rank)
 #                in a shared archive, cutting class-loading + verification at startup.
 #                The archive is built automatically on the first run and reused after;
 #                it is rebuilt whenever bin/p2rank.jar changes.
