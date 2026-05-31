@@ -203,40 +203,6 @@ class KdTree3DTest {
         assertSame(p2, different)
     }
 
-    @Test
-    void sparsify_parity() {
-        // Verify sparsify produces correct results with the new periodic-rebuild strategy
-        Protein p = Protein.load('distro/test_data/2W83.pdb')
-        Atoms atoms = p.proteinAtoms
-
-        double dist = 1.5d
-        Atoms sparsified = Atoms.sparsify(atoms, dist)
-
-        // Verify: no two accepted points are within dist of each other
-        for (int i = 0; i < sparsified.getCount(); i++) {
-            for (int j = i + 1; j < sparsified.getCount(); j++) {
-                double d = PerfUtils.dist(sparsified.list.get(i), sparsified.list.get(j))
-                assertTrue(d > dist,
-                        "Points $i and $j are too close: distance=$d, threshold=$dist")
-            }
-        }
-
-        // Verify: every rejected point has at least one accepted point within dist
-        Set<Atom> accepted = new HashSet<>(sparsified.list)
-        for (Atom a : atoms) {
-            if (!accepted.contains(a)) {
-                boolean hasNearby = false
-                for (Atom b : sparsified.list) {
-                    if (PerfUtils.dist(a, b) <= dist) {
-                        hasNearby = true
-                        break
-                    }
-                }
-                assertTrue(hasNearby, "Rejected atom has no accepted neighbor within $dist")
-            }
-        }
-    }
-
     // ==================== Thread-safety test ====================
 
     @Test

@@ -2,8 +2,6 @@ package cz.siret.prank.geom;
 
 import com.google.common.collect.Lists;
 import cz.siret.prank.geom.kdtree.AtomKdTree;
-import cz.siret.prank.geom.kdtree.v1.AtomKdTreeV1;
-import cz.siret.prank.geom.kdtree.v1.KdTree.Entry;
 import cz.siret.prank.program.params.Params;
 import cz.siret.prank.utils.ATimer;
 import cz.siret.prank.utils.CutoffAtomsCallLog;
@@ -490,33 +488,6 @@ public final class Atoms implements Iterable<Atom> {
     }
 
 //===========================================================================================================//
-
-    /**
-     * Remove points that are within dist of an already-accepted point.
-     * Uses mutable V1 KdTree with incremental addPoint() — O(N log N) total.
-     */
-    public static Atoms sparsify(Atoms atoms, double dist) {
-        long t0 = System.nanoTime();
-        int inputSize = atoms.getCount();
-
-        AtomKdTreeV1 tree = new AtomKdTreeV1(Integer.MAX_VALUE);
-        List<Atom> result = new ArrayList<>();
-        double sqrDist = dist * dist;
-
-        for (Atom a : atoms) {
-            Entry<Atom> nearest = tree.singleNearestNeighbor(a.getCoords());
-
-            if (nearest == null || nearest.distance > sqrDist) {
-                result.add(a);
-                tree.addPoint(a.getCoords(), a);
-            }
-        }
-
-        long elapsed = System.nanoTime() - t0;
-        log.debug("sparsify: {} -> {} points in {} ms", inputSize, result.size(), elapsed / 1_000_000);
-
-        return new Atoms(result);
-    }
 
     public static Atoms allFromStructure(Structure struc) {
         List<Atom> list = new ArrayList<>(4096);

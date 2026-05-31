@@ -70,7 +70,7 @@ class Surface implements Parametrized {
         log.debug "numerical surface: {} points", surfacePoints.count
         if (Params.inst.surface_sparsify) {
             // CDK returns lots of duplicate or too-close atoms (bug in the implementation?)
-            surfacePoints = Atoms.sparsify(surfacePoints, SPARSIFY_DIST)
+            surfacePoints = AtomDeduplicator.sparsify(surfacePoints, SPARSIFY_DIST)
             log.debug "surface after sparsification: {} points", surfacePoints.count
         }
 
