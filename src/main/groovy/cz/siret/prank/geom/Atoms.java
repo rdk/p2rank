@@ -424,6 +424,35 @@ public final class Atoms implements Iterable<Atom> {
         }
     }
 
+    public int countWithinSphereSerial(final Atom center, double radius) {
+        double sqrDist = radius*radius;
+        int count = 0;
+        for (Atom a : list) {
+            if (PerfUtils.sqrDist(a, center) <= sqrDist) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public int countWithinSphereKD(final Atom center, double radius) {
+        withKdTree();
+        return kdTree.countAtomsWithinRadius(center, radius);
+    }
+
+    /**
+     * Count atoms within a sphere, without materializing an {@link Atoms} list.
+     * Equivalent to {@code cutoutSphere(center, radius).getCount()} but allocation-free;
+     * uses the same KD-tree-vs-serial threshold as {@link #cutoutSphere}.
+     */
+    public int countWithinSphere(Atom center, double radius) {
+        if (getCount() >= Params.INSTANCE.getUse_kdtree_cutout_sphere_thrashold()) {
+            return countWithinSphereKD(center, radius);
+        } else {
+            return countWithinSphereSerial(center, radius);
+        }
+    }
+
 
     public SphereLayers cutoutLayers(Atom center, double radiusInner, double radiusOuter) {
         Atoms outerSphere = cutoutSphere(center, radiusOuter);

@@ -593,6 +593,59 @@ public final class KdTree3D {
     }
 
     /**
+     * Count points within sqrRadius of the query, WITHOUT materializing a result list.
+     *
+     * Equivalent to {@code findWithinRadius(...).getCount()} but allocation-free: it is
+     * called once per SAS point by the protrusion feature with a large radius (~10 A),
+     * where the result routinely exceeds the result list's initial capacity and the only
+     * thing the caller needs is the count.
+     *
+     * @param sqrRadius squared radius
+     */
+    public int countWithinRadius(double qx, double qy, double qz, double sqrRadius) {
+        if (size == 0) return 0;
+
+        int count = 0;
+
+        int[] stack = new int[64];
+        int sp = 0;
+        stack[sp++] = 0;
+
+        while (sp > 0) {
+            int node = stack[--sp];
+            if (node >= nodeCount) continue;
+
+            // Prune: entire subtree's bounding box is outside the search sphere
+            if (sqrDistToBox(qx, qy, qz,
+                    minXs[node], minYs[node], minZs[node],
+                    maxXs[node], maxYs[node], maxZs[node]) > sqrRadius) {
+                continue;
+            }
+
+            // Leaf: check each point against radius
+            if (leafStart[node] >= 0) {
+                int start = leafStart[node];
+                int end = leafEnd[node];
+                for (int i = start; i < end; i++) {
+                    double d = sqrDist(qx, qy, qz, xs[i], ys[i], zs[i]);
+                    if (d <= sqrRadius) {
+                        count++;
+                    }
+                }
+                continue;
+            }
+
+            // Internal: push both children (no ordering needed for radius search)
+            int left = 2 * node + 1;
+            int right = 2 * node + 2;
+            if (right < nodeCount) stack[sp++] = right;
+            if (left < nodeCount) stack[sp++] = left;
+        }
+
+        return count;
+    }
+
+    /**
      * Find k nearest neighbors.
      *
      * Uses a max-heap (ResultHeap) to track the k closest points seen so far.

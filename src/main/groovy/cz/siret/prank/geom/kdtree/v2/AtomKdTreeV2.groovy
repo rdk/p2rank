@@ -85,6 +85,12 @@ class AtomKdTreeV2 implements AtomKdTree {
         return tree.findWithinRadius(a.getX(), a.getY(), a.getZ(), sqrRadius)
     }
 
+    @Override
+    int countAtomsWithinRadius(Atom a, double radius) {
+        double sqrRadius = radius * radius
+        return tree.countWithinRadius(a.getX(), a.getY(), a.getZ(), sqrRadius)
+    }
+
     // --- Helpers ---
 
     private static Atoms toAtoms(List<KdTree3D.NNEntry> entries) {

@@ -19,7 +19,7 @@ class SurfaceProtrusionFeature extends SasFeatureCalculator implements Parametri
 
     @Override
     double[] calculateForSasPoint(Atom sasPoint, SasFeatureCalculationContext context) {
-        double protAtoms = context.protein.exposedAtoms.cutoutSphere(sasPoint, params.protrusion_radius).count
+        double protAtoms = context.protein.exposedAtoms.countWithinSphere(sasPoint, params.protrusion_radius)
         return [protAtoms] as double[]
     }
 

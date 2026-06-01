@@ -50,6 +50,23 @@ class KdTree3DTest {
     }
 
     @Test
+    void countWithinRadius_matchesFind() {
+        Protein p = Protein.load('distro/test_data/2W83.pdb')
+        Atoms atoms = p.proteinAtoms
+        KdTree3D tree = KdTree3D.build(atoms.list)
+
+        for (double radius : [2.0d, 6.0d, 10.0d]) {
+            double sqrR = radius * radius
+            for (Atom a : atoms) {
+                int found = tree.findWithinRadius(a.getX(), a.getY(), a.getZ(), sqrR).getCount()
+                int counted = tree.countWithinRadius(a.getX(), a.getY(), a.getZ(), sqrR)
+                assertEquals(found, counted,
+                        "count != find-count for atom ${a.getPDBserial()} at radius=$radius")
+            }
+        }
+    }
+
+    @Test
     void findWithinRadius_multipleRadii() {
         Protein p = Protein.load('distro/test_data/2W83.pdb')
         Atoms atoms = p.proteinAtoms

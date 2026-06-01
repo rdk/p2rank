@@ -38,6 +38,14 @@ public interface AtomKdTree {
 
     Atoms findAtomsWithinRadius(Atom a, double radius, boolean sorted);
 
+    /**
+     * Count atoms within {@code radius} of {@code a}. Default builds the result set and
+     * counts it; implementations should override with an allocation-free variant.
+     */
+    default int countAtomsWithinRadius(Atom a, double radius) {
+        return findAtomsWithinRadius(a, radius, false).getCount();
+    }
+
     default double nearestDist(Atom a) {
         return Math.sqrt(nearestSqrDist(a));
     }
