@@ -47,6 +47,7 @@
 set -uo pipefail
 
 cd "$(dirname "${BASH_SOURCE[0]}")/../.." || exit 1   # repo root
+source misc/test-scripts/bench-common.sh
 
 # Defaults
 REPS=4
@@ -59,7 +60,7 @@ PROTEINS=()
 OUT=$(mktemp -d /tmp/predict_bench.XXXXXX)
 trap 'rm -rf "$OUT"' EXIT
 
-usage() { sed -n '2,/^$/p' "$0" | sed 's/^# \?//; s/^#$//'; exit 0; }
+usage() { bench_usage; }
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -77,13 +78,7 @@ done
 
 # Default protein set: size spread from distro/test_data
 if [[ ${#PROTEINS[@]} -eq 0 ]]; then
-    PROTEINS=(
-        distro/test_data/clean/1t7qa.pdb
-        distro/test_data/1fbl.pdb
-        distro/test_data/clean/1a26A.pdb
-        distro/test_data/2W83.pdb
-        distro/test_data/1AHP.pdb
-    )
+    PROTEINS=("${BENCH_DEFAULT_PROTEINS[@]}")
 fi
 
 # Report the active JRE

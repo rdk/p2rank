@@ -416,8 +416,13 @@ public final class Atoms implements Iterable<Atom> {
         return kdTree.findAtomsWithinRadius(center, radius, false);
     }
 
+    /** Whether sphere queries on this set should use the KD-tree rather than a serial scan. */
+    private boolean useKdTreeForSphereQuery() {
+        return getCount() >= Params.INSTANCE.getUse_kdtree_cutout_sphere_thrashold();
+    }
+
     public Atoms cutoutSphere(Atom center, double radius) {
-        if (getCount() >= Params.INSTANCE.getUse_kdtree_cutout_sphere_thrashold()) {
+        if (useKdTreeForSphereQuery()) {
             return cutoutSphereKD(center, radius);
         } else {
             return cutoutSphereSerial(center, radius);
@@ -446,7 +451,7 @@ public final class Atoms implements Iterable<Atom> {
      * uses the same KD-tree-vs-serial threshold as {@link #cutoutSphere}.
      */
     public int countWithinSphere(Atom center, double radius) {
-        if (getCount() >= Params.INSTANCE.getUse_kdtree_cutout_sphere_thrashold()) {
+        if (useKdTreeForSphereQuery()) {
             return countWithinSphereKD(center, radius);
         } else {
             return countWithinSphereSerial(center, radius);

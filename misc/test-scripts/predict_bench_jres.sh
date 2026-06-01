@@ -41,53 +41,33 @@
 set -uo pipefail
 
 cd "$(dirname "${BASH_SOURCE[0]}")/../.." || exit 1   # repo root
+source misc/test-scripts/bench-common.sh
 
-SDK_DIR="${SDKMAN_DIR:-$HOME/.sdkman}/candidates/java"
 REPS=4
 LAUNCHER="distro/prank_faster"
 SPECS=()
-PROTEINS=(
-    distro/test_data/clean/1t7qa.pdb
-    distro/test_data/1fbl.pdb
-    distro/test_data/clean/1a26A.pdb
-    distro/test_data/2W83.pdb
-    distro/test_data/1AHP.pdb
-)
+PROTEINS=("${BENCH_DEFAULT_PROTEINS[@]}")
 ARCHIVE="distro/bin/p2rank-appcds.jsa"
 OUT=$(mktemp -d /tmp/predict_bench_jres.XXXXXX)
-
-usage() { sed -n '2,/^$/p' "$0" | sed 's/^# \?//; s/^#$//'; exit 0; }
-list_candidates() {
-    echo "Available SDKMAN JREs ($SDK_DIR):"
-    [[ -d "$SDK_DIR" ]] && ls -1 "$SDK_DIR" | grep -v '^current$' | sed 's/^/  /' || echo "  (none)"
-}
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
         -r|--reps)      REPS="$2"; shift 2 ;;
         -l|--launcher)  LAUNCHER="$2"; shift 2 ;;
         --proteins)     read -r -a PROTEINS <<<"$2"; shift 2 ;;
-        --list)         list_candidates; exit 0 ;;
-        -h|--help)      usage ;;
-        -*)             echo "Unknown option: $1" >&2; usage ;;
+        --list)         bench_list_candidates; exit 0 ;;
+        -h|--help)      bench_usage ;;
+        -*)             echo "Unknown option: $1" >&2; bench_usage ;;
         *)              SPECS+=("$1"); shift ;;
     esac
 done
 
 if [[ ${#SPECS[@]} -eq 0 ]]; then
     echo "No JREs specified." >&2; echo "" >&2
-    list_candidates >&2
+    bench_list_candidates >&2
     echo "" >&2; echo "Pass one or more, e.g.:  $0 25.0.2-oracle 21.0.10-oracle" >&2
     exit 1
 fi
-
-# Resolve a spec (sdkman name or path) to a JAVA_HOME; echoes path or empty on failure
-resolve_home() {
-    local spec="$1"
-    if [[ -x "$spec/bin/java" ]]; then echo "$spec"; return; fi
-    if [[ -x "$SDK_DIR/$spec/bin/java" ]]; then echo "$SDK_DIR/$spec"; return; fi
-    echo ""
-}
 
 # Preserve any existing AppCDS archive, restore on exit
 SAVED_ARCHIVE=""
@@ -127,9 +107,9 @@ bench_jre() {
 declare -a LABELS HOMES AVGS
 i=0
 for spec in "${SPECS[@]}"; do
-    home=$(resolve_home "$spec")
+    home=$(bench_resolve_home "$spec")
     if [[ -z "$home" ]]; then printf "  %-20s UNRESOLVED (skipped)\n" "$spec" >&2; continue; fi
-    label=$("$home/bin/java" -version 2>&1 | head -1 | sed 's/ version /-/; s/"//g; s/ .*//')
+    label=$(bench_label_of "$home")
     printf ">> %-22s %s\n" "$spec" "$("$home/bin/java" -version 2>&1 | head -1)" >&2
     avg=$(bench_jre "$home" "jre$i")
     LABELS[i]="$label ($spec)"; HOMES[i]="$home"; AVGS[i]="$avg"

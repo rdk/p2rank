@@ -50,9 +50,9 @@
 
 set -uo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")/../.." || exit 1   # repo root
+source misc/test-scripts/bench-common.sh
 
 CP="distro/bin/p2rank.jar:distro/bin/lib/*"
-SDK_DIR="${SDKMAN_DIR:-$HOME/.sdkman}/candidates/java"
 REPS=3
 CDS_MODES="off,appcds"
 JIT_MODES="tiered,c1"
@@ -67,9 +67,6 @@ OUT=$(mktemp -d /tmp/predict_matrix.XXXXXX)
 CSV=$(mktemp /tmp/predict_matrix_results.XXXXXX.csv)   # persists after run; survives $OUT cleanup
 trap 'rm -rf "$OUT"' EXIT
 
-usage() { sed -n '2,/^$/p' "$0" | sed 's/^# \?//; s/^#$//'; exit 0; }
-list_candidates() { echo "Available SDKMAN JREs ($SDK_DIR):"; ls -1 "$SDK_DIR" 2>/dev/null | grep -v '^current$' | sed 's/^/  /'; }
-
 while [[ $# -gt 0 ]]; do
     case "$1" in
         -r|--reps)    REPS="$2"; shift 2 ;;
@@ -79,24 +76,15 @@ while [[ $# -gt 0 ]]; do
         --gc)         GC_MODES="$2"; shift 2 ;;
         --aot)        case ",$CDS_MODES," in *,aot,*) ;; *) CDS_MODES="$CDS_MODES,aot" ;; esac; shift ;;
         --csv)        CSV="$2"; shift 2 ;;
-        --list)       list_candidates; exit 0 ;;
-        -h|--help)    usage ;;
-        -*)           echo "Unknown option: $1" >&2; usage ;;
+        --list)       bench_list_candidates; exit 0 ;;
+        -h|--help)    bench_usage ;;
+        -*)           echo "Unknown option: $1" >&2; bench_usage ;;
         *)            SPECS+=("$1"); shift ;;
     esac
 done
 
 # Default to the current JVM if none specified
 [[ ${#SPECS[@]} -eq 0 ]] && SPECS=("${JAVA_HOME:-$(dirname "$(dirname "$(command -v java)")")}")
-
-resolve_home() {
-    local s="$1"
-    [[ -x "$s/bin/java" ]] && { echo "$s"; return; }
-    [[ -x "$SDK_DIR/$s/bin/java" ]] && { echo "$SDK_DIR/$s"; return; }
-    echo ""
-}
-major_of() { "$1/bin/java" -version 2>&1 | head -1 | sed -E 's/.*version "([0-9]+).*/\1/'; }
-label_of() { "$1/bin/java" -version 2>&1 | head -1 | sed -E 's/ version "/-/; s/".*//'; }
 
 IFS=',' read -r -a CDS_ARR <<<"$CDS_MODES"
 IFS=',' read -r -a JIT_ARR <<<"$JIT_MODES"
@@ -133,9 +121,9 @@ time_avg() {
 }
 
 for spec in "${SPECS[@]}"; do
-    home=$(resolve_home "$spec")
+    home=$(bench_resolve_home "$spec")
     [[ -z "$home" ]] && { echo "  $spec: UNRESOLVED (skipped)" >&2; continue; }
-    J="$home/bin/java"; maj=$(major_of "$home"); lbl=$(label_of "$home")
+    J="$home/bin/java"; maj=$(bench_major_of "$home"); lbl=$(bench_label_of "$home")
     BASE=$(base_flags "$maj")
     echo ">> $lbl  ($spec, JDK major $maj)" >&2
     for jit in "${JIT_ARR[@]}"; do
