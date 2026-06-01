@@ -39,7 +39,7 @@ class PocketPredictor implements Parametrized {
         double score = point.transformedScore
 
         if (BALANCE_POINT_DENSITY) {
-            int pts = surfacePoints.cutoutSphere(point, BALANCE_RADIUS).count
+            int pts = surfacePoints.countWithinSphere(point, BALANCE_RADIUS)  // count only: avoid materializing an Atoms list per point
             score = score / pts
         }
 
