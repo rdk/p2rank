@@ -39,6 +39,7 @@ distro/README.md
 pastebin.txt
 
 CLAUDE.local.md
+.claude/
 
 # bench artifacts (pocket_grid_features_bench.sh)
 jfr-*.jfr
