@@ -14,6 +14,7 @@ import cz.siret.prank.geom.AtomDeduplicator
 import cz.siret.prank.geom.Struct
 import cz.siret.prank.geom.Surface
 import cz.siret.prank.geom.SurfaceStrategy
+import cz.siret.prank.geom.kdtree.AtomKdTree
 import org.openscience.cdk.interfaces.IAtomContainer
 
 import java.util.concurrent.ExecutorService
@@ -112,7 +113,8 @@ class AnalyzeRoutine extends Routine {
         "convert-dataset-to-atomid" : { cmdConvertContactresDataset() },
         "print-volsite-table" : { print_volsite_table() },
         "cofactors" : { cmdCofactors() },
-        "surface-strategies" : { cmdSurfaceStrategies() }
+        "surface-strategies" : { cmdSurfaceStrategies() },
+        "surface-density" : { cmdSurfaceDensity() }
     ])
 
 //===========================================================================================================//
@@ -1507,5 +1509,139 @@ class AnalyzeRoutine extends Routine {
     }
     private static String f3(double v) { String.format("%.3f", v) }
     private static String f1(double v) { String.format("%.1f", v) }
+
+    //===========================================================================================================//
+    // surface-density
+    //===========================================================================================================//
+
+    /** Mesh nearest-neighbour distance thresholds (A) - the spacing sweep over DISTINCT surface points. */
+    private static final double[] DENSITY_EPS = [0.001d, 0.01d, 0.05d, 0.1d, 0.25d, 0.5d, 1.0d] as double[]
+    /** Distance under which two points are treated as the same location (collapses exact tessellation dups). */
+    private static final double EXACT_EPS = 1e-4d
+
+    /** Per-protein surface density measurement. */
+    @CompileStatic
+    private static class DensityResult {
+        long points, atoms, uniqueLocs, keptSparsified
+        double area, sumNn, maxNn   // NN stats over the DISTINCT (unique-location) points
+        long[] leCounts             // # distinct points whose nearest other distinct point is within DENSITY_EPS[k]
+    }
+
+    /**
+     * Analyze the point density of the selected surface strategy ({@code surface_strategy}) over a
+     * dataset, and quantify how many surface points are (near-)identical - i.e. why p2rank sparsifies.
+     *
+     * <p>For each protein it builds the RAW (pre-sparsification) surface and reports:
+     * <ul>
+     *   <li>raw density: points per atom and per A^2;</li>
+     *   <li>exact duplication: distinct locations vs raw points, and the mean multiplicity. The CDK /
+     *       Faster / Packed icosahedral tessellation emits every direction with multiplicity >=5
+     *       (shared triangle vertices), so essentially every raw point has exact coincident twins;</li>
+     *   <li>mesh spacing: nearest-neighbour distance among the DISTINCT points (a meaningful density,
+     *       unlike NN over raw points which is ~0 due to the coincident twins), as a cumulative sweep
+     *       of the fraction of distinct points whose nearest other distinct point is within each eps;</li>
+     *   <li>the actual reduction from sparsification at the production 0.05 A threshold.</li>
+     * </ul>
+     */
+    void cmdSurfaceDensity() {
+        SurfaceStrategy strategy = SurfaceStrategy.resolve(params)
+        double solventRadius = params.solvent_radius
+        int tess = params.tessellation
+        double sparsifyDist = Surface.SPARSIFY_DIST
+        write "surface-density: strategy=${strategy.id} solventRadius=$solventRadius tessellation=$tess sparsifyDist=$sparsifyDist threads=${params.threads}"
+
+        ConcurrentLinkedQueue<DensityResult> resultsQ = new ConcurrentLinkedQueue<>()
+        def res = dataset.processItems { Dataset.Item item ->
+            Protein p = item.protein
+            IAtomContainer c = CdkUtils.toAtomContainer(p.proteinAtoms)
+            SurfaceStrategy.RawSurface raw = strategy.compute(c, solventRadius, tess)
+            resultsQ.add(analyzeDensity(raw, p.proteinAtoms.count, sparsifyDist))
+        }
+        write res.writeErrorsAndGetSummary(outdir)
+
+        List<DensityResult> results = new ArrayList<>(resultsQ)
+        if (results.empty) { write "no surfaces analyzed"; return }
+
+        long totProteins = results.size()
+        long totPoints = 0, totUnique = 0, totKept = 0
+        double totSumNn = 0, totMaxNn = 0, sumPtsPerAtom = 0, sumPtsPerA2 = 0
+        long[] totLe = new long[DENSITY_EPS.length]
+        for (DensityResult r : results) {
+            totPoints += r.points; totUnique += r.uniqueLocs; totKept += r.keptSparsified
+            totSumNn += r.sumNn
+            if (r.maxNn > totMaxNn) totMaxNn = r.maxNn
+            sumPtsPerAtom += r.atoms > 0 ? (double) r.points / r.atoms : 0
+            sumPtsPerA2 += r.area > 0 ? r.points / r.area : 0
+            for (int k = 0; k < totLe.length; k++) totLe[k] += r.leCounts[k]
+        }
+        double multiplicity = totUnique > 0 ? (double) totPoints / totUnique : 0
+        double exactDupPct = 100.0 * (1 - (double) totUnique / totPoints)
+        double removedPct = 100.0 * (1 - (double) totKept / totPoints)
+        double nnMean = totUnique > 0 ? totSumNn / totUnique : 0
+
+        StringBuilder out = new StringBuilder()
+        out << String.format("%n=== surface density (strategy=%s) over %d proteins ===%n", strategy.id, totProteins)
+        out << String.format("raw surface points : %d total, %.0f / protein, %.2f / atom, %.3f / A^2%n",
+                totPoints, (double) totPoints / totProteins, sumPtsPerAtom / totProteins, sumPtsPerA2 / totProteins)
+        out << String.format("exact duplication  : %d distinct locations -> mean multiplicity %.2fx (%.1f%% of raw points are exact coincident duplicates)%n",
+                totUnique, multiplicity, exactDupPct)
+        out << String.format("sparsify @ %.2f A   : %d -> %d points (%.1f%% removed)%n", sparsifyDist, totPoints, totKept, removedPct)
+        out << String.format("mesh spacing (NN between distinct points): mean %.4f A, max %.3f A%n", nnMean, totMaxNn)
+        out << String.format("%n%-12s %18s%n", "NN <= eps(A)", "% of distinct pts")
+        out << ("-" * 34) << "\n"
+        for (int k = 0; k < DENSITY_EPS.length; k++) {
+            out << String.format("%-12s %17.2f%%%n", f3(DENSITY_EPS[k]), totUnique > 0 ? 100.0 * totLe[k] / totUnique : 0)
+        }
+        write out.toString()
+
+        StringBuilder csv = new StringBuilder("strategy,proteins,total_points,distinct_locations,multiplicity,exact_dup_pct,points_per_protein,points_per_atom,points_per_A2,sparsify_dist_A,sparsify_kept,sparsify_removed_pct,mesh_nn_mean_A,mesh_nn_max_A")
+        for (double e : DENSITY_EPS) csv << ",mesh_nn_within_${f3(e)}_pct"
+        csv << "\n"
+        csv << "${strategy.id},${totProteins},${totPoints},${totUnique},${f3(multiplicity)},${f1(exactDupPct)},${f1((double) totPoints / totProteins)},${f3(sumPtsPerAtom / totProteins)},${f3(sumPtsPerA2 / totProteins)},${f3(sparsifyDist)},${totKept},${f1(removedPct)},${f3(nnMean)},${f3(totMaxNn)}"
+        for (int k = 0; k < DENSITY_EPS.length; k++) {
+            double pct = 0d
+            if (totUnique > 0) pct = 100.0d * totLe[k] / (double) totUnique
+            csv << ("," + f1(pct))
+        }
+        csv << "\n"
+        String csvPath = "$outdir/surface_density.csv"
+        writeFile csvPath, csv.toString()
+        write "density stats written to [$csvPath]"
+    }
+
+    /** Build the per-protein density measurement for one raw surface. */
+    private static DensityResult analyzeDensity(SurfaceStrategy.RawSurface raw, int atomCount, double sparsifyDist) {
+        Atoms pts = raw.points
+        int n = pts.count
+        DensityResult r = new DensityResult()
+        r.points = n
+        r.atoms = atomCount
+        r.area = raw.totalSurfaceArea
+        r.leCounts = new long[DENSITY_EPS.length]
+        if (n == 0) return r
+
+        // distinct surface locations: collapse exact coincident duplicates (the tessellation multiplicity)
+        Atoms distinct = AtomDeduplicator.sparsify(pts, EXACT_EPS)
+        r.uniqueLocs = distinct.count
+        // actual production sparsification reduction (greedy, 0.05 A)
+        r.keptSparsified = AtomDeduplicator.sparsify(pts, sparsifyDist).count
+
+        // mesh spacing: nearest-other-distinct-point distance over the DISTINCT set (NN over raw points
+        // is ~0 because every raw point has exact coincident twins, so we measure distinct-point spacing)
+        distinct.buildKdTree()
+        AtomKdTree tree = distinct.getKdTree()
+        double sum = 0, max = 0
+        for (Atom a : distinct.list) {
+            double d = tree.nearestDifferentDist(a)
+            sum += d
+            if (d > max) max = d
+            for (int k = 0; k < DENSITY_EPS.length; k++) {
+                if (d <= DENSITY_EPS[k]) r.leCounts[k]++
+            }
+        }
+        r.sumNn = sum
+        r.maxNn = max
+        return r
+    }
 
 }
