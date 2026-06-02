@@ -2004,8 +2004,20 @@ class Params {
     boolean surface_sparsify = true
 
     /**
-     * Use optimized library for solvent accessible surface calculation
+     * Solvent-accessible-surface generation strategy: "cdk" | "faster" | "packed".
+     *  - cdk:    CDK NumericalSurface (with metal van der Waals fallback)
+     *  - faster: optimized FasterNumericalSurface (current default)
+     *  - packed: flat-store + zero-copy delivery (bit-exact to faster, lower allocation / faster point handling)
+     * Empty (default) derives from the deprecated {@link #use_optimized_surface} (true -> faster, false -> cdk).
      */
+    @RuntimeParam
+    String surface_strategy = ""
+
+    /**
+     * @deprecated Use {@link #surface_strategy} instead. Honored only when surface_strategy is empty:
+     * true -> "faster", false -> "cdk".
+     */
+    @Deprecated
     @RuntimeParam
     boolean use_optimized_surface = true
 

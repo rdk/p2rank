@@ -70,4 +70,18 @@ class CdkUtils {
         return new Atoms(res)
     }
 
+    /**
+     * Build surface points directly from a packed {@code xyzxyz...} coordinate buffer (the zero-copy
+     * {@code PackedSurfaceAccess.surfacePointsXYZ()} path), reading only {@code [0, 3*count)}. Avoids the
+     * intermediate {@code Point3d} per point. {@code @CompileStatic} keeps this a tight primitive loop.
+     */
+    static Atoms toAtomPoints(double[] xyz, int count) {
+        List<Atom> res = new ArrayList<Atom>(count)
+        for (int p = 0; p < count; p++) {
+            int b = p * 3
+            res.add(new Point(xyz[b], xyz[b + 1], xyz[b + 2]))
+        }
+        return new Atoms(res)
+    }
+
 }

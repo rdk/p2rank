@@ -46,30 +46,22 @@ class Surface implements Parametrized {
 
         IAtomContainer container = CdkUtils.toAtomContainer(proteinAtoms)
 
+        // Pluggable, CLI-selectable surface strategy (cdk | faster | packed). Each strategy builds the
+        // surface and extracts its points in the cheapest way for that backend (the 'packed' strategy
+        // uses the zero-copy PackedSurfaceAccess path, avoiding the per-point Point3d). The metal-VdW
+        // fallback lives in the 'cdk' strategy (PatchedCdkNumericalSurface). See SurfaceStrategy.
+        SurfaceStrategy strategy = SurfaceStrategy.resolve(Params.inst)
+        SurfaceStrategy.RawSurface raw = strategy.compute(container, solventRadius, tesselationLevel)
 
-        double totalSurfaceArea
-        Point3d[] allSurfacePoints
+        double totalSurfaceArea = raw.totalSurfaceArea
+        Atoms surfacePoints = raw.points
 
-        if (Params.inst.use_optimized_surface) {
-            FasterNumericalSurface numericalSurface = new FasterNumericalSurface(container, solventRadius, tesselationLevel)
-            totalSurfaceArea = numericalSurface.totalSurfaceArea
-            allSurfacePoints = numericalSurface.allSurfacePoints
-        } else {
-            // Wrap CDK's NumericalSurface to fall back on elements with null VdW radius
-            // in CDK's Elements enum (Co, Ni, Cu, Rh, Os, Ir, ...). See PatchedCdkNumericalSurface
-            // and local/cdk-vdw-radius-gap.md.
-            PatchedCdkNumericalSurface numericalSurface = new PatchedCdkNumericalSurface(container, solventRadius, tesselationLevel)
-            totalSurfaceArea = numericalSurface.totalSurfaceArea
-            allSurfacePoints = numericalSurface.allSurfacePoints
-        }
-
-
-
-        Atoms surfacePoints = CdkUtils.toAtomPoints(allSurfacePoints)
-
-        log.debug "numerical surface: {} points", surfacePoints.count
-        if (Params.inst.surface_sparsify) {
-            // CDK returns lots of duplicate or too-close atoms (bug in the implementation?)
+        log.debug "numerical surface ({}): {} points", strategy.id, surfacePoints.count
+        // Two-boolean gate: the strategy declares whether its points need external sparsification, and
+        // the global surface_sparsify can still force it off. A future strategy that sparsifies
+        // internally would set requiresSparsification=false and skip this step.
+        if (strategy.requiresSparsification && Params.inst.surface_sparsify) {
+            // CDK/Faster/Packed return lots of duplicate or too-close points (icosahedral tessellation)
             surfacePoints = AtomDeduplicator.sparsify(surfacePoints, SPARSIFY_DIST)
             log.debug "surface after sparsification: {} points", surfacePoints.count
         }
