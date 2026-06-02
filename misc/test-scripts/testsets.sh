@@ -416,6 +416,21 @@ analyze() {
 }
 
 
+# benchmark + bit-equality-verify all surface strategies (cdk|faster|packed) on the major datasets
+surface_strategies() {
+
+    title SURFACE STRATEGIES BENCHMARK AND EQUALITY
+
+    # Uses ./prank.sh (local-env big heap + full C2/Graal JIT), NOT prank_faster: this is a heavy
+    # compute benchmark, and the command pre-loads all proteins (large datasets like holo4k need the
+    # big heap). prank_faster's C1-only JIT and 2g heap would undersell the optimized strategies.
+    test ./prank.sh analyze surface-strategies chen11.ds         -c config/test-default  -threads 16  -cache_datasets 0  -out_subdir TEST/SURFACE_STRATEGIES
+    test ./prank.sh analyze surface-strategies fptrain.ds        -c config/test-default  -threads 16  -cache_datasets 0  -out_subdir TEST/SURFACE_STRATEGIES
+    test ./prank.sh analyze surface-strategies coach420.ds       -c config/test-default  -threads 16  -cache_datasets 0  -out_subdir TEST/SURFACE_STRATEGIES
+    test ./prank.sh analyze surface-strategies joined.ds         -c config/test-default  -threads 16  -cache_datasets 0  -out_subdir TEST/SURFACE_STRATEGIES
+    test ./prank.sh analyze surface-strategies holo4k.ds         -c config/test-default  -threads 16  -cache_datasets 0  -out_subdir TEST/SURFACE_STRATEGIES
+}
+
 
 cofactors() {
 
