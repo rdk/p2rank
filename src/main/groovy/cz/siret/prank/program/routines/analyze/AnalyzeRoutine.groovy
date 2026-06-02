@@ -10,7 +10,15 @@ import cz.siret.prank.features.implementation.conservation.ConservationScore
 import cz.siret.prank.features.implementation.table.AtomTableFeature
 import cz.siret.prank.features.implementation.volsite.VolSitePharmacophore
 import cz.siret.prank.geom.Atoms
+import cz.siret.prank.geom.AtomDeduplicator
 import cz.siret.prank.geom.Struct
+import cz.siret.prank.geom.Surface
+import cz.siret.prank.geom.SurfaceStrategy
+import org.openscience.cdk.interfaces.IAtomContainer
+
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
+import java.util.concurrent.Future
 import cz.siret.prank.program.Main
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.routines.Routine
@@ -103,7 +111,8 @@ class AnalyzeRoutine extends Routine {
         "peptides" : { cmdPeptides() },
         "convert-dataset-to-atomid" : { cmdConvertContactresDataset() },
         "print-volsite-table" : { print_volsite_table() },
-        "cofactors" : { cmdCofactors() }
+        "cofactors" : { cmdCofactors() },
+        "surface-strategies" : { cmdSurfaceStrategies() }
     ])
 
 //===========================================================================================================//
@@ -1260,5 +1269,243 @@ class AnalyzeRoutine extends Routine {
         writeFile "$outdir/volsite_atom_table.csv", ss
 
     }
+
+    //===========================================================================================================//
+    // surface-strategies
+    //===========================================================================================================//
+
+    /** One pre-loaded protein: the CDK container + its atom count (structure I/O excluded from timing). */
+    @CompileStatic
+    private static class ProteinInput {
+        final String name
+        final IAtomContainer container
+        final int atomCount
+        ProteinInput(String name, IAtomContainer container, int atomCount) {
+            this.name = name; this.container = container; this.atomCount = atomCount
+        }
+    }
+
+    /** Per-surface measurement (nanoseconds for the two phases + point counts). */
+    @CompileStatic
+    private static class Sample {
+        final long surfaceNs, sparsifyNs
+        final int points, sparsePoints, atoms
+        Sample(long surfaceNs, long sparsifyNs, int points, int sparsePoints, int atoms) {
+            this.surfaceNs = surfaceNs; this.sparsifyNs = sparsifyNs
+            this.points = points; this.sparsePoints = sparsePoints; this.atoms = atoms
+        }
+    }
+
+    /**
+     * Benchmark every {@link SurfaceStrategy} on the dataset: for each strategy, build the surface for
+     * every protein at the configured parallelization (-threads), timing the surface generation and the
+     * subsequent sparsification per surface, and report aggregate stats.
+     *
+     * <p>Structure I/O is excluded: proteins are loaded and converted to CDK containers ONCE up front,
+     * then each strategy is timed over the in-memory containers. A short warm-up per strategy keeps the
+     * cross-strategy comparison fair (JIT + process-wide caches are hot before measuring).
+     */
+    void cmdSurfaceStrategies() {
+        double solventRadius = params.solvent_radius
+        int tess = params.tessellation
+        double sparsifyDist = Surface.SPARSIFY_DIST
+        int threads = Math.max(1, params.threads)
+        List<SurfaceStrategy> strategies = SurfaceStrategy.values().toList()
+
+        // 1) pre-load proteins -> CDK containers ONCE (I/O excluded from the surface timing)
+        write "preloading dataset proteins (structure I/O excluded from timing) ..."
+        Queue<ProteinInput> inputsQ = new ConcurrentLinkedQueue<>()
+        def pre = dataset.processItems { Dataset.Item item ->
+            Protein p = item.protein
+            inputsQ.add(new ProteinInput(p.name, CdkUtils.toAtomContainer(p.proteinAtoms), p.proteinAtoms.count))
+        }
+        write pre.writeErrorsAndGetSummary(outdir)
+        List<ProteinInput> proteins = new ArrayList<>(inputsQ)
+        if (proteins.empty) throw new PrankException("no proteins loaded")
+        long totalAtoms = 0
+        for (ProteinInput it : proteins) totalAtoms += it.atomCount
+        write "loaded ${proteins.size()} proteins, ${totalAtoms} atoms total; solventRadius=$solventRadius tessellation=$tess threads=$threads"
+
+        // 2) warm-up: an untimed PARALLEL pass over up to warmN proteins per strategy, so the JIT
+        // (C2/Graal) fully compiles the parallel hot paths and the process caches are populated before
+        // timing. Done in parallel (not single-threaded) and over a substantial sample so the timed pass
+        // is not skewed by first-surface compile/GC tail (which otherwise dominates small datasets).
+        int warmN = Math.min(proteins.size(), 500)
+        List<ProteinInput> warmSet = new ArrayList<>(proteins.subList(0, warmN))
+        Queue<String> warmErrors = new ConcurrentLinkedQueue<>()
+        for (SurfaceStrategy s : strategies) {
+            runParallel(warmSet, threads, warmErrors) { ProteinInput input ->
+                SurfaceStrategy.RawSurface r = s.compute(input.container, solventRadius, tess)
+                AtomDeduplicator.sparsify(r.points, sparsifyDist)
+            }
+        }
+
+        // 3) measured pass per strategy
+        StringBuilder csv = new StringBuilder("strategy,proteins,threads,wall_s,sum_surface_s,par_speedup," +
+                "surf_mean_ms,surf_median_ms,surf_p95_ms,surf_max_ms,sparsify_mean_ms," +
+                "avg_points,avg_sparse_points,sparsify_reduction_pct,Matoms_per_s\n")
+        StringBuilder console = new StringBuilder()
+        console << String.format("%n%-9s %8s %8s %9s %12s %11s %11s %10s %12s %9s %12s%n",
+                "strategy", "proteins", "wall_s", "speedup", "surf_med_ms", "surf_p95_ms", "sparse_ms",
+                "avg_pts", "avg_sparse", "reduce_%", "Matoms/s")
+        console << ("-" * 128) << "\n"
+
+        for (SurfaceStrategy s : strategies) {
+            ConcurrentLinkedQueue<Sample> samplesQ = new ConcurrentLinkedQueue<>()
+            Queue<String> errors = new ConcurrentLinkedQueue<>()
+
+            long wall0 = System.nanoTime()
+            runParallel(proteins, threads, errors) { ProteinInput input ->
+                long t0 = System.nanoTime()
+                SurfaceStrategy.RawSurface raw = s.compute(input.container, solventRadius, tess)
+                long t1 = System.nanoTime()
+                Atoms sparse = AtomDeduplicator.sparsify(raw.points, sparsifyDist)
+                long t2 = System.nanoTime()
+                samplesQ.add(new Sample(t1 - t0, t2 - t1, raw.points.count, sparse.count, input.atomCount))
+            }
+            long wallNs = System.nanoTime() - wall0
+
+            List<Sample> samples = new ArrayList<>(samplesQ)
+            if (!errors.empty) write "strategy ${s.id}: ${errors.size()} failures (first: ${errors.peek()})"
+            if (samples.empty) { write "strategy ${s.id}: no successful surfaces"; continue }
+
+            int n = samples.size()
+            double[] surfMs = new double[n]
+            double[] sparseMs = new double[n]
+            long sumSurfNs = 0, sumAtoms = 0, sumPts = 0, sumSparse = 0
+            for (int i = 0; i < n; i++) {
+                Sample sm = samples.get(i)
+                surfMs[i] = sm.surfaceNs / 1e6d
+                sparseMs[i] = sm.sparsifyNs / 1e6d
+                sumSurfNs += sm.surfaceNs
+                sumAtoms += sm.atoms
+                sumPts += sm.points
+                sumSparse += sm.sparsePoints
+            }
+            Arrays.sort(surfMs)
+            double avgPts = sumPts / (double) n
+            double avgSparse = sumSparse / (double) n
+            double wallS = wallNs / 1e9d
+            double speedup = sumSurfNs / (double) wallNs
+            double matomsPerS = sumAtoms / wallS / 1e6d
+            double reductionPct = avgPts > 0 ? (1 - avgSparse / avgPts) * 100 : 0
+
+            csv << "${s.id},${n},${threads},${f3(wallS)},${f3(sumSurfNs / 1e9d)},${f3(speedup)}," +
+                    "${f3(mean(surfMs))},${f3(median(surfMs))},${f3(pctl(surfMs, 95))},${f3(surfMs[n - 1])}," +
+                    "${f3(mean(sparseMs))},${Math.round(avgPts)},${Math.round(avgSparse)},${f1(reductionPct)},${f3(matomsPerS)}\n"
+
+            console << String.format("%-9s %8d %8.2f %9.2f %12.3f %11.3f %11.3f %10d %12d %9.1f %12.3f%n",
+                    s.id, n, wallS, speedup, median(surfMs), pctl(surfMs, 95), mean(sparseMs),
+                    Math.round(avgPts), Math.round(avgSparse), reductionPct, matomsPerS)
+        }
+
+        write console.toString()
+        String csvPath = "$outdir/surface_strategies.csv"
+        writeFile csvPath, csv.toString()
+        write "per-strategy stats written to [$csvPath]"
+
+        // 4) equality verification: binary (exact) + approximate (epsilon) vs a reference strategy.
+        // Per protein, compute the reference points once and compare every other strategy's points to
+        // them (same atom-major order); points are released per protein so memory stays bounded.
+        double eps = 1e-6d
+        SurfaceStrategy ref = null
+        for (SurfaceStrategy s : strategies) if (s.id == "faster") ref = s
+        if (ref == null) ref = strategies.get(0)
+        final SurfaceStrategy refStrat = ref
+
+        ConcurrentLinkedQueue<Object[]> eqQ = new ConcurrentLinkedQueue<>()
+        Queue<String> eqErrors = new ConcurrentLinkedQueue<>()
+        runParallel(proteins, threads, eqErrors) { ProteinInput input ->
+            List<Atom> refPts = refStrat.compute(input.container, solventRadius, tess).points.list
+            for (SurfaceStrategy s : strategies) {
+                if (s.is(refStrat)) continue
+                List<Atom> pts = s.compute(input.container, solventRadius, tess).points.list
+                double[] c = comparePoints(refPts, pts, eps)   // [mismatch, exact, withinEps, maxAbsDiff]
+                eqQ.add([s.id, c[0], c[1], c[2], c[3]] as Object[])
+            }
+        }
+        if (!eqErrors.empty) write "equality pass: ${eqErrors.size()} failures (first: ${eqErrors.peek()})"
+
+        StringBuilder eqCsv = new StringBuilder("strategy,reference,compared,binary_equal,within_eps,count_mismatch,max_abs_diff_A,epsilon_A\n")
+        StringBuilder eqOut = new StringBuilder()
+        eqOut << String.format("%n=== surface equality vs reference [%s]  (epsilon = %.0e A) ===%n", refStrat.id, eps)
+        eqOut << String.format("%-9s %9s %13s %11s %15s %16s%n",
+                "strategy", "compared", "binary_equal", "within_eps", "count_mismatch", "max_abs_diff_A")
+        eqOut << ("-" * 92) << "\n"
+        for (SurfaceStrategy s : strategies) {
+            if (s.is(refStrat)) continue
+            int compared = 0, binEq = 0, withinEps = 0, mism = 0
+            double maxd = 0d
+            for (Object[] r : eqQ) {
+                if (!((String) r[0]).equals(s.id)) continue
+                compared++
+                if (((double) r[1]) > 0) mism++
+                if (((double) r[2]) > 0) binEq++
+                if (((double) r[3]) > 0) withinEps++
+                double d = (double) r[4]
+                if (!Double.isNaN(d) && d > maxd) maxd = d
+            }
+            eqOut << String.format("%-9s %9d %13d %11d %15d %16.3e%n", s.id, compared, binEq, withinEps, mism, maxd)
+            eqCsv << "${s.id},${refStrat.id},${compared},${binEq},${withinEps},${mism},${String.format('%.6e', maxd)},${String.format('%.0e', eps)}\n"
+        }
+        write eqOut.toString()
+        String eqPath = "$outdir/surface_equality.csv"
+        writeFile eqPath, eqCsv.toString()
+        write "equality stats written to [$eqPath]"
+    }
+
+    /**
+     * Compare two equally-ordered surface point lists. Returns
+     * {@code [countMismatch(1/0), binaryExact(1/0), withinEpsilon(1/0), maxAbsCoordDiff]}. On a size
+     * mismatch returns {@code [1,0,0,NaN]} (no coordinate comparison possible).
+     */
+    private static double[] comparePoints(List<Atom> a, List<Atom> b, double eps) {
+        int n = a.size()
+        if (n != b.size()) return [1d, 0d, 0d, Double.NaN] as double[]
+        double maxd = 0d
+        for (int i = 0; i < n; i++) {
+            Atom pa = a.get(i), pb = b.get(i)
+            double dx = Math.abs(pa.x - pb.x)
+            double dy = Math.abs(pa.y - pb.y)
+            double dz = Math.abs(pa.z - pb.z)
+            if (dx > maxd) maxd = dx
+            if (dy > maxd) maxd = dy
+            if (dz > maxd) maxd = dz
+        }
+        return [0d, (maxd == 0d ? 1d : 0d), (maxd <= eps ? 1d : 0d), maxd] as double[]
+    }
+
+    /** Run {@code task} over {@code items} on {@code threads} (serial if 1); per-item failures are collected. */
+    private static void runParallel(List<ProteinInput> items, int threads, Queue<String> errors, Closure task) {
+        if (threads <= 1) {
+            for (ProteinInput it : items) {
+                try { task.call(it) } catch (Throwable e) { errors.add("${it.name}: ${e.message}".toString()) }
+            }
+            return
+        }
+        ExecutorService ex = Executors.newFixedThreadPool(threads)
+        try {
+            List<Future> futures = new ArrayList<>(items.size())
+            for (ProteinInput it : items) {
+                final ProteinInput item = it   // per-iteration capture: closures must NOT share the loop var
+                futures.add(ex.submit({ ->
+                    try { task.call(item) } catch (Throwable e) { errors.add("${item.name}: ${e.message}".toString()) }
+                } as Runnable))
+            }
+            for (Future fut : futures) fut.get()
+        } finally {
+            ex.shutdownNow()
+        }
+    }
+
+    private static double mean(double[] a) { if (a.length == 0) return 0; double s = 0; for (double v : a) s += v; return s / a.length }
+    private static double median(double[] sorted) { sorted.length == 0 ? 0 : sorted[(int) (sorted.length / 2)] }
+    private static double pctl(double[] sorted, double p) {
+        if (sorted.length == 0) return 0
+        int idx = (int) Math.ceil(p / 100.0d * sorted.length) - 1
+        return sorted[Math.max(0, Math.min(sorted.length - 1, idx))]
+    }
+    private static String f3(double v) { String.format("%.3f", v) }
+    private static String f1(double v) { String.format("%.1f", v) }
 
 }
