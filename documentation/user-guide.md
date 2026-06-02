@@ -363,12 +363,26 @@ Each row represents one predicted pocket, sorted by score (highest first).
 within a single prediction run. The `probability` column is calibrated against known protein-ligand
 complexes and is more interpretable: a pocket with `probability` 0.7 means that among pockets with
 similar raw scores, roughly 70% were true binding sites in the calibration dataset. There is no
-universal threshold, but pockets with probability above 0.5 are generally worth investigating.
+universal threshold; see [Why so many pockets?](#why-so-many-pockets) below and
+[Recommended cutoffs](#recommended-cutoffs) in Section 6 for practical starting points.
 
 > [!NOTE]
 > The probability calibration is model-specific. Different configs (`default`, `alphafold`,
 > `conservation_hmm`) each have their own calibration. Do not compare probability values across
 > different models or config profiles.
+
+#### Why so many pockets?
+
+P2Rank deliberately keeps the small, low-`probability` pockets rather than filtering them for
+you, so the full list is often long. They are reported because they can be valuable to different
+researchers and use cases: interaction hotspots, allosteric pockets, cryptic sites, and more. Each
+one comes with a calibrated `probability` and a `rank`, so if you only want the confident pockets,
+a single cutoff gives you exactly that.
+
+The list comes from scoring the whole protein surface for ligandability, clustering the
+high-scoring points into pockets, and ranking them. Because the count tracks surface area, larger
+proteins and predicted (AlphaFold) models tend to produce more low-probability pockets. See
+[Recommended cutoffs](#recommended-cutoffs) in Section 6 for sensible starting points.
 
 ### Residue scores (`_residues.csv`)
 
@@ -451,6 +465,24 @@ prank predict -f protein.pdb -pred_min_pocket_score 5.0 -pred_min_pockets 2
 
 > [!NOTE]
 > The probability filter (`-pred_min_pocket_probability`) requires a probability transformer to be configured in the model. The default shipped model includes one, so this works out of the box.
+
+#### Recommended cutoffs
+
+The filters above control *how* to trim the list; this is *where* to start. There is no universal threshold, but these defaults work well in practice. Both combine a probability floor with a safety net (`-pred_min_pockets`), so they always return at least that minimum even on a protein where everything scores low:
+
+- **General use: probability >= 0.2, keep at least the top 3.**
+  ```bash
+  prank predict -f protein.pdb -pred_min_pocket_probability 0.2 -pred_min_pockets 3
+  ```
+- **Docking / virtual screening: probability >= 0.3, keep at least the top 1.** When missing a true site is costly, don't go tighter than this.
+  ```bash
+  prank predict -f protein.pdb -pred_min_pocket_probability 0.3 -pred_min_pockets 1
+  ```
+
+Tighten the probability floor and lower the minimum-pockets count as your downstream capacity shrinks; loosen them when recall matters more than precision. Probability is calibrated across proteins for a given config profile, so one threshold transfers between structures (but not between profiles like `default` and `alphafold`; see [Section 5](#pocket-predictions-_predictionscsv)).
+
+> [!TIP]
+> P2Rank reports many small, low-probability pockets on purpose (see [Why so many pockets?](#why-so-many-pockets)). For the precision/recall reasoning behind these starting points, see this [detailed explanation from the P2Rank author](https://github.com/rdk/p2rank/issues/76#issuecomment-2672575053).
 
 ### 6.2 Visualization Options
 
@@ -790,7 +822,8 @@ prank predict dataset.ds \
 ### Recipe 3: Keep only high-confidence pockets
 
 Filter output to report at most 3 pockets, each with at least 40% predicted probability
-of being a true binding site.
+of being a true binding site. (0.4 is intentionally stricter than the general-purpose 0.2
+starting point in [Section 6.1](#recommended-cutoffs).)
 
 ```bash
 prank predict -f protein.pdb \
