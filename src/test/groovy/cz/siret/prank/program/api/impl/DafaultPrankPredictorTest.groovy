@@ -103,9 +103,8 @@ class DafaultPrankPredictorTest {
     @Test
     void runPrediction() throws Exception {
 
-        Futils.delete(outDir.toString())
-
         Path testOutDir = path(outDir, "predict_2W83_test")
+        Futils.delete(testOutDir.toString())   // delete only this test's own subdir, not the shared test_output parent (see maxParallelForks)
         predictor.runPrediction(pdb_2W83, testOutDir)
 
         def outf = testOutDir.toString() + "/2W83.pdb_predictions.csv"

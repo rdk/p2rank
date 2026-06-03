@@ -110,6 +110,16 @@ test {
     // mustRunAfter establishes ordering without forcing copyDocumentation to run for local test-only builds.
     mustRunAfter copyDocumentation
 
+    // Tests run SERIALLY by default (one test JVM). Pass -PmaxParallelForks=N to distribute
+    // test classes across N independent test JVMs; ./unit-test-parallel.sh does this for you.
+    // Each fork has its own Params.INSTANCE (a static singleton), so there is no cross-test
+    // interference from that global mutable state. NOTE: @Isolated/@ResourceLock are per-JVM
+    // and do NOT coordinate across forks, so tests must not write to shared filesystem paths;
+    // each test owns a distinct distro/test_output/<name> subdir. Wall time is floored by the
+    // slowest single test class (Gradle assigns whole classes to forks), so beyond ~4-6 forks
+    // there is no gain and JVM startup overhead makes it slower.
+    maxParallelForks = (project.findProperty('maxParallelForks') ?: 1) as int
+
     // show standard out and standard error of the test JVM(s) on the console
     // testLogging.showStandardStreams = true
 
