@@ -11,6 +11,18 @@
   wrappers live in `src/main/groovy/cz/siret/prank/geom/` (`SurfaceStrategy`,
   `cdksurface/`).
 
+- **FasterForest-private** is a permanent sister repo, always cloned next to
+  this one at `../FasterForest-private`
+  (https://github.com/rdk/FasterForest-private). It is the source of the random
+  forest dependency `cz.siret.prank:FasterForest` (see `build.gradle`); built
+  jars are vendored here under
+  `lib/local-mvn-repo/cz/siret/prank/FasterForest/<version>/` (single version
+  kept, replaced on each bump). To bump: run `./gradlew clean assemble` in the
+  sister repo (native libs are pre-committed, so a Java-only build is enough),
+  copy the resulting `build/libs/FasterForest-<ver>.{jar,pom}` into the vendored
+  dir, update the version in `build.gradle`, remove the old version dir, then
+  `./gradlew test`.
+
 ## Build artifacts (do not edit)
 
 - `distro/README.md` is **generated** from the top-level `README.md` by the
