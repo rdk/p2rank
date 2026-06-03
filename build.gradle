@@ -111,7 +111,7 @@ test {
     mustRunAfter copyDocumentation
 
     // Tests run SERIALLY by default (one test JVM). Pass -PmaxParallelForks=N to distribute
-    // test classes across N independent test JVMs; ./unit-test-parallel.sh does this for you.
+    // test classes across N independent test JVMs; ./unit-tests-parallel.sh does this for you.
     // Each fork has its own Params.INSTANCE (a static singleton), so there is no cross-test
     // interference from that global mutable state. NOTE: @Isolated/@ResourceLock are per-JVM
     // and do NOT coordinate across forks, so tests must not write to shared filesystem paths;

@@ -3,7 +3,7 @@
 #
 # run unit tests in parallel (fork-level: test classes spread across N test JVMs)
 #
-# usage: ./unit-test-parallel.sh [N]
+# usage: ./unit-tests-parallel.sh [N]
 #   N = number of parallel forks (default: min(6, cpus/2))
 #
 # NOTE: each fork is a separate JVM (maxHeapSize=2g each), so total RAM ~= N*2g.
