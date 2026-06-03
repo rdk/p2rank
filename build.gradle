@@ -250,7 +250,7 @@ dependencies {
     implementation 'org.openscience.cdk:cdk-silent:2.12'           // for Atom class
 
     implementation 'cz.cuni.cusbg:faster-molecular-surface:1.5'
-    implementation 'cz.siret.prank:FasterForest:2.10.2'
+    implementation 'cz.siret.prank:FasterForest:2.11.0'
 
     implementation 'nz.ac.waikato.cms.weka:weka-dev:3.9.6'
 
