@@ -465,20 +465,35 @@ class Params {
     /**
      * Flattening target type for random forest. Only relevant if rf_flatten=true.
      *
-     * Available options:
-     *  - LegacyFlatBinaryForest
-     *  - FlatBinaryForest
-     *  - ShortFlatBinaryForest
-     *  - SuperShortLegacyFlatBinaryForest
-     *  - InterleavedBfsForest
+     * IMPORTANT: targets fall into two families with DIFFERENT prediction semantics
+     * (see FasterForest's PREDICTION-SEMANTICS.md):
+     *  - "Legacy" / faithful (sum-then-normalize): reproduces the trained forest's
+     *    probabilities exactly. Trained leaves generally do NOT sum to 1 (the shipped
+     *    default model averages ~1.5), so this distinction is material, not cosmetic.
+     *  - "Score-based" (normalize-then-average): each leaf is pre-normalized, giving
+     *    every tree an equal vote. Faster/smaller, but per-point probabilities differ
+     *    from the trained model. Safe for a fresh train+eval run (the point-score
+     *    threshold is calibrated on the same flattened model), but do NOT pair a
+     *    score-based re-flatten of an existing model with a threshold calibrated on
+     *    the legacy model (e.g. the default pred_point_threshold) — the operating
+     *    point shifts.
+     *
+     * Faithful targets:    LegacyFlatBinaryForest, ShortFlatBinaryForest, SuperShortLegacyFlatBinaryForest
+     * Score-based targets: FlatBinaryForest, InterleavedBfsForest (and the other Bfs/Dfs/Ilp/Float/Native variants)
      */
     @RuntimeParam
     @ModelParam // training
     String rf_flatten_target = "LegacyFlatBinaryForest"
 
     /**
-     * Flatten random forest in a way that has exactly the same output
-     * by preserving weird way tree results are aggregated in FastRandomForest.
+     * DEFUNCT — has no effect. Superseded by rf_flatten_target.
+     *
+     * Previously intended to preserve the FastRandomForest aggregation (sum-then-
+     * normalize over non-normalized leaves) on flatten. ModelConverter no longer
+     * reads this flag; faithful output is now obtained by choosing a faithful
+     * rf_flatten_target (LegacyFlatBinaryForest / ShortFlatBinaryForest /
+     * SuperShortLegacyFlatBinaryForest), which is the default. Kept only so old
+     * configs/model params that set it still parse.
      */
     @Deprecated
     @RuntimeParam
