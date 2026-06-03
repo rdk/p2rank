@@ -2011,12 +2011,15 @@ class Params {
      *  - packed:            flat-store + zero-copy delivery (bit-exact to faster, lower allocation / faster point handling)
      *  - faster_distinct:   faster pipeline, one point per distinct direction (no ~5.7x coincident dups), area bit-exact, needs no sparsification
      *  - packed_distinct:   packed engine producing the same de-duplicated, area-exact distinct surface
-     *  - packed_distinct_v2: SIMD weighted dedup + right-sized store; bit-exact to packed_distinct, faster
+     *  - packed_distinct_v2: SIMD weighted dedup + right-sized store; bit-exact to packed_distinct, faster (DEFAULT)
      *  - float_distinct:    v2 pipeline with single-precision occlusion verdict; APPROXIMATE (area within ~1.4e-5), fastest
-     * Empty (default) derives from the deprecated {@link #use_optimized_surface} (true -> faster, false -> cdk).
+     * Default is "packed_distinct_v2": it yields the same SAS points as the historical default after
+     * sparsification (predictions are byte-identical to faster/cdk) while being substantially faster and
+     * needing no sparsification pass. Set to empty ("") to fall back to the deprecated
+     * {@link #use_optimized_surface} (true -> faster, false -> cdk).
      */
     @RuntimeParam
-    String surface_strategy = ""
+    String surface_strategy = "packed_distinct_v2"
 
     /**
      * @deprecated Use {@link #surface_strategy} instead. Honored only when surface_strategy is empty:
