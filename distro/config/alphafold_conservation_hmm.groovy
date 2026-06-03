@@ -8,6 +8,8 @@ import cz.siret.prank.program.params.Params
 
     model = "alphafold_conservation_hmm"
 
+    config_purpose = "prediction"
+
     features = ["chem","volsite","protrusion","conservation"]
 
     load_conservation = true

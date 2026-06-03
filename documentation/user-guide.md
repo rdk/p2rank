@@ -185,6 +185,13 @@ Rescoring re-ranks pockets predicted by another method (e.g. Fpocket). See the [
 | X-ray + conservation | `-c rescore_conservation` | Requires `.hom` conservation files |
 
 > [!WARNING]
+> Prediction configs (`alphafold`, `conservation_hmm`, ...) and rescoring configs
+> (`rescore_2024`, `rescore_conservation`, ...) are **not interchangeable**. Using one with the
+> wrong command (e.g. `prank rescore -c alphafold`, or a rescoring config with `prank predict`)
+> fails fast with an actionable error. Override with `-fail_on_wrong_config 0` only if you
+> know what you are doing.
+
+> [!WARNING]
 > The default model relies on B-factor values as a feature. AlphaFold models store pLDDT confidence
 > scores in the B-factor column, and cryo-EM structures may have resolution-based values there.
 > Using the default model on these structures will produce suboptimal results. Always use

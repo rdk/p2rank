@@ -8,6 +8,8 @@ import cz.siret.prank.program.params.Params
 
     model = "alphafold"
 
+    config_purpose = "prediction"
+
     features = ["chem","volsite","protrusion"]
 
     zscoretp_transformer = "{models_dir}/_score_transform/alphafold_ZscoreTpTransformer.json"

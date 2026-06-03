@@ -20,6 +20,8 @@ import cz.siret.prank.program.params.Params
      */
     model = "default_rescore"
 
+    config_purpose = "rescoring"
+
     /**
      * Random seed
      */

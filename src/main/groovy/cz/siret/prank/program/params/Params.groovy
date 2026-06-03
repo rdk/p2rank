@@ -1256,6 +1256,22 @@ class Params {
     boolean fail_on_model_feature_mismatch = true
 
     /**
+     * Declares what this config is intended for: "prediction" or "rescoring" (empty = unrestricted).
+     * Used to reject wrong command/config combinations (e.g. `prank rescore -c alphafold`,
+     * or a rescoring config used with `predict`). See issue #73.
+     */
+    @RuntimeParam
+    String config_purpose = ""
+
+    /**
+     * Validate that the command matches the config's declared purpose (config_purpose).
+     * true  = fail with a clear error on mismatch (recommended; prevents silently wrong results).
+     * false = only log a warning and continue.
+     */
+    @RuntimeParam
+    boolean fail_on_wrong_config = true
+
+    /**
      * Residue prediction mode (as opposed to full pocket prediction mode)
      */
     @RuntimeParam

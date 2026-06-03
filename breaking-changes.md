@@ -36,6 +36,15 @@ All changes of that type should be rare and should be all listed here.
   the failure to a warning. Legacy models without a stored header (v1/v2 files, or v3 directories lacking
   `features.txt`) are not affected. All bundled models match their shipped configs, so default usage is unaffected.
 
+###### Command / config purpose check
+
+* Prediction and rescoring commands now validate that the chosen config's declared purpose
+  (`config_purpose`, set to `prediction` or `rescoring` in the shipped configs) matches the command.
+  A mismatch (e.g. `prank rescore -c alphafold`, or a rescoring config used with `prank predict`)
+  fails fast with an actionable error. This is controlled by the new `fail_on_wrong_config`
+  parameter (default `true`); set `-fail_on_wrong_config 0` to downgrade to a warning. Configs
+  without `config_purpose` (custom configs, dev/training configs) are unrestricted, so they are unaffected.
+
 ###### Pocket-descriptors export (opt-in feature)
 
 * Per-pocket descriptors `-export_pocket_descriptors` underwent a multi-column interface migration. The built-in default

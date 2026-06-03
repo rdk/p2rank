@@ -444,6 +444,7 @@ class Main implements Parametrized, Writable {
      */
     @CompileDynamic
     void doRunPredict(String label, boolean evalPredict) {
+        checkCommandConfig()
         Dataset dataset = loadDatasetOrFile()
         String outdir = findOutdir("${label}_$dataset.label")
         configureLoggers(outdir)
@@ -603,6 +604,16 @@ class Main implements Parametrized, Writable {
 
     void initRescoreDefaultParams() {
         initParams(params, "$installDir/config/default_rescore.groovy")
+        checkCommandConfig()
+    }
+
+    /**
+     * Reject a command run with a config of the wrong purpose (e.g. `rescore -c alphafold`).
+     * Must be called after the command's params are fully resolved (rescore commands re-base
+     * on default_rescore inside initRescoreDefaultParams). See issue #73.
+     */
+    private void checkCommandConfig() {
+        CommandConfigCompatibility.check(command, params.config_purpose, configFileParam, params.fail_on_wrong_config)
     }
 
     /**

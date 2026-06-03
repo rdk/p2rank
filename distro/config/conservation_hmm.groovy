@@ -7,6 +7,8 @@ import cz.siret.prank.program.params.Params
 
     model = "conservation_hmm"
 
+    config_purpose = "prediction"
+
     features = ["chem","volsite","protrusion","bfactor","conservation"]
 
     load_conservation = true

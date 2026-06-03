@@ -11,6 +11,8 @@ import cz.siret.prank.program.params.Params
      */
     model = "rescore_conservation"
 
+    config_purpose = "rescoring"
+
     delete_models = true
 
     delete_vectors = true

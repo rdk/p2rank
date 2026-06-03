@@ -25,6 +25,8 @@ import cz.siret.prank.program.params.Params
      */
     model = "default"
 
+    config_purpose = "prediction"
+
     /**
      * Random seed
      */
