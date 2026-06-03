@@ -452,6 +452,13 @@ surface_density() {
 }
 
 
+# all surface analyses: strategy benchmark/equality + per-strategy density. Not in all() -- opt-in.
+surfaces() {
+    surface_strategies
+    surface_density
+}
+
+
 cofactors() {
 
     title COFACTORS FEATURE
