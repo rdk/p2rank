@@ -1,5 +1,16 @@
 # P2Rank — Repo Notes
 
+## Sister repos
+
+- **FasterMolecularSurface** is a permanent sister repo, always cloned next to
+  this one at `../FasterMolecularSurface`
+  (https://github.com/rdk/FasterMolecularSurface). It is the source of the
+  `cz.cuni.cusbg:faster-molecular-surface` Maven dependency (see
+  `build.gradle`); built jars are vendored here under
+  `lib/local-mvn-repo/cz/cuni/cusbg/faster-molecular-surface/`. P2Rank-side
+  wrappers live in `src/main/groovy/cz/siret/prank/geom/` (`SurfaceStrategy`,
+  `cdksurface/`).
+
 ## Build artifacts (do not edit)
 
 - `distro/README.md` is **generated** from the top-level `README.md` by the
