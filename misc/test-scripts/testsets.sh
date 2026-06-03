@@ -416,25 +416,27 @@ analyze() {
 }
 
 
-# benchmark + bit-equality-verify all surface strategies (cdk|faster|packed) on the major datasets
+# benchmark + bit-equality-verify all surface strategies (cdk|faster|packed) on the major datasets.
+# Optional args override the dataset list (default: the 5 major datasets), e.g. surface_strategies fptrain.ds
 surface_strategies() {
 
     title SURFACE STRATEGIES BENCHMARK AND EQUALITY
 
+    local datasets="${@:-chen11.ds fptrain.ds coach420.ds joined.ds holo4k.ds}"
+
     # Uses ./prank.sh (local-env big heap + full C2/Graal JIT), NOT prank_faster: this is a heavy
     # compute benchmark, and the command pre-loads all proteins (large datasets like holo4k need the
     # big heap). prank_faster's C1-only JIT and 2g heap would undersell the optimized strategies.
-    test ./prank.sh analyze surface-strategies chen11.ds         -c config/test-default  -threads 16  -cache_datasets 0  -out_subdir TEST/SURFACE_STRATEGIES
-    test ./prank.sh analyze surface-strategies fptrain.ds        -c config/test-default  -threads 16  -cache_datasets 0  -out_subdir TEST/SURFACE_STRATEGIES
-    test ./prank.sh analyze surface-strategies coach420.ds       -c config/test-default  -threads 16  -cache_datasets 0  -out_subdir TEST/SURFACE_STRATEGIES
-    test ./prank.sh analyze surface-strategies joined.ds         -c config/test-default  -threads 16  -cache_datasets 0  -out_subdir TEST/SURFACE_STRATEGIES
-    test ./prank.sh analyze surface-strategies holo4k.ds         -c config/test-default  -threads 16  -cache_datasets 0  -out_subdir TEST/SURFACE_STRATEGIES
+    for ds in $datasets; do
+        test ./prank.sh analyze surface-strategies $ds  -c config/test-default  -threads 16  -cache_datasets 0  -out_subdir TEST/SURFACE_STRATEGIES
+    done
 }
 
 
 # density stats (point redundancy, mesh spacing, sparsification reduction) of EACH surface strategy
 # on the major datasets (mlig variants excluded). surface-density analyzes one strategy per run
 # (selected via -surface_strategy), so we loop over every strategy x every dataset. Not in all().
+# Optional args override the dataset list (default: the 5 major datasets), e.g. surface_density fptrain.ds
 surface_density() {
 
     title SURFACE DENSITY PER STRATEGY
@@ -442,7 +444,7 @@ surface_density() {
     # ./prank.sh (big heap + full JIT), same rationale as surface_strategies: heavy compute that
     # pre-loads all proteins. Output is segregated per strategy so runs don't overwrite each other.
     local strategies="cdk faster packed faster_distinct packed_distinct"
-    local datasets="chen11.ds fptrain.ds coach420.ds joined.ds holo4k.ds"
+    local datasets="${@:-chen11.ds fptrain.ds coach420.ds joined.ds holo4k.ds}"
 
     for strat in $strategies; do
         for ds in $datasets; do
@@ -456,6 +458,13 @@ surface_density() {
 surfaces() {
     surface_strategies
     surface_density
+}
+
+
+# same as surfaces() but only on the smallest dataset (fptrain) for a quick check. Not in all().
+surfaces_fast() {
+    surface_strategies fptrain.ds
+    surface_density fptrain.ds
 }
 
 
