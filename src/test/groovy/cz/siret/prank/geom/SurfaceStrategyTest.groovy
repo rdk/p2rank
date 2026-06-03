@@ -55,7 +55,10 @@ class SurfaceStrategyTest {
             SurfaceStrategy.RawSurface raw = s.compute(c, 1.6d, 3)
             assertTrue(raw.totalSurfaceArea > 0, "area > 0 for ${s.id}")
             assertTrue(raw.points.count > 0, "points > 0 for ${s.id}")
-            assertTrue(s.requiresSparsification, "current strategies all need sparsification (${s.id})")
+            // distinct strategies de-duplicate internally and need no external sparsification; the rest do
+            boolean expectSparsification = !s.id.contains('distinct')
+            assertEquals(expectSparsification, s.requiresSparsification,
+                    "sparsification flag must match strategy semantics (${s.id})")
         }
     }
 
