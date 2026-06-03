@@ -432,6 +432,26 @@ surface_strategies() {
 }
 
 
+# density stats (point redundancy, mesh spacing, sparsification reduction) of EACH surface strategy
+# on the major datasets (mlig variants excluded). surface-density analyzes one strategy per run
+# (selected via -surface_strategy), so we loop over every strategy x every dataset. Not in all().
+surface_density() {
+
+    title SURFACE DENSITY PER STRATEGY
+
+    # ./prank.sh (big heap + full JIT), same rationale as surface_strategies: heavy compute that
+    # pre-loads all proteins. Output is segregated per strategy so runs don't overwrite each other.
+    local strategies="cdk faster packed faster_distinct packed_distinct"
+    local datasets="chen11.ds fptrain.ds coach420.ds joined.ds holo4k.ds"
+
+    for strat in $strategies; do
+        for ds in $datasets; do
+            test ./prank.sh analyze surface-density $ds  -surface_strategy $strat  -c config/test-default  -threads 16  -cache_datasets 0  -out_subdir TEST/SURFACE_DENSITY/$strat
+        done
+    done
+}
+
+
 cofactors() {
 
     title COFACTORS FEATURE
