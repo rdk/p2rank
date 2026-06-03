@@ -2,7 +2,9 @@ package cz.siret.prank.geom
 
 import cz.cuni.cusbg.surface.DistinctFasterNumericalSurface
 import cz.cuni.cusbg.surface.DistinctPackedNumericalSurface
+import cz.cuni.cusbg.surface.DistinctPackedNumericalSurfaceV2
 import cz.cuni.cusbg.surface.FasterNumericalSurface
+import cz.cuni.cusbg.surface.FloatNumericalSurface
 import cz.cuni.cusbg.surface.PackedNumericalSurface
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.Params
@@ -39,7 +41,19 @@ enum SurfaceStrategy {
      * {@link DistinctPackedNumericalSurface}: the PACKED engine producing the same de-duplicated,
      * area-exact distinct surface as FASTER_DISTINCT. Also needs no sparsification.
      */
-    PACKED_DISTINCT('packed_distinct', false)
+    PACKED_DISTINCT('packed_distinct', false),
+    /**
+     * {@link DistinctPackedNumericalSurfaceV2}: SIMD weighted dedup + right-sized store. Bit-exact to
+     * PACKED_DISTINCT (same distinct point set and area), just faster. Needs no sparsification.
+     */
+    PACKED_DISTINCT_V2('packed_distinct_v2', false),
+    /**
+     * {@link FloatNumericalSurface}: the V2 distinct pipeline with a single-precision occlusion verdict
+     * (8 SIMD lanes). Point positions and areas stay double, but a few boundary points may flip survival,
+     * so it is APPROXIMATE (area within ~1.4e-5 relative of exact, well inside tessellation discretization
+     * error), not bit-exact. Fastest variant. Needs no sparsification.
+     */
+    FLOAT_DISTINCT('float_distinct', false)
 
     final String id
     final boolean requiresSparsification
@@ -66,6 +80,12 @@ enum SurfaceStrategy {
                 return new RawSurface(s.totalSurfaceArea, CdkUtils.toAtomPoints(s.allSurfacePoints))
             case PACKED_DISTINCT:
                 DistinctPackedNumericalSurface s = new DistinctPackedNumericalSurface(container, solventRadius, tesselationLevel)
+                return new RawSurface(s.totalSurfaceArea, CdkUtils.toAtomPoints(s.surfacePointsXYZ(), s.surfacePointCount()))
+            case PACKED_DISTINCT_V2:
+                DistinctPackedNumericalSurfaceV2 s = new DistinctPackedNumericalSurfaceV2(container, solventRadius, tesselationLevel)
+                return new RawSurface(s.totalSurfaceArea, CdkUtils.toAtomPoints(s.surfacePointsXYZ(), s.surfacePointCount()))
+            case FLOAT_DISTINCT:
+                FloatNumericalSurface s = new FloatNumericalSurface(container, solventRadius, tesselationLevel)
                 return new RawSurface(s.totalSurfaceArea, CdkUtils.toAtomPoints(s.surfacePointsXYZ(), s.surfacePointCount()))
             default:
                 throw new IllegalStateException("unhandled surface strategy: $this")

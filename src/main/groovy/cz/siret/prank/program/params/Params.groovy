@@ -2004,12 +2004,15 @@ class Params {
     boolean surface_sparsify = true
 
     /**
-     * Solvent-accessible-surface generation strategy: "cdk" | "faster" | "packed" | "faster_distinct" | "packed_distinct".
-     *  - cdk:             CDK NumericalSurface (with metal van der Waals fallback)
-     *  - faster:          optimized FasterNumericalSurface (current default)
-     *  - packed:          flat-store + zero-copy delivery (bit-exact to faster, lower allocation / faster point handling)
-     *  - faster_distinct: faster pipeline, one point per distinct direction (no ~5.7x coincident dups), area bit-exact, needs no sparsification
-     *  - packed_distinct: packed engine producing the same de-duplicated, area-exact distinct surface (fastest)
+     * Solvent-accessible-surface generation strategy:
+     *  "cdk" | "faster" | "packed" | "faster_distinct" | "packed_distinct" | "packed_distinct_v2" | "float_distinct".
+     *  - cdk:               CDK NumericalSurface (with metal van der Waals fallback)
+     *  - faster:            optimized FasterNumericalSurface (current default)
+     *  - packed:            flat-store + zero-copy delivery (bit-exact to faster, lower allocation / faster point handling)
+     *  - faster_distinct:   faster pipeline, one point per distinct direction (no ~5.7x coincident dups), area bit-exact, needs no sparsification
+     *  - packed_distinct:   packed engine producing the same de-duplicated, area-exact distinct surface
+     *  - packed_distinct_v2: SIMD weighted dedup + right-sized store; bit-exact to packed_distinct, faster
+     *  - float_distinct:    v2 pipeline with single-precision occlusion verdict; APPROXIMATE (area within ~1.4e-5), fastest
      * Empty (default) derives from the deprecated {@link #use_optimized_surface} (true -> faster, false -> cdk).
      */
     @RuntimeParam
