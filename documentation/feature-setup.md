@@ -124,7 +124,7 @@ list (including training-internal variants), see
 | `bfactor` | Per-atom B-factor (meaningful only for experimental structures) |
 | `atom_table` | Atom-type table lookup (columns selected by `-atom_table_features`) |
 | `residue_table` | Residue-type table lookup (columns selected by `-residue_table_features`) |
-| `conservation` | Sequence conservation score (requires `-conservation_dirs` or HMM provider) |
+| `conservation` | Sequence conservation score (requires `-conservation_dirs` or HMM provider). Several variants exist, see [Conservation features](#conservation-features) below. |
 | `asa` | Accessible surface area |
 | `aa-propensity`, `atomtype-propensity`, `duplets`, `triplets` | AA / atom-type / sequence-duplet / triplet binding propensities |
 | `ss`, `sss` (+ `ss_cloud`, `sss_cloud`, `sss_motif`) | Secondary structure (full + simplified, cloud and motif variants) |
@@ -134,6 +134,30 @@ list (including training-internal variants), see
 | `anm_sensor`, `anm_effectiveness`, `anm_msf`, `cg_betweenness`, `cg_closeness`, `cg_degree` | Physics: ANM modes and contact-graph centrality measures |
 | `csv` | Per-protein values supplied through external CSV files (see "Adding new features" below) |
 | `xyz` | Dummy feature exposing the 3D coordinates of each SAS point (useful for `-export_points`) |
+
+
+## Conservation features
+
+P2Rank ships several conservation feature calculators. They all start from the same per-residue
+conservation scores and differ only in how those scores are mapped onto SAS points. All require
+conservation data (`-conservation_dirs` or an HMM provider, see [conservation.md](conservation.md)).
+
+| Name | Notes |
+|---|---|
+| `conservation`, `conservationcloud`, `conservationcloudscaled` | Original triplet. |
+| `conserv_sas`, `conserv_atomic`, `conserv_cloud` (+ `conserv_cloud2`) | Cleaner re-implementation, recommended. |
+| `z-conserv_sas`, `z-conserv_atomic`, `z-conserv_cloud` (+ `z-conserv_cloud2`) | Z-score normalized variants. |
+
+> [!WARNING]
+> The bare name `conserv` (and `z-conserv`) is **not** a usable feature: it is the internal name
+> of the residue-level calculator, exposed only through the `_sas` / `_atomic` wrappers. Passing
+> `-features '(conserv)'` fails with `Feature implementation not found: conserv`. Use
+> `conserv_sas`, `conserv_atomic`, or `conserv_cloud` instead.
+
+> [!TIP]
+> If you are unsure which to use, prefer the `conserv_*` triplet and tune `-conserv_cloud_radius`.
+> The variants differ mainly in SAS-point mapping; in practice the difference between them is
+> usually small.
 
 
 ## Adding new features

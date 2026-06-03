@@ -11,6 +11,7 @@ This directory contains documentation and tutorials for P2Rank.
 | File | Description |
 |------|-------------|
 | [rescoring.md](rescoring.md) | Rescoring predictions from other pocket prediction methods (Fpocket, Pocketeer, etc.) |
+| [docking.md](docking.md) | Deriving docking search boxes (center + size) from predicted pockets |
 | [export-points.md](export-points.md) | Exporting SAS points with feature vectors and predicted ligandability scores |
 | [export-pocket-grid.md](export-pocket-grid.md) | Exporting per-pocket 3D grid points (PyMOL/ChimeraX-ready) |
 | [export-pocket-descriptors.md](export-pocket-descriptors.md) | Exporting per-pocket scalar descriptors (volume, sphericity, principal moments, ...) |

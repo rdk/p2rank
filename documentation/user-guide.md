@@ -250,6 +250,17 @@ prank predict -f 2W83.pdb -chains A,B
 For batch processing, create a `.ds` text file that lists protein paths, one per line. Paths are
 resolved relative to the directory containing the `.ds` file. Lines starting with `#` are comments.
 
+> [!IMPORTANT]
+> **How P2Rank resolves paths.** Different inputs use different base directories, which is a
+> common source of "file not found" errors:
+> - `-f <file>`, `-o <dir>`, and the `.ds` path itself: relative to your **current working directory**.
+> - Dataset rows (the `protein`, `prediction`, ... columns inside a `.ds` file): relative to the
+>   **directory containing the `.ds` file**, not your working directory.
+> - `-conservation_dirs`: absolute, or relative to the **dataset directory**.
+> - `-c <config>`: a bare name resolves against the install `config/` directory with an implicit
+>   `.groovy` extension (`-c alphafold` -> `config/alphafold.groovy`); a path containing `/` or an
+>   explicit `.groovy` is taken relative to the working directory.
+
 **Simple list** (`basic.ds`):
 
 ```text
@@ -901,6 +912,22 @@ prank predict chains_dataset.ds
 > [!TIP]
 > Chain restriction is useful for large multi-chain complexes where you only care about
 > specific subunits. It also reduces memory usage and runtime.
+
+### Recipe 7: Build a docking box from a predicted pocket
+
+P2Rank predicts where ligands bind but does not output a docking search box
+directly. You can derive one (center plus size) for AutoDock Vina, Glide, or
+similar tools from the pocket centroid and SAS points, expanding by a margin of
+at least half the ligand's longest dimension.
+
+```bash
+# Export SAS points (with a per-point pocket assignment) for box construction
+prank predict -f protein.pdb -export_points 1 -export_points_format parquet
+```
+
+See [docking.md](docking.md) for the full workflow: copy-pasteable Python to
+turn a pocket into Vina `center_*` / `size_*` values, how to choose the margin,
+and a pocket-grid alternative (2.6+).
 
 
 ## 11. Troubleshooting
