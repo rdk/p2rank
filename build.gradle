@@ -136,6 +136,13 @@ test {
     if (JavaVersion.current() >= JavaVersion.VERSION_23) {
         jvmArgs '--sun-misc-unsafe-memory-access=allow'
     }
+    // --add-modules jdk.incubator.vector: lets the test JVM exercise the SIMD occlusion scan in the
+    // faster-molecular-surface library (surface_strategy=packed_distinct_v2). Output is bit-identical
+    // to the scalar fallback. Guarded on the module actually being present so CI on a stripped or
+    // future JDK without it still runs (the Gradle JVM shares the JDK used for the test forks).
+    if (ModuleLayer.boot().findModule('jdk.incubator.vector').isPresent()) {
+        jvmArgs '--add-modules=jdk.incubator.vector'
+    }
 
     // Forward kdtree benchmark properties to test JVM
     systemProperties System.properties.subMap([
