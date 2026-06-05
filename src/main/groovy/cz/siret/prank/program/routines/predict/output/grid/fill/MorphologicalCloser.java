@@ -26,7 +26,10 @@ public final class MorphologicalCloser implements PocketShapeFiller {
     private static final Logger log = LoggerFactory.getLogger(MorphologicalCloser.class);
 
     @Override
-    public BitSet fill(BitSet rawShell, PocketGrid grid, int minNeighbors, int maxIters) {
+    public BitSet fill(BitSet rawShell, PocketGrid grid, FillKnobs knobs) {
+        FillKnobs.Morph mk = (FillKnobs.Morph) knobs;
+        int minNeighbors = mk.minNeighbors();
+        int maxIters = mk.maxIters();
         if (rawShell.isEmpty()) return (BitSet) rawShell.clone();
 
         BitSet filled = (BitSet) rawShell.clone();

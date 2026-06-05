@@ -15,7 +15,7 @@ import java.util.BitSet;
 public final class NoOpFiller implements PocketShapeFiller {
 
     @Override
-    public BitSet fill(BitSet rawShell, PocketGrid grid, int minNeighbors, int maxIters) {
+    public BitSet fill(BitSet rawShell, PocketGrid grid, FillKnobs knobs) {
         return (BitSet) rawShell.clone();
     }
 

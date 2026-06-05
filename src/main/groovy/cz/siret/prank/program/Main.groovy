@@ -266,6 +266,10 @@ class Main implements Parametrized, Writable {
             throw new PrankException(
                     "-pocket_grid_fill_max_iters must be ≥ 0 (got ${params.pocket_grid_fill_max_iters}).")
         }
+        if (params.pocket_grid_fill_close_radius < 0) {
+            throw new PrankException(
+                    "-pocket_grid_fill_close_radius must be ≥ 0 (got ${params.pocket_grid_fill_close_radius}).")
+        }
         // -1 is the auto-scale sentinel; any other non-positive value would silently
         // disable the surface (radius 0) or pass garbage to PyMOL/ChimeraX (negative vdw).
         if (params.vis_pocket_grid_volume_radius != -1d && params.vis_pocket_grid_volume_radius <= 0d) {

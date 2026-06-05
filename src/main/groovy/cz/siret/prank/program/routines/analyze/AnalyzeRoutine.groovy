@@ -24,6 +24,15 @@ import cz.siret.prank.program.Main
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.routines.Routine
 import cz.siret.prank.program.routines.results.Evaluation
+import cz.siret.prank.program.routines.predict.output.grid.PocketGrid
+import cz.siret.prank.program.routines.predict.output.grid.PocketGridAnalysis
+import cz.siret.prank.program.routines.predict.output.grid.PocketGridBuilder
+import cz.siret.prank.program.routines.predict.output.grid.PocketGridConfig
+import cz.siret.prank.program.ml.Model
+import cz.siret.prank.features.FeatureExtractor
+import cz.siret.prank.prediction.pockets.rescorers.ModelBasedRescorer
+import cz.siret.prank.program.routines.predict.output.grid.fill.FillKnobs
+import cz.siret.prank.program.routines.predict.output.grid.fill.PocketShapeFillerRegistry
 import cz.siret.prank.program.visualization.RenderingModel
 import cz.siret.prank.program.visualization.renderers.NewPymolRenderer
 import cz.siret.prank.utils.*
@@ -41,6 +50,7 @@ import static cz.siret.prank.geom.Struct.getAuthorId
 import javax.annotation.Nullable
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.atomic.AtomicLong
 
 import static cz.siret.prank.geom.SecondaryStructureUtils.assignSecondaryStructure
 import static cz.siret.prank.utils.Cutils.newSynchronizedList
@@ -114,7 +124,11 @@ class AnalyzeRoutine extends Routine {
         "print-volsite-table" : { print_volsite_table() },
         "cofactors" : { cmdCofactors() },
         "surface-strategies" : { cmdSurfaceStrategies() },
-        "surface-density" : { cmdSurfaceDensity() }
+        "surface-density" : { cmdSurfaceDensity() },
+        "pocket-grid-overlap" : { cmdPocketGridOverlap() },
+        "pocket-grid-cavity-fit" : { cmdPocketGridCavityFit() },
+        "pocket-grid-ligand-fit" : { cmdPocketGridLigandFit() },
+        "pocket-grid-rule-compare" : { cmdPocketGridRuleCompare() }
     ])
 
 //===========================================================================================================//
@@ -149,6 +163,568 @@ class AnalyzeRoutine extends Routine {
             writeFile outf, csv.toString()
         }
 
+        write res.writeErrorsAndGetSummary(outdir)
+    }
+
+    // ============================================================================ //
+    // pocket-grid-overlap
+    // ============================================================================ //
+
+    /** One reported overlapping pocket pair within a single protein. */
+    @CompileStatic
+    private static class OverlapRow {
+        String protein
+        int nPockets
+        int nPoints
+        int rankA, rankB
+        int sizeA, sizeB
+        int overlap
+        int union
+        double jaccard         // |A∩B| / |A∪B|        (on filled sets)
+        double containment     // |A∩B| / min(|A|,|B|)  on FILLED sets; ~1.0 ⇒ smaller ⊆ larger
+        double containmentRaw  // same, on the RAW shells (pre-fill) — the geometric baseline
+        boolean subset         // containment(filled) >= threshold
+        boolean fillDriven     // subset under fill but NOT under raw shells: the fill caused the engulfment
+    }
+
+    /**
+     * SCAFFOLD. Builds the pocket grid for every protein in the dataset (same
+     * pipeline as production export: {@link PocketGridBuilder#build} with
+     * {@link PocketGridConfig#fromParams}) and reports, for every pair of
+     * pockets, how many grid points they share.
+     *
+     * <p>Motivation: {@code morph_closing} dilates each pocket's raw shell
+     * independently against a shared lattice envelope. SAS points are partitioned
+     * one-per-pocket, so the RAW shells can only overlap in a thin interface band.
+     * Any large overlap is therefore introduced by the fill stage. This command
+     * quantifies that across a dataset so we can pick concrete problematic
+     * proteins to anchor regression tests.
+     *
+     * <p>Run it twice to A/B the fill:
+     * <pre>
+     *   prank analyze pocket-grid-overlap dataset.ds -pocket_grid_fill morph_closing
+     *   prank analyze pocket-grid-overlap dataset.ds -pocket_grid_fill none
+     * </pre>
+     *
+     * <p>Outputs (in outdir):
+     * <ul>
+     *   <li>{@code pocket_grid_overlap_pairs.csv} -- one row per overlapping
+     *       pocket pair, sorted worst-first by containment.</li>
+     *   <li>{@code pocket_grid_overlap_worst.csv} -- top {@code TOP_N} subset-like
+     *       pairs, the shortlist for choosing unit-test cases.</li>
+     * </ul>
+     */
+    void cmdPocketGridOverlap() {
+        if (dataset == null) {
+            throw new PrankException("analyze pocket-grid-overlap requires a dataset argument")
+        }
+
+        // Flag a pair as "subset-like" when the smaller pocket is almost entirely
+        // contained in the larger one. 0.9 is a starting point; tune from the output.
+        final double SUBSET_CONTAINMENT = 0.9d
+        final int TOP_N = 50
+
+        PocketGridConfig config = PocketGridConfig.fromParams(params)
+        log.info "pocket-grid-overlap using config: {}", config
+
+        ConcurrentLinkedQueue<OverlapRow> rows = new ConcurrentLinkedQueue<>()
+        // Fill-volume telemetry: lets us tell "low overlap because the fill is tuned
+        // well" apart from "low overlap because the fill does nothing". A good fill
+        // keeps mean pocket size well above the raw shell while not over-dilating.
+        AtomicLong totalPocketsAcc = new AtomicLong()
+        AtomicLong totalAssignedAcc = new AtomicLong()
+
+        def res = forEachPrediction(true) { Protein protein, List<? extends Pocket> pockets, Dataset.Item item ->
+            if (pockets.size() < 2) return   // nothing to compare
+
+            PocketGrid grid = PocketGridBuilder.build(protein, pockets, config)
+            int nPoints = grid.allPoints.count
+
+            // Snapshot each pocket's filled + raw BitSet once (avoid re-fetching in the n² loop).
+            // The raw shells are a first-class build output (no second fill=none build needed),
+            // so we can tell fill-DRIVEN engulfment apart from pre-existing geometry.
+            int np = pockets.size()
+            BitSet[] sets = new BitSet[np]
+            BitSet[] raws = new BitSet[np]
+            int[] ranks = new int[np]
+            long assignedHere = 0
+            for (int i = 0; i < np; i++) {
+                ranks[i] = pockets[i].rank
+                sets[i] = grid.indicesForPocket(ranks[i])
+                raws[i] = grid.rawShellForPocket(ranks[i])
+                assignedHere += sets[i].cardinality()
+            }
+            totalPocketsAcc.addAndGet(np)
+            totalAssignedAcc.addAndGet(assignedHere)
+
+            for (int i = 0; i < np; i++) {
+                int sizeA = sets[i].cardinality()
+                if (sizeA == 0) continue
+                for (int j = i + 1; j < np; j++) {
+                    int sizeB = sets[j].cardinality()
+                    if (sizeB == 0) continue
+
+                    // BitSet set-algebra in Java (PocketGridAnalysis) — avoids the
+                    // Groovy @CompileStatic `.and()` no-op trap; see PocketGrid javadoc.
+                    int overlap = PocketGridAnalysis.intersectionCount(sets[i], sets[j])
+                    if (overlap == 0) continue   // report only overlapping pairs
+
+                    int union = sizeA + sizeB - overlap
+                    double containment = overlap / (double) Math.min(sizeA, sizeB)
+
+                    // raw-shell containment of the same pair (0 if either raw shell is empty)
+                    int rawA = raws[i].cardinality(), rawB = raws[j].cardinality()
+                    double containmentRaw = (rawA == 0 || rawB == 0) ? 0d :
+                            PocketGridAnalysis.intersectionCount(raws[i], raws[j]) / (double) Math.min(rawA, rawB)
+
+                    boolean subset = containment >= SUBSET_CONTAINMENT
+                    OverlapRow row = new OverlapRow(
+                            protein: protein.name,
+                            nPockets: np,
+                            nPoints: nPoints,
+                            rankA: ranks[i], rankB: ranks[j],
+                            sizeA: sizeA, sizeB: sizeB,
+                            overlap: overlap, union: union,
+                            jaccard: overlap / (double) union,
+                            containment: containment,
+                            containmentRaw: containmentRaw,
+                            subset: subset,
+                            // fill-driven: engulfed under fill, but the raw shells were NOT subset-like.
+                            fillDriven: subset && containmentRaw < SUBSET_CONTAINMENT)
+                    rows.add(row)
+                }
+            }
+        }
+
+        List<OverlapRow> all = new ArrayList<>(rows)
+        // Worst first: subset-like and most-contained pairs at the top.
+        all.sort { OverlapRow a, OverlapRow b -> Double.compare(b.containment, a.containment) }
+
+        writeFile "$outdir/pocket_grid_overlap_pairs.csv", toCsv(all)
+
+        // Worst cases shortlist = fill-driven engulfment (the actual pathology), worst-first.
+        List<OverlapRow> fillDrivenRows = all.findAll { it.fillDriven }
+        writeFile "$outdir/pocket_grid_overlap_worst.csv", toCsv(fillDrivenRows.take(TOP_N))
+
+        int subsetPairs = all.count { it.subset } as int
+        int fillDrivenPairs = fillDrivenRows.size()
+        int rawSubsetPairs = subsetPairs - fillDrivenPairs   // subset already present in the raw shells (benign / upstream)
+        int proteinsFillDriven = fillDrivenRows*.protein.toSet().size()
+        long totalPockets = totalPocketsAcc.get()
+        double meanPocketSize = totalPockets > 0 ? (totalAssignedAcc.get() / (double) totalPockets) : 0d
+        write "pocket-grid-overlap: ${all.size()} overlapping pocket pairs; " +
+              "${subsetPairs} subset-like (containment >= ${SUBSET_CONTAINMENT}), of which " +
+              "${fillDrivenPairs} FILL-DRIVEN (raw shells not subset) across ${proteinsFillDriven} proteins, " +
+              "${rawSubsetPairs} pre-existing in raw shells (benign/upstream)"
+        write "  fill volume: ${totalPockets} pockets, mean ${String.format(java.util.Locale.ROOT, '%.0f', meanPocketSize)} grid points/pocket"
+        write "  fill-driven worst cases -> ${outdir}/pocket_grid_overlap_worst.csv"
+        write res.writeErrorsAndGetSummary(outdir)
+    }
+
+    private static String toCsv(List<OverlapRow> rows) {
+        StringBuffer csv = new StringBuffer(
+                "protein, n_pockets, n_grid_points, rank_a, rank_b, size_a, size_b, " +
+                "overlap, union, jaccard, containment, containment_raw, subset, fill_driven\n")
+        for (OverlapRow r : rows) {
+            csv << String.format(java.util.Locale.ROOT,
+                    "%s, %d, %d, %d, %d, %d, %d, %d, %d, %.4f, %.4f, %.4f, %d, %d\n",
+                    r.protein, r.nPockets, r.nPoints, r.rankA, r.rankB, r.sizeA, r.sizeB,
+                    r.overlap, r.union, r.jaccard, r.containment, r.containmentRaw,
+                    r.subset ? 1 : 0, r.fillDriven ? 1 : 0)
+        }
+        return csv.toString()
+    }
+
+    // ============================================================================ //
+    // pocket-grid-cavity-fit
+    // ============================================================================ //
+
+    /** Per (protein, fill, R_large) confusion counts of assigned grid points vs the cavity mask. */
+    @CompileStatic
+    private static class CavityFitRow {
+        String fillLabel
+        double rLarge
+        long assigned     // |points assigned to any pocket under this fill|
+        long buried       // |cavity points (under the large-probe lid)|
+        long tp           // |assigned ∩ buried|
+    }
+
+    /** One fill strategy to score: display label + registry name + its typed knobs. */
+    @CompileStatic
+    private static class FillSpec {
+        String label, strategy
+        FillKnobs knobs
+        FillSpec(String label, String strategy, FillKnobs knobs) {
+            this.label = label; this.strategy = strategy; this.knobs = knobs
+        }
+    }
+
+    /** The fill strategies scored by pocket-grid-cavity-fit and pocket-grid-ligand-fit. */
+    private static final List<FillSpec> DEFAULT_FILLS = [
+            new FillSpec('none',          'none',          new FillKnobs.None()),
+            new FillSpec('closing_r1',    'closing',       FillKnobs.Closing.symmetric(1)),
+            new FillSpec('closing_r2',    'closing',       FillKnobs.Closing.symmetric(2)),
+            new FillSpec('dilate2_erode1','closing',       new FillKnobs.Closing(2, 1)),  // asymmetric: net +1 outward
+            new FillSpec('morph_n10',     'morph_closing', new FillKnobs.Morph(10, 10)),  // candidate morph default
+            new FillSpec('morph_n14',     'morph_closing', new FillKnobs.Morph(14, 10)),  // current morph default
+    ].asImmutable() as List<FillSpec>
+
+    /**
+     * Shared scaffold for the pocket-grid analyses: load the model + feature extractor once,
+     * then for each dataset item run the predictor and invoke
+     * {@code body(protein, outputPockets, item)}. Items that predict no pockets are skipped.
+     *
+     * @param ignoreLigands set the global ligand-skip switch (true when the analysis only
+     *                      needs predicted pockets, false when it scores against ligands)
+     */
+    private Dataset.Result forEachPrediction(boolean ignoreLigands, Closure body) {
+        if (ignoreLigands) LoaderParams.ignoreLigandsSwitch = true
+        Model model = Model.load(Main.findModel(params.installDir, params))
+        FeatureExtractor extractor = FeatureExtractor.createFactory()
+        return dataset.processItems { Dataset.Item item ->
+            PredictionPair pair = item.predictionPair
+            new ModelBasedRescorer(model, extractor).reorderPockets(pair.prediction, item.context)
+            List<? extends Pocket> pockets = pair.prediction.outputPockets
+            if (pockets == null || pockets.isEmpty()) return
+            body.call(pair.protein, pockets, item)
+        }
+    }
+
+    /**
+     * Calibrate the pocket-grid fill against a structure-derived ground truth.
+     *
+     * <p>A large rolling probe cannot enter a pocket: its solvent-accessible surface
+     * bridges (smooths) over the mouth. So for each candidate grid point we get a
+     * binary label, independent of the prediction pipeline:
+     * <ul>
+     *   <li><b>buried / cavity</b>: no large-probe surface point lies within
+     *       {@code R_large} of it (the large probe cannot reach it) -> it legitimately
+     *       belongs to the pocket volume.</li>
+     *   <li><b>open / solvent</b>: the large probe reaches it -> it is bulk-solvent-side
+     *       and should NOT count toward the pocket.</li>
+     * </ul>
+     *
+     * <p>Each fill's assigned points (union over pockets) are then scored against that
+     * mask: <b>precision</b> = fraction of assigned points that are truly buried
+     * (low precision = over-fill, bleeding into solvent), <b>recall</b> = fraction of
+     * buried cavity captured (low recall = under-fill, hollow shell), <b>IoU</b> the
+     * balance. Swept over {@code R_large in {3,4,5} Å} (the cavity-depth scale).
+     *
+     * <p>The candidate point set and the large-probe surface come straight from the
+     * existing machinery: {@link PocketGridBuilder} (grid sampling) and
+     * {@link Surface#computeAccessibleSurface} at a larger {@code solventRadius}.
+     */
+    void cmdPocketGridCavityFit() {
+        if (dataset == null) {
+            throw new PrankException("analyze pocket-grid-cavity-fit requires a dataset argument")
+        }
+
+        final double[] R_LARGE = [3.0d, 4.0d, 5.0d] as double[]
+        // Score the raw shell, the prototype true-closing at two radii, and the current default.
+        final List<FillSpec> FILLS = DEFAULT_FILLS
+
+        // Build the candidate grid once per protein with fill=none so indicesForPocket()
+        // returns the RAW shells; we then apply each filler in that same index space.
+        PocketGridConfig baseConfig = new PocketGridConfig(
+                params.pocket_grid_spacing, params.pocket_grid_max_dist, params.pocket_grid_atom_buffer,
+                params.pocket_grid_assign_cutoff, params.pocket_grid_assigner, 'none', new FillKnobs.None())
+        log.info "pocket-grid-cavity-fit base config: {}, R_large sweep: {}", baseConfig, R_LARGE
+
+        ConcurrentLinkedQueue<CavityFitRow> rows = new ConcurrentLinkedQueue<>()
+
+        def res = forEachPrediction(true) { Protein protein, List<? extends Pocket> pockets, Dataset.Item item ->
+            PocketGrid grid = PocketGridBuilder.build(protein, pockets, baseConfig)
+            int n = grid.allPoints.count
+            if (n == 0) return
+
+            // assigned[fill] = union over pockets of that fill's per-pocket points (same
+            // index space). Set-algebra in Java (PocketGridAnalysis) — see PocketGrid javadoc.
+            BitSet[] assigned = new BitSet[FILLS.size()]
+            for (int f = 0; f < FILLS.size(); f++) {
+                FillSpec spec = FILLS[f]
+                assigned[f] = PocketGridAnalysis.unionFilled(grid, pockets,
+                        PocketShapeFillerRegistry.get(spec.strategy), spec.knobs)
+            }
+
+            // Cavity mask per R_large: a grid point is buried iff the large-probe surface
+            // does not come within R_large of it (the per-point loop runs in Java).
+            for (double rLarge : R_LARGE) {
+                Surface largeSurf = Surface.computeAccessibleSurface(
+                        protein.proteinAtoms, rLarge, params.tessellation)
+                BitSet buried = PocketGridAnalysis.buriedMask(grid.allPoints, largeSurf.points, rLarge)
+
+                for (int f = 0; f < FILLS.size(); f++) {
+                    CavityFitRow row = new CavityFitRow(
+                            fillLabel: FILLS[f].label, rLarge: rLarge,
+                            assigned: assigned[f].cardinality(),
+                            buried: buried.cardinality(),
+                            tp: PocketGridAnalysis.intersectionCount(assigned[f], buried))
+                    rows.add(row)
+                }
+            }
+        }
+
+        // Micro-average: sum confusion counts across proteins, then derive rates.
+        Map<String, long[]> agg = new LinkedHashMap<>()   // key "fill@R" -> [assigned, buried, tp]
+        for (CavityFitRow r : rows) {
+            String key = "${r.fillLabel}@${r.rLarge}"
+            long[] a = agg.get(key)
+            if (a == null) { a = new long[3]; agg.put(key, a) }
+            a[0] += r.assigned; a[1] += r.buried; a[2] += r.tp
+        }
+
+        DataTable dt = new DataTable("fill", "r_large", "total_assigned", "total_buried", "tp", "precision", "recall", "iou")
+        StringBuffer tbl = new StringBuffer()
+        for (double rLarge : R_LARGE) {
+            tbl << String.format(java.util.Locale.ROOT, "%n  R_large = %.1f Å%n", rLarge)
+            tbl << String.format("    %-15s %9s %9s %9s%n", "fill", "precision", "recall", "IoU")
+            for (FillSpec spec : FILLS) {
+                long[] a = agg.get("${spec.label}@${rLarge}".toString())
+                if (a == null) continue
+                long assignedN = a[0], buriedN = a[1], tp = a[2]
+                double precision = assignedN > 0 ? tp / (double) assignedN : 0d
+                double recall    = buriedN   > 0 ? tp / (double) buriedN   : 0d
+                double iou       = (assignedN + buriedN - tp) > 0 ? tp / (double) (assignedN + buriedN - tp) : 0d
+                dt.newRow(spec.label)
+                        .put("r_large", String.format(java.util.Locale.ROOT, "%.1f", rLarge))
+                        .put("total_assigned", assignedN).put("total_buried", buriedN).put("tp", tp)
+                        .put("precision", String.format(java.util.Locale.ROOT, "%.4f", precision))
+                        .put("recall", String.format(java.util.Locale.ROOT, "%.4f", recall))
+                        .put("iou", String.format(java.util.Locale.ROOT, "%.4f", iou))
+                tbl << String.format(java.util.Locale.ROOT, "    %-15s %9.3f %9.3f %9.3f%n",
+                        spec.label, precision, recall, iou)
+            }
+        }
+
+        writeFile "$outdir/pocket_grid_cavity_fit.csv", dt.toCsv()
+        write "pocket-grid-cavity-fit: assigned-vs-cavity precision/recall/IoU (micro-averaged over dataset)"
+        write tbl.toString()
+        write "  full table -> ${outdir}/pocket_grid_cavity_fit.csv"
+        write res.writeErrorsAndGetSummary(outdir)
+    }
+
+    // ============================================================================ //
+    // pocket-grid-ligand-fit
+    // ============================================================================ //
+
+    /** Per (protein, fill, d_match) ligand-region coverage counts. */
+    @CompileStatic
+    private static class LigandFitRow {
+        String fillLabel
+        double dMatch
+        long ligandGrid   // |grid points within d_match of a ligand atom|
+        long covered      // |that set captured by some pocket under this fill|
+        long assigned     // |points assigned to any pocket under this fill|
+    }
+
+    /** Label for a decoupled cavity candidate, e.g. (6.0, 1.5) -> "cav_s6_d1.5". */
+    private static String cavityLabel(double rSmooth, double dReach) {
+        return String.format(java.util.Locale.ROOT, "cav_s%.0f_d%.1f", rSmooth, dReach)
+    }
+
+    /**
+     * Ligand-grounded cross-check of the fill. The dataset proteins are liganated,
+     * so the bound ligand marks where the binding volume actually is. Grid points
+     * within {@code d_match} of any relevant ligand atom are the ground-truth
+     * "binding region"; we measure, per fill, how much of it the predicted pockets
+     * capture (recall) and the volume cost (mean assigned points per pocket).
+     *
+     * <p>If filling barely raises ligand recall over {@code none} while inflating the
+     * assigned volume, the fill is overfilling (adding non-ligand points). Swept over
+     * {@code d_match in {2.5, 4.0} Å}. Complements {@code pocket-grid-cavity-fit}
+     * (which supplies the precision side via the large-probe cavity).
+     */
+    void cmdPocketGridLigandFit() {
+        if (dataset == null) {
+            throw new PrankException("analyze pocket-grid-ligand-fit requires a dataset argument")
+        }
+
+        final double[] D_MATCH = [2.5d, 4.0d] as double[]
+        final List<FillSpec> FILLS = DEFAULT_FILLS
+
+        // DECOUPLED cavity probe: R_smooth (probe radius -> where the smoothed lid sits)
+        // separated from d_reach (depth below the lid that counts as cavity). The coupled
+        // version (R_smooth == d_reach) missed pocket walls; this tests whether a wide
+        // smooth + shallow reach captures the walls while staying selective. [R_smooth, d_reach].
+        final List<double[]> CAVITY_COMBOS = [
+                [4.0d, 1.5d] as double[], [4.0d, 3.0d] as double[], [4.0d, 4.0d] as double[],
+                [6.0d, 1.5d] as double[], [6.0d, 3.0d] as double[], [6.0d, 4.5d] as double[],
+        ]
+        final List<String> ALL_LABELS = new ArrayList<>(FILLS*.label)
+        for (double[] c : CAVITY_COMBOS) ALL_LABELS.add(cavityLabel(c[0], c[1]))
+
+        PocketGridConfig baseConfig = new PocketGridConfig(
+                params.pocket_grid_spacing, params.pocket_grid_max_dist, params.pocket_grid_atom_buffer,
+                params.pocket_grid_assign_cutoff, params.pocket_grid_assigner, 'none', new FillKnobs.None())
+        log.info "pocket-grid-ligand-fit base config: {}, d_match sweep: {}", baseConfig, D_MATCH
+
+        ConcurrentLinkedQueue<LigandFitRow> rows = new ConcurrentLinkedQueue<>()
+        AtomicInteger withLigand = new AtomicInteger()
+
+        // NOTE: ignoreLigands=false — ligands are the ground truth here.
+        def res = forEachPrediction(false) { Protein protein, List<? extends Pocket> pockets, Dataset.Item item ->
+            Atoms ligAtoms = protein.allRelevantLigandAtoms
+            if (ligAtoms == null || ligAtoms.isEmpty()) return   // no ligand -> no ground truth
+
+            PocketGrid grid = PocketGridBuilder.build(protein, pockets, baseConfig)
+            if (grid.allPoints.count == 0) return
+
+            // Candidate "assignments": the morphological fills + the large-probe cavity mask used directly.
+            Map<String, BitSet> assignedByLabel = new LinkedHashMap<>()
+            for (FillSpec spec : FILLS) {
+                assignedByLabel.put(spec.label, PocketGridAnalysis.unionFilled(grid, pockets,
+                        PocketShapeFillerRegistry.get(spec.strategy), spec.knobs))
+            }
+            // Compute each distinct smoothing surface once, then a buried mask per (R_smooth, d_reach).
+            Map<Double, Atoms> smoothSurf = new LinkedHashMap<>()
+            for (double[] c : CAVITY_COMBOS) {
+                Double rs = c[0]
+                if (!smoothSurf.containsKey(rs)) {
+                    smoothSurf.put(rs, Surface.computeAccessibleSurface(protein.proteinAtoms, rs, params.tessellation).points)
+                }
+            }
+            for (double[] c : CAVITY_COMBOS) {
+                assignedByLabel.put(cavityLabel(c[0], c[1]),
+                        PocketGridAnalysis.buriedMask(grid.allPoints, smoothSurf.get((Double) c[0]), c[1]))
+            }
+
+            boolean counted = false
+            for (double dMatch : D_MATCH) {
+                BitSet ligandGrid = PocketGridAnalysis.withinMask(grid.allPoints, ligAtoms, dMatch)
+                if (ligandGrid.isEmpty()) continue   // ligand not near any candidate grid point
+                counted = true
+                for (String label : ALL_LABELS) {
+                    BitSet a = assignedByLabel.get(label)
+                    rows.add(new LigandFitRow(
+                            fillLabel: label, dMatch: dMatch,
+                            ligandGrid: ligandGrid.cardinality(),
+                            covered: PocketGridAnalysis.intersectionCount(a, ligandGrid),
+                            assigned: a.cardinality()))
+                }
+            }
+            if (counted) withLigand.incrementAndGet()
+        }
+
+        // Micro-average per (fill, d_match): sum covered / sum ligandGrid.
+        Map<String, long[]> agg = new LinkedHashMap<>()   // key "fill@d" -> [ligandGrid, covered, assigned, nProteins]
+        for (LigandFitRow r : rows) {
+            String key = "${r.fillLabel}@${r.dMatch}"
+            long[] a = agg.get(key)
+            if (a == null) { a = new long[4]; agg.put(key, a) }
+            a[0] += r.ligandGrid; a[1] += r.covered; a[2] += r.assigned; a[3] += 1
+        }
+
+        DataTable dt = new DataTable("strategy", "d_match", "total_ligand_grid", "total_covered", "ligand_recall", "mean_assigned")
+        StringBuffer tbl = new StringBuffer()
+        for (double dMatch : D_MATCH) {
+            tbl << String.format(java.util.Locale.ROOT, "%n  d_match = %.1f Å%n", dMatch)
+            tbl << String.format("    %-15s %14s %14s%n", "strategy", "ligand_recall", "mean_assigned")
+            for (String label : ALL_LABELS) {
+                long[] a = agg.get("${label}@${dMatch}".toString())
+                if (a == null) continue
+                long ligTot = a[0], covered = a[1], assignedTot = a[2], nprot = a[3]
+                double recall = ligTot > 0 ? covered / (double) ligTot : 0d
+                double meanAssigned = nprot > 0 ? assignedTot / (double) nprot : 0d
+                dt.newRow(label)
+                        .put("d_match", String.format(java.util.Locale.ROOT, "%.1f", dMatch))
+                        .put("total_ligand_grid", ligTot).put("total_covered", covered)
+                        .put("ligand_recall", String.format(java.util.Locale.ROOT, "%.4f", recall))
+                        .put("mean_assigned", String.format(java.util.Locale.ROOT, "%.1f", meanAssigned))
+                tbl << String.format(java.util.Locale.ROOT, "    %-15s %14.4f %14.1f%n",
+                        label, recall, meanAssigned)
+            }
+        }
+
+        writeFile "$outdir/pocket_grid_ligand_fit.csv", dt.toCsv()
+        write "pocket-grid-ligand-fit: ligand-region recall by the predicted pockets (${withLigand.get()} proteins with a usable ligand)"
+        write tbl.toString()
+        write "  mean_assigned = mean union-assigned points per protein (volume cost proxy)"
+        write "  full table -> ${outdir}/pocket_grid_ligand_fit.csv"
+        write res.writeErrorsAndGetSummary(outdir)
+    }
+
+    // ============================================================================ //
+    // pocket-grid-rule-compare
+    // ============================================================================ //
+
+    /** Count pocket pairs with containment (|A∩B|/min) >= threshold among the given per-pocket sets. */
+    private static int countSubsetPairs(List<BitSet> sets, double threshold) {
+        int c = 0
+        for (int i = 0; i < sets.size(); i++) {
+            int sa = sets[i].cardinality(); if (sa == 0) continue
+            for (int j = i + 1; j < sets.size(); j++) {
+                int sb = sets[j].cardinality(); if (sb == 0) continue
+                int ov = PocketGridAnalysis.intersectionCount(sets[i], sets[j])
+                if (ov >= threshold * Math.min(sa, sb)) c++
+            }
+        }
+        return c
+    }
+
+    /**
+     * PROTOTYPE comparison: current rule (closing + cross-pocket fill rule) vs the
+     * nearest-pocket (Voronoi) rule, on the same closing fill. For each protein the
+     * Voronoi variant restricts each pocket's assigned set to grid points it OWNS
+     * (nearest pocket by SAS distance, ties to lower rank). Reports, per dataset,
+     * subset pairs / ligand recall (d=4) / mean assigned, for both rules.
+     */
+    void cmdPocketGridRuleCompare() {
+        if (dataset == null) {
+            throw new PrankException("analyze pocket-grid-rule-compare requires a dataset argument")
+        }
+        final double SUBSET = 0.9d, DMATCH = 4.0d
+        PocketGridConfig config = PocketGridConfig.fromParams(params)   // default closing r=1
+        log.info "pocket-grid-rule-compare config: {}", config
+
+        AtomicLong curSubset = new AtomicLong(), vorSubset = new AtomicLong()
+        AtomicLong ligTot = new AtomicLong(), curLigCov = new AtomicLong(), vorLigCov = new AtomicLong()
+        AtomicLong curAssigned = new AtomicLong(), vorAssigned = new AtomicLong(), nPockets = new AtomicLong()
+        AtomicInteger nProteins = new AtomicInteger(), nWithLig = new AtomicInteger()
+
+        def res = forEachPrediction(false) { Protein protein, List<? extends Pocket> pockets, Dataset.Item item ->
+
+            PocketGrid grid = PocketGridBuilder.build(protein, pockets, config)
+            if (grid.allPoints.count == 0) return
+            nProteins.incrementAndGet()
+
+            // current sets (closing + cross-pocket rule, as built)
+            List<BitSet> cur = new ArrayList<>(pockets.size())
+            for (Pocket p : pockets) cur.add(grid.indicesForPocket(p.rank))
+            BitSet curUnion = PocketGridAnalysis.unionOf(cur)
+
+            // voronoi variant: restrict each set to points it owns (nearest pocket)
+            int[] owner = PocketGridAnalysis.nearestPocketOwners(grid, pockets, curUnion)
+            List<BitSet> vor = new ArrayList<>(pockets.size())
+            for (Pocket p : pockets) vor.add(PocketGridAnalysis.restrictToOwner(grid.indicesForPocket(p.rank), owner, p.rank))
+            BitSet vorUnion = PocketGridAnalysis.unionOf(vor)
+
+            curSubset.addAndGet(countSubsetPairs(cur, SUBSET))
+            vorSubset.addAndGet(countSubsetPairs(vor, SUBSET))
+            for (BitSet b : cur) curAssigned.addAndGet(b.cardinality())
+            for (BitSet b : vor) vorAssigned.addAndGet(b.cardinality())
+            nPockets.addAndGet(pockets.size())
+
+            Atoms ligAtoms = protein.allRelevantLigandAtoms
+            if (ligAtoms != null && !ligAtoms.isEmpty()) {
+                BitSet ligandGrid = PocketGridAnalysis.withinMask(grid.allPoints, ligAtoms, DMATCH)
+                if (!ligandGrid.isEmpty()) {
+                    nWithLig.incrementAndGet()
+                    ligTot.addAndGet(ligandGrid.cardinality())
+                    curLigCov.addAndGet(PocketGridAnalysis.intersectionCount(curUnion, ligandGrid))
+                    vorLigCov.addAndGet(PocketGridAnalysis.intersectionCount(vorUnion, ligandGrid))
+                }
+            }
+        }
+
+        long np = Math.max(nPockets.get(), 1L), lt = Math.max(ligTot.get(), 1L)
+        StringBuffer t = new StringBuffer()
+        t << String.format(java.util.Locale.ROOT, "%n  %-10s %12s %14s %14s%n", "rule", "subset_pairs", "ligand_recall", "mean_assigned")
+        t << String.format(java.util.Locale.ROOT, "  %-10s %12d %14.4f %14.1f%n",
+                "current", curSubset.get(), curLigCov.get() / (double) lt, curAssigned.get() / (double) np)
+        t << String.format(java.util.Locale.ROOT, "  %-10s %12d %14.4f %14.1f%n",
+                "voronoi", vorSubset.get(), vorLigCov.get() / (double) lt, vorAssigned.get() / (double) np)
+        write "pocket-grid-rule-compare: current vs nearest-pocket(voronoi), ${nProteins.get()} proteins (${nWithLig.get()} with ligand)"
+        write t.toString()
         write res.writeErrorsAndGetSummary(outdir)
     }
 

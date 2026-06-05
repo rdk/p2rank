@@ -950,18 +950,36 @@ class Params {
 
     /**
      * Shape-fill strategy for the per-pocket grid region:
-     *   morph_closing  (default) — iterative lattice dilation, no extra deps
+     *   closing        (default) — true dilate-then-erode morphological closing;
+     *                              fills enclosed holes/concavities without advancing
+     *                              the outer boundary. Radius = pocket_grid_fill_close_radius.
+     *   morph_closing            — iterative conditional dilation (no erode). Aggressive;
+     *                              keep pocket_grid_fill_min_neighbors high to avoid
+     *                              runaway outward growth.
      *   none                     — leave the raw shell as-is
-     * Validated at startup.
+     * Validated at startup. (Closing was chosen as default after a cavity- and
+     * ligand-grounded calibration over fptrain/coach420/holo4k: best overlap/coverage
+     * balance; see the fix/pocket-grid-overlap-fill analyses.)
      */
     @RuntimeParam
-    String pocket_grid_fill = "morph_closing"
+    String pocket_grid_fill = "closing"
 
-    /** [morph_closing only] minimum filled-neighbor count to promote a candidate cell. Ignored for pocket_grid_fill=none. */
+    /** [closing only] closing radius: dilate by this many lattice layers, then erode by
+     *  the same — closes holes/gaps up to ~2*radius cells wide. Small values (1-2) keep
+     *  the fill tight and prevent bridging into neighbouring pockets. */
     @RuntimeParam
-    int pocket_grid_fill_min_neighbors = 4
+    int pocket_grid_fill_close_radius = 1
 
-    /** [morph_closing only] iteration cap (guard against runaway dilation). Ignored for pocket_grid_fill=none. */
+    /** [morph_closing only] minimum filled-neighbor count (of 26) to promote a candidate cell.
+     *  Must exceed the 9 a flat front presents, else dilation runs away outward. 10 is the
+     *  tightest runaway-safe value (10 > 9): it fills concavities/holes but not flat/convex
+     *  surfaces. (14 was needlessly conservative -- it barely filled at all; 10 gives useful
+     *  fill with zero fill-driven engulfment across chen11/joined/coach420/holo4k.)
+     *  Ignored for pocket_grid_fill in {closing, none}. */
+    @RuntimeParam
+    int pocket_grid_fill_min_neighbors = 10
+
+    /** [morph_closing only] iteration cap (guard against runaway dilation). Ignored for pocket_grid_fill in {closing, none}. */
     @RuntimeParam
     int pocket_grid_fill_max_iters = 10
 

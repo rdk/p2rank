@@ -30,9 +30,16 @@ import java.util.Map;
  *   <li>For each pocket: compute the raw shell (points within {@code assignCutoff}
  *       of any of the pocket's {@code sasPoints}), then apply the chosen
  *       {@link PocketShapeFiller}.</li>
+ *   <li>Enforce the cross-pocket fill rule (HARD, always on): a point added by
+ *       filling (beyond this pocket's {@code assignCutoff}, so not in its raw shell)
+ *       is dropped if it lies in another pocket's raw shell. Fill may expand into
+ *       unclaimed space but must not swallow grid points that are within
+ *       {@code assignCutoff} of a different pocket.</li>
  * </ol>
  *
- * <p>One grid point may belong to multiple pockets. The result is an immutable
+ * <p>A grid point may still belong to multiple pockets via genuine within-cutoff
+ * sharing (it is in more than one pocket's raw shell) — that is not affected by the
+ * rule, which only constrains fill expansion. The result is an immutable
  * {@link PocketGrid}.
  */
 public final class PocketGridBuilder {
@@ -77,12 +84,14 @@ public final class PocketGridBuilder {
         LongIntHashMap latticeIndex = new LongIntHashMap(n);
 
         // pocketToPointIndices uses BitSet (not Set<Integer>) — zero autoboxing on
-        // add/contains/iterate, ~32× smaller memory.
+        // add/contains/iterate, ~32× smaller memory. pocketToRawShell keeps the pre-fill
+        // shells as a first-class build output (analyses read them instead of rebuilding).
         Map<Integer, BitSet> pocketToPointIndices = new HashMap<>(pockets.size() * 2);
+        Map<Integer, BitSet> pocketToRawShell = new HashMap<>(pockets.size() * 2);
 
         PocketGrid grid = new PocketGrid(
                 allPoints, config.spacing(), sample.originX(), sample.originY(), sample.originZ(),
-                latticeIndex, pocketToPointIndices);
+                latticeIndex, pocketToPointIndices, pocketToRawShell);
 
         // Populate latticeIndex via the grid's own packLatticeKey — single source of
         // truth for the world→lattice projection (also used by the morph closer and
@@ -99,13 +108,36 @@ public final class PocketGridBuilder {
 
         assigner.initialize(grid);
 
+        // Pass 1: raw shells (points within assignCutoff of each pocket's SAS points),
+        // plus their union. Computing all raw shells up front makes the cross-pocket
+        // fill rule below deterministic (independent of pocket order).
+        int np = pockets.size();
+        List<BitSet> rawShells = new ArrayList<>(np);
+        BitSet unionRaw = new BitSet();
         for (Pocket pocket : pockets) {
             Atoms inputs = pocket.getSasPoints();
             BitSet raw = (inputs == null || inputs.isEmpty())
                     ? new BitSet()
                     : assigner.computeRawShell(inputs, grid, assignCutoff);
-            BitSet filled = filler.fill(raw, grid, config.fillMinNeighbors(), config.fillMaxIters());
-            pocketToPointIndices.put(pocket.getRank(), filled);
+            rawShells.add(raw);
+            unionRaw.or(raw);
+            pocketToRawShell.put(pocket.getRank(), raw);
+        }
+
+        // Pass 2: fill each pocket, then enforce the cross-pocket fill rule (HARD,
+        // always on). A point ADDED BY FILLING (i.e. beyond this pocket's assignCutoff,
+        // so not in its raw shell) is dropped if it lies in ANOTHER pocket's raw shell
+        // — fill may expand into unclaimed space, but must not swallow grid points that
+        // are within assignCutoff of a different pocket. Points in this pocket's own raw
+        // shell are never dropped, so genuine within-cutoff interface sharing is kept.
+        for (int i = 0; i < np; i++) {
+            BitSet raw = rawShells.get(i);
+            BitSet filled = filler.fill(raw, grid, config.fillKnobs());
+
+            // drop fill-added points owned (within assignCutoff) by another pocket
+            PocketGridAnalysis.applyCrossPocketRule(filled, raw, unionRaw);
+
+            pocketToPointIndices.put(pockets.get(i).getRank(), filled);
         }
 
         log.info("PocketGrid built: {} kept points, {} pockets, fill={}",

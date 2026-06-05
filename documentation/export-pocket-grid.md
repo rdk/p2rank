@@ -50,13 +50,32 @@ empty grid is produced with a warning.
    is the set of kept points within `pocket_grid_assign_cutoff` of any
    of the pocket's `sasPoints`.
 4. **Shape fill** (`-pocket_grid_fill`):
-   - `morph_closing` (default): iterative 26-neighborhood dilation;
+   - `closing` (default): true morphological closing (dilate by
+     `pocket_grid_fill_close_radius` lattice layers, then erode by the same).
+     Fills enclosed holes and concavities up to `~2 * radius` cells wide without
+     advancing the pocket's outer boundary, so it solidifies the cavity without
+     ballooning into solvent or neighbouring pockets.
+   - `morph_closing`: iterative 26-neighborhood conditional dilation (no erode);
      promotes candidate cells whose filled-neighbor count reaches
      `pocket_grid_fill_min_neighbors`, up to `pocket_grid_fill_max_iters`
      iterations.
    - `none`: keep the raw shell exactly.
-5. **Multi-pocket membership.** A grid point may belong to more than one
-   pocket; each `(point, pocket)` membership produces its own row.
+
+   > [!WARNING]
+   > `morph_closing` with a low `pocket_grid_fill_min_neighbors` (a flat dilation
+   > front presents 9 filled neighbors, so anything below ~10 never stops) grows
+   > each pocket outward until `pocket_grid_fill_max_iters`, which inflates the
+   > volume descriptor and makes pockets engulf one another. The default is now
+   > `closing`; if you select `morph_closing`, keep `min_neighbors` >= 10 (the
+   > default), the tightest value that still stops the runaway.
+5. **Cross-pocket fill rule (always on).** A point added by *filling* (i.e.
+   beyond a pocket's `pocket_grid_assign_cutoff`, so not in its raw shell) is
+   dropped if it lies in another pocket's raw shell. Fill may expand into
+   unclaimed space, but cannot swallow grid points that are within
+   `pocket_grid_assign_cutoff` of a different pocket.
+6. **Multi-pocket membership.** A grid point may still belong to more than one
+   pocket via genuine within-cutoff sharing (it is in more than one pocket's raw
+   shell); each `(point, pocket)` membership produces its own row.
 
 ## Output format
 
@@ -164,9 +183,10 @@ Implementations live under
 | `pocket_grid_atom_buffer` | `1.0` Å | Inner bound. Drop points where `dist(nearest atom) < vdw(nearest) + buffer`. |
 | `pocket_grid_assign_cutoff` | `2.5` Å | Membership cutoff vs. `pocket.sasPoints` |
 | `pocket_grid_assigner` | `kdtree` | Range-query strategy: `kdtree`, `voxel_hash`. `kdtree` is typically faster for fine grids (small `pocket_grid_spacing`); `voxel_hash` is typically faster for coarse grids. Both produce identical results. |
-| `pocket_grid_fill` | `morph_closing` | Shape strategy: `morph_closing`, `none` |
-| `pocket_grid_fill_min_neighbors` | `4` | `morph_closing` only. Neighbor count threshold. |
-| `pocket_grid_fill_max_iters` | `10` | `morph_closing` only. Iteration cap. |
+| `pocket_grid_fill` | `closing` | Shape strategy: `closing` (true dilate-then-erode), `morph_closing` (conditional dilation, no erode), `none`. |
+| `pocket_grid_fill_close_radius` | `1` | `closing` only. Closing radius (dilate then erode by this many lattice layers); closes gaps up to `~2 * radius` cells. Keep small (1-2) to avoid bridging neighbouring pockets. |
+| `pocket_grid_fill_min_neighbors` | `10` | `morph_closing` only. Filled-neighbor count (of 26) to promote a candidate; must exceed the 9 a flat front presents, so 10 is the tightest runaway-safe value (fills concavities, not flat surfaces). |
+| `pocket_grid_fill_max_iters` | `10` | `morph_closing` only. Iteration cap (guard against runaway dilation). |
 | `vis_pocket_grid_volume_radius` | `-1` (auto = `0.85 × spacing`, ≈ 1.02 Å at default spacing) | Visualization-only. Sphere radius around each grid point in the PML's vdW-radius volumetric layer (`pocket_vol_N`). `-1` is a sentinel meaning "scale with spacing"; any positive value overrides with an explicit Å. The auto-scaled value sits just above the 3D-diagonal merge threshold (`spacing × √3 / 2 ≈ 0.866 × spacing`), so neighbors overlap in every direction (axes, 2D and 3D diagonals) and the surface reads as one clean continuous blob per pocket. Going much below `~spacing/2` leaves spheres too disconnected for PyMOL's surface algorithm: most of the mesh falls below the rendering threshold and looks like missing surface. |
 | `vis_pocket_grid_gaussian_iso` | `0.5` | Visualization-only. Iso-surface threshold for the Gaussian-density layer (`pocket_gauss_N`). Lower = looser surface farther from points; higher = tighter surface around densest regions. |
 

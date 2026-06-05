@@ -4,6 +4,7 @@ import com.carrotsearch.hppc.LongIntHashMap
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Point
 import cz.siret.prank.program.routines.predict.output.grid.fill.MorphologicalCloser
+import cz.siret.prank.program.routines.predict.output.grid.fill.FillKnobs
 import groovy.transform.CompileStatic
 import org.biojava.nbio.structure.Atom
 import org.junit.jupiter.api.Test
@@ -47,7 +48,7 @@ class MorphologicalCloserTest {
     @Test
     void noOpOnEmptyShell() {
         PocketGrid grid = buildCubeGrid(2, 2, 2)
-        BitSet result = CLOSER.fill(new BitSet(), grid, 3, 5)
+        BitSet result = CLOSER.fill(new BitSet(), grid, new FillKnobs.Morph(3, 5))
         assertEquals(0, result.cardinality())
     }
 
@@ -66,7 +67,7 @@ class MorphologicalCloserTest {
             if (i != centerIdx) raw.set(i)
         }
 
-        BitSet result = CLOSER.fill(raw, grid, 3, 5)
+        BitSet result = CLOSER.fill(raw, grid, new FillKnobs.Morph(3, 5))
 
         assertTrue(result.get(centerIdx), "center should be filled")
         assertEquals(grid.pointCount, result.cardinality(), "all 27 cells filled")
@@ -83,7 +84,7 @@ class MorphologicalCloserTest {
         int bIdx = grid.latticeIndex.get(PocketGrid.pack(5, 5, 5))
 
         BitSet raw = bits(aIdx, bIdx)
-        BitSet result = CLOSER.fill(raw, grid, 3, 5)
+        BitSet result = CLOSER.fill(raw, grid, new FillKnobs.Morph(3, 5))
 
         // Neither lone cell has ≥3 filled neighbors → no promotion at all.
         assertEquals(raw, result)
@@ -103,7 +104,7 @@ class MorphologicalCloserTest {
         for (int y = 0; y <= 2; y++) raw.set(grid.latticeIndex.get(PocketGrid.pack(4, y, 0)))
         // The single-cell concavity at (2, 1, 0) is surrounded by filled cells.
 
-        BitSet result = CLOSER.fill(raw, grid, 3, 5)
+        BitSet result = CLOSER.fill(raw, grid, new FillKnobs.Morph(3, 5))
 
         int concavityIdx = grid.latticeIndex.get(PocketGrid.pack(2, 1, 0))
         assertTrue(result.get(concavityIdx), "U concavity at (2,1,0) should be filled")
@@ -122,7 +123,7 @@ class MorphologicalCloserTest {
             if (i != centerIdx) raw.set(i)
         }
 
-        BitSet result = CLOSER.fill(raw, grid, 3, 0)
+        BitSet result = CLOSER.fill(raw, grid, new FillKnobs.Morph(3, 0))
         assertFalse(result.get(centerIdx), "no fill when max_iters=0")
     }
 
@@ -138,7 +139,7 @@ class MorphologicalCloserTest {
             if (i != centerIdx) raw.set(i)
         }
 
-        BitSet result = CLOSER.fill(raw, grid, 3, 1)
+        BitSet result = CLOSER.fill(raw, grid, new FillKnobs.Morph(3, 1))
         assertTrue(result.get(centerIdx), "the surrounded center should fill in one iter")
     }
 

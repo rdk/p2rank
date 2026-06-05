@@ -1,5 +1,6 @@
 package cz.siret.prank.program.routines.predict.output.grid
 
+import cz.siret.prank.program.routines.predict.output.grid.fill.FillKnobs
 import cz.siret.prank.domain.Pocket
 import cz.siret.prank.domain.Protein
 import cz.siret.prank.geom.Atoms
@@ -55,7 +56,7 @@ class PocketGridBuilderTest {
                 4.5d,     // assignCutoff
                 'kdtree', // assignerStrategy
                 'none',   // fillStrategy — keep raw shell for predictable test assertions
-                3, 5)
+                new FillKnobs.None())
     }
 
     private static Protein proteinWith(Atoms protAtoms) {
@@ -132,7 +133,7 @@ class PocketGridBuilderTest {
     void unknownFillStrategyThrows() {
         Protein protein = proteinWith(new Atoms([carbonAt(0d, 0d, 0d)]))
         PocketGridConfig bad = new PocketGridConfig(
-                1.0d, 6.0d, 0.5d, 4.5d, 'kdtree', 'cubist', 3, 5)
+                1.0d, 6.0d, 0.5d, 4.5d, 'kdtree', 'cubist', new FillKnobs.None())
         TestPocket p = new TestPocket()
         p.rank = 1
         p.sasPoints = sasAt(0d, 0d, 0d)
@@ -145,7 +146,7 @@ class PocketGridBuilderTest {
     void unknownAssignerStrategyThrows() {
         Protein protein = proteinWith(new Atoms([carbonAt(0d, 0d, 0d)]))
         PocketGridConfig bad = new PocketGridConfig(
-                1.0d, 6.0d, 0.5d, 4.5d, 'rocketship', 'none', 3, 5)
+                1.0d, 6.0d, 0.5d, 4.5d, 'rocketship', 'none', new FillKnobs.None())
         TestPocket p = new TestPocket()
         p.rank = 1
         p.sasPoints = sasAt(0d, 0d, 0d)
@@ -167,9 +168,9 @@ class PocketGridBuilderTest {
         pocket.sasPoints = sasAt(3d, 0d, 0d)
 
         PocketGridConfig kd = new PocketGridConfig(
-                1.0d, 6.0d, 0.5d, 4.5d, 'kdtree',     'none', 3, 5)
+                1.0d, 6.0d, 0.5d, 4.5d, 'kdtree',     'none', new FillKnobs.None())
         PocketGridConfig vh = new PocketGridConfig(
-                1.0d, 6.0d, 0.5d, 4.5d, 'voxel_hash', 'none', 3, 5)
+                1.0d, 6.0d, 0.5d, 4.5d, 'voxel_hash', 'none', new FillKnobs.None())
 
         PocketGrid kdGrid = PocketGridBuilder.build(protein, [pocket] as List<Pocket>, kd)
         PocketGrid vhGrid = PocketGridBuilder.build(protein, [pocket] as List<Pocket>, vh)
@@ -196,9 +197,9 @@ class PocketGridBuilderTest {
         pocket.sasPoints = sasAt(0.59d, 0d, 0d)
 
         PocketGridConfig kd = new PocketGridConfig(
-                1.2d, 5.0d, 0.5d, 2.5d, 'kdtree',     'none', 3, 5)
+                1.2d, 5.0d, 0.5d, 2.5d, 'kdtree',     'none', new FillKnobs.None())
         PocketGridConfig vh = new PocketGridConfig(
-                1.2d, 5.0d, 0.5d, 2.5d, 'voxel_hash', 'none', 3, 5)
+                1.2d, 5.0d, 0.5d, 2.5d, 'voxel_hash', 'none', new FillKnobs.None())
 
         BitSet kdShell = PocketGridBuilder.build(protein, [pocket] as List<Pocket>, kd).indicesForPocket(1)
         BitSet vhShell = PocketGridBuilder.build(protein, [pocket] as List<Pocket>, vh).indicesForPocket(1)

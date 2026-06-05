@@ -32,6 +32,15 @@ import java.util.Map;
  * directly via the constructor. Bean-style getters (not record accessors) so
  * Groovy callers using property syntax — {@code grid.allPoints},
  * {@code grid.pointCount} — keep working.
+ *
+ * <p><b>WARNING for Groovy callers</b> of {@link #indicesForPocket} /
+ * {@link #getPocketToPointIndices}: in Groovy under {@code @CompileStatic},
+ * {@code bitset.and(other)} / {@code .or(other)} / {@code .andNot(other)} do NOT
+ * mutate — they bind to Groovy's {@code DefaultGroovyMethods.and/or(BitSet,BitSet)}
+ * which RETURN a new BitSet and leave the receiver unchanged (a silent no-op that
+ * makes every "overlap"/"union" look like the receiver's own cardinality). Use the
+ * operators ({@code a & b}, {@code a | b}, {@code a & ~b}) and assign, or do the
+ * set-algebra in Java. This trap bit the pocket-grid analyses in AnalyzeRoutine twice.
  */
 public final class PocketGrid {
 
@@ -66,6 +75,9 @@ public final class PocketGrid {
     private final double originZ;
     private final LongIntHashMap latticeIndex;
     private final Map<Integer, BitSet> pocketToPointIndices;
+    /** Per-pocket RAW shell (points within assignCutoff of the pocket's SAS, pre-fill).
+     *  A first-class build output so analyses don't re-derive it via a second fill=none build. */
+    private final Map<Integer, BitSet> pocketToRawShell;
 
     public PocketGrid(Atoms allPoints,
                       double spacing,
@@ -73,7 +85,8 @@ public final class PocketGrid {
                       double originY,
                       double originZ,
                       LongIntHashMap latticeIndex,
-                      Map<Integer, BitSet> pocketToPointIndices) {
+                      Map<Integer, BitSet> pocketToPointIndices,
+                      Map<Integer, BitSet> pocketToRawShell) {
         this.allPoints = allPoints;
         this.spacing = spacing;
         this.originX = originX;
@@ -81,6 +94,13 @@ public final class PocketGrid {
         this.originZ = originZ;
         this.latticeIndex = latticeIndex;
         this.pocketToPointIndices = pocketToPointIndices;
+        this.pocketToRawShell = pocketToRawShell;
+    }
+
+    /** Convenience constructor for hand-built test grids: raw shell == assigned (no fill applied). */
+    public PocketGrid(Atoms allPoints, double spacing, double originX, double originY, double originZ,
+                      LongIntHashMap latticeIndex, Map<Integer, BitSet> pocketToPointIndices) {
+        this(allPoints, spacing, originX, originY, originZ, latticeIndex, pocketToPointIndices, pocketToPointIndices);
     }
 
     public Atoms getAllPoints() { return allPoints; }
@@ -99,6 +119,12 @@ public final class PocketGrid {
 
     public int getPocketCount() {
         return pocketToPointIndices.size();
+    }
+
+    /** @return this pocket's RAW shell (pre-fill); empty BitSet if pocket unknown. */
+    public BitSet rawShellForPocket(int rank) {
+        BitSet bs = pocketToRawShell.get(rank);
+        return bs != null ? bs : new BitSet();
     }
 
     /** @return BitSet of indices assigned to a pocket; empty BitSet if pocket unknown. */

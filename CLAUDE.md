@@ -31,6 +31,17 @@
   `distro/README.md` directly — any changes are silently overwritten on the
   next build.
 
+## Groovy gotchas
+
+- **`BitSet.and()` / `.or()` / `.andNot()` do NOT mutate in Groovy.** Under
+  `@CompileStatic`, `bitset.and(other)` binds to Groovy's
+  `DefaultGroovyMethods.and(BitSet, BitSet)`, which *returns* a new intersection
+  and leaves the receiver unchanged (the Java in-place semantics are shadowed).
+  Silent: no error, the result just looks like the receiver's own cardinality.
+  Use the operators (`a & b`, `a | b`, `a & ~b`) and assign, or do BitSet
+  set-algebra in Java. The grid engine (`PocketGrid*`, fillers) is Java for this
+  reason; the trap bit the Groovy `AnalyzeRoutine` pocket-grid analyses twice.
+
 ## Documentation style
 
 When writing or reviewing Markdown documentation (README, docs in
