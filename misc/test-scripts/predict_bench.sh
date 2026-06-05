@@ -12,6 +12,9 @@
 #   --compare    run BOTH distro/prank and distro/prank_faster and show the speedup
 #   --phases     print the startup phase breakdown (JVM -> config -> model -> work)
 #                with real per-line wall-clock timestamps, for one small protein
+#   --breakdown  DETAILED phase breakdown: a per-phase table (secs + %) plus a class-load
+#                census and JVM-startup probes, for one protein. Delegates to
+#                predict_breakdown.sh; deeper than --phases.
 #   --profile    JFR CPU profile: run the protein set repeated in ONE JVM and print
 #                the top hot methods (needs the `jfr` tool from the JDK)
 #
@@ -27,6 +30,9 @@
 #   -l, --launcher CMD  launcher to benchmark (default: distro/prank)
 #       --compare       benchmark distro/prank vs distro/prank_faster
 #       --phases        startup phase breakdown only
+#       --breakdown     detailed per-phase table + class-load census only
+#       --deep          with --breakdown: also run the expanded probes (histogram,
+#                       subsystem first-load, zstd/deserialize split, JIT/GC)
 #       --profile       JFR hot-method profile only
 #       --profile-reps N  copies of the protein set in the JFR dataset (default 6)
 #   -h, --help          show this help
@@ -54,6 +60,8 @@ REPS=4
 LAUNCHER="distro/prank"
 COMPARE=0
 PHASES=0
+BREAKDOWN=0
+BREAKDOWN_DEEP=0
 PROFILE=0
 PROFILE_REPS=6
 PROTEINS=()
@@ -68,6 +76,8 @@ while [[ $# -gt 0 ]]; do
         -l|--launcher)    LAUNCHER="$2"; shift 2 ;;
         --compare)        COMPARE=1; shift ;;
         --phases)         PHASES=1; shift ;;
+        --breakdown)      BREAKDOWN=1; shift ;;
+        --deep)           BREAKDOWN_DEEP=1; shift ;;
         --profile)        PROFILE=1; shift ;;
         --profile-reps)   PROFILE_REPS="$2"; shift 2 ;;
         -h|--help)        usage ;;
@@ -81,8 +91,17 @@ if [[ ${#PROTEINS[@]} -eq 0 ]]; then
     PROTEINS=("${BENCH_DEFAULT_PROTEINS[@]}")
 fi
 
+# Detailed per-phase breakdown: delegate to the dedicated script (single source of
+# truth). Single-protein by nature, so it uses the first protein in the set.
+# --deep forwards the expanded probe set.
+if [[ $BREAKDOWN -eq 1 ]]; then
+    bd_args=("${PROTEINS[0]}" -l "$LAUNCHER")
+    [[ $BREAKDOWN_DEEP -eq 1 ]] && bd_args+=(--deep)
+    exec misc/test-scripts/predict_breakdown.sh "${bd_args[@]}"
+fi
+
 # Report the active JRE
-JAVACMD="${JAVA_HOME:+$JAVA_HOME/bin/}java"
+JAVACMD="$(bench_javacmd)"
 echo "JRE: $("$JAVACMD" -version 2>&1 | head -1) ${JAVA_HOME:+($JAVA_HOME)}"
 echo "Launcher(s): $([[ $COMPARE -eq 1 ]] && echo 'distro/prank vs distro/prank_faster' || echo "$LAUNCHER")"
 echo ""
@@ -118,7 +137,7 @@ bench_set() {
 if [[ $PHASES -eq 1 ]]; then
     echo "=== Startup phase breakdown (per-line wall-clock, ${PROTEINS[0]##*/}) ==="
     stdbuf -oL -eL $LAUNCHER predict -f "${PROTEINS[0]}" -o "$OUT/pbo" 2>&1 \
-      | perl -MTime::HiRes=time -ne 'BEGIN{$s=time} printf "%7.3f  %s", time-$s, $_' \
+      | bench_ts_prefix \
       | grep -iE "default config|loading model|enabled features|processing dataset|loading protein|predicting pockets|finished|results saved" \
       | head -20
     exit 0

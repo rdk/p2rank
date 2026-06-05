@@ -157,7 +157,10 @@ class PredictPocketsRoutine extends Routine {
                 }
 
                 // Pocket grid + descriptors export + optional PyMOL viz.
-                PocketGridOutputs.exportIfEnabled(pair.prediction, item.protein, outdir, item.label)
+                // Use the already-loaded pair.protein (not item.protein, which would
+                // reparse the structure from disk: getPredictionPair() does not cache
+                // when dataset.cached==false, as is the case for the `predict` command).
+                PocketGridOutputs.exportIfEnabled(pair.prediction, pair.protein, outdir, item.label)
             }
 
             if (produceVisualizations) {

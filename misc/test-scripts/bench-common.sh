@@ -41,3 +41,14 @@ bench_resolve_home() {
 # Major version (e.g. 21) and short label (e.g. java-21.0.10) for a JAVA_HOME.
 bench_major_of() { "$1/bin/java" -version 2>&1 | head -1 | sed -E 's/.*version "([0-9]+).*/\1/'; }
 bench_label_of() { "$1/bin/java" -version 2>&1 | head -1 | sed -E 's/ version "/-/; s/".*//'; }
+
+# The `java` command honoring $JAVA_HOME (so launchers and probes use the same JRE).
+bench_javacmd() { echo "${JAVA_HOME:+$JAVA_HOME/bin/}java"; }
+
+# Pipe filter: prepend a cumulative wall-clock timestamp (seconds since the first
+# line) to each stdin line. $1 is an optional perl printf format taking the time
+# float then the line (default "%7.3f  %s"); pass a $'...'-quoted format if you need
+# a literal tab/newline, since the variable form is not escape-interpolated.
+bench_ts_prefix() {
+    BENCH_TS_FMT="${1:-%7.3f  %s}" perl -MTime::HiRes=time -ne 'BEGIN{$s=time} printf $ENV{BENCH_TS_FMT}, time-$s, $_'
+}
