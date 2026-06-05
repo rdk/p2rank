@@ -192,20 +192,20 @@ public class GridGenerator implements Iterable<Point> {
     }
 
     /**
-     * Samples lattice points that lie inside a "pocket-vicinity shell": close
-     * enough to {@code sasPoints} (within {@code maxDist}) but far enough from
-     * protein {@code atoms} to fall outside their van-der-Waals shells (plus
-     * {@code atomBuffer}). Two different point sets gate the two bounds:
+     * Samples lattice points that lie inside a shell around the protein
+     * {@code atoms}: within {@code maxDist} of the nearest atom (outer bound)
+     * but outside its van-der-Waals shell plus {@code atomBuffer} (inner bound).
+     * A single point set ({@code atoms}, i.e. protein + cofactor heavy atoms)
+     * gates both bounds, so the grid covers a shell around the whole protein,
+     * not just the vicinity of predicted pockets.
+     *
+     * <p>Per lattice cell, find the nearest atom via {@link Atoms#findNearest}, then:
      * <ul>
-     *   <li><b>Outer bound</b> uses {@code sasPoints} — typically the union of
-     *       {@code Pocket.sasPoints} across every predicted pocket. The lattice
-     *       box itself is the bounding box of {@code sasPoints} expanded by
-     *       {@code maxDist}, so the grid only exists in the neighborhood of
-     *       pockets (not over the whole protein).</li>
-     *   <li><b>Inner bound</b> uses {@code atoms} (protein + cofactor heavy
-     *       atoms). A lattice cell whose nearest atom is closer than
-     *       {@code vdw_radius(nearest) + atomBuffer} is dropped, keeping the
-     *       grid out of physical atom volume.</li>
+     *   <li><b>Outer bound:</b> drop the cell if it is farther than {@code maxDist}
+     *       from that atom.</li>
+     *   <li><b>Inner bound:</b> drop the cell if it is closer than
+     *       {@code vdw_radius(nearest) + atomBuffer}, keeping the grid out of
+     *       physical atom volume.</li>
      * </ul>
      *
      * <p>VdW radii come from {@link VdwRadiusTable}, which falls back to Krypton
@@ -214,25 +214,28 @@ public class GridGenerator implements Iterable<Point> {
      * <p>Returns a {@link GridSample} carrying the kept points plus the origin the
      * sampler used — callers that need to compute lattice coords downstream read
      * the origin from there instead of recomputing the same box / shift pipeline.
-     * The kept-points set is empty when {@code sasPoints} is empty.
+     * The kept-points set is empty when {@code atoms} is empty.
+     *
+     * <p>Note: per-pocket assignment downstream still uses {@code Pocket.sasPoints}
+     * (via {@code pocket_grid_assign_cutoff}); only the grid extent is atom-driven.
      */
-    public static GridSample sampleGridPointsBetween(Atoms atoms, Atoms sasPoints,
+    public static GridSample sampleGridPointsBetween(Atoms atoms,
                                                      double edge, double maxDist, double atomBuffer) {
-        if (sasPoints == null || sasPoints.isEmpty()) return new GridSample(new Atoms(), 0d, 0d, 0d);
+        if (atoms == null || atoms.isEmpty()) return new GridSample(new Atoms(), 0d, 0d, 0d);
 
-        // sasPoints.sqrDist below uses the kdtree only if it's already built; build it conditionally
-        // so tiny inputs (tests) skip the cost. atoms.findNearest builds its own kdtree lazily.
-        sasPoints.withKdTreeConditional();
+        // findNearest builds the kdtree lazily on first query; build it conditionally up front
+        // so the box pass and the per-cell pass share one tree without paying for tiny inputs.
+        atoms.withKdTreeConditional();
 
-        Box box = Box.aroundAtoms(sasPoints).withMargin(maxDist);
+        Box box = Box.aroundAtoms(atoms).withMargin(maxDist);
         GridGenerator grid = GridGenerator.forBox(box, edge);  // ctor guards against NaN/Inf box
 
-        double maxDistSqr = maxDist * maxDist;
         Atoms res = new Atoms(grid.getCount() / 4);
         for (Point p : grid) {
-            if (sasPoints.sqrDist(p) > maxDistSqr) continue;
-            Atom nearestAtom = atoms.findNearest(p);
-            if (Struct.dist(nearestAtom, p) < VdwRadiusTable.get(nearestAtom) + atomBuffer) continue;
+            Atom nearest = atoms.findNearest(p);
+            double dist = Struct.dist(nearest, p);
+            if (dist > maxDist) continue;
+            if (dist < VdwRadiusTable.get(nearest) + atomBuffer) continue;
             res.add(p.copy());
         }
 

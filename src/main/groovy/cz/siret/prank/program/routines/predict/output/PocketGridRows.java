@@ -22,11 +22,14 @@ import java.util.Map;
  * Long-format export of {@link PocketGrid}: one row per (point, pocket) pair.
  *
  * <p>A grid point assigned to K pockets contributes K rows. Unassigned points
- * are never emitted — they don't carry useful information for downstream
- * pocket analysis and inflate the file size.
+ * appear once with {@code pocket = 0} only when {@code includeUnassigned} is on
+ * (driven by {@code -pocket_grid_include_unassigned}); otherwise they are
+ * skipped. This is the tabular export only — the PDB visualization sidecar is a
+ * separate writer that always emits assigned points exclusively.
  *
  * <p>Sort order (documented spec contract): {@code pocket} ascending, then
- * {@code x}, {@code y}, {@code z} ascending.
+ * {@code x}, {@code y}, {@code z} ascending. Unassigned rows (if included) go
+ * last so readers that only care about assigned points can stop early.
  *
  * <p>Base schema: {@code x, y, z, pocket}. Each entry in {@code descriptors}
  * appends one or more columns; multi-column descriptors get the
@@ -52,21 +55,30 @@ public final class PocketGridRows implements TableData {
     /** [rowIndex][descriptorColumn] — flat across all descriptors; null when no descriptors. */
     private final double[][] descriptorValues;
 
-    public PocketGridRows(PocketGrid grid, Protein protein,
+    public PocketGridRows(PocketGrid grid, boolean includeUnassigned, Protein protein,
                           List<? extends Pocket> pockets,
                           List<String> descriptorNames) {
         List<PocketGridPointDescriptor> descriptors = resolveDescriptors(descriptorNames);
         this.grid = grid;
 
+        // Union of assigned point indices (across pockets) — sizes the output and, when
+        // includeUnassigned is on, identifies the leftover points. Plain BitSet.or here:
+        // this is Java, so it mutates in place (the Groovy DefaultGroovyMethods no-op trap
+        // does not apply to .java sources).
+        BitSet assignedUnion = new BitSet(grid.getAllPoints().getCount());
         int totalMemberships = 0;  // (point, pocket) pairs
         for (BitSet bs : grid.getPocketToPointIndices().values()) {
+            assignedUnion.or(bs);
             totalMemberships += bs.cardinality();
         }
+        int unassignedCount = includeUnassigned
+                ? grid.getAllPoints().getCount() - assignedUnion.cardinality()
+                : 0;
 
-        rowPointIdx = new int[totalMemberships];
+        rowPointIdx = new int[totalMemberships + unassignedCount];
         rowPocket = new int[rowPointIdx.length];
 
-        // Write pocket rows in rank order, each sorted by (x, y, z).
+        // Write pocket rows in rank order, each sorted by (x, y, z); unassigned (pocket=0) last.
         List<Atom> allPoints = grid.getAllPoints().list;
         int w = 0;
         List<Integer> ranks = new ArrayList<>(grid.getPocketToPointIndices().keySet());
@@ -79,6 +91,18 @@ public final class PocketGridRows implements TableData {
             for (Integer idx : sorted) {
                 rowPointIdx[w] = idx;
                 rowPocket[w] = rank;
+                w++;
+            }
+        }
+        if (includeUnassigned) {
+            List<Integer> unassigned = new ArrayList<>(unassignedCount);
+            for (int i = 0; i < allPoints.size(); i++) {
+                if (!assignedUnion.get(i)) unassigned.add(i);
+            }
+            sortByCoord(unassigned, allPoints);
+            for (Integer idx : unassigned) {
+                rowPointIdx[w] = idx;
+                rowPocket[w] = 0;   // sentinel: unassigned (pocket ranks are 1-based)
                 w++;
             }
         }
@@ -98,8 +122,10 @@ public final class PocketGridRows implements TableData {
         if (descriptors.isEmpty()) {
             this.descriptorValues = null;
         } else {
-            // Build rank → Pocket lookup. Every row has a non-zero rank since
-            // unassigned points are no longer emitted.
+            // Build rank → Pocket lookup; pocket=0 (unassigned, when includeUnassigned
+            // is on) maps to null. The three registered descriptors are all
+            // pocket-agnostic (they never read ctx.pocket()), so the null is never
+            // dereferenced — see the cost note in export-pocket-grid.md.
             Map<Integer, Pocket> rankToPocket = new HashMap<>();
             if (pockets != null) {
                 for (Pocket p : pockets) {

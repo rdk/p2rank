@@ -658,7 +658,8 @@ pocket_grid() {
     test $FASTER predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_fill morph_closing                                                            -out_subdir TEST/POCKET_GRID
     test $FASTER predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_fill none                                                                     -out_subdir TEST/POCKET_GRID
 
-    # Knobs: tighter spacing, larger reach, custom atom buffer
+    # Knobs: include unassigned, tighter spacing, larger reach, custom atom buffer
+    test $FASTER predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_include_unassigned 1                                                          -out_subdir TEST/POCKET_GRID
     test $FASTER predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_spacing 0.75                                                                  -out_subdir TEST/POCKET_GRID
     test $FASTER predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_max_dist 8                                                                    -out_subdir TEST/POCKET_GRID
     test $FASTER predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_atom_buffer 1.0                                                               -out_subdir TEST/POCKET_GRID

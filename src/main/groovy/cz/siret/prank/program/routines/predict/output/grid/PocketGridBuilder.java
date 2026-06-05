@@ -23,9 +23,10 @@ import java.util.Map;
 /**
  * Orchestrates the per-protein pocket grid:
  * <ol>
- *   <li>Sample lattice points in the pocket-vicinity shell defined by
- *       {@code Pocket.sasPoints} (union) and the configured bounds — see
- *       {@link GridGenerator#sampleGridPointsBetween}.</li>
+ *   <li>Sample lattice points in a shell around the protein atoms (within
+ *       {@code maxDist}, outside the per-atom vdW + {@code atomBuffer} volume) —
+ *       see {@link GridGenerator#sampleGridPointsBetween}. The grid spans the
+ *       whole protein; per-pocket assignment below restricts it to pockets.</li>
  *   <li>Build a lattice index for the kept points (for O(1) neighbor lookup).</li>
  *   <li>For each pocket: compute the raw shell (points within {@code assignCutoff}
  *       of any of the pocket's {@code sasPoints}), then apply the chosen
@@ -56,23 +57,13 @@ public final class PocketGridBuilder {
      *                an empty assignment.
      */
     public static PocketGrid build(Protein protein, List<? extends Pocket> pockets, PocketGridConfig config) {
-        // The union of pocket SAS points drives both the lattice bounding box and the
-        // per-cell outer bound. Use Atoms.join (plain concat) since per-pocket SAS sets
-        // are disjoint by construction (each SAS point belongs to one cluster).
-        List<Atoms> sasPerPocket = new ArrayList<>(pockets.size());
-        for (Pocket pocket : pockets) {
-            Atoms sas = pocket.getSasPoints();
-            if (sas != null && !sas.isEmpty()) sasPerPocket.add(sas);
-        }
-        Atoms allSasPoints = Atoms.join(sasPerPocket);
-        if (allSasPoints.isEmpty()) {
-            log.warn("No pocket has sasPoints — pocket grid will be empty.");
-        }
-
+        // The grid is a shell around the protein atoms (within maxDist, outside the
+        // per-atom vdW + atomBuffer volume). Per-pocket SAS points are NOT used for the
+        // grid extent — only for the per-pocket assignment (raw shells) below.
         // Sampler returns the kept points plus the origin it picked; consume both to
         // keep lattice-coord math consistent with what the sampler used.
         GridSample sample = GridGenerator.sampleGridPointsBetween(
-                protein.getProteinAtoms(), allSasPoints,
+                protein.getProteinAtoms(),
                 config.spacing(), config.maxDist(), config.atomBuffer());
 
         Atoms allPoints = sample.points();

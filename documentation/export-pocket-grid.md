@@ -22,33 +22,45 @@ prank rescore  fpocket.ds    -export_pocket_grid 1 -pocket_grid_format arrow.zst
 
 # Also produce PyMOL/ChimeraX visualization overlays
 prank predict -f protein.pdb -export_pocket_grid 1 -vis_pocket_grid 1
+
+# Include unassigned points (pocket=0) in the tabular file — e.g. to see the
+# full atom-driven lattice, including the outer shell outside every pocket
+prank predict -f protein.pdb -export_pocket_grid 1 -pocket_grid_include_unassigned 1
 ```
 
 ## Algorithm
 
-The grid is built around predicted pockets, not the whole protein.
-Both bounds of the sampled lattice are driven by per-pocket SAS points
-(the surface-accessible sampling points that P2Rank scores). Pockets
-loaded from external predictors (fpocket, etc.) don't expose
-`sasPoints` and contribute nothing; if no pocket has SAS points, an
-empty grid is produced with a warning.
+The grid is sampled as a shell around the whole protein; per-pocket
+assignment then restricts which points belong to which pocket. Most kept
+points stay unassigned unless you export them with
+`pocket_grid_include_unassigned` (see below).
 
 1. **Grid generation.** Lattice points are sampled inside the bounding
-   box of the union of `pocket.sasPoints` across every predicted pocket,
-   expanded by `pocket_grid_max_dist` in each direction. Lattice edge is
+   box of the protein (+ cofactor) atoms, expanded by
+   `pocket_grid_max_dist` in each direction. Lattice edge is
    `pocket_grid_spacing`.
-2. **Filtering.** A point is **kept** if both:
-   - it lies within `pocket_grid_max_dist` of some pocket's SAS point
-     (outer bound: pocket-vicinity-only grid), and
-   - its distance to the nearest protein/cofactor atom is at least
+2. **Filtering.** A point is **kept** if both, measured against the
+   nearest protein/cofactor atom:
+   - it lies within `pocket_grid_max_dist` of that atom (outer bound:
+     shell around the protein), and
+   - its distance to that atom is at least
      `vdw_radius(nearest) + pocket_grid_atom_buffer` (inner bound:
      keep grid points out of physical atom volume).
 
    Per-atom VdW radii come from CDK's `Elements` enum, with a 2.02 Å
    fallback for the handful of metals that have a null radius in CDK.
+
+   > [!NOTE]
+   > `pocket_grid_max_dist` is measured from protein **atoms**, so the
+   > sampled lattice covers a shell around the entire protein, not just the
+   > predicted pockets. Widening it grows the grid quickly (volume scales
+   > with the shell thickness). The pocket-local subset is the union of the
+   > per-pocket raw shells from step 3.
 3. **Per-pocket assignment.** For each predicted pocket, the *raw shell*
    is the set of kept points within `pocket_grid_assign_cutoff` of any
-   of the pocket's `sasPoints`.
+   of the pocket's `sasPoints` (the surface-accessible sampling points
+   P2Rank scores). Pockets that expose no `sasPoints` get an empty
+   assignment.
 4. **Shape fill** (`-pocket_grid_fill`):
    - `closing` (default): true morphological closing (dilate by
      `pocket_grid_fill_close_radius` lattice layers, then erode by the same).
@@ -84,10 +96,12 @@ Long format. One row per `(point, pocket)` pair.
 | Column | Type | Description |
 |---|---|---|
 | `x`, `y`, `z` | f64 | Grid point coordinate (Å) |
-| `pocket` | i32 | Pocket rank this row belongs to (1-based; always > 0; unassigned grid points are not emitted). |
+| `pocket` | i32 | Pocket rank this row belongs to (1-based). `0` only when `-pocket_grid_include_unassigned` is on (tabular export only). |
 | *(per-point descriptor columns)* | f64 / i32 | Appended in `-pocket_grid_point_descriptors` order. See the per-grid-point descriptors section below. |
 
 Rows are sorted by `pocket` ascending, then by `x`, `y`, `z` ascending.
+Pocket `0` rows (if enabled) go last, so readers that only care about
+assigned points can stop early.
 
 ### Non-finite values
 
@@ -178,8 +192,9 @@ Implementations live under
 | `export_pocket_grid` | `false` | Master gate for the grid file |
 | `vis_pocket_grid` | `false` | Also render grid-overlay scripts for every renderer in `-vis_renderers` (PyMOL `.pml` and/or ChimeraX `.cxc`). Requires `export_pocket_grid=true`. |
 | `pocket_grid_format` | `csv.gz` | One of `csv`, `csv.gz`, `csv.zst`, `arrow`, `arrow.gz`, `arrow.zst`, `parquet` |
+| `pocket_grid_include_unassigned` | `false` | Write `pocket=0` rows for points outside every pocket. **Tabular export only** — the PyMOL/ChimeraX PDB sidecar always shows assigned points only. |
 | `pocket_grid_spacing` | `1.2` Å | Lattice edge. Volume scales with this³ |
-| `pocket_grid_max_dist` | `4.0` Å | Outer bound. Drop points farther than this from any **pocket SAS point** (not from the protein as a whole). |
+| `pocket_grid_max_dist` | `4.0` Å | Outer bound. Drop points farther than this from the **nearest protein/cofactor atom** (the grid is a shell around the whole protein). |
 | `pocket_grid_atom_buffer` | `1.0` Å | Inner bound. Drop points where `dist(nearest atom) < vdw(nearest) + buffer`. |
 | `pocket_grid_assign_cutoff` | `2.5` Å | Membership cutoff vs. `pocket.sasPoints` |
 | `pocket_grid_assigner` | `kdtree` | Range-query strategy: `kdtree`, `voxel_hash`. `kdtree` is typically faster for fine grids (small `pocket_grid_spacing`); `voxel_hash` is typically faster for coarse grids. Both produce identical results. |

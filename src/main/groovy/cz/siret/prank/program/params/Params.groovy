@@ -910,14 +910,40 @@ class Params {
     @RuntimeParam
     String pocket_grid_format = "csv.gz"
 
+    /**
+     * Include unassigned grid points (those outside every pocket's
+     * {@code pocket_grid_assign_cutoff}) in the tabular grid export, emitted with
+     * {@code pocket = 0} and sorted after all assigned rows. Default off: only
+     * points assigned to at least one pocket are written.
+     *
+     * <p><b>Tabular export only.</b> This affects the {@code pocket_grid_format}
+     * file (csv / arrow / parquet) exclusively. The PyMOL/ChimeraX PDB sidecar
+     * ({@code vis_pocket_grid}) always shows assigned points only — it has no
+     * sentinel for "unassigned" and unassigned points carry no per-pocket meaning
+     * for visualization. So the tabular file and the visualization sidecar can
+     * legitimately differ in row count when this is on; that divergence is by
+     * design (the flag was previously removed for being inconsistent across
+     * outputs — it is now scoped to the tabular path on purpose).
+     *
+     * <p>Especially useful with the atom-driven {@code pocket_grid_max_dist}: most
+     * kept grid points are unassigned outer shell, and this is the only way to see
+     * the full sampled lattice.
+     */
+    @RuntimeParam
+    boolean pocket_grid_include_unassigned = false
+
     /** Lattice edge in Å. Volume scales with this³. */
     @RuntimeParam
     double pocket_grid_spacing = 1.2d
 
     /**
-     * Maximum distance (Å) from the nearest <i>pocket SAS point</i> (across all
-     * pockets) to keep a grid point. The grid lives only in the neighborhood of
-     * predicted pockets, not over the whole protein.
+     * Maximum distance (Å) from the nearest protein/cofactor atom to keep a grid
+     * point. This is the grid's outer bound: the sampled lattice is a shell around
+     * the whole protein (bounding box of the protein atoms expanded by this margin),
+     * not just the neighborhood of predicted pockets. Per-pocket membership is then
+     * restricted separately via {@code pocket_grid_assign_cutoff} against
+     * {@code Pocket.sasPoints}, so most kept points stay unassigned unless exported
+     * with {@code pocket_grid_include_unassigned}.
      */
     @RuntimeParam
     double pocket_grid_max_dist = 4.0d

@@ -32,6 +32,7 @@ final class PocketGridExporter {
         try {
             doExport(grid, protein, pockets, outdir, label,
                     Params.inst.pocket_grid_format,
+                    Params.inst.pocket_grid_include_unassigned,
                     Params.inst.pocket_grid_point_descriptors)
         } catch (Throwable e) {
             log.error("Failed to export pocket grid for {}: {}", label, e.message, e)
@@ -40,8 +41,8 @@ final class PocketGridExporter {
 
     private static void doExport(PocketGrid grid, Protein protein, List<? extends Pocket> pockets,
                                  String outdir, String label,
-                                 String format, List<String> descriptorNames) {
-        PocketGridRows data = new PocketGridRows(grid, protein, pockets, descriptorNames)
+                                 String format, boolean includeUnassigned, List<String> descriptorNames) {
+        PocketGridRows data = new PocketGridRows(grid, includeUnassigned, protein, pockets, descriptorNames)
         String filepath = "${outdir}/${label}_pocket_grid.${format}"
 
         long start = System.currentTimeMillis()

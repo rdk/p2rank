@@ -65,6 +65,20 @@ class PocketGridOverlapTest {
         return p
     }
 
+    /**
+     * A dense "floor" of carbons at {@code (x, y, 0)} for x = xFrom..xTo step 1 Å.
+     * Since {@code pocket_grid_max_dist} is now measured from protein atoms, the grid
+     * only exists near atoms — this floor makes the region just above it (the pocket
+     * axis at y=0) a contiguous kept-points envelope, WITHOUT carving the axis itself
+     * (the atoms sit {@code |y|} away, beyond their vdW+buffer shell of ~2.2 Å).
+     * Two disjoint floors (with a wide x-gap) produce two disconnected envelopes.
+     */
+    private static List<Atom> floor(double xFrom, double xTo, double y) {
+        List<Atom> out = new ArrayList<>()
+        for (double x = xFrom; x <= xTo + 1e-9d; x += 1.0d) out.add(carbonAt(x, y, 0d))
+        return out
+    }
+
     // NB: BitSet intersection uses Groovy's `&` operator, which returns a new
     // BitSet. Do NOT call `inter.and(other)` here: under @CompileStatic that binds
     // to Groovy's DefaultGroovyMethods.and(BitSet,BitSet), which RETURNS the
@@ -110,9 +124,11 @@ class PocketGridOverlapTest {
      */
     @Test
     void morphClosingInflatesOverlapThatRawShellDoesNot() {
-        // Protein atom parked far away so nothing near the pocket line is excluded ->
-        // the inter-pocket region is open solvent and the dilation can bridge it.
-        Protein protein = proteinWith(new Atoms([carbonAt(0d, -30d, 0d)]))
+        // Contiguous atom floor 3 Å below the pocket axis (x = -4..11): the grid is a
+        // continuous envelope just above it, so the inter-pocket region is open and the
+        // dilation can bridge it. The floor sits far enough (3 Å > vdW+buffer ≈ 2.2 Å)
+        // not to carve the axis at y=0.
+        Protein protein = proteinWith(new Atoms(floor(-4d, 11d, -3d)))
 
         // Pocket 1 ("big"): small SAS cluster around the origin.
         TestPocket p1 = pocket(1, sasAt(-1d, 0d, 0d, 0d, 0d, 0d, 1d, 0d, 0d))
@@ -129,14 +145,16 @@ class PocketGridOverlapTest {
         assertEquals(0.0d, containment(raw, 1, 2), 1e-9d)
 
         // morph_closing (min_neighbors=4, max_iters=10) dilates each shell across the
-        // shared envelope until the smaller pocket is almost entirely contained in the
-        // larger one -- overlap created purely by the fill stage, not the assignment.
-        // Observed: overlap=1476, containment=0.97. Thresholds carry margin.
+        // shared envelope until much of the smaller pocket is contained in the larger
+        // one -- overlap created purely by the fill stage, not the assignment.
+        // Observed (atom-driven floor envelope): overlap≈900, containment≈0.62.
+        // (The SAS-driven era saw ~1476 / 0.97 on a fatter cylinder; the floor gives a
+        // half-pipe, so engulfment is partial — the mechanism is the same.)
         assertTrue(overlap(morph, 1, 2) > 500,
                 "morph_closing should create large overlap (got ${overlap(morph, 1, 2)})")
-        assertTrue(containment(morph, 1, 2) > 0.9d,
-                "morph_closing should engulf the smaller pocket (containment " +
-                "${containment(morph, 1, 2)}, expected > 0.9)")
+        assertTrue(containment(morph, 1, 2) > 0.5d,
+                "morph_closing should engulf much of the smaller pocket (containment " +
+                "${containment(morph, 1, 2)}, expected > 0.5)")
     }
 
     /**
@@ -147,7 +165,10 @@ class PocketGridOverlapTest {
      */
     @Test
     void morphClosingDoesNotBridgeDisconnectedEnvelopes() {
-        Protein protein = proteinWith(new Atoms([carbonAt(0d, -30d, 0d)]))
+        // Two separate atom floors with a wide empty x-gap (4..16): the gap has no
+        // atoms, so no grid points exist there (every gap cell is > maxDist from any
+        // atom) -> two disconnected envelopes that morph_closing cannot bridge.
+        Protein protein = proteinWith(new Atoms(floor(-4d, 4d, -3d) + floor(16d, 24d, -3d)))
         TestPocket p1 = pocket(1, sasAt(0d, 0d, 0d))
         TestPocket p2 = pocket(2, sasAt(20d, 0d, 0d))   // > 2 * maxDist apart
         List<Pocket> pockets = [p1, p2] as List<Pocket>
@@ -173,7 +194,9 @@ class PocketGridOverlapTest {
      */
     @Test
     void closingFillDoesNotBridgePocketsThatMorphClosingEngulfs() {
-        Protein protein = proteinWith(new Atoms([carbonAt(0d, -30d, 0d)]))
+        // Contiguous atom floor (x = -4..14) -> one shared open envelope spanning both
+        // pockets, which are 10 Å apart.
+        Protein protein = proteinWith(new Atoms(floor(-4d, 14d, -3d)))
         TestPocket p1 = pocket(1, sasAt(-1d, 0d, 0d, 0d, 0d, 0d, 1d, 0d, 0d))
         TestPocket p2 = pocket(2, sasAt(10d, 0d, 0d))   // open gap, one shared envelope
         List<Pocket> pockets = [p1, p2] as List<Pocket>
@@ -181,11 +204,14 @@ class PocketGridOverlapTest {
         PocketGrid morph   = PocketGridBuilder.build(protein, pockets, morphConfig())
         PocketGrid closing = PocketGridBuilder.build(protein, pockets, closingConfig(2))
 
-        assertTrue(containment(morph, 1, 2) > 0.5d,
-                "morph_closing should bridge the open gap and engulf " +
-                "(containment ${containment(morph, 1, 2)})")
+        // morph_closing bridges the open gap (large overlap that the raw shell lacks);
+        // true closing dilates then erodes, so the advance into the open inter-pocket
+        // region is peeled back and the pockets stay disjoint. The contrast is the point.
+        assertTrue(overlap(morph, 1, 2) > 100,
+                "morph_closing should bridge the open gap (overlap ${overlap(morph, 1, 2)})")
         assertEquals(0, overlap(closing, 1, 2),
-                "true closing must not bridge separated pockets across an open gap")
+                "true closing must not bridge separated pockets across an open gap " +
+                "(overlap ${overlap(closing, 1, 2)})")
     }
 
 }

@@ -20,11 +20,12 @@ import static org.junit.jupiter.api.Assertions.*
  * stays fast and isolates the builder from the rest of the prediction
  * pipeline.
  *
- * <p>Pockets supply {@code sasPoints} — these drive both the lattice
- * bounding box (outer bound) and the per-pocket assignment (a grid point
- * is assigned to pocket P if it falls within {@code assignCutoff} of any
- * of P's SAS points). Tests put SAS points at convenient coordinates that
- * make geometric assertions easy to write.
+ * <p>The lattice extent is driven by the protein atoms (a shell within
+ * {@code maxDist} of an atom, outside its vdW + {@code atomBuffer} volume).
+ * Pockets supply {@code sasPoints}, which drive only the per-pocket assignment
+ * (a grid point is assigned to pocket P if it falls within {@code assignCutoff}
+ * of any of P's SAS points). Tests put atoms and SAS points at convenient
+ * coordinates that make geometric assertions easy to write.
  */
 @CompileStatic
 class PocketGridBuilderTest {
@@ -66,20 +67,22 @@ class PocketGridBuilderTest {
     }
 
     @Test
-    void buildsEmptyGridWhenNoPocketsHaveSasPoints() {
-        // No pocket has sasPoints → union is empty → grid sampler returns empty.
-        // The builder logs a warning and produces a PocketGrid with zero points.
+    void gridCoversAtomShellEvenWithNoPockets() {
+        // The grid extent is atom-driven, so with no pockets the lattice is still a
+        // (non-empty) shell around the protein atoms — there are just no pockets to
+        // assign points to. (Pre-revert this returned an empty grid because the SAS
+        // union drove the bounding box.)
         Protein protein = proteinWith(new Atoms([carbonAt(0d, 0d, 0d)]))
         PocketGrid grid = PocketGridBuilder.build(protein, [] as List<Pocket>, defaultConfig())
 
-        assertEquals(0, grid.pointCount)
+        assertTrue(grid.pointCount > 0, "atom-driven grid should have points even with no pockets")
         assertEquals(0, grid.pocketCount)
     }
 
     @Test
     void assignsGridPointsToASinglePocket() {
-        // Two-atom protein along x. Pocket's SAS points sit between them — the lattice
-        // box centers on the SAS points and the per-pocket assignment runs against them.
+        // Two-atom protein along x. The lattice box covers the atom shell; the pocket's
+        // SAS point sits between the atoms and the per-pocket assignment runs against it.
         Atom a1 = carbonAt(0d, 0d, 0d)
         Atom a2 = carbonAt(6d, 0d, 0d)
         Protein protein = proteinWith(new Atoms([a1, a2]))
@@ -209,8 +212,8 @@ class PocketGridBuilderTest {
 
     @Test
     void emptySasPointsYieldsEmptyAssignment() {
-        // Edge case: a pocket without SAS points contributes nothing to the lattice box
-        // and gets an empty assignment. The builder must not NPE.
+        // Edge case: a pocket without SAS points gets an empty assignment (the grid
+        // itself is still built around the protein atoms). The builder must not NPE.
         Atom a1 = carbonAt(0d, 0d, 0d)
         Protein protein = proteinWith(new Atoms([a1]))
 

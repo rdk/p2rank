@@ -91,6 +91,15 @@ class Benchmarks extends Routine {
         long totalGridPoints = 0, totalAssignedPairs = 0, totalPockets = 0
         int processed = 0, errors = 0
 
+        // Diagnostics (collected in an untimed pass below so they never inflate the phase timings):
+        //   assignedPerPocket — post-fill, post-cross-pocket-rule point count per pocket (the "pairs" unit)
+        //   rawPerPocket      — pre-fill raw-shell point count per pocket (points within assignCutoff of SAS)
+        // Totals let us separate "how many points were kept" from "how many got assigned" from
+        // "how many assignments are genuine multi-pocket overlap".
+        List<Integer> assignedPerPocket = new ArrayList<>()
+        List<Integer> rawPerPocket = new ArrayList<>()
+        long totalRawPairs = 0, totalDistinctAssigned = 0, totalUnassignedKept = 0
+
         for (Dataset.Item item : dataset.items) {
             try {
                 long t0 = System.nanoTime()
@@ -108,7 +117,6 @@ class Benchmarks extends Routine {
                     for (PocketDescriptor d : descriptors) {
                         d.compute(ctx)
                     }
-                    totalAssignedPairs += indices.cardinality()
                 }
                 long t3 = System.nanoTime()
 
@@ -118,6 +126,27 @@ class Benchmarks extends Routine {
                 totalGridPoints += grid.allPoints.count
                 totalPockets += pockets.size()
                 processed++
+
+                // ---- untimed diagnostics pass ----
+                // protUnion is the per-protein union of all pocket assignments; its cardinality is the
+                // number of DISTINCT kept points that landed in at least one pocket. (kept - distinct)
+                // is the outer-shell remainder: points kept by max_dist but never assigned to any pocket.
+                // NOTE: BitSet '|' here returns a NEW BitSet (Groovy DefaultGroovyMethods) — we reassign,
+                // never .or() in place (see CLAUDE.md Groovy gotcha).
+                BitSet protUnion = new BitSet()
+                for (Pocket pocket : pockets) {
+                    BitSet indices = grid.indicesForPocket(pocket.rank)
+                    int card = indices.cardinality()
+                    totalAssignedPairs += card
+                    assignedPerPocket.add(card)
+                    int rawCard = grid.rawShellForPocket(pocket.rank).cardinality()
+                    totalRawPairs += rawCard
+                    rawPerPocket.add(rawCard)
+                    protUnion = protUnion | indices
+                }
+                long distinct = protUnion.cardinality()
+                totalDistinctAssigned += distinct
+                totalUnassignedKept += (grid.allPoints.count - distinct)
             } catch (Exception e) {
                 log.error "Failed on item [{}]: {}", item.label, e.message
                 errors++
@@ -147,6 +176,78 @@ class Benchmarks extends Routine {
         log.info "  Descriptors:            {} ms total, {} ms/protein avg",
                 descriptorNs / 1_000_000, String.format(java.util.Locale.ROOT, "%.2f", descMsAvg)
         log.info "  Wall (incl. logging):   {} ms", totalMs
+
+        // ---- coverage diagnostics ----
+        // overlapPairs = assigned pairs counted more than once because a point sits in >1 pocket.
+        // netFill = how much filling grew (or, if negative, how much the cross-pocket rule clawed back)
+        // the assignment relative to the pre-fill raw shells.
+        long overlapPairs = totalAssignedPairs - totalDistinctAssigned
+        long netFill = totalAssignedPairs - totalRawPairs
+        log.info ""
+        log.info "===== Coverage ====="
+        log.info "  Raw-shell pairs (pre-fill):      {}", totalRawPairs
+        log.info "  Assigned pairs (post-fill):      {}", totalAssignedPairs
+        log.info "  Net fill effect (post - raw):    {} ({})", netFill, pctStr(netFill, totalRawPairs)
+        log.info "  Distinct assigned points:        {}", totalDistinctAssigned
+        log.info "  Multi-pocket overlap pairs:      {} ({} of assigned)", overlapPairs, pctStr(overlapPairs, totalAssignedPairs)
+        log.info "  Kept grid points (all):          {}", totalGridPoints
+        log.info "  Unassigned kept points:          {} ({} of kept)", totalUnassignedKept, pctStr(totalUnassignedKept, totalGridPoints)
+
+        logStats("Assigned points / pocket (post-fill)", assignedPerPocket)
+        logStats("Raw-shell points / pocket (pre-fill)", rawPerPocket)
+    }
+
+    /** Format ratio as a percentage string, guarding divide-by-zero. */
+    private static String pctStr(long num, long den) {
+        if (den == 0) return "n/a"
+        return String.format(java.util.Locale.ROOT, "%.1f%%", 100.0d * num / den)
+    }
+
+    /**
+     * Log descriptive stats for a per-pocket count distribution: n, min, percentiles
+     * (p10/p25/median/p75/p90/p95/p99), max, mean, stddev, zero-count and sum. Percentiles
+     * use nearest-rank on the sorted array. Helps diagnose skew (a few huge pockets vs many
+     * tiny ones) and dead pockets (zeros) that aggregate totals hide.
+     */
+    private static void logStats(String title, List<Integer> values) {
+        log.info ""
+        log.info "===== ${title} ====="
+        int nv = values.size()
+        if (nv == 0) {
+            log.info "  (no data)"
+            return
+        }
+        int[] a = new int[nv]
+        for (int i = 0; i < nv; i++) a[i] = values.get(i)
+        java.util.Arrays.sort(a)
+        long sum = 0
+        for (int v : a) sum += v
+        double mean = sum / (double) nv
+        double variance = 0
+        for (int v : a) { double d = v - mean; variance += d * d }
+        double sd = Math.sqrt(variance / nv)
+        // sorted ascending, so any zeros form the prefix: count until the first non-zero
+        int zeros = 0
+        for (int v : a) {
+            if (v != 0) break
+            zeros++
+        }
+        log.info "  n={}  min={}  p10={}  p25={}  median={}  p75={}  p90={}  p95={}  p99={}  max={}",
+                nv, a[0], pctile(a, 10), pctile(a, 25), pctile(a, 50), pctile(a, 75),
+                pctile(a, 90), pctile(a, 95), pctile(a, 99), a[nv - 1]
+        log.info "  mean={}  stddev={}  zeros={} ({})  sum={}",
+                String.format(java.util.Locale.ROOT, "%.1f", mean),
+                String.format(java.util.Locale.ROOT, "%.1f", sd),
+                zeros, pctStr(zeros, nv), sum
+    }
+
+    /** Nearest-rank percentile on an already-sorted ascending int[]. */
+    private static int pctile(int[] sorted, int p) {
+        int n = sorted.length
+        int rank = (int) Math.ceil(p / 100.0d * n) - 1
+        if (rank < 0) rank = 0
+        if (rank >= n) rank = n - 1
+        return sorted[rank]
     }
 
 //===========================================================================================================//
