@@ -45,17 +45,11 @@ public final class MorphologicalCloser implements PocketShapeFiller {
         boolean converged = false;
         for (; iter < maxIters; iter++) {
             // Step 1: collect candidates — unfilled cells adjacent to anything just promoted.
-            candidates.clear();
-            for (int i = newlyAdded.nextSetBit(0); i >= 0; i = newlyAdded.nextSetBit(i + 1)) {
-                int nn = grid.neighborsInto(i, buf);
-                for (int k = 0; k < nn; k++) {
-                    int nbr = buf[k];
-                    if (!filled.get(nbr)) {
-                        candidates.set(nbr);
-                    }
-                }
+            // This is a single dilation pass of the frontier (newlyAdded) against the full
+            // filled set; the shared primitive clears `candidates` and reuses `buf`.
+            if (!LatticeMorphology.dilateOnce(newlyAdded, filled, grid, candidates, buf)) {
+                converged = true; break;
             }
-            if (candidates.isEmpty()) { converged = true; break; }
 
             // Step 2: promote candidates whose filled-neighbor count meets threshold.
             promoted.clear();

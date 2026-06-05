@@ -23,6 +23,21 @@
   dir, update the version in `build.gradle`, remove the old version dir, then
   `./gradlew test`.
 
+- **p2rank-dev-artefacts** is a permanent sister dev repo, always cloned next to
+  this one at `../p2rank-dev-artefacts`
+  (https://github.com/rdk/p2rank-dev-artefacts, private). It holds large dev
+  artefacts kept out of the main repo: trained models under
+  `models/<version>/` (binaries via **Git LFS**) plus their predict configs, and
+  a `papers/` subdir. Predict configs there should use **relative-sibling**
+  `model =` paths (`../p2rank-dev-artefacts/models/...`), not machine-absolute
+  ones, so they stay portable across checkouts. Caveat: P2Rank does *not*
+  resolve `model` relative to the config file (only `dataset_base_dir` /
+  `output_base_dir` get that treatment); a relative `model` is tried against the
+  **current working dir** first, then `$installDir/models/`. So these configs
+  work only when run with cwd at this repo's root (the install dir), e.g.
+  `./prank.sh predict <in> -c ../p2rank-dev-artefacts/models/<config>` from here.
+  Not a Maven dependency: nothing is vendored back here.
+
 ## Build artifacts (do not edit)
 
 - `distro/README.md` is **generated** from the top-level `README.md` by the
