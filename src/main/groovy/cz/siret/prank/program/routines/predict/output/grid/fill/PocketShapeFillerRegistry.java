@@ -26,7 +26,7 @@ public final class PocketShapeFillerRegistry {
 
     static {
         register("morph_closing", MorphologicalCloser::new);
-        register("closing",       ErodeDilateCloser::new);   // PROTOTYPE: true dilate-then-erode closing
+        register("closing",       ErodeDilateCloser::new);   // default: true dilate-then-erode closing
         register("none",          NoOpFiller::new);
     }
 

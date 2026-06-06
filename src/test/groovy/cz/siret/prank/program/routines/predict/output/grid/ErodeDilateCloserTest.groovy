@@ -13,8 +13,8 @@ import org.junit.jupiter.api.Test
 import static org.junit.jupiter.api.Assertions.*
 
 /**
- * PROTOTYPE. Tests the true dilate-then-erode {@link ErodeDilateCloser} on
- * synthetic lattices, mirroring {@code MorphologicalCloserTest}.
+ * Tests the true dilate-then-erode {@link ErodeDilateCloser} (the default {@code closing}
+ * filler) on synthetic lattices, mirroring {@code MorphologicalCloserTest}.
  *
  * <p>Two properties matter for the over-overlap fix:
  * <ol>

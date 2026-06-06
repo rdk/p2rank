@@ -5,7 +5,7 @@ import cz.siret.prank.program.routines.predict.output.grid.PocketGrid;
 import java.util.BitSet;
 
 /**
- * PROTOTYPE. True binary morphological closing on the lattice: dilate the raw
+ * True binary morphological closing on the lattice: dilate the raw
  * shell by {@code dilateRadius} layers (26-connectivity), then erode by
  * {@code erodeRadius}. Closing fills holes and concavities up to width
  * {@code 2*radius} while restoring the outer boundary, so it does NOT balloon the
@@ -51,6 +51,10 @@ public final class ErodeDilateCloser implements PocketShapeFiller {
      * Asymmetric with {@code erodeCount < dilateCount} leaves {@code dilateCount - erodeCount}
      * net layers of OUTWARD growth on top of the hole-closing -- a bounded version of the
      * {@code morph_closing} outward bleed. Use the asymmetric form with care.
+     *
+     * <p>{@code dilateCount <= 0} is a no-op that returns a clone of the raw shell: with no
+     * dilation there is nothing for erosion to peel back, so any {@code erodeCount} is ignored
+     * (eroding the bare raw shell is never wanted). Production always passes the symmetric form.
      */
     public BitSet close(BitSet rawShell, PocketGrid grid, int dilateCount, int erodeCount) {
         BitSet filled = (BitSet) rawShell.clone();

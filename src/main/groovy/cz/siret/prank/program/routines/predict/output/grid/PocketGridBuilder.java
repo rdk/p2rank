@@ -115,6 +115,16 @@ public final class PocketGridBuilder {
             pocketToRawShell.put(pocket.getRank(), raw);
         }
 
+        // No pocket has any grid point within assignCutoff of its SAS points (e.g. pockets
+        // from an external predictor that exposes no sasPoints). The tabular export then
+        // emits zero rows unless pocket_grid_include_unassigned is on — warn rather than
+        // produce a silently empty grid file.
+        if (unionRaw.isEmpty()) {
+            log.warn("PocketGrid: no pocket has any assigned grid point (no pocket SAS points"
+                    + " within assignCutoff={}); tabular grid export will be empty unless"
+                    + " -pocket_grid_include_unassigned is set", assignCutoff);
+        }
+
         // Pass 2: fill each pocket, then enforce the cross-pocket fill rule (HARD,
         // always on). A point ADDED BY FILLING (i.e. beyond this pocket's assignCutoff,
         // so not in its raw shell) is dropped if it lies in ANOTHER pocket's raw shell

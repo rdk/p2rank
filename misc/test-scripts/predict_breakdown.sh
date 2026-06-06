@@ -39,6 +39,8 @@
 # Notes:
 #   - Run `./gradlew assemble` first (launchers use distro/bin/p2rank.jar).
 #   - Run on an idle machine. A small protein makes the fixed overhead easiest to read.
+#   - Linux / GNU coreutils only: uses GNU-specific `stat -c`, `find -printf`,
+#     `/usr/bin/time -f`, and `stdbuf`. The BSD/macOS equivalents differ.
 #
 
 set -uo pipefail

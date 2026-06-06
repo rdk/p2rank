@@ -365,9 +365,20 @@ class AnalyzeRoutine extends Routine {
             new FillSpec('closing_r1',    'closing',       FillKnobs.Closing.symmetric(1)),
             new FillSpec('closing_r2',    'closing',       FillKnobs.Closing.symmetric(2)),
             new FillSpec('dilate2_erode1','closing',       new FillKnobs.Closing(2, 1)),  // asymmetric: net +1 outward
-            new FillSpec('morph_n10',     'morph_closing', new FillKnobs.Morph(10, 10)),  // candidate morph default
-            new FillSpec('morph_n14',     'morph_closing', new FillKnobs.Morph(14, 10)),  // current morph default
+            new FillSpec('morph_n10',     'morph_closing', new FillKnobs.Morph(10, 10)),  // current morph default (min_neighbors=10)
+            new FillSpec('morph_n14',     'morph_closing', new FillKnobs.Morph(14, 10)),  // candidate (stricter, min_neighbors=14)
     ].asImmutable() as List<FillSpec>
+
+    /**
+     * Base config with fill=none, so {@code indicesForPocket()} returns the RAW shells;
+     * the cavity-fit and ligand-fit analyses then apply each {@link FillSpec} in that same
+     * index space. Reads the current {@code pocket_grid_*} params except fill.
+     */
+    private PocketGridConfig baseNoneConfig() {
+        new PocketGridConfig(
+                params.pocket_grid_spacing, params.pocket_grid_max_dist, params.pocket_grid_atom_buffer,
+                params.pocket_grid_assign_cutoff, params.pocket_grid_assigner, 'none', new FillKnobs.None())
+    }
 
     /**
      * Shared scaffold for the pocket-grid analyses: load the model + feature extractor once,
@@ -378,7 +389,7 @@ class AnalyzeRoutine extends Routine {
      *                      needs predicted pockets, false when it scores against ligands)
      */
     private Dataset.Result forEachPrediction(boolean ignoreLigands, Closure body) {
-        if (ignoreLigands) LoaderParams.ignoreLigandsSwitch = true
+        LoaderParams.ignoreLigandsSwitch = ignoreLigands
         Model model = Model.load(Main.findModel(params.installDir, params))
         FeatureExtractor extractor = FeatureExtractor.createFactory()
         return dataset.processItems { Dataset.Item item ->
@@ -420,14 +431,11 @@ class AnalyzeRoutine extends Routine {
         }
 
         final double[] R_LARGE = [3.0d, 4.0d, 5.0d] as double[]
-        // Score the raw shell, the prototype true-closing at two radii, and the current default.
+        // Score every fill strategy in DEFAULT_FILLS (raw shell, two true-closing radii,
+        // an asymmetric closing, and the two morph candidates).
         final List<FillSpec> FILLS = DEFAULT_FILLS
 
-        // Build the candidate grid once per protein with fill=none so indicesForPocket()
-        // returns the RAW shells; we then apply each filler in that same index space.
-        PocketGridConfig baseConfig = new PocketGridConfig(
-                params.pocket_grid_spacing, params.pocket_grid_max_dist, params.pocket_grid_atom_buffer,
-                params.pocket_grid_assign_cutoff, params.pocket_grid_assigner, 'none', new FillKnobs.None())
+        PocketGridConfig baseConfig = baseNoneConfig()
         log.info "pocket-grid-cavity-fit base config: {}, R_large sweep: {}", baseConfig, R_LARGE
 
         ConcurrentLinkedQueue<CavityFitRow> rows = new ConcurrentLinkedQueue<>()
@@ -553,9 +561,7 @@ class AnalyzeRoutine extends Routine {
         final List<String> ALL_LABELS = new ArrayList<>(FILLS*.label)
         for (double[] c : CAVITY_COMBOS) ALL_LABELS.add(cavityLabel(c[0], c[1]))
 
-        PocketGridConfig baseConfig = new PocketGridConfig(
-                params.pocket_grid_spacing, params.pocket_grid_max_dist, params.pocket_grid_atom_buffer,
-                params.pocket_grid_assign_cutoff, params.pocket_grid_assigner, 'none', new FillKnobs.None())
+        PocketGridConfig baseConfig = baseNoneConfig()
         log.info "pocket-grid-ligand-fit base config: {}, d_match sweep: {}", baseConfig, D_MATCH
 
         ConcurrentLinkedQueue<LigandFitRow> rows = new ConcurrentLinkedQueue<>()

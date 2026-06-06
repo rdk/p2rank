@@ -2,7 +2,6 @@ package cz.siret.prank.program.routines.predict.output;
 
 import cz.siret.prank.domain.Pocket;
 import cz.siret.prank.domain.Protein;
-import cz.siret.prank.geom.Atoms;
 import cz.siret.prank.program.routines.predict.output.TableData.ColumnType;
 import cz.siret.prank.program.routines.predict.output.grid.PocketGrid;
 import cz.siret.prank.program.routines.predict.output.grid.descriptors.PocketGridPointContext;
@@ -60,6 +59,21 @@ public final class PocketGridRows implements TableData {
                           List<String> descriptorNames) {
         List<PocketGridPointDescriptor> descriptors = resolveDescriptors(descriptorNames);
         this.grid = grid;
+
+        // Contract: unassigned (pocket=0) rows carry a null Pocket in the context, so they
+        // can only be emitted alongside descriptors that never read ctx.pocket(). Enforce it
+        // at construction rather than NPE deep in the per-row loop only when both happen to
+        // be set. The interface default isPocketAgnostic()==false, so a future per-pocket
+        // descriptor trips this immediately instead of silently.
+        if (includeUnassigned) {
+            for (PocketGridPointDescriptor d : descriptors) {
+                if (!d.isPocketAgnostic()) {
+                    throw new IllegalArgumentException(
+                            "pocket_grid_include_unassigned is incompatible with non-pocket-agnostic descriptor '"
+                            + d.name() + "': unassigned rows (pocket=0) have no pocket to read");
+                }
+            }
+        }
 
         // Union of assigned point indices (across pockets) — sizes the output and, when
         // includeUnassigned is on, identifies the leftover points. Plain BitSet.or here:
@@ -123,9 +137,10 @@ public final class PocketGridRows implements TableData {
             this.descriptorValues = null;
         } else {
             // Build rank → Pocket lookup; pocket=0 (unassigned, when includeUnassigned
-            // is on) maps to null. The three registered descriptors are all
-            // pocket-agnostic (they never read ctx.pocket()), so the null is never
-            // dereferenced — see the cost note in export-pocket-grid.md.
+            // is on) maps to null. The constructor guard above guarantees that whenever
+            // includeUnassigned is on every descriptor is pocket-agnostic (never reads
+            // ctx.pocket()), so the null is never dereferenced — see the cost note in
+            // export-pocket-grid.md.
             Map<Integer, Pocket> rankToPocket = new HashMap<>();
             if (pockets != null) {
                 for (Pocket p : pockets) {
