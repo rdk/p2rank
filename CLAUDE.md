@@ -3,9 +3,11 @@
 ## Sister repos
 
 - **FasterMolecularSurface** is a permanent sister repo, always cloned next to
-  this one at `../FasterMolecularSurface`
-  (https://github.com/rdk/FasterMolecularSurface). It is the source of the
-  `cz.cuni.cusbg:faster-molecular-surface` Maven dependency (see
+  this one at `../FasterMolecularSurface`. That single local checkout tracks two
+  GitHub remotes: `origin` is the private repo
+  (https://github.com/rdk/FasterMolecularSurface-private) and `public` is the
+  public mirror (https://github.com/rdk/FasterMolecularSurface). It is the
+  source of the `cz.cuni.cusbg:faster-molecular-surface` Maven dependency (see
   `build.gradle`); built jars are vendored here under
   `lib/local-mvn-repo/cz/cuni/cusbg/faster-molecular-surface/`. P2Rank-side
   wrappers live in `src/main/groovy/cz/siret/prank/geom/` (`SurfaceStrategy`,

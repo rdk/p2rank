@@ -49,6 +49,29 @@ class SurfaceStrategyTest {
     }
 
     @Test
+    void packedDistinctV3MatchesV2Exactly() {
+        IAtomContainer c = load()
+        double sr = 1.6
+        for (int tess in [2, 3, 4]) {
+            SurfaceStrategy.RawSurface v2 = SurfaceStrategy.PACKED_DISTINCT_V2.compute(c, sr, tess)
+            SurfaceStrategy.RawSurface v3 = SurfaceStrategy.PACKED_DISTINCT_V3.compute(c, sr, tess)
+
+            assertEquals(v2.totalSurfaceArea, v3.totalSurfaceArea, 0.0d,
+                    "total area must match exactly (tess=$tess)")
+            assertEquals(v2.points.count, v3.points.count,
+                    "point count must match (tess=$tess)")
+
+            List<Atom> p2 = v2.points.list
+            List<Atom> p3 = v3.points.list
+            for (int i = 0; i < p2.size(); i++) {
+                assertEquals(p2[i].x, p3[i].x, 0.0d, "x[$i] tess=$tess")
+                assertEquals(p2[i].y, p3[i].y, 0.0d, "y[$i] tess=$tess")
+                assertEquals(p2[i].z, p3[i].z, 0.0d, "z[$i] tess=$tess")
+            }
+        }
+    }
+
+    @Test
     void allStrategiesProduceAreaAndPoints() {
         IAtomContainer c = load()
         for (SurfaceStrategy s : SurfaceStrategy.values()) {

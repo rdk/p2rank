@@ -3,7 +3,7 @@
 # Benchmark `prank analyze surface-strategies` across CHOSEN JVMs and threading modes.
 #
 # Runs the surface-strategy benchmark (all SurfaceStrategy enum values: cdk, faster,
-# packed, faster_distinct, packed_distinct, packed_distinct_v2, float_distinct) on one
+# packed, faster_distinct, packed_distinct, packed_distinct_v2, packed_distinct_v3, float_distinct) on one
 # dataset, under every (JVM x threads) combination, and prints a combined summary
 # (wall_s, surf_median_ms, avg_points, reduction%, Matoms/s) plus the per-run CSVs.
 #

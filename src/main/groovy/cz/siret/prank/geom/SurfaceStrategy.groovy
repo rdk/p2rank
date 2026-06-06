@@ -3,6 +3,7 @@ package cz.siret.prank.geom
 import cz.cuni.cusbg.surface.DistinctFasterNumericalSurface
 import cz.cuni.cusbg.surface.DistinctPackedNumericalSurface
 import cz.cuni.cusbg.surface.DistinctPackedNumericalSurfaceV2
+import cz.cuni.cusbg.surface.DistinctPackedNumericalSurfaceV3
 import cz.cuni.cusbg.surface.FasterNumericalSurface
 import cz.cuni.cusbg.surface.FloatNumericalSurface
 import cz.cuni.cusbg.surface.PackedNumericalSurface
@@ -48,6 +49,13 @@ enum SurfaceStrategy {
      */
     PACKED_DISTINCT_V2('packed_distinct_v2', false),
     /**
+     * {@link DistinctPackedNumericalSurfaceV3}: PACKED_DISTINCT_V2 plus a SIMD-vectorized neighbor-build
+     * distance pass. Bit-exact to V2 (same distinct point set and area), ~4-5% faster at tess 2 (p2rank's
+     * operating point). Falls back to V2's scalar build on a JVM without {@code jdk.incubator.vector}.
+     * Current production default. Needs no sparsification.
+     */
+    PACKED_DISTINCT_V3('packed_distinct_v3', false),
+    /**
      * {@link FloatNumericalSurface}: the V2 distinct pipeline with a single-precision occlusion verdict
      * (8 SIMD lanes). Point positions and areas stay double, but a few boundary points may flip survival,
      * so it is APPROXIMATE (area within ~1.4e-5 relative of exact, well inside tessellation discretization
@@ -83,6 +91,9 @@ enum SurfaceStrategy {
                 return new RawSurface(s.totalSurfaceArea, CdkUtils.toAtomPoints(s.surfacePointsXYZ(), s.surfacePointCount()))
             case PACKED_DISTINCT_V2:
                 DistinctPackedNumericalSurfaceV2 s = new DistinctPackedNumericalSurfaceV2(container, solventRadius, tesselationLevel)
+                return new RawSurface(s.totalSurfaceArea, CdkUtils.toAtomPoints(s.surfacePointsXYZ(), s.surfacePointCount()))
+            case PACKED_DISTINCT_V3:
+                DistinctPackedNumericalSurfaceV3 s = new DistinctPackedNumericalSurfaceV3(container, solventRadius, tesselationLevel)
                 return new RawSurface(s.totalSurfaceArea, CdkUtils.toAtomPoints(s.surfacePointsXYZ(), s.surfacePointCount()))
             case FLOAT_DISTINCT:
                 FloatNumericalSurface s = new FloatNumericalSurface(container, solventRadius, tesselationLevel)

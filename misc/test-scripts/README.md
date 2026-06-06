@@ -29,7 +29,7 @@ development checkout.
 
 Benchmarks `prank analyze surface-strategies` (all surface strategies: `cdk`,
 `faster`, `packed`, `faster_distinct`, `packed_distinct`, `packed_distinct_v2`,
-`float_distinct`) on one dataset, under every `(JVM x threads)` combination, and
+`packed_distinct_v3`, `float_distinct`) on one dataset, under every `(JVM x threads)` combination, and
 writes a combined `summary.csv` (wall time, per-surface time, point counts,
 sparsification reduction, throughput) plus the per-run CSVs and logs.
 
