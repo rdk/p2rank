@@ -23,7 +23,7 @@ apply plugin: "com.github.ben-manes.versions"   //  ./gradlew dependencyUpdates
 
 
 group = 'cz.siret'
-version = '2.6-alpha.4'
+version = '2.6-alpha.5'
 
 description = 'Ligand binding site prediction based on machine learning.'
 
@@ -249,7 +249,7 @@ dependencies {
     implementation 'org.openscience.cdk:cdk-qsarmolecular:2.12'    // for NumericalSurface class
     implementation 'org.openscience.cdk:cdk-silent:2.12'           // for Atom class
 
-    implementation 'cz.cuni.cusbg:faster-molecular-surface:1.6'
+    implementation 'cz.cuni.cusbg:faster-molecular-surface:1.7'
     implementation 'cz.siret.prank:FasterForest:2.11.0'
 
     implementation 'nz.ac.waikato.cms.weka:weka-dev:3.9.6'
