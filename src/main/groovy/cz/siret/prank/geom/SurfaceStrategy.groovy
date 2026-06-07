@@ -6,6 +6,7 @@ import cz.cuni.cusbg.surface.DistinctPackedNumericalSurfaceV2
 import cz.cuni.cusbg.surface.DistinctPackedNumericalSurfaceV3
 import cz.cuni.cusbg.surface.FasterNumericalSurface
 import cz.cuni.cusbg.surface.FloatNumericalSurface
+import cz.cuni.cusbg.surface.FloatNumericalSurfaceV2
 import cz.cuni.cusbg.surface.PackedNumericalSurface
 import cz.siret.prank.program.PrankException
 import cz.siret.prank.program.params.Params
@@ -61,7 +62,15 @@ enum SurfaceStrategy {
      * so it is APPROXIMATE (area within ~1.4e-5 relative of exact, well inside tessellation discretization
      * error), not bit-exact. Fastest variant. Needs no sparsification.
      */
-    FLOAT_DISTINCT('float_distinct', false)
+    FLOAT_DISTINCT('float_distinct', false),
+    /**
+     * {@link FloatNumericalSurfaceV2}: both float optimizations stacked - the single-precision occlusion
+     * verdict (as FLOAT_DISTINCT) AND a single-precision SIMD neighbor-build distance pass. Positions and
+     * areas stay double; APPROXIMATE like FLOAT_DISTINCT (area within ~1e-4). The lib reports it ~1.3%
+     * faster than V3 at tess 2 (single + 16 threads, GraalVM). WARNING: the float scan collapses badly at
+     * tess >= 3 under threads (~23-32x slower); only sound at tess 2. Needs no sparsification.
+     */
+    FLOAT_DISTINCT_V2('float_distinct_v2', false)
 
     final String id
     final boolean requiresSparsification
@@ -97,6 +106,9 @@ enum SurfaceStrategy {
                 return new RawSurface(s.totalSurfaceArea, CdkUtils.toAtomPoints(s.surfacePointsXYZ(), s.surfacePointCount()))
             case FLOAT_DISTINCT:
                 FloatNumericalSurface s = new FloatNumericalSurface(container, solventRadius, tesselationLevel)
+                return new RawSurface(s.totalSurfaceArea, CdkUtils.toAtomPoints(s.surfacePointsXYZ(), s.surfacePointCount()))
+            case FLOAT_DISTINCT_V2:
+                FloatNumericalSurfaceV2 s = new FloatNumericalSurfaceV2(container, solventRadius, tesselationLevel)
                 return new RawSurface(s.totalSurfaceArea, CdkUtils.toAtomPoints(s.surfacePointsXYZ(), s.surfacePointCount()))
             default:
                 throw new IllegalStateException("unhandled surface strategy: $this")
