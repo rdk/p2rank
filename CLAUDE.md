@@ -9,9 +9,11 @@
   public mirror (https://github.com/rdk/FasterMolecularSurface). It is the
   source of the `cz.cuni.cusbg:faster-molecular-surface` Maven dependency (see
   `build.gradle`); built jars are vendored here under
-  `lib/local-mvn-repo/cz/cuni/cusbg/faster-molecular-surface/`. P2Rank-side
-  wrappers live in `src/main/groovy/cz/siret/prank/geom/` (`SurfaceStrategy`,
-  `cdksurface/`).
+  `lib/local-mvn-repo/cz/cuni/cusbg/faster-molecular-surface/`. Only the single
+  consumed version is kept (like the FasterForest dep below): on a bump, vendor
+  the new `<ver>/faster-molecular-surface-<ver>.{jar,pom}`, update the version in
+  `build.gradle`, and `git rm` the old version dir. P2Rank-side wrappers live in
+  `src/main/groovy/cz/siret/prank/geom/` (`SurfaceStrategy`, `cdksurface/`).
 
 - **FasterForest-private** is a permanent sister repo, always cloned next to
   this one at `../FasterForest-private`
