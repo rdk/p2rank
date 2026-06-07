@@ -92,11 +92,9 @@ abstract class AbstractProbeEnergyFeature extends SasFeatureCalculator implement
      * Calculate probe points on the protein surface
      */
     protected List<LabeledPoint> calcProbePoints(Protein protein) {
-        Surface surf = Surface.computeAccessibleSurface(
-            protein.proteinAtoms,
-            params.xenergy_solvent_radius,
-            params.xenergy_tessellation
-        )
+        // routed through the protein's shared surface cache: identical-parameter surfaces (other probe
+        // features, or the prediction surface when xenergy params match) are computed once, not per feature
+        Surface surf = protein.getSurface(params.xenergy_solvent_radius, params.xenergy_tessellation)
 
         List<LabeledPoint> res = new ArrayList<>(surf.points.size())
         for (Atom point : surf.points) {

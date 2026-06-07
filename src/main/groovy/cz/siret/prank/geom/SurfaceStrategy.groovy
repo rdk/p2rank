@@ -60,7 +60,8 @@ enum SurfaceStrategy {
      * {@link FloatNumericalSurface}: the V2 distinct pipeline with a single-precision occlusion verdict
      * (8 SIMD lanes). Point positions and areas stay double, but a few boundary points may flip survival,
      * so it is APPROXIMATE (area within ~1.4e-5 relative of exact, well inside tessellation discretization
-     * error), not bit-exact. Fastest variant. Needs no sparsification.
+     * error), not bit-exact. Superseded by {@link #FLOAT_DISTINCT_V2} (same fidelity, faster, because it
+     * also floats the neighbor build); kept as a baseline. Needs no sparsification.
      */
     FLOAT_DISTINCT('float_distinct', false),
     /**

@@ -2088,13 +2088,15 @@ class Params {
      *  - packed_distinct:   packed engine producing the same de-duplicated, area-exact distinct surface
      *  - packed_distinct_v2: SIMD weighted dedup + right-sized store; bit-exact to packed_distinct, faster
      *  - packed_distinct_v3: packed_distinct_v2 + SIMD-vectorized neighbor build; bit-exact to v2, ~4-5% faster at tess 2 (DEFAULT)
-     *  - float_distinct:    v2 pipeline with single-precision occlusion verdict; APPROXIMATE (area within ~1.4e-5)
+     *  - float_distinct:    v2 pipeline with single-precision occlusion verdict; APPROXIMATE (area within ~1.4e-5).
+     *                       Superseded by float_distinct_v2 (which is faster at the same fidelity); kept as a baseline.
      *  - float_distinct_v2: float_distinct PLUS a single-precision SIMD neighbor build; APPROXIMATE, the fastest variant
      *                       (measured ~3% over v3 at tess 2 / 16 threads on holo4k). WARNING: sound ONLY at tess 2 -
      *                       the float occlusion scan collapses ~23-32x at tess >= 3 under threads (Vector-API deopt).
      * Default is "packed_distinct_v3": it yields the same SAS points as the historical default after
-     * sparsification (predictions are byte-identical to faster/cdk) while being substantially faster and
-     * needing no sparsification pass. Set to empty ("") to fall back to the deprecated
+     * sparsification, so POCKET predictions are unchanged vs faster/cdk (verified 0/4009 differ on holo4k);
+     * per-residue scores can differ at the ~1e-4 level on rare near-duplicate boundary points. It is
+     * substantially faster and needs no sparsification pass. Set to empty ("") to fall back to the deprecated
      * {@link #use_optimized_surface} (true -> faster, false -> cdk).
      */
     @RuntimeParam

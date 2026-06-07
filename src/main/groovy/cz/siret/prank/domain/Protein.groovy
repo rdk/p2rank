@@ -66,18 +66,13 @@ class Protein implements Parametrized {
 
 //===========================================================================================================//
 
-    /** solvent accessible surface - set of SAS points */
-    Surface accessibleSurface
-
     /**
-     * surface for sampling training points (different from accessibleSurface iff params.tessellation != params.train_tessellation)
+     * Cache of solvent-accessible surfaces keyed by (solventRadius, tessellationLevel). The atom set is
+     * fixed per protein, so a SAS surface is fully determined by those two params; every requester
+     * (prediction sampling, train / train-negatives sampling, energy-probe features) shares one entry per
+     * distinct (radius, tessellation), so the same surface is never computed twice for the same params.
      */
-    Surface trainSurface
-
-    /**
-     * surface for sampling negative training points (different from trainSurface iff params.train_tessellation != params.train_negatives_tessellation )
-     */
-    Surface trainNegativesSurface
+    private final Map<String, Surface> surfaceCache = new HashMap<>()
 
 //===========================================================================================================//
 
@@ -164,40 +159,38 @@ class Protein implements Parametrized {
     }
 
     /**
-     * solvent accessible surface (SAS) points
+     * Solvent-accessible surface (SAS) for the given probe radius and tessellation, computed once per
+     * distinct (solventRadius, tessellation) and cached. This is the single entry point: train / negatives
+     * surfaces and energy-probe features all route through it, so identical-parameter surfaces are shared
+     * (e.g. when tessellation == effectiveTrainTessellation, or when an energy feature's xenergy params
+     * match the prediction surface) instead of being recomputed.
+     */
+    Surface getSurface(double solventRadius, int tessellationLevel) {
+        String key = solventRadius + ":" + tessellationLevel
+        Surface surf = surfaceCache.get(key)
+        if (surf == null) {
+            surf = Surface.computeAccessibleSurface(proteinAtoms, solventRadius, tessellationLevel)
+            surfaceCache.put(key, surf)
+            log.info "SAS points (solventRadius=$solventRadius, tessellation=$tessellationLevel): $surf.points.count"
+        }
+        return surf
+    }
+
+    /**
+     * solvent accessible surface (SAS) points used for prediction
      */
     Surface getAccessibleSurface() {
-        if (accessibleSurface == null) {
-            accessibleSurface = Surface.computeAccessibleSurface(proteinAtoms, params.solvent_radius, params.tessellation)
-            log.info "SAS points: $accessibleSurface.points.count"
-        }
-        return accessibleSurface
+        getSurface(params.solvent_radius, params.tessellation)
     }
 
+    /** surface for sampling training points (shares accessibleSurface iff tessellation == effectiveTrainTessellation) */
     Surface getTrainSurface() {
-        if (trainSurface == null) {
-            boolean shouldBeDistinct = params.tessellation != params.effectiveTrainTessellation
-            if (shouldBeDistinct) {
-                trainSurface = Surface.computeAccessibleSurface(proteinAtoms, params.solvent_radius, params.effectiveTrainTessellation)
-                log.info "train surface points: $trainSurface.points.count"
-            } else {
-                trainSurface = getAccessibleSurface()
-            }
-        }
-        return trainSurface
+        getSurface(params.solvent_radius, params.effectiveTrainTessellation)
     }
 
+    /** surface for sampling negative training points (shares with accessible/train surface at equal tessellation) */
     Surface getTrainNegativesSurface() {
-        if (trainNegativesSurface == null) {
-            boolean shouldBeDistinct = params.effectiveTrainTessellationNegatives != params.effectiveTrainTessellation
-            if (shouldBeDistinct) {
-                trainNegativesSurface = Surface.computeAccessibleSurface(proteinAtoms, params.solvent_radius, params.effectiveTrainTessellationNegatives)
-                log.info "train negatives surface points: $trainSurface.points.count"
-            } else {
-                trainNegativesSurface = getTrainSurface()
-            }
-        }
-        return trainNegativesSurface
+        getSurface(params.solvent_radius, params.effectiveTrainTessellationNegatives)
     }
 
     /**
@@ -205,9 +198,7 @@ class Protein implements Parametrized {
      */
     void clearSecondaryData() {
         exposedAtoms = null
-        accessibleSurface = null
-        trainSurface = null
-        trainNegativesSurface = null
+        surfaceCache.clear()
         secondaryData.clear()
         ligands.allIncludingIgnored.each { it.sasPoints = null; it.predictedPocket = null }
         for (BindingSite site : sites) {
