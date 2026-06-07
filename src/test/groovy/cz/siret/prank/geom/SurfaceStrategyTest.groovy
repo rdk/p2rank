@@ -71,6 +71,83 @@ class SurfaceStrategyTest {
         }
     }
 
+    /**
+     * The production justification for defaulting to a distinct strategy (packed_distinct_v3) is that it
+     * stands in for the historical FASTER surface followed by the 0.05 A sparsification step. This pins the
+     * actual geometric relationship between the two, so a future surface-engine change that drifts away
+     * from it (genuinely different point geometry, not just near-duplicate bookkeeping) fails loudly here.
+     *
+     * NOTE: the two are NOT bit-identical, despite the "exactly what sparsification removes" wording on
+     * the distinct strategies. sparsify() greedily drops every point within 0.05 A of an already-kept
+     * point, whereas a distinct engine only drops EXACTLY coincident points. So the distinct set is a
+     * coordinate-superset of FASTER+sparsify: any surplus point is a near-duplicate (within 0.05 A) that
+     * sparsify would have thinned. On 2src this is a handful of points out of ~6800. The invariants below
+     * encode that (superset + surplus-only-near-duplicates + tiny surplus), which is the strongest claim
+     * that is actually true -- exact equality is false and a test asserting it would be wrong.
+     *
+     * float_distinct is excluded: its single-precision occlusion verdict is documented as approximate
+     * (boundary points may flip), a different and larger source of divergence.
+     */
+    @Test
+    void distinctStrategiesAreNearDuplicateSupersetOfFasterPlusSparsify() {
+        IAtomContainer c = load()
+        double sr = 1.6
+        List<SurfaceStrategy> exactDistinct = [
+                SurfaceStrategy.FASTER_DISTINCT, SurfaceStrategy.PACKED_DISTINCT,
+                SurfaceStrategy.PACKED_DISTINCT_V2, SurfaceStrategy.PACKED_DISTINCT_V3]
+        for (int tess in [2, 3, 4]) {
+            SurfaceStrategy.RawSurface faster = SurfaceStrategy.FASTER.compute(c, sr, tess)
+            Atoms reference = AtomDeduplicator.sparsify(faster.points, Surface.SPARSIFY_DIST)
+            List<Atom> refPts = reference.list
+            Set<List<Double>> refSet = coordSet(refPts)
+
+            for (SurfaceStrategy s : exactDistinct) {
+                SurfaceStrategy.RawSurface d = s.compute(c, sr, tess)
+                List<Atom> dPts = d.points.list
+
+                assertEquals(faster.totalSurfaceArea, d.totalSurfaceArea, 0.0d,
+                        "${s.id} area must equal FASTER (tess=$tess)")
+
+                // distinct keeps at least as many points as faster+sparsify (it thins less aggressively)
+                assertTrue(d.points.count >= reference.count,
+                        "${s.id} must keep >= FASTER+sparsify points (tess=$tess): ${d.points.count} vs ${reference.count}")
+
+                // every faster+sparsify point survives in the distinct set (coordinate-superset)
+                Set<List<Double>> dSet = coordSet(dPts)
+                assertTrue(dSet.containsAll(refSet),
+                        "${s.id} must be a coordinate-superset of FASTER+sparsify (tess=$tess)")
+
+                // every surplus point is merely a near-duplicate sparsify would have removed
+                int surplus = 0
+                for (Atom a : dPts) {
+                    if (refSet.contains([a.x, a.y, a.z] as List<Double>)) continue
+                    surplus++
+                    assertTrue(minDistTo(a, refPts) <= Surface.SPARSIFY_DIST + 1e-9d,
+                            "${s.id} surplus point must be within SPARSIFY_DIST of a kept point (tess=$tess)")
+                }
+                // sanity: divergence is a near-duplicate handful, not a different surface (< 0.5%)
+                assertTrue(surplus <= reference.count * 0.005d,
+                        "${s.id} surplus must be tiny (tess=$tess): $surplus of ${reference.count}")
+            }
+        }
+    }
+
+    private static Set<List<Double>> coordSet(List<Atom> atoms) {
+        Set<List<Double>> set = new HashSet<>()
+        for (Atom a : atoms) set.add([a.x, a.y, a.z] as List<Double>)
+        return set
+    }
+
+    private static double minDistTo(Atom a, List<Atom> pts) {
+        double best = Double.MAX_VALUE
+        for (Atom p : pts) {
+            double dx = a.x - p.x, dy = a.y - p.y, dz = a.z - p.z
+            double d = Math.sqrt(dx * dx + dy * dy + dz * dz)
+            if (d < best) best = d
+        }
+        return best
+    }
+
     @Test
     void allStrategiesProduceAreaAndPoints() {
         IAtomContainer c = load()

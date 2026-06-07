@@ -307,6 +307,7 @@ Recommended flags for the **prediction** path (what `prank_faster` applies):
 -XX:TieredStopAtLevel=1            # omit on JDK 21
 -XX:SharedArchiveFile=<app.jsa>    # built once via -XX:ArchiveClassesAtExit
 -Xlog:cds=off                      # cosmetic noise suppression
+--add-modules jdk.incubator.vector # SIMD surface scan; added only if the JVM ships the module
 ```
 
 > [!NOTE]
