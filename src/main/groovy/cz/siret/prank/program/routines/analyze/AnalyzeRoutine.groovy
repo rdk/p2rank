@@ -1988,49 +1988,50 @@ class AnalyzeRoutine extends Routine {
         writeFile csvPath, csv.toString()
         write "per-strategy stats written to [$csvPath]"
 
-        // 4) equality verification: binary (exact) + approximate (epsilon) vs a reference strategy.
-        // Per protein, compute the reference points once and compare every other strategy's points to
-        // them (same atom-major order); points are released per protein so memory stays bounded.
+        // 4) equality verification: compare each strategy against the reference OF ITS OWN FAMILY.
+        // SurfaceStrategy has two families keyed on requiresSparsification: "full" (cdk/faster/packed,
+        // identical point count + atom-major order) and "distinct" (faster_distinct/packed_distinct/_v2/_v3/
+        // float_distinct, ~5.7x fewer points). comparePoints is index-aligned, so it is only meaningful
+        // WITHIN a family; comparing a distinct strategy against a full reference is a guaranteed count
+        // mismatch that proves nothing (and makes the default packed_distinct_v3 look broken). Reference
+        // per family: faster / faster_distinct when present, else the first strategy in the family.
         double eps = 1e-6d
-        SurfaceStrategy ref = null
-        for (SurfaceStrategy s : strategies) if (s.id == "faster") ref = s
-        if (ref == null) ref = strategies.get(0)
-        final SurfaceStrategy refStrat = ref
+        List<SurfaceStrategy> fullFamily = new ArrayList<>()
+        List<SurfaceStrategy> distinctFamily = new ArrayList<>()
+        for (SurfaceStrategy s : strategies) (s.requiresSparsification ? fullFamily : distinctFamily).add(s)
+        SurfaceStrategy fullRef = pickFamilyRef(fullFamily, "faster")
+        SurfaceStrategy distinctRef = pickFamilyRef(distinctFamily, "faster_distinct")
 
         ConcurrentLinkedQueue<Object[]> eqQ = new ConcurrentLinkedQueue<>()
         Queue<String> eqErrors = new ConcurrentLinkedQueue<>()
         runParallel(proteins, threads, eqErrors) { ProteinInput input ->
-            List<Atom> refPts = refStrat.compute(input.container, solventRadius, tess).points.list
-            for (SurfaceStrategy s : strategies) {
-                if (s.is(refStrat)) continue
-                List<Atom> pts = s.compute(input.container, solventRadius, tess).points.list
-                double[] c = comparePoints(refPts, pts, eps)   // [mismatch, exact, withinEps, maxAbsDiff]
-                eqQ.add([s.id, c[0], c[1], c[2], c[3]] as Object[])
-            }
+            compareWithinFamily(input, fullFamily, fullRef, solventRadius, tess, eps, eqQ)
+            compareWithinFamily(input, distinctFamily, distinctRef, solventRadius, tess, eps, eqQ)
         }
         if (!eqErrors.empty) write "equality pass: ${eqErrors.size()} failures (first: ${eqErrors.peek()})"
 
         StringBuilder eqCsv = new StringBuilder("strategy,reference,compared,binary_equal,within_eps,count_mismatch,max_abs_diff_A,epsilon_A\n")
         StringBuilder eqOut = new StringBuilder()
-        eqOut << String.format("%n=== surface equality vs reference [%s]  (epsilon = %.0e A) ===%n", refStrat.id, eps)
-        eqOut << String.format("%-9s %9s %13s %11s %15s %16s%n",
-                "strategy", "compared", "binary_equal", "within_eps", "count_mismatch", "max_abs_diff_A")
-        eqOut << ("-" * 92) << "\n"
+        eqOut << String.format("%n=== surface equality vs per-family reference  (epsilon = %.0e A) ===%n", eps)
+        eqOut << String.format("%-18s %-15s %9s %13s %11s %15s %16s%n",
+                "strategy", "reference", "compared", "binary_equal", "within_eps", "count_mismatch", "max_abs_diff_A")
+        eqOut << ("-" * 100) << "\n"
         for (SurfaceStrategy s : strategies) {
-            if (s.is(refStrat)) continue
+            SurfaceStrategy famRef = s.requiresSparsification ? fullRef : distinctRef
+            if (famRef == null || s.is(famRef)) continue
             int compared = 0, binEq = 0, withinEps = 0, mism = 0
             double maxd = 0d
             for (Object[] r : eqQ) {
                 if (!((String) r[0]).equals(s.id)) continue
                 compared++
-                if (((double) r[1]) > 0) mism++
-                if (((double) r[2]) > 0) binEq++
-                if (((double) r[3]) > 0) withinEps++
-                double d = (double) r[4]
+                if (((double) r[2]) > 0) mism++
+                if (((double) r[3]) > 0) binEq++
+                if (((double) r[4]) > 0) withinEps++
+                double d = (double) r[5]
                 if (!Double.isNaN(d) && d > maxd) maxd = d
             }
-            eqOut << String.format("%-9s %9d %13d %11d %15d %16.3e%n", s.id, compared, binEq, withinEps, mism, maxd)
-            eqCsv << "${s.id},${refStrat.id},${compared},${binEq},${withinEps},${mism},${String.format('%.6e', maxd)},${String.format('%.0e', eps)}\n"
+            eqOut << String.format("%-18s %-15s %9d %13d %11d %15d %16.3e%n", s.id, famRef.id, compared, binEq, withinEps, mism, maxd)
+            eqCsv << "${s.id},${famRef.id},${compared},${binEq},${withinEps},${mism},${String.format('%.6e', maxd)},${String.format('%.0e', eps)}\n"
         }
         write eqOut.toString()
         String eqPath = "$outdir/surface_equality.csv"
@@ -2057,6 +2058,29 @@ class AnalyzeRoutine extends Routine {
             if (dz > maxd) maxd = dz
         }
         return [0d, (maxd == 0d ? 1d : 0d), (maxd <= eps ? 1d : 0d), maxd] as double[]
+    }
+
+    /** Per-family equality reference: the {@code preferredId} strategy if the family contains it, else the first (null if empty). */
+    private static SurfaceStrategy pickFamilyRef(List<SurfaceStrategy> family, String preferredId) {
+        for (SurfaceStrategy s : family) if (s.id == preferredId) return s
+        return family.isEmpty() ? null : family.get(0)
+    }
+
+    /**
+     * Compare every non-reference member of {@code family} against {@code famRef} for one protein, appending
+     * {@code [strategyId, refId, mismatch, exact, withinEps, maxAbsDiff]} rows to {@code out}. No-op if the
+     * family has no reference (empty family).
+     */
+    private static void compareWithinFamily(ProteinInput input, List<SurfaceStrategy> family, SurfaceStrategy famRef,
+                                            double solventRadius, int tess, double eps, Queue<Object[]> out) {
+        if (famRef == null) return
+        List<Atom> refPts = famRef.compute(input.container, solventRadius, tess).points.list
+        for (SurfaceStrategy s : family) {
+            if (s.is(famRef)) continue
+            List<Atom> pts = s.compute(input.container, solventRadius, tess).points.list
+            double[] c = comparePoints(refPts, pts, eps)   // [mismatch, exact, withinEps, maxAbsDiff]
+            out.add([s.id, famRef.id, c[0], c[1], c[2], c[3]] as Object[])
+        }
     }
 
     /** Run {@code task} over {@code items} on {@code threads} (serial if 1); per-item failures are collected. */
