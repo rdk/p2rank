@@ -9,6 +9,7 @@ import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Struct
 import cz.siret.prank.program.Main
 import cz.siret.prank.program.PrankException
+import cz.siret.prank.program.ml.FlattenComparison
 import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.ml.ModelConverter
 import cz.siret.prank.program.routines.Routine
@@ -77,7 +78,8 @@ class TransformRoutine extends Routine {
         "flatten-rf-model" : { cmdFlattenRfModel() },
         "model-to-v3-format" : { cmdModelToV3Format() },
         "loop-flatten-rf-model" : { cmdLoopFlattenRfModel() },
-        "bench-flatten-optimizers" : { cmdBenchFlattenOptimizers() }
+        "bench-flatten-optimizers" : { cmdBenchFlattenOptimizers() },
+        "compare-flatten-eval" : { cmdCompareFlattenEval() }
     ])
 
 //===========================================================================================================//
@@ -252,6 +254,40 @@ class TransformRoutine extends Routine {
 
     private void cmdBenchFlattenOptimizers() {
         // TODO
+    }
+
+    /**
+     * G0 gate: run pocket prediction + eval with the (unflattened) model and with it re-flattened to each
+     * faithful target, on the given dataset, and print a pocket-level comparison (DCA top-N + point AUC).
+     *
+     *   prank transform compare-flatten-eval -f <dataset.ds> -m <model>
+     *       [-rf_flatten_target SoaLegacyFlatBinaryForest,Int16LeafSoaLegacyFlatBinaryForest]
+     *
+     * Targets are taken from rf_flatten_target (comma-separated) or default to the recommended faithful
+     * pair. Stay within the faithful family — score targets shift the operating point (see Params doc).
+     */
+    private void cmdCompareFlattenEval() {
+        mkdirs(outdir)
+        writeParams(outdir)
+
+        if (dataset == null) {
+            throw new PrankException("compare-flatten-eval requires a liganated dataset passed as an " +
+                    "UNNAMED arg, e.g.: prank transform compare-flatten-eval <dataset.ds>  (do NOT use -f, " +
+                    "which loads a single structure file, not a .ds dataset)")
+        }
+
+        String modelFile = main.findModel()
+        Model baseModel = Model.loadFromFileOrDir(modelFile)   // unflattened baseline (the shipped faithful default)
+
+        // Targets: a comma-separated list via rf_flatten_target, else the recommended faithful pair.
+        // (rf_flatten_target defaults to a single non-blank value, so only treat it as a list when it
+        // actually contains a comma — otherwise compare against SoaLegacy + Int16LeafSoa.)
+        String t = params.rf_flatten_target
+        List<String> targets = (t != null && t.contains(",")) ?
+                Sutils.split(t, ",").findAll { !it.isBlank() } : FlattenComparison.DEFAULT_FAITHFUL_TARGETS
+
+        write "G0 compare-flatten-eval: base model [$baseModel.label] vs targets $targets on dataset [$dataset.name]"
+        new FlattenComparison().compare(baseModel, dataset, targets, outdir)
     }
 
 
