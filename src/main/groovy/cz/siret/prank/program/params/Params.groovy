@@ -478,8 +478,15 @@ class Params {
      *    the legacy model (e.g. the default pred_point_threshold) — the operating
      *    point shifts.
      *
-     * Faithful targets:    LegacyFlatBinaryForest, ShortFlatBinaryForest, SuperShortLegacyFlatBinaryForest
+     * Faithful targets:    LegacyFlatBinaryForest, SoaLegacyFlatBinaryForest, ShortFlatBinaryForest,
+     *                      SuperShortLegacyFlatBinaryForest
+     * Faithful-approximate: Int16LeafSoaLegacyFlatBinaryForest (int16-quantized leaves — ranking-equivalent
+     *                      to LegacyFlat, not bit-exact; smaller footprint, fastest faithful variant
+     *                      measured on GraalVM+HotSpot. Safe with the default threshold; ranking-gated.)
      * Score-based targets: FlatBinaryForest, InterleavedBfsForest (and the other Bfs/Dfs/Ilp/Float/Native variants)
+     *
+     * Recommended ad-hoc re-flatten of the shipped (legacy) default model: SoaLegacyFlatBinaryForest
+     * (bit-exact, faster) or Int16LeafSoaLegacyFlatBinaryForest (ranking-equivalent, smaller+fastest).
      */
     @RuntimeParam
     @ModelParam // training

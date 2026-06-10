@@ -7,6 +7,8 @@ import cz.siret.prank.fforest.api.FasterForestConverter.ForestType
 import cz.siret.prank.fforest.api.FlatBinaryForest
 import cz.siret.prank.fforest.api.FlatBinaryForestBuilder
 import cz.siret.prank.fforest.api.LegacyFlatBinaryForest
+import cz.siret.prank.fforest.api.SoaLegacyFlatBinaryForest
+import cz.siret.prank.fforest.api.Int16LeafSoaLegacyFlatBinaryForest
 import cz.siret.prank.fforest.api.NativePanamaForest
 import cz.siret.prank.fforest.api.TrainableFasterForest
 import cz.siret.prank.fforest.api.WekaRandomForestConverter
@@ -130,6 +132,23 @@ class ModelConverterTest {
         }
     }
 
+    /**
+     * Fraction of point-pairs ordered the same way by two score vectors (Kendall concordance, ties skipped).
+     * 1.0 == identical ranking. Used to validate ranking-equivalence of an approximate variant.
+     */
+    private static double concordance(double[] a, double[] b) {
+        int n = a.length
+        long conc = 0, disc = 0
+        for (int i = 0; i < n; i++) {
+            for (int j = i + 1; j < n; j++) {
+                double da = a[i] - a[j], db = b[i] - b[j]
+                if (da == 0.0d || db == 0.0d) continue
+                if ((da > 0.0d) == (db > 0.0d)) conc++ else disc++
+            }
+        }
+        return (conc + disc) == 0L ? 1.0d : conc / ((double) (conc + disc))
+    }
+
 //===========================================================================================================//
 
     @Test
@@ -145,6 +164,7 @@ class ModelConverterTest {
             if (type == ForestType.NativePanamaFloatForest && !NativePanamaForest.isAvailable()) continue
             if (type == ForestType.NativePanamaForestAvx2) continue  // skip AVX2
             if (type == ForestType.NativePanamaFloatForestAvx2) continue  // skip AVX2
+            if (type == ForestType.PureLeafLegacyFlatBinaryForest) continue  // requires pure leaves; the depth-limited synthetic model is impure (throws by design)
 
             BinaryForest converted = FasterForestConverter.convertFasterForest(trainable, type)
             assertNotNull(converted, "Conversion to $type returned null")
@@ -173,6 +193,7 @@ class ModelConverterTest {
             if (type == ForestType.NativePanamaFloatForest && !NativePanamaForest.isAvailable()) continue
             if (type == ForestType.NativePanamaForestAvx2) continue
             if (type == ForestType.NativePanamaFloatForestAvx2) continue
+            if (type == ForestType.PureLeafLegacyFlatBinaryForest) continue  // requires pure leaves; the depth-limited synthetic model is impure (throws by design)
 
             BinaryForest converted = FasterForestConverter.convertFasterForest(trainable, type)
             assertNotNull(converted, "Conversion to $type returned null")
@@ -311,6 +332,61 @@ class ModelConverterTest {
 
             assertTrue(flattened.classifier instanceof LegacyFlatBinaryForest)
             assertTrue(flattened.label.contains("LegacyFlatBinaryForest"))
+        } finally {
+            Params.INSTANCE = originalParams
+        }
+    }
+
+    @Test
+    void testFlattenToSoaLegacyFlatBinaryForest() {
+        // SoaLegacy is FAITHFUL and bit-exact to LegacyFlat — flattening to it must not change any prediction.
+        Params originalParams = (Params) Params.inst.clone()
+        try {
+            Params.inst.rf_flatten = true
+            Params.inst.rf_flatten_target = "SoaLegacyFlatBinaryForest"
+            Params.inst.threads = 1
+
+            Model model = trainSmallModel("FasterForest")
+            TrainableFasterForest trainable = (TrainableFasterForest) model.classifier
+            BinaryForest legacy = FasterForestConverter.convertFasterForest(trainable, ForestType.LegacyFlatBinaryForest)
+
+            Model flattened = new ModelConverter().applyConversions(model)
+            assertTrue(flattened.classifier instanceof SoaLegacyFlatBinaryForest)
+            assertTrue(flattened.label.contains("SoaLegacyFlatBinaryForest"))
+
+            // Faithful contract: bit-identical to LegacyFlat.
+            double[][] testVectors = createTestVectors(100)
+            assertPredictionsMatch(legacy, (BinaryForest) flattened.classifier, testVectors, 0.0d)
+        } finally {
+            Params.INSTANCE = originalParams
+        }
+    }
+
+    @Test
+    void testFlattenToInt16LeafSoaLegacyFlatBinaryForest() {
+        // Int16LeafSoa is FAITHFUL-family but APPROXIMATE (int16-quantized leaves): not bit-exact, but must
+        // rank instances equivalently to LegacyFlat and stay numerically very close.
+        Params originalParams = (Params) Params.inst.clone()
+        try {
+            Params.inst.rf_flatten = true
+            Params.inst.rf_flatten_target = "Int16LeafSoaLegacyFlatBinaryForest"
+            Params.inst.threads = 1
+
+            Model model = trainSmallModel("FasterForest")
+            TrainableFasterForest trainable = (TrainableFasterForest) model.classifier
+            BinaryForest legacy = FasterForestConverter.convertFasterForest(trainable, ForestType.LegacyFlatBinaryForest)
+
+            Model flattened = new ModelConverter().applyConversions(model)
+            assertTrue(flattened.classifier instanceof Int16LeafSoaLegacyFlatBinaryForest)
+            assertTrue(flattened.label.contains("Int16LeafSoaLegacyFlatBinaryForest"))
+
+            // Ranking-equivalence (not value-equivalence): identical ordering + tiny value drift.
+            double[][] testVectors = createTestVectors(200)
+            double[] refScores = legacy.predictForBatch(testVectors)
+            double[] candScores = ((BinaryForest) flattened.classifier).predictForBatch(testVectors)
+            double conc = concordance(refScores, candScores)
+            assertTrue(conc >= 0.999d, "Int16LeafSoa ranking concordance with LegacyFlat too low: $conc")
+            assertPredictionsMatch(legacy, (BinaryForest) flattened.classifier, testVectors, 1e-2d)
         } finally {
             Params.INSTANCE = originalParams
         }
