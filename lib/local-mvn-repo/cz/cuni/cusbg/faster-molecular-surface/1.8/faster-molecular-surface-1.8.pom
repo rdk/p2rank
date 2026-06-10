@@ -9,7 +9,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>cz.cuni.cusbg</groupId>
   <artifactId>faster-molecular-surface</artifactId>
-  <version>1.7</version>
+  <version>1.8</version>
   <dependencies>
     <dependency>
       <groupId>org.openscience.cdk</groupId>

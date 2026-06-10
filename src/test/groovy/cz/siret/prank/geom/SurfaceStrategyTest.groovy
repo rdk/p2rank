@@ -72,7 +72,52 @@ class SurfaceStrategyTest {
     }
 
     /**
-     * The production justification for defaulting to a distinct strategy (packed_distinct_v3) is that it
+     * The new default {@code packed_distinct_v4} (fused single-pass weighted scan) must be bit-for-bit
+     * identical to {@code packed_distinct_v3} at the p2rank level: same total area, same point count, and
+     * the same point coordinates in the same order. The fusion only changes HOW survivors are emitted, so
+     * the surface (and hence every downstream p2rank feature) is unchanged.
+     */
+    @Test
+    void packedDistinctV4MatchesV3Exactly() {
+        IAtomContainer c = load()
+        double sr = 1.6
+        for (int tess in [2, 3, 4]) {
+            SurfaceStrategy.RawSurface v3 = SurfaceStrategy.PACKED_DISTINCT_V3.compute(c, sr, tess)
+            SurfaceStrategy.RawSurface v4 = SurfaceStrategy.PACKED_DISTINCT_V4.compute(c, sr, tess)
+
+            assertEquals(v3.totalSurfaceArea, v4.totalSurfaceArea, 0.0d,
+                    "total area must match exactly (tess=$tess)")
+            assertEquals(v3.points.count, v4.points.count,
+                    "point count must match (tess=$tess)")
+
+            List<Atom> p3 = v3.points.list
+            List<Atom> p4 = v4.points.list
+            for (int i = 0; i < p3.size(); i++) {
+                assertEquals(p3[i].x, p4[i].x, 0.0d, "x[$i] tess=$tess")
+                assertEquals(p3[i].y, p4[i].y, 0.0d, "y[$i] tess=$tess")
+                assertEquals(p3[i].z, p4[i].z, 0.0d, "z[$i] tess=$tess")
+            }
+        }
+    }
+
+    /** The shipped default surface_strategy must resolve to the bit-exact fused V4. */
+    @Test
+    void defaultStrategyIsPackedDistinctV4() {
+        assertEquals("packed_distinct_v4", new Params().surface_strategy,
+                "default surface_strategy param")
+        Params p = Params.inst
+        String saved = p.surface_strategy
+        try {
+            p.surface_strategy = "packed_distinct_v4"
+            assertEquals(SurfaceStrategy.PACKED_DISTINCT_V4, SurfaceStrategy.resolve(p),
+                    "packed_distinct_v4 must resolve to the V4 strategy")
+        } finally {
+            p.surface_strategy = saved
+        }
+    }
+
+    /**
+     * The production justification for defaulting to a distinct strategy (packed_distinct_v4) is that it
      * stands in for the historical FASTER surface followed by the 0.05 A sparsification step. This pins the
      * actual geometric relationship between the two, so a future surface-engine change that drifts away
      * from it (genuinely different point geometry, not just near-duplicate bookkeeping) fails loudly here.
@@ -94,7 +139,8 @@ class SurfaceStrategyTest {
         double sr = 1.6
         List<SurfaceStrategy> exactDistinct = [
                 SurfaceStrategy.FASTER_DISTINCT, SurfaceStrategy.PACKED_DISTINCT,
-                SurfaceStrategy.PACKED_DISTINCT_V2, SurfaceStrategy.PACKED_DISTINCT_V3]
+                SurfaceStrategy.PACKED_DISTINCT_V2, SurfaceStrategy.PACKED_DISTINCT_V3,
+                SurfaceStrategy.PACKED_DISTINCT_V4]
         for (int tess in [2, 3, 4]) {
             SurfaceStrategy.RawSurface faster = SurfaceStrategy.FASTER.compute(c, sr, tess)
             Atoms reference = AtomDeduplicator.sparsify(faster.points, Surface.SPARSIFY_DIST)

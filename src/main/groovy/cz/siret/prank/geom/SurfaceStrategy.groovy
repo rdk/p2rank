@@ -4,6 +4,7 @@ import cz.cuni.cusbg.surface.DistinctFasterNumericalSurface
 import cz.cuni.cusbg.surface.DistinctPackedNumericalSurface
 import cz.cuni.cusbg.surface.DistinctPackedNumericalSurfaceV2
 import cz.cuni.cusbg.surface.DistinctPackedNumericalSurfaceV3
+import cz.cuni.cusbg.surface.DistinctPackedNumericalSurfaceV4
 import cz.cuni.cusbg.surface.FasterNumericalSurface
 import cz.cuni.cusbg.surface.FloatNumericalSurface
 import cz.cuni.cusbg.surface.FloatNumericalSurfaceV2
@@ -53,9 +54,18 @@ enum SurfaceStrategy {
      * {@link DistinctPackedNumericalSurfaceV3}: PACKED_DISTINCT_V2 plus a SIMD-vectorized neighbor-build
      * distance pass. Bit-exact to V2 (same distinct point set and area), ~4-5% faster at tess 2 (p2rank's
      * operating point). Falls back to V2's scalar build on a JVM without {@code jdk.incubator.vector}.
-     * Current production default. Needs no sparsification.
+     * Superseded as the default by {@link #PACKED_DISTINCT_V4}; kept as a baseline. Needs no sparsification.
      */
     PACKED_DISTINCT_V3('packed_distinct_v3', false),
+    /**
+     * {@link DistinctPackedNumericalSurfaceV4}: PACKED_DISTINCT_V3 with the weighted-dedup occlusion scan
+     * fused into a single emit pass (it emits each surviving distinct direction inline instead of writing a
+     * verdict array and re-streaming all distinct directions a second time). Bit-exact to V3 (same distinct
+     * point set and area), ~3% faster at tess 2 (p2rank's operating point), ~5% at tess 3, ~8-10% at tess 4
+     * (faster-molecular-surface 1.8, JMH). Falls back to V3's scalar two-pass scan on a JVM without
+     * {@code jdk.incubator.vector}. Current production default. Needs no sparsification.
+     */
+    PACKED_DISTINCT_V4('packed_distinct_v4', false),
     /**
      * {@link FloatNumericalSurface}: the V2 distinct pipeline with a single-precision occlusion verdict
      * (8 SIMD lanes). Point positions and areas stay double, but a few boundary points may flip survival,
@@ -104,6 +114,9 @@ enum SurfaceStrategy {
                 return new RawSurface(s.totalSurfaceArea, CdkUtils.toAtomPoints(s.surfacePointsXYZ(), s.surfacePointCount()))
             case PACKED_DISTINCT_V3:
                 DistinctPackedNumericalSurfaceV3 s = new DistinctPackedNumericalSurfaceV3(container, solventRadius, tesselationLevel)
+                return new RawSurface(s.totalSurfaceArea, CdkUtils.toAtomPoints(s.surfacePointsXYZ(), s.surfacePointCount()))
+            case PACKED_DISTINCT_V4:
+                DistinctPackedNumericalSurfaceV4 s = new DistinctPackedNumericalSurfaceV4(container, solventRadius, tesselationLevel)
                 return new RawSurface(s.totalSurfaceArea, CdkUtils.toAtomPoints(s.surfacePointsXYZ(), s.surfacePointCount()))
             case FLOAT_DISTINCT:
                 FloatNumericalSurface s = new FloatNumericalSurface(container, solventRadius, tesselationLevel)

@@ -2080,27 +2080,29 @@ class Params {
 
     /**
      * Solvent-accessible-surface generation strategy:
-     *  "cdk" | "faster" | "packed" | "faster_distinct" | "packed_distinct" | "packed_distinct_v2" | "packed_distinct_v3" | "float_distinct" | "float_distinct_v2".
+     *  "cdk" | "faster" | "packed" | "faster_distinct" | "packed_distinct" | "packed_distinct_v2" | "packed_distinct_v3" | "packed_distinct_v4" | "float_distinct" | "float_distinct_v2".
      *  - cdk:               CDK NumericalSurface (with metal van der Waals fallback)
      *  - faster:            optimized FasterNumericalSurface (current default)
      *  - packed:            flat-store + zero-copy delivery (bit-exact to faster, lower allocation / faster point handling)
      *  - faster_distinct:   faster pipeline, one point per distinct direction (no ~5.7x coincident dups), area bit-exact, needs no sparsification
      *  - packed_distinct:   packed engine producing the same de-duplicated, area-exact distinct surface
      *  - packed_distinct_v2: SIMD weighted dedup + right-sized store; bit-exact to packed_distinct, faster
-     *  - packed_distinct_v3: packed_distinct_v2 + SIMD-vectorized neighbor build; bit-exact to v2, ~4-5% faster at tess 2 (DEFAULT)
+     *  - packed_distinct_v3: packed_distinct_v2 + SIMD-vectorized neighbor build; bit-exact to v2, ~4-5% faster at tess 2
+     *  - packed_distinct_v4: packed_distinct_v3 + fused single-pass weighted scan; bit-exact to v3, ~3% faster at tess 2 / ~5% tess 3 / ~8-10% tess 4 (DEFAULT)
      *  - float_distinct:    v2 pipeline with single-precision occlusion verdict; APPROXIMATE (area within ~1.4e-5).
      *                       Superseded by float_distinct_v2 (which is faster at the same fidelity); kept as a baseline.
      *  - float_distinct_v2: float_distinct PLUS a single-precision SIMD neighbor build; APPROXIMATE, the fastest variant
      *                       (measured ~3% over v3 at tess 2 / 16 threads on holo4k). WARNING: sound ONLY at tess 2 -
      *                       the float occlusion scan collapses ~23-32x at tess >= 3 under threads (Vector-API deopt).
-     * Default is "packed_distinct_v3": it yields the same SAS points as the historical default after
-     * sparsification, so POCKET predictions are unchanged vs faster/cdk (verified 0/4009 differ on holo4k);
-     * per-residue scores can differ at the ~1e-4 level on rare near-duplicate boundary points. It is
-     * substantially faster and needs no sparsification pass. Set to empty ("") to fall back to the deprecated
-     * {@link #use_optimized_surface} (true -> faster, false -> cdk).
+     * Default is "packed_distinct_v4": it is bit-for-bit identical to packed_distinct_v3 (same distinct SAS
+     * point set and areas, just a faster fused scan), which in turn yields the same SAS points as the
+     * historical default after sparsification, so POCKET predictions are unchanged vs faster/cdk (verified
+     * 0/4009 differ on holo4k); per-residue scores can differ at the ~1e-4 level on rare near-duplicate
+     * boundary points. It is substantially faster and needs no sparsification pass. Set to empty ("") to
+     * fall back to the deprecated {@link #use_optimized_surface} (true -> faster, false -> cdk).
      */
     @RuntimeParam
-    String surface_strategy = "packed_distinct_v3"
+    String surface_strategy = "packed_distinct_v4"
 
     /**
      * @deprecated Use {@link #surface_strategy} instead. Honored only when surface_strategy is empty:

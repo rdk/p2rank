@@ -1993,7 +1993,7 @@ class AnalyzeRoutine extends Routine {
         // identical point count + atom-major order) and "distinct" (faster_distinct/packed_distinct/_v2/_v3/
         // float_distinct, ~5.7x fewer points). comparePoints is index-aligned, so it is only meaningful
         // WITHIN a family; comparing a distinct strategy against a full reference is a guaranteed count
-        // mismatch that proves nothing (and makes the default packed_distinct_v3 look broken). Reference
+        // mismatch that proves nothing (and makes the default packed_distinct_v4 look broken). Reference
         // per family: faster / faster_distinct when present, else the first strategy in the family.
         double eps = 1e-6d
         List<SurfaceStrategy> fullFamily = new ArrayList<>()

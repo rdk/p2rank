@@ -27,7 +27,7 @@ if not "%JAVA_MAJOR%"=="" if %JAVA_MAJOR% GEQ 23 set "JAVA_OPTS=%JAVA_OPTS% --su
 
 rem
 rem  --add-modules jdk.incubator.vector: enables the SIMD (256-bit Vector API) occlusion scan in the
-rem  faster-molecular-surface library (surface_strategy=packed_distinct_v2 and the default packed_distinct_v3). Output is bit-identical to
+rem  faster-molecular-surface library (surface_strategy=packed_distinct_v2 and the default packed_distinct_v4). Output is bit-identical to
 rem  the scalar fallback -- this only speeds up surface generation. Added only when the running JVM
 rem  actually ships the incubator module, so a stripped or future runtime without it still starts cleanly.
 rem

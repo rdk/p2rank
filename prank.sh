@@ -54,7 +54,7 @@ if [ "$JAVA_MAJOR_VERSION" -ge 23 ] 2>/dev/null; then
 fi
 
 # --add-modules jdk.incubator.vector: enables the SIMD (256-bit Vector API) occlusion scan in the
-# faster-molecular-surface library (surface_strategy=packed_distinct_v2 and the default packed_distinct_v3). Output is bit-identical to
+# faster-molecular-surface library (surface_strategy=packed_distinct_v2 and the default packed_distinct_v4). Output is bit-identical to
 # the scalar fallback -- this only speeds up surface generation. Added only when the running JVM
 # actually ships the incubator module, so a stripped or future runtime without it still starts cleanly.
 if "$JAVACMD" --list-modules 2>/dev/null | grep -q '^jdk.incubator.vector'; then

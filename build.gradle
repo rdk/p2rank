@@ -137,7 +137,7 @@ test {
         jvmArgs '--sun-misc-unsafe-memory-access=allow'
     }
     // --add-modules jdk.incubator.vector: lets the test JVM exercise the SIMD occlusion scan + SIMD
-    // neighbor build in the faster-molecular-surface library (surface_strategy=packed_distinct_v3).
+    // neighbor build in the faster-molecular-surface library (surface_strategy=packed_distinct_v4).
     // Output is bit-identical to the scalar fallback. Guarded on the module actually being present so CI on a stripped or
     // future JDK without it still runs (the Gradle JVM shares the JDK used for the test forks).
     if (ModuleLayer.boot().findModule('jdk.incubator.vector').isPresent()) {
@@ -249,7 +249,7 @@ dependencies {
     implementation 'org.openscience.cdk:cdk-qsarmolecular:2.12'    // for NumericalSurface class
     implementation 'org.openscience.cdk:cdk-silent:2.12'           // for Atom class
 
-    implementation 'cz.cuni.cusbg:faster-molecular-surface:1.7'
+    implementation 'cz.cuni.cusbg:faster-molecular-surface:1.8'
     implementation 'cz.siret.prank:FasterForest:2.11.0'
 
     implementation 'nz.ac.waikato.cms.weka:weka-dev:3.9.6'
