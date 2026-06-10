@@ -44,6 +44,7 @@ class FlattenComparison implements Parametrized, Writable {
         double dca_4_0
         double dca_4_2
         double point_AUC
+        double evalSeconds   // wall-time of this variant's predict+eval pass (indicative — see caveat)
     }
 
     /**
@@ -65,10 +66,12 @@ class FlattenComparison implements Parametrized, Writable {
 
     private VariantEval evalVariant(String name, Model model, Dataset dataset, String outdir, boolean baseline) {
         write "G0: evaluating variant '$name' (${model.classifier.class.simpleName}) on dataset [$dataset.name]"
+        long t0 = System.currentTimeMillis()
         EvalResults res = new EvalPocketsRoutine(dataset, model, outdir).execute()
+        double evalSeconds = (System.currentTimeMillis() - t0) / 1000.0d
         Map<String, Double> s = res.stats
         return new VariantEval(name, baseline, model.classifier.class.simpleName,
-                nz(s.get("DCA_4_0")), nz(s.get("DCA_4_2")), nz(s.get("point_AUC")))
+                nz(s.get("DCA_4_0")), nz(s.get("DCA_4_2")), nz(s.get("point_AUC")), evalSeconds)
     }
 
     private static double nz(Double d) { return d == null ? Double.NaN : d.doubleValue() }
@@ -77,15 +80,19 @@ class FlattenComparison implements Parametrized, Writable {
         VariantEval base = rs.find { VariantEval v -> v.baseline }
         StringBuilder sb = new StringBuilder()
         sb.append("=== G0 flatten comparison (pocket-level, within faithful family) ===\n")
-        sb.append(String.format("%-40s %-28s %9s %9s %10s   %s%n",
-                "variant", "forest", "DCA_4_0", "DCA_4_2", "point_AUC", "delta vs baseline"))
+        sb.append(String.format("%-40s %9s %9s %10s %9s   %s%n",
+                "variant", "DCA_4_0", "DCA_4_2", "point_AUC", "eval_s", "delta vs baseline"))
         for (VariantEval v : rs) {
             String delta = (base != null && !v.baseline) ?
-                    String.format("dDCA_4_0=%+.4f  dDCA_4_2=%+.4f  dAUC=%+.6f",
-                            v.dca_4_0 - base.dca_4_0, v.dca_4_2 - base.dca_4_2, v.point_AUC - base.point_AUC) : ""
-            sb.append(String.format("%-40s %-28s %9.4f %9.4f %10.6f   %s%n",
-                    v.variant, v.forestClass, v.dca_4_0, v.dca_4_2, v.point_AUC, delta))
+                    String.format("dDCA_4_0=%+.4f  dDCA_4_2=%+.4f  dAUC=%+.6f  time=%+.1f%%",
+                            v.dca_4_0 - base.dca_4_0, v.dca_4_2 - base.dca_4_2, v.point_AUC - base.point_AUC,
+                            base.evalSeconds > 0 ? (v.evalSeconds - base.evalSeconds) / base.evalSeconds * 100.0d : 0.0d) : ""
+            sb.append(String.format("%-40s %9.4f %9.4f %10.6f %9.1f   %s%n",
+                    v.variant, v.dca_4_0, v.dca_4_2, v.point_AUC, v.evalSeconds, delta))
         }
+        sb.append("(eval_s = wall-time of each variant's predict+eval pass; INDICATIVE only — dominated by\n")
+        sb.append(" shared SAS-surface + feature extraction, and confounded by JIT warmup of the first pass.\n")
+        sb.append(" The clean isolated forest-inference speed is the FasterForest JMH result.)\n")
         return sb.toString()
     }
 }
