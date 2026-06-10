@@ -271,16 +271,20 @@ class TransformRoutine extends Routine {
         writeParams(outdir)
 
         if (dataset == null) {
-            throw new PrankException("compare-flatten-eval requires a dataset: -f <dataset.ds>")
+            throw new PrankException("compare-flatten-eval requires a liganated dataset passed as an " +
+                    "UNNAMED arg, e.g.: prank transform compare-flatten-eval <dataset.ds>  (do NOT use -f, " +
+                    "which loads a single structure file, not a .ds dataset)")
         }
 
         String modelFile = main.findModel()
-        Model baseModel = Model.loadFromFileOrDir(modelFile)   // unflattened baseline
+        Model baseModel = Model.loadFromFileOrDir(modelFile)   // unflattened baseline (the shipped faithful default)
 
-        List<String> targets = Sutils.split(params.rf_flatten_target ?: "", ",").findAll { !it.isBlank() }
-        if (targets.isEmpty()) {
-            targets = FlattenComparison.DEFAULT_FAITHFUL_TARGETS
-        }
+        // Targets: a comma-separated list via rf_flatten_target, else the recommended faithful pair.
+        // (rf_flatten_target defaults to a single non-blank value, so only treat it as a list when it
+        // actually contains a comma — otherwise compare against SoaLegacy + Int16LeafSoa.)
+        String t = params.rf_flatten_target
+        List<String> targets = (t != null && t.contains(",")) ?
+                Sutils.split(t, ",").findAll { !it.isBlank() } : FlattenComparison.DEFAULT_FAITHFUL_TARGETS
 
         write "G0 compare-flatten-eval: base model [$baseModel.label] vs targets $targets on dataset [$dataset.name]"
         new FlattenComparison().compare(baseModel, dataset, targets, outdir)
