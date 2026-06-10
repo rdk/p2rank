@@ -9,6 +9,7 @@ import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.Struct
 import cz.siret.prank.program.Main
 import cz.siret.prank.program.PrankException
+import cz.siret.prank.program.ml.FlattenComparison
 import cz.siret.prank.program.ml.Model
 import cz.siret.prank.program.ml.ModelConverter
 import cz.siret.prank.program.routines.Routine
@@ -77,7 +78,8 @@ class TransformRoutine extends Routine {
         "flatten-rf-model" : { cmdFlattenRfModel() },
         "model-to-v3-format" : { cmdModelToV3Format() },
         "loop-flatten-rf-model" : { cmdLoopFlattenRfModel() },
-        "bench-flatten-optimizers" : { cmdBenchFlattenOptimizers() }
+        "bench-flatten-optimizers" : { cmdBenchFlattenOptimizers() },
+        "compare-flatten-eval" : { cmdCompareFlattenEval() }
     ])
 
 //===========================================================================================================//
@@ -252,6 +254,36 @@ class TransformRoutine extends Routine {
 
     private void cmdBenchFlattenOptimizers() {
         // TODO
+    }
+
+    /**
+     * G0 gate: run pocket prediction + eval with the (unflattened) model and with it re-flattened to each
+     * faithful target, on the given dataset, and print a pocket-level comparison (DCA top-N + point AUC).
+     *
+     *   prank transform compare-flatten-eval -f <dataset.ds> -m <model>
+     *       [-rf_flatten_target SoaLegacyFlatBinaryForest,Int16LeafSoaLegacyFlatBinaryForest]
+     *
+     * Targets are taken from rf_flatten_target (comma-separated) or default to the recommended faithful
+     * pair. Stay within the faithful family — score targets shift the operating point (see Params doc).
+     */
+    private void cmdCompareFlattenEval() {
+        mkdirs(outdir)
+        writeParams(outdir)
+
+        if (dataset == null) {
+            throw new PrankException("compare-flatten-eval requires a dataset: -f <dataset.ds>")
+        }
+
+        String modelFile = main.findModel()
+        Model baseModel = Model.loadFromFileOrDir(modelFile)   // unflattened baseline
+
+        List<String> targets = Sutils.split(params.rf_flatten_target ?: "", ",").findAll { !it.isBlank() }
+        if (targets.isEmpty()) {
+            targets = FlattenComparison.DEFAULT_FAITHFUL_TARGETS
+        }
+
+        write "G0 compare-flatten-eval: base model [$baseModel.label] vs targets $targets on dataset [$dataset.name]"
+        new FlattenComparison().compare(baseModel, dataset, targets, outdir)
     }
 
 
