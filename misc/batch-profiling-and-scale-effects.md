@@ -233,7 +233,47 @@ the optimization brief in `local/dev/`).
 - **`PropertyTable.getValue` / autoboxing** in the feature path: prefer int-indexed lookups
   and primitive arrays over string-keyed maps and boxed `Integer`/`Double`.
 
-### 6c. Reproduce the fine-grained profile
+### 6c. The 6.5 % "Groovy dynamic" slice in detail
+
+These 977 samples are NOT missing `@CompileStatic` (the hot classes `Box`, `Cutils`,
+`Struct`, `Residue` are all `@CompileStatic`). They are constructs that still emit
+runtime/indy calls under `@CompileStatic`. By callsite:
+
+| callsite | ~% | construct that defeats `@CompileStatic` | fix |
+|---|---|---|---|
+| `Struct.isHydrogenAtom` | 1.4 | `Element.H == atom.element` -> `compareEqual` (Groovy `==` is null-safe `.equals`, never identity, even when statically compiled) | `.is()` / primitive / `.equals` |
+| `Box.<init>(List<Atom>)` | 1.1 | **per-element `invokedynamic cast` in `for(Atom a : atoms)`** (verified, see below) | indexed `get(i)` loop |
+| `Cutils.mapList` | 0.7 | closure invoked dynamically + argument coercion | typed loop / direct dispatch |
+| residue-labeling output (`ResidueLabelings.toCSV`, `ModelBasedResidueLabeler.aggregateScore`, `ResidueLabeling.add`) | 0.7 | dynamic `collect`, `<<` (`leftShift`), reflective `add` | cheapen / make conditional (it is an output path) |
+| `ModelBasedRescorer.rescorePockets`, `Cutils.sum`, `Residue$Key.equals` | ~0.7 | reflective `CachedMethod.invoke`; `==` in map-key `equals` | static binding; primitive field compares |
+
+Three root constructs, all surviving `@CompileStatic`: (1) `==` on non-primitives ->
+`DefaultTypeTransformation.compareEqual`; (2) iteration/coercion of values typed as
+`Object` -> `invokedynamic cast` via `CacheableCallSite`; (3) closures into `collect` and
+`<<` string building in per-point / per-residue loops.
+
+**Verified `Box.<init>` root cause (javap).** `for (Atom a : atoms)` over a `List<Atom>`
+compiles (even under `@CompileStatic`) to an iterator whose `next()` returns `Object`,
+followed by a Groovy runtime cast per element, not a JVM `checkcast`:
+
+```
+233: invokeinterface java/util/Iterator.next:()Ljava/lang/Object;
+238: invokedynamic    #0:cast:(Ljava/lang/Object;)Lorg/biojava/nbio/structure/Atom;   // per atom!
+```
+
+(the same `cast` call site also coerces `atoms.first()` at the top of the constructor).
+That `invokedynamic cast` is the `CacheableCallSite.getAndPut` seen in the profile, paid
+once per atom of every bounding box built. Fix: iterate by index so the element type is
+statically `Atom` (`for (int i=0;i<atoms.size();i++) { Atom a = atoms.get(i); ... }`) and
+use `atoms.get(0)` instead of `atoms.first()`. Re-disassemble after the change to confirm
+the `invokedynamic` is gone.
+
+> [!NOTE]
+> Realistic payoff is ~5-6 % if all are fixed, but it is genuinely death-by-a-thousand-cuts
+> (no single >1.5 % win). `isHydrogenAtom` and `Box.<init>` are the easy, highest-value
+> ones; the residue-labeling cost is largely an output path that may be made conditional.
+
+### 6d. Reproduce the fine-grained profile
 
 ```bash
 JFR=/tmp/h4k.jfr
