@@ -261,6 +261,50 @@ eval_predict_flattened() {
 }
 
 
+# Quick 2x3 comparison on holo4k along two axes (6 predict runs total):
+#   surface strategy: latest (packed_distinct_v4, the default) vs the legacy "faster" engine
+#                     (FasterNumericalSurface, the pre-distinct default up to mid-2026). The distinct
+#                     engine yields the same SAS points as faster after sparsification, so pockets match.
+#   flattened forest: legacy faithful (LegacyFlatBinaryForest, "as before") vs its SoA layout
+#                     (SoaLegacyFlatBinaryForest, bit-exact) vs the int16/uint16-quantized SoA legacy
+#                     (Int16LeafSoaLegacyFlatBinaryForest).
+# All forest variants pass -rf_flatten 1 so each run pays the flatten cost -- a fair timing comparison
+# (the int16 variant is ranking-equivalent to legacy, safe with the default threshold).
+# Uses ./prank.sh (big heap + full JIT, -threads 16), NOT prank_faster: holo4k is large and this is
+# a heavy compute benchmark -- same rationale as surface_strategies/pocket_grid_bench. Not in all().
+quick_compare() {
+
+    title QUICK COMPARE - SURFACE STRATEGY x FLATTEN ON HOLO4K [./prank.sh]
+
+    local surfaces="packed_distinct_v4 faster"
+    local flatten_targets="LegacyFlatBinaryForest SoaLegacyFlatBinaryForest Int16LeafSoaLegacyFlatBinaryForest"
+
+    for surf in $surfaces; do
+        for flat in $flatten_targets; do
+            test ./prank.sh predict holo4k.ds  -c config/test-default  -surface_strategy $surf  -rf_flatten 1 -rf_flatten_target $flat  -threads 16  -cache_datasets 0  -l ${surf}__${flat}  -out_subdir TEST/QUICK_COMPARE
+        done
+    done
+}
+
+# Same 2x3 holo4k matrix as quick_compare(), but driven by the distro/prank launcher
+# (standard distro JVM settings: default heap, full JIT) instead of ./prank.sh's local-env
+# (big heap + tuned flags). Separate -out_subdir so the two launchers' outputs don't collide.
+# Not in all().
+quick_compare_distro() {
+
+    title QUICK COMPARE - SURFACE STRATEGY x FLATTEN ON HOLO4K [distro/prank]
+
+    local surfaces="packed_distinct_v4 faster"
+    local flatten_targets="LegacyFlatBinaryForest SoaLegacyFlatBinaryForest Int16LeafSoaLegacyFlatBinaryForest"
+
+    for surf in $surfaces; do
+        for flat in $flatten_targets; do
+            test distro/prank predict holo4k.ds  -c config/test-default  -surface_strategy $surf  -rf_flatten 1 -rf_flatten_target $flat  -threads 16  -cache_datasets 0  -l ${surf}__${flat}  -out_subdir TEST/QUICK_COMPARE_DISTRO
+        done
+    done
+}
+
+
 
 
 eval_predict_uop() {
@@ -441,8 +485,11 @@ surface_density() {
 
     title SURFACE DENSITY PER STRATEGY
 
-    # ./prank.sh (big heap + full JIT), same rationale as surface_strategies: heavy compute that
-    # pre-loads all proteins. Output is segregated per strategy so runs don't overwrite each other.
+    # ./prank.sh (big heap + full JIT) for the heavy compute / full C2 JIT, same as surface_strategies.
+    # NOTE: unlike surface-strategies, surface-density streams proteins (processItems, ~threads loaded
+    # at once) and keeps only a small per-protein density record, so it does NOT need the big heap for
+    # memory -- the local-env launcher is used here only for the JIT/thread tuning. Output is segregated
+    # per strategy so runs don't overwrite each other.
     local strategies="cdk faster packed faster_distinct packed_distinct"
     local datasets="${@:-chen11.ds fptrain.ds coach420.ds joined.ds holo4k.ds}"
 

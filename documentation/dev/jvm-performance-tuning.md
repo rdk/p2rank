@@ -328,3 +328,13 @@ Recommended flags for the **training / large-batch** path:
 Priority order if you only do some of this: **(1) batch with a `.ds` file**, then
 **(2) AppCDS**, then **(3) C1-only JIT (except JDK 21)**, then (4) ParallelGC. GC and AOT
 are last-few-percent tweaks.
+
+---
+
+## 9. See also
+
+This doc covers the single-protein / startup-bound regime. For profiling **long,
+multi-threaded batch runs** (throughput, CPU efficiency, concurrency-correct phase
+attribution) and measured findings on `surface_strategy` / `rf_flatten_target` / JVM
+choice at full-dataset scale, see
+[`batch-profiling-and-scale-effects.md`](batch-profiling-and-scale-effects.md).
