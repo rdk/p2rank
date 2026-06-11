@@ -177,3 +177,70 @@ sdk use java 25.0.3-graal
 The `quick_compare` / `quick_compare_distro` routines in
 `misc/test-scripts/testsets.sh` run the full surface x flatten matrix end to end via the
 ordinary launchers (wall-time only, no phase attribution).
+
+---
+
+## 6. Fine-grained CPU profile of the fastest combination
+
+A JFR `settings=profile` recording of the fastest cell (HotSpot +
+`packed_distinct_v4` + `Int16LeafSoaLegacyFlatBinaryForest`) on **full holo4k, 16
+threads** (31.5 s app time, 15,019 CPU samples, 8,599 allocation samples). Each sample
+is attributed to its leaf-most p2rank/library subsystem.
+
+| subsystem | % CPU | dominant method(s) |
+|---|---|---|
+| **forest RF scoring** | **57.2 %** | `Int16LeafSoaLegacyFlatBinaryForest.leafIndex` (57 % in this one method) |
+| kdtree neighbor query | 14.4 % | `KdTree3D.countWithinRadius / nearestSqrDist / findWithinRadius / quickselect` |
+| surface generation | 10.6 % | `Vectorized256WeightedDedupFusedOcclusionScan.collect`, SIMD neighbor list |
+| Groovy dynamic | 6.5 % | `compareEqual`, `UnmodifiableMap.get`, boxing, indy fallback |
+| PDB parse (BioJava) | 5.2 % | `PDBFileParser`, `AtomImpl.getX` |
+| feature extraction | 4.4 % | `PrankFeatureExtractor.calcSasFeatVectorFromAtomVectors` |
+| logging/IO | 1.5 % | `ResidueLabelings.fmt` -> `printf` |
+
+CPU efficiency was ~1.0 (16 threads saturated) and GC ~1 % (304 ms / 22 pauses), so
+neither parallel scaling nor GC is a lever.
+
+> [!WARNING]
+> This corrects the coarse subset bucketing in section 2, which reported "surface
+> ~44-56 %". That number merged the kdtree (`cz.siret.prank.geom.kdtree`) into "surface".
+> Separated and at true full scale, **RF leaf-traversal is the overwhelming bottleneck
+> (57 %)**; surface generation is only ~11 %. Forest share is higher on full holo4k than
+> the 200-subset because it scales with SAS-point count, and the full set includes the
+> large multi-chain structures the subset under-sampled.
+
+### 6a. The 57 % hotspot: `leafIndex`
+
+Called `numTrees x numSASpoints` times via `predictForBatch`. It is the textbook RF
+inference bottleneck: a pointer-chasing loop with a gather
+(`instanceAttributes[attributeIndex[node]]`), random-access loads into
+`splitPoint`/`childLeft`/`childRight`, and a data-dependent, unpredictable branch, so it
+is memory-latency- and branch-misprediction-bound. The descent stays in `double` (only
+the leaves are int16-quantized). Batch prediction is already on, and Int16-leaf is
+already the fastest faithful variant measured, so the remaining headroom is in the
+descent itself. This is dependency-side work tracked in the FasterForest sister repo (see
+the optimization brief in `local/dev/`).
+
+### 6b. p2rank-side quick wins (no dependency change, ~4-5 % combined, low risk)
+
+- **`GenericHeader.getColIndex` (~1.2 %)**: resolves a feature column name to an index via
+  `Map<String,Integer>.get(name)` per call. Resolve name -> `int` index once, then index
+  by int in the per-point loop.
+- **`Struct.isHydrogenAtom` (~1.2 %)**: `Element.H == atom.element` and `atom.name[1]=='H'`
+  route through Groovy `compareEqual` per atom. Use identity/primitive compares (or Java).
+- **`ResidueLabelings.fmt` (~1 %)**: per-residue `printf` formatting for output. Use a
+  cheaper formatter and/or only when residue-label files are actually written.
+- **`PropertyTable.getValue` / autoboxing** in the feature path: prefer int-indexed lookups
+  and primitive arrays over string-keyed maps and boxed `Integer`/`Double`.
+
+### 6c. Reproduce the fine-grained profile
+
+```bash
+JFR=/tmp/h4k.jfr
+JAVA_OPTS="-XX:StartFlightRecording=settings=profile,filename=$JFR,dumponexit=true" \
+  ./prank.sh predict holo4k.ds -c config/test-default \
+    -surface_strategy packed_distinct_v4 -rf_flatten 1 \
+    -rf_flatten_target Int16LeafSoaLegacyFlatBinaryForest \
+    -threads 16 -rf_threads 16 -r_threads 16 -cache_datasets 0 -log_to_console 0 -o /tmp/h4k_jfr
+# leaf methods:   jfr print --events jdk.ExecutionSample --stack-depth 1 $JFR | ...
+# subsystem split: attribute each sample to its leaf-most cz.siret/cz.cuni frame
+```
