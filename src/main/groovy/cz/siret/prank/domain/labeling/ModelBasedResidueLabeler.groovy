@@ -18,7 +18,6 @@ import groovy.util.logging.Slf4j
 import javax.annotation.concurrent.NotThreadSafe
 import java.util.function.Function
 
-import static cz.siret.prank.utils.Cutils.mapList
 import static cz.siret.prank.utils.Formatter.format
 import static cz.siret.prank.utils.Formatter.formatNumbers
 
@@ -115,7 +114,15 @@ class ModelBasedResidueLabeler extends ResidueLabeler<Boolean> implements Parame
         for (Residue res : residues) {
             List<Double> pscores = Collections.emptyList()
             if (!ONLY_EXPOSED || protein.exposedResidues.contains(res)) {
-                pscores = mapList(points.cutoutShell(res.atoms, RADIUS).<LabeledPoint>asList(), { it.score })
+                // indexed loop instead of mapList(list, { it.score }): the untyped closure made
+                // 'it.score' a dynamic property access (ClosureMetaClass.invokeMethod) per point.
+                // Indexed get (not a Groovy for-each) so we do not reintroduce a per-element indy cast.
+                List<LabeledPoint> shell = points.cutoutShell(res.atoms, RADIUS).<LabeledPoint>asList()
+                int sz = shell.size()
+                pscores = new ArrayList<Double>(sz)
+                for (int i = 0; i < sz; i++) {
+                    pscores.add(shell.get(i).getScore())
+                }
             }
             
             double score = aggregateScore(pscores)
