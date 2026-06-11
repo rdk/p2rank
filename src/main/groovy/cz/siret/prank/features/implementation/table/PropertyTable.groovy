@@ -184,7 +184,12 @@ class PropertyTable {
 
     @Nonnull
     double getValueOrDefault(String itemName, String propertyName, double defaultVal) {
-        return getValue(itemName,propertyName) ?: defaultVal
+        // explicit null-check, not Elvis: '?:' on a boxed Double routes through Groovy asBoolean
+        // (dynamic dispatch) AND treats a legitimate 0.0 as falsy, so it would silently return
+        // defaultVal for a real stored 0.0. Benign today (every caller passes 0d, so 0.0 -> 0.0),
+        // but a latent correctness trap for any non-zero default. Explicit form is statically dispatched.
+        Double v = getValue(itemName, propertyName)
+        return v == null ? defaultVal : v.doubleValue()
     }
 
     public String toCSV() {
