@@ -337,4 +337,4 @@ This doc covers the single-protein / startup-bound regime. For profiling **long,
 multi-threaded batch runs** (throughput, CPU efficiency, concurrency-correct phase
 attribution) and measured findings on `surface_strategy` / `rf_flatten_target` / JVM
 choice at full-dataset scale, see
-[`batch-profiling-and-scale-effects.md`](batch-profiling-and-scale-effects.md).
+[`batch-profiling-and-scale-effects.md`](../../misc/batch-profiling-and-scale-effects.md).

@@ -5,8 +5,9 @@ This note covers how to profile **long, multi-threaded** `prank predict` runs (e
 `surface_strategy` x `rf_flatten_target` x JVM choices measured on holo4k in June 2026.
 
 It is the batch/throughput companion to
-[`jvm-performance-tuning.md`](jvm-performance-tuning.md), which covers the opposite
-regime: a single small-protein run, where fixed JVM/startup overhead dominates.
+[`jvm-performance-tuning.md`](../documentation/dev/jvm-performance-tuning.md), which covers
+the opposite regime: a single small-protein run, where fixed JVM/startup overhead
+dominates.
 
 > [!IMPORTANT]
 > The headline lesson: **profile rankings are scale dependent**. A single-protein or
