@@ -115,9 +115,13 @@ class Struct {
 
         // biojava is not reliable in assigning correct H element - see metapocket ub48 dataset
 
-        if (Element.H == atom.element) return true
+        // Element.H.is(...) is reference identity (enum singletons), compiled to acmp; the
+        // Groovy '==' here routed through ScriptBytecodeAdapter.compareEqual per atom. .is() on
+        // the non-null H constant is null-safe (atom.element may be null). charAt(1) avoids the
+        // StringGroovyMethods.getAt + Character boxing + compareEqual that name[1]=='H' incurred.
+        if (Element.H.is(atom.element)) return true
         if (atom.name.startsWith("H")) return true
-        if (atom.name.length()>1 && atom.name[1]=='H') return true
+        if (atom.name.length()>1 && atom.name.charAt(1)=='H') return true
         return false
     }
 
