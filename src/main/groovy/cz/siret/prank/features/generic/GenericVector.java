@@ -49,6 +49,21 @@ public class GenericVector {
         }
     }
 
+    // Index-based variants for hot paths that look up the same fixed column every call: resolve the
+    // index ONCE (header.getColIndex is a per-call String map lookup) and reuse it. idx < 0 means the
+    // column is absent, so these are no-ops, matching the silent-skip semantics of the String variants.
+    public void set(int idx, double value) {
+        if (idx >= 0) {
+            data[idx] = value;
+        }
+    }
+
+    public void multiply(int idx, double a) {
+        if (idx >= 0) {
+            data[idx] *= a;
+        }
+    }
+
     public void setValues(List<String> valuesHeader, double[] values) {
         String firstColName = valuesHeader.get(0);
         int start = header.getColIndex(firstColName);

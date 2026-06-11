@@ -42,6 +42,18 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
     GenericHeader calculatedFeatureVectorHeader
 
     /**
+     * Cached column indices of the fixed ChemFeature special-case columns, resolved once (lazily)
+     * from calculatedFeatureVectorHeader. The per-SAS-point chem post-processing below used to call
+     * valueVector.multiply('chem.atomDensity', ..) etc. by NAME, each a String map lookup per point
+     * (~1.5% of full-holo4k CPU, JFR). -1 means the column is absent (chem disabled) -> no-op.
+     */
+    private int chemAtomDensityIdx = -1
+    private int chemHDonorAtomsIdx = -1
+    private int chemHAcceptorAtomsIdx = -1
+    private int chemAtomsIdx = -1
+    private boolean chemColIndicesResolved = false
+
+    /**
      * Header of feature vector hat is returned -- after feature_filters are applied
      * If there are no feature_filters it is the same as calculatedFeatureVectorHeader.
      */
@@ -280,6 +292,23 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
      * @param fromVectors feature vectors of neighbouring atoms,  must match atoms
      * @return
      */
+    /** Resolve the fixed ChemFeature special-case column indices once. getColIndex returns null for
+     *  an absent column; we store -1 (GenericVector's int set/multiply treat <0 as a no-op, matching
+     *  the old by-name silent-skip). Called only inside the chem-enabled guards below. */
+    private void resolveChemColIndices() {
+        if (chemColIndicesResolved) return
+        GenericHeader h = calculatedFeatureVectorHeader
+        Integer i1 = h.getColIndex('chem.atomDensity')
+        Integer i2 = h.getColIndex('chem.hDonorAtoms')
+        Integer i3 = h.getColIndex('chem.hAcceptorAtoms')
+        Integer i4 = h.getColIndex('chem.atoms')
+        chemAtomDensityIdx    = (i1 == null) ? -1 : i1.intValue()
+        chemHDonorAtomsIdx    = (i2 == null) ? -1 : i2.intValue()
+        chemHAcceptorAtomsIdx = (i3 == null) ? -1 : i3.intValue()
+        chemAtomsIdx          = (i4 == null) ? -1 : i4.intValue()
+        chemColIndicesResolved = true
+    }
+
     private PrankFeatureVector calcSasFeatVectorFromAtomVectors(Atom point, Atoms neighbourhoodAtoms, Map<Integer, PrankFeatureVector> fromVectors) {
         PrankFeatureVector res = new PrankFeatureVector(calculatedFeatureVectorHeader)
 
@@ -319,17 +348,19 @@ class PrankFeatureExtractor extends FeatureExtractor<PrankFeatureVector> impleme
             
             res.multiply(1d/multip)                  // avg
 
-            // special cases (TODO: move to ChemFeature)
+            // special cases (TODO: move to ChemFeature) -- index-based to skip per-point name lookups
             if (featureSetup.enabledFeatureNames.contains(ChemFeature.NAME)) {
-                res.valueVector.multiply('chem.atomDensity', multip)
-                res.valueVector.multiply('chem.hDonorAtoms', multip)
-                res.valueVector.multiply('chem.hAcceptorAtoms', multip)
+                resolveChemColIndices()
+                res.valueVector.multiply(chemAtomDensityIdx, multip)
+                res.valueVector.multiply(chemHDonorAtomsIdx, multip)
+                res.valueVector.multiply(chemHAcceptorAtomsIdx, multip)
             }
 
         }
         // special cases (TODO: move to ChemFeature)
         if (featureSetup.enabledFeatureNames.contains(ChemFeature.NAME)) {
-            res.valueVector.set('chem.atoms', n)
+            resolveChemColIndices()
+            res.valueVector.set(chemAtomsIdx, n)
         }
 
         // calculate SAS features
