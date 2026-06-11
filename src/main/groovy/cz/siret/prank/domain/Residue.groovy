@@ -216,13 +216,16 @@ class Residue {
 
 //===========================================================================================================//
 
-    boolean equals(o) {
+    @Override
+    boolean equals(Object o) {
         if (this.is(o)) return true
-        if (getClass() != o.class) return false
+        if (!(o instanceof Residue)) return false   // Residue has no subclasses: == exact-class match
 
         Residue residue = (Residue) o
 
-        if (key != residue.key) return false
+        // untyped equals(o) + Groovy '!='/'getClass()!=' compiled to ScriptBytecodeAdapter
+        // compareNotEqual (dynamic) at every HashMap lookup; Objects.equals is null-safe + static
+        if (!Objects.equals(key, residue.key)) return false
 
         return true
     }
@@ -288,13 +291,14 @@ class Residue {
             this.residueNumber = residueNumber
         }
 
-        boolean equals(o) {
+        @Override
+        boolean equals(Object o) {
             if (this.is(o)) return true
-            if (getClass() != o.class) return false
+            if (!(o instanceof Key)) return false   // Key is final: instanceof == exact-class match
 
             Key key = (Key) o
 
-            if (!residueNumber.equals(key.residueNumber)) return false
+            if (!residueNumber.equals(key.residueNumber)) return false   // both non-null (ctor requireNonNull)
 
             return true
         }
