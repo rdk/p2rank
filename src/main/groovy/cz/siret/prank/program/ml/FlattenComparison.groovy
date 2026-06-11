@@ -27,6 +27,17 @@ import groovy.util.logging.Slf4j
  * <p><b>Compare only WITHIN the faithful family</b> (LegacyFlat / SoaLegacy / Int16LeafSoa): they share
  * the default point-score operating point ({@code pred_point_threshold}). Score-family targets shift the
  * operating point and would drop DCA for non-semantic reasons (see {@code Params.rf_flatten_target}).
+ *
+ * <p><b>This is the authoritative acceptance gate</b> for an approximate flatten target — the
+ * pocket-level objective, not the instance-level point-ranking that FasterForest's
+ * {@code RankingEquivalenceTest} pre-screens with. The point estimate this prints (dDCA vs baseline)
+ * should be paired with a <b>per-protein bootstrap CI</b> ({@code misc/dca_bootstrap_ci.py}, run on this
+ * command's output dir) so a small delta can be told from sampling noise; accept iff the dDCA CI
+ * includes 0 on coach420 AND holo4k. Calibration finding (real default model): {@code Int16LeafSoa} and
+ * even {@code Int8LeafSoa} — which FAILS FasterForest's instance-level tau-b >= 0.999 pre-screen — are
+ * pocket-indistinguishable from the faithful baseline here (dDCA CI includes 0), i.e. the instance-level
+ * tau-b bar is stricter than this objective requires. See FasterForest PREDICTION-SEMANTICS.md
+ * "Calibrating the acceptance thresholds against p2rank's objective".
  */
 @Slf4j
 @CompileStatic
