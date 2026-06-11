@@ -551,11 +551,8 @@ public final class KdTree3D {
     public Atoms findWithinRadius(double qx, double qy, double qz, double sqrRadius) {
         if (size == 0) return new Atoms(0);
 
-        // Pre-size result list to the top of the typical 50-150 range. At cap 64 most queries
-        // overflowed and grew 1-3x (ArrayList grows 1.5x: 64->96->144->216), copying up to ~150
-        // refs per query; this was ~2% of full-holo4k CPU (JFR). The result list is handed to the
-        // returned Atoms, so the slack is short-lived per-query garbage.
-        List<Atom> result = new ArrayList<>(160);
+        // Pre-size result list. Typical radius query returns ~50-150 atoms.
+        List<Atom> result = new ArrayList<>(64);
 
         int[] stack = new int[64];
         int sp = 0;
