@@ -45,13 +45,17 @@ class ProtrusionHistogramFeature extends SasFeatureCalculator implements Paramet
         double[] bins = new double[n]
 
         if (n == 1) {
-            bins[0] = atoms.cutoutSphere(sasPoint, maxDist).count
+            bins[0] = atoms.countWithinSphere(sasPoint, maxDist)
         } else {
+            // count-only: countWithinSphere is the allocation-free equivalent of
+            // cutoutSphere(...).count (same boundary, same KD-vs-serial threshold). Query deepLayer
+            // directly at each cutoff instead of materializing and narrowing -- the bin counts are
+            // identical (narrowing from a superset gives the same count), but with no per-point Atoms
+            // allocation and fewer distance tests. The cutoff sequence (cutoff -= step) is unchanged.
             double step = (params.protrusion_radius - MIN_DIST) / (n - 1)
             double cutoff = maxDist
             for (int i = n - 1; i >= 0; i--) {
-                atoms = atoms.cutoutSphere(sasPoint, cutoff)
-                bins[i] = atoms.count
+                bins[i] = atoms.countWithinSphere(sasPoint, cutoff)
                 cutoff -= step
             }
 
