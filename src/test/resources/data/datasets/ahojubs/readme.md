@@ -23,11 +23,14 @@ Minimal 9-column format containing only the fields needed for site definitions.
 
 21,608 sites across 6,196 unique proteins.
 
-## ahojubs_full.csv
+## ahojubs_full.csv.gz
 
 Extended 59-column format with additional pocket statistics, PDB chain metadata,
 overlap metrics, pLDDT scores, and more. Some columns contain quoted values with
 embedded commas (e.g. `union_residues`, `intersection_residues`).
+
+Gzipped (57 MB to 7.6 MB); `AhojUbsSiteParser` reads it transparently via
+`Futils.inputStream` (extension-based decompression).
 
 The columns used by the parser (`site_uid`, `afdb_filename`, `chain_resi`,
 `center_x`, `center_y`, `center_z`) are present with the same names but at

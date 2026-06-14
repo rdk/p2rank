@@ -505,12 +505,6 @@ documentation only.
   (build pins `7.2.5-rdk.1`). CLAUDE.md's keep-single-version policy: `git rm`
   the unused versions. (faster-molecular-surface is clean: only `1.8`.)
 
-- **57 MB uncompressed `ahojubs_full.csv` committed as a plain Git blob.**
-  `src/test/resources/data/datasets/ahojubs/ahojubs_full.csv`: largest object in
-  the tree, permanent in history; gzips to ~7.7 MB. Gzip + make
-  `AhojUbsSiteParser` gz-aware, or Git-LFS it, or trim to a sample and relax the
-  exact-count asserts in `AhojUbsSiteParserTest`. (audit M3; decision pending)
-
 - **Committed tutorial `params.txt` leaks developer absolute paths.**
   `documentation/notebooks/.../predict_1fbl/params.txt:39,96,122`
   (`/mnt/ssd/prank/...` in `dataset_base_dir`/`installDir`/`output_base_dir`).

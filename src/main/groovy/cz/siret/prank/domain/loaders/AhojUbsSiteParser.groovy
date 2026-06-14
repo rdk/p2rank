@@ -1,5 +1,6 @@
 package cz.siret.prank.domain.loaders
 
+import cz.siret.prank.utils.Futils
 import cz.siret.prank.utils.Sutils
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
@@ -39,7 +40,8 @@ class AhojUbsSiteParser {
         int totalSites = 0
         int skippedEmpty = 0
 
-        new File(filePath).withReader(StandardCharsets.UTF_8.name()) { Reader reader ->
+        // Futils.inputStream auto-decompresses by extension (.gz/.zst/...); plain files pass through
+        Futils.inputStream(filePath).withReader(StandardCharsets.UTF_8.name()) { Reader reader ->
             CSVParser csvParser = CSV_FORMAT.parse(reader)
 
             // Check if the full format columns are present

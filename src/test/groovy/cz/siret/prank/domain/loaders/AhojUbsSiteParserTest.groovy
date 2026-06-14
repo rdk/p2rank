@@ -22,7 +22,7 @@ class AhojUbsSiteParserTest {
 
     static final String DATA_DIR = 'src/test/resources/data/datasets/ahojubs'
     static final String REDUCED_CSV = "$DATA_DIR/ahojubs_reduced.csv"
-    static final String FULL_CSV = "$DATA_DIR/ahojubs_full.csv"
+    static final String FULL_CSV = "$DATA_DIR/ahojubs_full.csv.gz"
 
     static final double DELTA = 0.0001d
 
