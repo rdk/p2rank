@@ -481,12 +481,18 @@ class Params {
      * Faithful targets:    LegacyFlatBinaryForest, SoaLegacyFlatBinaryForest, ShortFlatBinaryForest,
      *                      SuperShortLegacyFlatBinaryForest
      * Faithful-approximate: Int16LeafSoaLegacyFlatBinaryForest (int16-quantized leaves — ranking-equivalent
-     *                      to LegacyFlat, not bit-exact; smaller footprint, fastest faithful variant
-     *                      measured on GraalVM+HotSpot. Safe with the default threshold; ranking-gated.)
+     *                      to LegacyFlat, not bit-exact; smaller footprint. Safe with the default
+     *                      threshold; ranking-gated.) The float-split-descent variants (FasterForest 2.13.0,
+     *                      experimental) are also faithful-approximate / ranking-gated:
+     *                      FloatSplitSoaLegacyFlatBinaryForest (float splits, exact double leaves),
+     *                      Int16LeafFloatSplitSoaLegacyFlatBinaryForest (int16 leaves + float splits, the
+     *                      fastest faithful variant measured: about -14% vs Int16LeafSoa, -28% vs LegacyFlat
+     *                      on GraalVM), and Int16LeafFloatSplitBranchlessSoaLegacyFlatBinaryForest.
      * Score-based targets: FlatBinaryForest, InterleavedBfsForest (and the other Bfs/Dfs/Ilp/Float/Native variants)
      *
      * Recommended ad-hoc re-flatten of the shipped (legacy) default model: SoaLegacyFlatBinaryForest
-     * (bit-exact, faster) or Int16LeafSoaLegacyFlatBinaryForest (ranking-equivalent, smaller+fastest).
+     * (bit-exact, faster), Int16LeafSoaLegacyFlatBinaryForest (ranking-equivalent, smaller), or the
+     * experimental Int16LeafFloatSplitSoaLegacyFlatBinaryForest (ranking-equivalent, fastest measured).
      */
     @RuntimeParam
     @ModelParam // training

@@ -343,6 +343,16 @@ behaviour — kept in the file so they don't get re-raised.
   carries neither). `Params.groovy:461-508,671-672`: the annotations are
   documentation-only, so this is drift/intent risk, not a runtime bug.
 
+- **Faithful float-split flatten variants are experimental and not yet in the
+  re-flatten recommendation.** `FloatSplitSoaLegacyFlatBinaryForest`,
+  `Int16LeafFloatSplitSoaLegacyFlatBinaryForest` (the fastest faithful measured,
+  ~-14% vs `Int16LeafSoa`, ~-28% vs `LegacyFlat` on GraalVM), and
+  `Int16LeafFloatSplitBranchlessSoaLegacyFlatBinaryForest` are selectable via
+  `-rf_flatten_target` (FasterForest 2.13.0) and now listed in
+  `Params.rf_flatten_target`, but are ranking-gated/experimental upstream.
+  Revisit the recommended re-flatten target (and default-eligibility) when they
+  graduate from experimental.
+
 ---
 
 ## Stale comments / dead code (open carry-forwards)
