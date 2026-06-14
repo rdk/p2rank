@@ -42,6 +42,20 @@
   `./prank.sh predict <in> -c ../p2rank-dev-artefacts/models/<config>` from here.
   Not a Maven dependency: nothing is vendored back here.
 
+## Dev backlog / tech debt tracking
+
+Known small bugs, inconsistencies, and follow-ups are tracked in-repo, not just
+in issues:
+
+- `misc/dev/backlog.md`: the live punch-list (one-liner entries grouped by
+  category). Check it before re-raising an issue: items marked **Not wanted**
+  are deliberate keep-as-is decisions. Add newly found items here (deduped
+  against existing entries), and remove entries once resolved.
+- `misc/dev/technical-debt.md`: long-form companion (issue + why + workaround +
+  proper fix + trigger) for items that need more than a one-liner.
+- `misc/todo/pocket_grid/FOLLOWUP.md`: pocket-grid-specific future ideas and
+  perf notes.
+
 ## Build artifacts (do not edit)
 
 - `distro/README.md` is **generated** from the top-level `README.md` by the
