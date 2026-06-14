@@ -163,15 +163,6 @@ behaviour — kept in the file so they don't get re-raised.
 
 ## External-data loader robustness
 
-- **Conservation `chainInfoMap` keyed by masked chainId, read by raw
-  authorId.** `ConservationScore.groovy:353-364,391` masks the chain id
-  (blank -> 'A') for both the `getResidueChain` lookup and the map key, but
-  `AnalyzeRoutine` reads it by raw `chain.authorId` and `residueChainsByAuthorId`
-  is raw-keyed. For blank-authorId custom PDBs this hits `P2Rank.failStatic`
-  (provider set) or silently reports the chain as failed in analyze. Key/read
-  consistently by the raw id; mask only for cache/file naming. (audit M2;
-  long-form candidate for `technical-debt.md`)
-
 - **`SwinSiteLoader`/`PUResNetLoader` NPE on a missing prediction directory.**
   `SwinSiteLoader.groovy:69-72` (+ PUResNet): `Futils.listFiles` ->
   `File.listFiles()` returns null for a non-existent / non-directory path.

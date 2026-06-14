@@ -351,7 +351,10 @@ class ConservationScore implements Parametrized {
 
         for (Chain chain : conservationChains) {
             String chainId = Struct.getAuthorId(chain)
-            chainId = Struct.maskEmptyChainId(chainId)
+            // raw authorId keys both Protein.residueChainsByAuthorId (getResidueChain below) and the
+            // chainInfoMap that AnalyzeRoutine reads by chain.authorId; mask ONLY for conservation
+            // file/cache naming (legacy HMM convention), not for chain lookup or the report map.
+            String maskedChainId = Struct.maskEmptyChainId(chainId)
             List<Group> aaGroups = chain.getAtomGroups(GroupType.AMINOACID)
             int chainResidueCount = aaGroups.size()
 
@@ -371,10 +374,10 @@ class ConservationScore implements Parametrized {
                     //       or move masking to HmmServerConservationProvider.
                     String sequence = FastaExporter.maskFastaChain(residueChain.standardCodeCharString)
                     scoreFile = ConservationLoader.instance.findOrFetchConservationFile(
-                        itemContext, protein.fileName, chainId, sequence, provider)
+                        itemContext, protein.fileName, maskedChainId, sequence, provider)
                 } else {
                     scoreFile = ConservationLoader.instance.findConservationFile(
-                        itemContext, protein.fileName, chainId)
+                        itemContext, protein.fileName, maskedChainId)
                 }
 
                 log.info "Loading conservation scores from file [{}]", scoreFile
