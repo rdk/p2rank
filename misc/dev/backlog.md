@@ -309,12 +309,6 @@ Silent feature-value or feature-width changes since 2.5.1. Each needs a
 keep-or-revert decision: if intentional, document in `breaking-changes.md`, bump
 the model-compat marker, and retrain affected configs; if not, revert.
 
-- **`feat_propensity_tables` default `"SprintT1070"` resolves to a non-existent
-  path.** `Params.groovy:1852-1862`: tables moved under
-  `/tables/propensities/peptides/SprintT1070/...`, so the propensity features
-  fail to resolve their table by default. Looks like an outright bug rather than
-  a deliberate value shift -- verify the intended layout and fix.
-
 - **`duplets` feature HEADER widened 1 -> 3.** `DupletsPropensityFeature.groovy:25,65`
   (`['product']` -> `['avg','max','product']`). `duplets_sas`/`duplets_atomic`
   are used in config/ions and config/pept; old single-column models are

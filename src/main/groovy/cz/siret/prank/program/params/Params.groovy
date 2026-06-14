@@ -1852,14 +1852,15 @@ class Params {
     /**
      * Identifies set of pre-calculated propensity tables for duplets/triplets features.
      *
-     * Value should be a directory in program resources to take peptide propensities from
-     * (resources/tables/propensities/$var/...)
-     * Available: SprintT1070, SprintA870
+     * Value is a directory under program resources to take propensities from
+     * (resources/tables/propensities/$var/...).
+     * Available: peptides/SprintT1070, peptides/SprintA870, peptides/SprintALL
+     * (also ions/* and dna/* subsets used by the respective configs).
      *
      * TODO: move to dist dir on release
      */
     @ModelParam
-    String feat_propensity_tables = "SprintT1070"
+    String feat_propensity_tables = "peptides/SprintT1070"
 
 
     /**
