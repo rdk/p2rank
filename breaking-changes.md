@@ -67,6 +67,28 @@ All changes of that type should be rare and should be all listed here.
   `pocket_grid_vis_volume_radius` → `vis_pocket_grid_volume_radius` and
   `pocket_grid_vis_gaussian_iso` → `vis_pocket_grid_gaussian_iso`. Old names hard-fail at startup with no aliases.
 
+###### Feature value changes (retraining required)
+
+Several feature calculators changed their numeric output (or width) during the
+2.6 dev cycle. The model/feature-header check above catches a width change at
+load time, but value-only changes are silent: a model trained on 2.5.1 feature
+vectors sees shifted inputs at prediction time. Retrain models that use these
+features (the listed research configs).
+
+* `duplets` (sequence duplet propensity) widened from a single `product` column
+  to three (`avg`, `max`, `product`). Models using `duplets_sas`/`duplets_atomic`
+  (e.g. config/ions, config/pept) must be retrained.
+* `cres` (contact-residue) contact-atom distance changed from 3.3 to 3.5 A
+  (`ContactResiduesRF.CONTACT_ATOM_DIST`), shifting `cres` values for any model
+  using it (config/dna, config/ions, config/pept).
+* `cr1pos.CAmCB` now reflects the true `dca - dcb` for every residue. Previously
+  a value-ordering bug subtracted `dcb` before it was assigned (so `dcb` was 0),
+  making `CAmCB` equal `dca` (the CA distance) in the common case. Models trained
+  on the old `cr1pos` must be retrained.
+* `asa` (solvent-accessible surface) now includes cofactor HETATM atoms when
+  `-cofactors` is enabled (switched from `getAllNonHAtomArray(hetAtoms=false)` to
+  the protein heavy-atom set). Only affects runs using cofactor-as-surface.
+
 ### 2.5.1
 
 none

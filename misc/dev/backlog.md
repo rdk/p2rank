@@ -294,32 +294,6 @@ behaviour — kept in the file so they don't get re-raised.
 
 ---
 
-## Reproducibility / model-compatibility (decision pending)
-
-Silent feature-value or feature-width changes since 2.5.1. Each needs a
-keep-or-revert decision: if intentional, document in `breaking-changes.md`, bump
-the model-compat marker, and retrain affected configs; if not, revert.
-
-- **`duplets` feature HEADER widened 1 -> 3.** `DupletsPropensityFeature.groovy:25,65`
-  (`['product']` -> `['avg','max','product']`). `duplets_sas`/`duplets_atomic`
-  are used in config/ions and config/pept; old single-column models are
-  incompatible.
-
-- **`cres` `CONTACT_ATOM_DIST` 3.3 -> 3.5 A.** `ContactResiduesRF.groovy:15`
-  (a static constant, not a Param): shifts `cres` values for config dna/ions/pept.
-
-- **`cr1pos.CAmCB` now computed unconditionally.**
-  `ContactResidue1PositionFeature.groovy:54-78`: almost certainly the intended
-  fix of a 2.5.1 ordering bug (where `dcb` was always 0), but it changes
-  `cr1pos` for ~every residue and is undocumented. (audit M6)
-
-- **`asa` now includes cofactor HETATM atoms when `-cofactors` is set.**
-  `AsaFeature.groovy:47-54`: switched from `getAllNonHAtomArray(hetAtoms=false)`
-  to `protein.proteinAtoms`, so cofactor-as-surface atoms enter the ASA under
-  that mode.
-
----
-
 ## Doc / config drift
 
 - **README badge stuck at 2.5.1.** `README.md:11` vs `build.gradle:25`
