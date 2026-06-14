@@ -9,6 +9,10 @@ than a one-liner.
 
 Originated from a 10-agent post-2.5.1 audit but has been continuously
 maintained since; the file is the live backlog, not an audit archive.
+Expanded 2026-06 from a 25-agent audit of `2.5.1..HEAD` (v2.6-alpha.5); that
+audit's HIGH findings (AmberCharges united amide-H, crpos modified-residue NPE)
+and several MEDIUM crashes (analyze binding-sites center, energy empty-cloud
+fallback length, AHoJ-UBS malformed-token abort) are already fixed on `develop`.
 
 File paths are repo-relative; line numbers may drift as the surrounding files
 evolve. Items marked **Not wanted** are explicit decisions to keep current
@@ -46,6 +50,159 @@ behaviour — kept in the file so they don't get re-raised.
   `misc/dev/technical-debt.md`. Mitigated by `CofactorHandler` defensive
   recovery; trigger to fix: a third bracketed list param appears.
 
+- **`pred_min_pocket_probability` with no `probatp_transformer` drops every
+  pocket.** `Prediction.groovy:100-104`: with no transformer all pockets keep
+  the default `auxInfo.probaTP=0`, so any positive threshold filters them all
+  and the prediction is silently empty.
+
+- **`PLBIndexRescorer` yields NaN for single-pocket predictions.**
+  `PLBIndexRescorer.groovy:59-70`: M=1 gives sig=0 so ZPLB=0/0=NaN ->
+  `newScore=NaN`, leaving the downstream sort order undefined.
+
+- **`bench_skip_rescoring` leaves `pocket.sasPoints` null -> NPE.**
+  `ModelBasedRescorer.groovy:165-174` returns early; if
+  `eval_output_prediction_files` is also on, `PredictionSummary.toCSV`
+  (`PredictionSummary.groovy:62`) dereferences the null.
+
+- **`AtomKdTreeV2.findNearestNDifferentAtoms(sorted=true)` throws.**
+  `AtomKdTreeV2.groovy:72-79`: `removeIf` on the immutable `List.of(...)`
+  returned by `KdTree3D.findNearestN(sorted=true)` -> UnsupportedOperationException.
+  Only the `sorted=true` path is affected.
+
+- **`GetcleftOutputCalculator` NPEs when a pocket has no SAS points.**
+  `GetcleftOutputCalculator.groovy:38-48`: `pocket.sasPoints` (nullable for
+  non-PrankPocket types) is dereferenced without a guard. (likely)
+
+- **`RescorePocketsRoutine` grid export uses `item.protein`.**
+  `RescorePocketsRoutine.groovy:133`: with `cache_datasets=false` (the rescore
+  default) this re-parses the structure and exports from the un-rescored pair;
+  the predict path was fixed to use `pair.protein`.
+
+- **`DataTable.formatSummaryTable` does not filter NaN.** `DataTable.groovy:147-201`:
+  a single NaN in a column corrupts the overall min/max/avg/sum/median; the
+  grouped variant (`:279`) filters NaN, so the two tables disagree.
+
+- **`TableExporter.formatDouble` emits scientific notation for `|d|>9.2e8`.**
+  `TableExporter.groovy:380-396`: falls back to `Double.toString` (`1e9 ->
+  "1.0E9"`), violating the documented legacy `"0.#######"` plain-decimal CSV
+  contract.
+
+- **`PocketChargeStats` does not null-guard `pocket.surfaceAtoms`.**
+  `PocketChargeStats.java:16-25`: the net-charge and polarity descriptors NPE on
+  a null `surfaceAtoms`; the sibling dipole descriptor guards it.
+
+- **`export_points_format` not validated at startup.** `Main.groovy:209-218`:
+  unlike `pocket_grid_format`, an unknown value silently produces a CSV-content
+  file with the wrong extension.
+
+- **`SITE_UNREACHABLE` not divided by runs in multi-seed aggregation.**
+  `EvalResults.groovy:191-199`: it is an absolute cumulative count, so
+  aggregating a seed loop via `addSubResults` inflates it by x(runs).
+
+---
+
+## NaN / divide-by-zero / empty-input (introduced since 2.5.1)
+
+- **`ConservationScore.calculateZScores` throws on an empty score map.**
+  `ConservationScore.groovy:134-145`: `new StatSample([])` trips a Groovy
+  power-assert (active regardless of `-ea`) which propagates into features.
+
+- **`StatSample.getVariance` off-by-one: `size==1` yields NaN.**
+  `StatSample.groovy:49-57`: the added `size<1` guard is dead (the ctor asserts
+  non-empty); the real divide-by-zero is `xx/(size-1)` at `size==1`.
+
+- **`HybridizationFeature` Tier-1 lookup NPEs on `hyb_sp2` present but
+  `hyb_sp3` null.** `HybridizationFeature.groovy:78-82`: unboxing null into a
+  `double[]`. Latent on table data. (WIP-light area)
+
+- **`AnmModel` divides by sqrt of a possibly-negative eigenvalue.**
+  `AnmModel.groovy:166-196`: EJML noise on the 3N×3N Hessian can leave a
+  negative non-zero eigenvalue in the kept modes -> NaN. (physics, WIP-light)
+
+- **energy2/energy3 `nearestPointEnergy` not NaN-guarded.**
+  `AbstractProbeEnergyFeature.groovy:144,149-159`: the guard added to the
+  single-probe path was not applied to the 9-dim or energy3 direct outputs.
+  (energy, WIP-light)
+
+- **`EnergyCalculator` HB override uses Groovy `?:` truthiness.**
+  `EnergyCalculator.groovy:376-378`: an HB override row with `r0` or `epsilon`
+  exactly `0.0` is silently ignored, falling back to the probe default.
+  (energy, WIP-light)
+
+---
+
+## Error surfacing / swallowed failures
+
+- **`eval-rescore` discards the dataset Result.** `Main.groovy:536-549` never
+  calls `finalizeDatasetResult`, so per-item failures produce no error CSV and
+  the run exits 0.
+
+- **`classifier_train_stats` silently returns empty stats.**
+  `TrainEvalRoutine.groovy:105-125`: the body is commented out and now only logs
+  "not implemented"; 2.5.1 computed real per-instance train metrics.
+
+- **`Parallel.eachParallel`/`collectParallel` swallow all but the first task
+  exception.** `Parallel.groovy:32-38,58-66`: only the first failing `f.get()`
+  propagates; exceptions from other completed tasks are lost.
+
+- **`PocketPredictor.pocketScore` broad try/catch swallows all scoring
+  errors.** `PocketPredictor.groovy:49-85`: any failure in point scoring /
+  sorting / score-limit handling yields a silent `score=0` with a misleading
+  "conservation" warning.
+
+- **`PreloadConservationRoutine` leaks its thread pool on `fail_fast`.**
+  `PreloadConservationRoutine.groovy:82-86`: `future.get()` rethrows before
+  `executor.shutdownNow()`. Also `collectChainTasks` (`:115-136`) discards the
+  `processItems` Result, ignoring protein-load failures.
+
+- **Fetched conservation cached via `Futils.writeFile`, which swallows write
+  errors.** `ConservationLoader.groovy:165-170` (+ `Futils.groovy:403-420`): a
+  partial/empty cache file is later returned as valid.
+
+---
+
+## External-data loader robustness
+
+- **Conservation `chainInfoMap` keyed by masked chainId, read by raw
+  authorId.** `ConservationScore.groovy:353-364,391` masks the chain id
+  (blank -> 'A') for both the `getResidueChain` lookup and the map key, but
+  `AnalyzeRoutine` reads it by raw `chain.authorId` and `residueChainsByAuthorId`
+  is raw-keyed. For blank-authorId custom PDBs this hits `P2Rank.failStatic`
+  (provider set) or silently reports the chain as failed in analyze. Key/read
+  consistently by the raw id; mask only for cache/file naming. (audit M2;
+  long-form candidate for `technical-debt.md`)
+
+- **`SwinSiteLoader`/`PUResNetLoader` NPE on a missing prediction directory.**
+  `SwinSiteLoader.groovy:69-72` (+ PUResNet): `Futils.listFiles` ->
+  `File.listFiles()` returns null for a non-existent / non-directory path.
+
+- **`ConcavityLoader` derefs `gridPoints.first()` before its empty-guard.**
+  `ConcavityLoader.groovy:60-67`: NoSuchElementException on an empty group; the
+  `if (gridPoints.empty)` guard just below is dead.
+
+- **`Seq2PocketLoader` aborts the whole load on a bad score/serial field.**
+  `Seq2PocketLoader.groovy:94-103`: `Double.parseDouble` / `Integer.parseInt`
+  are uncaught, while short/malformed lines are skipped (uneven handling).
+
+- **`PocketeerLoader` assumes fully-formed JSON.** `PocketeerLoader.groovy:60-95`:
+  missing fields / short arrays NPE or IndexOutOfBounds; the sibling loaders
+  validate shape.
+
+- **`AhojUbsSiteParser` throws on blank/non-numeric coordinates.**
+  `AhojUbsSiteParser.groovy:49-74`: only `chain_resi` blankness is checked;
+  `center_x/y/z` are parsed unconditionally, and the "skipped empty" warning
+  overstates what is validated.
+
+- **Rewritten coordinate loaders ignore `GeometricTransformation`.**
+  `ConcavityLoader.groovy:39-86` (+ SwinSite, Pocketeer): FPocket applies
+  `transformation.applyToAtoms` to its grid groups; these do not, so pockets are
+  mis-registered on transformed inputs.
+
+- **`FPocketLoader` non-contiguous pocket numbering can insert null.**
+  `FPocketLoader.groovy:118-122`: `for (i=1..size) res.add(groups.get(i))`
+  assumes contiguous keys 1..N; a gap inserts a null, NPE'd by the new
+  empty-guard. (likely)
+
 ---
 
 ## Inconsistencies / parity gaps
@@ -78,6 +235,104 @@ behaviour — kept in the file so they don't get re-raised.
   the Models panel. Mirror the ChimeraX pattern for parity; not a correctness
   fix.
 
+- **`EnergyCalculator.atomDataCache` keyed by `Atom.PDBserial`.**
+  `EnergyCalculator.groovy:106-144`: serial==0 is skipped, but two distinct
+  heavy atoms sharing a non-zero PDBserial would return wrong cached params
+  (sigma/epsilon/charge/role). (likely; WIP-light area; see also the thread-safety
+  note under Concurrency)
+
+- **`AtomKdTreeV2` vs `AtomKdTreeV1` `findNearestNDifferentAtoms` diverge.**
+  `AtomKdTreeV2.groovy:72-79`: V1 queries `count` and removes the identity-equal
+  atom with `==` (can return count-1); V2 queries `count+1` and removes self
+  differently. Result count and equality test differ.
+
+- **`KdTree3D` sorted k-NN tie ordering differs from the old impl.**
+  `KdTree3D.java:743-766`: `PyramidFeature` reads `findNearestNAtoms(...,9,true)`
+  positionally, so among equal-distance atoms the heap-sort order (and thus the
+  feature values) can drift vs the previous implementation.
+
+- **`GridGenerator` iterator yields `ny*nz` points when `nx==0`.**
+  `GridGenerator.java:84-123,222-243`: `hasNext()` tests only `z<nz`, so a box
+  thinner than `edge` along x still walks all cells at `originX` while
+  `getCount()=nx*ny*nz=0` disagrees.
+
+- **`ChimeraXRenderer` ignores `vis_point_gradient_pymol` /
+  `vis_point_gradient_max`.** `ChimeraXRenderer.groovy:54-55` hardcodes
+  `palette lime:red range 0,0.7`; both PyMOL renderers honor the params, so the
+  ChimeraX output diverges under a non-default gradient.
+
+- **`NewPymolRenderer` fragile CIF detection via `.contains(".cif")`.**
+  `NewPymolRenderer.groovy:63-72`: trips on a `.cif` substring in a directory
+  component (e.g. `/data/v1.cif_set/prot.pdb`).
+
+- **`PredictionVisualizer` pocket-mode lacks the CIF -> PDB conversion residue
+  mode got.** `PredictionVisualizer.groovy:76-107`: predict/rescore pocket mode
+  only copies the raw input, while PyMOL cannot reliably parse BioJava CIF.
+
+- **`FeatureSetup` filter accounting over-reports when filtering is active.**
+  `FeatureSetup.groovy:90-108`: `getFilterableSubFeatureNames` /
+  `getFixedSubFeatureNames` list all sub-features of surviving features, not the
+  subset kept by `feature_filters`.
+
+- **`FeatureSetup.applyFilters` mutates the shared `Params.feature_filters`.**
+  `FeatureSetup.groovy:262-274`: `featureFilters.add(0, "*")` on the list passed
+  straight from `params.feature_filters` when the first filter starts with `-`.
+
+- **`ModelConverter` float-native flatten targets lack the availability
+  pre-flight guard.** `ModelConverter.groovy:67-75`: only `NativePanamaForest`
+  and `NativePanamaForestAvx2` are platform-checked; the `Float` variants are
+  not, so an unavailable target fails late instead of with a clear message.
+
+- **`TransformRoutine` compare-flatten-eval drops a single
+  `-rf_flatten_target` override.** `TransformRoutine.groovy:285-287`: treated as
+  a list only when it contains a comma; a single non-comma value falls through to
+  the defaults.
+
+- **`AminoAcidMapper.parseCsv` silently accepts a trailing-comma line.**
+  `AminoAcidMapper.groovy:165-170`: `line.split(",")` drops trailing empties, so
+  `LLP,LYS,` parses as a valid 2-column `LLP -> LYS`.
+
+- **Explicit ligand definition matching only a cofactor group fails with a
+  misleading "matches no ligands".** `Ligands.groovy:95-108`: when a cofactor is
+  configured for the same group, `loadForProtein` pre-filters cofactors out
+  before split, so the ligand definition never matches.
+
+- **`mapWithIndex` helper misused for a name->Feature map.**
+  `FeatureSetup.groovy:211-218`: `setSubFeatureOffsets` uses it purely to key by
+  name; "index" is irrelevant. Readability nit. (refactor)
+
+---
+
+## Reproducibility / model-compatibility (decision pending)
+
+Silent feature-value or feature-width changes since 2.5.1. Each needs a
+keep-or-revert decision: if intentional, document in `breaking-changes.md`, bump
+the model-compat marker, and retrain affected configs; if not, revert.
+
+- **`feat_propensity_tables` default `"SprintT1070"` resolves to a non-existent
+  path.** `Params.groovy:1852-1862`: tables moved under
+  `/tables/propensities/peptides/SprintT1070/...`, so the propensity features
+  fail to resolve their table by default. Looks like an outright bug rather than
+  a deliberate value shift -- verify the intended layout and fix.
+
+- **`duplets` feature HEADER widened 1 -> 3.** `DupletsPropensityFeature.groovy:25,65`
+  (`['product']` -> `['avg','max','product']`). `duplets_sas`/`duplets_atomic`
+  are used in config/ions and config/pept; old single-column models are
+  incompatible.
+
+- **`cres` `CONTACT_ATOM_DIST` 3.3 -> 3.5 A.** `ContactResiduesRF.groovy:15`
+  (a static constant, not a Param): shifts `cres` values for config dna/ions/pept.
+
+- **`cr1pos.CAmCB` now computed unconditionally.**
+  `ContactResidue1PositionFeature.groovy:54-78`: almost certainly the intended
+  fix of a 2.5.1 ordering bug (where `dcb` was always 0), but it changes
+  `cr1pos` for ~every residue and is undocumented. (audit M6)
+
+- **`asa` now includes cofactor HETATM atoms when `-cofactors` is set.**
+  `AsaFeature.groovy:47-54`: switched from `getAllNonHAtomArray(hetAtoms=false)`
+  to `protein.proteinAtoms`, so cofactor-as-surface atoms enter the ASA under
+  that mode.
+
 ---
 
 ## Doc / config drift
@@ -91,6 +346,43 @@ behaviour — kept in the file so they don't get re-raised.
   — Java-version coverage and CI distribution choice are
   intentional; README's "tested up to Java 25" wording will refresh at the
   2.6 release.
+
+- **Em-dash (U+2014) in `breaking-changes.md:22,23,62`** violates the CLAUDE.md
+  no-em-dash hard rule; the whole 2.6 section was added this cycle.
+
+- **Em-dash (U+2014) in `documentation/export-pocket-grid.md:26,195`** -- same
+  hard-rule violation in a new file.
+
+- **`user-guide.md:1108`** frames `pred_point_threshold` default as 0.35; the
+  `Params.groovy` baseline is 0.4 (alphafold/conservation predict configs also
+  use 0.4, not just the rescore configs the footnote names).
+
+- **`CurveMetrics` AUPRC javadoc is self-contradictory.** `CurveMetrics.java:12-15,80-129`:
+  the class doc describes a stepwise (Davis & Goadrich) curve while the code is
+  trapezoidal.
+
+- **`SiteMetricsTest.groovy:173-178`** asserts `avgPointScore` is NaN for the
+  wrong (stale) reason after the point-score-unify commit; the value is now
+  computed for all site types.
+
+- **`feature_filters` Javadoc examples stale.** `Params.groovy:149-177`: after
+  the fixed-vs-filterable change, filters apply only to `extra_features`; the
+  examples still imply they restrict `features`.
+
+- **`cofactor_max_protein_dist` doc says "INFO warning"; code logs WARN.**
+  `Params.groovy:618-621` (`CofactorHandler.warnDistantCofactors` uses
+  `log.warn`; `documentation/cofactors.md` is correct).
+
+- **Stale symbol `getEffectiveCofactorDefinitions`** (renamed
+  `resolveCofactorDefinitions`) in `documentation/dev/cofactors.md:10,174`.
+
+- **`aa_mapping` is feature-determining but annotated `@RuntimeParam`.**
+  `Params.groovy:642-643`: it changes corrected residue codes feeding several
+  table/charge features, so it should be `@ModelParam`.
+
+- **Flatten params carry both `@RuntimeParam` and `@ModelParam`** (and one
+  carries neither). `Params.groovy:461-508,671-672`: the annotations are
+  documentation-only, so this is drift/intent risk, not a runtime bug.
 
 ---
 
@@ -123,6 +415,60 @@ behaviour — kept in the file so they don't get re-raised.
 - **`AbstractScalarPocketDescriptor.java:21-23`** comment says "both registered
   descriptors are multi-column" — accurate today, will silently lie when a
   scalar grid-point descriptor is added.
+
+- **`SLinkClusterer` (V1) is now dead production code.** Only the parity oracle
+  in tests references it; `AtomClusterer`/`AtomGroupClusterer` both wire
+  `SLinkClustererV2`. Keep as the V2 parity oracle or delete.
+
+- **`AAScore.chainId` is a dead field** (written, never read).
+  `ConservationScore.groovy:71-83`: `loadScoreFile` gained a `chainId` param
+  solely to populate it.
+
+- **`PymolRenderer.colorExposedAtoms` is dead** (`PymolRenderer.groovy:132-136`):
+  body fully commented out, returns `""`; the call site contributes nothing.
+
+- **`cmdBindingSiteCenters` "Sites skipped" counter is never incremented.**
+  `AnalyzeRoutine.cmdBindingSiteCenters` declares `totalSkippedSites` and emits
+  it into the summary, but never increments it (always 0) for explicit-site
+  datasets.
+
+- **Misleading "same iteration order as V1" comment** in
+  `SLinkClustererV2.java:56-66`: single-linkage output is connected-components of
+  the threshold graph; the loop order is not load-bearing for matching V1.
+
+- **`ZScoreSingleLinkageClustering.admitPoint` ignores `point.predicted`**
+  (`:82-85`): a legitimate alternative strategy, but the test comment claiming
+  non-predicted points are excluded is misleading.
+
+---
+
+## Concurrency / thread-safety (latent)
+
+These do not bite today (shared state is not yet concurrently mutated), but are
+landmines if usage changes; see also the Test-isolation gaps section.
+
+- **`SLinkClustererV2` stores union-find state in instance fields.**
+  `SLinkClustererV2.java:16-17,50-54`: `parent`/`rank` are instance arrays
+  mutated by `cluster()`, so one shared instance across threads clobbers state
+  silently. V1 used method-local arrays and was reentrant.
+
+- **`EnergyCalculator.atomDataCache` is an unsynchronized `HashMap`.**
+  `EnergyCalculator.groovy:106-144`: mutated by `getAtomData()`; its
+  `ConcurrencyTest` bypasses the cache (serial==0 path), so it has zero coverage.
+
+- **`Protein.surfaceCache` is a plain `HashMap` with unsynchronized lazy init.**
+  `Protein.groovy:75,168-177`: safe only while one thread requests surfaces per
+  Protein. (likely)
+
+- **`ConservationProviderFactory` caches a JVM-lifetime singleton.**
+  `ConservationProviderFactory.groovy:59-99`: built from `Params.INSTANCE` at
+  first call; `reset()` is never invoked from main code, so it goes stale if the
+  conservation params change mid-process (e.g. ploop).
+
+- **`Parallel.groovy` creates a fresh `ForkJoinPool` per call.**
+  `Parallel.groovy:27,53`: GPars reused a current pool; `new ForkJoinPool(...)`
+  per call means nested `eachParallel`/`collectParallel` oversubscribe threads.
+  (refactor/perf)
 
 ---
 
@@ -161,3 +507,33 @@ documentation only.
   (`KdTreeAssigner.java:41`): every atom returned by the KD tree is in
   `latticeIndex` by construction.
 
+- **`SLinkClustererV2` logs the full per-cluster size list at INFO** on every
+  `cluster()` call (`SLinkClustererV2.java:77-78`): noisy on the SAS-point
+  prediction path with many ligandable points. (likely)
+
+---
+
+## Build / repo hygiene
+
+- **Stale vendored jars.** `lib/local-mvn-repo` still tracks FasterForest
+  `2.11.0` (build pins `2.13.0`) and biojava `7.2.2-rdk.1` + `7.2.4-rdk.1`
+  (build pins `7.2.5-rdk.1`). CLAUDE.md's keep-single-version policy: `git rm`
+  the unused versions. (faster-molecular-surface is clean: only `1.8`.)
+
+- **57 MB uncompressed `ahojubs_full.csv` committed as a plain Git blob.**
+  `src/test/resources/data/datasets/ahojubs/ahojubs_full.csv`: largest object in
+  the tree, permanent in history; gzips to ~7.7 MB. Gzip + make
+  `AhojUbsSiteParser` gz-aware, or Git-LFS it, or trim to a sample and relax the
+  exact-count asserts in `AhojUbsSiteParserTest`. (audit M3; decision pending)
+
+- **Committed tutorial `params.txt` leaks developer absolute paths.**
+  `documentation/notebooks/.../predict_1fbl/params.txt:39,96,122`
+  (`/mnt/ssd/prank/...` in `dataset_base_dir`/`installDir`/`output_base_dir`).
+
+- **`distro/prank.bat:24,35,49`** version-detection hardcodes
+  `%JAVA_HOME%\bin\java.exe`; with JAVA_HOME unset (java on PATH only) both
+  probes fail silently and the new JVM flags are no-ops. (distinct from the
+  `prank.bat:14` JAVA_OPTS no-op above)
+
+- **`distro/prank_burst:125-131`** first-run AppCDS dump
+  (`-XX:ArchiveClassesAtExit`) has a benign race for concurrent cold starts.
