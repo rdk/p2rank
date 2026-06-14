@@ -129,6 +129,32 @@ class AmberChargesTest {
     }
 
     @Test
+    void unitedBackboneFoldsAmideHydrogenIntoNitrogenNotCarbon() {
+        // Regression: the backbone amide proton (atom "H") bonds to the amide N,
+        // NOT the carbonyl C. The net-charge invariants above can't catch a
+        // mis-fold because charge stays within the residue — so pin the backbone
+        // N and C united values explicitly.
+        //
+        // The historical bug: findHeavyBondedTo("H") stripped the leading 'H' to
+        // an empty suffix and matched prefix "C" (carbonyl) before "N", folding
+        // the +0.2719 e amide H into C (→ 0.8692 e) and leaving N at the bare
+        // −0.4157 e, for every non-PRO residue.
+        double unitedN = -0.4157d + 0.2719d   // BB_N + BB_H = −0.1438
+        double unitedC = 0.5973d              // BB_C unchanged (carbonyl C carries no H)
+
+        for (String res : ["ALA", "GLY", "SER", "TRP", "ASP", "LYS"]) {
+            assertEquals(unitedN, AmberCharges.getUnited(res, "N"), EPS,
+                    "$res united N must absorb the amide H (BB_N + BB_H)")
+            assertEquals(unitedC, AmberCharges.getUnited(res, "C"), EPS,
+                    "$res united C must stay the bare carbonyl C")
+        }
+
+        // Guard the exact failure mode: amide H must NOT land on the carbonyl C.
+        assertNotEquals(0.5973d + 0.2719d, AmberCharges.getUnited("ALA", "C"), EPS,
+                "amide H must not be folded into the carbonyl C")
+    }
+
+    @Test
     void unitedAtomTableHasNoHydrogenEntries() {
         // United-atom table is heavy-atoms-only; H atoms should return NaN.
         assertTrue(Double.isNaN(AmberCharges.getUnited("LYS", "HZ1")))

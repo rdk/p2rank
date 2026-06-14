@@ -415,6 +415,13 @@ public final class AmberCharges {
      * @return the heavy atom name (key in {@code heavy}), or {@code null} if no match
      */
     private static String findHeavyBondedTo(String hName, Set<String> heavyNames) {
+        // Backbone amide proton: named exactly "H", it bonds to the amide nitrogen N.
+        // Special-cased because stripping the leading 'H' leaves an empty suffix, so the
+        // generic prefix search below would match the carbonyl "C" (present in every
+        // residue) before "N" — folding the amide H's charge onto the wrong heavy atom.
+        if (hName.equals("H")) {
+            return heavyNames.contains("N") ? "N" : null;
+        }
         String suffix = hName.substring(1);
         while (true) {
             for (String prefix : HEAVY_ELEMENT_PREFIXES) {
