@@ -292,6 +292,28 @@ behaviour — kept in the file so they don't get re-raised.
   `FeatureSetup.groovy:211-218`: `setSubFeatureOffsets` uses it purely to key by
   name; "index" is irrelevant. Readability nit. (refactor)
 
+- **Machine-readable output formatting relies on a global locale pin.** CSV /
+  printf number formatting is split between explicit `String.format(Locale.ROOT,
+  ...)` (newer: `PocketGridPymolRenderer`, `PocketGridChimeraXRenderer`,
+  `Benchmarks`) and bare default-locale formatting that only produces `.`
+  decimals because `Locale.setDefault(en_US)` is pinned at the entry points
+  (`Main.main:725`, and now `DafaultPrankPredictor` ctor after the cs_CZ
+  `_residues.csv` bug: `%.4f` -> `0,5000` split the CSV into 10 cols not 7).
+  `PredictionOutputPinningTest` now forces `cs_CZ` so a lost pin fails on every
+  machine + CI. Remaining hardening, in order of leverage:
+  (A) run the suite under a hostile comma-decimal locale in CI -- forward
+  `user.language`/`user.country` into the test fork in `build.gradle` and add a
+  matrix axis (`develop.yml` currently runs `gradlew build` under the runner's
+  dot-locale, so it never exercises this); catches the whole class incl. future
+  sites.
+  (B) migrate the remaining bare-default output sites to `Locale.ROOT` so the
+  global pin is a backstop, not load-bearing: `ResidueLabelings.groovy:143`
+  (resolve its "centralize CSV formatting" TODO), `utils/csv/CSV.groovy:62`
+  (`System.sprintf`), `PocketPredictor.groovy:140`, `PymolRenderer.groovy:199,213`,
+  `ParamLooper.groovy:88`.
+  (C) optional lint test: fail the build on new bare `sprintf(` /
+  `String.format("` (no `Locale` arg) in output-writing code, with an allowlist.
+
 ---
 
 ## Doc / config drift

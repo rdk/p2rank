@@ -32,8 +32,19 @@ class PredictionOutputPinningTest {
 
     static PrankPredictor predictor
 
+    static Locale savedLocale
+
     @BeforeAll
     static void initAll() {
+        // Run the whole prediction under a HOSTILE comma-decimal locale (cs_CZ) on purpose.
+        // P2Rank's CSV/number output relies on the en_US default locale being pinned at the
+        // entry point (Main.main / DafaultPrankPredictor). If that pin is ever lost, "%.4f"
+        // emits "0,5000" and the residues CSV column count breaks. Forcing the hostile locale
+        // here makes that regression fail on EVERY machine and in CI, not only on systems
+        // whose default locale happens to use a comma separator.
+        savedLocale = Locale.getDefault()
+        Locale.setDefault(new Locale("cs", "CZ"))
+
         Params.INSTANCE = new Params()
         predictor = PrankFacade.createPredictor(installDir)
         Futils.delete(outDir.toString())
@@ -42,6 +53,7 @@ class PredictionOutputPinningTest {
 
     @AfterAll
     static void tearDownAll() {
+        if (savedLocale != null) Locale.setDefault(savedLocale)
         Params.INSTANCE = new Params()
         try { Futils.delete(outDir.toString()) } catch (Exception ignored) {}
     }

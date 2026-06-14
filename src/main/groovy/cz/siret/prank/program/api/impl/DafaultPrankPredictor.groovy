@@ -22,6 +22,10 @@ class DafaultPrankPredictor extends PrankPredictor {
     private Path installDir
 
     DafaultPrankPredictor(Path installDir) {
+        // force proper decimal formatting (. as separator) in output, independent of system locale.
+        // Main.main() does the same for the CLI; library API consumers bypass Main, so pin it here too.
+        Locale.setDefault(new Locale("en", "US"))
+
         this.installDir = installDir
         Params.inst.installDir = installDir // TODO refactor
     }
