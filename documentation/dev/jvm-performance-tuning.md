@@ -10,7 +10,7 @@ not from changing p2rank code.
 
 > [!TIP]
 > If you just want the fast launcher and not the theory, jump to
-> [The ready-made launcher: `prank_faster`](#3-the-ready-made-launcher-prank_faster).
+> [The ready-made launcher: `prank_burst`](#3-the-ready-made-launcher-prank_burst).
 
 ---
 
@@ -120,9 +120,9 @@ and on JDK 25+ also method profiles so the JIT starts optimizing immediately.
 
 ---
 
-## 3. The ready-made launcher: `prank_faster`
+## 3. The ready-made launcher: `prank_burst`
 
-`distro/prank_faster` is a drop-in replacement for `distro/prank` that applies the above
+`distro/prank_burst` is a drop-in replacement for `distro/prank` that applies the above
 automatically and adapts to the running JDK.
 
 What it does:
@@ -136,10 +136,10 @@ What it does:
 Usage:
 
 ```bash
-distro/prank_faster predict -f distro/test_data/1fbl.pdb      # first run builds the archive
-distro/prank_faster predict -f distro/test_data/1fbl.pdb      # subsequent runs are faster
-PRANK_FULL_JIT=1 distro/prank_faster predict distro/test_data/basic.ds    # full C2 for huge batches / training
-JAVA_OPTS=-Xmx4g distro/prank_faster predict -f distro/test_data/1fbl.pdb # bigger heap (keep < 32 GB)
+distro/prank_burst predict -f distro/test_data/1fbl.pdb      # first run builds the archive
+distro/prank_burst predict -f distro/test_data/1fbl.pdb      # subsequent runs are faster
+PRANK_FULL_JIT=1 distro/prank_burst predict distro/test_data/basic.ds    # full C2 for huge batches / training
+JAVA_OPTS=-Xmx4g distro/prank_burst predict -f distro/test_data/1fbl.pdb # bigger heap (keep < 32 GB)
 ```
 
 Measured result vs the stock `distro/prank`: roughly **-33% on single proteins** and
@@ -150,9 +150,9 @@ Measured result vs the stock `distro/prank`: roughly **-33% on single proteins**
 > diff `_predictions.csv` after any tuning change to confirm this on your build.
 
 > [!NOTE]
-> **On Windows.** `prank_faster` is a bash script: it runs under Git Bash / MSYS (it
+> **On Windows.** `prank_burst` is a bash script: it runs under Git Bash / MSYS (it
 > detects `$OSTYPE=msys*` and switches the classpath separator to `;`), not in `cmd.exe`.
-> There is no `prank_faster.bat`. If you launch via the native `distro/prank.bat`, it only
+> There is no `prank_burst.bat`. If you launch via the native `distro/prank.bat`, it only
 > sets the compatibility flags (such as heap, `--add-opens`, `--enable-native-access`), not the
 > speedups. To get them, add these JVM-portable flags to `JAVA_OPTS` in `prank.bat`:
 > `-XX:+UseParallelGC`, `-XX:TieredStopAtLevel=1` (omit on JDK 21), and AppCDS via
@@ -177,7 +177,7 @@ Vendor notes:
 - **Oracle HotSpot 25/26 are the fastest** for optimized prediction and ship the full set
   of base CDS archives.
 - **GraalVM** has the slowest *stock* startup (its compiler is heavy to init) but optimizes
-  to nearly tie HotSpot. Since `prank_faster` uses C1-only, GraalVM's optimizing compiler
+  to nearly tie HotSpot. Since `prank_burst` uses C1-only, GraalVM's optimizing compiler
   is never engaged for prediction -- there is no reason to prefer it for the prediction path.
 - **GraalVM ships only the default base CDS archive**, so the >=32 GB-heap CDS pitfall bites
   GraalVM hardest (Oracle HotSpot ships more archive variants).
@@ -210,7 +210,7 @@ distro jar):
 
 ```bash
 # Modes on the current JVM (stock-vs-faster comparison, JFR profile, phase breakdown):
-misc/test-scripts/predict_bench.sh --compare       # stock vs prank_faster
+misc/test-scripts/predict_bench.sh --compare       # stock vs prank_burst
 misc/test-scripts/predict_bench.sh --profile       # JFR hot-method profile
 misc/test-scripts/predict_bench.sh --phases        # startup phase breakdown
 
@@ -245,7 +245,7 @@ name or a path to its JAVA_HOME.
 > Symptom to check: run with `-Xlog:cds` and look for "Loading static archive failed".
 
 > [!WARNING]
-> **The AppCDS archive is JDK-specific, but only rebuilt on jar change.** `prank_faster`
+> **The AppCDS archive is JDK-specific, but only rebuilt on jar change.** `prank_burst`
 > rebuilds `bin/p2rank-appcds.jsa` when `p2rank.jar` changes, not when you switch JDK or
 > `JAVA_HOME`. Archives are tied to the exact JVM, so a stale archive from another JDK
 > fails to map and you silently fall back to full class loading (CDS failures are non-fatal).
@@ -260,11 +260,11 @@ name or a path to its JAVA_HOME.
 > that p2rank and Groovy classes report `source: shared objects file`, for example:
 >
 > ```bash
-> JAVA_OPTS="-Xlog:class+load=info" distro/prank_faster predict -f distro/test_data/1fbl.pdb \
+> JAVA_OPTS="-Xlog:class+load=info" distro/prank_burst predict -f distro/test_data/1fbl.pdb \
 >   | grep -E "(cz\.siret|groovy\.).*shared objects file" | head
 > ```
 >
-> Do this on a *reuse* run, not the archive-building run: `prank_faster` rebuilds the archive
+> Do this on a *reuse* run, not the archive-building run: `prank_burst` rebuilds the archive
 > whenever `p2rank.jar` changes (and on first run), and during a build run those classes load
 > from the jar, not from the archive. This check is independent of `-Xlog:cds=off`: that flag
 > only silences the `cds` log tag, it does not suppress `class+load` output.
@@ -272,21 +272,21 @@ name or a path to its JAVA_HOME.
 > [!WARNING]
 > **`-Xlog:aot=off` is only valid on JDK 24+.** The `aot` log tag does not exist on 17/21,
 > where passing it aborts JVM startup. Only add AOT-related flags after checking the major
-> version. (The matrix script handles this by gating AOT behind a version check; `prank_faster` sidesteps it entirely by not using AOT.)
+> version. (The matrix script handles this by gating AOT behind a version check; `prank_burst` sidesteps it entirely by not using AOT.)
 
 > [!WARNING]
 > **JDK major-version parsing.** A naive `sed 's/.*"\([0-9]*\).*/\1/'` is greedy and matches
 > through the closing quote of `"21.0.10"`, returning an empty string on modern LTS version
 > lines like `java version "21.0.10" 2026-01-20 LTS`. Use `sed -E 's/.*version "([0-9]+).*/\1/'`
 > (anchored on the unique `version "`). The same bug previously made the stock `prank` /
-> `prank.sh` launchers' Java-23+ flag gate silently never fire (`prank_faster` shipped with
+> `prank.sh` launchers' Java-23+ flag gate silently never fire (`prank_burst` shipped with
 > the fixed parse).
 
 > [!NOTE]
 > **Benign CDS log noise.** A dynamic archive layers on the JDK's base archive, which was
 > built without p2rank's `--add-opens` / `--enable-native-access` flags, so the JVM logs
 > error-level "Disabling optimized module handling" lines. CDS still loads and class data is
-> still shared: the messages are cosmetic. `prank_faster` routes them off with `-Xlog:cds=off`.
+> still shared: the messages are cosmetic. `prank_burst` routes them off with `-Xlog:cds=off`.
 
 > [!NOTE]
 > **Compact object headers** (`-XX:+UseCompactObjectHeaders`, JDK 24 experimental, 25
@@ -299,7 +299,7 @@ name or a path to its JAVA_HOME.
 
 ## 8. Quick reference
 
-Recommended flags for the **prediction** path (what `prank_faster` applies):
+Recommended flags for the **prediction** path (what `prank_burst` applies):
 
 ```
 -Xmx2048m
@@ -311,10 +311,10 @@ Recommended flags for the **prediction** path (what `prank_faster` applies):
 ```
 
 > [!NOTE]
-> `prank_faster` does not use the AOT cache. On JDK 24+ you can swap AppCDS for the
+> `prank_burst` does not use the AOT cache. On JDK 24+ you can swap AppCDS for the
 > AOT cache manually with `-XX:AOTCache=<app.aot>` instead of `-XX:SharedArchiveFile`
 > (creation is two-step on 24, one-step on 25+; see the bonus lever in section 2). It is
-> an opt-in further ~3-7%, not part of the `prank_faster` baseline.
+> an opt-in further ~3-7%, not part of the `prank_burst` baseline.
 
 Recommended flags for the **training / large-batch** path:
 

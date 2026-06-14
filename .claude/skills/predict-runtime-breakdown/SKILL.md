@@ -19,7 +19,7 @@ against the distro launchers, so build first:
 ./gradlew assemble
 ./misc/test-scripts/predict_breakdown.sh                         # small default protein, stock launcher
 ./misc/test-scripts/predict_breakdown.sh distro/test_data/2W83.pdb   # a specific (larger) protein
-./misc/test-scripts/predict_breakdown.sh -l distro/prank_faster      # see the CDS + C1-JIT launcher
+./misc/test-scripts/predict_breakdown.sh -l distro/prank_burst      # see the CDS + C1-JIT launcher
 ./misc/test-scripts/predict_breakdown.sh --deep                      # + classpath, class-load histogram, subsystem first-load, zstd/deserialize split, JIT/GC
 ```
 
@@ -27,7 +27,7 @@ It is also exposed as a mode of the main bench script, alongside `--phases`/`--p
 
 ```bash
 ./misc/test-scripts/predict_bench.sh --breakdown                      # same, via predict_bench.sh
-./misc/test-scripts/predict_bench.sh --breakdown -l distro/prank_faster distro/test_data/2W83.pdb
+./misc/test-scripts/predict_bench.sh --breakdown -l distro/prank_burst distro/test_data/2W83.pdb
 ```
 
 To compare JREs, switch the active JVM (e.g. via SDKMAN `JAVA_HOME`) and re-run; the
@@ -73,7 +73,7 @@ Show the phase table (seconds + share) and call out the largest targets. Typical
 on a small protein with stock `distro/prank`: roughly A ~27%, B ~22%, C ~25%, D ~17%,
 E ~1%, F ~5%, i.e. ~93% fixed overhead, ~7% actual prediction. The biggest single lever
 is A+B (class loading + runtime Groovy config compile), which is what AppCDS in
-`distro/prank_faster` attacks.
+`distro/prank_burst` attacks.
 
 ## Caveats (state these)
 

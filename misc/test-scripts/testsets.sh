@@ -23,13 +23,15 @@ cyan=`tput setaf 6`
 reset=`tput sgr0`
 
 ###################################################################################################################
-# Launcher for short prediction-class commands (predict / eval-predict / rescore / analyze /
-# transform / export-points / print). distro/prank_faster (AppCDS + C1-only JIT) starts faster
-# than ./prank.sh on these short runs, and predictions are identical. Long training/eval
-# (traineval / crossval / ploop) deliberately stays on ./prank.sh, whose local-env config
-# (big heap + full C2 + threads) is what those long runs need. Override to compare, e.g.
-# FASTER=./prank.sh or FASTER=distro/prank.
-FASTER="${FASTER:-distro/prank_faster}"
+# BURST = distro/prank_burst -- used ONLY for single-protein commands (predict / eval-predict /
+# export-points / analyze / transform on one -f input file). Its AppCDS + C1-only JIT give the
+# lowest startup/warmup cost, which wins when the whole run is over in seconds. Override to
+# compare, e.g. BURST=./prank.sh or BURST=distro/prank.
+#
+# Everything else (datasets, multi-protein predict/eval/rescore, training, ploop) calls ./prank.sh
+# directly: its local-env config (big heap + full C2 + threads) is what those longer runs need,
+# and prank_burst's 2g heap + C1-only JIT would undersell them.
+BURST="${BURST:-distro/prank_burst}"
 ###################################################################################################################
 
 function format_time {
@@ -118,21 +120,21 @@ quick() {
     # uses default config
     # therefore the results are stored in distro/test_output/
 
-    test $FASTER predict -f distro/test_data/1fbl.pdb                          -out_subdir TEST/TESTS
-    test $FASTER predict -f distro/test_data/1fbl.pdb.gz                       -out_subdir TEST/TESTS
-    test $FASTER predict -f distro/test_data/1fbl.pdb.zst -c alphafold         -out_subdir TEST/TESTS
-    test $FASTER predict -f distro/test_data/1fbl.cif     -c alphafold         -out_subdir TEST/TESTS
-    test $FASTER predict -f distro/test_data/1fbl.cif.gz  -c alphafold         -out_subdir TEST/TESTS
-    test $FASTER predict -f distro/test_data/1fbl.cif.zst                      -out_subdir TEST/TESTS
-    test $FASTER predict test.ds                                               -out_subdir TEST/TESTS
-    test $FASTER eval-predict -f distro/test_data/liganated/1aaxa.pdb          -out_subdir TEST/TESTS
-    test $FASTER eval-predict test.ds                                          -out_subdir TEST/TESTS
+    test $BURST predict -f distro/test_data/1fbl.pdb                          -out_subdir TEST/TESTS
+    test $BURST predict -f distro/test_data/1fbl.pdb.gz                       -out_subdir TEST/TESTS
+    test $BURST predict -f distro/test_data/1fbl.pdb.zst -c alphafold         -out_subdir TEST/TESTS
+    test $BURST predict -f distro/test_data/1fbl.cif     -c alphafold         -out_subdir TEST/TESTS
+    test $BURST predict -f distro/test_data/1fbl.cif.gz  -c alphafold         -out_subdir TEST/TESTS
+    test $BURST predict -f distro/test_data/1fbl.cif.zst                      -out_subdir TEST/TESTS
+    test ./prank.sh predict test.ds                                               -out_subdir TEST/TESTS
+    test $BURST eval-predict -f distro/test_data/liganated/1aaxa.pdb          -out_subdir TEST/TESTS
+    test ./prank.sh eval-predict test.ds                                          -out_subdir TEST/TESTS
 
-    test $FASTER rescore fpocket.ds                                            -out_subdir TEST/TESTS
-    test $FASTER rescore fpocket3.ds                                           -out_subdir TEST/TESTS
-    test $FASTER rescore concavity.ds                                          -out_subdir TEST/TESTS
-    test $FASTER eval-rescore fpocket.ds                                       -out_subdir TEST/TESTS
-    test $FASTER eval-rescore concavity.ds                                     -out_subdir TEST/TESTS
+    test ./prank.sh rescore fpocket.ds                                            -out_subdir TEST/TESTS
+    test ./prank.sh rescore fpocket3.ds                                           -out_subdir TEST/TESTS
+    test ./prank.sh rescore concavity.ds                                          -out_subdir TEST/TESTS
+    test ./prank.sh eval-rescore fpocket.ds                                       -out_subdir TEST/TESTS
+    test ./prank.sh eval-rescore concavity.ds                                     -out_subdir TEST/TESTS
 
     test ./prank.sh traineval -t fpocket.ds -e test.ds       -loop 1 -fail_fast 1 -out_subdir TEST/TESTS
     test ./prank.sh crossval  fpocket.ds  -folds 4           -loop 1 -fail_fast 1 -out_subdir TEST/TESTS
@@ -143,17 +145,17 @@ quick() {
     test ./prank.sh traineval -t fpocket.ds -e test.ds -loop 1 -fail_fast 1 -tessellation 1 -train_tessellation 3 -out_subdir TEST/TESTS
 
     # test export_points feature
-    test $FASTER predict -f distro/test_data/1fbl.pdb -export_points 1 -export_points_format csv.gz     -out_subdir TEST/TESTS
+    test $BURST predict -f distro/test_data/1fbl.pdb -export_points 1 -export_points_format csv.gz     -out_subdir TEST/TESTS
 
     # test export-points command (no model)
-    test $FASTER export-points -f distro/test_data/1fbl.pdb -export_points_format csv.gz                -out_subdir TEST/TESTS
+    test $BURST export-points -f distro/test_data/1fbl.pdb -export_points_format csv.gz                -out_subdir TEST/TESTS
 
     # test pocket grid + descriptors + PyMOL viz (all three exports in one go)
-    test $FASTER predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -export_pocket_descriptors 1 -vis_pocket_grid 1     -out_subdir TEST/TESTS
+    test $BURST predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -export_pocket_descriptors 1 -vis_pocket_grid 1     -out_subdir TEST/TESTS
 
     # cofactors feature smoke test
-    test $FASTER predict -f distro/test_data/liganated/1t7qa.pdb -cofactors COA                         -out_subdir TEST/TESTS
-    test $FASTER analyze cofactors -f distro/test_data/liganated/1t7qa.pdb                              -out_subdir TEST/TESTS
+    test $BURST predict -f distro/test_data/liganated/1t7qa.pdb -cofactors COA                         -out_subdir TEST/TESTS
+    test $BURST analyze cofactors -f distro/test_data/liganated/1t7qa.pdb                              -out_subdir TEST/TESTS
 
 }
 
@@ -166,14 +168,14 @@ basic() {
     title RUNNING BASIC TESTS
 
     # -fail_fast 0 because of missing ligands
-    test $FASTER eval-predict chen11.ds                              -c config/train-default                        -out_subdir TEST/TESTS
-    test $FASTER eval-predict 'joined(mlig).ds'                      -c config/train-default                        -out_subdir TEST/TESTS
+    test ./prank.sh eval-predict chen11.ds                              -c config/train-default                        -out_subdir TEST/TESTS
+    test ./prank.sh eval-predict 'joined(mlig).ds'                      -c config/train-default                        -out_subdir TEST/TESTS
     test ./prank.sh traineval -t chen11-fpocket.ds -e chen11-fpocket.ds -c config/train-default  -loop 1  -fail_fast 1 -out_subdir TEST/TESTS
     test ./prank.sh traineval -t chen11-fpocket.ds -e 'joined(mlig).ds' -c config/train-default  -loop 1  -fail_fast 0 -out_subdir TEST/TESTS
     test ./prank.sh crossval chen11-fpocket.ds                          -c config/train-default  -loop 1  -fail_fast 1 -out_subdir TEST/TESTS
 
-    #test $FASTER eval-predict mlig-joined.ds   -c config/train-default -visualizations 1 -tessellation 3 -l VISUALIZATIONS_TES3 -c config/train-default -out_subdir TEST/TESTS
-    #test $FASTER eval-predict mlig-joined.ds   -c config/train-default -visualizations 1  -l VISUALIZATIONS                     -c config/train-default -out_subdir TEST/TESTS
+    #test ./prank.sh eval-predict mlig-joined.ds   -c config/train-default -visualizations 1 -tessellation 3 -l VISUALIZATIONS_TES3 -c config/train-default -out_subdir TEST/TESTS
+    #test ./prank.sh eval-predict mlig-joined.ds   -c config/train-default -visualizations 1  -l VISUALIZATIONS                     -c config/train-default -out_subdir TEST/TESTS
 }
 
 # test prediction on all datasets
@@ -181,15 +183,15 @@ predict() {
 
    title PREDICTIONS ON ALL DATASETS
 
-   test $FASTER predict joined.ds          -c config/test-default    -out_subdir TEST/PREDICT
-   test $FASTER predict holo4k.ds          -c config/test-default    -out_subdir TEST/PREDICT
-   test $FASTER predict coach420.ds        -c config/test-default    -out_subdir TEST/PREDICT
-   test $FASTER predict ah4h.holoraw.ds    -c config/test-default    -out_subdir TEST/PREDICT
+   test ./prank.sh predict joined.ds          -c config/test-default    -out_subdir TEST/PREDICT
+   test ./prank.sh predict holo4k.ds          -c config/test-default    -out_subdir TEST/PREDICT
+   test ./prank.sh predict coach420.ds        -c config/test-default    -out_subdir TEST/PREDICT
+   test ./prank.sh predict ah4h.holoraw.ds    -c config/test-default    -out_subdir TEST/PREDICT
 
-   test $FASTER predict chen11.ds          -c config/test-default    -out_subdir TEST/PREDICT
-   test $FASTER predict fptrain.ds         -c config/test-default    -out_subdir TEST/PREDICT
-   test $FASTER predict 'joined(mlig).ds'  -c config/test-default    -out_subdir TEST/PREDICT
-   test $FASTER predict 'holo4k(mlig).ds'  -c config/test-default    -out_subdir TEST/PREDICT
+   test ./prank.sh predict chen11.ds          -c config/test-default    -out_subdir TEST/PREDICT
+   test ./prank.sh predict fptrain.ds         -c config/test-default    -out_subdir TEST/PREDICT
+   test ./prank.sh predict 'joined(mlig).ds'  -c config/test-default    -out_subdir TEST/PREDICT
+   test ./prank.sh predict 'holo4k(mlig).ds'  -c config/test-default    -out_subdir TEST/PREDICT
 
 }
 
@@ -199,15 +201,15 @@ predict() {
 #
 #   title PREDICTIONS WITH FLATTENED FOREST
 #
-#   test $FASTER predict joined.ds         -c config/test-default  -rf_flatten 1  -rf_flatten_target FlatBinaryForest -out_subdir TEST/PREDICT_FLATTENED
-#   test $FASTER predict holo4k.ds         -c config/test-default  -rf_flatten 1  -rf_flatten_target LegacyFlatBinaryForest -out_subdir TEST/PREDICT_FLATTENED
-#   test $FASTER predict coach420.ds       -c config/test-default  -rf_flatten 1  -rf_flatten_target ShortFlatBinaryForest -out_subdir TEST/PREDICT_FLATTENED
-#   test $FASTER predict ah4h.holoraw.ds   -c config/test-default  -rf_flatten 1  -rf_flatten_target SuperShortLegacyFlatBinaryForest -out_subdir TEST/PREDICT_FLATTENED
+#   test ./prank.sh predict joined.ds         -c config/test-default  -rf_flatten 1  -rf_flatten_target FlatBinaryForest -out_subdir TEST/PREDICT_FLATTENED
+#   test ./prank.sh predict holo4k.ds         -c config/test-default  -rf_flatten 1  -rf_flatten_target LegacyFlatBinaryForest -out_subdir TEST/PREDICT_FLATTENED
+#   test ./prank.sh predict coach420.ds       -c config/test-default  -rf_flatten 1  -rf_flatten_target ShortFlatBinaryForest -out_subdir TEST/PREDICT_FLATTENED
+#   test ./prank.sh predict ah4h.holoraw.ds   -c config/test-default  -rf_flatten 1  -rf_flatten_target SuperShortLegacyFlatBinaryForest -out_subdir TEST/PREDICT_FLATTENED
 #
-#   test $FASTER predict chen11.ds         -c config/test-default  -rf_flatten 1  -rf_flatten_target FlatBinaryForest -out_subdir TEST/PREDICT_FLATTENED
-#   test $FASTER predict fptrain.ds        -c config/test-default  -rf_flatten 1  -rf_flatten_target FlatBinaryForest -out_subdir TEST/PREDICT_FLATTENED
-#   test $FASTER predict 'joined(mlig).ds' -c config/test-default  -rf_flatten 1  -rf_flatten_target InterleavedBfsForest -out_subdir TEST/PREDICT_FLATTENED
-#   test $FASTER predict 'holo4k(mlig).ds' -c config/test-default  -rf_flatten 1  -rf_flatten_target InterleavedBfsForest -out_subdir TEST/PREDICT_FLATTENED
+#   test ./prank.sh predict chen11.ds         -c config/test-default  -rf_flatten 1  -rf_flatten_target FlatBinaryForest -out_subdir TEST/PREDICT_FLATTENED
+#   test ./prank.sh predict fptrain.ds        -c config/test-default  -rf_flatten 1  -rf_flatten_target FlatBinaryForest -out_subdir TEST/PREDICT_FLATTENED
+#   test ./prank.sh predict 'joined(mlig).ds' -c config/test-default  -rf_flatten 1  -rf_flatten_target InterleavedBfsForest -out_subdir TEST/PREDICT_FLATTENED
+#   test ./prank.sh predict 'holo4k(mlig).ds' -c config/test-default  -rf_flatten 1  -rf_flatten_target InterleavedBfsForest -out_subdir TEST/PREDICT_FLATTENED
 #
 #}
 
@@ -216,15 +218,15 @@ conservation() {
 
    title PREDICTIONS USING CONSERVATION
 
-   test $FASTER predict joined.ds   -c config/test-conservation -conservation_dirs 'joined/conservation/hmm/scores'   -fail_fast 0 -log_cases 1  -out_subdir TEST/CONSERVATION
-   test $FASTER predict coach420.ds -c config/test-conservation -conservation_dirs 'coach420/conservation/hmm/scores' -fail_fast 0 -log_cases 1  -out_subdir TEST/CONSERVATION
-   test $FASTER predict holo4k.ds   -c config/test-conservation -conservation_dirs 'holo4k/conservation/hmm/scores'   -fail_fast 0 -log_cases 1  -out_subdir TEST/CONSERVATION
+   test ./prank.sh predict joined.ds   -c config/test-conservation -conservation_dirs 'joined/conservation/hmm/scores'   -fail_fast 0 -log_cases 1  -out_subdir TEST/CONSERVATION
+   test ./prank.sh predict coach420.ds -c config/test-conservation -conservation_dirs 'coach420/conservation/hmm/scores' -fail_fast 0 -log_cases 1  -out_subdir TEST/CONSERVATION
+   test ./prank.sh predict holo4k.ds   -c config/test-conservation -conservation_dirs 'holo4k/conservation/hmm/scores'   -fail_fast 0 -log_cases 1  -out_subdir TEST/CONSERVATION
 
    title EVALUATING PREDICTIONS USING CONSERVATION
 
-   test $FASTER eval-predict joined.ds   -c config/test-conservation -conservation_dirs 'joined/conservation/hmm/scores'   -fail_fast 0 -log_cases 1  -out_subdir TEST/CONSERVATION
-   test $FASTER eval-predict coach420.ds -c config/test-conservation -conservation_dirs 'coach420/conservation/hmm/scores' -fail_fast 0 -log_cases 1  -out_subdir TEST/CONSERVATION
-   test $FASTER eval-predict holo4k.ds   -c config/test-conservation -conservation_dirs 'holo4k/conservation/hmm/scores'   -fail_fast 0 -log_cases 1  -out_subdir TEST/CONSERVATION
+   test ./prank.sh eval-predict joined.ds   -c config/test-conservation -conservation_dirs 'joined/conservation/hmm/scores'   -fail_fast 0 -log_cases 1  -out_subdir TEST/CONSERVATION
+   test ./prank.sh eval-predict coach420.ds -c config/test-conservation -conservation_dirs 'coach420/conservation/hmm/scores' -fail_fast 0 -log_cases 1  -out_subdir TEST/CONSERVATION
+   test ./prank.sh eval-predict holo4k.ds   -c config/test-conservation -conservation_dirs 'holo4k/conservation/hmm/scores'   -fail_fast 0 -log_cases 1  -out_subdir TEST/CONSERVATION
 
    title TRAIN/EVAL USING CONSERVATION
 
@@ -241,10 +243,10 @@ eval_predict() {
 
     title EVALUATING PREDICTIONS ON MAIN DATASETS
 
-    test $FASTER eval-predict joined.ds       -c config/test-default    -out_subdir TEST/EVAL
-    test $FASTER eval-predict coach420.ds     -c config/test-default    -out_subdir TEST/EVAL
-    test $FASTER eval-predict holo4k.ds       -c config/test-default    -out_subdir TEST/EVAL
-    # test $FASTER predict ah4h.holoraw.ds      -c config/test-default    -out_subdir TEST/PREDICT
+    test ./prank.sh eval-predict joined.ds       -c config/test-default    -out_subdir TEST/EVAL
+    test ./prank.sh eval-predict coach420.ds     -c config/test-default    -out_subdir TEST/EVAL
+    test ./prank.sh eval-predict holo4k.ds       -c config/test-default    -out_subdir TEST/EVAL
+    # test ./prank.sh predict ah4h.holoraw.ds      -c config/test-default    -out_subdir TEST/PREDICT
     
 }
 
@@ -253,11 +255,11 @@ eval_predict_flattened() {
 
     title EVALUATING PREDICTIONS WITH FLATTENED FOREST
 
-    test $FASTER eval-predict joined.ds       -c config/test-default  -rf_flatten 1 -rf_flatten_target FlatBinaryForest  -out_subdir TEST/EVAL_FLATTENED
-    test $FASTER eval-predict coach420.ds     -c config/test-default  -rf_flatten 1 -rf_flatten_target FlatBinaryForest  -out_subdir TEST/EVAL_FLATTENED
-    test $FASTER eval-predict holo4k.ds       -c config/test-default  -rf_flatten 1 -rf_flatten_target FlatBinaryForest  -out_subdir TEST/EVAL_FLATTENED -l FlatBinaryForest
+    test ./prank.sh eval-predict joined.ds       -c config/test-default  -rf_flatten 1 -rf_flatten_target FlatBinaryForest  -out_subdir TEST/EVAL_FLATTENED
+    test ./prank.sh eval-predict coach420.ds     -c config/test-default  -rf_flatten 1 -rf_flatten_target FlatBinaryForest  -out_subdir TEST/EVAL_FLATTENED
+    test ./prank.sh eval-predict holo4k.ds       -c config/test-default  -rf_flatten 1 -rf_flatten_target FlatBinaryForest  -out_subdir TEST/EVAL_FLATTENED -l FlatBinaryForest
 
-    test $FASTER eval-predict holo4k.ds       -c config/test-default  -rf_flatten 1 -rf_flatten_target NativePanamaForest  -out_subdir TEST/EVAL_FLATTENED_NATIVE
+    test ./prank.sh eval-predict holo4k.ds       -c config/test-default  -rf_flatten 1 -rf_flatten_target NativePanamaForest  -out_subdir TEST/EVAL_FLATTENED_NATIVE
 }
 
 
@@ -270,7 +272,7 @@ eval_predict_flattened() {
 #                     (Int16LeafSoaLegacyFlatBinaryForest).
 # All forest variants pass -rf_flatten 1 so each run pays the flatten cost -- a fair timing comparison
 # (the int16 variant is ranking-equivalent to legacy, safe with the default threshold).
-# Uses ./prank.sh (big heap + full JIT, -threads 16), NOT prank_faster: holo4k is large and this is
+# Uses ./prank.sh (big heap + full JIT, -threads 16), NOT prank_burst: holo4k is large and this is
 # a heavy compute benchmark -- same rationale as surface_strategies/pocket_grid_bench. Not in all().
 quick_compare() {
 
@@ -311,19 +313,19 @@ eval_predict_uop() {
 
     title EVALUATING PREDICTIONS ON MAIN DATASETS
 
-    test $FASTER eval-predict joined.ds       -c config/test-default  -use_only_positive_score 1  -out_subdir TEST/EVAL_UOP
-    test $FASTER eval-predict holo4k.ds       -c config/test-default  -use_only_positive_score 1  -out_subdir TEST/EVAL_UOP
-    test $FASTER eval-predict coach420.ds     -c config/test-default  -use_only_positive_score 1  -out_subdir TEST/EVAL_UOP
-    # test $FASTER predict ah4h.holoraw.ds      -c config/test-default    -out_subdir TEST/PREDICT
+    test ./prank.sh eval-predict joined.ds       -c config/test-default  -use_only_positive_score 1  -out_subdir TEST/EVAL_UOP
+    test ./prank.sh eval-predict holo4k.ds       -c config/test-default  -use_only_positive_score 1  -out_subdir TEST/EVAL_UOP
+    test ./prank.sh eval-predict coach420.ds     -c config/test-default  -use_only_positive_score 1  -out_subdir TEST/EVAL_UOP
+    # test ./prank.sh predict ah4h.holoraw.ds      -c config/test-default    -out_subdir TEST/PREDICT
 
 }
 eval_predict_flattened_uop() {
 
     title EVALUATING PREDICTIONS WITH FLATTENED FOREST
 
-    test $FASTER eval-predict joined.ds       -c config/test-default  -rf_flatten 1 -use_only_positive_score 1 -out_subdir TEST/EVAL_FLATTENED_UOP
-    test $FASTER eval-predict holo4k.ds       -c config/test-default  -rf_flatten 1 -use_only_positive_score 1 -out_subdir TEST/EVAL_FLATTENED_UOP
-    test $FASTER eval-predict coach420.ds     -c config/test-default  -rf_flatten 1 -use_only_positive_score 1 -out_subdir TEST/EVAL_FLATTENED_UOP
+    test ./prank.sh eval-predict joined.ds       -c config/test-default  -rf_flatten 1 -use_only_positive_score 1 -out_subdir TEST/EVAL_FLATTENED_UOP
+    test ./prank.sh eval-predict holo4k.ds       -c config/test-default  -rf_flatten 1 -use_only_positive_score 1 -out_subdir TEST/EVAL_FLATTENED_UOP
+    test ./prank.sh eval-predict coach420.ds     -c config/test-default  -rf_flatten 1 -use_only_positive_score 1 -out_subdir TEST/EVAL_FLATTENED_UOP
 
 }
 
@@ -335,9 +337,9 @@ eval_predict_alphafold() {
 
     title EVALUATING PREDICTIONS ON MAIN DATASETS
 
-    test $FASTER eval-predict joined.ds       -c config/test-alphafold    -out_subdir TEST/EVAL_ALPHAFOLD
-    test $FASTER eval-predict holo4k.ds       -c config/test-alphafold    -out_subdir TEST/EVAL_ALPHAFOLD
-    test $FASTER eval-predict coach420.ds     -c config/test-alphafold    -out_subdir TEST/EVAL_ALPHAFOLD
+    test ./prank.sh eval-predict joined.ds       -c config/test-alphafold    -out_subdir TEST/EVAL_ALPHAFOLD
+    test ./prank.sh eval-predict holo4k.ds       -c config/test-alphafold    -out_subdir TEST/EVAL_ALPHAFOLD
+    test ./prank.sh eval-predict coach420.ds     -c config/test-alphafold    -out_subdir TEST/EVAL_ALPHAFOLD
 
 }
 
@@ -347,44 +349,44 @@ eval_predict_rest() {
     title EVALUATING PREDICTIONS ON OTHER DATASETS
 
     # train=test for the reference
-    test $FASTER eval-predict chen11.ds           -c config/test-default   -out_subdir TEST/EVAL
-    test $FASTER eval-predict fptrain.ds          -c config/test-default   -out_subdir TEST/EVAL
+    test ./prank.sh eval-predict chen11.ds           -c config/test-default   -out_subdir TEST/EVAL
+    test ./prank.sh eval-predict fptrain.ds          -c config/test-default   -out_subdir TEST/EVAL
 
     # -fail_fast 0 because of missing ligands
-    test $FASTER eval-predict 'joined(mlig).ds'   -c config/test-default  -fail_fast 0  -out_subdir TEST/EVAL
-    test $FASTER eval-predict 'coach420(mlig).ds' -c config/test-default  -fail_fast 0  -out_subdir TEST/EVAL
-    test $FASTER eval-predict 'holo4k(mlig).ds'   -c config/test-default  -fail_fast 0  -out_subdir TEST/EVAL
+    test ./prank.sh eval-predict 'joined(mlig).ds'   -c config/test-default  -fail_fast 0  -out_subdir TEST/EVAL
+    test ./prank.sh eval-predict 'coach420(mlig).ds' -c config/test-default  -fail_fast 0  -out_subdir TEST/EVAL
+    test ./prank.sh eval-predict 'holo4k(mlig).ds'   -c config/test-default  -fail_fast 0  -out_subdir TEST/EVAL
 
 
 
-    #test $FASTER eval-predict mlig-moad-nr.ds -c config/test-default -log_cases 1  -fail_fast 1  -out_subdir TEST/EVAL
-    #test $FASTER eval-predict moad-nr.ds      -c config/test-default -log_cases 1  -fail_fast 1  -out_subdir TEST/EVAL
+    #test ./prank.sh eval-predict mlig-moad-nr.ds -c config/test-default -log_cases 1  -fail_fast 1  -out_subdir TEST/EVAL
+    #test ./prank.sh eval-predict moad-nr.ds      -c config/test-default -log_cases 1  -fail_fast 1  -out_subdir TEST/EVAL
 }
 
 eval_rescore() {
 
     title EVALUATING RESCORING ON ALL DATASETS
 
-    test $FASTER eval-rescore joined-fpocket.ds           -c config/test-default  -out_subdir TEST/EVAL
-    test $FASTER eval-rescore coach420-fpocket.ds         -c config/test-default  -out_subdir TEST/EVAL
-    test $FASTER eval-rescore holo4k-fpocket.ds           -c config/test-default  -out_subdir TEST/EVAL
+    test ./prank.sh eval-rescore joined-fpocket.ds           -c config/test-default  -out_subdir TEST/EVAL
+    test ./prank.sh eval-rescore coach420-fpocket.ds         -c config/test-default  -out_subdir TEST/EVAL
+    test ./prank.sh eval-rescore holo4k-fpocket.ds           -c config/test-default  -out_subdir TEST/EVAL
                                                              
-    test $FASTER eval-rescore chen11-fpocket.ds           -c config/test-default  -out_subdir TEST/EVAL
+    test ./prank.sh eval-rescore chen11-fpocket.ds           -c config/test-default  -out_subdir TEST/EVAL
 
     # -fail_fast 0 because of missing ligands
-    test $FASTER eval-rescore 'joined(mlig)-fpocket.ds'   -c config/test-default  -fail_fast 0  -out_subdir TEST/EVAL
-    test $FASTER eval-rescore 'coach420(mlig)-fpocket.ds' -c config/test-default  -fail_fast 0  -out_subdir TEST/EVAL
-    test $FASTER eval-rescore 'holo4k(mlig)-fpocket.ds'   -c config/test-default  -fail_fast 0  -out_subdir TEST/EVAL
+    test ./prank.sh eval-rescore 'joined(mlig)-fpocket.ds'   -c config/test-default  -fail_fast 0  -out_subdir TEST/EVAL
+    test ./prank.sh eval-rescore 'coach420(mlig)-fpocket.ds' -c config/test-default  -fail_fast 0  -out_subdir TEST/EVAL
+    test ./prank.sh eval-rescore 'holo4k(mlig)-fpocket.ds'   -c config/test-default  -fail_fast 0  -out_subdir TEST/EVAL
 }
 
 fpocket_rescore() {
 
     title "EVALUATING FPOCKT-RESCORE (RUNNING FPOCKET AD-HOC)"
 
-    test $FASTER fpocket-rescore joined.ds           -c config/test-default  -out_subdir TEST/RESCORE
-    test $FASTER fpocket-rescore coach420.ds         -c config/test-default  -out_subdir TEST/RESCORE
-    test $FASTER fpocket-rescore holo4k.ds           -c config/test-default  -out_subdir TEST/RESCORE
-    test $FASTER fpocket-rescore chen11.ds           -c config/test-default  -out_subdir TEST/RESCORE
+    test ./prank.sh fpocket-rescore joined.ds           -c config/test-default  -out_subdir TEST/RESCORE
+    test ./prank.sh fpocket-rescore coach420.ds         -c config/test-default  -out_subdir TEST/RESCORE
+    test ./prank.sh fpocket-rescore holo4k.ds           -c config/test-default  -out_subdir TEST/RESCORE
+    test ./prank.sh fpocket-rescore chen11.ds           -c config/test-default  -out_subdir TEST/RESCORE
 
 }
 
@@ -428,34 +430,34 @@ analyze() {
 
     title PRINT/ANALYZE COMMANDS
 
-    test $FASTER print features     -c config/train-default  -out_subdir TEST/ANALYZE
-    test $FASTER print model-info   -c config/train-default  -out_subdir TEST/ANALYZE
+    test ./prank.sh print features     -c config/train-default  -out_subdir TEST/ANALYZE
+    test ./prank.sh print model-info   -c config/train-default  -out_subdir TEST/ANALYZE
 
-    test $FASTER analyze fasta-masked -f distro/test_data/liganated/1aaxa.pdb -c config/train-default  -out_subdir TEST/ANALYZE
+    test $BURST analyze fasta-masked -f distro/test_data/liganated/1aaxa.pdb -c config/train-default  -out_subdir TEST/ANALYZE
 
-    test $FASTER analyze fasta-masked chen11.ds              -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
-    test $FASTER analyze fasta-masked joined.ds              -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
-    test $FASTER analyze fasta-masked coach420.ds            -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
-    test $FASTER analyze fasta-masked holo4k.ds              -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
+    test ./prank.sh analyze fasta-masked chen11.ds              -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
+    test ./prank.sh analyze fasta-masked joined.ds              -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
+    test ./prank.sh analyze fasta-masked coach420.ds            -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
+    test ./prank.sh analyze fasta-masked holo4k.ds              -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
 
-    test $FASTER analyze residues              joined.ds     -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
-    test $FASTER analyze binding-residues      joined.ds     -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
-    test $FASTER analyze labeled-residues      joined.ds     -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
-    test $FASTER analyze chains                joined.ds     -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
-    test $FASTER analyze chains-residues       joined.ds     -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
-    test $FASTER analyze aa-propensities       joined.ds     -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
-    test $FASTER analyze aa-surf-seq-duplets   joined.ds     -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
-    test $FASTER analyze aa-surf-seq-triplets  joined.ds     -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
-    test $FASTER analyze fasta-raw             joined.ds     -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
+    test ./prank.sh analyze residues              joined.ds     -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
+    test ./prank.sh analyze binding-residues      joined.ds     -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
+    test ./prank.sh analyze labeled-residues      joined.ds     -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
+    test ./prank.sh analyze chains                joined.ds     -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
+    test ./prank.sh analyze chains-residues       joined.ds     -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
+    test ./prank.sh analyze aa-propensities       joined.ds     -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
+    test ./prank.sh analyze aa-surf-seq-duplets   joined.ds     -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
+    test ./prank.sh analyze aa-surf-seq-triplets  joined.ds     -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
+    test ./prank.sh analyze fasta-raw             joined.ds     -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
 
-    test $FASTER analyze residues              holo4k.ds     -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
-    test $FASTER analyze binding-residues      holo4k.ds     -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
-    test $FASTER analyze labeled-residues      holo4k.ds     -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
-    test $FASTER analyze chains                holo4k.ds     -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
-    test $FASTER analyze chains-residues       holo4k.ds     -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
+    test ./prank.sh analyze residues              holo4k.ds     -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
+    test ./prank.sh analyze binding-residues      holo4k.ds     -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
+    test ./prank.sh analyze labeled-residues      holo4k.ds     -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
+    test ./prank.sh analyze chains                holo4k.ds     -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
+    test ./prank.sh analyze chains-residues       holo4k.ds     -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
 
-    test $FASTER analyze cofactors             joined.ds     -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
-    test $FASTER analyze cofactors             holo4k.ds     -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
+    test ./prank.sh analyze cofactors             joined.ds     -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
+    test ./prank.sh analyze cofactors             holo4k.ds     -c config/train-default  -cache_datasets 0   -out_subdir TEST/ANALYZE
 
 }
 
@@ -468,9 +470,9 @@ surface_strategies() {
 
     local datasets="${@:-chen11.ds fptrain.ds coach420.ds joined.ds holo4k.ds}"
 
-    # Uses ./prank.sh (local-env big heap + full C2/Graal JIT), NOT prank_faster: this is a heavy
+    # Uses ./prank.sh (local-env big heap + full C2/Graal JIT), NOT prank_burst: this is a heavy
     # compute benchmark, and the command pre-loads all proteins (large datasets like holo4k need the
-    # big heap). prank_faster's C1-only JIT and 2g heap would undersell the optimized strategies.
+    # big heap). prank_burst's C1-only JIT and 2g heap would undersell the optimized strategies.
     for ds in $datasets; do
         test ./prank.sh analyze surface-strategies $ds  -c config/test-default  -threads 16  -cache_datasets 0  -out_subdir TEST/SURFACE_STRATEGIES
     done
@@ -520,30 +522,30 @@ cofactors() {
     title COFACTORS FEATURE
 
     # analyze cofactors: survey mode (no -cofactors) on file + dataset
-    test $FASTER analyze cofactors -f distro/test_data/liganated/1t7qa.pdb                                          -out_subdir TEST/COFACTORS
-    test $FASTER analyze cofactors test.ds                                                                          -out_subdir TEST/COFACTORS
+    test $BURST analyze cofactors -f distro/test_data/liganated/1t7qa.pdb                                          -out_subdir TEST/COFACTORS
+    test ./prank.sh analyze cofactors test.ds                                                                          -out_subdir TEST/COFACTORS
 
     # analyze cofactors: dry-run mode with each specifier form
-    test $FASTER analyze cofactors -f distro/test_data/liganated/1t7qa.pdb -cofactors COA                           -out_subdir TEST/COFACTORS
-    test $FASTER analyze cofactors -f distro/test_data/liganated/1t7qa.pdb -cofactors 'COA[atom_id:9551]'           -out_subdir TEST/COFACTORS
-    test $FASTER analyze cofactors -f distro/test_data/liganated/1t7qa.pdb -cofactors 'COA[contact_res_ids:A_K258]' -out_subdir TEST/COFACTORS
-    test $FASTER analyze cofactors -f distro/test_data/liganated/1t7qa.pdb -cofactors ZZZZ                          -out_subdir TEST/COFACTORS
+    test $BURST analyze cofactors -f distro/test_data/liganated/1t7qa.pdb -cofactors COA                           -out_subdir TEST/COFACTORS
+    test $BURST analyze cofactors -f distro/test_data/liganated/1t7qa.pdb -cofactors 'COA[atom_id:9551]'           -out_subdir TEST/COFACTORS
+    test $BURST analyze cofactors -f distro/test_data/liganated/1t7qa.pdb -cofactors 'COA[contact_res_ids:A_K258]' -out_subdir TEST/COFACTORS
+    test $BURST analyze cofactors -f distro/test_data/liganated/1t7qa.pdb -cofactors ZZZZ                          -out_subdir TEST/COFACTORS
 
     # predict with cofactors
-    test $FASTER predict -f distro/test_data/liganated/1t7qa.pdb -cofactors COA                                     -out_subdir TEST/COFACTORS
+    test $BURST predict -f distro/test_data/liganated/1t7qa.pdb -cofactors COA                                     -out_subdir TEST/COFACTORS
     # R18: never-present specifier must be a no-op (drop-in safety)
-    test $FASTER predict -f distro/test_data/1fbl.pdb -cofactors ZZZZ                                               -out_subdir TEST/COFACTORS
+    test $BURST predict -f distro/test_data/1fbl.pdb -cofactors ZZZZ                                               -out_subdir TEST/COFACTORS
     # R22: case-mismatched name must still match (parser auto-uppercases the group name)
-    test $FASTER predict -f distro/test_data/liganated/1t7qa.pdb -cofactors coa                                     -out_subdir TEST/COFACTORS
+    test $BURST predict -f distro/test_data/liganated/1t7qa.pdb -cofactors coa                                     -out_subdir TEST/COFACTORS
     # R22: contact_res_ids must survive comma-splitting (bracket-aware parse)
-    test $FASTER predict -f distro/test_data/liganated/1t7qa.pdb -cofactors 'COA[contact_res_ids:A_K258,A_D246]'    -out_subdir TEST/COFACTORS
+    test $BURST predict -f distro/test_data/liganated/1t7qa.pdb -cofactors 'COA[contact_res_ids:A_K258,A_D246]'    -out_subdir TEST/COFACTORS
 
     # knobs
-    test $FASTER predict -f distro/test_data/liganated/1t7qa.pdb -cofactors COA -cofactor_max_protein_dist 0        -out_subdir TEST/COFACTORS
-    test $FASTER predict -f distro/test_data/liganated/1t7qa.pdb -cofactors COA -vis_highlight_cofactors 0          -out_subdir TEST/COFACTORS
+    test $BURST predict -f distro/test_data/liganated/1t7qa.pdb -cofactors COA -cofactor_max_protein_dist 0        -out_subdir TEST/COFACTORS
+    test $BURST predict -f distro/test_data/liganated/1t7qa.pdb -cofactors COA -vis_highlight_cofactors 0          -out_subdir TEST/COFACTORS
 
     # R19: aa_mapping collision warning (MSE is in built-in minimal mapping)
-    test $FASTER predict -f distro/test_data/1fbl.pdb -cofactors MSE                                                -out_subdir TEST/COFACTORS
+    test $BURST predict -f distro/test_data/1fbl.pdb -cofactors MSE                                                -out_subdir TEST/COFACTORS
 
     # drop-in safety benchmark
     test ./benchmark/cofactors_dropin_safety.sh distro/test_data/concavity.ds
@@ -560,32 +562,32 @@ cofactors_full() {
     fi
 
     # --- A. predict on the demo dataset, both formats ---
-    test $FASTER predict cofactors-demo-cif.ds          -dataset_base_dir $DS_BASE  -fail_fast 1  -out_subdir TEST/COF_DS
-    test $FASTER predict cofactors-demo-pdb.ds          -dataset_base_dir $DS_BASE  -fail_fast 1  -out_subdir TEST/COF_DS
+    test ./prank.sh predict cofactors-demo-cif.ds          -dataset_base_dir $DS_BASE  -fail_fast 1  -out_subdir TEST/COF_DS
+    test ./prank.sh predict cofactors-demo-pdb.ds          -dataset_base_dir $DS_BASE  -fail_fast 1  -out_subdir TEST/COF_DS
 
     # --- B. baseline runs (no cofactors column) for delta comparison ---
-    test $FASTER predict cofactors-demo-baseline-cif.ds -dataset_base_dir $DS_BASE  -fail_fast 1  -out_subdir TEST/COF_DS
-    test $FASTER predict cofactors-demo-baseline-pdb.ds -dataset_base_dir $DS_BASE  -fail_fast 1  -out_subdir TEST/COF_DS
+    test ./prank.sh predict cofactors-demo-baseline-cif.ds -dataset_base_dir $DS_BASE  -fail_fast 1  -out_subdir TEST/COF_DS
+    test ./prank.sh predict cofactors-demo-baseline-pdb.ds -dataset_base_dir $DS_BASE  -fail_fast 1  -out_subdir TEST/COF_DS
 
     # --- C. analyze cofactors on the demo dataset (matches.csv, summary) ---
-    test $FASTER analyze cofactors cofactors-demo-cif.ds          -dataset_base_dir $DS_BASE  -fail_fast 1  -out_subdir TEST/COF_DS
-    test $FASTER analyze cofactors cofactors-demo-baseline-cif.ds -dataset_base_dir $DS_BASE  -fail_fast 1  -out_subdir TEST/COF_DS
+    test ./prank.sh analyze cofactors cofactors-demo-cif.ds          -dataset_base_dir $DS_BASE  -fail_fast 1  -out_subdir TEST/COF_DS
+    test ./prank.sh analyze cofactors cofactors-demo-baseline-cif.ds -dataset_base_dir $DS_BASE  -fail_fast 1  -out_subdir TEST/COF_DS
 
     # --- D. combined with -aa_mapping pdbfixer (R19 collision on TPQ family) ---
-    test $FASTER predict cofactors-demo-cif.ds -dataset_base_dir $DS_BASE  -aa_mapping pdbfixer  -out_subdir TEST/COF_DS
+    test ./prank.sh predict cofactors-demo-cif.ds -dataset_base_dir $DS_BASE  -aa_mapping pdbfixer  -out_subdir TEST/COF_DS
 
     # --- E. visualization spot-check on two well-known cofactors ---
-    test $FASTER predict -f $DS_BASE/structures/pdb/4REK.pdb -cofactors FAD  -visualizations 1  -out_subdir TEST/COF_DS
-    test $FASTER predict -f $DS_BASE/structures/pdb/4BEU.pdb -cofactors PLP  -visualizations 1  -out_subdir TEST/COF_DS
+    test $BURST predict -f $DS_BASE/structures/pdb/4REK.pdb -cofactors FAD  -visualizations 1  -out_subdir TEST/COF_DS
+    test $BURST predict -f $DS_BASE/structures/pdb/4BEU.pdb -cofactors PLP  -visualizations 1  -out_subdir TEST/COF_DS
 
     # --- F. export-points (cofactor atoms must propagate into the points output) ---
-    test $FASTER export-points -f $DS_BASE/structures/pdb/4REK.pdb -cofactors FAD  -out_subdir TEST/COF_DS
+    test $BURST export-points -f $DS_BASE/structures/pdb/4REK.pdb -cofactors FAD  -out_subdir TEST/COF_DS
 
     # --- G. full-dataset stress test (523 structures across 43 cofactor codes) ---
     if [ -f "$DS_BASE/cofactors-full.ds" ]; then
-        test $FASTER predict cofactors-full.ds          -dataset_base_dir $DS_BASE  -fail_fast 1  -out_subdir TEST/COF_DS_FULL
-        test $FASTER predict cofactors-full-baseline.ds -dataset_base_dir $DS_BASE  -fail_fast 1  -out_subdir TEST/COF_DS_FULL
-        test $FASTER analyze cofactors cofactors-full.ds -dataset_base_dir $DS_BASE  -fail_fast 1  -out_subdir TEST/COF_DS_FULL
+        test ./prank.sh predict cofactors-full.ds          -dataset_base_dir $DS_BASE  -fail_fast 1  -out_subdir TEST/COF_DS_FULL
+        test ./prank.sh predict cofactors-full-baseline.ds -dataset_base_dir $DS_BASE  -fail_fast 1  -out_subdir TEST/COF_DS_FULL
+        test ./prank.sh analyze cofactors cofactors-full.ds -dataset_base_dir $DS_BASE  -fail_fast 1  -out_subdir TEST/COF_DS_FULL
     fi
 }
 
@@ -594,39 +596,39 @@ aa_mapping() {
     title AA MAPPING FEATURE
 
     # bundled pdbfixer preset (87-entry table)
-    test $FASTER predict -f distro/test_data/1fbl.pdb                                                                       -aa_mapping pdbfixer    -out_subdir TEST/AA_MAPPING
+    test $BURST predict -f distro/test_data/1fbl.pdb                                                                       -aa_mapping pdbfixer    -out_subdir TEST/AA_MAPPING
 
     # dataset paths (predict / rescore / eval)
-    test $FASTER predict test.ds                                                                                            -aa_mapping pdbfixer    -out_subdir TEST/AA_MAPPING
-    test $FASTER rescore fpocket.ds                                                                                         -aa_mapping pdbfixer    -out_subdir TEST/AA_MAPPING
-    test $FASTER eval-predict -f distro/test_data/liganated/1aaxa.pdb                                                       -aa_mapping pdbfixer    -out_subdir TEST/AA_MAPPING
+    test ./prank.sh predict test.ds                                                                                            -aa_mapping pdbfixer    -out_subdir TEST/AA_MAPPING
+    test ./prank.sh rescore fpocket.ds                                                                                         -aa_mapping pdbfixer    -out_subdir TEST/AA_MAPPING
+    test $BURST eval-predict -f distro/test_data/liganated/1aaxa.pdb                                                       -aa_mapping pdbfixer    -out_subdir TEST/AA_MAPPING
 }
 
 transform() {
 
   title TRANSFORM COMMANDS
 
-  test $FASTER transform reduce-to-chains  -f distro/test_data/2W83.cif     -chains A                                                  # output: <out_dir>/2W83_A.cif
-  test $FASTER transform reduce-to-chains  -f distro/test_data/2W83.pdb     -chains A                                                  # output: <out_dir>/2W83_A.pdb
-  test $FASTER transform reduce-to-chains  -f distro/test_data/2W83.cif.gz  -chains A,B                                                # output: <out_dir>/2W83_A,B.cif.gz
-  test $FASTER transform reduce-to-chains  -f distro/test_data/2W83.cif.gz  -chains A,B  -out_file distro/test_output/2W83_A,B.cif.gz  # output: distro/test_output/2W83_A,B.cif.gz
-  test $FASTER transform reduce-to-chains  -f distro/test_data/2W83.cif     -chains keep                                               # output: <out_dir>/2W83.cif
-  test $FASTER transform reduce-to-chains  -f distro/test_data/2W83.cif     -chains keep -out_format pdb.gz                            # output: <out_dir>/2W83.pdb.gz
-  test $FASTER transform reduce-to-chains  -f distro/test_data/2W83.cif     -chains all                                                # output: <out_dir>/2W83_all.cif
-  test $FASTER transform reduce-to-chains  -f distro/test_data/2W83.cif     -chains A    -out_format keep                              # output: <out_dir>/2W83_A.cif
-  test $FASTER transform reduce-to-chains  -f distro/test_data/2W83.cif.gz  -chains A    -out_format pdb.gz                            # output: <out_dir>/2W83_A.pdb.gz
-  test $FASTER transform reduce-to-chains  -f distro/test_data/2W83.pdb.gz  -chains A,B  -out_format cif                               # output: <out_dir>/2W83_A,B.cif
+  test $BURST transform reduce-to-chains  -f distro/test_data/2W83.cif     -chains A                                                  # output: <out_dir>/2W83_A.cif
+  test $BURST transform reduce-to-chains  -f distro/test_data/2W83.pdb     -chains A                                                  # output: <out_dir>/2W83_A.pdb
+  test $BURST transform reduce-to-chains  -f distro/test_data/2W83.cif.gz  -chains A,B                                                # output: <out_dir>/2W83_A,B.cif.gz
+  test $BURST transform reduce-to-chains  -f distro/test_data/2W83.cif.gz  -chains A,B  -out_file distro/test_output/2W83_A,B.cif.gz  # output: distro/test_output/2W83_A,B.cif.gz
+  test $BURST transform reduce-to-chains  -f distro/test_data/2W83.cif     -chains keep                                               # output: <out_dir>/2W83.cif
+  test $BURST transform reduce-to-chains  -f distro/test_data/2W83.cif     -chains keep -out_format pdb.gz                            # output: <out_dir>/2W83.pdb.gz
+  test $BURST transform reduce-to-chains  -f distro/test_data/2W83.cif     -chains all                                                # output: <out_dir>/2W83_all.cif
+  test $BURST transform reduce-to-chains  -f distro/test_data/2W83.cif     -chains A    -out_format keep                              # output: <out_dir>/2W83_A.cif
+  test $BURST transform reduce-to-chains  -f distro/test_data/2W83.cif.gz  -chains A    -out_format pdb.gz                            # output: <out_dir>/2W83_A.pdb.gz
+  test $BURST transform reduce-to-chains  -f distro/test_data/2W83.pdb.gz  -chains A,B  -out_format cif                               # output: <out_dir>/2W83_A,B.cif
 
-  test $FASTER transform reduce-to-chains  -f distro/test_data/1fbl.cif     -chains A
-  test $FASTER transform reduce-to-chains  -f distro/test_data/1fbl.pdb     -chains A
-  test $FASTER transform reduce-to-chains  -f distro/test_data/1fbl.cif.gz  -chains A,B
-  test $FASTER transform reduce-to-chains  -f distro/test_data/1fbl.cif.gz  -chains A,B  -out_file distro/test_output/1fbl_A,B.cif.gz
-  test $FASTER transform reduce-to-chains  -f distro/test_data/1fbl.cif     -chains keep
-  test $FASTER transform reduce-to-chains  -f distro/test_data/1fbl.cif     -chains keep -out_format pdb.gz
-  test $FASTER transform reduce-to-chains  -f distro/test_data/1fbl.cif     -chains all
-  test $FASTER transform reduce-to-chains  -f distro/test_data/1fbl.cif     -chains A    -out_format keep
-  test $FASTER transform reduce-to-chains  -f distro/test_data/1fbl.cif.gz  -chains A    -out_format pdb.gz
-  test $FASTER transform reduce-to-chains  -f distro/test_data/1fbl.pdb.gz  -chains A,B  -out_format cif
+  test $BURST transform reduce-to-chains  -f distro/test_data/1fbl.cif     -chains A
+  test $BURST transform reduce-to-chains  -f distro/test_data/1fbl.pdb     -chains A
+  test $BURST transform reduce-to-chains  -f distro/test_data/1fbl.cif.gz  -chains A,B
+  test $BURST transform reduce-to-chains  -f distro/test_data/1fbl.cif.gz  -chains A,B  -out_file distro/test_output/1fbl_A,B.cif.gz
+  test $BURST transform reduce-to-chains  -f distro/test_data/1fbl.cif     -chains keep
+  test $BURST transform reduce-to-chains  -f distro/test_data/1fbl.cif     -chains keep -out_format pdb.gz
+  test $BURST transform reduce-to-chains  -f distro/test_data/1fbl.cif     -chains all
+  test $BURST transform reduce-to-chains  -f distro/test_data/1fbl.cif     -chains A    -out_format keep
+  test $BURST transform reduce-to-chains  -f distro/test_data/1fbl.cif.gz  -chains A    -out_format pdb.gz
+  test $BURST transform reduce-to-chains  -f distro/test_data/1fbl.pdb.gz  -chains A,B  -out_format cif
 
 }
 
@@ -634,33 +636,33 @@ export_points() {
 
     title EXPORT POINTS FEATURE
 
-    test $FASTER predict -f distro/test_data/1fbl.pdb -export_points 1 -export_points_format csv       -out_subdir TEST/EXPORT_POINTS
-    test $FASTER predict -f distro/test_data/1fbl.pdb -export_points 1 -export_points_format csv.gz    -out_subdir TEST/EXPORT_POINTS
-    test $FASTER predict -f distro/test_data/1fbl.pdb -export_points 1 -export_points_format csv.zst   -out_subdir TEST/EXPORT_POINTS
-    test $FASTER predict -f distro/test_data/1fbl.pdb -export_points 1 -export_points_format arrow     -out_subdir TEST/EXPORT_POINTS
-    test $FASTER predict -f distro/test_data/1fbl.pdb -export_points 1 -export_points_format arrow.gz  -out_subdir TEST/EXPORT_POINTS
-    test $FASTER predict -f distro/test_data/1fbl.pdb -export_points 1 -export_points_format arrow.zst -out_subdir TEST/EXPORT_POINTS
-    test $FASTER predict -f distro/test_data/1fbl.pdb -export_points 1 -export_points_format parquet   -out_subdir TEST/EXPORT_POINTS
+    test $BURST predict -f distro/test_data/1fbl.pdb -export_points 1 -export_points_format csv       -out_subdir TEST/EXPORT_POINTS
+    test $BURST predict -f distro/test_data/1fbl.pdb -export_points 1 -export_points_format csv.gz    -out_subdir TEST/EXPORT_POINTS
+    test $BURST predict -f distro/test_data/1fbl.pdb -export_points 1 -export_points_format csv.zst   -out_subdir TEST/EXPORT_POINTS
+    test $BURST predict -f distro/test_data/1fbl.pdb -export_points 1 -export_points_format arrow     -out_subdir TEST/EXPORT_POINTS
+    test $BURST predict -f distro/test_data/1fbl.pdb -export_points 1 -export_points_format arrow.gz  -out_subdir TEST/EXPORT_POINTS
+    test $BURST predict -f distro/test_data/1fbl.pdb -export_points 1 -export_points_format arrow.zst -out_subdir TEST/EXPORT_POINTS
+    test $BURST predict -f distro/test_data/1fbl.pdb -export_points 1 -export_points_format parquet   -out_subdir TEST/EXPORT_POINTS
 
     # export-points command (no model needed)
-    test $FASTER export-points -f distro/test_data/2W83.cif -extra_features 'surface_protrusion' -export_points_format arrow -out_subdir TEST/EXPORT_POINTS
-    test $FASTER export-points -f distro/test_data/1fbl.pdb                                              -out_subdir TEST/EXPORT_POINTS
-    test $FASTER export-points -f distro/test_data/1fbl.pdb -export_points_format csv.gz                 -out_subdir TEST/EXPORT_POINTS
-    test $FASTER export-points -f distro/test_data/1fbl.pdb -export_points_format csv.zst                -out_subdir TEST/EXPORT_POINTS
-    test $FASTER export-points -f distro/test_data/1fbl.pdb -export_points_format arrow                  -out_subdir TEST/EXPORT_POINTS
-    test $FASTER export-points -f distro/test_data/1fbl.pdb -export_points_format arrow.gz               -out_subdir TEST/EXPORT_POINTS
-    test $FASTER export-points -f distro/test_data/1fbl.pdb -export_points_format arrow.zst              -out_subdir TEST/EXPORT_POINTS
-    test $FASTER export-points -f distro/test_data/1fbl.pdb -export_points_format parquet                -out_subdir TEST/EXPORT_POINTS
+    test $BURST export-points -f distro/test_data/2W83.cif -extra_features 'surface_protrusion' -export_points_format arrow -out_subdir TEST/EXPORT_POINTS
+    test $BURST export-points -f distro/test_data/1fbl.pdb                                              -out_subdir TEST/EXPORT_POINTS
+    test $BURST export-points -f distro/test_data/1fbl.pdb -export_points_format csv.gz                 -out_subdir TEST/EXPORT_POINTS
+    test $BURST export-points -f distro/test_data/1fbl.pdb -export_points_format csv.zst                -out_subdir TEST/EXPORT_POINTS
+    test $BURST export-points -f distro/test_data/1fbl.pdb -export_points_format arrow                  -out_subdir TEST/EXPORT_POINTS
+    test $BURST export-points -f distro/test_data/1fbl.pdb -export_points_format arrow.gz               -out_subdir TEST/EXPORT_POINTS
+    test $BURST export-points -f distro/test_data/1fbl.pdb -export_points_format arrow.zst              -out_subdir TEST/EXPORT_POINTS
+    test $BURST export-points -f distro/test_data/1fbl.pdb -export_points_format parquet                -out_subdir TEST/EXPORT_POINTS
 
     # predict/rescore on datasets
-    test $FASTER predict chen11.ds            -c config/test-default  -export_points 1 -export_points_format arrow.zst -out_subdir TEST/EXPORT_POINTS
-    test $FASTER rescore coach420-fpocket.ds  -c config/test-default  -export_points 1 -export_points_format csv.zst   -out_subdir TEST/EXPORT_POINTS
-    test $FASTER rescore chen11-fpocket.ds    -c config/test-default  -export_points 1 -export_points_format parquet   -out_subdir TEST/EXPORT_POINTS
+    test ./prank.sh predict chen11.ds            -c config/test-default  -export_points 1 -export_points_format arrow.zst -out_subdir TEST/EXPORT_POINTS
+    test ./prank.sh rescore coach420-fpocket.ds  -c config/test-default  -export_points 1 -export_points_format csv.zst   -out_subdir TEST/EXPORT_POINTS
+    test ./prank.sh rescore chen11-fpocket.ds    -c config/test-default  -export_points 1 -export_points_format parquet   -out_subdir TEST/EXPORT_POINTS
 
     # export-points command  on datasets
-    test $FASTER export-points chen11.ds            -c config/test-default  -export_points_format arrow.zst -out_subdir TEST/EXPORT_POINTS
-    test $FASTER export-points coach420-fpocket.ds  -c config/test-default  -export_points_format csv.zst   -out_subdir TEST/EXPORT_POINTS
-    test $FASTER export-points chen11-fpocket.ds    -c config/test-default  -export_points_format parquet   -out_subdir TEST/EXPORT_POINTS
+    test ./prank.sh export-points chen11.ds            -c config/test-default  -export_points_format arrow.zst -out_subdir TEST/EXPORT_POINTS
+    test ./prank.sh export-points coach420-fpocket.ds  -c config/test-default  -export_points_format csv.zst   -out_subdir TEST/EXPORT_POINTS
+    test ./prank.sh export-points chen11-fpocket.ds    -c config/test-default  -export_points_format parquet   -out_subdir TEST/EXPORT_POINTS
 }
 
 pocket_grid() {
@@ -668,73 +670,73 @@ pocket_grid() {
     title POCKET GRID + DESCRIPTORS EXPORT
 
     # Basic combinations on a single file
-    test $FASTER predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1                                                                                            -out_subdir TEST/POCKET_GRID
-    test $FASTER predict -f distro/test_data/1fbl.pdb -export_pocket_descriptors 1                                                                                     -out_subdir TEST/POCKET_GRID
-    test $FASTER predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -export_pocket_descriptors 1                                                               -out_subdir TEST/POCKET_GRID
-    test $FASTER predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -vis_pocket_grid 1                                                                  -out_subdir TEST/POCKET_GRID
+    test $BURST predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1                                                                                            -out_subdir TEST/POCKET_GRID
+    test $BURST predict -f distro/test_data/1fbl.pdb -export_pocket_descriptors 1                                                                                     -out_subdir TEST/POCKET_GRID
+    test $BURST predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -export_pocket_descriptors 1                                                               -out_subdir TEST/POCKET_GRID
+    test $BURST predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -vis_pocket_grid 1                                                                  -out_subdir TEST/POCKET_GRID
 
     # All grid file formats
-    test $FASTER predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_format csv                                                                    -out_subdir TEST/POCKET_GRID
-    test $FASTER predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_format csv.gz                                                                 -out_subdir TEST/POCKET_GRID
-    test $FASTER predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_format csv.zst                                                                -out_subdir TEST/POCKET_GRID
-    test $FASTER predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_format arrow                                                                  -out_subdir TEST/POCKET_GRID
-    test $FASTER predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_format arrow.gz                                                               -out_subdir TEST/POCKET_GRID
-    test $FASTER predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_format arrow.zst                                                              -out_subdir TEST/POCKET_GRID
-    test $FASTER predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_format parquet                                                                -out_subdir TEST/POCKET_GRID
+    test $BURST predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_format csv                                                                    -out_subdir TEST/POCKET_GRID
+    test $BURST predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_format csv.gz                                                                 -out_subdir TEST/POCKET_GRID
+    test $BURST predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_format csv.zst                                                                -out_subdir TEST/POCKET_GRID
+    test $BURST predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_format arrow                                                                  -out_subdir TEST/POCKET_GRID
+    test $BURST predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_format arrow.gz                                                               -out_subdir TEST/POCKET_GRID
+    test $BURST predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_format arrow.zst                                                              -out_subdir TEST/POCKET_GRID
+    test $BURST predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_format parquet                                                                -out_subdir TEST/POCKET_GRID
 
     # Full descriptor menu (all seven shipped, including principal_moments)
-    test $FASTER predict -f distro/test_data/1fbl.pdb -export_pocket_descriptors 1 -pocket_descriptors 'volume,sphericity,radius_of_gyration,num_residues,num_surface_atoms,num_grid_points,principal_moments'  -out_subdir TEST/POCKET_GRID
+    test $BURST predict -f distro/test_data/1fbl.pdb -export_pocket_descriptors 1 -pocket_descriptors 'volume,sphericity,radius_of_gyration,num_residues,num_surface_atoms,num_grid_points,principal_moments'  -out_subdir TEST/POCKET_GRID
 
     # Per-grid-point descriptors (volsite, volsite_smooth), each at least once
-    test $FASTER predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_point_descriptors 'volsite'                                                       -out_subdir TEST/POCKET_GRID
-    test $FASTER predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_point_descriptors 'volsite_smooth'                                                -out_subdir TEST/POCKET_GRID
-    test $FASTER predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_point_descriptors 'volsite,volsite_smooth'                                        -out_subdir TEST/POCKET_GRID
+    test $BURST predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_point_descriptors 'volsite'                                                       -out_subdir TEST/POCKET_GRID
+    test $BURST predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_point_descriptors 'volsite_smooth'                                                -out_subdir TEST/POCKET_GRID
+    test $BURST predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_point_descriptors 'volsite,volsite_smooth'                                        -out_subdir TEST/POCKET_GRID
 
     # Per-grid-point descriptor knobs
-    test $FASTER predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_point_descriptors 'volsite'        -pocket_grid_volsite_radius 5.0                 -out_subdir TEST/POCKET_GRID
-    test $FASTER predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_point_descriptors 'volsite_smooth' -pocket_grid_volsite_sigma 1.5                  -out_subdir TEST/POCKET_GRID
+    test $BURST predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_point_descriptors 'volsite'        -pocket_grid_volsite_radius 5.0                 -out_subdir TEST/POCKET_GRID
+    test $BURST predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_point_descriptors 'volsite_smooth' -pocket_grid_volsite_sigma 1.5                  -out_subdir TEST/POCKET_GRID
 
     # Full combo: per-pocket descriptors + per-grid-point descriptors + viz in one run
-    test $FASTER predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -export_pocket_descriptors 1 -pocket_grid_point_descriptors 'volsite,volsite_smooth' -vis_pocket_grid 1   -out_subdir TEST/POCKET_GRID
+    test $BURST predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -export_pocket_descriptors 1 -pocket_grid_point_descriptors 'volsite,volsite_smooth' -vis_pocket_grid 1   -out_subdir TEST/POCKET_GRID
 
     # Grid-free descriptors only — exercises the grid-build short-circuit (no
     # "PocketGrid built" log line should appear for these invocations).
-    test $FASTER predict -f distro/test_data/1fbl.pdb -export_pocket_descriptors 1 -pocket_descriptors 'num_residues,num_surface_atoms' -export_pocket_grid 0           -out_subdir TEST/POCKET_GRID
+    test $BURST predict -f distro/test_data/1fbl.pdb -export_pocket_descriptors 1 -pocket_descriptors 'num_residues,num_surface_atoms' -export_pocket_grid 0           -out_subdir TEST/POCKET_GRID
 
     # Fill strategies (only morph_closing and none are valid; convex_hull is rejected at startup)
-    test $FASTER predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_fill morph_closing                                                            -out_subdir TEST/POCKET_GRID
-    test $FASTER predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_fill none                                                                     -out_subdir TEST/POCKET_GRID
+    test $BURST predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_fill morph_closing                                                            -out_subdir TEST/POCKET_GRID
+    test $BURST predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_fill none                                                                     -out_subdir TEST/POCKET_GRID
 
     # Knobs: include unassigned, tighter spacing, larger reach, custom atom buffer
-    test $FASTER predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_include_unassigned 1                                                          -out_subdir TEST/POCKET_GRID
-    test $FASTER predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_spacing 0.75                                                                  -out_subdir TEST/POCKET_GRID
-    test $FASTER predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_max_dist 8                                                                    -out_subdir TEST/POCKET_GRID
-    test $FASTER predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_atom_buffer 1.0                                                               -out_subdir TEST/POCKET_GRID
+    test $BURST predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_include_unassigned 1                                                          -out_subdir TEST/POCKET_GRID
+    test $BURST predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_spacing 0.75                                                                  -out_subdir TEST/POCKET_GRID
+    test $BURST predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_max_dist 8                                                                    -out_subdir TEST/POCKET_GRID
+    test $BURST predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_atom_buffer 1.0                                                               -out_subdir TEST/POCKET_GRID
 
     # Validation: fail-fast checks (each must exit non-zero — uses test_expect_fail so the green [OK] is shown only when the command fails as designed)
-    test_expect_fail $FASTER predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_fill cubist                                                                   -out_subdir TEST/POCKET_GRID
-    test_expect_fail $FASTER predict -f distro/test_data/1fbl.pdb -export_pocket_descriptors 1 -pocket_descriptors 'not_a_descriptor'                                              -out_subdir TEST/POCKET_GRID
-    test_expect_fail $FASTER predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_point_descriptors 'not_a_descriptor'                                         -out_subdir TEST/POCKET_GRID
-    test_expect_fail $FASTER predict -f distro/test_data/1fbl.pdb -vis_pocket_grid 1                                                                                        -out_subdir TEST/POCKET_GRID
+    test_expect_fail $BURST predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_fill cubist                                                                   -out_subdir TEST/POCKET_GRID
+    test_expect_fail $BURST predict -f distro/test_data/1fbl.pdb -export_pocket_descriptors 1 -pocket_descriptors 'not_a_descriptor'                                              -out_subdir TEST/POCKET_GRID
+    test_expect_fail $BURST predict -f distro/test_data/1fbl.pdb -export_pocket_grid 1 -pocket_grid_point_descriptors 'not_a_descriptor'                                         -out_subdir TEST/POCKET_GRID
+    test_expect_fail $BURST predict -f distro/test_data/1fbl.pdb -vis_pocket_grid 1                                                                                        -out_subdir TEST/POCKET_GRID
 
     # Rescore + dataset paths
-    test $FASTER rescore  fpocket.ds  -export_pocket_grid 1 -export_pocket_descriptors 1                                                                               -out_subdir TEST/POCKET_GRID
-    test $FASTER predict  test.ds     -export_pocket_grid 1 -export_pocket_descriptors 1 -pocket_grid_format parquet                                                   -out_subdir TEST/POCKET_GRID
+    test ./prank.sh rescore  fpocket.ds  -export_pocket_grid 1 -export_pocket_descriptors 1                                                                               -out_subdir TEST/POCKET_GRID
+    test ./prank.sh predict  test.ds     -export_pocket_grid 1 -export_pocket_descriptors 1 -pocket_grid_format parquet                                                   -out_subdir TEST/POCKET_GRID
 
     # Cofactor interaction — cofactor atoms must show up in the grid's exclusion zone
-    test $FASTER predict -f distro/test_data/liganated/1t7qa.pdb -cofactors COA -export_pocket_grid 1 -export_pocket_descriptors 1                                     -out_subdir TEST/POCKET_GRID
+    test $BURST predict -f distro/test_data/liganated/1t7qa.pdb -cofactors COA -export_pocket_grid 1 -export_pocket_descriptors 1                                     -out_subdir TEST/POCKET_GRID
 
 
     # Single timed run per dataset at the env default thread count (PRANK_LOCALENV_PARAMS,
     # typically -threads 16). No -threads override here on purpose — measures real
     # end-to-end wall time on each dataset rather than isolating per-protein cost.
-    test $FASTER predict joined.ds     -c config/test-default  -export_pocket_grid 1 -export_pocket_descriptors 1  -out_subdir TEST/POCKET_GRID
-    test $FASTER predict holo4k.ds     -c config/test-default  -export_pocket_grid 1 -export_pocket_descriptors 1  -out_subdir TEST/POCKET_GRID
-    test $FASTER predict coach420.ds   -c config/test-default  -export_pocket_grid 1 -export_pocket_descriptors 1  -out_subdir TEST/POCKET_GRID
-    test $FASTER predict chen11.ds     -c config/test-default  -export_pocket_grid 1 -export_pocket_descriptors 1  -out_subdir TEST/POCKET_GRID
-    #test $FASTER predict fptrain.ds    -c config/test-default  -export_pocket_grid 1 -export_pocket_descriptors 1  -out_subdir TEST/POCKET_GRID
+    test ./prank.sh predict joined.ds     -c config/test-default  -export_pocket_grid 1 -export_pocket_descriptors 1  -out_subdir TEST/POCKET_GRID
+    test ./prank.sh predict holo4k.ds     -c config/test-default  -export_pocket_grid 1 -export_pocket_descriptors 1  -out_subdir TEST/POCKET_GRID
+    test ./prank.sh predict coach420.ds   -c config/test-default  -export_pocket_grid 1 -export_pocket_descriptors 1  -out_subdir TEST/POCKET_GRID
+    test ./prank.sh predict chen11.ds     -c config/test-default  -export_pocket_grid 1 -export_pocket_descriptors 1  -out_subdir TEST/POCKET_GRID
+    #test ./prank.sh predict fptrain.ds    -c config/test-default  -export_pocket_grid 1 -export_pocket_descriptors 1  -out_subdir TEST/POCKET_GRID
 
-    test $FASTER predict fptrain.ds    -c config/test-default  -export_pocket_grid 1 -export_pocket_descriptors 1 -visualizations 1 -vis_pocket_grid 1  -out_subdir TEST/POCKET_GRID
+    test ./prank.sh predict fptrain.ds    -c config/test-default  -export_pocket_grid 1 -export_pocket_descriptors 1 -visualizations 1 -vis_pocket_grid 1  -out_subdir TEST/POCKET_GRID
 
 
 }
@@ -743,11 +745,11 @@ pocket_grid_bench() {
 
     title POCKET GRID BENCHMARK
 
-    test $FASTER predict joined.ds     -c config/test-default  -export_pocket_grid 1 -export_pocket_descriptors 1  -out_subdir TEST/POCKET_GRID/BENCH
-    test $FASTER predict holo4k.ds     -c config/test-default  -export_pocket_grid 1 -export_pocket_descriptors 1  -out_subdir TEST/POCKET_GRID/BENCH
-    test $FASTER predict coach420.ds   -c config/test-default  -export_pocket_grid 1 -export_pocket_descriptors 1  -out_subdir TEST/POCKET_GRID/BENCH
-    test $FASTER predict chen11.ds     -c config/test-default  -export_pocket_grid 1 -export_pocket_descriptors 1  -out_subdir TEST/POCKET_GRID/BENCH
-    test $FASTER predict fptrain.ds    -c config/test-default  -export_pocket_grid 1 -export_pocket_descriptors 1  -out_subdir TEST/POCKET_GRID/BENCH
+    test ./prank.sh predict joined.ds     -c config/test-default  -export_pocket_grid 1 -export_pocket_descriptors 1  -out_subdir TEST/POCKET_GRID/BENCH
+    test ./prank.sh predict holo4k.ds     -c config/test-default  -export_pocket_grid 1 -export_pocket_descriptors 1  -out_subdir TEST/POCKET_GRID/BENCH
+    test ./prank.sh predict coach420.ds   -c config/test-default  -export_pocket_grid 1 -export_pocket_descriptors 1  -out_subdir TEST/POCKET_GRID/BENCH
+    test ./prank.sh predict chen11.ds     -c config/test-default  -export_pocket_grid 1 -export_pocket_descriptors 1  -out_subdir TEST/POCKET_GRID/BENCH
+    test ./prank.sh predict fptrain.ds    -c config/test-default  -export_pocket_grid 1 -export_pocket_descriptors 1  -out_subdir TEST/POCKET_GRID/BENCH
 
 }
 
@@ -760,10 +762,10 @@ pocket_grid_long() {
     PG_DESCRIPTORS='volume,sphericity,radius_of_gyration,num_residues,num_surface_atoms,num_grid_points,principal_moments'
     PG_POINT_DESCRIPTORS='volsite,volsite_smooth'
 
-    test $FASTER predict joined.ds     -c config/test-default  -export_pocket_grid 1 -export_pocket_descriptors 1 -pocket_descriptors "$PG_DESCRIPTORS" -pocket_grid_point_descriptors "$PG_POINT_DESCRIPTORS" -visualizations 1 -vis_pocket_grid 1  -out_subdir TEST/POCKET_GRID_LONG
-    test $FASTER predict holo4k.ds     -c config/test-default  -export_pocket_grid 1 -export_pocket_descriptors 1 -pocket_descriptors "$PG_DESCRIPTORS" -pocket_grid_point_descriptors "$PG_POINT_DESCRIPTORS" -visualizations 1 -vis_pocket_grid 1  -out_subdir TEST/POCKET_GRID_LONG
-    test $FASTER predict coach420.ds   -c config/test-default  -export_pocket_grid 1 -export_pocket_descriptors 1 -pocket_descriptors "$PG_DESCRIPTORS" -pocket_grid_point_descriptors "$PG_POINT_DESCRIPTORS" -visualizations 1 -vis_pocket_grid 1  -out_subdir TEST/POCKET_GRID_LONG
-    test $FASTER predict chen11.ds     -c config/test-default  -export_pocket_grid 1 -export_pocket_descriptors 1 -pocket_descriptors "$PG_DESCRIPTORS" -pocket_grid_point_descriptors "$PG_POINT_DESCRIPTORS" -visualizations 1 -vis_pocket_grid 1  -out_subdir TEST/POCKET_GRID_LONG
+    test ./prank.sh predict joined.ds     -c config/test-default  -export_pocket_grid 1 -export_pocket_descriptors 1 -pocket_descriptors "$PG_DESCRIPTORS" -pocket_grid_point_descriptors "$PG_POINT_DESCRIPTORS" -visualizations 1 -vis_pocket_grid 1  -out_subdir TEST/POCKET_GRID_LONG
+    test ./prank.sh predict holo4k.ds     -c config/test-default  -export_pocket_grid 1 -export_pocket_descriptors 1 -pocket_descriptors "$PG_DESCRIPTORS" -pocket_grid_point_descriptors "$PG_POINT_DESCRIPTORS" -visualizations 1 -vis_pocket_grid 1  -out_subdir TEST/POCKET_GRID_LONG
+    test ./prank.sh predict coach420.ds   -c config/test-default  -export_pocket_grid 1 -export_pocket_descriptors 1 -pocket_descriptors "$PG_DESCRIPTORS" -pocket_grid_point_descriptors "$PG_POINT_DESCRIPTORS" -visualizations 1 -vis_pocket_grid 1  -out_subdir TEST/POCKET_GRID_LONG
+    test ./prank.sh predict chen11.ds     -c config/test-default  -export_pocket_grid 1 -export_pocket_descriptors 1 -pocket_descriptors "$PG_DESCRIPTORS" -pocket_grid_point_descriptors "$PG_POINT_DESCRIPTORS" -visualizations 1 -vis_pocket_grid 1  -out_subdir TEST/POCKET_GRID_LONG
 
 }
 

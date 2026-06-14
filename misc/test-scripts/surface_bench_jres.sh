@@ -7,7 +7,7 @@
 # dataset, under every (JVM x threads) combination, and prints a combined summary
 # (wall_s, surf_median_ms, avg_points, reduction%, Matoms/s) plus the per-run CSVs.
 #
-# Uses ./prank.sh (local-env big heap + full JIT), NOT prank_faster: this is a heavy
+# Uses ./prank.sh (local-env big heap + full JIT), NOT prank_burst: this is a heavy
 # compute benchmark that pre-loads all proteins, so it wants the big heap and the
 # JVM's real top-tier JIT (C2 on stock HotSpot, Graal on GraalVM, per the chosen JVM).
 #

@@ -9,7 +9,7 @@
 #
 # Modes (combine freely):
 #   default      per-protein timing table + average, for one launcher
-#   --compare    run BOTH distro/prank and distro/prank_faster and show the speedup
+#   --compare    run BOTH distro/prank and distro/prank_burst and show the speedup
 #   --phases     print the startup phase breakdown (JVM -> config -> model -> work)
 #                with real per-line wall-clock timestamps, for one small protein
 #   --breakdown  DETAILED phase breakdown: a per-phase table (secs + %) plus a class-load
@@ -28,7 +28,7 @@
 # options:
 #   -r, --reps N        timed reps per protein (default 4, plus one untimed warmup)
 #   -l, --launcher CMD  launcher to benchmark (default: distro/prank)
-#       --compare       benchmark distro/prank vs distro/prank_faster
+#       --compare       benchmark distro/prank vs distro/prank_burst
 #       --phases        startup phase breakdown only
 #       --breakdown     detailed per-phase table + class-load census only
 #       --deep          with --breakdown: also run the expanded probes (histogram,
@@ -103,7 +103,7 @@ fi
 # Report the active JRE
 JAVACMD="$(bench_javacmd)"
 echo "JRE: $("$JAVACMD" -version 2>&1 | head -1) ${JAVA_HOME:+($JAVA_HOME)}"
-echo "Launcher(s): $([[ $COMPARE -eq 1 ]] && echo 'distro/prank vs distro/prank_faster' || echo "$LAUNCHER")"
+echo "Launcher(s): $([[ $COMPARE -eq 1 ]] && echo 'distro/prank vs distro/prank_burst' || echo "$LAUNCHER")"
 echo ""
 
 # --- helper: average wall time of one launcher over the protein set --------------
@@ -171,8 +171,8 @@ fi
 if [[ $COMPARE -eq 1 ]]; then
     echo "=== distro/prank (stock) ==="
     stock=$(bench_set "distro/prank")
-    echo "=== distro/prank_faster ==="
-    faster=$(bench_set "distro/prank_faster")
+    echo "=== distro/prank_burst ==="
+    faster=$(bench_set "distro/prank_burst")
     sp=$(awk "BEGIN{printf \"%.1f\", (1 - $faster/$stock)*100}")
     echo ""
     printf "AVERAGE  stock %.3fs   faster %.3fs   speedup %s%%\n" "$stock" "$faster" "$sp"

@@ -32,7 +32,7 @@
 #   ./misc/test-scripts/predict_breakdown.sh [protein] [-l launcher]
 #
 #   protein    .pdb/.cif path (default: a small protein from distro/test_data)
-#   -l CMD     launcher (default: distro/prank; use distro/prank_faster to see CDS/C1 effect)
+#   -l CMD     launcher (default: distro/prank; use distro/prank_burst to see CDS/C1 effect)
 #   --deep     also run the expanded probes (8)-(12) above (slower: extra JVM runs)
 #   -h         show this help
 #

@@ -6,7 +6,7 @@
 # wall-time table relative to the fastest, and verifies that predictions are
 # identical across all JREs (a JRE that changes results is a correctness bug).
 #
-# AppCDS archives are JVM-specific, so when benchmarking distro/prank_faster the
+# AppCDS archives are JVM-specific, so when benchmarking distro/prank_burst the
 # archive (distro/bin/p2rank-appcds.jsa) is removed and rebuilt for each JRE; the
 # original is restored on exit.
 #
@@ -21,7 +21,7 @@
 #
 # options:
 #   -r, --reps N        timed reps per protein (default 4, plus one untimed warmup)
-#   -l, --launcher CMD  launcher to benchmark (default: distro/prank_faster)
+#   -l, --launcher CMD  launcher to benchmark (default: distro/prank_burst)
 #       --proteins "a b c"   space-separated protein paths (default: 5-protein spread)
 #       --list          list available SDKMAN candidates and exit
 #   -h, --help          show this help
@@ -44,7 +44,7 @@ cd "$(dirname "${BASH_SOURCE[0]}")/../.." || exit 1   # repo root
 source misc/test-scripts/bench-common.sh
 
 REPS=4
-LAUNCHER="distro/prank_faster"
+LAUNCHER="distro/prank_burst"
 SPECS=()
 PROTEINS=("${BENCH_DEFAULT_PROTEINS[@]}")
 ARCHIVE="distro/bin/p2rank-appcds.jsa"
@@ -87,7 +87,7 @@ bench_jre() {
     local home="$1"; local tag="$2"
     export JAVA_HOME="$home"
     # faster launcher: each JRE needs its own AppCDS archive
-    [[ "$LAUNCHER" == *prank_faster ]] && rm -f "$ARCHIVE"
+    [[ "$LAUNCHER" == *prank_burst ]] && rm -f "$ARCHIVE"
     # warmup (also builds the archive)
     if ! $LAUNCHER predict -f "${PROTEINS[0]}" -o "$OUT/$tag" >/dev/null 2>&1; then echo FAIL; return; fi
     local total=0; local count=0

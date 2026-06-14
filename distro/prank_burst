@@ -1,9 +1,18 @@
 #!/usr/bin/env bash
 
 #
-# Faster drop-in replacement for ./prank
+# prank_burst -- a "burst" launcher: a drop-in replacement for ./prank tuned for
+# fast execution of very short runs, primarily prediction on a SINGLE protein
+# (predict / eval-predict / export-points / analyze / transform on one -f input file).
 #
-# Speedups over the stock launcher (measured on JDK 25, see below):
+# It trades peak throughput for the lowest possible startup + warmup cost, so it wins
+# exactly when the whole job is over in a few seconds and there is no time to amortize
+# JVM warmup. It is the WRONG tool for large multi-protein datasets or training: there
+# the C2 optimizing compiler and a bigger heap pay off, and ./prank.sh (local-env: big
+# heap + full JIT + threads) is faster -- use that instead. (Set PRANK_FULL_JIT=1 to
+# re-enable C2 here if you must push a long job through this script.)
+#
+# Speedups over the stock launcher on these short runs (measured on JDK 25, see below):
 #   1. AppCDS  - caches parsed/verified application classes (Groovy, BioJava, p2rank)
 #                in a shared archive, cutting class-loading + verification at startup.
 #                The archive is built automatically on the first run and reused after;
@@ -22,8 +31,8 @@
 # Heap stays at 2g: that keeps compressed oops enabled (heap < 32g), which is what lets
 # the JVM map its base CDS archive - a >32g heap silently disables CDS entirely.
 #
-# Override the heap with: JAVA_OPTS="-Xmx4g" ./prank_faster ...
-# Disable C1-only mode with: PRANK_FULL_JIT=1 ./prank_faster ...
+# Override the heap with: JAVA_OPTS="-Xmx4g" ./prank_burst ...
+# Disable C1-only mode with: PRANK_FULL_JIT=1 ./prank_burst ...
 #
 
 #
