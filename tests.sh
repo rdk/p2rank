@@ -9,5 +9,8 @@
 # ./tests.sh all     # comprehensive set of tests that include training an evaluation on real datasets
 #                    # datasets from https://github.com/rdk/p2rank-datasets have to be downloaded first
 #
+# ./tests.sh quick basic            # run several routines sequentially
+# ./tests.sh quick -threads 8       # append params to every p2rank invocation in the routine(s)
+#
 
-misc/test-scripts/testsets.sh $@
+misc/test-scripts/testsets.sh "$@"

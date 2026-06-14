@@ -14,7 +14,7 @@ development checkout.
 
 | script | what it does |
 |---|---|
-| `testsets.sh` | Named test routines (predict, eval, conservation, surfaces, ...). Run one routine: `./misc/test-scripts/testsets.sh <routine>`. |
+| `testsets.sh` | Named test routines (predict, eval, conservation, surfaces, ...). Run one or more sequentially, with optional params forwarded to every p2rank call (see [below](#testsetssh)). |
 | `surface_bench_jres.sh` | Benchmark `analyze surface-strategies` across JVMs x threading modes (see below). |
 | `predict_bench_jres.sh` | Compare `prank predict` wall time across chosen JREs, and verify predictions are identical across them. |
 | `predict_bench_matrix.sh` | Predict benchmark over a matrix of configurations. |
@@ -24,6 +24,46 @@ development checkout.
 | `eval_new_features.sh`, `eval_session_features.sh` | Feature-evaluation runs. |
 | `standard-benchmarks.sh`, `benchmark.sh` | Higher-level benchmark drivers. |
 | `bench-common.sh` | Shared helpers sourced by the `*_bench_jres.sh` scripts (JVM resolution, labels, usage). Not run directly. |
+
+## testsets.sh
+
+Runs named test routines, each a bash function in the script (`quick`, `basic`,
+`predict`, `conservation`, `surface_strategies`, ...).
+
+```bash
+./misc/test-scripts/testsets.sh <routine> [args...] [<routine> [args...]] ... [p2rank params...]
+```
+
+(`./tests.sh` at the repo root is a thin wrapper that forwards to this script.)
+
+- **Multiple routines** run sequentially, in the order listed:
+  ```bash
+  ./tests.sh quick basic predict
+  ```
+- **Extra p2rank params** are appended to every p2rank invocation, overriding the
+  per-command defaults (p2rank takes the last value). The routine list ends at the
+  first `-`-prefixed token, so no separator is needed:
+  ```bash
+  ./tests.sh quick basic -threads 8 -fail_fast 0
+  ```
+  They may also come from the `EXTRA` env var, which composes with the CLI ones:
+  ```bash
+  EXTRA="-log_cases 1" ./tests.sh quick -threads 4
+  ```
+- A few routines take **positional args** right after the routine name (an optional
+  dataset list, or `config label`):
+  ```bash
+  ./tests.sh surface_strategies coach420.ds holo4k.ds -threads 16
+  ./tests.sh traineval_config config/test-default MyLabel
+  ```
+
+> [!NOTE]
+> The routine list is split from the p2rank params at the first token starting
+> with `-`. So a routine's positional arg must not start with `-` (it would be
+> read as a param) and must not coincide with a routine name (it would start a new
+> routine). Dataset names (`*.ds`) and `config/...` paths are always safe; only
+> free-form labels need care. An explicit `--` may terminate the routine list but
+> is normally unnecessary.
 
 ## surface_bench_jres.sh
 

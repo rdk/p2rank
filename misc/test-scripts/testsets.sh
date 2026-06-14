@@ -2,8 +2,9 @@
 
 ###################################################################################################################
 
-ROUTINE=$1
-shift
+# Args are parsed near the bottom (the "run" section), after all routine
+# functions are defined -- so a token can be recognised as a routine name via
+# `declare -F`. See the usage comment there.
 
 TIMESTAMP=$(date +'%Y%m%d_%H%M%S')
 LOGDIR="local-logs/$TIMESTAMP"
@@ -49,7 +50,7 @@ function format_time {
 
 # test command and write exit code and running time
 test() {
-    CMD="$@"
+    CMD="$@ ${EXTRA_PARAMS[*]}"
 
     echo "${reset}testing command [${blue}$CMD${reset}]${reset}"
 
@@ -76,7 +77,7 @@ test() {
 # success criterion. Green [OK] means the command failed as expected; red
 # [ERROR] means it unexpectedly succeeded.
 test_expect_fail() {
-    CMD="$@"
+    CMD="$@ ${EXTRA_PARAMS[*]}"
 
     echo "${reset}testing command (expect fail) [${blue}$CMD${reset}]${reset}"
 
@@ -977,7 +978,24 @@ print_env() {
 ###################################################################################################################
 
 run() {
-    $ROUTINE $@
+    local routine="" tok
+    local -a args=()
+    for tok in "${ROUTINE_TOKENS[@]}"; do
+        if declare -F "$tok" > /dev/null; then
+            # a defined function starts a new routine; dispatch the previous one first
+            [[ -n "$routine" ]] && { title "ROUTINE: $routine ${args[*]}"; "$routine" "${args[@]}"; }
+            routine="$tok"; args=()
+        elif [[ -n "$routine" ]]; then
+            args+=("$tok")                       # positional arg for the current routine
+        else
+            echo "${red}unknown routine: '$tok'${reset}" >&2; exit 1
+        fi
+    done
+    if [[ -n "$routine" ]]; then
+        title "ROUTINE: $routine ${args[*]}"; "$routine" "${args[@]}"
+    else
+        echo "${red}no routine specified${reset}" >&2; exit 1
+    fi
 }
 
 rm -f $RUN_LOG
@@ -989,8 +1007,23 @@ xstart=`date +%s`
 
 print_env >> $SUMMARY_LOG
 
+# Parse args here, after all routine functions are defined:
+#   ./testsets.sh <routine> [args...] [<routine> [args...]] ... [p2rank params...]
+# One or more routines run sequentially (a token naming a function starts a new
+# routine; following non-option tokens are that routine's positional args, e.g.
+# datasets or config + label). The routine section ends at the first option-like
+# token (starting with `-`) or an explicit `--`; from there on, everything plus
+# $EXTRA is appended to every p2rank call (see test()) and overrides per-command
+# defaults. So just append the flags -- no separator needed:
+#   ./testsets.sh quick basic -threads 8 -fail_fast 0
+# `--` is only needed to force the split for the rare routine arg that starts with `-`.
+ROUTINE_TOKENS=()
+while [[ $# -gt 0 && "$1" != "--" && "$1" != -* ]]; do ROUTINE_TOKENS+=("$1"); shift; done
+[[ "$1" == "--" ]] && shift
+EXTRA_PARAMS=($EXTRA "$@")
+
 # colors are stripped from stream that goes to the file
-run $@ > >( tee >( sed 's/\x1B\[[0-9;]*[A-Za-z]//g' | sed 's/[\x01-\x1F\x7F]//g' | sed 's/(B//g' >> $SUMMARY_LOG ) )
+run > >( tee >( sed 's/\x1B\[[0-9;]*[A-Za-z]//g' | sed 's/[\x01-\x1F\x7F]//g' | sed 's/(B//g' >> $SUMMARY_LOG ) )
 
 
 xend=`date +%s`
