@@ -89,7 +89,9 @@ class ContactResiduesPositionFeature extends SasFeatureCalculator implements Par
 
                 Residue closestResOfType = residues.min { it.atoms.dist(sasPoint)  }
                 Atoms ratoms = closestResOfType.atoms
-                Atom Ca = closestResOfType.aminoAcid.getCA()
+                // residues are admitted on res.getAa() (corrected 3-letter code), which can resolve for
+                // modified/HETATM groups that are not BioJava AminoAcids; guard the CA lookup (distca falls back to distcenter below)
+                Atom Ca = closestResOfType.aminoAcid?.getCA()
 
                 count = residues.size()
                 distclosest = ratoms.dist(sasPoint)
