@@ -36,7 +36,7 @@ class MethylEnergyCloudSF extends AbstractMethylEnergyCloudSF {
 
         if (cloudPoints.size() == 0) {
             log.warn("No probe points found in cloud for SAS point, returning 0.0 energy")
-            return [0.0] as double[]
+            return new double[getHeader().size()]
         }
 
         // Build the score list without a Groovy closure (audit follow-up); StatSample's

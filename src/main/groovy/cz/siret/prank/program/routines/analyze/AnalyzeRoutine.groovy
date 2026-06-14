@@ -838,8 +838,20 @@ class AnalyzeRoutine extends Routine {
                     itemsWithoutSites.add(item.row)
                 }
                 double cutoff = params.ligand_protein_contact_distance
+                SiteCenterMethod centerMethod = SiteCenterMethod.parse(params.site_eval_center_method)
+                if (!centerMethod.supportedForLigandSites) {
+                    throw new PrankException("analyze binding-sites: site_eval_center_method='${centerMethod}' is not " +
+                            "supported for ligand-defined sites (it is only valid for explicitly defined sites). Use a " +
+                            "ligand-compatible method such as atoms_center_of_mass, sas_points_centroid, ca_atoms_centroid " +
+                            "or contact_atoms_centroid.")
+                }
                 for (Ligand lig : p.relevantLigands) {
                     Atom c = lig.centroid
+                    if (c == null) {
+                        throw new PrankException("analyze binding-sites: could not compute a binding-site center for " +
+                                "ligand '${lig.label}' in protein '${p.name}' using site_eval_center_method='${centerMethod}' " +
+                                "(method produced no center, e.g. no contact CA atoms). Use a different site_eval_center_method.")
+                    }
                     Atoms contactAtoms = p.proteinAtoms.cutoutShell(lig.atoms, cutoff)
                     List<Residue> contactResidues = p.residues.getDistinctForAtoms(contactAtoms)
 

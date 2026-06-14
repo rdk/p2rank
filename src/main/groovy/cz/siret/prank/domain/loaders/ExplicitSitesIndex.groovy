@@ -93,8 +93,16 @@ class ExplicitSitesIndex {
     private List<Residue> resolveResidues(SiteDef sd, Protein protein) {
         List<Residue> resolved = new ArrayList<>()
         for (String resId : sd.residueIds) {
-            ExtendedResidueId eid = ExtendedResidueId.parse(resId)
-            ResidueNumber rn = eid.toResidueNumber()
+            ResidueNumber rn
+            try {
+                rn = ExtendedResidueId.parse(resId).toResidueNumber()
+            } catch (RuntimeException e) {
+                // Malformed token in a third-party CSV: warn and skip, consistent with the
+                // well-formed-but-unresolvable case below (don't abort the whole item load).
+                log.warn "Cannot parse residue id [{}] for site [{}] in protein [{}]: {}",
+                        resId, sd.siteId, protein.name, e.message
+                continue
+            }
             Residue r = protein.residues.getResidue(Residue.Key.of(rn))
             if (r != null) {
                 resolved.add(r)
