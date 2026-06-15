@@ -89,6 +89,18 @@ features (the listed research configs).
   `-cofactors` is enabled (switched from `getAllNonHAtomArray(hetAtoms=false)` to
   the protein heavy-atom set). Only affects runs using cofactor-as-surface.
 
+###### Alternate-conformation chain reduction (default on)
+
+* Structures that deposit microheterogeneity as separate superimposed whole chains, each tagged with a single
+  non-blank altLoc letter (e.g. PDB `6een`, chains A/B/C/D being the same polymer ~0.002 A apart), now have the
+  redundant alternate chains dropped at load time, keeping only the primary conformation. Controlled by the new
+  `reduce_alternate_conformation_chains` parameter (default `true`); set `-reduce_alternate_conformation_chains 0`
+  for legacy behaviour (all alternate chains loaded). This changes the surface, features, and predictions for such
+  structures (the previous output was computed on ~Nx-overlapping atoms and was inflated). Ordinary within-residue
+  altLocs are already collapsed by the parser and are unaffected. The pattern is rare (~3/10000 structures on a
+  PDB-wide sample, 1 of them materially), so aggregate benchmark metrics are unchanged within noise. See
+  `cz.siret.prank.geom.AlternateChainReducer`.
+
 ### 2.5.1
 
 none

@@ -198,6 +198,18 @@ behaviour — kept in the file so they don't get re-raised.
 
 ## Inconsistencies / parity gaps
 
+- **Alternate-conformation chain reducer: full-benchmark validation pending.**
+  `AlternateChainReducer` (default on via `reduce_alternate_conformation_chains`)
+  collapses microheterogeneity-as-chains (6een); verified by unit tests + the 3
+  PDB-10k structures it affects (only 6een materially). Still TODO: a holo4k /
+  chen11 `eval-predict` on/off run to confirm aggregate DCA/DCC don't move
+  (expected flat: ~3/10000 structures affected). Detection thresholds
+  (`MIN_ALTLOC_FRACTION`, `OVERLAP_DISTANCE`, `MIN_OVERLAP_FRACTION`) are class
+  constants, not params - promote if tuning is ever needed. Note: the reducer
+  does NOT touch the residual trivial `distinct`-vs-`faster+sparsify` divergence
+  on 1xjz/8fz5 (1 extra low-rank pocket each) - that is the inherent distinct
+  superset behaviour, already documented on `surface_strategy`.
+
 - **`NewPymolRenderer` class name is stale** — `NewPymolRenderer.groovy:28`.
   Two distinct active classes (`NewPymolRenderer` vs `PymolRenderer`). The
   "New" prefix predates a refactor. The cofactor block depends on a static

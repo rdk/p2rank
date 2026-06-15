@@ -2127,6 +2127,23 @@ class Params {
     boolean use_optimized_surface = true
 
     /**
+     * Detect and collapse alternate-conformation chains: microheterogeneity deposited as separate whole
+     * chains that are each (almost) entirely tagged with a single non-blank altLoc letter and that
+     * geometrically superimpose on a primary chain (e.g. PDB 6een, whose chains A/B/C/D are the same
+     * polymer in 4 conformations, ~0.002 A apart). Such redundant chains otherwise multiply the surface
+     * and feature input (6een: ~4x atoms), inflating SAS point counts and pocket scores. When true, for
+     * each cluster of mutually-overlapping uniform-altLoc chains only the primary conformation (lowest
+     * altLoc letter, or a blank-altLoc chain) is kept; the others are dropped before residues/atoms are
+     * built. Ordinary within-residue altLocs are already collapsed by the parser and are unaffected; only
+     * the rare whole-chain-alternate pattern is touched (~3/10000 structures on a PDB-wide sample, 1 of
+     * them materially). The geometric overlap test is the safety guard: chains that occupy distinct space
+     * (genuine homo-oligomer copies, mislabeled or not) never overlap and are always kept. Off => legacy
+     * behavior (all alternate chains loaded). See {@link cz.siret.prank.geom.AlternateChainReducer}.
+     */
+    @RuntimeParam
+    boolean reduce_alternate_conformation_chains = true
+
+    /**
      * Command used to run fpocket when running 'prank fpocket-rescore'. Can contain custom fpocket arguments.
      */
     @RuntimeParam

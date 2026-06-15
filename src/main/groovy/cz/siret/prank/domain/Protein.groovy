@@ -4,6 +4,7 @@ import cz.siret.prank.domain.labeling.ResidueLabeling
 import cz.siret.prank.domain.loaders.LoaderParams
 import cz.siret.prank.features.api.ProcessedItemContext
 import cz.siret.prank.features.implementation.conservation.ConservationScore
+import cz.siret.prank.geom.AlternateChainReducer
 import cz.siret.prank.geom.Atoms
 import cz.siret.prank.geom.SecondaryStructureUtils
 import cz.siret.prank.geom.Struct
@@ -552,6 +553,12 @@ class Protein implements Parametrized {
 
             name = name + onlyChains.join("")
             structure = PdbUtils.reduceStructureToChains(structure, onlyChains)
+        }
+
+        // Collapse alternate-conformation chains (microheterogeneity deposited as superimposed whole chains,
+        // e.g. 6een chains A/B/C/D); keeps only the primary conformation. No-op for ordinary structures.
+        if (params.reduce_alternate_conformation_chains) {
+            structure = AlternateChainReducer.reduceAlternateConformationChains(structure, name)
         }
 
         calculateResidues()

@@ -391,4 +391,15 @@ class PdbUtils {
         return newS;
     }
 
+    /**
+     * Builds a new Structure carrying the given Chain objects (and the source metadata). The Chain/Group/Atom
+     * objects are reused by reference, not cloned (same contract as {@link #reduceStructureToChains}), so
+     * downstream reference-equality on atoms is preserved.
+     */
+    static Structure structureWithChains(Structure s, List<Chain> chains) {
+        Structure newS = cleanCopyWithMetadata(s)
+        copyChains(chains, s, newS)
+        return newS
+    }
+
 }
