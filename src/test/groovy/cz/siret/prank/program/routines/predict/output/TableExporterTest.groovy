@@ -268,9 +268,17 @@ class TableExporterTest {
                 ["score", "pocket"],
                 [row(0.5d, 1e12d)],   // 10^12 > Integer.MAX_VALUE (~2.15e9)
                 1)
+        def filepath = "$tempDir/big.parquet"
         assertThrows(ArithmeticException) {
-            TableExporter.export(data, "$tempDir/big.parquet", "parquet")
+            TableExporter.export(data, filepath, "parquet")
         }
+        // The INT-range check must happen BEFORE the Parquet writer is opened: if it
+        // fired mid-write, ParquetWriter.close() would throw while flushing and leak
+        // the file handle, leaving a corrupt partial .parquet that can't be deleted on
+        // Windows (breaking @TempDir cleanup and any real caller's retry). Asserting the
+        // file was never created guards that on every platform, not just Windows.
+        assertFalse(new File(filepath).exists(),
+                "rejected export must not leave a partial .parquet on disk")
     }
 
     @Test

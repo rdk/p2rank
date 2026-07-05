@@ -247,6 +247,17 @@ class TableExporter {
             types[c] = data.getColumnType(c)
         }
 
+        // Reject non-representable INT values BEFORE opening the writer. If toIntStrict
+        // throws from inside the dehydrator (i.e. mid-write), the try-with-resources
+        // calls ParquetWriter.close(), which flushes the half-written row group and
+        // writes the footer — and that throws before reaching the underlying stream's
+        // close(), leaking the output file handle. On Windows an open file cannot be
+        // deleted, so callers (and JUnit's @TempDir) can neither clean up nor overwrite
+        // the corrupt partial .parquet. Validating up-front keeps the failure clean and
+        // leaves no partial file on disk. (CSV/Arrow close their streams cleanly on the
+        // same failure, so this guard is only needed on the Parquet path.)
+        assertIntColumnsRepresentable(data, header, types)
+
         MessageType schema = buildParquetSchema(header, types)
         File outputFile = new File(filepath)
 
@@ -412,6 +423,26 @@ class TableExporter {
         }
         long asLong = (long) v
         return Math.toIntExact(asLong)
+    }
+
+    /**
+     * Eagerly run {@link #toIntStrict} over every INT-column value so an out-of-range
+     * or non-finite value is rejected before any output file is opened. See
+     * {@link #writeParquet} for why the Parquet path cannot tolerate the exception
+     * being thrown mid-write. INT columns are sparse (typically a single rank column),
+     * so this extra pass is negligible next to the write itself.
+     */
+    private static void assertIntColumnsRepresentable(TableData data, List<String> header, ColumnType[] types) {
+        int rowCount = data.getRowCount()
+        for (int c = 0; c < types.length; c++) {
+            if (types[c] == ColumnType.INT) {
+                double[] column = data.getColumn(c)
+                String columnName = header.get(c)
+                for (int i = 0; i < rowCount; i++) {
+                    toIntStrict(column[i], columnName)
+                }
+            }
+        }
     }
 
 }
