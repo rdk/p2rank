@@ -23,7 +23,7 @@ apply plugin: "com.github.ben-manes.versions"   //  ./gradlew dependencyUpdates
 
 
 group = 'cz.siret'
-version = '2.6-alpha.5'
+version = '2.6-alpha.6'
 
 description = 'Ligand binding site prediction based on machine learning.'
 
@@ -216,11 +216,11 @@ tasks.named("dependencyUpdates").configure {
 
 dependencies {
 
-    implementation 'org.apache.groovy:groovy:5.0.7'
+    implementation 'org.apache.groovy:groovy:5.1.0'
     implementation 'org.apache.commons:commons-lang3:3.20.0'
-    implementation 'com.carrotsearch:hppc:0.10.0'   // primitive collections (LongIntHashMap in pocket grid)
+    implementation 'com.carrotsearch:hppc:0.11.1'   // primitive collections (LongIntHashMap in pocket grid)
     implementation 'org.apache.commons:commons-math3:3.6.1'
-    implementation 'org.ejml:ejml-all:0.46.0'   // eigendecomposition for ANM features (physics/AnmModel)
+    implementation 'org.ejml:ejml-all:0.46.1'   // eigendecomposition for ANM features (physics/AnmModel)
     implementation 'commons-io:commons-io:2.22.0'
     implementation 'com.google.guava:guava:33.6.0-jre'
     implementation 'com.google.code.gson:gson:2.14.0'
@@ -229,7 +229,7 @@ dependencies {
     implementation 'org.zeroturnaround:zt-zip:1.18.2'
     implementation 'org.apache.commons:commons-compress:1.28.0'
     implementation 'org.tukaani:xz:1.12'
-    implementation 'com.github.luben:zstd-jni:1.5.7-11'
+    implementation 'com.github.luben:zstd-jni:1.5.7-15'
     implementation 'com.github.dpaukov:combinatoricslib3:3.4.0'
     implementation 'us.ihmc:euclid:0.22.5'
 
@@ -252,11 +252,11 @@ dependencies {
     implementation 'cz.cuni.cusbg:faster-molecular-surface:1.8'
     implementation 'cz.siret.prank:FasterForest:2.13.0'
 
-    implementation 'nz.ac.waikato.cms.weka:weka-dev:3.9.6'
+    implementation 'nz.ac.waikato.cms.weka:weka-dev:3.9.7'
 
     implementation fileTree(dir: 'lib', include: '*.jar')
 
-    testImplementation 'org.junit.jupiter:junit-jupiter:6.1.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter:6.1.3'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
 }
