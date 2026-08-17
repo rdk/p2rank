@@ -519,9 +519,9 @@ documentation only.
 ## Build / repo hygiene
 
 - **Stale vendored jars.** `lib/local-mvn-repo` still tracks FasterForest
-  `2.11.0` (build pins `2.13.0`) and biojava `7.2.2-rdk.1` + `7.2.4-rdk.1`
-  (build pins `7.2.5-rdk.1`). CLAUDE.md's keep-single-version policy: `git rm`
-  the unused versions. (faster-molecular-surface is clean: only `1.8`.)
+  `2.11.0` (build pins `2.13.0`). CLAUDE.md's keep-single-version policy:
+  `git rm` the unused version. (faster-molecular-surface is clean: only `1.8`;
+  biojava is clean: only `7.2.6-rdk.1`.)
 
 - **Committed tutorial `params.txt` leaks developer absolute paths.**
   `documentation/notebooks/.../predict_1fbl/params.txt:39,96,122`

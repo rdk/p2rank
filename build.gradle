@@ -242,9 +242,9 @@ dependencies {
     implementation 'org.apache.logging.log4j:log4j-core:2.26.1'
     implementation 'org.apache.logging.log4j:log4j-slf4j2-impl:2.26.1'
 
-    implementation 'org.biojava:biojava-core:7.2.5'
-    implementation 'org.biojava:biojava-alignment:7.2.5'
-    implementation 'org.biojava:biojava-structure:7.2.5-rdk.1' // forked version with new parseSites param
+    implementation 'org.biojava:biojava-core:7.2.6'
+    implementation 'org.biojava:biojava-alignment:7.2.6'
+    implementation 'org.biojava:biojava-structure:7.2.6-rdk.1' // forked version with new parseSites param
 
     implementation 'org.openscience.cdk:cdk-qsarmolecular:2.12'    // for NumericalSurface class
     implementation 'org.openscience.cdk:cdk-silent:2.12'           // for Atom class
