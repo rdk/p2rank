@@ -222,7 +222,7 @@ dependencies {
     implementation 'org.apache.commons:commons-math3:3.6.1'
     implementation 'org.ejml:ejml-all:0.46.1'   // eigendecomposition for ANM features (physics/AnmModel)
     implementation 'commons-io:commons-io:2.22.0'
-    implementation 'com.google.guava:guava:33.6.0-jre'
+    implementation 'com.google.guava:guava:33.7.1-jre'
     implementation 'com.google.code.gson:gson:2.14.0'
     implementation 'com.univocity:univocity-parsers:2.9.1' // csv parser
     implementation 'org.apache.commons:commons-csv:1.14.1'
@@ -235,7 +235,7 @@ dependencies {
 
     implementation 'org.apache.arrow:arrow-vector:19.0.0'
     implementation 'org.apache.arrow:arrow-memory-netty:19.0.0'
-    implementation 'blue.strategic.parquet:parquet-floor:2.1'
+    implementation 'blue.strategic.parquet:parquet-floor:2.2'
 
     implementation 'org.slf4j:slf4j-api:2.0.18'
     implementation 'org.slf4j:jul-to-slf4j:2.0.18'         // for netlib logging messages
@@ -246,8 +246,8 @@ dependencies {
     implementation 'org.biojava:biojava-alignment:7.2.6'
     implementation 'org.biojava:biojava-structure:7.2.6-rdk.1' // forked version with new parseSites param
 
-    implementation 'org.openscience.cdk:cdk-qsarmolecular:2.12'    // for NumericalSurface class
-    implementation 'org.openscience.cdk:cdk-silent:2.12'           // for Atom class
+    implementation 'org.openscience.cdk:cdk-qsarmolecular:2.13'    // for NumericalSurface class
+    implementation 'org.openscience.cdk:cdk-silent:2.13'           // for Atom class
 
     implementation 'cz.cuni.cusbg:faster-molecular-surface:1.8'
     implementation 'cz.siret.prank:FasterForest:2.13.0'
