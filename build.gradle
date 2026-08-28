@@ -218,7 +218,8 @@ dependencies {
 
     implementation 'org.apache.groovy:groovy:5.1.0'
     implementation 'org.apache.commons:commons-lang3:3.20.0'
-    implementation 'com.carrotsearch:hppc:0.11.1'   // primitive collections (LongIntHashMap in pocket grid)
+    implementation 'com.carrotsearch:hppc:0.10.0'   // primitive collections (LongIntHashMap in pocket grid)
+                                                    // pinned: hppc 0.11.x is compiled for Java 21 (class file 65) and breaks the Java 17 build target
     implementation 'org.apache.commons:commons-math3:3.6.1'
     implementation 'org.ejml:ejml-all:0.46.1'   // eigendecomposition for ANM features (physics/AnmModel)
     implementation 'commons-io:commons-io:2.22.0'
