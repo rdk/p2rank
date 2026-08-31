@@ -216,7 +216,7 @@ tasks.named("dependencyUpdates").configure {
 
 dependencies {
 
-    implementation 'org.apache.groovy:groovy:5.1.0'
+    implementation 'org.apache.groovy:groovy:5.1.1'
     implementation 'org.apache.commons:commons-lang3:3.20.0'
     implementation 'com.carrotsearch:hppc:0.10.0'   // primitive collections (LongIntHashMap in pocket grid)
                                                     // pinned: hppc 0.11.x is compiled for Java 21 (class file 65) and breaks the Java 17 build target
@@ -230,7 +230,7 @@ dependencies {
     implementation 'org.zeroturnaround:zt-zip:1.18.2'
     implementation 'org.apache.commons:commons-compress:1.28.0'
     implementation 'org.tukaani:xz:1.12'
-    implementation 'com.github.luben:zstd-jni:1.5.7-15'
+    implementation 'com.github.luben:zstd-jni:1.5.7-16'
     implementation 'com.github.dpaukov:combinatoricslib3:3.4.0'
     implementation 'us.ihmc:euclid:0.22.5'
 
