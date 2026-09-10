@@ -1,5 +1,48 @@
 # P2Rank — Repo Notes
 
+## Sister repos
+
+Repos this build depends on, developed alongside P2Rank. All are cloned next to
+this one and none is fetched by the build: the artifacts they produce are
+vendored here under `lib/local-mvn-repo/`, so a plain `./gradlew assemble` works
+without them. Only the single consumed version of each is kept, replaced on
+every bump.
+
+- **FasterMolecularSurface** (https://github.com/rdk/FasterMolecularSurface),
+  cloned at `../FasterMolecularSurface`. Source of the
+  `cz.cuni.cusbg:faster-molecular-surface` dependency (see `build.gradle`),
+  vendored under
+  `lib/local-mvn-repo/cz/cuni/cusbg/faster-molecular-surface/<ver>/`. On a bump,
+  vendor the new `faster-molecular-surface-<ver>.{jar,pom}`, update the version
+  in `build.gradle`, and `git rm` the old version dir. P2Rank-side wrappers live
+  in `src/main/groovy/cz/siret/prank/geom/` (`SurfaceStrategy`, `cdksurface/`).
+
+- **FasterForest** (https://github.com/rdk/FasterForest). Source of the random
+  forest dependency `cz.siret.prank:FasterForest` (see `build.gradle`), vendored
+  under `lib/local-mvn-repo/cz/siret/prank/FasterForest/<ver>/`. To bump: run
+  `./gradlew clean assemble` in a checkout of that repo (native libs are
+  pre-committed, so a Java-only build is enough), copy the resulting
+  `build/libs/FasterForest-<ver>.{jar,pom}` into the vendored dir, update the
+  version in `build.gradle`, remove the old version dir, then `./gradlew test`.
+  The vendored version may be ahead of the tags published there.
+
+- **biojava** (https://github.com/rdk/biojava), cloned at `../biojava`. Fork of
+  BioJava. `build.gradle` uses stock `biojava-core` and `biojava-alignment`, but
+  `biojava-structure` is the forked `7.2.6-rdk.1`, which adds a configurable
+  `parseSites` flag to skip `STRUCT_SITE_GEN` parsing in CIF files. Built from
+  branch `updated-cif-parsing-bug-7.2.6-rebase` and vendored under
+  `lib/local-mvn-repo/org/biojava/biojava-structure/7.2.6-rdk.1/`.
+
+- **p2rank-datasets** (https://github.com/rdk/p2rank-datasets), cloned at
+  `../p2rank-datasets`. Training and evaluation datasets: `*.ds` list files plus
+  the structure directories they reference. Not a dependency, nothing is
+  vendored back.
+
+  > [!NOTE]
+  > A `*.ds` file may list only a subset of the PDB files in the matching
+  > directory. For reproducibility the `.ds` line count is authoritative, not the
+  > directory contents.
+
 ## Dev backlog / tech debt tracking
 
 Known small bugs, inconsistencies, and follow-ups are tracked in-repo, not just
