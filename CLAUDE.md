@@ -1,47 +1,5 @@
 # P2Rank — Repo Notes
 
-## Sister repos
-
-- **FasterMolecularSurface** is a permanent sister repo, always cloned next to
-  this one at `../FasterMolecularSurface`. That single local checkout tracks two
-  GitHub remotes: `origin` is the private repo
-  (https://github.com/rdk/FasterMolecularSurface-private) and `public` is the
-  public mirror (https://github.com/rdk/FasterMolecularSurface). It is the
-  source of the `cz.cuni.cusbg:faster-molecular-surface` Maven dependency (see
-  `build.gradle`); built jars are vendored here under
-  `lib/local-mvn-repo/cz/cuni/cusbg/faster-molecular-surface/`. Only the single
-  consumed version is kept (like the FasterForest dep below): on a bump, vendor
-  the new `<ver>/faster-molecular-surface-<ver>.{jar,pom}`, update the version in
-  `build.gradle`, and `git rm` the old version dir. P2Rank-side wrappers live in
-  `src/main/groovy/cz/siret/prank/geom/` (`SurfaceStrategy`, `cdksurface/`).
-
-- **FasterForest-private** is a permanent sister repo, always cloned next to
-  this one at `../FasterForest-private`
-  (https://github.com/rdk/FasterForest-private). It is the source of the random
-  forest dependency `cz.siret.prank:FasterForest` (see `build.gradle`); built
-  jars are vendored here under
-  `lib/local-mvn-repo/cz/siret/prank/FasterForest/<version>/` (single version
-  kept, replaced on each bump). To bump: run `./gradlew clean assemble` in the
-  sister repo (native libs are pre-committed, so a Java-only build is enough),
-  copy the resulting `build/libs/FasterForest-<ver>.{jar,pom}` into the vendored
-  dir, update the version in `build.gradle`, remove the old version dir, then
-  `./gradlew test`.
-
-- **p2rank-dev-artefacts** is a permanent sister dev repo, always cloned next to
-  this one at `../p2rank-dev-artefacts`
-  (https://github.com/rdk/p2rank-dev-artefacts, private). It holds large dev
-  artefacts kept out of the main repo: trained models under
-  `models/<version>/` (binaries via **Git LFS**) plus their predict configs, and
-  a `papers/` subdir. Predict configs there should use **relative-sibling**
-  `model =` paths (`../p2rank-dev-artefacts/models/...`), not machine-absolute
-  ones, so they stay portable across checkouts. Caveat: P2Rank does *not*
-  resolve `model` relative to the config file (only `dataset_base_dir` /
-  `output_base_dir` get that treatment); a relative `model` is tried against the
-  **current working dir** first, then `$installDir/models/`. So these configs
-  work only when run with cwd at this repo's root (the install dir), e.g.
-  `./prank.sh predict <in> -c ../p2rank-dev-artefacts/models/<config>` from here.
-  Not a Maven dependency: nothing is vendored back here.
-
 ## Dev backlog / tech debt tracking
 
 Known small bugs, inconsistencies, and follow-ups are tracked in-repo, not just
