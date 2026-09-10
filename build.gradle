@@ -216,7 +216,7 @@ tasks.named("dependencyUpdates").configure {
 
 dependencies {
 
-    implementation 'org.apache.groovy:groovy:5.1.1'
+    implementation 'org.apache.groovy:groovy:5.1.2'
     implementation 'org.apache.commons:commons-lang3:3.20.0'
     implementation 'com.carrotsearch:hppc:0.10.0'   // primitive collections (LongIntHashMap in pocket grid)
                                                     // pinned: hppc 0.11.x is compiled for Java 21 (class file 65) and breaks the Java 17 build target
@@ -236,10 +236,10 @@ dependencies {
 
     implementation 'org.apache.arrow:arrow-vector:19.0.0'
     implementation 'org.apache.arrow:arrow-memory-netty:19.0.0'
-    implementation 'blue.strategic.parquet:parquet-floor:2.2'
+    implementation 'blue.strategic.parquet:parquet-floor:2.3'
 
-    implementation 'org.slf4j:slf4j-api:2.0.18'
-    implementation 'org.slf4j:jul-to-slf4j:2.0.18'         // for netlib logging messages
+    implementation 'org.slf4j:slf4j-api:2.0.19'
+    implementation 'org.slf4j:jul-to-slf4j:2.0.19'         // for netlib logging messages
     implementation 'org.apache.logging.log4j:log4j-core:2.26.1'
     implementation 'org.apache.logging.log4j:log4j-slf4j2-impl:2.26.1'
 
